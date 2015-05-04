@@ -26,7 +26,6 @@ using System.Linq;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -57,7 +56,7 @@ namespace Transformalize.Operations {
             if (!_firstRun && _entity.DetectChanges)
                 return;
             _entity.InputKeys = new Row[0];
-            TflLogger.Debug(_entity.ProcessName, _entity.Name, "Released input keys.");
+            _connection.Logger.EntityDebug(_entity.Name, "Released input keys.");
         }
 
         private Row GetOperationRow(IEnumerable<Row> batch, Fields fields) {

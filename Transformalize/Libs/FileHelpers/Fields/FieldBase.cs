@@ -254,7 +254,7 @@ namespace Transformalize.Libs.FileHelpers.Fields
             catch (ConvertException ex)
             {
                 var e = ConvertException.ReThrowException(ex, mFieldInfo.Name, line.mReader.LineNumber, fieldString.ExtractedFrom + 1);
-                throw new TransformalizeException("{0} {1}", e.Message, e.MessageExtra);
+                throw e;
             }
         }
 

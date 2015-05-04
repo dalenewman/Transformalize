@@ -1,17 +1,18 @@
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneDependencies : AbstractConnectionDependencies {
-        public LuceneDependencies(string processName)
+        public LuceneDependencies(string processName, ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new LuceneConnectionChecker(processName),
+                new NullTableQueryWriter(),
+                new LuceneConnectionChecker(processName, logger),
                 new LuceneEntityRecordsExist(),
                 new LuceneEntityDropper(),
                 new LuceneEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
+                new List<IViewWriter> { new NullViewWriter() },
                 new LuceneTflWriter(),
-                new FalseScriptRunner(),
-                new FalseDataTypeService()) { }
+                new NullScriptRunner(),
+                new NullDataTypeService(), logger) { }
     }
 }

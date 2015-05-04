@@ -29,7 +29,7 @@ namespace Transformalize.Operations {
                 if (CanChangeType(value, typeof(int))) {
                     _lengthMap[field.Alias] = Convert.ToInt32(value);
                 } else {
-                    throw new TransformalizeException("Can not change field {0}'s length of '{0}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
+                    throw new TransformalizeException(Logger, "Can not change field {0}'s length of '{0}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
                 }
             }
 
@@ -41,7 +41,7 @@ namespace Transformalize.Operations {
                         if (CanChangeType(value, typeof(int))) {
                             _lengthMap[field.Alias] = Convert.ToInt32(value);
                         } else {
-                            throw new TransformalizeException("Can not change field {0}'s length of '{1}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
+                            throw new TransformalizeException(Logger, "Can not change field {0}'s length of '{1}' to an integer.  Please use an integer or the keyword: max.", field.Alias, value);
                         }
                     }
                 }
@@ -53,7 +53,7 @@ namespace Transformalize.Operations {
         void StringLengthOperation_OnFinishedProcessing(IOperation obj) {
             if (_count > 0)
             {
-             TflLogger.Warn(ProcessName, EntityName, "Please address truncated {0} fields: {1}.", _count, string.Join(", ", _truncatedFields.Select(kv => kv.Key)));
+             Logger.EntityWarn(EntityName, "Please address truncated {0} fields: {1}.", _count, string.Join(", ", _truncatedFields.Select(kv => kv.Key)));
             }
         }
 

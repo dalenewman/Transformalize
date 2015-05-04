@@ -48,7 +48,7 @@ namespace Transformalize.Main {
         private readonly bool _templateContentExists;
 
         public List<TemplateAction> Actions = new List<TemplateAction>();
-        public IParameters Parameters = new Parameters.Parameters();
+        public IParameters Parameters { get; set; }
         public Contents Contents { get; private set; }
         public string Name { get; private set; }
 
@@ -60,6 +60,7 @@ namespace Transformalize.Main {
 
         public Template(Process process, TflTemplate element, Contents contents) {
 
+            Parameters = new Parameters.Parameters(new DefaultFactory(process.Logger));
             Cache = element.Cache;
             Enabled = element.Enabled;
             Engine = element.Engine;
@@ -92,7 +93,7 @@ namespace Transformalize.Main {
             if (!CacheIsUsable())
                 return CacheContent(RenderContent());
 
-            TflLogger.Debug(_process.Name, string.Empty, "Returning {0} template output from cache.", Name);
+            _process.Logger.Debug("Returning {0} template output from cache.", Name);
             return _renderedTemplateContent;
         }
 
@@ -107,7 +108,7 @@ namespace Transformalize.Main {
         private string RenderContent() {
 
             if (Contents.Content.Equals(string.Empty)) {
-                TflLogger.Warn(_process.Name, string.Empty, "Template {0} is empty.", Name);
+                _process.Logger.Warn("Template {0} is empty.", Name);
                 return string.Empty;
             }
 
@@ -133,16 +134,17 @@ namespace Transformalize.Main {
                 });
             }
 
-            TflLogger.Debug(_process.Name, string.Empty, "Rendered {0} template.", Name);
+            _process.Logger.Debug("Rendered {0} template.", Name);
             return renderedContent;
         }
 
         private string CacheContent(string renderedContent) {
-            if (Cache && !string.IsNullOrEmpty(renderedContent)) {
-                File.WriteAllText(_renderedTemplateFile, renderedContent);
-                File.WriteAllText(_templateFile, Contents.Content);
-                TflLogger.Debug(_process.Name, string.Empty, "Cached {0} template output.", Name);
-            }
+            if (!Cache || string.IsNullOrEmpty(renderedContent)) 
+                return renderedContent;
+
+            File.WriteAllText(_renderedTemplateFile, renderedContent);
+            File.WriteAllText(_templateFile, Contents.Content);
+            _process.Logger.Debug("Cached {0} template output.", Name);
             return renderedContent;
         }
 

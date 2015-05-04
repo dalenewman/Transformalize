@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Transformalize.Logging;
 using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Test {
@@ -13,7 +14,7 @@ namespace Transformalize.Test {
         public void TestExcel() {
             const string fileName = @"TestFiles\Headers\Headers.xlsx";
             var request = new FileInspectionRequest(fileName);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(3, actual.ColumnCount());
             Assert.AreEqual("Header 2", actual.Fields[1].Name);
@@ -23,7 +24,7 @@ namespace Transformalize.Test {
         public void TestCommas() {
             const string fileName = @"TestFiles\Headers\Headers.csv";
             var request = new FileInspectionRequest(fileName) { LineLimit = 3 };
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(',', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
@@ -34,7 +35,7 @@ namespace Transformalize.Test {
         public void TestPipes() {
             const string fileName = @"TestFiles\Headers\Headers.psv";
             var request = new FileInspectionRequest(fileName);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual('|', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
@@ -45,7 +46,7 @@ namespace Transformalize.Test {
         public void TestTabs() {
             const string fileName = @"TestFiles\Headers\Headers.tsv";
             var request = new FileInspectionRequest(fileName);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual('\t', actual.Delimiter);
             Assert.AreEqual(3, actual.ColumnCount());
@@ -56,7 +57,7 @@ namespace Transformalize.Test {
         public void TestSingleColumn() {
             const string fileName = @"TestFiles\Headers\Single.txt";
             var request = new FileInspectionRequest(fileName);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(default(char), actual.Delimiter);
             Assert.AreEqual(1, actual.ColumnCount());
@@ -74,7 +75,7 @@ v|6,v|;7,v|8,v9,v|10,
 v|11,v|;12,v|13,v|14,v|15");
 
             var request = new FileInspectionRequest(file);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             foreach (
                 var delimiter in
@@ -107,7 +108,7 @@ CA,""20,000,000"",Sock,
 KS,""9,000,000"",Rectangle");
 
             var request = new FileInspectionRequest(file);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(3, actual.Fields.Count);
 
@@ -136,7 +137,7 @@ KS,""9,000,000"",Rectangle");
             File.WriteAllText(file, @"State,Population,Shape");
 
             var request = new FileInspectionRequest(file);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(3, actual.Fields.Count);
 
@@ -164,7 +165,7 @@ KS,""9,000,000"",Rectangle");
             File.WriteAllText(file, string.Empty);
 
             var request = new FileInspectionRequest(file);
-            var actual = FileInformationFactory.Create(request);
+            var actual = FileInformationFactory.Create(request, new TestLogger());
 
             Assert.AreEqual(0, actual.Fields.Count);
         }

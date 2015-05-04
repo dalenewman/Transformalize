@@ -75,7 +75,7 @@ namespace Transformalize.Main {
 
             foreach (var keyField in new[] { "TflKey", "TflUpdate", "TflBatchId", "TflFileName", "TflDeleted", "TflAction" }) {
                 if (field.Alias.Equals(keyField, IC) && field.Input) {
-                    TflLogger.Warn(_entity.ProcessName, _entity.Name, "{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
+                    _process.Logger.EntityWarn(_entity.Name, "{0}, defined in {1}, is a reserved field name.  Please alias this field.", field.Alias, field.Entity);
                 }
             }
 

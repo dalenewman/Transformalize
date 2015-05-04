@@ -306,7 +306,7 @@ namespace Transformalize.Main {
                 result = "I" + input.GetHashCode().ToString(CultureInfo.InvariantCulture).Replace("-", "0");
             }
             if (!input.Equals(result)) {
-                TflLogger.Debug(string.Empty, string.Empty, "Using '{0}' to identify field '{1}'.", result, input);
+                //logger.Debug("Using '{0}' to identify field '{1}'.", result, input);
             }
             return sb.ToString();
         }

@@ -26,6 +26,12 @@ using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesConnectionChecker : IConnectionChecker {
+        private readonly ILogger _logger;
+
+        public AnalysisServicesConnectionChecker(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public bool Check(AbstractConnection connection) {
             bool isReady;
@@ -35,7 +41,7 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 isReady = server.Connected;
                 server.Disconnect();
             } catch (Exception e) {
-                TflLogger.Warn(string.Empty, string.Empty, "Error checking {0} connection. {1}", connection.Name, e.Message);
+                _logger.Warn("Error checking {0} connection. {1}", connection.Name, e.Message);
                 return false;
             }
             return isReady;

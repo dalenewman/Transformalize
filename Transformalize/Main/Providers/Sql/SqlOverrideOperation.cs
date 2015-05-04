@@ -32,9 +32,7 @@ namespace Transformalize.Main.Providers.Sql {
         protected override void PrepareCommand(IDbCommand cmd) {
 
             if (!string.IsNullOrEmpty(_entity.SqlScriptOverride)) {
-                var reader = _entity.SqlScriptOverride.StartsWith("http", IC)
-                    ? (ContentsReader)new ContentsWebReader() :
-                    new ContentsFileReader(string.Empty);
+                var reader = _entity.SqlScriptOverride.StartsWith("http", IC) ? (ContentsReader)new ContentsWebReader(Logger) : new ContentsFileReader(Logger);
                 var contents = reader.Read(_entity.SqlScriptOverride);
                 _entity.SqlOverride = contents.Content.TrimEnd();
 

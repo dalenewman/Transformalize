@@ -58,7 +58,7 @@ namespace Transformalize.Main.Providers.Solr {
                 } else if (versionType.Equals("byte[]") || versionType.Equals("rowversion")) {
                     end = Common.BytesToHexString((byte[])entity.End);
                 } else {
-                    end = new DefaultFactory().Convert(entity.End, versionType).ToString();
+                    end = new DefaultFactory(Logger).Convert(entity.End, versionType).ToString();
                 }
 
                 var doc = new Dictionary<string, object> {

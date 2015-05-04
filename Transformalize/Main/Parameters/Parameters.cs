@@ -27,11 +27,15 @@ using System.Linq;
 
 namespace Transformalize.Main.Parameters {
     public class Parameters : IParameters, IEnumerable<KeyValuePair<string, IParameter>> {
+        private readonly DefaultFactory _defaultFactory;
 
-        private readonly DefaultFactory _defaultFactory = new DefaultFactory();
         private readonly IDictionary<string, IParameter> _items = new Dictionary<string, IParameter>();
         private KeyValuePair<string, IParameter> _first;
         private int _index = 0;
+
+        public Parameters(DefaultFactory defaultFactory) {
+            _defaultFactory = defaultFactory;
+        }
 
         IEnumerator<KeyValuePair<string, IParameter>> IEnumerable<KeyValuePair<string, IParameter>>.GetEnumerator() {
             return _items.GetEnumerator();

@@ -27,11 +27,12 @@ using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
     public class DefaultConnectionChecker : IConnectionChecker {
-
+        private readonly ILogger _logger;
         protected static readonly Dictionary<string, bool> CachedResults = new Dictionary<string, bool>();
         private readonly int _timeOut;
 
-        public DefaultConnectionChecker(int timeOut = 3) {
+        public DefaultConnectionChecker(ILogger logger, int timeOut = 3) {
+            _logger = logger;
             _timeOut = timeOut;
         }
 
@@ -58,17 +59,16 @@ namespace Transformalize.Main.Providers {
                         cn.Open();
                         result = cn.State == ConnectionState.Open;
                         if (result) {
-                            TflLogger.Debug(string.Empty, string.Empty, "{0} connection is ready.", connection.Name);
+                            _logger.Debug("{0} connection is ready.", connection.Name);
                         } else {
-                            TflLogger.Warn(string.Empty, string.Empty, "{0} connection is not responding.", connection.Name);
+                            _logger.Warn("{0} connection is not responding.", connection.Name);
                         }
                     } catch (Exception e) {
-                        TflLogger.Error(string.Empty, string.Empty, "{0} connection caused error message: {1}", connection.Name, e.Message);
-                        TflLogger.Dispose();
+                        _logger.Error("{0} connection caused error message: {1}", connection.Name, e.Message);
                     }
                 }
             } catch (Exception ex) {
-                throw new TransformalizeException(string.Empty, string.Empty, "{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable. Error Message: {2}", connection.Name, connection.Type, ex.Message);
+                throw new TransformalizeException(_logger, "{0} connection type '{1}' is unavailable.  Make sure the assembly (*.dll) is in the same folder as your executable. Error Message: {2}", connection.Name, connection.Type, ex.Message);
             }
 
             CachedResults[connection.Name] = result;

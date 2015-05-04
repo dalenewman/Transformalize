@@ -1,8 +1,5 @@
-using Transformalize.Libs.Rhino.Etl;
-
 namespace Transformalize.Main.Providers {
-    public class FalseTflWriter : WithLoggingMixin, ITflWriter {
-
+    public class NullTflWriter : ITflWriter {
         public void Initialize(Process process) {
         }
     }

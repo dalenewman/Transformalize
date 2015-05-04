@@ -5,7 +5,6 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Nest.Domain.Responses;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -44,7 +43,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     }
                 }
 
-                TflLogger.Info(_entity.ProcessName, _entity.Name, "Extract {0} corresponding key{1}", _entity.InputKeys.Length, _entity.InputKeys.Length.Plural());
+                Logger.EntityInfo(_entity.Name, "Extract {0} corresponding key{1}", _entity.InputKeys.Length, _entity.InputKeys.Length.Plural());
                 var queries = new List<string>();
                 foreach (var row in _entity.InputKeys) {
                     var subQuery = new List<string>();
@@ -55,10 +54,10 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 }
                 var query = string.Join(" OR ", queries);
 
-                TflLogger.Debug(_entity.ProcessName, _entity.Name, query);
+                Logger.EntityDebug(_entity.Name, query);
 
                 if (size < 100) {
-                    TflLogger.Info(_entity.ProcessName, _entity.Name, "Using query to fetch results.");
+                    Logger.EntityInfo(_entity.Name, "Using query to fetch results.");
                     scrolling = false;
                     results = _client.Client.Search<dynamic>(s => s
                         .Index(_client.Index)
@@ -70,7 +69,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                         .Fields(_fields)
                     );
                 } else {
-                    TflLogger.Info(_entity.ProcessName, _entity.Name, "Using query scroll to fetch results.");
+                    Logger.EntityInfo(_entity.Name, "Using query scroll to fetch results.");
                     scanResults = _client.Client.Search<dynamic>(s => s
                         .Index(_client.Index)
                         .Type(_client.Type)
@@ -87,7 +86,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                         );
                 }
             } else {
-                TflLogger.Info(_entity.ProcessName, _entity.Name, "Using match all scroll to fetch results.");
+                Logger.EntityInfo(_entity.Name, "Using match all scroll to fetch results.");
                 scanResults = _client.Client.Search<dynamic>(s => s
                     .Index(_client.Index)
                     .Type(_client.Type)
@@ -134,7 +133,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         void ElasticSearchEntityExtract_OnRowProcessed(IOperation arg1, Row arg2) {
             Interlocked.Increment(ref _count);
             if (_count % arg1.LogRows == 0) {
-                Info("Processed {0} records.", _count);
+                Logger.Info("Processed {0} records.", _count);
             }
         }
 

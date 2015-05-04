@@ -24,11 +24,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Numerics;
 using Transformalize.Configuration;
 using Transformalize.Libs.FileHelpers.Enums;
-using Transformalize.Libs.Lucene.Net.Index;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
     public abstract class AbstractConnection {
@@ -90,6 +89,7 @@ namespace Transformalize.Main.Providers {
         public bool CheckMe { get; set; }
         public ConnectionIs Is { get; set; }
         public string TextQualifier { get; set; }
+        public ILogger Logger { get; set; }
 
         public ConnectionStringProperties ConnectionStringProperties {
             get { return _connectionStringProperties; }
@@ -161,6 +161,7 @@ namespace Transformalize.Main.Providers {
             TflWriter = dependencies.TflWriter;
             ScriptRunner = dependencies.ScriptRunner;
             DataTypeService = dependencies.DataTypeService;
+            Logger = dependencies.Logger;
 
             Is = new ConnectionIs(this);
         }

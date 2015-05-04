@@ -18,18 +18,15 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public override IOperation ExtractCorrespondingKeysFromOutput(Entity entity) {
-            var p = new Process("blank");
-            return Extract(p, entity, true);
+            return Extract(null, entity, true);
         }
 
         public override IOperation ExtractAllKeysFromOutput(Entity entity) {
-            var p = new Process("blank");
-            return Extract(p, entity, true);
+            return Extract(null, entity, true);
         }
 
         public override IOperation ExtractAllKeysFromInput(Process process, Entity entity) {
-            var p = new Process("blank");
-            return Extract(p, entity, true);
+            return Extract(process, entity, true);
         }
 
         public override IOperation Insert(Process process, Entity entity) {
@@ -49,7 +46,7 @@ namespace Transformalize.Main.Providers.File {
         }
 
         public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
-            return new FieldInspector().Inspect(FileInformationFactory.Create(File), process.FileInspectionRequest);
+            return new FieldInspector(process.Logger).Inspect(FileInformationFactory.Create(File, process.Logger), process.FileInspectionRequest);
         }
 
         public override IOperation Delete(Entity entity) {

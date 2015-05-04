@@ -22,15 +22,18 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Logging;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
 
     public class FieldSqlWriter {
+
         private Dictionary<string, Field> _original;
         private Dictionary<string, string> _output;
 
-        public FieldSqlWriter(IEnumerable<Field> fields) {
+        public FieldSqlWriter(IEnumerable<Field> fields)
+        {
             StartWithFields(fields);
         }
 
@@ -146,7 +149,7 @@ namespace Transformalize.Main {
         public FieldSqlWriter IsNull() {
             foreach (var key in CopyOutputKeys()) {
                 var field = _original[key];
-                var d = field.Default ?? new DefaultFactory().Convert(string.Empty, field.SimpleType);
+                var d = field.Default;
 
                 if (field.SimpleType == "byte[]" || field.SimpleType == "rowversion")
                     d = "0x";

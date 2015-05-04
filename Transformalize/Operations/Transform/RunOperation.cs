@@ -7,15 +7,17 @@ using Transformalize.Logging;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Operations.Transform {
+
     public class RunOperation : ShouldRunOperation {
         private readonly int _timeOut;
         private readonly IDbConnection _connection;
+        private readonly ILogger _logger;
 
         public RunOperation(string inKey, AbstractConnection connection, int timeOut)
-            : base(inKey, string.Empty)
-        {
+            : base(inKey, string.Empty) {
             _timeOut = timeOut;
             _connection = connection.GetConnection();
+            _logger = connection.Logger;
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
@@ -24,8 +26,9 @@ namespace Transformalize.Operations.Transform {
             foreach (var row in rows) {
                 if (ShouldRun(row)) {
                     var command = row[InKey].ToString();
-                    _connection.Execute(command, commandTimeout:_timeOut);
-                    TflLogger.Info(ProcessName, EntityName, "Executed {0}", command);
+                    _connection.Execute(command, commandTimeout: _timeOut);
+
+                    _logger.EntityInfo(EntityName, "Executed {0}", command);
                 }
                 yield return row;
             }

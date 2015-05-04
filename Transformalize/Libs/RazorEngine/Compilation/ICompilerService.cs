@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Transformalize.Libs.RazorEngine.Compilation.Inspectors;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.RazorEngine.Compilation
 {
@@ -43,8 +44,9 @@ namespace Transformalize.Libs.RazorEngine.Compilation
         ///     Compiles the type defined in the specified type context.
         /// </summary>
         /// <param name="context">The type context which defines the type to compile.</param>
+        /// <param name="logger"></param>
         /// <returns>The compiled type.</returns>
-        Tuple<Type, Assembly> CompileType(TypeContext context);
+        Tuple<Type, Assembly> CompileType(TypeContext context, ILogger logger);
 
         /// <summary>
         ///     Returns a set of assemblies that must be referenced by the compiled template.

@@ -90,7 +90,9 @@ namespace Transformalize.Main.Providers.SqlCe {
                 );
         }
 
-        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
+        public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false)
+        {
+            var logger = process.Logger;
             //default implementation for relational database
             if (entity.Inserts + entity.Updates > 0 || force) {
                 using (var cn = GetConnection()) {
@@ -122,11 +124,11 @@ namespace Transformalize.Main.Providers.SqlCe {
                     AddParameter(cmd, "@Deletes", entity.Deletes);
 
                     if (entity.CanDetectChanges(input.IsDatabase)) {
-                        var end = new DefaultFactory().Convert(entity.End, entity.Version.SimpleType);
+                        var end = new DefaultFactory(Logger).Convert(entity.End, entity.Version.SimpleType);
                         AddParameter(cmd, "@End", end);
                     }
 
-                    TflLogger.Debug(entity.ProcessName, entity.Name, cmd.CommandText);
+                    logger.EntityDebug(entity.Name, cmd.CommandText);
                     cmd.ExecuteNonQuery();
                 }
             }

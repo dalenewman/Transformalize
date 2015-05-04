@@ -23,7 +23,6 @@
 using System;
 using System.Linq;
 using Transformalize.Libs.Dapper;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlServer {
     public class SqlServerEntityAutoFieldReader : IEntityAutoFieldReader {
@@ -39,7 +38,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 var sql = PrepareSql();
-                TflLogger.Debug(process, name, sql);
+                connection.Logger.EntityDebug(name, sql);
 
                 var results = cn.Query(sql, new { name, schema });
 
@@ -68,9 +67,6 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         private string GetSystemType(string dataType) {
             var typeDefined = _dataTypeService.TypesReverse.ContainsKey(dataType);
-            if (!typeDefined) {
-                TflLogger.Warn(string.Empty, string.Empty, "Transformalize hasn't mapped the SQL data type: {0} to a .NET data type.  It will default to string.", dataType);
-            }
             return typeDefined ? _dataTypeService.TypesReverse[dataType] : "System.String";
         }
 

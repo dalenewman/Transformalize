@@ -8,10 +8,12 @@ namespace Transformalize.Main.Providers.Lucene {
 
     public class LuceneConnectionChecker : IConnectionChecker {
         private readonly string _processName;
+        private readonly ILogger _logger;
         private static readonly Dictionary<int, bool> Checks = new Dictionary<int, bool>();
 
-        public LuceneConnectionChecker(string processName) {
+        public LuceneConnectionChecker(string processName, ILogger logger) {
             _processName = processName;
+            _logger = logger;
         }
 
         public bool Check(AbstractConnection connection) {
@@ -23,14 +25,14 @@ namespace Transformalize.Main.Providers.Lucene {
             try {
                 using (var indexDirectory = LuceneDirectoryFactory.Create(connection, connection.TflBatchEntity(_processName))) {
                     using (var reader = IndexReader.Open(indexDirectory, true)) {
-                        TflLogger.Debug(_processName, string.Empty, "Successfully connected to lucene index in {0}.", connection.Folder);
+                        connection.Logger.Debug("Successfully connected to lucene index in {0}.", connection.Folder);
                         Checks[hashCode] = true;
                         return true;
                     }
                 }
             } catch (Exception ex) {
-                TflLogger.Warn(_processName, string.Empty, "Failed to connect to a lucene index in {0}.", connection.Folder);
-                TflLogger.Debug(_processName, string.Empty, ex.Message);
+                _logger.Warn("Failed to connect to a lucene index in {0}.", connection.Folder);
+                _logger.Debug(ex.Message);
                 var exists = new DirectoryInfo(connection.Folder).Exists;
                 Checks[hashCode] = exists;
                 return exists;

@@ -171,7 +171,7 @@ namespace Transformalize.Main.Providers.Lucene {
         }
 
 
-        private static Dictionary<string, Analyzer> GetFields(Entity entity, string version) {
+        private static Dictionary<string, Analyzer> GetFields(Entity entity, string version, ILogger logger) {
             var fields = new Dictionary<string, Analyzer>();
             foreach (var field in entity.OutputFields()) {
                 foreach (var searchType in field.SearchTypes) {
@@ -182,7 +182,7 @@ namespace Transformalize.Main.Providers.Lucene {
                             fields[field.Alias] = LuceneAnalyzerFactory.Create(searchType.Analyzer, version);
                         }
                     } else {
-                        TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Lucene is limited to standard, simple, keyword, or whitespace.", searchType.Analyzer, searchType.Name);
+                        logger.EntityWarn(entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Lucene is limited to standard, simple, keyword, or whitespace.", searchType.Analyzer, searchType.Name);
                         if (!fields.ContainsKey(field.Alias)) {
                             fields[field.Alias] = LuceneAnalyzerFactory.Create(searchType.Analyzer, version);
                         }
@@ -230,7 +230,7 @@ namespace Transformalize.Main.Providers.Lucene {
                 }
 
                 var analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer);
-                foreach (var field in GetFields(entity, connection.Version)) {
+                foreach (var field in GetFields(entity, connection.Version, connection.Logger)) {
                     analyzer.AddAnalyzer(field.Key, field.Value);
                 }
                 return new IndexWriter(dir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);
@@ -242,7 +242,7 @@ namespace Transformalize.Main.Providers.Lucene {
             Analyzer defaultAnalyzer = new KeywordAnalyzer();
 
             var analyzer = new PerFieldAnalyzerWrapper(defaultAnalyzer);
-            foreach (var field in GetFields(entity, connection.Version)) {
+            foreach (var field in GetFields(entity, connection.Version, connection.Logger)) {
                 analyzer.AddAnalyzer(field.Key, field.Value);
             }
             return new IndexWriter(dir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED);

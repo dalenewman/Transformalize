@@ -14,7 +14,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 return;
 
             var outputSql = string.Format("CREATE VIEW {0} AS {1}", process.OutputConnection.Enclose(process.View), ViewSql(process));
-            TflLogger.Debug(process.Name, string.Empty, outputSql);
+            process.Logger.Debug(outputSql);
             using (var cn = process.OutputConnection.GetConnection()) {
                 cn.Open();
                 cn.Execute(outputSql);

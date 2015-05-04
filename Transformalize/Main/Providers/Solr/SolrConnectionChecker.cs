@@ -6,8 +6,13 @@ using Transformalize.Logging;
 namespace Transformalize.Main.Providers.Solr {
 
     public class SolrConnectionChecker : IConnectionChecker {
+        private readonly ILogger _logger;
 
         private static readonly Dictionary<int, bool> Checks = new Dictionary<int, bool>();
+
+        public SolrConnectionChecker(ILogger logger) {
+            _logger = logger;
+        }
 
         public bool Check(AbstractConnection connection) {
 
@@ -23,7 +28,7 @@ namespace Transformalize.Main.Providers.Solr {
                 Checks[hashCode] = true;
                 return true;
             } catch (Exception e) {
-                TflLogger.Warn(string.Empty, string.Empty, "Failed to connect to {0}. Pinging {1} resulted in: {3}", connection.Name, solrConnection.GetPingUrl(), e.Message);
+                _logger.Warn("Failed to connect to {0}. Pinging {1} resulted in: {3}", connection.Name, solrConnection.GetPingUrl(), e.Message);
                 return false;
             }
         }

@@ -77,9 +77,8 @@ namespace Transformalize.Operations {
                     Debug(sql);
                     records = cn.Execute(sql, new { TflBatchId = entityChanged ? _entity.TflBatchId : _process.MasterEntity.TflBatchId }, commandTimeout: 0);
                 }
-
-                TflLogger.Debug(ProcessName, EntityName, "TflBatchId = {0}.", _entity.TflBatchId);
-                TflLogger.Info(ProcessName, EntityName, "Processed {0} rows. Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
+                Logger.EntityDebug(EntityName, "TflBatchId = {0}.", _entity.TflBatchId);
+                Logger.EntityInfo(EntityName, "Processed {0} rows. Updated {1} with {2}.", records, _process.MasterEntity.Alias, _entity.Alias);
             }
             return rows;
         }

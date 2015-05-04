@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Test {
@@ -30,7 +31,7 @@ namespace Transformalize.Test {
     public class TestParameters {
         [Test]
         public void TestAdding1() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key", "Name", "Value", "string"}
             };
             Assert.AreEqual(1, actual.Count);
@@ -39,7 +40,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestAdding2() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name1", "Value", "string"},
                 {"Key2", "Name2", "Value", "string"},
             };
@@ -49,7 +50,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestAddingSameKeyPreservesLast() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name", "Value1", "string"},
                 {"Key1", "Name", "Value2", "string"},
             };
@@ -59,14 +60,14 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestConstruction() {
-            var actual = new Parameters();
+            var actual = new Parameters(new DefaultFactory(new TestLogger()));
             Assert.IsNotNull(actual);
             Assert.False(actual.Any());
         }
 
         [Test]
         public void TestEnumerate() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name1", "Value1", "string"},
                 {"Key2", "Name2", "Value2", "string"},
             };
@@ -84,7 +85,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestGet1() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name1", "Value2", "string"},
                 {"Key2", "Name2", "Value2", "string"},
             };
@@ -94,7 +95,7 @@ namespace Transformalize.Test {
         [Test]
         [ExpectedException(typeof(KeyNotFoundException))]
         public void TestGetBad() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name1", "Value2", "string"},
                 {"Key2", "Name2", "Value2", "string"},
             };
@@ -103,7 +104,7 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestValueType() {
-            var actual = new Parameters {
+            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
                 {"Key1", "Name1", "0", "System.Int32"},
                 {"Key2", "Name2", "false", "System.Boolean"},
             };

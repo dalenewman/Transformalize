@@ -18,7 +18,7 @@ namespace Transformalize.Main {
 
         public void Load() {
             short entityIndex = 0;
-            foreach (TflEntity element in _elements) {
+            foreach (var element in _elements) {
                 var entity = new EntityConfigurationLoader(_process).Read(element, entityIndex);
 
                 GuardAgainstFieldOverlap(entity);
@@ -41,7 +41,7 @@ namespace Transformalize.Main {
             if (!entityKeys.Any()) return;
 
             var count = entityKeys.Count;
-            TflLogger.Warn(entity.ProcessName, entity.Name, "field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
+            _process.Logger.EntityWarn(entity.Name, "field overlap error in {3}.  The field{1}: {0} {2} already defined in previous entities.  You must alias (rename) these.", string.Join(", ", entityKeys), count.Plural(), count == 1 ? "is" : "are", entity.Alias);
         }
     }
 }

@@ -35,17 +35,17 @@ namespace Transformalize.Operations.Transform {
             _subjectKey = _hasSubject ? parameters.GetKeyByName("subject") : string.Empty;
 
             if (!parameters.ContainsName("from")) {
-                throw new TransformalizeException(ProcessName, EntityName, "Mail transform requires parameter named from.");
+                throw new TransformalizeException(Logger, EntityName, "Mail transform requires parameter named from.");
             }
             _fromKey = parameters.GetKeyByName("from");
 
             if (!parameters.ContainsName("to")) {
-                throw new TransformalizeException(ProcessName, EntityName, "Mail transform requires parameter named to.");
+                throw new TransformalizeException(Logger, EntityName, "Mail transform requires parameter named to.");
             }
             _toKey = parameters.GetKeyByName("to");
 
             if (!parameters.ContainsName("body")) {
-                throw new TransformalizeException(ProcessName, EntityName, "Mail transform requires parameter named body.");
+                throw new TransformalizeException(Logger, EntityName, "Mail transform requires parameter named body.");
             }
             _bodyKey = parameters.GetKeyByName("body");
 

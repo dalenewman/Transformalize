@@ -26,25 +26,16 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.SemanticLogging;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
     [TestFixture]
     public class TestConfiguration {
 
-        [SetUp]
-        public void SetUp() {
-            var console = new ObservableEventListener();
-            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-            console.LogToConsole(new LegacyLogFormatter());
-        }
-
         [Test]
         [Ignore("Because this requires a NorthWind database.")]
         public void TestBase() {
-            var northWind = ProcessFactory.Create("NorthWind.xml")[0];
+            var northWind = ProcessFactory.Create("NorthWind.xml", new TestLogger())[0];
             Assert.AreEqual("int16", northWind.Entities[0].Fields["OrderDetailsQuantity"].Type);
             Assert.AreEqual(8, northWind.Entities.Count);
             Assert.AreEqual(3, northWind.Entities[1].CalculatedFields.Count);
@@ -154,7 +145,7 @@ namespace Transformalize.Test {
         </add>
     </processes>
 </transformalize>";
-            var process = ProcessFactory.CreateSingle(xml);
+            var process = ProcessFactory.CreateSingle(xml, new TestLogger());
 
             Assert.AreEqual("process", process.Name);
             Assert.AreEqual("entity", process.Entities.First().Name);
@@ -180,7 +171,7 @@ namespace Transformalize.Test {
             var cfg = new TflRoot(File.ReadAllText(@"C:\Temp\test.xml"), null);
             Assert.AreEqual(0, cfg.Problems().Count);
 
-            var process = ProcessFactory.CreateSingle(@"C:\Temp\test.xml");
+            var process = ProcessFactory.CreateSingle(@"C:\Temp\test.xml", new TestLogger());
             Assert.IsNotNull(process);
 
             process.ExecuteScaler();

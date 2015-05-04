@@ -1,14 +1,11 @@
-using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Logging;
-
 namespace Transformalize.Main.Providers.ElasticSearch {
-    public class ElasticSearchTflWriter : WithLoggingMixin, ITflWriter {
+    public class ElasticSearchTflWriter : ITflWriter {
         public void Initialize(Process process) {
             var connection = process.OutputConnection;
             var entity = process.OutputConnection.TflBatchEntity(process.Name);
             new ElasticSearchEntityDropper().Drop(connection, entity);
 
-            TflLogger.Info(process.Name, string.Empty, "Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
+            process.Logger.Info( "Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
@@ -21,7 +20,7 @@ namespace Transformalize.Main {
             foreach (var action in elements) {
                 var modes = action.GetModes();
                 if (modes.Length > 0 && !modes.Contains("*") && !modes.Any(m => m.Equals(_process.Mode, IC))) {
-                    TflLogger.Debug(_process.Name, string.Empty, "Bypassing {0} action in {1} mode.", action.Action, _process.Mode);
+                    _process.Logger.Debug("Bypassing {0} action in {1} mode.", action.Action, _process.Mode);
                     continue;
                 }
 

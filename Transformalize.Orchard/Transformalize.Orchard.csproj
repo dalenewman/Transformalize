@@ -53,6 +53,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Cfg-NET.0.0.7\lib\CfgNet.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Orchard.Core, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -684,6 +685,7 @@
     <Compile Include="Routes.cs" />
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\IApiService.cs" />
+    <Compile Include="TransformalizeLogger.cs" />
     <Compile Include="Services\TransformalizeService.cs" />
     <Compile Include="Services\ITransformalizeService.cs" />
     <Compile Include="Services\IFileService.cs" />

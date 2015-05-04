@@ -1,18 +1,17 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class HtmlRowOperation : EntityOutputOperation {
         private readonly Entity _entity;
         private readonly string _htmlField;
         private readonly StringBuilder _htmlRow = new StringBuilder();
 
         public HtmlRowOperation(Entity entity, string htmlField)
-            : base(entity)
-        {
+            : base(entity) {
             _entity = entity;
             _htmlField = htmlField;
         }

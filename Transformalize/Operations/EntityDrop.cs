@@ -26,6 +26,7 @@ using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
 
 namespace Transformalize.Operations {
+
     public class EntityDrop : AbstractOperation {
         private readonly Process _process;
         private readonly Entity _entity;

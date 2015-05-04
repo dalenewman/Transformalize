@@ -36,19 +36,22 @@ namespace Transformalize.Runner {
 
     public class ProcessRunner : IProcessRunner {
 
-        public IEnumerable<Row> Run(ref Process process) {
+        public IEnumerable<Row> Run(Process process) {
 
-            process.CheckIfReady();
-            process.Setup();
+            var result = Enumerable.Empty<Row>();
+            if (!process.IsReady()) {
+                return result;
+            }
 
             var timer = new Stopwatch();
             timer.Start();
 
+            process.Setup();
             process.IsFirstRun = process.MasterEntity == null || !process.OutputConnection.RecordsExist(process.MasterEntity);
             process.PerformActions(a => a.Before);
 
             if (!process.IsFirstRun) {
-                ProcessDeletes(ref process);
+                ProcessDeletes(process);
             }
 
             ProcessEntities(ref process);
@@ -80,13 +83,13 @@ namespace Transformalize.Runner {
             process.PerformActions(a => a.After);
 
             timer.Stop();
-            TflLogger.Info(process.Name, string.Empty, "Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
+            process.Logger.Info( "Process affected {0} records in {1}.", process.Anything, timer.Elapsed);
 
             process.Complete = true;
             return process.Results;
         }
 
-        private static void ProcessDeletes(ref Process process) {
+        private static void ProcessDeletes(Process process) {
             var p = process;
             foreach (var entityDeleteProcess in process.Entities.Where(entity => entity.Delete).Select(entity => new EntityDeleteProcess(p, entity) {
                 PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
@@ -133,10 +136,6 @@ namespace Transformalize.Runner {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };
             transformProcess.Execute();
-        }
-
-        public void Dispose() {
-            //LogManager.Flush();
         }
 
     }

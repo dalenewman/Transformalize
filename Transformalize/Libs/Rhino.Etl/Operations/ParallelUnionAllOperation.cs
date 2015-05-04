@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
 
@@ -12,8 +13,6 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
     public class ParallelUnionAllOperation : AbstractOperation {
 
         private readonly List<IOperation> _operations = new List<IOperation>();
-
-        public ParallelUnionAllOperation() { }
 
         public ParallelUnionAllOperation(IEnumerable<IOperation> ops) {
             _operations.AddRange(ops);

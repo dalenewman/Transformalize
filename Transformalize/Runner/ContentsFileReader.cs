@@ -1,18 +1,24 @@
 using System.IO;
 using System.Web;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
     public class ContentsFileReader : ContentsReader {
+        private readonly ILogger _logger;
 
         private readonly string _path;
         private readonly char[] _s = new[] { '\\' };
 
-        public ContentsFileReader() {
+        public ContentsFileReader(ILogger logger)
+        {
+            _logger = logger;
             _path = string.Empty;
         }
 
-        public ContentsFileReader(string path) {
+        public ContentsFileReader(string path, ILogger logger)
+        {
+            _logger = logger;
             _path = path ?? string.Empty;
         }
 
@@ -31,7 +37,7 @@ namespace Transformalize.Runner {
                             );
 
             if (!fileInfo.Exists) {
-                throw new TransformalizeException(string.Empty, string.Empty, "Sorry. I can't find the file {0}.", fileInfo.FullName);
+                throw new TransformalizeException(_logger, "Sorry. I can't find the file {0}.", fileInfo.FullName);
             }
 
             var content = File.ReadAllText(fileInfo.FullName);

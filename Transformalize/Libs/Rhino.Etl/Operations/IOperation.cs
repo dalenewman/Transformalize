@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
@@ -21,6 +22,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
         long LogRows { get; set; }
         string ProcessName { get; set; }
         string EntityName { get; set; }
+        ILogger Logger { get; set; }
 
         /// <summary>
         ///     Sets the transaction.

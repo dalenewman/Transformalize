@@ -71,7 +71,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
             get { return _targetTable; }
             set {
                 _targetTable = value;
-                TflLogger.Debug(ProcessName, EntityName, "Target table set to {0}.", _targetTable);
+                Logger.EntityDebug(EntityName, "Target table set to {0}.", _targetTable);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                         throw;
 
                     var length = l.GetValue(metadata);
-                    throw new TransformalizeException(ProcessName, string.Empty, "Column: {0} contains data with a length greater than: {1}", column, length);
+                    throw new TransformalizeException(Logger, string.Empty, "Column: {0} contains data with a length greater than: {1}", column, length);
                 }
             }
             yield break;

@@ -1,6 +1,7 @@
 ﻿using Transformalize.Extensions;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Main;
+using Transformalize.Main.Providers;
 
 namespace Transformalize.Configuration {
     public class TflLog : CfgNode {
@@ -8,8 +9,10 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = false)]
         public bool Async { get; set; }
-        [Cfg(value = Common.DefaultValue)]
+
+        [Cfg(value = Common.DefaultValue, toLower = true)]
         public string Connection { get; set; }
+
         [Cfg(value = Common.DefaultValue)]
         public string File { get; set; }
         [Cfg(value = Common.DefaultValue)]
@@ -58,5 +61,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = (long)10000)]
         public long Rows { get; set; }
 
+        public AbstractConnection ConnectionInstance { get; set; }
     }
 }

@@ -123,6 +123,7 @@
     <Compile Include="TestInput.cs" />
     <Compile Include="TestEventSource.cs" />
     <Compile Include="TestBenchmark.cs" />
+    <Compile Include="TestLogger.cs" />
     <Compile Include="TestTemp.cs" />
     <Compile Include="TextXmlContentHandler.cs" />
     <Compile Include="TestOptions.cs" />

@@ -1,18 +1,18 @@
 using System.Collections.Generic;
-using Transformalize.Main.Providers.AnalysisServices;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Folder {
     public class FolderDependencies : AbstractConnectionDependencies {
-        public FolderDependencies()
+        public FolderDependencies(ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new FolderConnectionChecker(),
+                new NullTableQueryWriter(),
+                new FolderConnectionChecker(logger),
                 new FolderEntityRecordsExist(),
                 new FolderEntityDropper(),
                 new FolderEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
-                new FalseTflWriter(),
-                new FalseScriptRunner(), 
-                new FalseDataTypeService()) { }
+                new List<IViewWriter> { new NullViewWriter() },
+                new NullTflWriter(),
+                new NullScriptRunner(), 
+                new NullDataTypeService(), logger) { }
     }
 }

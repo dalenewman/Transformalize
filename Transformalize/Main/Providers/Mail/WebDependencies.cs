@@ -1,18 +1,19 @@
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Mail {
     public class WebDependencies : AbstractConnectionDependencies {
-        public WebDependencies()
+        public WebDependencies(ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new FalseConnectionChecker(),
-                new FalseEntityRecordsExist(),
-                new FalseEntityDropper(),
-                new FalseEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
-                new FalseTflWriter(),
-                new FalseScriptRunner(),
-                new FalseDataTypeService()
+                new NullTableQueryWriter(),
+                new NullConnectionChecker(),
+                new NullEntityRecordsExist(),
+                new NullEntityDropper(),
+                new NullEntityCreator(),
+                new List<IViewWriter> { new NullViewWriter() },
+                new NullTflWriter(),
+                new NullScriptRunner(),
+                new NullDataTypeService(), logger
                 ) { }
     }
 }

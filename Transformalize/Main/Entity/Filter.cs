@@ -1,15 +1,20 @@
 using System;
 using System.Globalization;
-using System.Net.Mime;
 using System.Text;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Lucene.Net.Util.Cache;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
     public class Filter {
+        private readonly ILogger _logger;
+
+        public Filter(ILogger logger) {
+            Expression = string.Empty;
+            _logger = logger;
+        }
+
         public Field LeftField { get; set; }
         public Field RightField { get; set; }
 
@@ -41,7 +46,7 @@ namespace Transformalize.Main {
             builder.Append(rightSide);
 
             var expression = builder.ToString();
-            TflLogger.Warn(Process(), Entity(), "Input filter: {0}", expression);
+            _logger.EntityWarn(Entity(), "Input filter: {0}", expression);
             return expression;
         }
 
@@ -111,22 +116,8 @@ namespace Transformalize.Main {
         public ComparisonOperator Operator { get; set; }
         public Continuation Continuation { get; set; }
 
-        public Filter() {
-            Expression = string.Empty;
-        }
-
         public bool HasExpression() {
             return !string.IsNullOrEmpty(Expression);
-        }
-
-        private string Process() {
-            if (!LeftIsLiteral()) {
-                return LeftField.Process;
-            }
-            if (!RightIsLiteral()) {
-                return RightField.Process;
-            }
-            return string.Empty;
         }
 
         private string Entity() {

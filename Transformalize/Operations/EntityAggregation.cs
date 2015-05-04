@@ -49,7 +49,7 @@ namespace Transformalize.Operations {
             _keysToGroupBy = new Fields(entity.Fields, entity.CalculatedFields).WithGroup().Aliases().ToArray();
 
             if (_keysToGroupBy.Length == 0) {
-                throw new TransformalizeException(entity.ProcessName, entity.Name, "When an entity is set to group, you need to set at least one field's aggregate attribute to 'group'.");
+                throw new TransformalizeException(Logger, entity.Name, "When an entity is set to group, you need to set at least one field's aggregate attribute to 'group'.");
             }
 
             _firstKey = _keysToGroupBy[0];
@@ -173,7 +173,8 @@ namespace Transformalize.Operations {
                         break;
 
                     default:
-                        Error("The '{0}' aggregate is not implemented", field.Aggregate);
+                        var message = string.Format("The '{0}' aggregate is not implemented", field.Aggregate);
+                        Error(new Exception(message), message);
                         break;
                 }
             }

@@ -35,7 +35,7 @@ namespace Transformalize.Operations.Transform {
                             var r = row;
                             row[OutKey] = _parameterKeys.Select(k => r[k] ?? _parameters[k].Value).Sum(k => (dynamic)_map[_outType](k));
                         } catch (Exception ex) {
-                            throw new TransformalizeException("The paramter types passed in to the add operation are not compatible for adding.  Check types for parameters {0}. {1}", string.Join(", ", _parameterKeys), ex.Message);
+                            throw new TransformalizeException(Logger, "The paramter types passed in to the add operation are not compatible for adding.  Check types for parameters {0}. {1}", string.Join(", ", _parameterKeys), ex.Message);
                         }
                     }
                 } else {

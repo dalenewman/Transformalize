@@ -2,10 +2,17 @@ using System;
 using System.IO;
 using System.Net;
 using System.Web;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
     public class ContentsWebReader : ContentsReader {
+        private readonly ILogger _logger;
+
+        public ContentsWebReader(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public override Contents Read(string resource) {
 
@@ -17,7 +24,7 @@ namespace Transformalize.Runner {
                 try {
                     uri = new Uri(resource);
                 } catch (Exception ex) {
-                    throw new TransformalizeException("Trouble fetching {0}. {1}", resource, ex.Message);
+                    throw new TransformalizeException(_logger, "Trouble fetching {0}. {1}", resource, ex.Message);
                 }
             }
 
@@ -25,7 +32,7 @@ namespace Transformalize.Runner {
             if (response.Code == HttpStatusCode.OK) {
                 response.Content = response.Content;
             } else {
-                throw new TransformalizeException(string.Empty, string.Empty, "{0} returned from {1}", response.Code, resource);
+                throw new TransformalizeException(_logger, "{0} returned from {1}", response.Code, resource);
             }
 
             return new Contents {

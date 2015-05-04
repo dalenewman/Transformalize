@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.SemanticLogging;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
 using Transformalize.Main;
@@ -33,12 +32,6 @@ using Transformalize.Test.Builders;
 namespace Transformalize.Test {
     [TestFixture]
     public class TestWarehouse {
-        [SetUp]
-        public void SetUp() {
-            var console = new ObservableEventListener();
-            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-            console.LogToConsole(new LegacyLogFormatter());
-        }
 
         [Test]
         [Ignore("Depends on having a SQL Server database named Junk.")]
@@ -50,15 +43,14 @@ namespace Transformalize.Test {
             var process = GetInitialProcess(inventory, storageLocations, warehouses);
 
             //init and run
-            var init = ProcessFactory.CreateSingle(process, new Options());
+            var init = ProcessFactory.CreateSingle(process, new TestLogger(), new Options());
             init.Mode = "init";
             init.PipelineThreading = PipelineThreading.SingleThreaded;
             init.ExecuteScaler();
 
-            var first = ProcessFactory.CreateSingle(process, new Options());
+            var first = ProcessFactory.CreateSingle(process, new TestLogger(), new Options());
             first.PipelineThreading = PipelineThreading.SingleThreaded;
             first.ExecuteScaler();
-            //LogManager.Flush();
 
             Assert.AreEqual(3, first["Inventory"].Inserts);
             Assert.AreEqual(2, first["StorageLocation"].Inserts);
@@ -74,7 +66,7 @@ namespace Transformalize.Test {
             process = GetInitialProcess(inventory, storageLocations, warehouses);
 
             //run again, no changes
-            var second = ProcessFactory.CreateSingle(process);
+            var second = ProcessFactory.CreateSingle(process, new TestLogger());
             second.PipelineThreading = PipelineThreading.SingleThreaded;
             second.ExecuteScaler();
             //LogManager.Flush();
@@ -103,7 +95,7 @@ namespace Transformalize.Test {
             process.Entities[2].InputOperation = GetInitialWarehouses();
 
             //run again
-            var third = ProcessFactory.CreateSingle(process);
+            var third = ProcessFactory.CreateSingle(process, new TestLogger());
             third.PipelineThreading = PipelineThreading.SingleThreaded;
             third.ExecuteScaler();
             //LogManager.Flush();

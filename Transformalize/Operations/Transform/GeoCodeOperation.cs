@@ -35,10 +35,10 @@ namespace Transformalize.Operations.Transform {
                         row[OutKey] = string.Format("{0},{1}", latLong.Latitude, latLong.Longitude);
                     } catch (Exception e) {
                         row[OutKey] = "0,0";
-                        TflLogger.Warn(ProcessName, EntityName, "GeoCoding failed for {0}. {1}", address, e.Message);
+                        Logger.EntityWarn(EntityName, "GeoCoding failed for {0}. {1}", address, e.Message);
                     }
                     if (_sleep > 0) {
-                        TflLogger.Info(ProcessName, EntityName, "GeoCoded {0} to {1}.", address, row[OutKey]);
+                        Logger.EntityInfo(EntityName, "GeoCoded {0} to {1}.", address, row[OutKey]);
                         System.Threading.Thread.Sleep(_sleep);
                     }
                 }

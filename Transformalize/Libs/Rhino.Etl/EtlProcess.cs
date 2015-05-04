@@ -10,7 +10,6 @@ using System.Data;
 using Transformalize.Libs.Rhino.Etl.Infrastructure;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -19,9 +18,12 @@ namespace Transformalize.Libs.Rhino.Etl {
     ///     A single etl process
     /// </summary>
     public abstract class EtlProcess : EtlProcessBase<EtlProcess>, IDisposable {
-        private IPipelineExecuter _pipelineExecuter = new ThreadPoolPipelineExecuter();
+        private IPipelineExecuter _pipelineExecuter;
 
-        protected EtlProcess(Process process) : base(process) { }
+        protected EtlProcess(Process process)
+            : base(process) {
+            _pipelineExecuter = new ThreadPoolPipelineExecuter { Logger = process.Logger };
+        }
 
         /// <summary>
         ///     Gets the pipeline executer.
@@ -30,8 +32,12 @@ namespace Transformalize.Libs.Rhino.Etl {
         public IPipelineExecuter PipelineExecuter {
             get { return _pipelineExecuter; }
             set {
-                Debug("Setting PipelineExecutor to {0}", value.GetType().ToString());
+                Debug("Setting PipelineExecutor to {0}", value.GetType().Name);
+                if (value.Logger == null) {
+                    value.Logger = _pipelineExecuter.Logger;
+                }
                 _pipelineExecuter = value;
+
             }
         }
 
@@ -101,7 +107,7 @@ namespace Transformalize.Libs.Rhino.Etl {
         /// <param name="dictionary">The dictionary.</param>
         protected virtual void OnRowProcessed(IOperation op, Row dictionary) {
             if (op.Statistics.OutputtedRows > 0 && op.Statistics.OutputtedRows % op.LogRows == 0) {
-                TflLogger.Info(op.ProcessName, op.EntityName, "Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
+                Logger.EntityInfo(op.EntityName, "Processed {0} rows in {1}", op.Statistics.OutputtedRows, op.Name);
             }
         }
 

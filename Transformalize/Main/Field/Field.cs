@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Logging;
 using Transformalize.Main.Parameters;
-using Transformalize.Main.Providers.SqlServer;
 
 namespace Transformalize.Main {
 
@@ -36,7 +35,6 @@ namespace Transformalize.Main {
         private FieldType _fieldType = FieldType.NonKey;
         private string _identifier = "identifier";
         private string _name = "field";
-        private string _sqlDataType;
         private string _type = "System.String";
         private string _simpleType = "string";
         private bool _input = true;
@@ -52,11 +50,9 @@ namespace Transformalize.Main {
         private string _schema = string.Empty;
         private string _entity = string.Empty;
         private string _entityOutputName = string.Empty;
-        private IParameters _parameters = new Parameters.Parameters();
         private string _sort = string.Empty;
         private string _aggregate = string.Empty;
         private string _process = string.Empty;
-        private string _length = "64";
         private string _aliasLower = string.Empty;
 
         public string Alias {
@@ -98,25 +94,7 @@ namespace Transformalize.Main {
             set { _process = value; }
         }
 
-        public string Length {
-            get { return _length; }
-            set {
-                int test;
-                if (int.TryParse(value, out test)) {
-                    if (test <= 0) {
-                        TflLogger.Warn(this.Process, this.Entity, "The field length {0} is invalid.  It must be greater than zero.", value);
-                        return;
-                    }
-                } else {
-                    if (!value.Equals("max", StringComparison.OrdinalIgnoreCase)) {
-                        TflLogger.Warn(this.Process, this.Entity, "The field length {0} is invalid.  It must be a number greater than zero or max.", value);
-                        return;
-                    }
-                }
-                _length = value;
-            }
-        }
-
+        public string Length { get; set; }
         public int Precision { get; set; }
         public int Scale { get; set; }
         public bool NotNull { get; set; }
@@ -141,11 +119,6 @@ namespace Transformalize.Main {
             set { _label = value; }
         }
 
-        public IParameters Parameters {
-            get { return _parameters; }
-            set { _parameters = value; }
-        }
-
         public bool HasParameters { get; set; }
         public bool DefaultBlank { get; set; }
         public bool DefaultWhiteSpace { get; set; }
@@ -160,7 +133,7 @@ namespace Transformalize.Main {
 
         public object Default {
             get { return _default; }
-            set { _default = new DefaultFactory().Convert(value, SimpleType); }
+            set { _default = new DefaultFactory(new NullLogger()).Convert(value, SimpleType); }
         }
 
         public Type SystemType {
@@ -176,7 +149,9 @@ namespace Transformalize.Main {
             : this("System.String", "64", fieldType, true, null) {
         }
 
-        public Field(string typeName, string length, FieldType fieldType, bool output, string @default) {
+        public Field(string typeName, string length, FieldType fieldType, bool output, string @default)
+        {
+            Length = "64";
             Initialize(typeName, length, fieldType, output, @default);
         }
 

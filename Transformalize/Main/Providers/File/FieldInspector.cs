@@ -8,8 +8,14 @@ namespace Transformalize.Main.Providers.File {
 
     public class FieldInspector {
 
+        private readonly ILogger _logger;
+
+        public FieldInspector(ILogger logger) {
+            _logger = logger;
+        }
+
         public Fields Inspect(string file) {
-            return Inspect(FileInformationFactory.Create(file), new FileInspectionRequest(file));
+            return Inspect(FileInformationFactory.Create(file, _logger), new FileInspectionRequest(file));
         }
 
         public Fields Inspect(FileInformation fileInformation) {
@@ -18,31 +24,33 @@ namespace Transformalize.Main.Providers.File {
 
         public Fields Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
-            var process = new TflProcess() {
-                Name = request.ProcessName,
-                StarEnabled = false
-            };
-
-            process.Connections.Add(new TflConnection {
-                Name = "input",
-                Provider = "file",
-                File = fileInformation.FileInfo.FullName,
-                Delimiter = fileInformation.Delimiter == default(char) ? "|" : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture),
-                Start = fileInformation.FirstRowIsHeader ? 2 : 1,
+            var process = new TflProcess().GetDefaultOf<TflProcess>(p => {
+                p.Name = request.ProcessName;
+                p.StarEnabled = false;
             });
 
-            process.Connections.Add(new TflConnection {
-                Name = "output",
-                Provider = "internal"
-            });
+            process.Connections.Add(process.GetDefaultOf<TflConnection>(c => {
+                c.Name = "input";
+                c.Provider = "file";
+                c.File = fileInformation.FileInfo.FullName;
+                c.Delimiter = fileInformation.Delimiter == default(char)
+                    ? "|"
+                    : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
+                c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
+            }));
 
-            process.Entities.Add(new TflEntity {
-                Name = "Data",
-                DetectChanges = false,
-                Sample = System.Convert.ToInt32(request.Sample),
-                Fields = new List<TflField>(),
-                CalculatedFields = new List<TflField>()
-            });
+            process.Connections.Add(process.GetDefaultOf<TflConnection>(c => {
+                c.Name = "output";
+                c.Provider = "internal";
+            }));
+
+            process.Entities.Add(process.GetDefaultOf<TflEntity>(e => {
+                e.Name = "Data";
+                e.DetectChanges = false;
+                e.Sample = System.Convert.ToInt32(request.Sample);
+                e.Fields = new List<TflField>();
+                e.CalculatedFields = new List<TflField>();
+            }));
 
             foreach (var fd in fileInformation.Fields) {
                 var field = fd;
@@ -92,11 +100,11 @@ namespace Transformalize.Main.Providers.File {
                 );
             }
 
-            var runner = ProcessFactory.CreateSingle(new TflRoot(process).Processes[0]);
+            var runner = ProcessFactory.CreateSingle(new TflRoot(process).Processes[0], _logger);
             var results = runner.Execute().ToList();
 
             if (results.Count <= 0) {
-                TflLogger.Warn(string.Empty, string.Empty, "Nothing imported from in {0}!", fileInformation.FileInfo.Name);
+                _logger.Warn("Nothing imported from in {0}!", fileInformation.FileInfo.Name);
                 return fileInformation.Fields;
             }
 

@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using Moq;
@@ -30,8 +29,6 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Libs.SemanticLogging;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.SqlServer;
@@ -50,7 +47,7 @@ namespace Transformalize.Test {
                 Console.WriteLine(problem);
             }
 
-            _process = ProcessFactory.CreateSingle(cfg.Processes[0]);
+            _process = ProcessFactory.CreateSingle(cfg.Processes[0], new TestLogger());
 
             _entityKeysExtract = new Mock<IOperation>();
             _entityKeysExtract.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(new List<Row> {

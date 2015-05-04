@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.NVelocity.App;
+using Transformalize.Libs.Nest.DSL.Repository;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -47,9 +47,11 @@ namespace Transformalize.Main {
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();
         private readonly bool _isInitMode;
         private readonly string _entityName;
+        private readonly ILogger _logger;
 
         public TransformOperationFactory(Process process, string entityName) {
             _process = process;
+            _logger = process.Logger;
             _entityName = entityName;
             _isInitMode = process.IsInitMode();
         }
@@ -80,7 +82,7 @@ namespace Transformalize.Main {
                 shouldRun = row => Common.CompareMap[op](row[element.RunField], value);
             }
 
-            var templates = ComposeTemplates(field, ref element);
+            var templates = ComposeTemplates(field, element);
 
             switch (element.Method.ToLower()) {
                 case "convert":
@@ -192,7 +194,7 @@ namespace Transformalize.Main {
                     return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "now":
-                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id);
+                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id, _process.Logger);
                     return new PartialProcessOperation(_process)
                         .Register(
                             new NowOperation(
@@ -309,10 +311,10 @@ namespace Transformalize.Main {
                                 }
                             }
                             if (equals.Count == 0) {
-                                TflLogger.Warn(_process.Name, _entityName, "Map '{0}' is empty.", element.Map);
+                                _logger.EntityWarn(_entityName, "Map '{0}' is empty.", element.Map);
                             }
                         } else {
-                            TflLogger.Warn(_process.Name, _entityName, "Map '{0}' is empty.", element.Map);
+                            _logger.EntityWarn(_entityName, "Map '{0}' is empty.", element.Map);
                         }
                     }
 
@@ -367,7 +369,7 @@ namespace Transformalize.Main {
                     foreach (var script in element.Scripts) {
                         //TODO: Move to Validate
                         if (!_process.Scripts.ContainsKey(script.Name)) {
-                            throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
+                            throw new TransformalizeException(_logger, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
@@ -376,14 +378,15 @@ namespace Transformalize.Main {
                         outKey,
                         element.Script,
                         scripts,
-                        parameters
+                        parameters,
+                        _logger
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "csharp":
                     foreach (var script in element.Scripts) {
                         // TODO: Move to Validate
                         if (!_process.Scripts.ContainsKey(script.Name)) {
-                            throw new TransformalizeException(_process.Name, _entityName, "Invalid script reference: {0}.", script.Name);
+                            throw new TransformalizeException(_logger, _entityName, "Invalid script reference: {0}.", script.Name);
                         }
                         scripts[script.Name] = _process.Scripts[script.Name];
                     }
@@ -404,17 +407,14 @@ namespace Transformalize.Main {
                         element.Template,
                         element.Model,
                         templates,
-                        parameters
+                        parameters,
+                        _logger
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "razor":
                     goto case "template";
 
                 case "velocity":
-                    // TODO: Move to composition root
-                    if (!_process.VelocityInitialized) {
-                        Velocity.Init();
-                    }
                     return new VelocityOperation(
                         outKey,
                         outType,
@@ -485,8 +485,8 @@ namespace Transformalize.Main {
 
                 case "timezone":
                     //TODO: Move to Modify
-                    element.FromTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, element.FromTimeZone, "UTC");
-                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id);
+                    element.FromTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, element.FromTimeZone, "UTC", _process.Logger);
+                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id, _process.Logger);
 
                     return new TimeZoneOperation(
                         inKey,
@@ -778,11 +778,11 @@ namespace Transformalize.Main {
 
             }
 
-            TflLogger.Warn(field.Process, _entityName, "{0} method is undefined.  It will not be used.", element.Method);
+            _logger.EntityWarn(_entityName, "{0} method is undefined.  It will not be used.", element.Method);
             return new EmptyOperation();
         }
 
-        private Dictionary<string, Template> ComposeTemplates(Field field, ref TflTransform element) {
+        private Dictionary<string, Template> ComposeTemplates(Field field, TflTransform element) {
             var templates = new Dictionary<string, Template>();
             var method = element.Method.ToLower();
             if (new[] { "razor", "template", "velocity" }.All(n => n != method))
@@ -790,7 +790,7 @@ namespace Transformalize.Main {
 
             foreach (var template in element.Templates) {
                 if (!_process.Templates.ContainsKey(template.Name)) {
-                    throw new TransformalizeException(_process.Name, _entityName, "Invalid template reference: {0}", template.Name);
+                    throw new TransformalizeException(_logger, _entityName, "Invalid template reference: {0}", template.Name);
                 }
                 templates[template.Name] = _process.Templates[template.Name];
                 _process.Templates[template.Name].IsUsedInPipeline = true;

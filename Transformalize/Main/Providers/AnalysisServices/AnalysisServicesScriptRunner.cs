@@ -22,7 +22,6 @@
 
 using System;
 using Microsoft.AnalysisServices;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesScriptRunner : IScriptRunner {
@@ -30,9 +29,10 @@ namespace Transformalize.Main.Providers.AnalysisServices {
         public IScriptReponse Execute(AbstractConnection connection, string script, int timeOut = 0) {
             var response = new ScriptResponse();
             var server = new Server();
+            var logger = connection.Logger;
 
             try {
-                TflLogger.Debug(string.Empty, string.Empty, "Connecting to {0} on {1}.", connection.Database, connection.Server);
+                logger.Debug("Connecting to {0} on {1}.", connection.Database, connection.Server);
                 server.Connect(connection.GetConnectionString());
 
                 var results = server.Execute(script);
@@ -44,11 +44,11 @@ namespace Transformalize.Main.Providers.AnalysisServices {
                 }
                 response.Success = response.Messages.Count == 0;
             } catch (Exception e) {
-                TflLogger.Debug(string.Empty, string.Empty, e.Message + (e.InnerException != null ? " " + e.InnerException.Message : string.Empty));
+                logger.Debug(e.Message + (e.InnerException != null ? " " + e.InnerException.Message : string.Empty));
                 response.Messages.Add(e.Message);
             } finally {
                 if (server.Connected) {
-                    TflLogger.Debug(string.Empty, string.Empty, "Disconnecting from {0} on {1}.", connection.Database, connection.Server);
+                    logger.Debug("Disconnecting from {0} on {1}.", connection.Database, connection.Server);
                     server.Disconnect();
                 }
             }

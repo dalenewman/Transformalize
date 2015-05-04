@@ -1,7 +1,7 @@
-using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 
 namespace Transformalize.Runner {
-    public abstract class ContentsReader : WithLoggingMixin {
+    public abstract class ContentsReader {
         public abstract Contents Read(string resource);
     }
 }

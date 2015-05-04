@@ -24,18 +24,26 @@ using System.Net;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
+
     public class TemplateActionWeb : TemplateActionHandler {
+        private readonly ILogger _logger;
+
+        public TemplateActionWeb(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public override void Handle(TemplateAction action) {
             var method = action.Method.ToLower();
             if (!string.IsNullOrEmpty(action.Url)) {
                 var response = method == "post" ? Web.Post(action.Url, string.Empty) : Web.Get(action.Url);
                 if (response.Code == HttpStatusCode.OK) {
-                    TflLogger.Info(action.ProcessName, string.Empty, "Made web request to {0}.", action.Url);
+                    _logger.Info("Made web request to {0}.", action.Url);
                 } else {
-                    TflLogger.Warn(action.ProcessName, string.Empty, "Web request to {0} returned {1}.", action.Url, response.Code);
+                    _logger.Warn("Web request to {0} returned {1}.", action.Url, response.Code);
                 }
             } else {
-                TflLogger.Warn(action.ProcessName, string.Empty, "Missing url for web action.");
+                _logger.Warn("Missing url for web action.");
             }
         }
     }

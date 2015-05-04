@@ -7,27 +7,21 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
-    public class DistinctOperation : AbstractAggregationOperation
-    {
+namespace Transformalize.Libs.Rhino.Etl.Operations {
+    public class DistinctOperation : AbstractAggregationOperation {
         private readonly IEnumerable<string> _columnsToGroupBy;
 
-        public DistinctOperation(IEnumerable<string> columnsToGroupBy)
-        {
+        public DistinctOperation(IEnumerable<string> columnsToGroupBy) {
             _columnsToGroupBy = columnsToGroupBy;
         }
 
-        protected override void Accumulate(Row row, Row aggregate)
-        {
-            foreach (var column in _columnsToGroupBy)
-            {
+        protected override void Accumulate(Row row, Row aggregate) {
+            foreach (var column in _columnsToGroupBy) {
                 aggregate[column] = row[column];
             }
         }
 
-        protected override string[] GetColumnsToGroupBy()
-        {
+        protected override string[] GetColumnsToGroupBy() {
             return _columnsToGroupBy.ToArray();
         }
     }

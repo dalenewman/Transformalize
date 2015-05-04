@@ -29,15 +29,13 @@ using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NVelocity.App;
-using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
-using Transformalize.Main.Transform;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
 using Transformalize.Test.Builders;
-using MapBuilder = Transformalize.Test.Builders.MapBuilder;
 
 namespace Transformalize.Test {
     [TestFixture]
@@ -488,7 +486,7 @@ namespace Transformalize.Test {
     </processes>
 </transformalize>
 ";
-            var process = ProcessFactory.Create(xml.Replace('\'', '"'));
+            var process = ProcessFactory.Create(xml.Replace('\'', '"'), new TestLogger());
 
             var input = new RowsBuilder()
                 .Row("email", "").Field("has_email", null, "bool")
@@ -644,7 +642,8 @@ namespace Transformalize.Test {
             var js = new JavascriptOperation("out", @"
                 JSON.parse(x)[1].value",
                 new Dictionary<string, Script>(),
-                parameters
+                parameters,
+                new TestLogger()
             );
             var output = TestOperation(input, js);
 
@@ -658,7 +657,7 @@ namespace Transformalize.Test {
             var input = new RowsBuilder().Row("x", 3).Field("y", 4).ToOperation();
             var scripts = new Dictionary<string, Script>() { { "script", new Script("script", "function multiply(x,y) { return x*y; }", "") } };
             var parameters = new ParametersBuilder().Parameters("x", "y").ToParameters();
-            var javascript = new JavascriptOperation("o1", "multiply(x,y)", scripts, parameters);
+            var javascript = new JavascriptOperation("o1", "multiply(x,y)", scripts, parameters, new TestLogger());
             var output = TestOperation(input, javascript);
 
             Assert.AreEqual(expected, output[0]["o1"]);
@@ -713,7 +712,7 @@ namespace Transformalize.Test {
 
             var scripts = new Dictionary<string, Script>() { { "script", new Script("script", minuteDiff, "") } };
             var parameters = new ParametersBuilder().Parameters("OrderStatus", "StartDate", "EndDate").ToParameters();
-            var javascript = new JavascriptOperation("o1", "minuteDiff(OrderStatus,StartDate,EndDate);", scripts, parameters);
+            var javascript = new JavascriptOperation("o1", "minuteDiff(OrderStatus,StartDate,EndDate);", scripts, parameters, new TestLogger());
             var output = TestOperation(input, javascript);
 
             Assert.AreEqual(30, output[0]["o1"]);
@@ -777,7 +776,7 @@ namespace Transformalize.Test {
 
             config.Entities[0].InputOperation = input;
 
-            var process = ProcessFactory.CreateSingle(config);
+            var process = ProcessFactory.CreateSingle(config, new TestLogger());
 
             var output = process.Execute().ToArray();
 
@@ -857,7 +856,7 @@ namespace Transformalize.Test {
 
             config.Entities[0].InputOperation = input;
 
-            var process = ProcessFactory.CreateSingle(config);
+            var process = ProcessFactory.CreateSingle(config, new TestLogger());
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 
@@ -906,7 +905,7 @@ namespace Transformalize.Test {
                     .Field("EndDate", DateTime.Now)
                 .ToOperation();
 
-            var process = ProcessFactory.CreateSingle(config);
+            var process = ProcessFactory.CreateSingle(config, new TestLogger());
             process.PipelineThreading = PipelineThreading.SingleThreaded;
             var output = process.Execute().ToArray();
 
@@ -1172,7 +1171,7 @@ namespace Transformalize.Test {
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new RazorOperation("out", "string", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new RazorOperation("out", "string", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters, new TestLogger());
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual("6", output[0]["out"]);
         }
@@ -1272,7 +1271,7 @@ It is False#end", templates, parameters);
             var input = new RowsBuilder().Row("input", 2).Field("out", "").ToOperation();
             var templates = new List<KeyValuePair<string, Template>>();
             var parameters = new ParametersBuilder().Parameter("x", 3).Parameter("input").ToParameters();
-            var templateOperation = new RazorOperation("out", "int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters);
+            var templateOperation = new RazorOperation("out", "int", "@{var result = Model.input * Model.x;}@result", "dynamic", templates, parameters, new TestLogger());
             var output = TestOperation(input, templateOperation);
             Assert.AreEqual(6, output[0]["out"]);
         }
@@ -1466,7 +1465,7 @@ It is False#end", templates, parameters);
                 .Row("MeterNumber", "R00001")
                 .Row("MeterNumber", "000002").ToOperation();
 
-            var process = ProcessFactory.CreateSingle(cfg);
+            var process = ProcessFactory.CreateSingle(cfg, new TestLogger());
             var output = process.Execute().ToArray();
 
             Assert.AreEqual("Reclaim", output[0]["MeterCategory"]);
@@ -1479,7 +1478,7 @@ It is False#end", templates, parameters);
             var input = new RowsBuilder()
                 .Row("in", "1009 Broad St., St. Joseph, MI.  49085")
                 .ToOperation();
-            var geoCodeOperation = new GeoCodeOperation("in", "out", 0, false, new Parameters());
+            var geoCodeOperation = new GeoCodeOperation("in", "out", 0, false, new Parameters(new DefaultFactory(new TestLogger())));
             var output = TestOperation(input, geoCodeOperation);
 
             Assert.AreEqual(1, output.Count);
@@ -1570,7 +1569,7 @@ It is False#end", templates, parameters);
                 .Row("in1", 3).Field("in2", 4)
                 .ToOperation();
 
-            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+            var copyParameters = new Parameters(new DefaultFactory(new TestLogger())) { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
             var concatOperation = new ConcatOperation("out", copyParameters);
 
             var output = TestOperation(input, concatOperation);
@@ -1589,7 +1588,7 @@ It is False#end", templates, parameters);
                 .Row("in1", 3).Field("in2", 4)
                 .ToOperation();
 
-            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+            var copyParameters = new Parameters(new DefaultFactory(new TestLogger())) { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
 
             var joinArrayOperation = new JoinTransformOperation("out", "-", copyParameters);
 
@@ -1607,7 +1606,7 @@ It is False#end", templates, parameters);
                 .Row("in1", 3).Field("in2", 4)
                 .ToOperation();
 
-            var copyParameters = new Parameters() { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
+            var copyParameters = new Parameters(new DefaultFactory(new TestLogger())) { { "in1", "in1", null, "int" }, { "in2", "in2", null, "int" } };
 
             var formatArrayOperation = new FormatOperation("out", "Here is {0} and here is {1}.", copyParameters);
 

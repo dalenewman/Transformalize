@@ -6,6 +6,7 @@ using Transformalize.Main;
 namespace Transformalize.Configuration {
     public class TflField : CfgNode {
         private string _type;
+        private string _length;
 
         /// <summary>
         /// Optional.  Default is `false`
@@ -148,7 +149,7 @@ namespace Transformalize.Configuration {
         /// * sum
         /// 
         /// </summary>
-        [Cfg(value="last", domain = "array,concat,count,first,group,join,last,max,maxlength,min,minlength,sum", toLower = true)]
+        [Cfg(value = "last", domain = "array,concat,count,first,group,join,last,max,maxlength,min,minlength,sum", toLower = true)]
         public string Aggregate { get; set; }
 
         /// <summary>
@@ -194,8 +195,25 @@ namespace Transformalize.Configuration {
         /// This is the maximum length allowed for a field.  Any content exceeding this length will be truncated. 
         /// Note: A warning is issued in the logs when this occurs, so you can increase the length if necessary.
         /// </summary>
-        [Cfg(value = "64")]
-        public string Length { get; set; }
+        [Cfg(value = "64", toLower = true)]
+        public string Length {
+            get { return _length; }
+            set {
+                if (value == null)
+                    return;
+                int number;
+                if (int.TryParse(value, out number)) {
+                    if (number <= 0) {
+                        AddProblem("A field's length must be a number greater than zero, or max.");
+                    }
+                } else {
+                    if (value != "max") {
+                        AddProblem("A field's length must be a number greater than zero, or max.");
+                    }
+                }
+                _length = value;
+            }
+        }
 
         /// <summary>
         /// **Required**
@@ -230,7 +248,7 @@ namespace Transformalize.Configuration {
         /// * asc
         /// * desc
         /// </summary>
-        [Cfg(value="none", domain = "asc,desc,none", toLower = true)]
+        [Cfg(value = "none", domain = "asc,desc,none", toLower = true)]
         public string Sort { get; set; }
 
         /// <summary>

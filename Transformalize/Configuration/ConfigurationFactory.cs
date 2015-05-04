@@ -1,16 +1,18 @@
 using System.Collections.Generic;
 using System.IO;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Runner;
 
 namespace Transformalize.Configuration {
 
     public class ConfigurationFactory {
-
+        private readonly ILogger _logger;
         private readonly Dictionary<string, string> _parameters;
         private readonly string _resource;
 
-        public ConfigurationFactory(string resource, Dictionary<string, string> parameters = null) {
+        public ConfigurationFactory(string resource, ILogger logger, Dictionary<string, string> parameters = null) {
+            _logger = logger;
             _parameters = parameters;
             _resource = resource.Trim();
         }
@@ -29,16 +31,16 @@ namespace Transformalize.Configuration {
 
             switch (source) {
                 case ConfigurationSource.Xml:
-                    return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader());
+                    return new ProcessXmlConfigurationReader(_resource, new ContentsStringReader(), _logger);
                 case ConfigurationSource.WebFile:
-                    return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader());
+                    return new ProcessXmlConfigurationReader(_resource, new ContentsWebReader(_logger), _logger);
                 default:
                     var name = _resource.Contains("?") ? _resource.Substring(0, _resource.IndexOf('?')) : _resource;
                     if (Path.HasExtension(name)) {
-                        return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader());
+                        return new ProcessXmlConfigurationReader(_resource, new ContentsFileReader(_logger), _logger);
                     }
 
-                    throw new TransformalizeException(string.Empty, string.Empty, "{0} is invalid configuration.", _resource);
+                    throw new TransformalizeException(_logger, "{0} is invalid configuration.", _resource);
             }
 
         }

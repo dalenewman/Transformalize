@@ -79,7 +79,7 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
         ///     <c>true</c> if this instance has errors; otherwise, <c>false</c>.
         /// </value>
         public bool HasErrors {
-            get { return Errors.Length != 0; }
+            get { return Errors.Count != 0; }
         }
 
         #endregion
@@ -97,9 +97,9 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
 #pragma warning restore 642
             } catch (Exception e) {
                 foreach (var x in e.FlattenHierarchy()) {
-                    Error("Failure in pipeline. {0}", (enumerator.Current + " " + x.Message.Replace("\n"," ")).Trim());
+                    Error(x, "Failure in pipeline. {0}", (enumerator.Current + " " + x.Message.Replace("\n"," ")).Trim());
                     if (x.TargetSite != null && x.TargetSite.DeclaringType != null) {
-                        Error("Error in {0}", x.TargetSite.DeclaringType.FullName);
+                        Warn("Error in {0}", x.TargetSite.DeclaringType.FullName);
                     }
                 }
             }

@@ -65,7 +65,7 @@ namespace Transformalize.Operations.Extract {
                 }
             }
 
-            Info("Reading Delimited {0}", _name);
+            Logger.Info("Reading Delimited {0}", _name);
 
             var conversionMap = Common.GetObjectConversionMap();
 
@@ -77,7 +77,7 @@ namespace Transformalize.Operations.Extract {
                                 ProcessRow(row, _fields, _fullName, conversionMap);
                             } catch (Exception ex) {
                                 if (!_warned) {
-                                    TflLogger.Warn(_entity.ProcessName, _entity.Alias, "First row from '{0}' failed to process.  You may have headers.  If so, set start=\"2\" on connection. Note: start is 1-based. {0}", _name, ex.Message);
+                                    Logger.EntityWarn(_entity.Alias, "First row from '{0}' failed to process.  You may have headers.  If so, set start=\"2\" on connection. Note: start is 1-based. {0}", _name, ex.Message);
                                     _warned = true;
                                 }
 
@@ -101,7 +101,7 @@ namespace Transformalize.Operations.Extract {
                             try {
                                 ProcessRow(row, _fields, _fullName, conversionMap);
                             } catch (Exception ex) {
-                                TflLogger.Warn(_entity.ProcessName, _entity.Alias, "First row failed to process.  You may have headers.  If so, set start-index=\"2\" on connection. {0}", ex.Message);
+                                Logger.EntityWarn(_entity.Alias, "First row failed to process.  You may have headers.  If so, set start-index=\"2\" on connection. {0}", ex.Message);
                             }
                         } else {
                             ProcessRow(row, _fields, _fullName, conversionMap);
@@ -137,7 +137,7 @@ namespace Transformalize.Operations.Extract {
 
             var errorInfo = new FileInfo(Common.GetTemporaryFolder(_entity.ProcessName).TrimEnd(new[] { '\\' }) + @"\" + _name + ".errors.txt");
             file.OutputErrors(errorInfo.FullName);
-            TflLogger.Warn(_entity.ProcessName, _entity.Alias, "Errors sent to {0}.", errorInfo.Name);
+            Logger.EntityWarn(_entity.Alias, "Errors sent to {0}.", errorInfo.Name);
         }
     }
 }

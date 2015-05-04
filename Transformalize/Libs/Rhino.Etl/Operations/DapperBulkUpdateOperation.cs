@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Dynamic;
 using System.Linq;
 using Transformalize.Extensions;
@@ -37,7 +36,7 @@ namespace Transformalize.Libs.Rhino.Etl.Operations {
                     transaction.Commit();
                 } catch (Exception ex) {
                     transaction.Rollback();
-                    throw new TransformalizeException(ProcessName, EntityName, "The bulk update operation failed. {0}", ex.Message);
+                    throw new TransformalizeException(_connection.Logger, EntityName, "The bulk update operation failed. {0}", ex.Message);
                 }
             }
             yield break;

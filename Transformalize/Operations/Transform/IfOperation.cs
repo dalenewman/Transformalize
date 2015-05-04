@@ -65,7 +65,7 @@ namespace Transformalize.Operations.Transform {
             var rightType = _rightHasValue && _rightValue != null  ? Common.ToSimpleType(_rightValue.GetType().Name) : _right.Value.SimpleType;
 
             if (!leftType.Equals(rightType)) {
-                TflLogger.Warn(ProcessName, EntityName, "If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
+                Logger.EntityWarn(EntityName, "If Operation for {0} has type mismatch: left type is {1}, right type is {2};", OutKey, leftType, rightType);
             }
 
             Name = string.Format("IfOperation ({0})", outKey);
@@ -73,12 +73,12 @@ namespace Transformalize.Operations.Transform {
             if (Common.CompareMap.ContainsKey(_op))
                 return;
 
-            throw new TransformalizeException(ProcessName, EntityName, "Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
+            throw new TransformalizeException(Logger, EntityName, "Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
         }
 
         private object ComparableValue(string otherType, object value) {
             if (value.Equals(string.Empty) && !otherType.Equals("string")) {
-                return new DefaultFactory().Convert(value, otherType);
+                return new DefaultFactory(Logger).Convert(value, otherType);
             }
             return _conversionMap[otherType](value);
         }

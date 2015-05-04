@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using Transformalize.Libs.RazorEngine.Compilation;
 using Transformalize.Libs.RazorEngine.Text;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.RazorEngine.Templating
 {
@@ -154,9 +155,10 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type.</param>
         /// <param name="cacheName">The name of the template type in the cache.</param>
-        public void Compile(string razorTemplate, Type modelType, string cacheName)
+        /// <param name="logger"></param>
+        public void Compile(string razorTemplate, Type modelType, string cacheName, ILogger logger)
         {
-            _proxy.Compile(razorTemplate, modelType, cacheName);
+            _proxy.Compile(razorTemplate, modelType, cacheName, logger);
         }
 
         /// <summary>
@@ -171,10 +173,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
         ///     If razorTemplate is not NULL, this parameter may be NULL (unused).
         /// </param>
         /// <param name="model">The model instance or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="ITemplate{T}" />.
         /// </returns>
-        public ITemplate CreateTemplate(string razorTemplate, Type templateType, object model)
+        public ITemplate CreateTemplate(string razorTemplate, Type templateType, object model, ILogger logger)
         {
             if (disposed)
                 throw new ObjectDisposedException("IsolatedTemplateService");
@@ -185,7 +188,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
                     throw new ArgumentException("IsolatedTemplateService instances do not support anonymous or dynamic types.");
             }
 
-            return _proxy.CreateTemplate(razorTemplate, templateType, model);
+            return _proxy.CreateTemplate(razorTemplate, templateType, model, logger);
         }
 
         /// <summary>
@@ -232,10 +235,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </summary>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="Type" />.
         /// </returns>
-        public Type CreateTemplateType(string razorTemplate, Type modelType)
+        public Type CreateTemplateType(string razorTemplate, Type modelType, ILogger logger)
         {
             if (disposed)
                 throw new ObjectDisposedException("IsolatedTemplateService");
@@ -243,7 +247,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (CompilerServicesUtility.IsDynamicType(modelType))
                 throw new ArgumentException("IsolatedTemplateService instances do not support anonymous or dynamic types.");
 
-            return _proxy.CreateTemplateType(razorTemplate, modelType);
+            return _proxy.CreateTemplateType(razorTemplate, modelType, logger);
         }
 
         /// <summary>

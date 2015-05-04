@@ -22,11 +22,16 @@
 
 using System.IO;
 using Transformalize.Logging;
-using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
 
     public class TemplateActionOpen : TemplateActionHandler {
+        private readonly ILogger _logger;
+
+        public TemplateActionOpen(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public override void Handle(TemplateAction action) {
 
@@ -35,9 +40,9 @@ namespace Transformalize.Main {
 
             if (!file.Equals(string.Empty) && File.Exists(file)) {
                 System.Diagnostics.Process.Start(file);
-                TflLogger.Info(action.ProcessName, string.Empty, "Opened file {0}.", file);
+                _logger.Info("Opened file {0}.", file);
             } else {
-                TflLogger.Warn(action.ProcessName, string.Empty, "Can't open '{0}'.", file);
+                _logger.Warn("Can't open '{0}'.", file);
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers.Html {
         public override IOperation Insert(Process process, Entity entity) {
             var pp = new PartialProcessOperation(process);
             pp.Register(new HtmlRowOperation(entity, "HtmlRow"));
-            pp.RegisterLast(new HtmlLoadOperation(this, entity, "HtmlRow"));
+            pp.Register(new HtmlLoadOperation(this, entity, "HtmlRow"));
             return pp;
         }
 

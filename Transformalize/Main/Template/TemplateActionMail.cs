@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net;
 using System.Net.Mail;
 using Transformalize.Logging;
 using Transformalize.Main.Providers.Mail;
@@ -8,6 +7,12 @@ using Transformalize.Main.Providers.Mail;
 namespace Transformalize.Main {
 
     public class TemplateActionMail : TemplateActionHandler {
+        private readonly ILogger _logger;
+
+        public TemplateActionMail(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         private readonly char[] _addressDelimiter = ",".ToCharArray();
 
@@ -17,8 +22,8 @@ namespace Transformalize.Main {
             var file = isTemplate ? action.RenderedFile : action.File;
 
             if (action.To.Equals(string.Empty)) {
-                TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send email. No 'to' provided.");
-                return;
+                _logger.Warn("Couldn't send email. No 'to' provided.");
+                 return;
             }
 
             var mail = new MailMessage {
@@ -26,7 +31,7 @@ namespace Transformalize.Main {
             };
 
             if (action.Connection == null) {
-                TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send email.  Mail action needs a valid connection.");
+                _logger.Warn("Couldn't send email.  Mail action needs a valid connection.");
                 return;
             }
 
@@ -69,10 +74,10 @@ namespace Transformalize.Main {
             try {
                 var connection = ((MailConnection)action.Connection).SmtpClient;
                 connection.Send(mail);
-                TflLogger.Info(action.ProcessName, string.Empty, isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
+                _logger.Info(isTemplate ? "Emailed rendered content to: {0}." : "Email sent to {0}.", action.To);
             } catch (Exception e) {
-                TflLogger.Warn(action.ProcessName, string.Empty, "Couldn't send mail. {0}", e.Message);
-                TflLogger.Debug(action.ProcessName, string.Empty, e.StackTrace);
+                _logger.Warn("Couldn't send mail. {0}", e.Message);
+                _logger.Debug(e.StackTrace);
             }
         }
     }

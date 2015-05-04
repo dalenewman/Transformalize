@@ -42,8 +42,6 @@ namespace Transformalize.Main {
 
         public Entity Read(TflEntity element, short entityIndex) {
 
-            Validate(element);
-
             var entity = new Entity() {
                 ProcessName = _process.Name,
                 Schema = element.Schema,
@@ -117,7 +115,7 @@ namespace Transformalize.Main {
 
             //depend on fields
             LoadVersion(element, entity);
-            LoadFilter(element.Filter, entity);
+            LoadFilter(element.Filter, entity, _process.Logger);
 
             entity.Input.AddRange(PrepareIo(element.Input, entity.Fields));
             entity.Output = PrepareIo(element.Output, entity.Fields);
@@ -125,11 +123,11 @@ namespace Transformalize.Main {
             return entity;
         }
 
-        private static void LoadFilter(IEnumerable<TflFilter> filter, Entity entity) {
+        private static void LoadFilter(IEnumerable<TflFilter> filter, Entity entity, ILogger logger) {
 
             foreach (var element in filter) {
 
-                var item = new Filter();
+                var item = new Filter(logger);
 
                 if (!string.IsNullOrEmpty(element.Expression)) {
                     item.Expression = element.Expression;
@@ -180,7 +178,7 @@ namespace Transformalize.Main {
             if (_process.Mode != "metadata" && element.Fields.Count == 0) {
                 try {
 
-                    TflLogger.Info(entity.ProcessName, entity.Name, "Detecting fields.");
+                    _process.Logger.EntityInfo(entity.Name, "Detecting fields.");
                     var connection = entity.Input.First().Connection;
                     var fields = connection.GetEntitySchema(_process, entity, entityIndex == 0);
                     if (!fields.Any())
@@ -203,12 +201,12 @@ namespace Transformalize.Main {
                         f.Label = field.Label;
                         element.Fields.Add(f);
                     }
-                    TflLogger.Info(entity.ProcessName, entity.Name, "Detected {0} fields.", fields.Count);
+                    _process.Logger.EntityInfo(entity.Name, "Detected {0} fields.", fields.Count);
                 } catch (Exception ex) {
-                    throw new TransformalizeException("No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
+                    throw new TransformalizeException(_process.Logger, "No fields defined.  Unable to detect them for {0}. {1}", entity.Name, ex.Message);
                 } finally {
                     if (element.Fields.Count == 0) {
-                        throw new TransformalizeException(entity.ProcessName, entity.Name, "No fields defined.  Unable to detect them for {0}.", entity.Name);
+                        throw new TransformalizeException(_process.Logger, entity.Name, "No fields defined.  Unable to detect them for {0}.", entity.Name);
                     }
                 }
             }
@@ -233,7 +231,7 @@ namespace Transformalize.Main {
                         var value = Common.ConversionMap[simpleType](io.RunValue);
                         shouldRun = row => Common.CompareMap[op](row[field.Alias], value);
                     } else {
-                        TflLogger.Warn(_process.Name, entity, "Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
+                        _process.Logger.EntityWarn(entity, "Field {0} specified in {1} output doesn't exist.  It will not affect the output.", io.RunField, io.Name);
                     }
                 }
 
@@ -247,17 +245,6 @@ namespace Transformalize.Main {
             return namedConnections;
         }
 
-        private void Validate(TflEntity element) {
-            var validator = ValidationFactory.CreateValidator<TflEntity>();
-            var results = validator.Validate(element);
-            if (!results.IsValid) {
-                foreach (var result in results) {
-                    TflLogger.Error(_process.Name, element.Name, result.Message);
-                }
-                throw new TransformalizeException(_process.Name, element.Name, "Entity validation failed. See error log.");
-            }
-        }
-
         private void GuardAgainstMissingPrimaryKey(TflEntity element) {
 
             if (element.Fields.Any(f => f.PrimaryKey))
@@ -267,7 +254,7 @@ namespace Transformalize.Main {
                 return;
 
             if (!element.CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
-                TflLogger.Warn(_process.Name, element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
+                _process.Logger.EntityWarn(element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
                 var pk = element.GetDefaultOf<TflField>(f => {
                     f.Name = "TflHashCode";
                     f.Type = "int";
@@ -289,7 +276,7 @@ namespace Transformalize.Main {
             }
         }
 
-        private static void LoadVersion(TflEntity element, Entity entity) {
+        private void LoadVersion(TflEntity element, Entity entity) {
             if (String.IsNullOrEmpty(element.Version))
                 return;
 
@@ -299,7 +286,7 @@ namespace Transformalize.Main {
                 if (entity.CalculatedFields.HaveField(entity.Alias, element.Version)) {
                     entity.Version = entity.CalculatedFields.Find(entity.Alias, element.Version).First();
                 } else {
-                    throw new TransformalizeException("version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
+                    throw new TransformalizeException(_process.Logger, "version field reference '{0}' is undefined in {1}.", element.Version, element.Name);
                 }
             }
             entity.Version.Output = true;

@@ -26,7 +26,7 @@ namespace Transformalize.Main.Providers.Solr {
             _dates.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().WithDate().Aliases());
 
             _singleKey = entity.PrimaryKey.Count == 1;
-            _solrMap = new SolrEntityCreator().GetFieldMap(entity);
+            _solrMap = new SolrEntityCreator(Logger).GetFieldMap(entity);
 
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _key = entity.FirstKey();
@@ -37,7 +37,7 @@ namespace Transformalize.Main.Providers.Solr {
         void SolrLoadOperation_OnRowProcessed(IOperation arg1, Row arg2) {
             Interlocked.Increment(ref _count);
             if (_count % arg1.LogRows == 0) {
-                Info("Processed {0} records.", _count);
+                Logger.Info("Processed {0} records.", _count);
             }
         }
 

@@ -5,7 +5,6 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
 
@@ -16,10 +15,6 @@ namespace Transformalize.Test {
 
         [Test]
         public void Test2() {
-
-            var console = new ObservableEventListener();
-            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-            var sink = console.LogToConsole(new LegacyLogFormatter());
 
             var xml = @"
 <cfg>
@@ -64,10 +59,7 @@ namespace Transformalize.Test {
 
             Assert.AreEqual(3, root.Processes.First().DataSets.First().Rows.Count);
 
-            var rows = ProcessFactory.CreateSingle(root.Processes[0]).Execute().ToList();
-
-            sink.Dispose();
-            console.Dispose();
+            var rows = ProcessFactory.CreateSingle(root.Processes[0], new TestLogger()).Execute().ToList();
 
             Assert.AreEqual(3, rows.Count());
 
@@ -75,10 +67,6 @@ namespace Transformalize.Test {
 
         [Test]
         public void Test1() {
-
-            var console = new ObservableEventListener();
-            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-            var sink = console.LogToConsole(new LegacyLogFormatter());
 
             var data = new List<Dictionary<string, string>>{
                 new Dictionary<string, string> {{"f1", "1"}, {"f2", "1"}, {"f3", new DateTime(2001, 1, 1).ToString()}},
@@ -107,10 +95,7 @@ namespace Transformalize.Test {
             Assert.AreEqual(0, problems.Count);
             Assert.AreEqual(3, process.DataSets.First().Rows.Count);
 
-            var rows = ProcessFactory.CreateSingle(process).Execute().ToList();
-
-            sink.Dispose();
-            console.Dispose();
+            var rows = ProcessFactory.CreateSingle(process, new TestLogger()).Execute().ToList();
 
             Assert.AreEqual(3, rows.Count());
         }

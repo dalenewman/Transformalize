@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Parameters {
 
@@ -40,12 +39,10 @@ namespace Transformalize.Main.Parameters {
             get { return _simpleType; }
             set {
                 _simpleType = Common.ToSimpleType(value);
-                if (Value != null) {
-                    if (_conversionMap.ContainsKey(_simpleType)) {
-                        Value = _conversionMap[_simpleType](Value);
-                    } else {
-                        TflLogger.Warn(string.Empty, string.Empty, "Parameter type {0} is not mapped for conversion.", _simpleType);
-                    }
+                if (Value == null) 
+                    return;
+                if (_conversionMap.ContainsKey(_simpleType)) {
+                    Value = _conversionMap[_simpleType](Value);
                 }
             }
         }

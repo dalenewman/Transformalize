@@ -22,12 +22,12 @@ namespace Transformalize.Main {
             foreach (var r in _elements) {
                 Entity leftEntity;
                 if (!_process.Entities.TryFind(r.LeftEntity, out leftEntity)) {
-                    throw new TransformalizeException(_process.Name, r.LeftEntity, "Can't find left entity {0}.", r.LeftEntity);
+                    throw new TransformalizeException(_process.Logger, r.LeftEntity, "Can't find left entity {0}.", r.LeftEntity);
                 }
 
                 Entity rightEntity;
                 if (!_process.Entities.TryFind(r.RightEntity, out rightEntity)) {
-                    throw new TransformalizeException(_process.Name, r.RightEntity, "Can't find right entity {0}.", r.RightEntity);
+                    throw new TransformalizeException(_process.Logger, r.RightEntity, "Can't find right entity {0}.", r.RightEntity);
                 }
 
                 var join = GetJoins(r, leftEntity, rightEntity);
@@ -43,7 +43,7 @@ namespace Transformalize.Main {
             return relationships;
         }
 
-        private static List<Join> GetJoins(TflRelationship r, Entity leftEntity, Entity rightEntity) {
+        private List<Join> GetJoins(TflRelationship r, Entity leftEntity, Entity rightEntity) {
             if (string.IsNullOrEmpty(r.LeftField)) {
                 return (
                     from TflJoin j in r.Join
@@ -57,7 +57,7 @@ namespace Transformalize.Main {
             };
         }
 
-        private static Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
+        private Join GetJoin(Entity leftEntity, string leftField, Entity rightEntity, string rightField) {
 
             var leftFields = leftEntity.OutputFields();
             var rightFields = rightEntity.OutputFields();
@@ -65,11 +65,11 @@ namespace Transformalize.Main {
             var rightHit = rightFields.HaveField(rightEntity.Alias, rightField);
 
             if (!leftHit) {
-                throw new TransformalizeException(leftEntity.ProcessName, leftEntity.Name, "The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
+                throw new TransformalizeException(_process.Logger, leftEntity.Name, "The left entity {0} does not have a field named {1} for joining to the right entity {2} with field {3}.", leftEntity.Alias, leftField, rightEntity.Alias, rightField);
             }
 
             if (!rightHit) {
-                throw new TransformalizeException(rightEntity.ProcessName, rightEntity.Name, "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
+                throw new TransformalizeException(_process.Logger, rightEntity.Name, "The right entity {0} does not have a field named {1} for joining to the left entity {2} with field {3}.", rightEntity.Alias, rightField, leftEntity.Alias, leftField);
             }
 
             var join = new Join {

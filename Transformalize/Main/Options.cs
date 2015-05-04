@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
 using Transformalize.Libs.Newtonsoft.Json;
-using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
@@ -78,7 +77,6 @@ namespace Transformalize.Main {
                     }
                 } catch (Exception e) {
                     var message = string.Format("Couldn't parse options: {0}.", settings);
-                    TflLogger.Debug(string.Empty, string.Empty, message + " " + e.Message);
                     Problems.Add(message);
                 }
             }

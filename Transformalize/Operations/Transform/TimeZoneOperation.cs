@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
 using Transformalize.Main;
@@ -35,9 +34,6 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         row[OutKey] = date.Add(_adjustment);
                     }
-                    //if (_utcToLocal) {
-                    //    row[OutKey] = new DateTime(date.Ticks, DateTimeKind.Local);
-                    //}
                 } else {
                     Skip();
                 }
@@ -46,14 +42,14 @@ namespace Transformalize.Operations.Transform {
             }
         }
 
-        public static string GuardTimeZone(string process, string entity, string timeZone, string defaultTimeZone) {
+        public static string GuardTimeZone(string process, string entity, string timeZone, string defaultTimeZone, ILogger logger) {
             var result = timeZone;
             if (timeZone == String.Empty) {
                 result = defaultTimeZone;
-                TflLogger.Debug(process, entity, "Defaulting From TimeZone to {0}.", defaultTimeZone);
+                logger.EntityDebug(entity, "Defaulting From TimeZone to {0}.", defaultTimeZone);
             } else {
                 if (!TimeZoneInfo.GetSystemTimeZones().Any(tz => tz.Id.Equals(timeZone))) {
-                    throw new TransformalizeException(process, entity, "From Timezone Id {0} is invalid.", timeZone);
+                    throw new TransformalizeException(logger, entity, "From Timezone Id {0} is invalid.", timeZone);
                 }
             }
             return result;

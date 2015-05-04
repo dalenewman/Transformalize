@@ -10,6 +10,7 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "", required = true, unique = true, toLower = true)]
         public string Name { get; set; }
+
         [Cfg(value = 500)]
         public int BatchSize { get; set; }
         [Cfg(value = "")]

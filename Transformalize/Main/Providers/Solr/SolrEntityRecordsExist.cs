@@ -6,7 +6,7 @@ namespace Transformalize.Main.Providers.Solr {
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 
-            var checker = new SolrConnectionChecker();
+            var checker = new SolrConnectionChecker(connection.Logger);
             if (checker.Check(connection)) {
                 throw new NotImplementedException();
             }

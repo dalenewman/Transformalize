@@ -4,6 +4,7 @@ using Transformalize.Logging;
 namespace Transformalize.Main.Providers.Solr {
 
     public class SolrEntityCreator : IEntityCreator {
+        private readonly ILogger _logger;
 
         private readonly Dictionary<string, string> _types = new Dictionary<string, string>() {
             {"int64", "long"},
@@ -57,12 +58,13 @@ namespace Transformalize.Main.Providers.Solr {
         };
         public IEntityExists EntityExists { get; set; }
 
-        public SolrEntityCreator() {
+        public SolrEntityCreator(ILogger logger) {
+            _logger = logger;
             EntityExists = new SolrEntityExists();
         }
 
         public void Create(AbstractConnection connection, Process process, Entity entity) {
-            throw new TransformalizeException(process.Name, entity.Name, "Error writing Solr mapping.");
+            throw new TransformalizeException(_logger, entity.Name, "Error writing Solr mapping.");
         }
 
         public Dictionary<string, object> GetFields(Entity entity) {
@@ -84,7 +86,7 @@ namespace Transformalize.Main.Providers.Solr {
                                 }
                             }
                         } else {
-                            TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Solr.", analyzer, searchType.Name);
+                            _logger.EntityWarn(entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Solr.", analyzer, searchType.Name);
                             if (!fields.ContainsKey(alias)) {
                                 fields[alias] = new Dictionary<string, object>() { { "type", type } };
                             }

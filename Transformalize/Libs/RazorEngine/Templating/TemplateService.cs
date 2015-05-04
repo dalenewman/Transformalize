@@ -15,6 +15,7 @@ using Transformalize.Libs.RazorEngine.Compilation.Inspectors;
 using Transformalize.Libs.RazorEngine.Configuration;
 using Transformalize.Libs.RazorEngine.Templating.Parallel;
 using Transformalize.Libs.RazorEngine.Text;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.RazorEngine.Templating
 {
@@ -103,10 +104,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type.</param>
         /// <param name="cacheName">The name of the template type in the cache.</param>
-        public void Compile(string razorTemplate, Type modelType, string cacheName)
+        /// <param name="logger"></param>
+        public void Compile(string razorTemplate, Type modelType, string cacheName, ILogger logger)
         {
             var hashCode = razorTemplate.GetHashCode();
-            var type = CreateTemplateType(razorTemplate, modelType);
+            var type = CreateTemplateType(razorTemplate, modelType, logger);
             var item = new CachedTemplateItem(hashCode, type);
 
             _cache.AddOrUpdate(cacheName, item, (n, i) => item);
@@ -124,16 +126,17 @@ namespace Transformalize.Libs.RazorEngine.Templating
         ///     If razorTemplate is not NULL, this parameter may be NULL (unused).
         /// </param>
         /// <param name="model">The model instance or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="ITemplate" />.
         /// </returns>
         [Pure]
-        public virtual ITemplate CreateTemplate(string razorTemplate, Type templateType, object model)
+        public virtual ITemplate CreateTemplate(string razorTemplate, Type templateType, object model, ILogger logger)
         {
             if (templateType == null)
             {
                 var modelType = (model == null) ? typeof (object) : model.GetType();
-                templateType = CreateTemplateType(razorTemplate, modelType);
+                templateType = CreateTemplateType(razorTemplate, modelType, logger);
             }
 
             var context = CreateInstanceContext(templateType);
@@ -215,26 +218,26 @@ namespace Transformalize.Libs.RazorEngine.Templating
                         .Select((rt, i) => CreateTemplate(
                             rt,
                             (templateTypeList == null) ? null : templateTypeList[i],
-                            (modelList == null) ? null : modelList[i]));
+                            (modelList == null) ? null : modelList[i], new NullLogger()));
                 else
                     return GetParallelQueryPlan<Type>()
                         .CreateQuery(templateTypes)
                         .Select((tt, i) => CreateTemplate(
                             (razorTemplateList == null) ? null : razorTemplateList[i],
                             tt,
-                            (modelList == null) ? null : modelList[i]));
+                            (modelList == null) ? null : modelList[i], new NullLogger()));
             }
 
             if (razorTemplateList != null)
                 return razorTemplates.Select((rt, i) => CreateTemplate(
                     rt,
                     (templateTypeList == null) ? null : templateTypeList[i],
-                    (modelList == null) ? null : modelList[i]));
+                    (modelList == null) ? null : modelList[i], new NullLogger()));
             else
                 return templateTypeList.Select((tt, i) => CreateTemplate(
                     (razorTemplateList == null) ? null : razorTemplateList[i],
                     tt,
-                    (modelList == null) ? null : modelList[i]));
+                    (modelList == null) ? null : modelList[i], new NullLogger()));
         }
 
         /// <summary>
@@ -242,15 +245,16 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </summary>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="Type" />.
         /// </returns>
         [Pure]
-        public virtual Type CreateTemplateType(string razorTemplate, Type modelType)
+        public virtual Type CreateTemplateType(string razorTemplate, Type modelType, ILogger logger)
         {
             var context = new TypeContext
                           {
-                              ModelType = (modelType == null) ? typeof (object) : modelType,
+                              ModelType = modelType ?? typeof (object),
                               TemplateContent = razorTemplate,
                               TemplateType = (_config.BaseTemplateType) ?? typeof (TemplateBase<>)
                           };
@@ -264,7 +268,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             service.Debug = _config.Debug;
             service.CodeInspectors = _config.CodeInspectors ?? Enumerable.Empty<ICodeInspector>();
 
-            var result = service.CompileType(context);
+            var result = service.CompileType(context, logger);
 
             _assemblies.Add(result.Item2);
 
@@ -296,10 +300,10 @@ namespace Transformalize.Libs.RazorEngine.Templating
                 return GetParallelQueryPlan<string>()
                     .CreateQuery(razorTemplates)
                     .Select((t, i) => CreateTemplateType(t,
-                                                         (modelTypeList == null) ? null : modelTypeList[i]));
+                                                         (modelTypeList == null) ? null : modelTypeList[i], new NullLogger()));
 
             return razorTemplates.Select((t, i) => CreateTemplateType(t,
-                                                                      (modelTypeList == null) ? null : modelTypeList[i]));
+                                                                      (modelTypeList == null) ? null : modelTypeList[i], new NullLogger()));
         }
 
         /// <summary>
@@ -379,7 +383,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             ITemplate instance;
 
             if (cacheName == null)
-                instance = CreateTemplate(razorTemplate, null, model);
+                instance = CreateTemplate(razorTemplate, null, model, new NullLogger());
             else
                 instance = GetTemplate(razorTemplate, model, cacheName);
 
@@ -401,7 +405,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             ITemplate instance;
 
             if (cacheName == null)
-                instance = CreateTemplate(razorTemplate, typeof (T), model);
+                instance = CreateTemplate(razorTemplate, typeof(T), model, new NullLogger());
             else
                 instance = GetTemplate<T>(razorTemplate, model, cacheName);
 
@@ -508,7 +512,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             CachedTemplateItem cachedItem;
             ITemplate instance = null;
             if (_cache.TryGetValue(cacheName, out cachedItem))
-                instance = CreateTemplate(null, cachedItem.TemplateType, model);
+                instance = CreateTemplate(null, cachedItem.TemplateType, model, new NullLogger());
 
             if (instance == null && _config.Resolver != null)
             {
@@ -536,7 +540,7 @@ namespace Transformalize.Libs.RazorEngine.Templating
             if (!(_cache.TryGetValue(cacheName, out item)))
                 throw new InvalidOperationException("No template exists with name '" + cacheName + "'");
 
-            var instance = CreateTemplate(null, item.TemplateType, model);
+            var instance = CreateTemplate(null, item.TemplateType, model, new NullLogger());
 
             return Run(instance, viewBag);
         }
@@ -636,13 +640,13 @@ namespace Transformalize.Libs.RazorEngine.Templating
             CachedTemplateItem item;
             if (!(_cache.TryGetValue(cacheName, out item) && item.CachedHashCode == hashCode))
             {
-                var type = CreateTemplateType(razorTemplate, (model == null) ? typeof (T) : model.GetType());
+                var type = CreateTemplateType(razorTemplate, (model == null) ? typeof(T) : model.GetType(), new NullLogger());
                 item = new CachedTemplateItem(hashCode, type);
 
                 _cache.AddOrUpdate(cacheName, item, (n, i) => item);
             }
 
-            var instance = CreateTemplate(null, item.TemplateType, model);
+            var instance = CreateTemplate(null, item.TemplateType, model, new NullLogger());
             return instance;
         }
 

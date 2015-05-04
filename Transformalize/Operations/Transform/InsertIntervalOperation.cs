@@ -14,7 +14,7 @@ namespace Transformalize.Operations.Transform {
             : base(inKey, outKey) {
 
             if (interval <= 0) {
-                throw new TransformalizeException(ProcessName, EntityName, "Insert Interval operation for {0} must have interval > 0.", outKey);
+                throw new TransformalizeException(EntityName, Logger, "Insert Interval operation for {0} must have interval > 0.", outKey);
             }
 
             _valueArray = value.ToCharArray();

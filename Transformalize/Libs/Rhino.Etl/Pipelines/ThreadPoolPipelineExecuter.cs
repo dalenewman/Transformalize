@@ -31,14 +31,14 @@ namespace Transformalize.Libs.Rhino.Etl.Pipelines {
                     }
                 } catch (Exception e) {
                     foreach (var inner in e.FlattenHierarchy()) {
-                        Error("Failed to execute {0}. {1}", operation.Name, inner.Message);
+                        Error(inner, "Failed to execute {0}. {1}", operation.Name, inner.Message);
                         Debug(inner.StackTrace);
                     }
                     threadedEnumerator.MarkAsFinished();
 #if DEBUG
                     throw new TransformalizeException(string.Empty, string.Empty, e.Message);
 #endif
-                    
+
                 } finally {
                     threadedEnumerator.MarkAsFinished();
                 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Build.Utilities;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
@@ -10,13 +11,9 @@ using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
-using Orchard.UI.Notify;
 using Orchard.Utility.Extensions;
-using Transformalize.Configuration;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Libs.SemanticLogging;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Operations;
@@ -25,6 +22,7 @@ using Transformalize.Orchard.Models;
 namespace Transformalize.Orchard.Services {
 
     public class TransformalizeService : ITransformalizeService {
+        private const StringComparison IGNORE_CASE = StringComparison.OrdinalIgnoreCase;
 
         private readonly IOrchardServices _orchardServices;
         private readonly IFileService _fileService;
@@ -76,37 +74,28 @@ namespace Transformalize.Orchard.Services {
 
         public TransformalizeResponse Run(TransformalizeRequest request) {
 
-            var log = new List<string>();
-
-            if (request.Part.DisplayLog) {
-                var memory = new ObservableEventListener();
-                memory.EnableEvents(TflEventSource.Log, request.Part.ToLogLevel());
-                memory.LogToMemory(ref log);
-                TflLogger.Info("Orchard", "Log", "Injecting memory logger");
-                TflLogger.Info("Orchard", "Log", "Orchard version: {0}", OrchardVersion);
-                TflLogger.Info("Orchard", "Log", "Transformalize.Orchard version: {0}", _extensionManager.GetExtension("Transformalize.Orchard").Version);
-            }
-
-            var processes = new List<Process>();
+            var moduleVersion = _extensionManager.GetExtension("Transformalize.Orchard").Version;
+            var logger = new TransformalizeLogger(request.Part.Title(), Logger, request.Part.LogLevel, OrchardVersion, moduleVersion);
+            var processes = new List<Process>(); 
 
             //transitioning to using TflRoot instead of string configuration
             if (request.Root != null) {
-                if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                if (request.Options.Mode.Equals("rebuild", IGNORE_CASE)) {
                     request.Options.Mode = "init";
-                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
                     request.Options.Mode = "first";
-                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
                 } else {
-                    processes.AddRange(ProcessFactory.Create(request.Root, request.Options));
+                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
                 }
             } else {  //legacy
-                if (request.Options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+                if (request.Options.Mode.Equals("rebuild", IGNORE_CASE)) {
                     request.Options.Mode = "init";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
                     request.Options.Mode = "first";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
                 } else {
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
                 }
             }
 
@@ -118,7 +107,7 @@ namespace Transformalize.Orchard.Services {
 
             return new TransformalizeResponse() {
                 Processes = processes.ToArray(),
-                Log = log
+                Log = new List<string>(logger.Dump())
             };
         }
 
@@ -191,7 +180,7 @@ namespace Transformalize.Orchard.Services {
                 if (file.IndexOfAny(Path.GetInvalidPathChars()) == -1 && _appDataFolder.FileExists(file)) {
                     filePart = _fileService.Create(file);
                 } else {
-                    TflLogger.Error(string.Empty, string.Empty, "File '{0}' passed into process is invalid!", file);
+                    Logger.Error("File '{0}' passed into process is invalid!", file);
                     return;
                 }
             }

@@ -42,7 +42,7 @@ namespace Transformalize.Main.Providers.Lucene {
                 return;
 
             var versionType = entity.Version == null ? "string" : entity.Version.SimpleType;
-            var end = entity.End ?? new DefaultFactory().Convert(entity.End, versionType);
+            var end = entity.End ?? new DefaultFactory(Logger).Convert(entity.End, versionType);
 
             using (var dir = LuceneDirectoryFactory.Create(this, TflBatchEntity(entity.ProcessName))) {
                 using (var writer = new IndexWriter(dir, new KeywordAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED)) {

@@ -25,6 +25,7 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Test.Builders;
@@ -58,7 +59,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -89,7 +90,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -124,7 +125,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg,new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -151,7 +152,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -179,7 +180,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -212,7 +213,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -247,7 +248,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -274,7 +275,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -301,7 +302,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg,new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -328,7 +329,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -355,7 +356,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -382,7 +383,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 
@@ -409,7 +410,7 @@ namespace Transformalize.Test {
 
             cfg.Entities.First().InputOperation = _testInput;
 
-            var output = ProcessFactory.CreateSingle(cfg).Execute().ToArray();
+            var output = ProcessFactory.CreateSingle(cfg, new TestLogger()).Execute().ToArray();
 
             Assert.AreEqual(2, output.Length);
 

@@ -26,6 +26,7 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Test.Builders;
@@ -122,7 +123,7 @@ namespace Transformalize.Test {
                 .Row("CategoryId", 3).Field("Name", "Dairy")
                 .ToOperation();
 
-            return ProcessFactory.CreateSingle(process);
+            return ProcessFactory.CreateSingle(process, new TestLogger());
 
         }
 

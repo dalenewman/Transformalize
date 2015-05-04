@@ -5,7 +5,9 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
+
     public class ElasticSearchEntityOutputKeysExtract : AbstractOperation {
+
         private readonly List<AliasType> _aliasTypes = new List<AliasType>();
         private readonly string[] _sourceInclude;
         private readonly Dictionary<string, Func<object, object>> _conversionMap = Common.GetObjectConversionMap();

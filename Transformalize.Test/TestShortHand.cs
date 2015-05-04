@@ -21,11 +21,8 @@
 #endregion
 
 using System.Diagnostics.Tracing;
-using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.SemanticLogging;
-using Transformalize.Logging;
 using Transformalize.Main.Transform;
 
 namespace Transformalize.Test {
@@ -34,13 +31,6 @@ namespace Transformalize.Test {
 
         private readonly TflField _field = new TflField();
         private readonly ShortHandFactory _factory = new ShortHandFactory(new TflProcess());
-
-        [SetUp]
-        public void SetUp() {
-            var console = new ObservableEventListener();
-            console.EnableEvents(TflEventSource.Log, EventLevel.Informational);
-            console.LogToConsole(new LegacyLogFormatter());
-        }
 
         [Test]
         public void Replace() {

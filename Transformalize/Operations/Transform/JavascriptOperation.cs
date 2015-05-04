@@ -19,7 +19,12 @@ namespace Transformalize.Operations.Transform {
         private readonly bool _addSelf;
         private readonly StringBuilder _scriptAppender = new StringBuilder();
 
-        public JavascriptOperation(string outKey, string script, Dictionary<string, Script> scripts, IParameters parameters)
+        public JavascriptOperation(
+            string outKey, 
+            string script, 
+            Dictionary<string, Script> scripts, 
+            IParameters parameters,
+            ILogger logger)
             : base(string.Empty, outKey) {
             _script = script;
             _parameters = parameters;
@@ -28,41 +33,41 @@ namespace Transformalize.Operations.Transform {
             Program program;
 
             foreach (var pair in scripts) {
-                TflLogger.Debug(string.Empty, string.Empty, "Running script {0}.", pair.Value.File);
+                logger.Debug("Running script {0}.", pair.Value.File);
                 try {
                     program = new JavaScriptParser().Parse(pair.Value.Content);
                     if (program.Errors != null && program.Errors.Count > 0) {
-                        TflLogger.Warn(string.Empty, string.Empty, "Javascript Parse Failed. Script: {0}.", pair.Value.Name);
+                        logger.Warn("Javascript Parse Failed. Script: {0}.", pair.Value.Name);
                         foreach (var error in program.Errors) {
-                            TflLogger.Warn(string.Empty, string.Empty, error.Description);
+                            logger.Warn(error.Description);
                         }
                     } else {
                         _scriptAppender.AppendLine(pair.Value.Content);
                     }
                 } catch (Exception e) {
-                    TflLogger.Error(string.Empty, string.Empty, "Javascript Parse Failed. Name: {0}. Script: {1}.", pair.Value.Name, pair.Value.Content);
-                    TflLogger.Error(string.Empty, string.Empty, e.Message);
+                    logger.Error("Javascript Parse Failed. Name: {0}. Script: {1}.", pair.Value.Name, pair.Value.Content);
+                    logger.Error(e.Message);
                 }
             }
 
             try {
                 program = new JavaScriptParser().Parse(_script);
                 if (program.Errors != null && program.Errors.Count > 0) {
-                    TflLogger.Warn(string.Empty, string.Empty, "Javascript Parse Failed. Inline: {0}.", _script);
+                    logger.Warn("Javascript Parse Failed. Inline: {0}.", _script.Replace("{","{{").Replace("}","}}"));
                     foreach (var error in program.Errors) {
-                        TflLogger.Warn(string.Empty, string.Empty, error.Description);
+                        logger.Warn(error.Description);
                     }
                 }
             } catch (Exception e) {
-                TflLogger.Error(string.Empty, string.Empty, "Javascript Parse Failed. Inline: '{0}'. Message: ", _script, e.Message);
+                logger.Error("Javascript Parse Failed. Inline: '{0}'. Message: ", _script, e.Message);
             }
 
             var externalScripts = _scriptAppender.ToString();
             if (externalScripts.Equals(string.Empty))
                 return;
 
-            TflLogger.Debug(string.Empty, string.Empty, "Loading scripts into Javascript engine...");
-            TflLogger.Debug(string.Empty, string.Empty, externalScripts);
+            logger.Debug("Loading scripts into Javascript engine...");
+            logger.Debug(externalScripts.Replace("{","{{").Replace("}","}}"));
             _jint.Execute(externalScripts);
 
             Name = string.Format("JavascriptOperation ({0})", outKey);

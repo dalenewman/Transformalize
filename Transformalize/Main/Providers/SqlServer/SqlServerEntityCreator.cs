@@ -5,11 +5,17 @@ using Transformalize.Logging;
 namespace Transformalize.Main.Providers.SqlServer {
 
     public class SqlServerEntityCreator : DatabaseEntityCreator {
+        private readonly ILogger _logger;
+
+        public SqlServerEntityCreator(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public override void Create(AbstractConnection connection, Process process, Entity entity) {
 
             if (EntityExists != null && EntityExists.Exists(connection, entity)) {
-                TflLogger.Warn(process.Name, entity.Name, "Trying to create entity that already exists! {0}", entity.Name);
+                process.Logger.EntityWarn(entity.Name,"Trying to create entity that already exists! {0}", entity.Name);
                 return;
             }
 
@@ -39,20 +45,20 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
 
             var createSql = connection.TableQueryWriter.CreateTable(entity.OutputName(), defs);
-            TflLogger.Debug(process.Name, entity.Name, createSql);
+            _logger.EntityDebug(entity.Name, createSql);
 
             var indexSql = connection.TableQueryWriter.AddUniqueClusteredIndex(entity.OutputName());
-            TflLogger.Debug(process.Name, entity.Name, indexSql);
+            _logger.EntityDebug(entity.Name, indexSql);
 
             var keySql = connection.TableQueryWriter.AddPrimaryKey(entity.OutputName(), primaryKey);
-            TflLogger.Debug(process.Name, entity.Name, keySql);
+            _logger.EntityDebug(entity.Name, keySql);
 
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(createSql);
                 cn.Execute(indexSql);
                 cn.Execute(keySql);
-                TflLogger.Info(process.Name, entity.Name, "Initialized {0} in {1} on {2}.", entity.OutputName(), connection.Database, connection.Server);
+                _logger.EntityInfo(entity.Name, "Initialized {0} in {1} on {2}.", entity.OutputName(), connection.Database, connection.Server);
             }
         }
 

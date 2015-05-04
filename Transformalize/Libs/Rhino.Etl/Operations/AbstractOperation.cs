@@ -6,12 +6,14 @@
 
 using System;
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Represent a single operation that can occure during the ETL process
     /// </summary>
     public abstract class AbstractOperation : WithLoggingMixin, IOperation {
+
         private string _name;
         private readonly OperationStatistics _statistics = new OperationStatistics();
         private string _entityName = string.Empty;

@@ -19,8 +19,8 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            TflLogger.Warn(entity.ProcessName, entity.Name, response.ServerError.Error);
-            TflLogger.Warn(entity.ProcessName, entity.Name, "Trouble deleting {0} {1}.", client.Index, client.Type);
+            connection.Logger.EntityWarn(entity.Name, response.ServerError.Error);
+            connection.Logger.EntityWarn(entity.Name, "Trouble deleting {0} {1}.", client.Index, client.Type);
         }
     }
 }

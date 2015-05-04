@@ -7,7 +7,6 @@ using Transformalize.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -35,7 +34,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             _prefix = "{\"index\": {\"_index\": \"" + _client.Index + "\", \"_type\": \"" + _client.Type + "\", \"_id\": \"";
 
             _singleKey = entity.PrimaryKey.Count == 1;
-            _elasticMap = new ElasticSearchEntityCreator().GetFieldMap(entity);
+            _elasticMap = new ElasticSearchEntityCreator(Logger).GetFieldMap(entity);
 
             _keys = entity.PrimaryKey.Aliases().ToArray();
             _key = entity.FirstKey();
@@ -66,7 +65,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                     .AddQueryString("refresh", @"true")
                 );
                 if (_count % LogRows == 0) {
-                    TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} rows in {1}", _count, Name);
+                    Logger.EntityInfo(_entity.Name, "Processed {0} rows in {1}", _count, Name);
                 }
             }
             yield break;

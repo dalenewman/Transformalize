@@ -11,14 +11,16 @@ namespace Transformalize.Main.Providers.File {
 
         private readonly FileSystemInfo _fileInfo;
         private readonly FileInspectionRequest _request;
+        private readonly ILogger _logger;
         private readonly List<Line> _storage = new List<Line>();
         private char _bestDelimiter;
         private bool _isCsv;
 
-        public Lines(FileSystemInfo fileInfo, FileInspectionRequest request) {
+        public Lines(FileSystemInfo fileInfo, FileInspectionRequest request, ILogger logger) {
             _fileInfo = fileInfo;
             _isCsv = fileInfo.Extension.Equals(".csv", StringComparison.OrdinalIgnoreCase);
             _request = request;
+            _logger = logger;
             _storage.AddRange(new LineLoader(fileInfo, request).Load());
         }
 
@@ -28,7 +30,7 @@ namespace Transformalize.Main.Providers.File {
                 return _bestDelimiter;
 
             if (_storage.Count == 0) {
-                TflLogger.Warn(string.Empty, string.Empty, "Can't find any lines or a delimiter for {0}. Defaulting to single column.", _fileInfo.Name);
+                _logger.Warn("Can't find any lines or a delimiter for {0}. Defaulting to single column.", _fileInfo.Name);
                 return default(char);
             }
 
@@ -58,11 +60,11 @@ namespace Transformalize.Main.Providers.File {
 
             if (winner != null) {
                 _bestDelimiter = winner.Character;
-                TflLogger.Info(string.Empty, string.Empty, "Delimiter is '{0}'", _bestDelimiter);
+                _logger.Info("Delimiter is '{0}'", _bestDelimiter);
                 return _bestDelimiter;
             }
 
-            TflLogger.Warn(string.Empty, string.Empty, "Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
+            _logger.Warn("Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
             return default(char);
         }
 
@@ -87,12 +89,12 @@ namespace Transformalize.Main.Providers.File {
             }
 
             if (!candidates.Any()) {
-                TflLogger.Warn(string.Empty, string.Empty, "Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
+                _logger.Warn("Can't find a delimiter for {0}.  Defaulting to single column.", _fileInfo.Name);
                 return default(char);
             }
 
             _bestDelimiter = candidates.First(kv => kv.Value.Equals(max)).Key;
-            TflLogger.Info(string.Empty, string.Empty, "Delimiter is '{0}'", _bestDelimiter);
+            _logger.Info("Delimiter is '{0}'", _bestDelimiter);
             return _bestDelimiter;
         }
 
@@ -102,7 +104,7 @@ namespace Transformalize.Main.Providers.File {
             var delimiter = FindDelimiter();
 
             if (_storage.Count == 0) {
-                TflLogger.Warn("JunkDrawer", _fileInfo.Name, "No lines in file.");
+                _logger.EntityWarn(_fileInfo.Name, "No lines in file.");
                 return fields;
             }
 

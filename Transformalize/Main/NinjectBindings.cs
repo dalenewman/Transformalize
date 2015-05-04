@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Transformalize.Configuration;
+using Transformalize.Libs.Ninject.Activation.Providers;
 using Transformalize.Libs.Ninject.Modules;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.SolrNet;
@@ -41,17 +42,20 @@ namespace Transformalize.Main {
     public class NinjectBindings : NinjectModule {
 
         private readonly TflProcess _process;
+        private readonly ILogger _logger;
         private const string CORE_ID = "CoreId";
         private readonly Type _type = typeof(Dictionary<string, object>);
 
-        public NinjectBindings(TflProcess process) {
+        public NinjectBindings(TflProcess process, ILogger logger) {
             _process = process;
+            _logger = logger;
         }
 
         public override void Load() {
 
             Bind<AbstractConnectionDependencies>().To<InternalDependencies>().WhenInjectedInto<InternalConnection>();
             Bind<AbstractConnection>().To<InternalConnection>().Named("internal");
+            Bind<ILogger>().ToConstant(_logger);
 
             var providers = _process
                 .Connections
@@ -151,13 +155,13 @@ namespace Transformalize.Main {
                         Bind<ISolrCoreAdmin>().To<SolrCoreAdmin>();
 
                         // each entity-core must be bound
-                        foreach (TflEntity entity in _process.Entities) {
+                        foreach (var entity in _process.Entities) {
                             var connection = entity.Connection;
 
-                            foreach (TflConnection cn in _process.Connections.Where(c => c.Name == connection && c.Provider == "solr")) {
+                            foreach (var cn in _process.Connections.Where(c => c.Name == connection && c.Provider == "solr")) {
 
                                 var coreUrl = cn.NormalizeUrl(8983) + "/" + (entity.PrependProcessNameToOutputName ? _process.Name + entity.Alias : entity.Alias);
-                                TflLogger.Info(_process.Name, entity.Name, "Registering SOLR core {0}", coreUrl);
+                                _logger.EntityInfo(entity.Name, "Registering SOLR core {0}", coreUrl);
 
                                 Bind<ISolrConnection>().ToConstant(new Libs.SolrNet.Impl.SolrConnection(coreUrl))
                                     .WithMetadata(CORE_ID, coreUrl);

@@ -8,10 +8,8 @@ namespace Transformalize.Operations.Load {
     public class MailLoadOperation : AbstractOperation {
 
         private readonly List<string> _columns = new List<string>();
-        private readonly string _name;
 
         public MailLoadOperation(Entity entity) {
-            _name = Common.EntityOutputName(entity, entity.ProcessName);
             _columns.AddRange(new Fields(entity.Fields, entity.CalculatedFields).WithOutput().Aliases());
         }
 

@@ -27,6 +27,7 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -51,7 +52,7 @@ namespace Transformalize.Test {
                     .Field("name")
                 .Process();
 
-            var process = ProcessFactory.CreateSingle(cfg);
+            var process = ProcessFactory.CreateSingle(cfg, new TestLogger());
 
             var output = process.Execute().ToArray();
 
@@ -88,7 +89,7 @@ namespace Transformalize.Test {
                 
                 .Process();
 
-            var process = ProcessFactory.CreateSingle(cfg);
+            var process = ProcessFactory.CreateSingle(cfg,new TestLogger());
 
             Assert.AreEqual(2, process.Entities.First().Input.Count);
 

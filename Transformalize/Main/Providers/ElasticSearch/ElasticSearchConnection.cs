@@ -32,7 +32,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 } else if (versionType.Equals("byte[]") || versionType.Equals("rowversion")) {
                     end = Common.BytesToHexString((byte[])entity.End);
                 } else {
-                    end = new DefaultFactory().Convert(entity.End, versionType).ToString();
+                    end = new DefaultFactory(Logger).Convert(entity.End, versionType).ToString();
                 }
 
                 var body = new {
@@ -113,7 +113,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                 .Type(client.Type)
             );
             if (!mapping.IsValid) {
-                throw new TransformalizeException("Trouble getting mapping for {0}:{1} {2}", client.Index, client.Type, mapping.ServerError.Error);
+                throw new TransformalizeException(Logger, "Trouble getting mapping for {0}:{1} {2}", client.Index, client.Type, mapping.ServerError.Error);
             }
             var fields = new Fields();
             foreach (var pair in mapping.Mapping.Properties) {

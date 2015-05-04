@@ -37,15 +37,15 @@ namespace Transformalize.Operations.Transform {
             _outType = outType;
 
             if (inType != "datetime") {
-                throw new TransformalizeException("TimeOfDay operation can only accept DateTime input. Your input is for {0} is {1}.", outKey, inType);
+                throw new TransformalizeException(Logger, "TimeOfDay operation can only accept DateTime input. Your input is for {0} is {1}.", outKey, inType);
             }
 
             if (!(new[] { "double", "decimal", "float" }).Any(s => s.Equals(outType, StringComparison.OrdinalIgnoreCase))) {
-                throw new TransformalizeException("TimeOfDay operation output must be double, decimal, or float.  Your output for {0} is {1}.", outKey, outType);
+                throw new TransformalizeException(Logger, "TimeOfDay operation output must be double, decimal, or float.  Your output for {0} is {1}.", outKey, outType);
             }
 
             if (!_timeMap.ContainsKey(timeComponent.ToLower())) {
-                throw new TransformalizeException(ProcessName, EntityName, "TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
+                throw new TransformalizeException(Logger, EntityName, "TimeOfDay operation expects time component to be days, hours, minutes, seconds, or milliseconds.  You have {0}.", timeComponent);
             }
 
             _transformer = _timeMap[timeComponent.ToLower()];

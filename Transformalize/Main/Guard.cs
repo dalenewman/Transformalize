@@ -1,9 +1,12 @@
-﻿namespace Transformalize.Main {
+﻿using Transformalize.Libs.Cfg.Net;
+
+namespace Transformalize.Main {
     public class Guard {
-        public static void Against(bool assertion, string message, params object[] args) {
+        public static bool Against(CfgProblems problems, bool assertion, string message, params object[] args) {
             if (assertion == false)
-                return;
-            throw new TransformalizeException(string.Empty, string.Empty, message, args);
+                return false;
+            problems.AddCustomProblem(message, args);
+            return true;
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Transformalize.Libs.RazorEngine.Templating;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.RazorEngine
 {
@@ -48,9 +49,10 @@ namespace Transformalize.Libs.RazorEngine
         /// </summary>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="cacheName">The name of the template type in cache.</param>
-        public static void Compile(string razorTemplate, string cacheName)
+        /// <param name="logger"></param>
+        public static void Compile(string razorTemplate, string cacheName, ILogger logger)
         {
-            TemplateService.Compile(razorTemplate, null, cacheName);
+            TemplateService.Compile(razorTemplate, null, cacheName, logger);
         }
 
         /// <summary>
@@ -59,9 +61,10 @@ namespace Transformalize.Libs.RazorEngine
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type.</param>
         /// <param name="cacheName">The name of the template type in cache.</param>
-        public static void Compile(string razorTemplate, Type modelType, string cacheName)
+        /// <param name="logger"></param>
+        public static void Compile(string razorTemplate, Type modelType, string cacheName, ILogger logger)
         {
-            TemplateService.Compile(razorTemplate, modelType, cacheName);
+            TemplateService.Compile(razorTemplate, modelType, cacheName, logger);
         }
 
         /// <summary>
@@ -70,22 +73,24 @@ namespace Transformalize.Libs.RazorEngine
         /// <typeparam name="T">The model type.</typeparam>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="cacheName">The name of the template type in cache.</param>
+        /// <param name="logger"></param>
         [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "We already provide a non-generic alternative.")]
-        public static void Compile<T>(string razorTemplate, string cacheName)
+        public static void Compile<T>(string razorTemplate, string cacheName, ILogger logger)
         {
-            TemplateService.Compile(razorTemplate, typeof (T), cacheName);
+            TemplateService.Compile(razorTemplate, typeof (T), cacheName, logger);
         }
 
         /// <summary>
         ///     Creates an instance of <see cref="ITemplate" /> from the specified string template.
         /// </summary>
         /// <param name="razorTemplate">The string template.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="ITemplate" />.
         /// </returns>
-        public static ITemplate CreateTemplate(string razorTemplate)
+        public static ITemplate CreateTemplate(string razorTemplate, ILogger logger)
         {
-            return TemplateService.CreateTemplate(razorTemplate, null, null);
+            return TemplateService.CreateTemplate(razorTemplate, null, null, logger);
         }
 
         /// <summary>
@@ -94,12 +99,13 @@ namespace Transformalize.Libs.RazorEngine
         /// <typeparam name="T">The model type.</typeparam>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="model">The model instance.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="ITemplate{T}" />.
         /// </returns>
-        public static ITemplate CreateTemplate<T>(string razorTemplate, T model)
+        public static ITemplate CreateTemplate<T>(string razorTemplate, T model, ILogger logger)
         {
-            return TemplateService.CreateTemplate(razorTemplate, null, model);
+            return TemplateService.CreateTemplate(razorTemplate, null, model, logger);
         }
 
         /// <summary>
@@ -142,7 +148,7 @@ namespace Transformalize.Libs.RazorEngine
         /// </returns>
         public static Type CreateTemplateType(string razorTemplate)
         {
-            return TemplateService.CreateTemplateType(razorTemplate, null);
+            return TemplateService.CreateTemplateType(razorTemplate, null, new NullLogger());
         }
 
         /// <summary>
@@ -155,7 +161,7 @@ namespace Transformalize.Libs.RazorEngine
         /// </returns>
         public static Type CreateTemplateType(string razorTemplate, Type modelType)
         {
-            return TemplateService.CreateTemplateType(razorTemplate, modelType);
+            return TemplateService.CreateTemplateType(razorTemplate, modelType, new NullLogger());
         }
 
         /// <summary>

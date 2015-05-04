@@ -20,21 +20,19 @@
 
 #endregion
 
-namespace Transformalize.Main.Providers.SqlServer
-{
-    public class SqlServerEntityCounter : IEntityCounter
-    {
+using Transformalize.Logging;
+
+namespace Transformalize.Main.Providers.SqlServer {
+    public class SqlServerEntityCounter : IEntityCounter {
         private readonly IConnectionChecker _connectionChecker;
         private readonly SqlServerEntityExists _entityExists;
 
-        public SqlServerEntityCounter(IConnectionChecker connectionChecker = null)
-        {
-            _connectionChecker = connectionChecker ?? new DefaultConnectionChecker();
+        public SqlServerEntityCounter(ILogger logger, IConnectionChecker connectionChecker = null) {
+            _connectionChecker = connectionChecker ?? new DefaultConnectionChecker(logger);
             _entityExists = new SqlServerEntityExists();
         }
 
-        public int Count(AbstractConnection connection, Entity entity, bool useAlias)
-        {
+        public int Count(AbstractConnection connection, Entity entity, bool useAlias) {
             if (_connectionChecker == null || _connectionChecker.Check(connection)) {
                 if (_entityExists.Exists(connection, entity)) {
                     using (var cn = connection.GetConnection()) {

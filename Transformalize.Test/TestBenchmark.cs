@@ -26,6 +26,7 @@ using System.IO;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -46,11 +47,11 @@ namespace Transformalize.Test {
             xDocWatch.Stop();
 
             cfgWatch.Start();
-            var cfgProcess = new ConfigurationFactory(xml).CreateSingle();
+            var cfgProcess = new ConfigurationFactory(xml, new TestLogger()).CreateSingle();
             cfgWatch.Stop();
 
             procWatch.Start();
-            var bigBloatedProcess = ProcessFactory.CreateSingle(xml);
+            var bigBloatedProcess = ProcessFactory.CreateSingle(xml, new TestLogger());
             procWatch.Stop();
 
             Console.WriteLine("Process: " + procWatch.ElapsedMilliseconds); // ~ 1928 to 1586

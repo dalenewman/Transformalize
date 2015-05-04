@@ -27,17 +27,20 @@ using Transformalize.Main.Parameters;
 namespace Transformalize.Main {
     public class EntityTransformParametersReader : ITransformParametersReader {
         private readonly Entity _entity;
+        private readonly ILogger _logger;
 
-        public EntityTransformParametersReader(Entity entity) {
+        public EntityTransformParametersReader(Entity entity, ILogger logger)
+        {
             _entity = entity;
+            _logger = logger;
         }
 
         public IParameters Read(TflTransform transform) {
-            var parameters = new Parameters.Parameters();
+            var parameters = new Parameters.Parameters(new DefaultFactory(_logger));
 
             foreach (var p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Field) && (string.IsNullOrEmpty(p.Name) || string.IsNullOrEmpty(p.Value))) {
-                    throw new TransformalizeException("The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);
+                    throw new TransformalizeException(_logger, "The entity {0} has a {1} transform parameter without a field attribute, or name and value attributes.  Entity parameters require one or the other.", _entity.Alias, transform.Method);
                 }
 
                 var fields = new Fields(_entity.Fields, _entity.CalculatedFields);
@@ -48,7 +51,7 @@ namespace Transformalize.Main {
                         parameters.Add(field.Alias, name, null, field.Type);
                     } else {
                         if (!p.Field.StartsWith("Tfl")) {
-                            TflLogger.Warn(_entity.ProcessName, _entity.Name, "The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
+                            _logger.EntityWarn(_entity.Name, "The entity {0} has a {1} transform parameter that references field {2}.  This field hasn't been defined yet in {0}.", _entity.Alias, transform.Method, p.Field);
                         }
                         var name = string.IsNullOrEmpty(p.Name) ? p.Field : p.Name;
                         parameters.Add(p.Field, name, p.HasValue() ? p.Value : null, "System.String");

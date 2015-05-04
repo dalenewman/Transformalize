@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Transformalize.Main;
 using Transformalize.Main.Parameters;
 
 namespace Transformalize.Test.Builders {
@@ -38,7 +39,7 @@ namespace Transformalize.Test.Builders {
         }
 
         public Parameters ToParameters() {
-            var parameters = new Parameters();
+            var parameters = new Parameters(new DefaultFactory(new TestLogger()));
             foreach (var p in _params) {
                 parameters.Add(p.Key, p.Value);
             }

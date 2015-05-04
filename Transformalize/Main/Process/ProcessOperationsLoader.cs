@@ -33,7 +33,7 @@ namespace Transformalize.Main {
                 foreach (var t in f.Transforms) {
 
                     var factory = new TransformOperationFactory(_process, string.Empty);
-                    var parameters = new ProcessTransformParametersReader(_process).Read(t);
+                    var parameters = new ProcessTransformParametersReader(_process, new DefaultFactory(_process.Logger)).Read(t);
                     var operation = factory.Create(field, t, parameters);
 
                     _process.TransformOperations.Add(operation);

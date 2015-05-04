@@ -1,11 +1,12 @@
-﻿@model Transformalize.Orchard.Models.ExecuteViewModel
+﻿@using Transformalize.Extensions
+@model Transformalize.Orchard.Models.ExecuteViewModel
 @{
     Layout.Title = "Results";
     Script.Require("jQuery").AtHead();
 }
 <script type="text/javascript">
     //<!--
-    $(document).ready(function() {
+    $(document).ready(function () {
         function removeMessages() {
             $(".zone-messages").fadeOut().hide();
         }
@@ -30,7 +31,10 @@
             <tbody>
                 @foreach (var fields in Model.TransformalizeResponse.Log.Select(line => line.Split("|".ToCharArray()).Select(f => f.TrimEnd('.')).ToArray())) {
                     string color;
-                    switch (fields[1].Trim().ToLower().Substring(0,4)) {
+                    if (fields.Length < 5) {
+                        continue;
+                    }
+                    switch (fields[1].Trim().Left(4)) {
                         case "erro":
                             color = "danger";
                             break;
@@ -46,7 +50,7 @@
                     }
                     <tr class="@color">
                         @for (int i = 0; i < fields.Length; i++) {
-                            var field = fields[i].Trim(new []{' ','.'});
+                            var field = fields[i].Trim(new[] { ' ', '.' });
                             if (i == 1) {
                                 <td><span class="label label-@color">@field</span></td>
                             } else {
@@ -62,7 +66,7 @@
 
 @foreach (var process in Model.TransformalizeResponse.Processes) {
     var results = process.Results.ToArray();
-    if(results.Length > 0) {
+    if (results.Length > 0) {
         var fields = process.OutputFields().ToArray();
         <h3>@process.Name Results</h3>
         <div class="table-responsive">
@@ -81,9 +85,9 @@
                                 <td>
                                     @if (field.SimpleType.StartsWith("bool")) {
                                         if ((bool)row[field.Alias]) {
-                                            <span style="color:#73a839;" class="glyphicon glyphicon-ok"></span>    
+                                            <span style="color:#73a839;" class="glyphicon glyphicon-ok"></span>
                                         } else {
-                                            <span style="color:#c71c22;" class="glyphicon glyphicon-remove"></span>    
+                                            <span style="color:#c71c22;" class="glyphicon glyphicon-remove"></span>
                                         }
                                     } else {
                                         @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])

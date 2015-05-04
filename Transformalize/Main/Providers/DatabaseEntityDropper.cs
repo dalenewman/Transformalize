@@ -41,7 +41,7 @@ namespace Transformalize.Main.Providers {
             using (var cn = connection.GetConnection()) {
                 cn.Open();
                 cn.Execute(sql);
-                TflLogger.Debug(entity.ProcessName, entity.Name, "Dropped Output {0}", entity.OutputName());
+                connection.Logger.EntityDebug(entity.Name, "Dropped Output {0}", entity.OutputName());
             }
         }
 

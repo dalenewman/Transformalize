@@ -31,9 +31,11 @@ using Transformalize.Operations;
 namespace Transformalize.Processes {
 
     public class InitializationProcess : EtlProcess {
+        private readonly Process _process;
 
         public InitializationProcess(Process process)
             : base(process) {
+            _process = process;
             process.OutputConnection.TflWriter.Initialize(process);
             foreach (var writer in process.OutputConnection.ViewWriters) {
                 writer.Drop(process);
@@ -51,16 +53,13 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
-                var messageBuilder = new StringBuilder();
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        TflLogger.Error(this.Process.Name, string.Empty, e.Message);
-                        messageBuilder.AppendLine(e.Message);
-                        TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
-                        messageBuilder.AppendLine(e.StackTrace);
+                        _process.Logger.Error(e, e.Message);
+                        _process.Logger.Debug(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(this.Process.Name, string.Empty, "Initialization Process failed for {0}. {1}", Process.Name, messageBuilder.ToString());
+                throw new TransformalizeException(_process.Logger, "Initialization Process failed for {0}.", Process.Name);
             }
 
             foreach (var writer in Process.OutputConnection.ViewWriters) {

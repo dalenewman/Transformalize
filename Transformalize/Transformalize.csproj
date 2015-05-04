@@ -2260,7 +2260,6 @@
     <Compile Include="Libs\NVelocity\Runtime\IRuntimeServices.cs" />
     <Compile Include="Libs\NVelocity\Runtime\Log\ILogSystem.cs" />
     <Compile Include="Libs\NVelocity\Runtime\Log\LogManager.cs" />
-    <Compile Include="Libs\NVelocity\Runtime\Log\NLogSystem.cs" />
     <Compile Include="Libs\NVelocity\Runtime\Log\NullLogSystem.cs" />
     <Compile Include="Libs\NVelocity\Runtime\Parser\ICharStream.cs" />
     <Compile Include="Libs\NVelocity\Runtime\Parser\Node\AbstractExecutor.cs" />
@@ -2370,82 +2369,7 @@
     <Compile Include="Libs\Rhino.Etl\Operations\DapperBulkUpdateOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\ParallelUnionAllOperation.cs" />
     <Compile Include="Libs\Rhino.Etl\Operations\SortMergeJoinOperation.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\ConsoleSinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\Constants.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\CustomFormatterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\CustomSinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\EventTextFormatterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\FormatterElementFactory.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\IFormatterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\ISinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\JsonEventTextFormatterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\ParameterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Configuration\XmlEventTextFormatterElement.cs" />
-    <Compile Include="Libs\SemanticLogging\ConsoleLog.cs" />
-    <Compile Include="Libs\SemanticLogging\Elasticsearch\Configuration\ElasticsearchSinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\Elasticsearch\ElasticsearchLog.cs" />
-    <Compile Include="Libs\SemanticLogging\Elasticsearch\Properties\Resource.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Libs\SemanticLogging\Elasticsearch\Sinks\ElasticsearchSink.cs" />
-    <Compile Include="Libs\SemanticLogging\Elasticsearch\Utility\ElasticsearchEventEntrySerializer.cs" />
-    <Compile Include="Libs\SemanticLogging\EventEntry.cs" />
-    <Compile Include="Libs\SemanticLogging\EventListenerExtensions.cs" />
-    <Compile Include="Libs\SemanticLogging\EventSourceAnalyzer\EventSourceAnalyzer.cs" />
-    <Compile Include="Libs\SemanticLogging\EventSourceAnalyzer\EventSourceAnalyzerException.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\DefaultConsoleColorMapper.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\EventTextFormatter.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\EventTextFormatting.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\IConsoleColorMapper.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\IEventTextFormatter.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\JsonEventTextFormatter.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\PropertyNames.cs" />
-    <Compile Include="Libs\SemanticLogging\Formatters\XmlEventTextFormatter.cs" />
-    <Compile Include="Libs\SemanticLogging\GlobalSuppressions.cs" />
-    <Compile Include="Libs\SemanticLogging\Keywords.cs" />
-    <Compile Include="Libs\SemanticLogging\ObservableEventListener.cs" />
-    <Compile Include="Libs\SemanticLogging\Observable\EventEntrySubject.cs" />
-    <Compile Include="Libs\SemanticLogging\Observable\ObservableProjection.cs" />
-    <Compile Include="Libs\SemanticLogging\Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Libs\SemanticLogging\Schema\EventSchema.cs" />
-    <Compile Include="Libs\SemanticLogging\Schema\EventSourceSchemaCache.cs" />
-    <Compile Include="Libs\SemanticLogging\Schema\EventSourceSchemaReader.cs" />
-    <Compile Include="Libs\SemanticLogging\SemanticLoggingEventSource.cs" />
-    <Compile Include="Libs\SemanticLogging\SemanticLoggingEventSourceResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SemanticLoggingEventSourceResources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Libs\SemanticLogging\SinkSubscription.cs" />
-    <Compile Include="Libs\SemanticLogging\Sinks\ConsoleSink.cs" />
-    <Compile Include="Libs\SemanticLogging\Sinks\FlushFailedException.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Configuration\FlatFileSinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Configuration\RollingFlatFileSinkElement.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\FlatFileLog.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\RollingFlatFileLog.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\FlatFileSink.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\RollFileExistsBehavior.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\RollingFlatFilePurger.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\RollingFlatFileSink.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\RollingFlatFileSink.Inner.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\RollInterval.cs" />
-    <Compile Include="Libs\SemanticLogging\TextFile\Sinks\TallyKeepingFileStreamWriter.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\BufferedEventPublisher.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\Buffering.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\EventEntryExtensions.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\EventEntryUtil.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\FileUtil.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\Guard.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\TextFormatterExtensions.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\TypeExtensions.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\XmlExtensions.cs" />
-    <Compile Include="Libs\SemanticLogging\Utility\XmlUtil.cs" />
+    <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2Constants.cs" />
     <Compile Include="Libs\SharpZLib\BZip2\BZip2Exception.cs" />
@@ -2796,15 +2720,9 @@
     <Compile Include="Libs\SolrNet\Utils\X.cs" />
     <Compile Include="Libs\UnidecodeSharpFork\Characters.cs" />
     <Compile Include="Libs\UnidecodeSharpFork\Unidecoder.cs" />
-    <Compile Include="Logging\ElasticSearchSink.cs" />
-    <Compile Include="Logging\ElasticSearchSinkExtensions.cs" />
-    <Compile Include="Logging\MailSinkExtensions.cs" />
-    <Compile Include="Logging\MemorySink.cs" />
-    <Compile Include="Logging\EmailSink.cs" />
-    <Compile Include="Logging\EmailSinkExtensions.cs" />
-    <Compile Include="Logging\LegacyLogFormatter.cs" />
-    <Compile Include="Logging\TflEventSource.cs" />
-    <Compile Include="Logging\TflLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
+    <Compile Include="Logging\VelocityLogSystem.cs" />
     <Compile Include="Main\Common.cs" />
     <Compile Include="Main\Entity\Entities.cs" />
     <Compile Include="Main\Entity\Filter.cs" />
@@ -3382,7 +3300,6 @@
     <Compile Include="Libs\Rhino.Etl\Pipelines\SingleThreadedPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Pipelines\ThreadPoolPipelineExecuter.cs" />
     <Compile Include="Libs\Rhino.Etl\Row.cs" />
-    <Compile Include="Libs\Rhino.Etl\WithLoggingMixin.cs" />
     <Compile Include="Operations\AliasDefault.cs" />
     <Compile Include="Operations\AliasOperation.cs" />
     <Compile Include="Operations\Extract\FileContentsExtract.cs" />
@@ -3622,18 +3539,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Libs\SemanticLogging\Elasticsearch\Properties\Resource.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\SemanticLogging\Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Libs\SemanticLogging\SemanticLoggingEventSourceResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>SemanticLoggingEventSourceResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="Libs\FileHelpers\Diagrams\DataLinkDiagram.cd" />
     <None Include="Libs\FileHelpers\Diagrams\EnginesDiagram.cd" />
     <None Include="Libs\FileHelpers\Diagrams\EnginesDiagramCompact.cd" />

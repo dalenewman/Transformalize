@@ -1,8 +1,6 @@
-using Transformalize.Libs.Rhino.Etl;
+namespace Transformalize.Main.Providers {
 
-namespace Transformalize.Main.Providers
-{
-    public class FalseViewWriter : WithLoggingMixin, IViewWriter {
+    public class NullViewWriter : IViewWriter {
 
         public void Create(Process process) {
         }

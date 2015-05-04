@@ -14,7 +14,7 @@ namespace Transformalize.Operations.Transform {
             Name = string.Format("TimeSpanOperation ({0})", outKey);
 
             if (_parameters.Count < 2) {
-                throw new TransformalizeException(ProcessName, EntityName, "Timespan requires 2 date parameters.");
+                throw new TransformalizeException(EntityName, Logger, "Timespan requires 2 date parameters.");
             }
         }
 

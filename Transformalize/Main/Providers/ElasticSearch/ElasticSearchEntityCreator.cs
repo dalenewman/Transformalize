@@ -4,6 +4,7 @@ using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchEntityCreator : IEntityCreator {
+        private readonly ILogger _logger;
 
         private readonly Dictionary<string, string> _types = new Dictionary<string, string>() {
             {"int64", "long"},
@@ -60,7 +61,9 @@ namespace Transformalize.Main.Providers.ElasticSearch {
         };
         public IEntityExists EntityExists { get; set; }
 
-        public ElasticSearchEntityCreator() {
+        public ElasticSearchEntityCreator(ILogger logger)
+        {
+            _logger = logger;
             EntityExists = new ElasticSearchEntityExists();
         }
 
@@ -80,7 +83,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             if (response.Success)
                 return;
 
-            throw new TransformalizeException(process.Name, entity.Name, response.ServerError.Error);
+            throw new TransformalizeException(_logger, entity.Name, response.ServerError.Error);
         }
 
         public Dictionary<string, object> GetFields(Entity entity) {
@@ -102,7 +105,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
                                 }
                             }
                         } else {
-                            TflLogger.Warn(entity.ProcessName, entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Elasticsearch.", analyzer, searchType.Name);
+                            _logger.EntityWarn(entity.Name, "Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Elasticsearch.", analyzer, searchType.Name);
                             if (!fields.ContainsKey(alias)) {
                                 fields[alias] = new Dictionary<string, object>() { { "type", type } };
                             }

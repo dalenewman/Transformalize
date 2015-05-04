@@ -26,11 +26,14 @@ using Transformalize.Logging;
 namespace Transformalize.Main {
 
     public class TemplateActionReplace : TemplateActionHandler {
+        private readonly ILogger _logger;
         private readonly string _oldValue;
         private readonly string _newValue;
 
-        public TemplateActionReplace()
-            : this(string.Empty, string.Empty) {
+        public TemplateActionReplace(ILogger logger)
+            : this(string.Empty, string.Empty)
+        {
+            _logger = logger;
         }
 
         public TemplateActionReplace(string oldValue, string newValue) {
@@ -60,12 +63,12 @@ namespace Transformalize.Main {
             if (fileInfo.Exists) {
                 var content = File.ReadAllText(fileInfo.FullName);
                 File.WriteAllText(fileInfo.FullName, content.Replace(action.OldValue, action.NewValue));
-                TflLogger.Info(action.ProcessName, string.Empty, "Performed {0} action on {1}.", action.Action, fileInfo.Name);
+                _logger.Info("Performed {0} action on {1}.", action.Action, fileInfo.Name);
             } else {
                 if (action.TemplateName.Equals(string.Empty)) {
-                    TflLogger.Warn(action.ProcessName, string.Empty, "Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
+                    _logger.Warn("Skipping {0} action. File '{1}' does not exist.", action.Action, fileName);
                 } else {
-                    TflLogger.Warn(action.ProcessName, string.Empty, "Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
+                    _logger.Warn("Skipping {0} action in {1} template. Niether file '{2}' nor rendered file '{3}' exist.", action.Action, action.TemplateName, action.File, action.RenderedFile);
                 }
             }
         }

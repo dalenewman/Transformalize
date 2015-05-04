@@ -6,22 +6,28 @@ using Transformalize.Logging;
 namespace Transformalize.Main.Providers.File {
 
     public class FileImporter {
+        private readonly ILogger _logger;
+
+        public FileImporter(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public long ImportScaler(string fileName, TflConnection output) {
             return ImportScaler(new FileInspectionRequest(fileName), output);
         }
 
         public long ImportScaler(FileInspectionRequest request, TflConnection output) {
-            var fileInformation = FileInformationFactory.Create(request);
-            var configuration = BuildProcess(fileInformation, request, output);
-            var initProcess = ProcessFactory.CreateSingle(configuration);
+            var fileInformation = FileInformationFactory.Create(request, _logger);
+            var configuration = BuildProcess(fileInformation, request, output, _logger);
+            var initProcess = ProcessFactory.CreateSingle(configuration, _logger);
             if (initProcess.Connections.Output().Provider != "internal") {
                 initProcess.Options.Mode = "init";
                 initProcess.Mode = "init";
                 initProcess.ExecuteScaler();
             }
 
-            var process = ProcessFactory.CreateSingle(configuration, new Options());
+            var process = ProcessFactory.CreateSingle(configuration, _logger, new Options());
             process.ExecuteScaler();
             return process.Entities[0].Inserts;
         }
@@ -32,9 +38,9 @@ namespace Transformalize.Main.Providers.File {
 
         public FileImportResult Import(FileInspectionRequest request, TflConnection output) {
 
-            var fileInformation = FileInformationFactory.Create(request);
-            var configuration = BuildProcess(fileInformation, request, output);
-            var process = ProcessFactory.CreateSingle(configuration);
+            var fileInformation = FileInformationFactory.Create(request, _logger);
+            var configuration = BuildProcess(fileInformation, request, output, _logger);
+            var process = ProcessFactory.CreateSingle(configuration, _logger);
 
             if (process.Connections.Output().Provider != "internal") {
                 process.Options.Mode = "init";
@@ -44,11 +50,11 @@ namespace Transformalize.Main.Providers.File {
 
             return new FileImportResult {
                 Information = fileInformation,
-                Rows = ProcessFactory.CreateSingle(configuration).Execute()
+                Rows = ProcessFactory.CreateSingle(configuration, _logger).Execute()
             };
         }
 
-        private static TflProcess BuildProcess(FileInformation fileInformation, FileInspectionRequest request, TflConnection output) {
+        private static TflProcess BuildProcess(FileInformation fileInformation, FileInspectionRequest request, TflConnection output, ILogger logger) {
 
             var root = new TflRoot(string.Format(@"<tfl><processes><add name='{0}'><connections><add name='input' provider='internal' /></connections></add></processes></tfl>", request.EntityName), null);
 
@@ -74,13 +80,13 @@ namespace Transformalize.Main.Providers.File {
                 e.DetectChanges = false;
             }));
 
-            var fields = new FieldInspector().Inspect(fileInformation, request);
+            var fields = new FieldInspector(logger).Inspect(fileInformation, request);
 
             foreach (var fd in fields) {
                 if (fd.Type.Equals("string")) {
-                    TflLogger.Info(request.ProcessName, request.EntityName, "Using {0} character string for {1}.", fd.Length, fd.Name);
+                    logger.EntityInfo(request.EntityName, "Using {0} character string for {1}.", fd.Length, fd.Name);
                 } else {
-                    TflLogger.Info(request.ProcessName, request.EntityName, "Using {0} for {1}.", fd.Type, fd.Name);
+                    logger.EntityInfo(request.EntityName, "Using {0} for {1}.", fd.Type, fd.Name);
                 }
 
                 var field = fd;

@@ -17,12 +17,13 @@ namespace Transformalize.Main {
 
             foreach (var entity in _process.Entities) {
                 entity.RelationshipToMaster = ReadRelationshipToMaster(entity);
-                if (!entity.RelationshipToMaster.Any() && !entity.IsMaster()) {
-                    if (_process.Mode == "metadata") {
-                        TflLogger.Warn(entity.ProcessName, entity.Name, "The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
-                    } else {
-                        throw new TransformalizeException("The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
-                    }
+                if (entity.RelationshipToMaster.Any() || entity.IsMaster()) 
+                    continue;
+
+                if (_process.Mode == "metadata") {
+                    _process.Logger.EntityWarn(entity.Name, "The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
+                } else {
+                    throw new TransformalizeException(_process.Logger, "The entity {0} must have a relationship to the master entity {1}.", entity.Name, _process.MasterEntity == null ? "undefined" : _process.MasterEntity.Name);
                 }
             }
         }

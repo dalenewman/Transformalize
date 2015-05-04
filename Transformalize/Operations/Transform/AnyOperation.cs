@@ -38,7 +38,7 @@ namespace Transformalize.Operations.Transform {
             if (Common.CompareMap.ContainsKey(op))
                 return;
 
-            throw new TransformalizeException(ProcessName, EntityName, "Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
+            throw new TransformalizeException(Logger, EntityName, "Operator {0} is invalid.  Try equal, notequal, greaterthan, greaterthanequal, greaterthan, or greaterthanequal.");
 
         }
 

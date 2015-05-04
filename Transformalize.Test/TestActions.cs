@@ -26,6 +26,7 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Dapper;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -46,7 +47,7 @@ namespace Transformalize.Test {
                     .To(file2)
                 .Process();
 
-            ProcessFactory.CreateSingle(process).ExecuteScaler();
+            ProcessFactory.CreateSingle(process, new TestLogger()).ExecuteScaler();
 
             Assert.AreEqual("f1,f2,f3\nv1,v2,v3", File.ReadAllText(file2));
         }
@@ -68,7 +69,7 @@ namespace Transformalize.Test {
                     .To(file)
                 .Process();
 
-            ProcessFactory.CreateSingle(process).ExecuteScaler();
+            ProcessFactory.CreateSingle(process, new TestLogger()).ExecuteScaler();
 
             Assert.AreEqual("Setting1: 1, Setting2: 2;", File.ReadAllText(file));
 
@@ -91,7 +92,7 @@ namespace Transformalize.Test {
                     .To("output")
                 .Process();
 
-            var process = ProcessFactory.CreateSingle(element);
+            var process = ProcessFactory.CreateSingle(element, new TestLogger());
 
             process.ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));

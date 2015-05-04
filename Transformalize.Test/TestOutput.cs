@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Libs.Rhino.Etl;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Test.Builders;
 
@@ -59,7 +60,7 @@ namespace Transformalize.Test {
 </add>
 </processes></tfl>".Replace('\'', '"');
 
-            var process = ProcessFactory.Create(xml)[0];
+            var process = ProcessFactory.Create(xml, new TestLogger())[0];
             process.Entities[0].InputOperation = input;
             var output = process.Execute();
 
@@ -103,7 +104,7 @@ namespace Transformalize.Test {
 </add>
 </processes></tfl>", file1,file2).Replace('\'', '"');
 
-            var process = ProcessFactory.Create(xml)[0];
+            var process = ProcessFactory.Create(xml, new TestLogger())[0];
             process.Entities[0].InputOperation = input;
             var rows = process.Execute();
 

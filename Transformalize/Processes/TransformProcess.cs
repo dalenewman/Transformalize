@@ -60,11 +60,11 @@ namespace Transformalize.Processes {
             if (errors.Any()) {
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        TflLogger.Error(this.Process.Name, string.Empty, e.Message);
-                        TflLogger.Debug(this.Process.Name, string.Empty, e.StackTrace);
+                        _process.Logger.Error(e.Message);
+                        _process.Logger.Debug(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(this.Process.Name, string.Empty, "Transform process failed for {0}.", Process.Name);
+                throw new TransformalizeException(Logger, "Transform process failed for {0}.", Process.Name);
             }
 
             base.PostProcessing();

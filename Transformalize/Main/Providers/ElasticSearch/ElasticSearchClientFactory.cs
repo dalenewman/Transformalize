@@ -3,7 +3,6 @@ using Transformalize.Libs.Elasticsearch.Net.Connection.Configuration;
 using Transformalize.Libs.Elasticsearch.Net.ConnectionPool;
 using Transformalize.Libs.Nest;
 using Transformalize.Libs.Nest.Domain.Connection;
-using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
 
@@ -15,7 +14,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             var entityName = entityExists ? entity.Name : string.Empty;
             var alias = entityExists ? entity.Alias.ToLower() : string.Empty;
 
-            TflLogger.Debug(processName, entityName, "Preparing Elasticsearch.NET client for {0}", connection.Uri());
+            connection.Logger.EntityDebug(entityName, "Preparing Elasticsearch.NET client for {0}", connection.Uri());
             var settings = new ConnectionConfiguration(
                 new SingleNodeConnectionPool(connection.Uri())
             );
@@ -34,7 +33,7 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             var entityName = entityExists ? entity.Name : string.Empty;
             var alias = entityExists ? entity.Alias.ToLower() : string.Empty;
 
-            TflLogger.Debug(processName, entityName, "Preparing NEST client for {0}", connection.Uri());
+            connection.Logger.EntityDebug(entityName, "Preparing NEST client for {0}", connection.Uri());
             var pool = new SingleNodeConnectionPool(connection.Uri());
             var settings = new ConnectionSettings(pool).SetTimeout(System.Threading.Timeout.Infinite);
 

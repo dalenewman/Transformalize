@@ -9,14 +9,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Transformalize.Libs.Rhino.Etl.Enumerables
-{
+namespace Transformalize.Libs.Rhino.Etl.Enumerables {
     /// <summary>
     ///     An iterator to be consumed by concurrent threads only which supplies an element of the decorated enumerable one by one
     /// </summary>
     /// <typeparam name="T">The type of the decorated enumerable</typeparam>
-    public class GatedThreadSafeEnumerator<T> : WithLoggingMixin, IEnumerable<T>, IEnumerator<T>
-    {
+    public class GatedThreadSafeEnumerator<T> : WithLoggingMixin, IEnumerable<T>, IEnumerator<T> {
         private readonly IEnumerator<T> innerEnumerator;
         private readonly int numberOfConsumers;
         private readonly object sync = new object();
@@ -30,8 +28,8 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// </summary>
         /// <param name="numberOfConsumers">The number of consumers that will be consuming this iterator concurrently</param>
         /// <param name="source">The decorated enumerable that will be iterated and fed one element at a time to all consumers</param>
-        public GatedThreadSafeEnumerator(int numberOfConsumers, IEnumerable<T> source)
-        {
+        /// <param name="logger"></param>
+        public GatedThreadSafeEnumerator(int numberOfConsumers, IEnumerable<T> source) {
             this.numberOfConsumers = numberOfConsumers;
             consumersLeft = numberOfConsumers;
             innerEnumerator = source.GetEnumerator();
@@ -40,8 +38,7 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <summary>
         ///     Number of consumers    left that have not yet completed
         /// </summary>
-        public int ConsumersLeft
-        {
+        public int ConsumersLeft {
             get { return consumersLeft; }
         }
 
@@ -49,23 +46,19 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         ///     Get    the    enumerator
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
-        {
+        public IEnumerator<T> GetEnumerator() {
             return this;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
+        IEnumerator IEnumerable.GetEnumerator() {
             return GetEnumerator();
         }
 
         /// <summary>
         ///     Dispose    the    enumerator
         /// </summary>
-        public void Dispose()
-        {
-            if (Interlocked.Decrement(ref consumersLeft) == 0)
-            {
+        public void Dispose() {
+            if (Interlocked.Decrement(ref consumersLeft) == 0) {
                 Debug("Disposing inner enumerator");
                 innerEnumerator.Dispose();
             }
@@ -75,11 +68,9 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         ///     MoveNext the enumerator
         /// </summary>
         /// <returns></returns>
-        public bool MoveNext()
-        {
+        public bool MoveNext() {
             lock (sync)
-                if (Interlocked.Increment(ref callsToMoveNext) == numberOfConsumers)
-                {
+                if (Interlocked.Increment(ref callsToMoveNext) == numberOfConsumers) {
                     callsToMoveNext = 0;
                     moveNext = innerEnumerator.MoveNext();
                     current = innerEnumerator.Current;
@@ -87,9 +78,7 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
                     Debug("Pulsing all waiting threads");
 
                     Monitor.PulseAll(sync);
-                }
-                else
-                {
+                } else {
                     Monitor.Wait(sync);
                 }
 
@@ -99,22 +88,19 @@ namespace Transformalize.Libs.Rhino.Etl.Enumerables
         /// <summary>
         ///     Reset the enumerator
         /// </summary>
-        public void Reset()
-        {
+        public void Reset() {
             throw new NotSupportedException();
         }
 
         /// <summary>
         ///     The    current    value of the enumerator
         /// </summary>
-        public T Current
-        {
+        public T Current {
             get { return current; }
         }
 
-        object IEnumerator.Current
-        {
-            get { return ((IEnumerator<T>) this).Current; }
+        object IEnumerator.Current {
+            get { return ((IEnumerator<T>)this).Current; }
         }
     }
 }

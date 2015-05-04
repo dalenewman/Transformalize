@@ -1,18 +1,19 @@
 
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchDependencies : AbstractConnectionDependencies {
-        public ElasticSearchDependencies()
+        public ElasticSearchDependencies(ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new ElasticSearchConnectionChecker(),
+                new NullTableQueryWriter(),
+                new ElasticSearchConnectionChecker(logger),
                 new ElasticSearchEntityRecordsExist(),
                 new ElasticSearchEntityDropper(),
-                new ElasticSearchEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
+                new ElasticSearchEntityCreator(logger),
+                new List<IViewWriter> { new NullViewWriter() },
                 new ElasticSearchTflWriter(),
-                new FalseScriptRunner(),
-                new FalseDataTypeService()) { }
+                new NullScriptRunner(),
+                new NullDataTypeService(), logger) { }
     }
 }

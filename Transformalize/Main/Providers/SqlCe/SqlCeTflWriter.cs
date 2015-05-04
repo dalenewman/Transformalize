@@ -1,13 +1,12 @@
 using System.Data;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.SqlCe {
 
-    public class SqlCeTflWriter : WithLoggingMixin, ITflWriter {
+    public class SqlCeTflWriter : ITflWriter {
 
-        public void Initialize(Process process) {
-
+        public void Initialize(Process process)
+        {
             if (!new SqlCeTableExists(process.OutputConnection).OutputExists("TflBatch")) {
                 Execute(process.OutputConnection, @"
                     CREATE TABLE [TflBatch](
@@ -38,12 +37,13 @@ namespace Transformalize.Main.Providers.SqlCe {
                         TflBatchId ASC
                     );
                 ");
-                Debug("Created TflBatch.");
+
+                process.Logger.Debug("Created TflBatch.");
             }
 
             Execute(process.OutputConnection, "DELETE FROM TflBatch WHERE ProcessName = '{0}';", process.Name);
 
-            TflLogger.Info(process.Name, string.Empty, "Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
+            process.Logger.Info( "Initialized TrAnSfOrMaLiZeR {0} connection.", process.OutputConnection.Name);
         }
 
         private static void Execute(AbstractConnection connection, string sqlFormat, params object[] values) {

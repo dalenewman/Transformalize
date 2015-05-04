@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Logging;
 using Transformalize.Runner;
@@ -11,10 +9,12 @@ namespace Transformalize.Main {
     public class ScriptReader {
 
         private readonly List<TflScript> _elements;
+        private readonly ILogger _logger;
         private readonly char[] _s = new[] { '\\' };
 
-        public ScriptReader(List<TflScript> elements) {
+        public ScriptReader(List<TflScript> elements, ILogger logger) {
             _elements = elements;
+            _logger = logger;
         }
 
         public Dictionary<string, Script> Read() {
@@ -31,15 +31,15 @@ namespace Transformalize.Main {
 
                 var resource = script.Path.Equals(string.Empty) ? script.File : script.Path.TrimEnd(_s) + @"\" + script.File;
                 if (resource.StartsWith("http", StringComparison.OrdinalIgnoreCase)) {
-                    var contents = new ContentsWebReader().Read(resource);
+                    var contents = new ContentsWebReader(_logger).Read(resource);
                     scripts[script.Name] = new Script(script.Name, contents.Content, contents.FileName);
                 } else {
                     var fileInfo = new FileInfo(resource);
                     if (!fileInfo.Exists) {
-                        TflLogger.Warn(string.Empty, string.Empty, "Missing Script: {0}.", fileInfo.FullName);
+                        _logger.Warn("Missing Script: {0}.", fileInfo.FullName);
                     } else {
                         scripts[script.Name] = new Script(script.Name, File.ReadAllText(fileInfo.FullName), fileInfo.FullName);
-                        TflLogger.Debug(string.Empty, string.Empty, "Loaded script {0}.", fileInfo.FullName);
+                        _logger.Debug("Loaded script {0}.", fileInfo.FullName);
                     }
                 }
             }

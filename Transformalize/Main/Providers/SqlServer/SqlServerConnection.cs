@@ -187,11 +187,11 @@ namespace Transformalize.Main.Providers.SqlServer {
                     AddParameter(cmd, "@Deletes", entity.Deletes);
 
                     if (entity.CanDetectChanges(input.IsDatabase)) {
-                        var end = new DefaultFactory().Convert(entity.End, entity.Version.SimpleType);
+                        var end = new DefaultFactory(Logger).Convert(entity.End, entity.Version.SimpleType);
                         AddParameter(cmd, "@End", end);
                     }
 
-                    TflLogger.Debug(entity.ProcessName, entity.Name, cmd.CommandText);
+                    Logger.EntityDebug(entity.Name, cmd.CommandText);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -258,8 +258,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                         entity.End = entity.HasRows ? reader.GetValue(0) : null;
                     }
                 } catch (Exception ex) {
-                    TflLogger.Debug(entity.ProcessName, entity.Name, ex.StackTrace);
-                    throw new TransformalizeException(entity.ProcessName, entity.Name, ex.Message);
+                    Logger.EntityDebug(entity.Name, ex.StackTrace);
+                    throw new TransformalizeException(Logger, entity.Name, ex.Message);
                 }
             }
         }

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.RazorEngine.Text;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.RazorEngine.Templating
 {
@@ -38,7 +39,8 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type.</param>
         /// <param name="cacheName">The name of the template type in the cache.</param>
-        void Compile(string razorTemplate, Type modelType, string cacheName);
+        /// <param name="logger"></param>
+        void Compile(string razorTemplate, Type modelType, string cacheName, ILogger logger);
 
         /// <summary>
         ///     Creates an instance of <see cref="ITemplate{T}" /> from the specified string template.
@@ -52,10 +54,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
         ///     If razorTemplate is not NULL, this parameter may be NULL (unused).
         /// </param>
         /// <param name="model">The model instance or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="ITemplate{T}" />.
         /// </returns>
-        ITemplate CreateTemplate(string razorTemplate, Type templateType, object model);
+        ITemplate CreateTemplate(string razorTemplate, Type templateType, object model, ILogger logger);
 
         /// <summary>
         ///     Creates a set of templates from the specified string templates.
@@ -83,10 +86,11 @@ namespace Transformalize.Libs.RazorEngine.Templating
         /// </summary>
         /// <param name="razorTemplate">The string template.</param>
         /// <param name="modelType">The model type or NULL if no model exists.</param>
+        /// <param name="logger"></param>
         /// <returns>
         ///     An instance of <see cref="Type" />.
         /// </returns>
-        Type CreateTemplateType(string razorTemplate, Type modelType);
+        Type CreateTemplateType(string razorTemplate, Type modelType, ILogger logger);
 
         /// <summary>
         ///     Creates a set of template types from the specfied string templates.

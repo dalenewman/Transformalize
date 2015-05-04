@@ -73,7 +73,7 @@ namespace Transformalize.Operations.Transform {
                 case "int64":
                     return items.Average(x => Convert.ToInt64(x));
                 default:
-                    TflLogger.Warn(ProcessName, EntityName, "Unable to handle average of type {0}", _outType);
+                    Logger.EntityWarn(EntityName, "Unable to handle average of type {0}", _outType);
                     return 0;
             }
         }

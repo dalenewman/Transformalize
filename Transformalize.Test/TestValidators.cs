@@ -25,6 +25,7 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
@@ -154,7 +155,7 @@ namespace Transformalize.Test {
 </cfg>
 ".Replace('\'', '"');
 
-            var process = ProcessFactory.Create(xml)[0];
+            var process = ProcessFactory.Create(xml, new TestLogger())[0];
             process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
@@ -197,7 +198,7 @@ namespace Transformalize.Test {
 </cfg>
 ".Replace('\'', '"');
 
-            var process = ProcessFactory.Create(xml)[0];
+            var process = ProcessFactory.Create(xml, new TestLogger())[0];
             process.Entities[0].InputOperation = input;
             var output = process.Execute().ToArray();
 
@@ -236,7 +237,7 @@ namespace Transformalize.Test {
                 .Row("name", "Vlad")
                 .Row("name","Tara").ToOperation();
 
-            var process = ProcessFactory.CreateSingle(cfg);
+            var process = ProcessFactory.CreateSingle(cfg, new TestLogger());
             var output = process.Execute().ToArray();
 
             Assert.AreEqual("DALE", output[0]["new-name"]);

@@ -34,10 +34,12 @@ namespace Transformalize.Processes {
     public class EntityDeleteProcess : EtlProcess {
         private readonly Process _process;
         private readonly Entity _entity;
+        private readonly ILogger _logger;
 
         public EntityDeleteProcess(Process process, Entity entity)
             : base(process) {
             _process = process;
+            _logger = process.Logger;
             _entity = entity;
         }
 
@@ -62,7 +64,7 @@ namespace Transformalize.Processes {
 
             //primary key and/or version may be calculated, so defaults and transformations should be run on them
             if (!_entity.PrimaryKey.All(f => f.Input) || (_entity.Version != null && !_entity.Version.Input)) {
-                TflLogger.Warn(_entity.ProcessName, _entity.Alias, "Using a calculated primary key or version to perform deletes requires setting default values and all transformations to run.  The preferred method is to use an input field.");
+                _logger.EntityWarn(_entity.Alias, "Using a calculated primary key or version to perform deletes requires setting default values and all transformations to run.  The preferred method is to use an input field.");
                 Register(new ApplyDefaults(true, new Fields(_entity.Fields, _entity.CalculatedFields)) { EntityName = _entity.Name });
                 foreach (var transform in _entity.OperationsBeforeAggregation) {
                     Register(transform);
@@ -83,16 +85,13 @@ namespace Transformalize.Processes {
 
             var errors = GetAllErrors().ToArray();
             if (errors.Any()) {
-                var messageBuilder = new StringBuilder();
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        TflLogger.Error(_entity.ProcessName, _entity.Name, e.Message);
-                        messageBuilder.AppendLine(e.Message);
-                        TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
-                        messageBuilder.AppendLine(e.StackTrace);
+                        _logger.EntityError(_entity.Name, e.Message);
+                        _logger.EntityDebug(_entity.Name, e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(this.Process.Name, string.Empty, "Entity Delete Process for {0} failed. {1}", _entity.Alias, messageBuilder.ToString());
+                throw new TransformalizeException(Logger, string.Empty, "Entity Delete Process for {0} failed.", _entity.Alias);
             }
 
             base.PostProcessing();

@@ -47,7 +47,7 @@ namespace Transformalize.Main.Providers.Folder {
 
         public override Fields GetEntitySchema(Process process, Entity entity, bool isMaster = false) {
             var file = Folder.TrimEnd("\\".ToCharArray()) + "\\" + entity.Name.TrimStart("\\".ToCharArray());
-            return new FieldInspector().Inspect(file);
+            return new FieldInspector(process.Logger).Inspect(file);
         }
 
         public override IOperation Delete(Entity entity) {

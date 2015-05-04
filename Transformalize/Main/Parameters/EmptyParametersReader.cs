@@ -20,13 +20,12 @@
 
 #endregion
 
-namespace Transformalize.Main
-{
-    public class EmptyParametersReader : IParametersReader
-    {
-        public IParameters Read()
-        {
-            return new Parameters.Parameters();
+using Transformalize.Logging;
+
+namespace Transformalize.Main {
+    public class EmptyParametersReader : IParametersReader {
+        public IParameters Read() {
+            return new Parameters.Parameters(new DefaultFactory(new NullLogger()));
         }
     }
 }

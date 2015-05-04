@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers {
 
     public abstract class AbstractConnectionDependencies {
 
+        public ILogger Logger { get; private set; }
         public ITableQueryWriter TableQueryWriter { get; private set; }
         public IConnectionChecker ConnectionChecker { get; private set; }
         public IEntityRecordsExist EntityRecordsExist { get; private set; }
@@ -23,7 +25,8 @@ namespace Transformalize.Main.Providers {
             List<IViewWriter> viewWriters,
             ITflWriter tflWriter,
             IScriptRunner scriptRunner,
-            IDataTypeService dataTypeService
+            IDataTypeService dataTypeService,
+            ILogger logger
             ) {
             TableQueryWriter = tableQueryWriter;
             ConnectionChecker = connectionChecker;
@@ -34,6 +37,7 @@ namespace Transformalize.Main.Providers {
             TflWriter = tflWriter;
             ScriptRunner = scriptRunner;
             DataTypeService = dataTypeService;
+            Logger = logger;
         }
     }
 }

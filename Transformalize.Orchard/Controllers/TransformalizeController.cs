@@ -8,8 +8,8 @@ using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
+using Orchard.Logging;
 using Transformalize.Extensions;
-using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
@@ -22,6 +22,7 @@ namespace Transformalize.Orchard.Controllers {
         private readonly ITransformalizeService _transformalize;
         private readonly IFileService _fileService;
         public Localizer T { get; set; }
+        public ILogger Logger { get; set; }
 
         public TransformalizeController(
             IOrchardServices services,
@@ -32,6 +33,7 @@ namespace Transformalize.Orchard.Controllers {
             _transformalize = transformalize;
             _fileService = fileService;
             T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
         }
 
         [Themed]
@@ -132,7 +134,7 @@ namespace Transformalize.Orchard.Controllers {
                     model.DisplayLog = true;
                     model.TransformalizeResponse.Log.Add(string.Format("{0} | error | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.Message));
                     model.TransformalizeResponse.Log.Add(string.Format("{0} | debug | orchard | . | {1}", DateTime.Now.ToString("HH:mm:ss"), ex.StackTrace));
-                    TflLogger.Error(string.Empty, string.Empty, ex.Message + Environment.NewLine + ex.StackTrace);
+                    Logger.Error(ex.Message + Environment.NewLine + ex.StackTrace);
                 }
             } else {
                 model.TransformalizeResponse = _transformalize.Run(request);

@@ -32,7 +32,7 @@ namespace Transformalize.Test.Builders {
         }
 
         public IOperation ToOperation() {
-            var mock = new Mock<IOperation>();
+            var mock = new Mock<IOperation>() { Name = "Mock"};
             mock.Setup(foo => foo.Execute(It.IsAny<IEnumerable<Row>>())).Returns(ToRows());
             return mock.Object;
         }

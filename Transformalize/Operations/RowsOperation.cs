@@ -6,7 +6,7 @@ namespace Transformalize.Operations {
     public class RowsOperation : AbstractOperation {
         private readonly IEnumerable<Row> _rows;
 
-        public RowsOperation(IEnumerable<Row> rows) {
+        public RowsOperation(IEnumerable<Row> rows){
             _rows = rows;
         }
 

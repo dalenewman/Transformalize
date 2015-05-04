@@ -22,17 +22,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.IO;
 using System.Linq;
-using System.Text;
-using Transformalize.Extensions;
-using Transformalize.Libs.Dapper;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Libs.SemanticLogging;
-using Transformalize.Libs.SemanticLogging.TextFile;
-using Transformalize.Libs.SemanticLogging.TextFile.Sinks;
 using Transformalize.Logging;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.File;
@@ -46,7 +38,6 @@ namespace Transformalize.Main {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
         private List<IOperation> _transformOperations = new List<IOperation>();
-        private IParameters _parameters = new Parameters.Parameters();
         private bool _enabled = true;
         private Connections _connections = new Connections();
         private bool _logStarted;
@@ -78,8 +69,6 @@ namespace Transformalize.Main {
         private List<Log> _logList = new List<Log>();
         private bool _shouldLog = true;
         private bool _parallel = true;
-        private List<ObservableEventListener> _eventListeners = new List<ObservableEventListener>();
-        private List<SinkSubscription> _sinkSubscriptions = new List<SinkSubscription>();
 
         // properties
         public string TimeZone { get; set; }
@@ -123,10 +112,7 @@ namespace Transformalize.Main {
             set { _transformOperations = value; }
         }
 
-        public IParameters Parameters {
-            get { return _parameters; }
-            set { _parameters = value; }
-        }
+        public IParameters Parameters { get; set; }
 
         public IEnumerable<TemplateAction> Actions { get; set; }
 
@@ -137,17 +123,7 @@ namespace Transformalize.Main {
             set { _logRows = value; }
         }
 
-        public List<Log> Log {
-            get { return _logList; }
-            set { _logList = value; }
-        }
-
         public bool VelocityInitialized { get; set; }
-
-        public bool ShouldLog {
-            get { return _shouldLog; }
-            set { _shouldLog = value; }
-        }
 
         public bool Parallel {
             get { return _parallel; }
@@ -155,19 +131,30 @@ namespace Transformalize.Main {
         }
 
         //constructor
-        public Process(string name = "") {
+        public Process(string name, ILogger logger) {
+            Logger = logger;
             Name = name;
             DataSets = new Dictionary<string, List<Row>>();
+            Parameters = new Parameters.Parameters(new DefaultFactory(logger));
         }
 
         //methods
-        public void CheckIfReady() {
-            if (!Enabled && !Options.Force)
-                throw new TransformalizeException(Name, string.Empty, "Process is disabled.");
-
-            foreach (var connection in Connections.Where(cn => !cn.Connection.IsReady())) {
-                throw new TransformalizeException(Name, string.Empty, "Connection {0} failed.", connection.Name);
+        public bool IsReady() {
+            if (!Enabled && !Options.Force) {
+                Logger.Warn("Process is disabled.");
+                return false;
             }
+
+            var checks = new Dictionary<string, bool>();
+            foreach (var connection in Connections) {
+                var ready = connection.Connection.IsReady();
+                if (!ready) {
+                    Logger.Error("Connection {0} is not ready.", connection.Name);
+                }
+                checks[connection.Name] = ready;
+            }
+
+            return checks.All(kv => kv.Value);
         }
 
         private IProcessRunner GetRunner() {
@@ -183,131 +170,29 @@ namespace Transformalize.Main {
 
         public void ExecuteScaler() {
             StartLogging();
-            var p = this;
-            using (var runner = GetRunner()) {
-                runner.Run(ref p);
-            }
+            GetRunner().Run(this);
             StopLogging();
         }
 
         public IEnumerable<Row> Execute() {
             StartLogging();
-            var p = this;
-            using (var runner = GetRunner()) {
-                var rows = runner.Run(ref p);
-                StopLogging();
-                return rows;
-            }
-        }
-
-        public List<ObservableEventListener> EventListeners {
-            get { return _eventListeners; }
-            set { _eventListeners = value; }
+            var rows = GetRunner().Run(this);
+            StopLogging();
+            return rows;
         }
 
         public void StopLogging() {
-            foreach (var listener in EventListeners) {
-                listener.DisableEvents(TflEventSource.Log);
-                listener.Dispose();
-            }
-            EventListeners.Clear();
-            foreach (var sink in SinkSubscriptions) {
-                sink.Dispose();
-            }
-            SinkSubscriptions.Clear();
+            Logger.Stop();
             _logStarted = false;
         }
 
         public void StartLogging() {
-
-            try {
-                if (_logStarted || !ShouldLog || Log == null || Log.Count <= 0)
-                    return;
-
-                foreach (var log in Log) {
-                    switch (log.Provider) {
-                        case ProviderType.File:
-                            log.Folder = log.Folder.Replace('/', '\\');
-                            log.File = log.File.Replace('/', '\\');
-                            log.Folder = (log.Folder.Equals(Common.DefaultValue) ? "logs" : log.Folder).TrimEnd('\\') + "\\";
-                            log.File = (log.File.Equals(Common.DefaultValue) ? "tfl-" + Name + ".log" : log.File).TrimStart('\\');
-
-                            var fileListener = new ObservableEventListener();
-                            fileListener.EnableEvents(TflEventSource.Log, log.Level);
-                            SinkSubscriptions.Add(fileListener.LogToRollingFlatFile(log.Folder + log.File, 5000, "yyyy-MM-dd", RollFileExistsBehavior.Increment, RollInterval.Day, new LegacyLogFormatter(), 0, log.Async));
-                            EventListeners.Add(fileListener);
-                            break;
-                        case ProviderType.Mail:
-                            if (log.Subject.Equals(Common.DefaultValue)) {
-                                log.Subject = Name + " " + log.Level;
-                            }
-                            var mailListener = new ObservableEventListener();
-                            mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
-                            SinkSubscriptions.Add(mailListener.LogToEmail(log));
-                            EventListeners.Add(mailListener);
-                            break;
-                        case ProviderType.ElasticSearch:
-                            //note: does not work
-                            if (log.Connection == null) {
-                                throw new TransformalizeException(Name, string.Empty, "The elasticsearch logger needs to reference an elasticsearch connection in the <connections/> collection.");
-                            }
-                            var elasticListener = new ObservableEventListener();
-                            elasticListener.EnableEvents(TflEventSource.Log, log.Level);
-                            SinkSubscriptions.Add(
-                                elasticListener.LogToElasticSearch(
-                                    Name,
-                                    log,
-                                    TimeSpan.FromSeconds(5),
-                                    TimeSpan.FromSeconds(10),
-                                    500,
-                                    2000
-                                )
-                            );
-                            EventListeners.Add(elasticListener);
-                            break;
-                    }
-
-                }
-            } catch (Exception ex) {
-                if (!ShouldLog || Log == null || Log.Count <= 0)
-                    return;
-                foreach (var exception in ex.FlattenHierarchy()) {
-                    if (exception is IOException) {
-                        TflLogger.Warn(Name, string.Empty, exception.Message);
-
-                    } else {
-                        TflLogger.Warn(Name, string.Empty, "Troubling handling logging configuration. {0} {1} {2}", exception.Message, exception.StackTrace, exception.GetType());
-                    }
-                }
-            }
-
-            foreach (var log in Log) {
-                switch (log.Provider) {
-                    case ProviderType.File:
-                        TflLogger.Info(Name, "Log", "Writing errors to {0}", log.Folder + log.File);
-                        break;
-                    case ProviderType.Mail:
-                        TflLogger.Info(Name, "Log", "Mailing errors to {0}", log.To);
-                        break;
-                    case ProviderType.ElasticSearch:
-                        TflLogger.Info(Name, "Log", "Writing errors to {0}Transformalize/LogEntry", log.Connection.Uri());
-                        break;
-                    default:
-                        TflLogger.Warn(Name, "Log", "Log does not support {0} provider. You may only add mail and file providers from the configuration.", log.Provider);
-                        break;
-                }
-            }
-
+            Logger.Start();
             _logStarted = true;
-
-        }
-
-        public List<SinkSubscription> SinkSubscriptions {
-            get { return _sinkSubscriptions; }
-            set { _sinkSubscriptions = value; }
         }
 
         public Dictionary<string, List<Row>> DataSets { get; set; }
+        public ILogger Logger { get; private set; }
 
         public Fields OutputFields() {
             return Fields().WithOutput();
@@ -358,7 +243,7 @@ namespace Transformalize.Main {
             }
 
             if (!IsValidationResultField(alias, entity) && issueWarning) {
-                TflLogger.Warn(Name, entity, "Can't find field with alias {0}", alias);
+                Logger.Warn("Can't find field with alias {0}", alias);
             }
 
             return null;

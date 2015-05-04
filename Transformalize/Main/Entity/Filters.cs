@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Transformalize.Main {
+
     public class Filters : List<Filter> {
+
         public string ResolveExpression(string textQualifier) {
             var builder = new StringBuilder();
             var last = this.Count - 1;

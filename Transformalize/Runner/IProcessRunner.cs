@@ -4,7 +4,7 @@ using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
-    public interface IProcessRunner : IDisposable {
-        IEnumerable<Row> Run(ref Process process);
+    public interface IProcessRunner {
+        IEnumerable<Row> Run(Process process);
     }
 }

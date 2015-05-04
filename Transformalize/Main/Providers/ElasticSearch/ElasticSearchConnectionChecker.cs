@@ -4,6 +4,11 @@ using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.ElasticSearch {
     public class ElasticSearchConnectionChecker : IConnectionChecker {
+        private readonly ILogger _logger;
+
+        public ElasticSearchConnectionChecker(ILogger logger) {
+            _logger = logger;
+        }
 
         private static readonly Dictionary<int, bool> Checks = new Dictionary<int, bool>();
 
@@ -18,12 +23,12 @@ namespace Transformalize.Main.Providers.ElasticSearch {
             try {
                 var response = client.Client.Ping();
                 if (response.HttpStatusCode != null && response.HttpStatusCode == 200) {
-                    TflLogger.Debug(string.Empty, string.Empty, "Successful ping of {0}.", connection.Name);
+                    _logger.Debug("Successful ping of {0}.", connection.Name);
                     return true;
                 }
-                TflLogger.Warn(string.Empty, string.Empty, "Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, response.ServerError.Error);
+                _logger.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, response.ServerError.Error);
             } catch (Exception e) {
-                TflLogger.Warn(string.Empty, string.Empty, "Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, e.Message);
+                _logger.Warn("Failed to connect to {0}, {1}:{2}. {3}", connection.Name, connection.Server, connection.Port, e.Message);
                 return false;
             }
 

@@ -12,14 +12,17 @@ namespace Transformalize.Runner {
 
     public class MetadataRunner : IProcessRunner {
 
-        public IEnumerable<Row> Run(ref Process process) {
-
-            process.CheckIfReady();
-            process.Setup();
+        public IEnumerable<Row> Run(Process process) {
 
             var result = Enumerable.Empty<Row>();
+            if (!process.IsReady()) {
+                return result;
+            }
+
             var timer = new Stopwatch();
             timer.Start();
+
+            process.Setup();
 
             var fileName = new FileInfo(Path.Combine(Common.GetTemporaryFolder(process.Name), "MetaData.xml")).FullName;
             var writer = new MetaDataWriter(process);
@@ -27,13 +30,10 @@ namespace Transformalize.Runner {
             System.Diagnostics.Process.Start(fileName);
 
             timer.Stop();
-            TflLogger.Info(process.Name, string.Empty, "Calculated metadata in {0}.", timer.Elapsed);
+            process.Logger.Info( "Calculated metadata in {0}.", timer.Elapsed);
             process.Complete = true;
             return result;
         }
 
-        public void Dispose() {
-            //LogManager.Flush();
-        }
     }
 }

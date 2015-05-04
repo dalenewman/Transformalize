@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Operations;
+using Transformalize.Logging;
 
 namespace Transformalize.Libs.Rhino.Etl
 {
@@ -15,6 +16,8 @@ namespace Transformalize.Libs.Rhino.Etl
     /// </summary>
     public interface IPipelineExecuter
     {
+        ILogger Logger { get; set; }
+
         /// <summary>
         ///     Gets a value indicating whether this instance has errors.
         /// </summary>

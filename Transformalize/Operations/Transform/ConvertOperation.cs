@@ -18,7 +18,7 @@ namespace Transformalize.Operations.Transform {
             _fromFormat = fromFormat;
 
             if (!_conversionMap.ContainsKey(_outType)) {
-                throw new TransformalizeException(ProcessName, EntityName, "Type {0} is not mapped for conversion.", _outType);
+                throw new TransformalizeException(Logger, EntityName, "Type {0} is not mapped for conversion.", _outType);
             }
 
             if (_outType == "datetime" && !string.IsNullOrEmpty(_fromFormat)) {
@@ -33,7 +33,7 @@ namespace Transformalize.Operations.Transform {
             if (_outType.Equals("string") && inType == "byte[]") {
                 if (!encoding.Equals(Common.DefaultValue)) {
                     if (System.Text.Encoding.GetEncodings().Any(e => e.Name.Equals(encoding))) {
-                        throw new TransformalizeException(ProcessName, EntityName, "The encoding `{0}` declared in your convert transform does not exist in System.Text.Encoding (see www.iana.org for standard encoding names).");
+                        throw new TransformalizeException(Logger, EntityName, "The encoding `{0}` declared in your convert transform does not exist in System.Text.Encoding (see www.iana.org for standard encoding names).");
                     }
                     _conversionMap[_outType] = (x => System.Text.Encoding.GetEncoding(encoding).GetString((byte[])x));
                 }

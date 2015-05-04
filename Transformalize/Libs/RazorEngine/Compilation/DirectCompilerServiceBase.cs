@@ -107,9 +107,10 @@ namespace Transformalize.Libs.RazorEngine.Compilation {
         ///     Compiles the type defined in the specified type context.
         /// </summary>
         /// <param name="context">The type context which defines the type to compile.</param>
+        /// <param name="logger"></param>
         /// <returns>The compiled type.</returns>
         [Pure, SecurityCritical]
-        public override Tuple<Type, Assembly> CompileType(TypeContext context) {
+        public override Tuple<Type, Assembly> CompileType(TypeContext context, ILogger logger) {
             if (context == null)
                 throw new ArgumentNullException("context");
 
@@ -117,10 +118,10 @@ namespace Transformalize.Libs.RazorEngine.Compilation {
             var compileResult = result.Item1;
 
             if (compileResult.Errors != null && compileResult.Errors.Count > 0) {
-                TflLogger.Warn(_none,_none, "The following template content will not compile:");
-                TflLogger.Info(_none,_none, context.TemplateContent);
+                logger.Warn("The following template content will not compile:");
+                logger.Info(context.TemplateContent);
                 foreach (var error in compileResult.Errors) {
-                    TflLogger.Error(_none,_none,error.ToString().Split(':').Last().Trim(' '));
+                    logger.Error(error.ToString().Split(':').Last().Trim(' '));
                 }
                 throw new TemplateCompilationException(compileResult.Errors, result.Item2, context.TemplateContent);
             }

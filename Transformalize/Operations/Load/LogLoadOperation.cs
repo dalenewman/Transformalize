@@ -10,21 +10,18 @@ using System.Linq;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Load {
+
     public class LogLoadOperation : AbstractOperation {
         private readonly Entity _entity;
-
         private readonly List<string> _columns = new List<string>();
-        private readonly string _name;
         private readonly List<string> _guids = new List<string>();
         private readonly List<string> _byteArrays = new List<string>();
 
         public LogLoadOperation(Entity entity) {
             _entity = entity;
-            _name = Common.EntityOutputName(entity, entity.ProcessName);
             var fields = new Fields(entity.Fields, entity.CalculatedFields).WithOutput();
             _columns.AddRange(fields.Aliases());
             _guids.AddRange(fields.WithGuid().Aliases());
@@ -32,7 +29,6 @@ namespace Transformalize.Operations.Load {
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
-            //GlobalDiagnosticsContext.Set("output", _name);
 
             foreach (var row in rows) {
                 foreach (var guid in _guids) {
@@ -41,9 +37,8 @@ namespace Transformalize.Operations.Load {
                 foreach (var byteArray in _byteArrays) {
                     row[byteArray] = Common.BytesToHexString((byte[])row[byteArray]);
                 }
-                TflLogger.Info(_entity.ProcessName, _entity.Name, JsonConvert.SerializeObject(_columns.ToDictionary(alias => alias, alias => row[alias])));
+                Logger.EntityInfo(_entity.Name, JsonConvert.SerializeObject(_columns.ToDictionary(alias => alias, alias => row[alias])));
             }
-            //LogManager.Flush();
             yield break;
         }
     }

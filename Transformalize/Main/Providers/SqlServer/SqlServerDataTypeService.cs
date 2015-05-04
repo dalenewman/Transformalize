@@ -21,10 +21,10 @@
 #endregion
 
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
 namespace Transformalize.Main.Providers.SqlServer {
+
     public class SqlServerDataTypeService : IDataTypeService {
         private Dictionary<string, string> _reverseTypes;
         private Dictionary<string, string> _types;
@@ -101,10 +101,6 @@ namespace Transformalize.Main.Providers.SqlServer {
             var dimensions = (new[] { "decimal" }).Any(s => s.Equals(field.SimpleType)) ? string.Format("({0},{1})", field.Precision, field.Scale) : string.Empty;
             var notNull = field.NotNull ? " NOT NULL" : string.Empty;
             var surrogate = field.Identity ? " IDENTITY(1,1) " : string.Empty;
-
-            if (!Types.ContainsKey(field.SimpleType)) {
-                throw new TransformalizeException(field.Process, field.Entity, "Field type {0} is not implemented.", field.SimpleType);
-            }
 
             var sqlDataType = Types[field.SimpleType];
 

@@ -23,10 +23,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
-using Transformalize.Libs.SemanticLogging;
 using Transformalize.Logging;
 using Transformalize.Main;
+using Transformalize.Run.Libs.SemanticLogging;
+using LegacyLogFormatter = Transformalize.Run.Logging.LegacyLogFormatter;
+using ObservableEventListener = Transformalize.Run.Libs.SemanticLogging.ObservableEventListener;
 using Process = Transformalize.Main.Process;
+using TflEventSource = Transformalize.Run.Logging.TflEventSource;
 
 namespace Transformalize.Run {
     internal class Program {
@@ -57,11 +60,11 @@ namespace Transformalize.Run {
                     if (_options.Valid()) {
                         if (_options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
                             _options.Mode = "init";
-                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
                             _options.Mode = "first";
-                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
                         } else {
-                            processes.AddRange(ProcessFactory.Create(resource, _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
                         }
                     } else {
                         foreach (var problem in _options.Problems) {
@@ -71,7 +74,7 @@ namespace Transformalize.Run {
                         Environment.Exit(1);
                     }
                 } else {
-                    processes.AddRange(ProcessFactory.Create(resource));
+                    processes.AddRange(ProcessFactory.Create(resource, new NullLogger()));
                 }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
@@ -89,7 +92,7 @@ namespace Transformalize.Run {
                 }
             }
 
-            
+
             listener.DisableEvents(TflEventSource.Log);
             listener.Dispose();
         }

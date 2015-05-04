@@ -22,12 +22,12 @@
 
 using System.Collections.Generic;
 using Transformalize.Configuration;
-using Transformalize.Logging;
 using Transformalize.Main.Providers;
 
 namespace Transformalize.Main {
 
     public class TemplateAction {
+
         private readonly Process _process;
 
         public string Action { get; set; }
@@ -53,6 +53,7 @@ namespace Transformalize.Main {
         public int Timeout { get; set; }
         public string Command { get; set; }
         public string ProcessName { get; set; }
+        public Dictionary<string, TemplateActionHandler> ActionHandlers { get; set; }
 
         public TemplateAction(Process process, string template, TflAction action) {
             _process = process;
@@ -77,29 +78,29 @@ namespace Transformalize.Main {
             NewValue = action.NewValue;
             Command = action.Command;
             Timeout = action.TimeOut;
+
+            ActionHandlers = new Dictionary<string, TemplateActionHandler>() {
+                {"copy", new TemplateActionCopy(_process)},
+                {"open", new TemplateActionOpen(_process.Logger)},
+                {"run", new TemplateActionRun(_process.Logger)},
+                {"web", new TemplateActionWeb(_process.Logger)},
+                {"tfl", new TemplateActionTfl(_process.Logger)},
+                {"exec", new TemplateActionExecute(_process)},
+                {"execute", new TemplateActionExecute(_process)},
+                {"mail", new TemplateActionMail(_process.Logger)},
+                {"replace", new TemplateActionReplace(_process.Logger)},
+                {"dostounix", new TemplateActionReplace("\r\n", "\n")},
+                {"unixtodos", new TemplateActionReplace("\n","\r\n")}
+            };
         }
 
        public void Handle(string file) {
 
-            var handlers = new Dictionary<string, TemplateActionHandler>() {
-                {"copy", new TemplateActionCopy(_process)},
-                {"open", new TemplateActionOpen()},
-                {"run", new TemplateActionRun()},
-                {"web", new TemplateActionWeb()},
-                {"tfl", new TemplateActionTfl()},
-                {"exec", new TemplateActionExecute()},
-                {"execute", new TemplateActionExecute()},
-                {"mail", new TemplateActionMail()},
-                {"replace", new TemplateActionReplace()},
-                {"dostounix", new TemplateActionReplace("\r\n", "\n")},
-                {"unixtodos", new TemplateActionReplace("\n","\r\n")}
-            };
-
-            if (handlers.ContainsKey(Action.ToLower())) {
+            if (ActionHandlers.ContainsKey(Action)) {
                 RenderedFile = file;
-                handlers[Action.ToLower()].Handle(this);
+                ActionHandlers[Action].Handle(this);
             } else {
-                TflLogger.Warn(_process.Name, string.Empty, "The {0} action is not implemented.", Action);
+                _process.Logger.Warn("The {0} action is not implemented.", Action);
             }
         }
     }

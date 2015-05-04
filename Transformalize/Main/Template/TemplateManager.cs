@@ -23,7 +23,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using Transformalize.Logging;
 
 namespace Transformalize.Main {
 
@@ -49,12 +48,12 @@ namespace Transformalize.Main {
                 }
 
                 if (!template.Enabled) {
-                    TflLogger.Warn(_process.Name, string.Empty, "Template {0} is disabled.", template.Name);
+                    _process.Logger.Warn("Template {0} is disabled.", template.Name);
                     continue;
                 }
 
                 if (template.Actions.All(a => a.Modes.All(m => !m.Equals("*") && !m.Equals(_process.Mode, StringComparison.OrdinalIgnoreCase)))) {
-                    TflLogger.Info(_process.Name, string.Empty, "Template {0} not rendered in {1} mode.", template.Name, _process.Mode);
+                    _process.Logger.Info("Template {0} not rendered in {1} mode.", template.Name, _process.Mode);
                     continue;
                 }
 
@@ -64,8 +63,8 @@ namespace Transformalize.Main {
                     fullName = new FileInfo(folder.TrimEnd(_trim) + @"\" + template.Name + new FileInfo(template.Contents.FileName).Extension.ToLower().Replace("cshtml", "html")).FullName;
                     File.WriteAllText(fullName, template.Render());
                 } catch (Exception e) {
-                    TflLogger.Warn(_process.Name, string.Empty, "Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
-                    TflLogger.Debug(_process.Name, string.Empty, e.StackTrace);
+                    _process.Logger.Warn("Template {0} failed to render. {1}. If the template is depending on pipe-line variables, make sure it is referenced in a template transform.", template.Name, e.Message);
+                    _process.Logger.Debug(_process.Name, string.Empty, e.StackTrace);
                 }
 
                 foreach (var action in template.Actions) {

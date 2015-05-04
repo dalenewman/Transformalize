@@ -35,7 +35,7 @@ namespace Transformalize.Main {
 
                     foreach (var t in f.Transforms) {
                         field.Transforms.Add(t.Method.ToLower());
-                        var reader = new FieldParametersReader();
+                        var reader = new FieldParametersReader(new DefaultFactory(_process.Logger));
                         if (t.BeforeAggregation) {
                             entity.OperationsBeforeAggregation.Add(factory.Create(field, t, reader.Read(t)));
                         }
@@ -52,7 +52,7 @@ namespace Transformalize.Main {
                     var field = _process.GetField(entity.Alias, cf.Alias);
 
                     foreach (var t in cf.Transforms) {
-                        var reader = new EntityTransformParametersReader(entity);
+                        var reader = new EntityTransformParametersReader(entity, _process.Logger);
 
                         if (t.BeforeAggregation) {
                             entity.OperationsBeforeAggregation.Add(factory.Create(field, t, reader.Read(t)));

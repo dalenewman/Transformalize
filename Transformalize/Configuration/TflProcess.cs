@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
+using Transformalize.Libs.NVelocity.App;
+using Transformalize.Libs.NVelocity.Runtime;
 using Transformalize.Libs.SolrNet;
+using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Solr;
@@ -260,7 +262,12 @@ namespace Transformalize.Configuration {
 
             try {
                 var factory = new ShortHandFactory(this);
-                factory.ExpandShortHandTransforms();
+                var problems = factory.ExpandShortHandTransforms();
+                if (problems.Any()) {
+                    foreach (var problem in problems) {
+                        AddProblem(problem);
+                    }
+                }
             } catch (Exception ex) {
                 AddProblem("Trouble expanding short hand transforms. {0}", ex.Message);
             }
@@ -484,8 +491,15 @@ namespace Transformalize.Configuration {
         }
 
         // Register Dependencies
-        public IKernel Register() {
-            return new StandardKernel(new NinjectBindings(this));
+        public IKernel Register(ILogger logger) {
+
+            if (GetAllTransforms().Any(t => t.Method == "velocity")) {
+                Velocity.SetProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, typeof(VelocityLogSystem).FullName);
+                Velocity.Init();
+            }
+
+            return new StandardKernel(new NinjectBindings(this, logger));
+
         }
 
         /// <summary>
@@ -495,8 +509,8 @@ namespace Transformalize.Configuration {
         public void Resolve(IKernel kernal) {
             foreach (var connection in Connections) {
                 var parameters = new IParameter[] {
-                new ConstructorArgument("element", connection)
-            };
+                    new ConstructorArgument("element", connection)
+                };
                 connection.Connection = kernal.Get<AbstractConnection>(connection.Provider, parameters);
                 connection.Connection.TypeAndAssemblyName = _providerTypes[connection.Provider];
 
@@ -508,6 +522,18 @@ namespace Transformalize.Configuration {
                     solr.ReadOnlyOperationCores[coreUrl] = kernal.Get<ISolrReadOnlyOperations<Dictionary<string, object>>>(coreUrl);
                     solr.OperationCores[coreUrl] = kernal.Get<ISolrOperations<Dictionary<string, object>>>(coreUrl);
                 }
+            }
+
+            foreach (var log in Log) {
+                if (log.Connection == Common.DefaultValue)
+                    continue;
+
+                var connection = Connections.First(c => c.Name == log.Connection);
+                var parameters = new IParameter[] {
+                    new ConstructorArgument("element", connection)
+                };
+                log.ConnectionInstance = kernal.Get<AbstractConnection>(connection.Provider, parameters);
+                log.ConnectionInstance.TypeAndAssemblyName = _providerTypes[connection.Provider];
             }
         }
 

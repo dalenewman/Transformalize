@@ -21,18 +21,22 @@
 #endregion
 
 using Transformalize.Configuration;
-using Transformalize.Logging;
 
 namespace Transformalize.Main {
+
     public class FieldParametersReader : ITransformParametersReader {
+        private readonly DefaultFactory _defaultFactory;
+
+        public FieldParametersReader(DefaultFactory defaultFactory) {
+            _defaultFactory = defaultFactory;
+        }
 
         public IParameters Read(TflTransform transform) {
-            var parameters = new Parameters.Parameters();
+            var parameters = new Parameters.Parameters(_defaultFactory);
 
             foreach (var p in transform.Parameters) {
                 if (string.IsNullOrEmpty(p.Name)) {
-                    TflLogger.Warn(string.Empty, string.Empty, "Detected a {0} transform parameter without a name attribute.  Field parameters require names and values.", transform.Method);
-                    return new Parameters.Parameters();
+                    return new Parameters.Parameters(_defaultFactory);
                 }
 
                 var value = p.HasValue() ? p.Value : null;

@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.CSharp;
-using Microsoft.CSharp.RuntimeBinder;
 using Transformalize.Libs.Microsoft.System.Web.Razor.Parser;
+using Transformalize.Logging;
+using Binder = Microsoft.CSharp.RuntimeBinder.Binder;
 
 namespace Transformalize.Libs.RazorEngine.Compilation.CSharp
 {

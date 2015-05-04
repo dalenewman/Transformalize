@@ -25,6 +25,7 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
+using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -40,7 +41,7 @@ namespace Transformalize.Test {
         protected class TestProcess : EtlProcess {
             private readonly List<Row> _returnRows = new List<Row>();
             private readonly IEnumerable<IOperation> _testOperations;
-            private static Process _process = new Process("test");
+            private static Process _process = new Process("test", new TestLogger());
 
             public TestProcess(params IOperation[] testOperations)
                 : base(_process) {

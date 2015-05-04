@@ -41,10 +41,12 @@ namespace Transformalize.Processes {
         private readonly Process _process;
         private readonly Entity _entity;
         private readonly ConcurrentDictionary<string, CollectorOperation> _collectors = new ConcurrentDictionary<string, CollectorOperation>();
+        private readonly ILogger _logger;
 
         public EntityProcess(Process process, Entity entity)
             : base(process) {
             _process = process;
+            _logger = process.Logger;
             _entity = entity;
             _collectors[STANDARD_OUTPUT] = new CollectorOperation();
             PipelineExecuter = entity.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter();
@@ -110,7 +112,7 @@ namespace Transformalize.Processes {
             partial.Register(new FilterOutputOperation(output.ShouldRun) { EntityName = _entity.Name });
 
             if (output.Connection.Type == ProviderType.Internal) {
-                partial.RegisterLast(_collectors[output.Name]);
+                partial.Register(_collectors[output.Name]);
             } else {
                 if (Process.IsFirstRun || !_entity.DetectChanges) {
                     partial.Register(new EntityAddTflFields(process, _entity));
@@ -134,9 +136,9 @@ namespace Transformalize.Processes {
         protected override void PostProcessing() {
 
             if (_entity.Delete) {
-                TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Deletes, _entity.Deletes.Plural(), _entity.Alias);
+                _logger.EntityInfo(_entity.Name, "Processed {0} insert{1}, {2} update{3}, and {4} delete{5} in {6}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Deletes, _entity.Deletes.Plural(), _entity.Alias);
             } else {
-                TflLogger.Info(_entity.ProcessName, _entity.Name, "Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
+                _logger.EntityInfo(_entity.Name, "Processed {0} insert{1}, and {2} update{3} in {4}.", _entity.Inserts, _entity.Inserts.Plural(), _entity.Updates, _entity.Updates.Plural(), _entity.Alias);
             }
 
             _entity.InputKeys = new Row[0];
@@ -146,13 +148,13 @@ namespace Transformalize.Processes {
                 var messageBuilder = new StringBuilder();
                 foreach (var error in errors) {
                     foreach (var e in error.FlattenHierarchy()) {
-                        TflLogger.Error(_entity.ProcessName, _entity.Name, e.Message);
+                        _logger.EntityError(_entity.Name, e.Message);
                         messageBuilder.AppendLine(e.Message);
-                        TflLogger.Debug(_entity.ProcessName, _entity.Name, e.StackTrace);
+                        _logger.EntityError(_entity.Name, e.StackTrace);
                         messageBuilder.AppendLine(e.StackTrace);
                     }
                 }
-                throw new TransformalizeException(_entity.ProcessName, _entity.Name, "Entity Process failed for {0}. {1}", _entity.Alias, messageBuilder.ToString());
+                throw new TransformalizeException(Logger, _entity.Name, "Entity Process failed for {0}. {1}", _entity.Alias, messageBuilder.ToString());
             }
 
             if (Process.OutputConnection.Is.Internal()) {

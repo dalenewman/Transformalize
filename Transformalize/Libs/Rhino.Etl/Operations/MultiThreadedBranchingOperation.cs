@@ -8,53 +8,52 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl.Enumerables;
+using Transformalize.Logging;
 
-namespace Transformalize.Libs.Rhino.Etl.Operations
-{
+namespace Transformalize.Libs.Rhino.Etl.Operations {
     /// <summary>
     ///     Branch the current pipeline flow into all its inputs
     /// </summary>
-    public class MultiThreadedBranchingOperation : AbstractBranchingOperation
-    {
+    public class MultiThreadedBranchingOperation : AbstractBranchingOperation {
+        private readonly ILogger _logger;
+
+        public MultiThreadedBranchingOperation(ILogger logger) {
+            _logger = logger;
+        }
+
         /// <summary>
         ///     Executes this operation
         /// </summary>
         /// <param name="rows">The rows.</param>
         /// <returns></returns>
-        public override IEnumerable<Row> Execute(IEnumerable<Row> rows)
-        {
-            var input = new GatedThreadSafeEnumerator<Row>(Operations.Count, rows);
+        public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
+            var input = new GatedThreadSafeEnumerator<Row>(Operations.Count, rows) {
+                Logger = _logger
+            };
 
             var sync = new object();
 
-            foreach (var operation in Operations)
-            {
+            foreach (var operation in Operations) {
                 var clone = input.Select(r => r.Clone());
                 var result = operation.Execute(clone);
 
-                if (result == null)
-                {
+                if (result == null) {
                     input.Dispose();
                     continue;
                 }
 
                 var enumerator = result.GetEnumerator();
 
-                ThreadPool.QueueUserWorkItem(delegate
-                                                 {
-                                                     try
-                                                     {
-                                                         while (enumerator.MoveNext()) ;
-                                                     }
-                                                     finally
-                                                     {
-                                                         lock (sync)
-                                                         {
-                                                             enumerator.Dispose();
-                                                             Monitor.Pulse(sync);
-                                                         }
-                                                     }
-                                                 });
+                ThreadPool.QueueUserWorkItem(delegate {
+                    try {
+                        while (enumerator.MoveNext()) ;
+                    } finally {
+                        lock (sync) {
+                            enumerator.Dispose();
+                            Monitor.Pulse(sync);
+                        }
+                    }
+                });
             }
 
             lock (sync)

@@ -90,7 +90,7 @@ namespace Transformalize.Main.Providers {
 
             var tableSample = string.Empty;
             if (entity.Sample > 0m && entity.Sample < 100m && connection.TableSample) {
-                TflLogger.Info(entity.ProcessName, entity.Name, "Sample enforced at query level: {0:##} percent.", entity.Sample);
+                connection.Logger.EntityInfo(entity.Name, "Sample enforced at query level: {0:##} percent.", entity.Sample);
                 tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
             }
 

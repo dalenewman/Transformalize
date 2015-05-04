@@ -5,8 +5,9 @@ using Transformalize.Libs.Cfg.Net;
 namespace Transformalize.Configuration {
     public class TflAction : CfgNode {
 
-        [Cfg(required = true)]
+        [Cfg(required = true, toLower = true)]
         public string Action { get; set; }
+
         [Cfg(value = true)]
         public bool After { get; set; }
         [Cfg(value = "")]

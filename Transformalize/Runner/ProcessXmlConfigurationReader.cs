@@ -28,14 +28,17 @@ using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Runner {
+
     public class ProcessXmlConfigurationReader : IReader<List<TflProcess>> {
 
         private readonly string _resource;
         private readonly ContentsReader _contentsReader;
+        private readonly ILogger _logger;
 
-        public ProcessXmlConfigurationReader(string resource, ContentsReader contentsReader) {
+        public ProcessXmlConfigurationReader(string resource, ContentsReader contentsReader, ILogger logger) {
             _resource = resource;
             _contentsReader = contentsReader;
+            _logger = logger;
         }
 
         public List<TflProcess> Read(Dictionary<string, string> parameters) {
@@ -45,7 +48,7 @@ namespace Transformalize.Runner {
             if (cfg.Response.Any()) {
                 foreach (var response in cfg.Response) {
                     if (response.Status != (short)200) {
-                        TflLogger.Warn(string.Empty, string.Empty, "API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
+                        _logger.Warn("API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                     }
                 }
             }
@@ -53,10 +56,10 @@ namespace Transformalize.Runner {
             var problems = cfg.Problems();
             if (problems.Any()) {
                 foreach (var problem in problems) {
-                    TflLogger.Error(string.Empty, string.Empty, problem);
+                    _logger.Error(problem);
                 }
-                TflLogger.Debug(string.Empty, string.Empty, content);
-                throw new TransformalizeException(string.Empty, string.Empty, string.Join(Environment.NewLine, problems));
+                _logger.Debug(content);
+                throw new TransformalizeException(_logger, string.Join(Environment.NewLine, problems));
             }
 
             return cfg.Processes;

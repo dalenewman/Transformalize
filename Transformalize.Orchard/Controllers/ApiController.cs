@@ -3,7 +3,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using Microsoft.Build.Utilities;
+using Orchard.ContentManagement;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
+using Orchard.Logging;
 using Transformalize.Extensions;
 using Transformalize.Main;
 using Transformalize.Orchard.Models;
@@ -12,20 +16,26 @@ using Transformalize.Orchard.Services;
 namespace Transformalize.Orchard.Controllers {
     public class ApiController : TflController {
 
+        private static readonly string OrchardVersion = typeof(ContentItem).Assembly.GetName().Version.ToString();
         private readonly ITransformalizeService _transformalize;
         private readonly IApiService _apiService;
+        private readonly string _moduleVersion;
         private readonly Stopwatch _stopwatch = new Stopwatch();
 
         public Localizer T { get; set; }
+        public ILogger Logger { get; set; }
 
         public ApiController(
             ITransformalizeService transformalize,
-            IApiService apiService
+            IApiService apiService,
+            IExtensionManager extensionManager
         ) {
             _stopwatch.Start();
             _transformalize = transformalize;
             _apiService = apiService;
+            _moduleVersion = extensionManager.GetExtension("Transformalize.Orchard").Version;
             T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
         }
 
         [ActionName("Api/Configuration")]
@@ -67,6 +77,7 @@ namespace Transformalize.Orchard.Controllers {
             request.RequestType = ApiRequestType.MetaData;
             var query = GetQuery();
             var transformalizeRequest = new TransformalizeRequest(part, query, null);
+            var logger = new TransformalizeLogger(transformalizeRequest.Part.Title(), Logger, part.LogLevel, OrchardVersion, _moduleVersion);
 
             var problems = transformalizeRequest.Root.Problems();
             if (problems.Any()) {
@@ -80,7 +91,7 @@ namespace Transformalize.Orchard.Controllers {
                 );
             }
 
-            var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(transformalizeRequest.Root.Processes[0], new Options { Mode = "metadata" })).Write();
+            var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(transformalizeRequest.Root.Processes[0], logger, new Options { Mode = "metadata" })).Write();
             return new ApiResponse(request, metaData).ContentResult(
                 query["format"] ?? DefaultFormat,
                 query["flavor"] ?? DefaultFlavor

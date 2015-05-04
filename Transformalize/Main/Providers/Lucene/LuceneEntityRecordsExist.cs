@@ -12,7 +12,7 @@ namespace Transformalize.Main.Providers.Lucene {
 
         public bool RecordsExist(AbstractConnection connection, Entity entity) {
 
-            var checker = new LuceneConnectionChecker(entity.ProcessName);
+            var checker = new LuceneConnectionChecker(entity.ProcessName, connection.Logger);
             if (!checker.Check(connection))
                 return false;
 

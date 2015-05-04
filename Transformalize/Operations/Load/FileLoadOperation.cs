@@ -66,13 +66,13 @@ namespace Transformalize.Operations.Load {
             _mapFields = _fileFields.WithIdentifiers().ToArray();
 
             if (FileInfo.DirectoryName != null && !Directory.Exists(FileInfo.DirectoryName)) {
-                Info("Creating Output Folder(s).");
+                Logger.Info("Creating Output Folder(s).");
                 Directory.CreateDirectory(FileInfo.DirectoryName);
             }
 
             if (FileInfo.Exists)
                 return;
-            TflLogger.Warn(entity.ProcessName, entity.Alias, "Output file already exists.  Deleting...");
+            Logger.EntityWarn(entity.Alias, "Output file already exists.  Deleting...");
 
             FileInfo.Delete();
         }
@@ -134,7 +134,7 @@ namespace Transformalize.Operations.Load {
                         Encoding.GetEncoding(_connection.Encoding)
                 };
             } catch (Exception ex) {
-                throw new TransformalizeException(ProcessName, EntityName, ex.Message);
+                throw new TransformalizeException(Logger, EntityName, ex.Message);
             }
 
             if (!_connection.Header.Equals(string.Empty)) {

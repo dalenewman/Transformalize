@@ -26,12 +26,16 @@ using Transformalize.Logging;
 namespace Transformalize.Main {
 
     public class TransformalizeException : Exception {
-
         private readonly string _message;
 
-        public TransformalizeException(string process, string entity, string message, params object[] args) {
+        public TransformalizeException(ILogger logger, string message, params object[] args) {
             _message = args.Length > 0 ? string.Format(message, args) : message;
-            TflLogger.Error(process, entity, _message);
+            logger.Error(_message);
+        }
+
+        public TransformalizeException(string entity, ILogger logger, string message, params object[] args) {
+            _message = args.Length > 0 ? string.Format(message, args) : message;
+            logger.EntityError(entity, _message);
         }
 
         public override string Message {

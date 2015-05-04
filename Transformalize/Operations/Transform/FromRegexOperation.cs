@@ -44,7 +44,7 @@ namespace Transformalize.Operations.Transform {
                             try {
                                 row[pair.Key] = Common.ConversionMap[pair.Value.SimpleType](@group.Value);
                             } catch (Exception ex) {
-                                TflLogger.Warn(ProcessName, EntityName, "Trouble converting '{0}' to '{1}' type.  Matched from {2}. {3}", row[pair.Key], pair.Value.SimpleType, row[InKey], ex.Message);
+                                Logger.EntityWarn(EntityName, "Trouble converting '{0}' to '{1}' type.  Matched from {2}. {3}", row[pair.Key], pair.Value.SimpleType, row[InKey], ex.Message);
                             }
                         }
                     }

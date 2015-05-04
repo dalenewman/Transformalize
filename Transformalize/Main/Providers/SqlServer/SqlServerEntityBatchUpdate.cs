@@ -59,7 +59,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             AddParameter(command, "TflKey", row["TflKey"]);
             AddParameter(command, "TflBatchId", _entity.TflBatchId);
 
-            TflLogger.Debug(_entity.ProcessName, _entity.Alias, command.CommandText);
+            Logger.EntityDebug(_entity.Alias, command.CommandText);
         }
     }
 }

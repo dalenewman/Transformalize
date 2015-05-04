@@ -1,18 +1,18 @@
 using System.Collections.Generic;
-using Transformalize.Main.Providers.AnalysisServices;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.Console {
     public class ConsoleDependencies : AbstractConnectionDependencies {
-        public ConsoleDependencies()
+        public ConsoleDependencies(ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new FalseConnectionChecker(),
-                new FalseEntityRecordsExist(),
-                new FalseEntityDropper(),
-                new FalseEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
-                new FalseTflWriter(),
-                new FalseScriptRunner(),
-            new FalseDataTypeService()) { }
+                new NullTableQueryWriter(),
+                new NullConnectionChecker(),
+                new NullEntityRecordsExist(),
+                new NullEntityDropper(),
+                new NullEntityCreator(),
+                new List<IViewWriter> { new NullViewWriter() },
+                new NullTflWriter(),
+                new NullScriptRunner(),
+            new NullDataTypeService(), logger) { }
     }
 }

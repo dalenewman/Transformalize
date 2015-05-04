@@ -41,7 +41,7 @@ namespace Transformalize.Operations.Transform {
 
             if (!parameters.Any()) {
                 castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", OutKey, Common.ToSystemType(outType)));
-                testRow[OutKey] = new DefaultFactory().Convert(null, outType);
+                testRow[OutKey] = new DefaultFactory(Logger).Convert(null, outType);
             } else {
                 var map = Common.GetLiteral();
                 foreach (var pair in parameters) {
@@ -50,7 +50,7 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", pair.Value.Name, Common.ToSystemType(pair.Value.SimpleType)));
                     }
-                    testRow[pair.Value.Name] = new DefaultFactory().Convert(null, pair.Value.SimpleType);
+                    testRow[pair.Value.Name] = new DefaultFactory(Logger).Convert(null, pair.Value.SimpleType);
                 }
             }
 
@@ -73,8 +73,8 @@ public class Transformer : ITransformer
     }}
 }}", scriptBuilder, castBuilder, script);
 
-            TflLogger.Debug(ProcessName, EntityName, "Compiling this code:");
-            TflLogger.Debug(ProcessName, EntityName, code);
+            Logger.EntityDebug(EntityName, "Compiling this code:");
+            Logger.EntityDebug(EntityName, code);
 
             var res = csc.CompileAssemblyFromSource(
                 cp,
@@ -86,16 +86,16 @@ public class Transformer : ITransformer
                 _transformer = (ITransformer)Activator.CreateInstance(type);
                 try {
                     var test = _transformer.Transform(testRow);
-                    TflLogger.Debug(ProcessName, EntityName, "CSharp transform compiled and passed test. {0}", test);
+                    Logger.EntityDebug(EntityName, "CSharp transform compiled and passed test. {0}", test);
                 } catch (Exception e) {
-                    TflLogger.Debug(ProcessName, EntityName, "CSharp transform compiled but failed test. {0}", e.Message);
-                    TflLogger.Debug(ProcessName, EntityName, e.StackTrace);
+                    Logger.EntityDebug(EntityName, "CSharp transform compiled but failed test. {0}", e.Message);
+                    Logger.EntityDebug(EntityName, e.StackTrace);
                 }
             } else {
                 foreach (var error in res.Errors) {
-                    TflLogger.Error(ProcessName, EntityName, error.ToString());
+                    Logger.EntityError(EntityName, error.ToString());
                 }
-                throw new TransformalizeException(ProcessName, EntityName, "Failed to compile code. {0}", code);
+                throw new TransformalizeException(Logger, EntityName, "Failed to compile code. {0}", code);
             }
 
             Name = string.Format("CSharpOperation ({0})", outKey);

@@ -57,7 +57,7 @@ namespace Transformalize.Main {
 
         private void AppendFields(OrderedFields fields, StringBuilder content) {
             var entity = fields.Any() ? fields.First().Entity : string.Empty;
-            TflLogger.Debug(_process.Name, entity, "Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
+            _process.Logger.EntityDebug(entity, "Entity auto found {0} field{1}.", fields.Count, fields.Count == 1 ? string.Empty : "s");
 
             content.AppendLine("      <fields>");
             foreach (var f in fields) {

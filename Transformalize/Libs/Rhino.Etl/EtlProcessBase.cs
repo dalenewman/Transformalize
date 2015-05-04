@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Libs.Rhino.Etl {
@@ -23,6 +22,7 @@ namespace Transformalize.Libs.Rhino.Etl {
 
         public EtlProcessBase(Process process) {
             _process = process;
+            Logger = _process.Logger;
         }
 
         /// <summary>
@@ -58,20 +58,9 @@ namespace Transformalize.Libs.Rhino.Etl {
             operation.UseTransaction = UseTransaction;
             operation.LogRows = _process.LogRows;
             operation.ProcessName = _process.Name;
+            operation.Logger = Logger;
             Operations.Add(operation);
-            TflLogger.Debug(_process.Name, operation.EntityName, "Register {0}", operation.Name);
-            return (TDerived)this;
-        }
-
-        /// <summary>
-        ///     Registers the operation at the end of the operations queue
-        /// </summary>
-        /// <param name="operation">The operation.</param>
-        public TDerived RegisterLast(IOperation operation) {
-            operation.LogRows = _process.LogRows;
-            operation.ProcessName = _process.Name;
-            _lastOperations.Add(operation);
-            TflLogger.Debug(operation.ProcessName, operation.EntityName, "RegisterLast {0} in {1}", operation.Name, _process.Name);
+            Logger.Debug("Register {0}", operation.Name ?? operation.GetType().Name);
             return (TDerived)this;
         }
 

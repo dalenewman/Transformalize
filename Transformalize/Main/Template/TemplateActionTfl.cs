@@ -3,7 +3,14 @@ using System.Collections.Generic;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
+
     public class TemplateActionTfl : TemplateActionHandler {
+
+        private readonly ILogger _logger;
+
+        public TemplateActionTfl(ILogger logger) {
+            _logger = logger;
+        }
 
         public override void Handle(TemplateAction action) {
             Dictionary<string, string> parameters = null;
@@ -12,10 +19,9 @@ namespace Transformalize.Main {
                 parameters = Common.ParseQueryString(new Uri(action.Url).Query);
             }
 
-            var processes = ProcessFactory.Create(action.Url, new Options(), parameters);
+            var processes = ProcessFactory.Create(action.Url, _logger, new Options(), parameters);
             foreach (var process in processes) {
-                process.ShouldLog = false;
-                TflLogger.Info(action.ProcessName, string.Empty, "Executing {0}", process.Name);
+                _logger.Info("Executing {0}", process.Name);
                 process.ExecuteScaler();
             }
         }

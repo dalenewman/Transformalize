@@ -8,7 +8,6 @@ namespace Transformalize.Operations {
     /// Because the input and the output are the same, gather data before writing.
     /// </summary>
     public class GatherOperation : AbstractOperation {
-
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
             return rows.ToArray();
         }

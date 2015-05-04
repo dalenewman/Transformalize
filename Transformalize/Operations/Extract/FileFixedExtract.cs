@@ -56,7 +56,7 @@ namespace Transformalize.Operations.Extract {
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {
 
-            Info("Reading Fixed {0}", _name);
+            Logger.Info("Reading Fixed {0}", _name);
 
             if (_top > 0) {
                 using (var file = new FluentFile(_classBuilder.CreateRecordClass()).From(_fullName).OnError(_errorMode)) {
@@ -91,7 +91,7 @@ namespace Transformalize.Operations.Extract {
 
             var errorInfo = new FileInfo(Common.GetTemporaryFolder(_entity.ProcessName).TrimEnd(new[] { '\\' }) + @"\" + _name + ".errors.txt");
             file.OutputErrors(errorInfo.FullName);
-            TflLogger.Warn(_entity.ProcessName, _entity.Alias, "Errors sent to {0}.", errorInfo.Name);
+            Logger.EntityWarn(_entity.Alias, "Errors sent to {0}.", errorInfo.Name);
             return false;
         }
 

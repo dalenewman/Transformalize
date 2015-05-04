@@ -7,13 +7,11 @@ namespace Transformalize.Main.Providers.Lucene {
         private readonly LuceneConnection _luceneConnection;
         private readonly Entity _entity;
         private readonly Field[] _primaryKey;
-        private readonly bool _isMaster;
 
-        public LuceneEntityDelete(LuceneConnection luceneConnection, Entity entity) {
+        public LuceneEntityDelete(LuceneConnection luceneConnection, Entity entity){
             _luceneConnection = luceneConnection;
             _entity = entity;
             _primaryKey = entity.PrimaryKey.ToArray();
-            _isMaster = entity.IsMaster();
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

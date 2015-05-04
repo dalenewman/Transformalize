@@ -1,17 +1,18 @@
 using System.Collections.Generic;
+using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.AnalysisServices {
     public class AnalysisServicesDependencies : AbstractConnectionDependencies {
-        public AnalysisServicesDependencies()
+        public AnalysisServicesDependencies(ILogger logger)
             : base(
-                new FalseTableQueryWriter(),
-                new AnalysisServicesConnectionChecker(),
-                new FalseEntityRecordsExist(),
-                new FalseEntityDropper(),
-                new FalseEntityCreator(),
-                new List<IViewWriter> { new FalseViewWriter() },
-                new FalseTflWriter(),
+                new NullTableQueryWriter(),
+                new AnalysisServicesConnectionChecker(logger),
+                new NullEntityRecordsExist(),
+                new NullEntityDropper(),
+                new NullEntityCreator(),
+                new List<IViewWriter> { new NullViewWriter() },
+                new NullTflWriter(),
                 new AnalysisServicesScriptRunner(),
-                new FalseDataTypeService()) { }
+                new NullDataTypeService(), logger) { }
     }
 }

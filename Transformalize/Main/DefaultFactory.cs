@@ -21,9 +21,16 @@
 #endregion
 
 using System;
+using Transformalize.Logging;
 
 namespace Transformalize.Main {
     public class DefaultFactory {
+        private readonly ILogger _logger;
+
+        public DefaultFactory(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         public object Convert(object something, string type) {
             var simpleType = Common.ToSimpleType(type);
@@ -109,7 +116,7 @@ namespace Transformalize.Main {
                 }
 
             } catch (Exception e) {
-                throw new TransformalizeException("Trouble converting {0} to {1}. {2}", value, type, e.Message);
+                throw new TransformalizeException(_logger, "Trouble converting {0} to {1}. {2}", value, type, e.Message);
             }
 
         }
