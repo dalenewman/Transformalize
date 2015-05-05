@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Transformalize.Configuration;
 using Transformalize.Libs.Newtonsoft.Json;
@@ -23,14 +24,14 @@ namespace Transformalize.Orchard.Handlers {
     }}]
 }}";
 
-        public static string LogsToJson(IEnumerable<string> logs) {
+        public static string LogsToJson(IEnumerable<LinkedList<string>> logs) {
             var sw = new StringWriter();
             var writer = new JsonTextWriter(sw);
             writer.WriteStartArray();
             foreach (var log in logs) {
                 writer.WriteStartObject();
 
-                var attributes = log.Split(new[] { " | " }, 5, StringSplitOptions.None);
+                var attributes = log.ToList();
                 writer.WritePropertyName("time");
                 writer.WriteValue(attributes[0]);
                 writer.WritePropertyName("level");

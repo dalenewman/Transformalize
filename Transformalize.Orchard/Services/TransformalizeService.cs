@@ -107,7 +107,7 @@ namespace Transformalize.Orchard.Services {
 
             return new TransformalizeResponse() {
                 Processes = processes.ToArray(),
-                Log = new List<string>(logger.Dump())
+                Log = new List<LinkedList<string>>(logger.Dump())
             };
         }
 

@@ -40,7 +40,6 @@ namespace Transformalize.Main {
         private List<IOperation> _transformOperations = new List<IOperation>();
         private bool _enabled = true;
         private Connections _connections = new Connections();
-        private bool _logStarted;
 
         // fields (for now)
         public bool Complete = false;
@@ -66,8 +65,6 @@ namespace Transformalize.Main {
         private string _view = Common.DefaultValue;
         private string _mode;
         private long _logRows = 10000;
-        private List<Log> _logList = new List<Log>();
-        private bool _shouldLog = true;
         private bool _parallel = true;
 
         // properties
@@ -122,8 +119,6 @@ namespace Transformalize.Main {
             get { return _logRows; }
             set { _logRows = value; }
         }
-
-        public bool VelocityInitialized { get; set; }
 
         public bool Parallel {
             get { return _parallel; }
@@ -183,12 +178,10 @@ namespace Transformalize.Main {
 
         public void StopLogging() {
             Logger.Stop();
-            _logStarted = false;
         }
 
         public void StartLogging() {
             Logger.Start();
-            _logStarted = true;
         }
 
         public Dictionary<string, List<Row>> DataSets { get; set; }

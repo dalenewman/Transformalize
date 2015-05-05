@@ -7,6 +7,8 @@ namespace Transformalize.Logging {
     /// </summary>
     public class NullLogger : ILogger {
 
+        public string Name { get; set; }
+
         public void Info(string message, params object[] args)
         {
         }

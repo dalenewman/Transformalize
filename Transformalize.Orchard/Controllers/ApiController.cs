@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -84,7 +85,7 @@ namespace Transformalize.Orchard.Controllers {
                 var bad = new TransformalizeResponse();
                 request.Status = 501;
                 request.Message = "Configuration Problem" + problems.Count.Plural();
-                bad.Log.AddRange(problems.Select(p => string.Format("{0:HH:mm:ss} | Error | . | . | {1}", DateTime.UtcNow, p)));
+                bad.Log.AddRange(problems.Select(p => new LinkedList<string>(new[]{DateTime.Now.ToString(),"error",".",".",p})));
                 return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
                     query["format"] ?? DefaultFormat,
                     query["flavor"] ?? DefaultFlavor

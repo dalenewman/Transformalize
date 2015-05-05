@@ -363,10 +363,10 @@ namespace Transformalize.Configuration {
         private void ModifyDefaultSearchTypes() {
 
             if (SearchTypes.All(st => st.Name != "none"))
-                SearchTypes.Add(new TflSearchType() { Name = "none", MultiValued = false, Store = false, Index = false });
+                SearchTypes.Add(new TflSearchType { Name = "none", MultiValued = false, Store = false, Index = false });
 
             if (SearchTypes.All(st => st.Name != "default"))
-                SearchTypes.Add(new TflSearchType() { Name = "default", MultiValued = false, Store = true, Index = true });
+                SearchTypes.Add(new TflSearchType { Name = "default", MultiValued = false, Store = true, Index = true });
 
         }
 
@@ -492,14 +492,18 @@ namespace Transformalize.Configuration {
 
         // Register Dependencies
         public IKernel Register(ILogger logger) {
-
-            if (GetAllTransforms().Any(t => t.Method == "velocity")) {
-                Velocity.SetProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, typeof(VelocityLogSystem).FullName);
-                Velocity.Init();
-            }
+            RegisterVelocity(logger);
 
             return new StandardKernel(new NinjectBindings(this, logger));
+        }
 
+        private void RegisterVelocity(ILogger logger) {
+            if (GetAllTransforms().All(t => t.Method != "velocity") && !Templates.Any(t => t.Engine.Equals("velocity")))
+                return;
+
+            logger.Info("Initializing nVelocity");
+            Velocity.SetProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, typeof(VelocityLogSystem).FullName);
+            Velocity.Init();
         }
 
         /// <summary>

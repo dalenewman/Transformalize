@@ -78,6 +78,7 @@ namespace Transformalize.Main {
 
 
         private class ProcessReader {
+            private const StringComparison IgnoreCase = StringComparison.OrdinalIgnoreCase;
 
             private readonly TflProcess _element;
             private readonly ILogger _logger;
@@ -124,11 +125,6 @@ namespace Transformalize.Main {
                 _process.Templates = new TemplateReader(_process, _element.Templates).Read();
                 _process.SearchTypes = new SearchTypeReader(_element.SearchTypes).Read();
                 new MapLoader(ref _process, _element.Maps).Load();
-
-                if (_process.Templates.Any(t => t.Value.Engine.Equals("velocity", StringComparison.OrdinalIgnoreCase))) {
-                    Velocity.Init();
-                    _process.VelocityInitialized = true;
-                }
 
                 //these depend on the shared process properties
                 new EntitiesLoader(ref _process, _element.Entities).Load();

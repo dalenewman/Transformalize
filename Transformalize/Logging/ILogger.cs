@@ -3,6 +3,8 @@ using System;
 namespace Transformalize.Logging {
     public interface ILogger {
 
+        string Name { get; set; }
+
         void Info(string message, params object[] args);
         void Debug(string message, params object[] args);
         void Warn(string message, params object[] args);

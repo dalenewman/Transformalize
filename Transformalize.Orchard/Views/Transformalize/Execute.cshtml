@@ -29,9 +29,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var fields in Model.TransformalizeResponse.Log.Select(line => line.Split("|".ToCharArray()).Select(f => f.TrimEnd('.')).ToArray())) {
+                
+                @foreach (var fields in Model.TransformalizeResponse.Log.Select(l=>l.ToList())) {
                     string color;
-                    if (fields.Length < 5) {
+                    if (fields.Count < 5) {
                         continue;
                     }
                     switch (fields[1].Trim().Left(4)) {
@@ -49,7 +50,7 @@
                             break;
                     }
                     <tr class="@color">
-                        @for (int i = 0; i < fields.Length; i++) {
+                        @for (int i = 0; i < fields.Count; i++) {
                             var field = fields[i].Trim(new[] { ' ', '.' });
                             if (i == 1) {
                                 <td><span class="label label-@color">@field</span></td>

@@ -29,9 +29,9 @@ namespace Transformalize.Test {
         [Test]
         public void TestLogsFragment() {
 
-            var logs = new List<string> {
-                "time | level | process | entity | message",
-                "time | level | process | entity | message"
+            var logs = new List<LinkedList<string>> {
+                new LinkedList<string>(new[]{"time","level","process","entity","message"}) ,
+                new LinkedList<string>(new[]{"time","level","process","entity","message"}) 
             };
 
             var actual = Orchard.Handlers.XmlContentHandler.LogsToXml(logs);

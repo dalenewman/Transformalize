@@ -15,7 +15,8 @@ namespace Transformalize.Configuration {
         public bool Cache { get; set; }
         [Cfg( value = true)]
         public bool Enabled { get; set; }
-        [Cfg( value = "razor", domain = "razor,velocity")]
+
+        [Cfg( value = "razor", domain = "razor,velocity", toLower = true)]
         public string Engine { get; set; }
         [Cfg()]
         public string Path { get; set; }

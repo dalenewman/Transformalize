@@ -12,10 +12,10 @@ namespace Transformalize.Run.Logging {
 
     public class RunLogger : ILogger {
 
+        public string Name { get; set; }
         private readonly TflProcess _process;
         private List<ObservableEventListener> _eventListeners = new List<ObservableEventListener>();
         private List<SinkSubscription> _sinkSubscriptions = new List<SinkSubscription>();
-        private readonly string _name;
 
         public List<ObservableEventListener> EventListeners {
             get { return _eventListeners; }
@@ -29,7 +29,7 @@ namespace Transformalize.Run.Logging {
 
         public RunLogger(TflProcess process) {
             _process = process;
-            _name = process.Name;
+            Name = process.Name;
         }
 
         public void Info(string message, params object[] args) {
@@ -53,25 +53,25 @@ namespace Transformalize.Run.Logging {
         }
 
         public void EntityInfo(string entity, string message, params object[] args) {
-            TflLogger.Info(_name, entity, message, args);
+            TflLogger.Info(Name, entity, message, args);
         }
 
         public void EntityDebug(string entity, string message, params object[] args) {
-            TflLogger.Debug(_name, entity, message, args);
+            TflLogger.Debug(Name, entity, message, args);
         }
 
         public void EntityWarn(string entity, string message, params object[] args) {
-            TflLogger.Warn(_name, entity, message, args);
+            TflLogger.Warn(Name, entity, message, args);
         }
 
         public void EntityError(string entity, string message, params object[] args) {
-            TflLogger.Error(_name, entity, message, args);
+            TflLogger.Error(Name, entity, message, args);
         }
 
         public void EntityError(string entity, Exception exception, string message, params object[] args) {
-            TflLogger.Error(_name, entity, message, args);
-            TflLogger.Error(_name, entity, exception.Message);
-            TflLogger.Error(_name, entity, exception.StackTrace);
+            TflLogger.Error(Name, entity, message, args);
+            TflLogger.Error(Name, entity, exception.Message);
+            TflLogger.Error(Name, entity, exception.StackTrace);
         }
 
         public void Start() {
