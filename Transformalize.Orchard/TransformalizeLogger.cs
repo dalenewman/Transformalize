@@ -1,33 +1,41 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Orchard.Logging;
+using Transformalize.Configuration;
 using tflLogger = Transformalize.Logging.ILogger;
 using Transformalize.Extensions;
 
 namespace Transformalize.Orchard {
 
+    /// <summary>
+    /// This logger implementation wraps whatever Orchard CMS is using 
+    /// and also records an in-memory log for reporting back to the TFL execute view.
+    /// </summary>
     public class TransformalizeLogger : tflLogger {
 
         private readonly string _level;
-        private readonly ILogger _logger;
+        private readonly ILogger _orchardLogger;
         private readonly string _orchardVersion;
         private readonly string _moduleVersion;
-        private readonly ConcurrentQueue<LinkedList<string>> _log = new ConcurrentQueue<LinkedList<string>>();
+        private readonly ConcurrentQueue<string[]> _log = new ConcurrentQueue<string[]>();
+        private bool _reportedHost = false;
 
+        public string DatetimeFormat { get; set; }
         public string Name { get; set; }
 
-        public TransformalizeLogger(string name, ILogger logger, string level, string orchardVersion, string moduleVersion) {
+        public TransformalizeLogger(string name, string level, ILogger orchardLogger, string orchardVersion, string moduleVersion) {
             _level = level.ToLower().Left(4);
             Name = name;
-            _logger = logger;
+            _orchardLogger = orchardLogger;
             _orchardVersion = orchardVersion;
             _moduleVersion = moduleVersion;
+            DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
         }
 
-        public IEnumerable<LinkedList<string>> Dump() {
-            LinkedList<string> item;
+        public IEnumerable<string[]> Dump() {
+            string[] item;
             while (_log.TryDequeue(out item)) {
                 yield return item;
             }
@@ -55,88 +63,104 @@ namespace Transformalize.Orchard {
 
         public void EntityInfo(string entity, string message, params object[] args) {
             if (_level != "none") {
-                var line = AppendLevel("info ", entity);
-                line.AddLast(string.Format(message, args));
-                _log.Enqueue(line);
+                _log.Enqueue(GetLine("info ", entity, string.Format(message, args)));
             }
-            if (!_logger.IsEnabled(LogLevel.Information))
+            if (!_orchardLogger.IsEnabled(LogLevel.Information))
                 return;
 
-            _logger.Information(message, args);
+            _orchardLogger.Information(message, args);
 
         }
 
         public void EntityDebug(string entity, string message, params object[] args) {
             if (_level == "debu") {
-                var line = AppendLevel("debug", entity);
-                line.AddLast(string.Format(message, args));
-                _log.Enqueue(line);
+                _log.Enqueue(GetLine("debug", entity, string.Format(message, args)));
             }
-            if (!_logger.IsEnabled(LogLevel.Debug))
+            if (!_orchardLogger.IsEnabled(LogLevel.Debug))
                 return;
-            _logger.Debug(message, args);
+            _orchardLogger.Debug(message, args);
         }
 
         public void EntityWarn(string entity, string message, params object[] args) {
             if (_level != "none") {
-                var line = AppendLevel("warn ", entity);
-                line.AddLast(string.Format(message, args));
-                _log.Enqueue(line);
+                _log.Enqueue(GetLine("warn", entity, string.Format(message, args)));
             }
 
-            if (!_logger.IsEnabled(LogLevel.Warning))
+            if (!_orchardLogger.IsEnabled(LogLevel.Warning))
                 return;
-            _logger.Warning(message, args);
+            _orchardLogger.Warning(message, args);
         }
 
         public void EntityError(string entity, string message, params object[] args) {
             if (_level != "none") {
-                var line = AppendLevel("error", entity);
-                line.AddLast(string.Format(message, args));
-                _log.Enqueue(line);
+                _log.Enqueue(GetLine("error", entity, string.Format(message, args)));
             }
-            if (!_logger.IsEnabled(LogLevel.Error))
+            if (!_orchardLogger.IsEnabled(LogLevel.Error))
                 return;
-            _logger.Error(message, args);
+            _orchardLogger.Error(message, args);
         }
 
         public void EntityError(string entity, Exception exception, string message, params object[] args) {
             if (_level != "none") {
-                var line1 = AppendLevel("error", entity);
-                line1.AddLast(string.Format(message, args));
-                _log.Enqueue(line1);
-
-                var line2 = AppendLevel("error", entity);
-                line2.AddLast(exception.Message);
-                _log.Enqueue(line2);
-
-                var line3 = AppendLevel("error", entity);
-                line3.AddLast(exception.StackTrace);
-                _log.Enqueue(line3);
+                _log.Enqueue(GetLine("error", entity, string.Format(message, args)));
+                _log.Enqueue(GetLine("error", entity, exception.Message));
+                _log.Enqueue(GetLine("error", entity, exception.StackTrace));
             }
 
-            if (!_logger.IsEnabled(LogLevel.Error))
+            if (!_orchardLogger.IsEnabled(LogLevel.Error))
                 return;
-            _logger.Error(exception, message, args);
+            _orchardLogger.Error(exception, message, args);
         }
 
-        public void Start() {
-            if (!_logger.IsEnabled(LogLevel.Information))
+        public void Start(TflProcess process) {
+            if (!_reportedHost) {
+                EntityInfo(".", "Orchard version: {0}", _orchardVersion);
+                EntityInfo(".", "Transformalize.Orchard version: {0}", _moduleVersion);
+                EntityInfo(".", GetHost());
+                _reportedHost = true;
+            }
+            if (_level != "none") {
+                Info("{0} entit{1} in {2} mode.", process.Entities.Count, process.Entities.Count.Pluralize(), process.Mode == string.Empty ? "Default" : process.Mode);
+                Info("Running {0} with a {1} pipeline.", process.Parallel ? "Parallel" : "Serial", GetPipelineDescription(process));
+            }
+
+            if (!_orchardLogger.IsEnabled(LogLevel.Information))
                 return;
-            EntityInfo(".", "Orchard version: {0}", _orchardVersion);
-            EntityInfo(".", "Transformalize.Orchard version: {0}", _moduleVersion);
-            _logger.Information("TFL has started logging.");
+            _orchardLogger.Information("TFL started logging process {0}.", Name);
         }
 
         public void Stop() {
-            if (_logger.IsEnabled(LogLevel.Information)) {
-                _logger.Information("TFL has stopped logging.");
+            if (_orchardLogger.IsEnabled(LogLevel.Information)) {
+                _orchardLogger.Information("TFL stopped logging process {0}.", Name);
             }
         }
 
-        private LinkedList<string> AppendLevel(string level, string entity) {
-            return new LinkedList<string>(new[] { DateTime.Now.ToString(), level, Name, entity });
+        private string[] GetLine(string level, string entity, string message) {
+            return new[] { DateTime.Now.ToString(DatetimeFormat), level, Name, entity, message };
         }
+
+        private static string GetHost() {
+            var host = System.Net.Dns.GetHostName();
+            var ip4 = System.Net.Dns.GetHostEntry(host).AddressList.Where(a => a.ToString().Length > 4 && a.ToString()[4] != ':').Select(a => a.ToString()).ToArray();
+            return string.Format("Host is {0} {1}", host, string.Join(", ", ip4.Any() ? ip4 : new[] { string.Empty }));
+        }
+
+        private string GetPipelineDescription(TflProcess process) {
+            var pipeline = process.PipelineThreading;
+            if (pipeline != "Default")
+                return pipeline;
+
+            if (process.Entities.All(e => e.PipelineThreading == "SingleThreaded")) {
+                pipeline = "SingleThreaded";
+            } else if (process.Entities.All(e => e.PipelineThreading == "MultiThreaded")) {
+                pipeline = "MultiThreaded";
+            } else {
+                pipeline = "Mixed";
+            }
+            return pipeline;
+        }
+
+
 
     }
 }

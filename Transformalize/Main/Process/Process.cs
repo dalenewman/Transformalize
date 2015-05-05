@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -37,12 +38,8 @@ namespace Transformalize.Main {
     public class Process {
 
         private const StringComparison IC = StringComparison.OrdinalIgnoreCase;
-        private List<IOperation> _transformOperations = new List<IOperation>();
-        private bool _enabled = true;
-        private Connections _connections = new Connections();
 
         // fields (for now)
-        public bool Complete = false;
         public IEnumerable<Row> Results = Enumerable.Empty<Row>();
         public Fields CalculatedFields = new Fields();
         public Entities Entities = new Entities();
@@ -60,77 +57,52 @@ namespace Transformalize.Main {
         public Dictionary<string, Template> Templates = new Dictionary<string, Template>();
         public AbstractConnection OutputConnection;
 
-        private PipelineThreading _pipelineThreading = PipelineThreading.MultiThreaded;
-        private string _star = Common.DefaultValue;
-        private string _view = Common.DefaultValue;
         private string _mode;
-        private long _logRows = 10000;
-        private bool _parallel = true;
 
         // properties
+        public TflProcess Configuration { get; set; }
         public string TimeZone { get; set; }
         public bool IsFirstRun { get; set; }
         public long Anything { get; set; }
         public bool StarEnabled { get; set; }
         public bool ViewEnabled { get; set; }
-
-        public string Star {
-            get { return _star.Equals(Common.DefaultValue) ? Name + "Star" : _star; }
-            set { _star = value; }
-        }
-
-        public string View {
-            get { return _view.Equals(Common.DefaultValue) ? Name + "View" : _view; }
-            set { _view = value; }
-        }
+        public IParameters Parameters { get; set; }
+        public IEnumerable<TemplateAction> Actions { get; set; }
+        public FileInspectionRequest FileInspectionRequest { get; set; }
+        public Dictionary<string, List<Row>> DataSets { get; set; }
+        public ILogger Logger { get; private set; }
+        public Connections Connections { get; set; }
+        public PipelineThreading PipelineThreading { get; set; }
+        public bool Enabled { get; set; }
+        public List<IOperation> TransformOperations { get; set; }
+        public long LogRows { get; set; }
+        public bool Parallel { get; set; }
+        public bool Complete { get; set; }
+        public string Star { get; set; }
+        public string View { get; set; }
+        public IProcessRunner Runner { get; set; }
 
         public string Mode {
             get { return _mode; }
             set { _mode = value.ToLower(); }
         }
 
-        public Connections Connections {
-            get { return _connections; }
-            set { _connections = value; }
-        }
-
-        public PipelineThreading PipelineThreading {
-            get { return _pipelineThreading; }
-            set { _pipelineThreading = value; }
-        }
-
-        public bool Enabled {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-
-        public List<IOperation> TransformOperations {
-            get { return _transformOperations; }
-            set { _transformOperations = value; }
-        }
-
-        public IParameters Parameters { get; set; }
-
-        public IEnumerable<TemplateAction> Actions { get; set; }
-
-        public FileInspectionRequest FileInspectionRequest { get; set; }
-
-        public long LogRows {
-            get { return _logRows; }
-            set { _logRows = value; }
-        }
-
-        public bool Parallel {
-            get { return _parallel; }
-            set { _parallel = value; }
-        }
-
         //constructor
         public Process(string name, ILogger logger) {
+            View = Common.DefaultValue;
+            Star = Common.DefaultValue;
+            Connections = new Connections();
+            PipelineThreading = PipelineThreading.MultiThreaded;
+            Enabled = true;
+            TransformOperations = new List<IOperation>();
+            Parallel = true;
+            LogRows = 10000;
+            Complete = false;
             Logger = logger;
             Name = name;
             DataSets = new Dictionary<string, List<Row>>();
             Parameters = new Parameters.Parameters(new DefaultFactory(logger));
+            Runner = new NullRunner();
         }
 
         //methods
@@ -152,40 +124,18 @@ namespace Transformalize.Main {
             return checks.All(kv => kv.Value);
         }
 
-        private IProcessRunner GetRunner() {
-            switch (Mode) {
-                case "init":
-                    return new InitializeRunner();
-                case "metadata":
-                    return new MetadataRunner();
-                default:
-                    return new ProcessRunner();
-            }
-        }
-
         public void ExecuteScaler() {
-            StartLogging();
-            GetRunner().Run(this);
-            StopLogging();
-        }
-
-        public IEnumerable<Row> Execute() {
-            StartLogging();
-            var rows = GetRunner().Run(this);
-            StopLogging();
-            return rows;
-        }
-
-        public void StopLogging() {
+            Logger.Start(Configuration);
+            Runner.Run(this);
             Logger.Stop();
         }
 
-        public void StartLogging() {
-            Logger.Start();
+        public IEnumerable<Row> Execute() {
+            Logger.Start(Configuration);
+            var rows = Runner.Run(this);
+            Logger.Stop();
+            return rows;
         }
-
-        public Dictionary<string, List<Row>> DataSets { get; set; }
-        public ILogger Logger { get; private set; }
 
         public Fields OutputFields() {
             return Fields().WithOutput();
@@ -262,10 +212,11 @@ namespace Transformalize.Main {
         }
 
         public void PerformActions(Func<TemplateAction, bool> filter) {
-            if (Actions.Any(filter)) {
-                foreach (var action in Actions.Where(filter)) {
-                    action.Handle(FindFile(action));
-                }
+            if (!Actions.Any(filter))
+                return;
+
+            foreach (var action in Actions.Where(filter)) {
+                action.Handle(FindFile(action));
             }
         }
 
@@ -297,7 +248,7 @@ namespace Transformalize.Main {
         }
 
         public bool IsInitMode() {
-            return Mode.Equals("init", StringComparison.OrdinalIgnoreCase);
+            return Mode.Equals("init");
         }
 
     }

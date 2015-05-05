@@ -3532,6 +3532,7 @@
     <Compile Include="Runner\InitializeRunner.cs" />
     <Compile Include="Runner\IProcessRunner.cs" />
     <Compile Include="Runner\MetadataRunner.cs" />
+    <Compile Include="Runner\NullRunner.cs" />
     <Compile Include="Runner\ProcessRunner.cs" />
     <Compile Include="Runner\ProcessXmlConfigurationReader.cs" />
     <Compile Include="Operations\EntityInputKeysExtractDelta.cs" />

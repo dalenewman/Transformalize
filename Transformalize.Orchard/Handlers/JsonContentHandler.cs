@@ -24,26 +24,25 @@ namespace Transformalize.Orchard.Handlers {
     }}]
 }}";
 
-        public static string LogsToJson(IEnumerable<LinkedList<string>> logs) {
+        public static string LogsToJson(IEnumerable<string[]> logs) {
             var sw = new StringWriter();
             var writer = new JsonTextWriter(sw);
             writer.WriteStartArray();
             foreach (var log in logs) {
-                writer.WriteStartObject();
-
-                var attributes = log.ToList();
+                if (log.Length <= 4) 
+                    continue;
+                writer.WriteStartObject(); //add
                 writer.WritePropertyName("time");
-                writer.WriteValue(attributes[0]);
+                writer.WriteValue(log[0]);
                 writer.WritePropertyName("level");
-                writer.WriteValue(attributes[1].TrimEnd());
+                writer.WriteValue(log[1].TrimEnd());
                 writer.WritePropertyName("process");
-                writer.WriteValue(attributes[2]);
+                writer.WriteValue(log[2]);
                 writer.WritePropertyName("entity");
-                writer.WriteValue(attributes[3]);
+                writer.WriteValue(log[3]);
                 writer.WritePropertyName("message");
-                writer.WriteValue(attributes[4].TrimEnd(new[] { ' ', '\r', '\n' }));
-
-                writer.WriteEndObject();
+                writer.WriteValue(log[4].TrimEnd(new[] { ' ', '\r', '\n' }));
+                writer.WriteEndObject(); //add
             }
             writer.WriteEndArray();
             writer.Flush();
@@ -56,7 +55,7 @@ namespace Transformalize.Orchard.Handlers {
             var processes = "[]";
             var environments = "[]";
             var results = "[]";
-            var content = "{}";
+            const string content = "{}";
 
             var tfl = new TflRoot(configuration, null);
             var settings = new JsonSerializerSettings {

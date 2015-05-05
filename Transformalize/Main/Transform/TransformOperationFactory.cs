@@ -267,14 +267,12 @@ namespace Transformalize.Main {
                         element.Length
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
+                case "hashcode":
                 case "gethashcode":
                     return new GetHashCodeOperation(
                         inKey,
                         outKey
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
-
-                case "hashcode":
-                    goto case "gethashcode";
 
                 case "mail":
                     var connection = _process.Connections.GetConnectionByName(element.Connection).Connection;
@@ -400,6 +398,7 @@ namespace Transformalize.Main {
                         parameters
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
+                case "razor":
                 case "template":
                     return new RazorOperation(
                         outKey,
@@ -410,9 +409,6 @@ namespace Transformalize.Main {
                         parameters,
                         _logger
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
-
-                case "razor":
-                    goto case "template";
 
                 case "velocity":
                     return new VelocityOperation(

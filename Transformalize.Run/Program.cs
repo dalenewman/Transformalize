@@ -23,9 +23,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Run.Libs.SemanticLogging;
+using Transformalize.Run.Logging;
 using LegacyLogFormatter = Transformalize.Run.Logging.LegacyLogFormatter;
 using ObservableEventListener = Transformalize.Run.Libs.SemanticLogging.ObservableEventListener;
 using Process = Transformalize.Main.Process;
@@ -50,21 +50,23 @@ namespace Transformalize.Run {
 
             var resource = args[0];
 
+            _options = new Options(CombineArguments(args));
             var listener = new ObservableEventListener();
-            listener.EnableEvents(TflEventSource.Log, EventLevel.Informational);
+            listener.EnableEvents(TflEventSource.Log, _options.LogLevel);
             var subscription = listener.LogToConsole(new LegacyLogFormatter());
 
             try {
                 if (OptionsMayExist(args)) {
-                    _options = new Options(CombineArguments(args));
+                    
                     if (_options.Valid()) {
-                        if (_options.Mode.Equals("rebuild", StringComparison.OrdinalIgnoreCase)) {
+
+                        if (_options.Mode == "rebuild") {
                             _options.Mode = "init";
-                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new RunLogger(), _options));
                             _options.Mode = "first";
-                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new RunLogger(), _options));
                         } else {
-                            processes.AddRange(ProcessFactory.Create(resource, new NullLogger(), _options));
+                            processes.AddRange(ProcessFactory.Create(resource, new RunLogger(), _options));
                         }
                     } else {
                         foreach (var problem in _options.Problems) {
@@ -74,7 +76,7 @@ namespace Transformalize.Run {
                         Environment.Exit(1);
                     }
                 } else {
-                    processes.AddRange(ProcessFactory.Create(resource, new NullLogger()));
+                    processes.AddRange(ProcessFactory.Create(resource, new RunLogger()));
                 }
             } catch (Exception e) {
                 Console.WriteLine(e.Message);
@@ -95,6 +97,7 @@ namespace Transformalize.Run {
 
             listener.DisableEvents(TflEventSource.Log);
             listener.Dispose();
+            subscription.Dispose();
         }
 
         private static string CombineArguments(IEnumerable<string> args) {

@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using Transformalize.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Main {
@@ -39,48 +40,71 @@ namespace Transformalize.Main {
         public string Mode {
             get { return _mode; }
             set {
-                _mode = value;
+                if (value != null) {
+                    _mode = value.ToLower();
+                }
             }
         }
 
         public Options(string settings = "") {
 
-            if (!string.IsNullOrEmpty(settings)) {
-                try {
-                    if (settings.Contains("'")) {
-                        settings = settings.Replace('\'', '"');
-                    }
-                    var options = JsonConvert.DeserializeObject<Dictionary<string, object>>(settings);
+            LogLevel = EventLevel.Informational;
 
-                    foreach (var option in options) {
-                        var key = option.Key.ToLower();
-                        var value = option.Value.ToString().ToLower();
-                        switch (key) {
+            if (string.IsNullOrEmpty(settings))
+                return;
 
-                            case "mode":
-                                Mode = value;
-                                break;
-
-                            case "force":
-                                bool input;
-                                if (bool.TryParse(value, out input)) {
-                                    Force = input;
-                                } else {
-                                    RecordBadValue(option, typeof(bool));
-                                }
-                                break;
-
-                            default:
-                                RecordBadProperty(option);
-                                break;
-                        }
-                    }
-                } catch (Exception e) {
-                    var message = string.Format("Couldn't parse options: {0}.", settings);
-                    Problems.Add(message);
+            try {
+                if (settings.Contains("'")) {
+                    settings = settings.Replace('\'', '"');
                 }
-            }
+                var options = JsonConvert.DeserializeObject<Dictionary<string, object>>(settings);
 
+                foreach (var option in options) {
+                    var key = option.Key.ToLower();
+                    var value = option.Value.ToString().ToLower();
+                    switch (key) {
+
+                        case "mode":
+                            Mode = value;
+                            break;
+
+                        case "force":
+                            bool input;
+                            if (bool.TryParse(value, out input)) {
+                                Force = input;
+                            } else {
+                                RecordBadValue(option, typeof(bool));
+                            }
+                            break;
+
+                        case "log-level":
+                        case "level":
+                            var level = value.Left(4);
+                            switch (level) {
+                                case "debu":
+                                    LogLevel = EventLevel.Verbose;
+                                    break;
+                                case "warn":
+                                    LogLevel = EventLevel.Warning;
+                                    break;
+                                case "error":
+                                    LogLevel = EventLevel.Error;
+                                    break;
+                                default:
+                                    LogLevel = EventLevel.Informational;
+                                    break;
+                            }
+                            break;
+
+                        default:
+                            RecordBadProperty(option);
+                            break;
+                    }
+                }
+            } catch (Exception e) {
+                var message = string.Format("Couldn't parse options: {0}.", settings);
+                Problems.Add(message);
+            }
         }
 
         public bool Valid() {

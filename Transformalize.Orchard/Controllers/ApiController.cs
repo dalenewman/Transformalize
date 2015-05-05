@@ -78,14 +78,14 @@ namespace Transformalize.Orchard.Controllers {
             request.RequestType = ApiRequestType.MetaData;
             var query = GetQuery();
             var transformalizeRequest = new TransformalizeRequest(part, query, null);
-            var logger = new TransformalizeLogger(transformalizeRequest.Part.Title(), Logger, part.LogLevel, OrchardVersion, _moduleVersion);
+            var logger = new TransformalizeLogger(transformalizeRequest.Part.Title(), part.LogLevel, Logger, OrchardVersion, _moduleVersion);
 
             var problems = transformalizeRequest.Root.Problems();
             if (problems.Any()) {
                 var bad = new TransformalizeResponse();
                 request.Status = 501;
                 request.Message = "Configuration Problem" + problems.Count.Plural();
-                bad.Log.AddRange(problems.Select(p => new LinkedList<string>(new[]{DateTime.Now.ToString(),"error",".",".",p})));
+                bad.Log.AddRange(problems.Select(p => new[]{DateTime.Now.ToString(),"error",".",".",p}));
                 return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
                     query["format"] ?? DefaultFormat,
                     query["flavor"] ?? DefaultFlavor

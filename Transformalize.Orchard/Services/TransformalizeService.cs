@@ -75,7 +75,7 @@ namespace Transformalize.Orchard.Services {
         public TransformalizeResponse Run(TransformalizeRequest request) {
 
             var moduleVersion = _extensionManager.GetExtension("Transformalize.Orchard").Version;
-            var logger = new TransformalizeLogger(request.Part.Title(), Logger, request.Part.LogLevel, OrchardVersion, moduleVersion);
+            var logger = new TransformalizeLogger(request.Part.Title(), request.Part.LogLevel, Logger, OrchardVersion, moduleVersion);
             var processes = new List<Process>(); 
 
             //transitioning to using TflRoot instead of string configuration
@@ -107,7 +107,7 @@ namespace Transformalize.Orchard.Services {
 
             return new TransformalizeResponse() {
                 Processes = processes.ToArray(),
-                Log = new List<LinkedList<string>>(logger.Dump())
+                Log = logger.Dump().ToList()
             };
         }
 

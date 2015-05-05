@@ -13,9 +13,9 @@ namespace Transformalize.Run.Logging {
     public class RunLogger : ILogger {
 
         public string Name { get; set; }
-        private readonly TflProcess _process;
         private List<ObservableEventListener> _eventListeners = new List<ObservableEventListener>();
         private List<SinkSubscription> _sinkSubscriptions = new List<SinkSubscription>();
+        private bool _started;
 
         public List<ObservableEventListener> EventListeners {
             get { return _eventListeners; }
@@ -25,11 +25,6 @@ namespace Transformalize.Run.Logging {
         public List<SinkSubscription> SinkSubscriptions {
             get { return _sinkSubscriptions; }
             set { _sinkSubscriptions = value; }
-        }
-
-        public RunLogger(TflProcess process) {
-            _process = process;
-            Name = process.Name;
         }
 
         public void Info(string message, params object[] args) {
@@ -74,14 +69,19 @@ namespace Transformalize.Run.Logging {
             TflLogger.Error(Name, entity, exception.StackTrace);
         }
 
-        public void Start() {
-            foreach (var log in _process.Log) {
+        public void Start(TflProcess process) {
+            if (_started)
+                return;
+
+            _started = true;
+            Name = process.Name;
+            foreach (var log in process.Log) {
                 switch (log.Provider) {
                     case "file":
                         log.Folder = log.Folder.Replace('/', '\\');
                         log.File = log.File.Replace('/', '\\');
                         log.Folder = (log.Folder.Equals(Common.DefaultValue) ? "logs" : log.Folder).TrimEnd('\\') + "\\";
-                        log.File = (log.File.Equals(Common.DefaultValue) ? "tfl-" + _process.Name + ".log" : log.File).TrimStart('\\');
+                        log.File = (log.File.Equals(Common.DefaultValue) ? "tfl-" + process.Name + ".log" : log.File).TrimStart('\\');
 
                         var fileListener = new ObservableEventListener();
                         fileListener.EnableEvents(TflEventSource.Log, (EventLevel)Enum.Parse(typeof(EventLevel), log.Level));
@@ -90,7 +90,7 @@ namespace Transformalize.Run.Logging {
                         break;
                     case "mail":
                         if (log.Subject.Equals(Common.DefaultValue)) {
-                            log.Subject = _process.Name + " " + log.Level;
+                            log.Subject = process.Name + " " + log.Level;
                         }
                         var mailListener = new ObservableEventListener();
                         mailListener.EnableEvents(TflEventSource.Log, EventLevel.Error);
@@ -100,6 +100,7 @@ namespace Transformalize.Run.Logging {
                 }
 
             }
+
         }
 
         public void Stop() {

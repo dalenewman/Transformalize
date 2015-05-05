@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
@@ -11,7 +10,7 @@ namespace Transformalize.Main {
         private readonly Process _process;
         private readonly List<TflEntity> _entities;
 
-        public OperationsLoader(ref Process process, List<TflEntity> entities) {
+        public OperationsLoader(Process process, List<TflEntity> entities) {
             _process = process;
             _entities = entities;
         }
@@ -63,10 +62,7 @@ namespace Transformalize.Main {
                         AddBranches(t.Branches, entity, field, reader);
                     }
                 }
-
-
             }
-
         }
 
         private void AddBranches(IEnumerable<TflBranch> branches, Entity entity, Field field, ITransformParametersReader reader) {

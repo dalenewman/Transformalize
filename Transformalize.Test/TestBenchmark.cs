@@ -31,7 +31,7 @@ using Transformalize.Main;
 
 namespace Transformalize.Test {
     [TestFixture]
-    public class TestBenchmark : EtlProcessHelper {
+    public class TestBenchmark {
 
         [Test]
         public void RunCfgBenchmark() {

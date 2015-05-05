@@ -1,4 +1,5 @@
 using System;
+using Transformalize.Configuration;
 
 namespace Transformalize.Logging {
     public interface ILogger {
@@ -17,7 +18,7 @@ namespace Transformalize.Logging {
         void EntityError(string entity, string message, params object[] args);
         void EntityError(string entity, Exception exception, string message, params object[] args);
 
-        void Start();
+        void Start(TflProcess process);
         void Stop();
     }
 }

@@ -11,7 +11,7 @@ namespace Transformalize.Main {
         private readonly Process _process;
         private readonly List<TflEntity> _elements;
 
-        public EntitiesLoader(ref Process process, List<TflEntity> elements) {
+        public EntitiesLoader(Process process, List<TflEntity> elements) {
             _process = process;
             _elements = elements;
         }

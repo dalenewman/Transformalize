@@ -132,8 +132,8 @@ namespace Transformalize.Orchard.Controllers {
                     model.TransformalizeResponse = _transformalize.Run(request);
                 } catch (Exception ex) {
                     model.DisplayLog = true;
-                    model.TransformalizeResponse.Log.Add(new LinkedList<string>(new[]{DateTime.Now.ToString(), "error","orchard", ".", ex.Message}));
-                    model.TransformalizeResponse.Log.Add(new LinkedList<string>(new[] { DateTime.Now.ToString(), "debug", "orchard", ".", ex.StackTrace }));
+                    model.TransformalizeResponse.Log.Add(new[]{DateTime.Now.ToString(), "error","orchard", ".", ex.Message});
+                    model.TransformalizeResponse.Log.Add(new[] { DateTime.Now.ToString(), "debug", "orchard", ".", ex.StackTrace });
                     Logger.Error(ex.Message + Environment.NewLine + ex.StackTrace);
                 }
             } else {

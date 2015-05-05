@@ -9,7 +9,7 @@ namespace Transformalize.Main {
         private readonly Process _process;
         private readonly List<TflMap> _elements;
 
-        public MapLoader(ref Process process, List<TflMap> elements) {
+        public MapLoader(Process process, List<TflMap> elements) {
             _process = process;
             _elements = elements;
         }

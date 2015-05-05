@@ -32,8 +32,10 @@ namespace Transformalize.Configuration {
         public bool Html { get; set; }
         [Cfg(value = "get")]
         public string Method { get; set; }
-        [Cfg(value = "*")]
+
+        [Cfg(value = "*", toLower = true)]
         public string Mode { get; set; }
+
         [Cfg(value = "")]
         public string NewValue { get; set; }
         [Cfg(value = "")]

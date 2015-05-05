@@ -34,19 +34,19 @@ namespace Transformalize.Orchard.Handlers {
             return string.Concat(nodes.Select(n => n.ToString()));
         }
 
-        public static string LogsToXml(IEnumerable<LinkedList<string>> logs) {
+        public static string LogsToXml(List<string[]> logs) {
             var xmlBuilder = new StringBuilder();
             var xmlWriter = XmlWriter.Create(xmlBuilder, new XmlWriterSettings() { ConformanceLevel = ConformanceLevel.Fragment });
             foreach (var log in logs) {
+                if (log.Length <= 4) 
+                    continue;
                 xmlWriter.WriteStartElement("add");
-                var attributes = log.ToList();
-                xmlWriter.WriteAttributeString("time", attributes[0]);
-                xmlWriter.WriteAttributeString("level", attributes[1].TrimEnd());
-                xmlWriter.WriteAttributeString("process", attributes[2]);
-                xmlWriter.WriteAttributeString("entity", attributes[3]);
-                xmlWriter.WriteAttributeString("message", attributes[4].TrimEnd(new[] { ' ', '\r', '\n' }));
-
-                xmlWriter.WriteEndElement();
+                xmlWriter.WriteAttributeString("time", log[0]);
+                xmlWriter.WriteAttributeString("level", log[1].TrimEnd());
+                xmlWriter.WriteAttributeString("process", log[2]);
+                xmlWriter.WriteAttributeString("entity", log[3]);
+                xmlWriter.WriteAttributeString("message", log[4].TrimEnd(new[] { ' ', '\r', '\n' }));
+                xmlWriter.WriteEndElement(); //add
             }
             xmlWriter.Flush();
             return xmlBuilder.ToString();

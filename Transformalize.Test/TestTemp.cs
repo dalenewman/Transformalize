@@ -1,12 +1,10 @@
-﻿using System.Diagnostics.Tracing;
-using NUnit.Framework;
-using Transformalize.Logging;
+﻿using NUnit.Framework;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
 
     [TestFixture]
-    public class TestTemp : EtlProcessHelper {
+    public class TestTemp {
 
         [Test]
         [Ignore("test")]
