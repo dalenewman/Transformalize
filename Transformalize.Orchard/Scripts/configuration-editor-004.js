@@ -94,7 +94,7 @@
         hintOptions: { schemaInfo: tags }
     });
 
-    editor.setSize('100%', Math.round(window.innerHeight * .75));
+    editor.setSize('100%', Math.round(window.innerHeight * .65));
 
     $('#md-button').click(function () {
         window.open(settings.metaDataUrl, '_blank');

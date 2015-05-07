@@ -60,6 +60,7 @@ namespace Transformalize.Main.Transform {
             {"lower","tolower"},
             {"map","map"},
             {"now","now"},
+            {"utcnow","utcnow"},
             {"padleft","padleft"},
             {"padright","padright"},
             {"phone","formatphone"},
@@ -126,6 +127,7 @@ namespace Transformalize.Main.Transform {
             {"distinctwords", DistinctWords},
             {"guid", (arg, root, last) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "guid"; t.IsShortHand = true;})},
             {"now", (arg, root, last) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "now"; t.IsShortHand = true;})},
+            {"utcnow", (arg, root, last) =>root.GetDefaultOf<TflTransform>(t=>{t.Method = "utcnow"; t.IsShortHand = true;})},
             {"remove", Remove},
             {"trimstart", (arg, root, last) => root.GetDefaultOf<TflTransform>(t=>{t.Method = "trimstart"; t.TrimChars = arg; t.IsShortHand = true;})},
             {"trimstartappend", TrimStartAppend},
@@ -170,8 +172,8 @@ namespace Transformalize.Main.Transform {
 
         private TflTransform Equals(string arg, TflField field, TflTransform lastTransform) {
             var split = SplitComma(arg);
-            if (Guard.Against(_problems, split.Length == 0 || split.Length > 1,
-                "The equals method requires one parameter representing a value or field that you want compared with this field's value.")) {
+            if (Guard.Against(_problems, split.Length == 0 && lastTransform.Method != "copy" || split.Length > 1,
+                "The equals method requires a parameter representing a value or field that you want compared with this field's value OR should be proceeded by a copy transform that supplies multiple parameters.")) {
                 return _guard;
             }
 

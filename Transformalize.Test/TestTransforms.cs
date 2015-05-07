@@ -29,12 +29,13 @@ using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.NVelocity.App;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
 using Transformalize.Main.Providers;
+using Transformalize.Main.Transform;
 using Transformalize.Operations;
 using Transformalize.Operations.Transform;
+using Transformalize.Operations.Validate;
 using Transformalize.Test.Builders;
 
 namespace Transformalize.Test {
@@ -154,6 +155,52 @@ namespace Transformalize.Test {
             var rows = TestOperation(input, distance);
 
             Assert.AreEqual(985.32863773508757d, rows[0]["o1"]);
+        }
+
+        [Test]
+        public void EqualsSingleValue() {
+            var parameters = new ParametersBuilder()
+                .Parameter("p1", "test")
+                .ToParameters();
+            var rows = new RowsOperation(new RowsBuilder()
+                .Row("f1", "test")
+                .Row("f1", "not-test")
+                .ToRows());
+            var equals = new EqualsOperation("f1", parameters);
+            var results = TestOperation(rows, equals);
+            Assert.AreEqual(true, results[0]["f1"]);
+            Assert.AreEqual(false, results[1]["f1"]);
+        }
+
+        [Test]
+        public void EqualsSingleParameter() {
+            var parameters = new ParametersBuilder()
+                .Parameter("p1")
+                .ToParameters();
+            var rows = new RowsOperation(new RowsBuilder()
+                .Row("f1", "test").Field("p1", "test")
+                .Row("f1", "not-test").Field("p1", "test")
+                .ToRows());
+            var equals = new EqualsOperation("f1", parameters);
+            var results = TestOperation(rows, equals);
+            Assert.AreEqual(true, results[0]["f1"]);
+            Assert.AreEqual(false, results[1]["f1"]);
+        }
+
+        [Test]
+        public void EqualsParameters() {
+            var parameters = new ParametersBuilder()
+                .Parameter("p1")
+                .Parameter("p2")
+                .ToParameters();
+            var rows = new RowsOperation(new RowsBuilder()
+                .Row("f1", null).Field("p1", "test").Field("p2", "test")
+                .Row("f1", null).Field("p1", "test").Field("p2", "not-test")
+                .ToRows());
+            var equals = new EqualsOperation("f1", parameters);
+            var results = TestOperation(rows, equals);
+            Assert.AreEqual(true, results[0]["f1"]);
+            Assert.AreEqual(false, results[1]["f1"]);
         }
 
         [Test]

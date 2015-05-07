@@ -55,5 +55,11 @@ namespace Transformalize.Configuration {
         public string[] GetModes() {
             return Modes.Any() ? Modes.Select(m => m.Name).ToArray() : new[] { Mode };
         }
+
+        protected override void Validate() {
+            if (Before && After) {
+                AddProblem("The {0} action is set to run before AND after.  Please choose before OR after.", Action);
+            }
+        }
     }
 }

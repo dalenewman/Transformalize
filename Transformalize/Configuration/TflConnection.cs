@@ -54,7 +54,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int Port { get; set; }
 
-        [Cfg(value = "sqlserver", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", toLower = true)]
+        [Cfg(value = "internal", domain = "sqlserver,mysql,postgresql,sqlce,analysisservices,file,folder,internal,console,log,mail,html,elasticsearch,solr,lucene,web", toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
@@ -77,6 +77,19 @@ namespace Transformalize.Configuration {
         public bool Check { get; set; }
 
         public AbstractConnection Connection { get; set; }
+
+        protected override void Modify() {
+            ModifyProvider();
+        }
+
+        private void ModifyProvider() {
+            //backwards compatibility, default provider used to be sqlserver
+            if (Provider == "internal" &&
+                (Database != "" || ConnectionString != "")
+                ) {
+                Provider = "sqlserver";
+            }
+        }
 
         protected override void Validate() {
             const StringComparison ic = StringComparison.OrdinalIgnoreCase;

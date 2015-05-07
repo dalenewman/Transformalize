@@ -21,7 +21,6 @@
 #endregion
 
 using System.Linq;
-using System.Text;
 using Transformalize.Extensions;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;

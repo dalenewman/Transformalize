@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
-using Transformalize.Libs.Lucene.Net.Document;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration {
@@ -10,7 +9,7 @@ namespace Transformalize.Configuration {
         [Cfg(required = false, unique = true)]
         public string Alias { get; set; }
 
-        [Cfg(value = "input", toLower = true)]
+        [Cfg(value = "", toLower = true)]
         public string Connection { get; set; }
 
         [Cfg(value = false)]
@@ -215,6 +214,10 @@ namespace Transformalize.Configuration {
                 p.Entity = entity;
                 p.Field = field;
             });
+        }
+
+        public bool HasConnection() {
+            return Connection != string.Empty || Input.Count > 0;
         }
     }
 }

@@ -20,6 +20,11 @@ namespace Transformalize.Orchard {
         private readonly string _orchardVersion;
         private readonly string _moduleVersion;
         private readonly ConcurrentQueue<string[]> _log = new ConcurrentQueue<string[]>();
+        private readonly bool _infoEnabled;
+        private readonly bool _debugEnabled;
+        private readonly bool _warnEnabled;
+        private readonly bool _errorEnabled;
+
         private bool _reportedHost = false;
 
         public string DatetimeFormat { get; set; }
@@ -31,7 +36,30 @@ namespace Transformalize.Orchard {
             _orchardLogger = orchardLogger;
             _orchardVersion = orchardVersion;
             _moduleVersion = moduleVersion;
-            DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
+            DatetimeFormat = "HH:mm:ss";
+
+            var levels = GetLevels(_level);
+            _debugEnabled = levels[0];
+            _infoEnabled = levels[1];
+            _warnEnabled = levels[2];
+            _errorEnabled = levels[3];
+        }
+
+        private static bool[] GetLevels(string level) {
+            switch (level) {
+                case "debu":
+                    return new[] { true, true, true, true };
+                case "info":
+                    return new[] { false, true, true, true };
+                case "warn":
+                    return new[] { false, false, true, true };
+                case "erro":
+                    return new[] { false, false, false, true };
+                case "none":
+                    return new[] { false, false, false, false };
+                default:
+                    goto case "info";
+            }
         }
 
         public IEnumerable<string[]> Dump() {
@@ -62,7 +90,7 @@ namespace Transformalize.Orchard {
         }
 
         public void EntityInfo(string entity, string message, params object[] args) {
-            if (_level != "none") {
+            if (_infoEnabled) {
                 _log.Enqueue(GetLine("info ", entity, string.Format(message, args)));
             }
             if (!_orchardLogger.IsEnabled(LogLevel.Information))
@@ -73,7 +101,7 @@ namespace Transformalize.Orchard {
         }
 
         public void EntityDebug(string entity, string message, params object[] args) {
-            if (_level == "debu") {
+            if (_debugEnabled) {
                 _log.Enqueue(GetLine("debug", entity, string.Format(message, args)));
             }
             if (!_orchardLogger.IsEnabled(LogLevel.Debug))
@@ -82,7 +110,7 @@ namespace Transformalize.Orchard {
         }
 
         public void EntityWarn(string entity, string message, params object[] args) {
-            if (_level != "none") {
+            if (_warnEnabled) {
                 _log.Enqueue(GetLine("warn", entity, string.Format(message, args)));
             }
 
@@ -92,7 +120,7 @@ namespace Transformalize.Orchard {
         }
 
         public void EntityError(string entity, string message, params object[] args) {
-            if (_level != "none") {
+            if (_errorEnabled) {
                 _log.Enqueue(GetLine("error", entity, string.Format(message, args)));
             }
             if (!_orchardLogger.IsEnabled(LogLevel.Error))
@@ -101,7 +129,7 @@ namespace Transformalize.Orchard {
         }
 
         public void EntityError(string entity, Exception exception, string message, params object[] args) {
-            if (_level != "none") {
+            if (_errorEnabled) {
                 _log.Enqueue(GetLine("error", entity, string.Format(message, args)));
                 _log.Enqueue(GetLine("error", entity, exception.Message));
                 _log.Enqueue(GetLine("error", entity, exception.StackTrace));
@@ -145,7 +173,7 @@ namespace Transformalize.Orchard {
             return string.Format("Host is {0} {1}", host, string.Join(", ", ip4.Any() ? ip4 : new[] { string.Empty }));
         }
 
-        private string GetPipelineDescription(TflProcess process) {
+        private static string GetPipelineDescription(TflProcess process) {
             var pipeline = process.PipelineThreading;
             if (pipeline != "Default")
                 return pipeline;

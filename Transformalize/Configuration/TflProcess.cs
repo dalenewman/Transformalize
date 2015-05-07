@@ -251,6 +251,9 @@ namespace Transformalize.Configuration {
                 calculatedField.Input = false;
             }
 
+            ModifyDefaultConnection("input");
+            ModifyDefaultConnection("output");
+            ModifyDefaultEntityConnections();
             ModifyDefaultOutput();
             ModifyDefaultSearchTypes();
 
@@ -275,6 +278,18 @@ namespace Transformalize.Configuration {
             ModifyMergeParameters();
             ModifyMapParameters();
 
+        }
+
+        private void ModifyDefaultEntityConnections() {
+            foreach (var entity in Entities.Where(entity => !entity.HasConnection())) {
+                entity.Connection = Connections.Any(c => c.Name == "input") ? "input" : Connections.First().Name;
+            }
+        }
+
+        private void ModifyDefaultConnection(string name) {
+            if (Connections.All(c => c.Name != name)) {
+                this.Connections.Add(this.GetDefaultOf<TflConnection>(c => { c.Name = name; }));
+            }
         }
 
         private void ModifyMergeParameters() {

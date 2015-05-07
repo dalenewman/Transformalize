@@ -26,7 +26,6 @@ using System.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Libs.Rhino.Etl.Pipelines;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Operations;
 using Transformalize.Processes;
@@ -54,10 +53,10 @@ namespace Transformalize.Runner {
                 ProcessDeletes(process);
             }
 
-            ProcessEntities(ref process);
+            ProcessEntities(process);
 
             if (process.StarEnabled && !process.OutputConnection.Is.Internal()) {
-                ProcessMaster(ref process);
+                ProcessMaster(process);
             }
 
             if (process.OutputConnection.Is.Internal()) {
@@ -98,7 +97,7 @@ namespace Transformalize.Runner {
             }
         }
 
-        private static void ProcessEntities(ref Process process) {
+        private static void ProcessEntities(Process process) {
             var p = process;
             if (process.Entities.Count == 1) {
                 new EntityProcess(p, process.Entities[0]).Execute();
@@ -122,7 +121,7 @@ namespace Transformalize.Runner {
             }
         }
 
-        private static void ProcessMaster(ref Process process) {
+        private static void ProcessMaster(Process process) {
             var updateMasterProcess = new UpdateMasterProcess(process) {
                 PipelineExecuter = process.PipelineThreading == PipelineThreading.SingleThreaded ? (AbstractPipelineExecuter)new SingleThreadedPipelineExecuter() : new ThreadPoolPipelineExecuter()
             };

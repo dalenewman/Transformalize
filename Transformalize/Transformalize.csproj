@@ -3375,6 +3375,7 @@
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\TransliterateOperation.cs" />
     <Compile Include="Operations\Transform\UrlEncodeOperation.cs" />
+    <Compile Include="Operations\Transform\UtcNowOperation.cs" />
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\VelocityOperation.cs" />
     <Compile Include="Operations\Transform\WebOperation.cs" />

@@ -347,7 +347,7 @@ namespace Transformalize.Test {
                 .Parameter("other", new Parameter("other", null) {SimpleType = "string"})
                 .ToParameters();
 
-            var validator = new EqualsOperation("in", parameters.First().Value);
+            var validator = new EqualsOperation("in", parameters);
 
             var output = TestOperation(rows, validator);
 
@@ -366,7 +366,7 @@ namespace Transformalize.Test {
                 .Parameter("other", new Parameter("other", "789A") { SimpleType = "string" })
                 .ToParameters();
 
-            var validator = new EqualsOperation("in", parameters.First().Value);
+            var validator = new EqualsOperation("in", parameters);
 
             var output = TestOperation(rows, validator);
 

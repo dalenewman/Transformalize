@@ -193,21 +193,16 @@ namespace Transformalize.Main {
                 case "guid":
                     return new GuidOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
+                case "utcnow":
+                    return new UtcNowOperation(
+                        inKey,
+                        outKey
+                    ) {ShouldRun = shouldRun, EntityName = _entityName};
                 case "now":
-                    toTimeZone = TimeZoneOperation.GuardTimeZone(field.Process, _entityName, toTimeZone, TimeZoneInfo.Local.Id, _process.Logger);
-                    return new PartialProcessOperation(_process)
-                        .Register(
-                            new NowOperation(
-                                inKey,
-                                outKey
-                                ) { ShouldRun = shouldRun, EntityName = _entityName })
-                        .Register(
-                            new TimeZoneOperation(
-                                outKey,
-                                outKey,
-                                "UTC",
-                                toTimeZone)
-                            );
+                    return new NowOperation(
+                        inKey,
+                        outKey
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
                 case "remove":
                     return new RemoveOperation(
                         inKey,
@@ -647,7 +642,7 @@ namespace Transformalize.Main {
 
                 // validators
                 case "equals":
-                    return new EqualsOperation(outKey, parameters.First().Value) { ShouldRun = shouldRun, EntityName = _entityName };
+                    return new EqualsOperation(outKey, parameters) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "isempty":
                     return new IsEmptyOperation(
