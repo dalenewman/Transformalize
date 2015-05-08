@@ -7,6 +7,9 @@ using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
 using Transformalize.Libs.NVelocity.App;
 using Transformalize.Libs.NVelocity.Runtime;
+using Transformalize.Libs.RazorEngine;
+using Transformalize.Libs.RazorEngine.Configuration.Fluent;
+using Transformalize.Libs.RazorEngine.Templating;
 using Transformalize.Libs.SolrNet;
 using Transformalize.Logging;
 using Transformalize.Main;
@@ -131,7 +134,7 @@ namespace Transformalize.Configuration {
         /// This refers to the razor templating engine's content type.  If you're rendering HTML 
         /// markup, use `html`, if not, using `raw` may inprove performance.
         /// </summary>
-        [Cfg(value = "raw", domain = "raw,html")]
+        [Cfg(value = "raw", domain = "raw,html", toLower = true)]
         public string TemplateContentType { get; set; }
 
         /// <summary>
@@ -508,8 +511,22 @@ namespace Transformalize.Configuration {
         // Register Dependencies
         public IKernel Register(ILogger logger) {
             RegisterVelocity(logger);
+            RegisterRazor(logger);
 
             return new StandardKernel(new NinjectBindings(this, logger));
+        }
+
+        private void RegisterRazor(ILogger logger) {
+            if (TemplateContentType == "html")
+                return;
+
+            if (!Templates.Any() && !GetAllTransforms().Any(t => t.Method == "template" || t.Method == "razor"))
+                return;
+
+            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(Encoding.Raw));
+            var templateService = new TemplateService(config);
+            logger.Debug("Switching RazorEngine content type to raw.");
+            Razor.SetTemplateService(templateService);
         }
 
         private void RegisterVelocity(ILogger logger) {

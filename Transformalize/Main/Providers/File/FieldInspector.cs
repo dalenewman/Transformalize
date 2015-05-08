@@ -24,32 +24,34 @@ namespace Transformalize.Main.Providers.File {
 
         public Fields Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
-            var process = new TflProcess().GetDefaultOf<TflProcess>(p => {
+            var process = new TflRoot().GetDefaultOf<TflProcess>(p => {
                 p.Name = request.ProcessName;
                 p.StarEnabled = false;
+                p.ViewEnabled = false;
+                p.PipelineThreading = "MultiThreaded";
             });
 
-            process.Connections.Add(process.GetDefaultOf<TflConnection>(c => {
-                c.Name = "input";
-                c.Provider = "file";
-                c.File = fileInformation.FileInfo.FullName;
-                c.Delimiter = fileInformation.Delimiter == default(char)
-                    ? "|"
-                    : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
-                c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
-            }));
-
-            process.Connections.Add(process.GetDefaultOf<TflConnection>(c => {
-                c.Name = "output";
-                c.Provider = "internal";
-            }));
+            process.Connections = new List<TflConnection> {
+                process.GetDefaultOf<TflConnection>(c => {
+                    c.Name = "input";
+                    c.Provider = "file";
+                    c.File = fileInformation.FileInfo.FullName;
+                    c.Delimiter = fileInformation.Delimiter == default(char)
+                        ? "|"
+                        : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
+                    c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
+                }),
+                process.GetDefaultOf<TflConnection>(c => {
+                    c.Name = "output";
+                    c.Provider = "internal";
+                })
+            };
 
             process.Entities.Add(process.GetDefaultOf<TflEntity>(e => {
-                e.Name = "Data";
+                e.Name = request.EntityName;
+                e.PrependProcessNameToOutputName = false;
                 e.DetectChanges = false;
                 e.Sample = System.Convert.ToInt32(request.Sample);
-                e.Fields = new List<TflField>();
-                e.CalculatedFields = new List<TflField>();
             }));
 
             foreach (var fd in fileInformation.Fields) {

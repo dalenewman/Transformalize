@@ -26,7 +26,6 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Logging;
 using Transformalize.Main;
 using Transformalize.Main.Providers.SqlServer;
 using Transformalize.Test.Builders;

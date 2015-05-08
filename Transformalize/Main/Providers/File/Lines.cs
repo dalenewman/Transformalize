@@ -60,7 +60,7 @@ namespace Transformalize.Main.Providers.File {
 
             if (winner != null) {
                 _bestDelimiter = winner.Character;
-                _logger.Info("Delimiter is '{0}'", _bestDelimiter);
+                _logger.EntityInfo(_request.EntityName, "Delimiter is '{0}'", _bestDelimiter);
                 return _bestDelimiter;
             }
 
@@ -94,7 +94,7 @@ namespace Transformalize.Main.Providers.File {
             }
 
             _bestDelimiter = candidates.First(kv => kv.Value.Equals(max)).Key;
-            _logger.Info("Delimiter is '{0}'", _bestDelimiter);
+            _logger.EntityInfo(_request.EntityName, "Delimiter is '{0}'", _bestDelimiter);
             return _bestDelimiter;
         }
 

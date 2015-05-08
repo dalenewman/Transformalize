@@ -28,6 +28,7 @@ using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
+using Transformalize.Main.Transform;
 
 namespace Transformalize.Main {
 
@@ -65,11 +66,11 @@ namespace Transformalize.Main {
                 Index = entityIndex
             };
 
-            GuardAgainstMissingPrimaryKey(element);
-
             // wire up connections
             if (_process.Connections.Contains(element.Connection)) {
                 entity.Input.Add(_process.Connections.GetConnectionByName(element.Connection).NamedConnection());
+            } else {
+                _process.Logger.EntityWarn(element.Name, "Could not find connection '{0}'.", element.Connection);
             }
 
             //needs an input connection
@@ -243,37 +244,6 @@ namespace Transformalize.Main {
 
             }
             return namedConnections;
-        }
-
-        private void GuardAgainstMissingPrimaryKey(TflEntity element) {
-
-            if (element.Fields.Any(f => f.PrimaryKey))
-                return;
-
-            if (element.CalculatedFields.Any(cf => cf.PrimaryKey))
-                return;
-
-            if (!element.CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
-                _process.Logger.EntityWarn(element.Name, "Adding TflHashCode primary key for {0}.", element.Name);
-                var pk = element.GetDefaultOf<TflField>(f => {
-                    f.Name = "TflHashCode";
-                    f.Type = "int";
-                    f.PrimaryKey = true;
-                    f.Transforms = new List<TflTransform> {
-                        element.GetDefaultOf<TflTransform>(t => {
-                            t.Method = "concat";
-                            t.Parameter = "*";
-                        }), 
-                        element.GetDefaultOf<TflTransform>(t => t.Method = "gethashcode")
-                    };
-                });
-
-                element.CalculatedFields.Insert(0, pk);
-            }
-
-            if (string.IsNullOrEmpty(element.Version)) {
-                element.Version = "TflHashCode";
-            }
         }
 
         private void LoadVersion(TflEntity element, Entity entity) {

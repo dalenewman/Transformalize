@@ -22,7 +22,6 @@ namespace Transformalize.Main {
             _process = process;
             _elements = elements;
             _defaultFactory = new DefaultFactory(process.Logger);
-            SetupRazorTemplateService();
         }
 
         public Dictionary<string, Template> Read() {
@@ -64,16 +63,5 @@ namespace Transformalize.Main {
 
         }
 
-        private void SetupRazorTemplateService() {
-            const Encoding theDefault = Encoding.Html;
-
-            if (_process.TemplateContentType == theDefault)
-                return;
-
-            var config = new FluentTemplateServiceConfiguration(c => c.WithEncoding(_process.TemplateContentType));
-            var templateService = new TemplateService(config);
-            Razor.SetTemplateService(templateService);
-            _process.Logger.Debug("Set RazorEngine to {0} content type.", _process.TemplateContentType);
-        }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
@@ -119,7 +120,40 @@ namespace Transformalize.Configuration {
                     field.Alias = Prefix + field.Name;
                 }
             }
+            ModifyMissingPrimaryKey();
         }
+
+        /// <summary>
+        /// Adds a primary key if there isn't one.
+        /// </summary>
+        private void ModifyMissingPrimaryKey() {
+
+            if (!Fields.Any())
+                return;
+
+            if (Fields.Any(f => f.PrimaryKey))
+                return;
+
+            if (CalculatedFields.Any(cf => cf.PrimaryKey))
+                return;
+
+            if (!CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
+                var pk = GetDefaultOf<TflField>(f => {
+                    f.Name = "TflHashCode";
+                    f.Type = "int";
+                    f.PrimaryKey = true;
+                    f.T = "copy(*).concat().hashcode()";
+                });
+
+                CalculatedFields.Add(pk);
+            }
+
+            if (string.IsNullOrEmpty(Version)) {
+                Version = "TflHashCode";
+            }
+        }
+
+
 
         protected override void Validate() {
             var fields = GetAllFields().ToArray();

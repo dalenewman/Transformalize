@@ -123,5 +123,9 @@ namespace Transformalize.Configuration {
         public NamedConnection NamedConnection() {
             return new NamedConnection() { Name = Name, Connection = Connection };
         }
+
+        public override string ToString() {
+            return "{ name: " + Name + ", provider: " + Provider + " }";
+        }
     }
 }
