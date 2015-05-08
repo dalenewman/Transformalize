@@ -77,15 +77,24 @@ namespace Transformalize.Libs.EnterpriseLibrary.Validation.Validators {
                     try {
                         // because typeconverter is failing on decimals with thousands delimiter (e.g. 100,000.00)
                         if (targetType == typeof(decimal)) {
-                            var output = Decimal.Parse(
-                                objectToValidate, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol,
-                                (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))
-                            );
-                        } else {
-                            TypeConverter typeConverter = TypeDescriptor.GetConverter(targetType);
-                            object convertedValue = typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture, objectToValidate);
-                            if (convertedValue == null) {
+                            decimal attempt;
+                            if (!Decimal.TryParse(objectToValidate,
+                                NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol,
+                                (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo)),
+                                out attempt)) {
                                 logError = true;
+                            }
+                        } else {
+                            // because typeconverter just too loose with dates
+                            if (targetType == typeof(DateTime) && objectToValidate.Length < 6) {
+                                logError = true;
+                            } else {
+                                var typeConverter = TypeDescriptor.GetConverter(targetType);
+                                var convertedValue = typeConverter.ConvertFromString(null, CultureInfo.CurrentCulture,
+                                    objectToValidate);
+                                if (convertedValue == null) {
+                                    logError = true;
+                                }
                             }
                         }
                     } catch (Exception) {
