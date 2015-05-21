@@ -33,7 +33,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Transformalize")]
-[assembly: AssemblyCopyright("Copyright © Dale Newman 2014")]
+[assembly: AssemblyCopyright("Copyright © Dale Newman 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -58,6 +58,6 @@ using System.Resources;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("0.0.1.0")]
-[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyVersion("0.0.6.0")]
+[assembly: AssemblyFileVersion("0.0.6.0")]
 [assembly: NeutralResourcesLanguageAttribute("en-US")]

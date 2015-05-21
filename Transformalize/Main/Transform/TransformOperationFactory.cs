@@ -286,7 +286,6 @@ namespace Transformalize.Main {
                     var startsWith = _process.MapStartsWith.ContainsKey(element.Map) ? _process.MapStartsWith[element.Map] : new Map();
                     var endsWith = _process.MapEndsWith.ContainsKey(element.Map) ? _process.MapEndsWith[element.Map] : new Map();
 
-
                     //TODO: Move to Modify and Validate
                     if (equals.Count == 0 && startsWith.Count == 0 && endsWith.Count == 0) {
                         if (element.Map.Contains("=")) {
@@ -561,6 +560,7 @@ namespace Transformalize.Main {
                     return new HtmlEncodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "htmldecode":
+                case "xmldecode":
                     return new HtmlDecodeOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "filter":

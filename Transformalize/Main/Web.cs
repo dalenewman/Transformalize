@@ -24,6 +24,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading;
 
 namespace Transformalize.Main {
     public class WebResponse {
@@ -48,10 +49,12 @@ namespace Transformalize.Main {
 
     public class Web {
 
-        public static WebResponse Post(string url, string postData) {
+        public static WebResponse Post(string url, int timeOut, string postData) {
 
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "POST";
+            request.Timeout = timeOut == 0 ? Timeout.Infinite : timeOut;
+            request.KeepAlive = timeOut == 0;
             request.ContentType = "application/x-www-form-urlencoded";
 
             var byteArray = Encoding.UTF8.GetBytes(postData);
@@ -75,9 +78,11 @@ namespace Transformalize.Main {
             }
         }
 
-        public static WebResponse Get(string url) {
+        public static WebResponse Get(string url, int timeOut) {
             var request = (HttpWebRequest)WebRequest.Create(url);
             request.Method = "GET";
+            request.Timeout = timeOut == 0 ? Timeout.Infinite : timeOut;
+            request.KeepAlive = timeOut == 0;
 
             try {
                 using (var response = (HttpWebResponse)request.GetResponse()) {

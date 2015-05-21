@@ -24,8 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Logging;
+using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Main;
+using ILogger = Transformalize.Logging.ILogger;
 
 namespace Transformalize.Runner {
 
@@ -53,17 +54,15 @@ namespace Transformalize.Runner {
                 }
             }
 
-            var problems = cfg.Problems();
-            if (problems.Any()) {
-                foreach (var problem in problems) {
-                    _logger.Error(problem);
-                }
-                _logger.Debug(content);
-                throw new TransformalizeException(_logger, string.Join(Environment.NewLine, problems));
+            var errors = cfg.Errors();
+            if (!errors.Any()) 
+                return cfg.Processes;
+
+            foreach (var error in errors) {
+                _logger.Error(error);
             }
-
-            return cfg.Processes;
-
+            _logger.Debug(content);
+            throw new TransformalizeException(_logger, string.Join(Environment.NewLine, errors));
         }
 
     }

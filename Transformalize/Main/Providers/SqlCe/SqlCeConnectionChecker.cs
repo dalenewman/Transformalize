@@ -8,7 +8,7 @@ namespace Transformalize.Main.Providers.SqlCe {
             : base(logger, timeOut) {
         }
 
-        public new bool Check(AbstractConnection connection, ILogger logger) {
+        public bool Check(AbstractConnection connection, ILogger logger) {
             if (CachedResults.ContainsKey(connection.Name)) {
                 return CachedResults[connection.Name];
             }

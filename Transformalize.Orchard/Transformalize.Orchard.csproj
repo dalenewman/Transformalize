@@ -49,11 +49,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CfgNet, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.0.7\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.1.1\lib\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Orchard.Core, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -645,6 +644,8 @@
     <Content Include="Module.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\CfgNetLogger.cs" />
+    <Compile Include="Services\CfgNetNotifier.cs" />
     <Compile Include="Controllers\ApiController.cs" />
     <Compile Include="Controllers\TflController.cs" />
     <Compile Include="Controllers\WidgetController.cs" />
@@ -685,12 +686,11 @@
     <Compile Include="Routes.cs" />
     <Compile Include="Services\ApiService.cs" />
     <Compile Include="Services\IApiService.cs" />
-    <Compile Include="TransformalizeLogger.cs" />
+    <Compile Include="Services\TransformalizeLogger.cs" />
     <Compile Include="Services\TransformalizeService.cs" />
     <Compile Include="Services\ITransformalizeService.cs" />
     <Compile Include="Services\IFileService.cs" />
     <Compile Include="Services\FileService.cs" />
-    <Compile Include="TransferResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\EditorTemplates\Parts\Configuration.cshtml" />

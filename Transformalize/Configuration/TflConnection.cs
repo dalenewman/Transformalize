@@ -94,13 +94,13 @@ namespace Transformalize.Configuration {
         protected override void Validate() {
             const StringComparison ic = StringComparison.OrdinalIgnoreCase;
             if (Provider.Equals("File", ic) && string.IsNullOrEmpty(File)) {
-                AddProblem("The file provider requires a file.");
+                Error("The file provider requires a file.");
             } else if (Provider.Equals("Folder", ic) && string.IsNullOrEmpty(Folder)) {
-                AddProblem("The folder provider requires a folder.");
+                Error("The folder provider requires a folder.");
             }
 
             if (Delimiter.Length > 1) {
-                AddProblem(string.Format("Invalid delimiter defined for connection '{0}'.  The delimiter '{1}' is too long.  It can only be zero or one character.", Name, Delimiter));
+                Error(string.Format("Invalid delimiter defined for connection '{0}'.  The delimiter '{1}' is too long.  It can only be zero or one character.", Name, Delimiter));
             }
         }
 

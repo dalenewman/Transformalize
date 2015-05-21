@@ -263,7 +263,7 @@ namespace Transformalize.Configuration {
             try {
                 AdaptFieldsCreatedFromTransforms(new[] { "fromxml", "fromregex", "fromjson", "fromsplit" });
             } catch (Exception ex) {
-                AddProblem("Trouble adapting fields created from transforms. {0}", ex.Message);
+                Error("Trouble adapting fields created from transforms. {0}", ex.Message);
             }
 
             try {
@@ -271,11 +271,11 @@ namespace Transformalize.Configuration {
                 var problems = factory.ExpandShortHandTransforms();
                 if (problems.Any()) {
                     foreach (var problem in problems) {
-                        AddProblem(problem);
+                        Error(problem);
                     }
                 }
             } catch (Exception ex) {
-                AddProblem("Trouble expanding short hand transforms. {0}", ex.Message);
+                Error("Trouble expanding short hand transforms. {0}", ex.Message);
             }
 
             ModifyMergeParameters();
@@ -367,12 +367,9 @@ namespace Transformalize.Configuration {
                 foreach (var parameter in parameters) {
                     if (parameter.IndexOf('.') > 0) {
                         var split = parameter.Split(new[] { '.' });
-                        transform.Parameters.Add(new TflParameter {
-                            Entity = split[0],
-                            Field = split[1]
-                        });
+                        transform.Parameters.Add(GetParameter(split[0], split[1]));
                     } else {
-                        transform.Parameters.Add(new TflParameter { Field = parameter });
+                        transform.Parameters.Add(GetParameter(parameter));
                     }
                 }
             }
@@ -381,16 +378,28 @@ namespace Transformalize.Configuration {
         private void ModifyDefaultSearchTypes() {
 
             if (SearchTypes.All(st => st.Name != "none"))
-                SearchTypes.Add(new TflSearchType { Name = "none", MultiValued = false, Store = false, Index = false });
+                SearchTypes.Add(this.GetDefaultOf<TflSearchType>(st => {
+                    st.Name = "none";
+                    st.MultiValued = false;
+                    st.Store = false;
+                    st.Index = false;
+                }));
 
             if (SearchTypes.All(st => st.Name != "default"))
-                SearchTypes.Add(new TflSearchType { Name = "default", MultiValued = false, Store = true, Index = true });
-
+                SearchTypes.Add(this.GetDefaultOf<TflSearchType>(st => {
+                    st.Name = "default";
+                    st.MultiValued = false;
+                    st.Store = true;
+                    st.Index = true;
+                }));
         }
 
         private void ModifyDefaultOutput() {
             if (Connections.All(c => c.Name != "output"))
-                Connections.Add(new TflConnection() { Name = "output", Provider = "internal" });
+                Connections.Add(this.GetDefaultOf<TflConnection>(c => {
+                    c.Name = "output";
+                    c.Provider = "internal";
+                }));
         }
 
         private void AdaptFieldsCreatedFromTransforms(IEnumerable<string> transformToFields) {
@@ -415,7 +424,7 @@ namespace Transformalize.Configuration {
 
         private void ValidateMapConnections() {
             foreach (var map in Maps.Where(m => m.Query != string.Empty).Where(map => Connections.All(c => c.Name != map.Connection))) {
-                AddProblem("The {0} map references an invalid connection: {1}.", map.Name, map.Connection);
+                Error("The {0} map references an invalid connection: {1}.", map.Name, map.Connection);
             }
         }
 
@@ -433,14 +442,14 @@ namespace Transformalize.Configuration {
             foreach (var transform in GetAllTransforms().Where(t => methodsWithConnections.Any(nc => nc == t.Method))) {
                 var connection = Connections.FirstOrDefault(c => c.Name == transform.Connection);
                 if (connection == null) {
-                    AddProblem("The {0} transform references an invalid connection: {2}.", transform.Method, transform.Connection);
+                    Error("The {0} transform references an invalid connection: {2}.", transform.Method, transform.Connection);
                     continue;
                 }
 
                 switch (transform.Method) {
                     case "mail":
                         if (connection.Provider != "mail") {
-                            AddProblem("The {0} transform references the wrong type of connection: {1}.", transform.Method, connection.Provider);
+                            Error("The {0} transform references the wrong type of connection: {1}.", transform.Method, connection.Provider);
                         }
                         break;
                 }
@@ -449,25 +458,25 @@ namespace Transformalize.Configuration {
 
         private void ValidateEntityConnections() {
             foreach (var entity in Entities.Where(entity => Connections.All(c => c.Name != entity.Connection))) {
-                AddProblem("The {0} entity references an invalid connection: {1}.", entity.Name, entity.Connection);
+                Error("The {0} entity references an invalid connection: {1}.", entity.Name, entity.Connection);
             }
         }
 
         private void ValidateTemplateActionConnections() {
             foreach (var action in Templates.SelectMany(template => template.Actions.Where(a => a.Connection != string.Empty).Where(action => Connections.All(c => c.Name != action.Connection)))) {
-                AddProblem("The {0} template action references an invalid connection: {1}.", action.Action, action.Connection);
+                Error("The {0} template action references an invalid connection: {1}.", action.Action, action.Connection);
             }
         }
 
         private void ValidateActionConnections() {
             foreach (var action in Actions.Where(action => action.Connection != string.Empty).Where(action => Connections.All(c => c.Name != action.Connection))) {
-                AddProblem("The {0} action references an invalid connection: {1}.", action.Action, action.Connection);
+                Error("The {0} action references an invalid connection: {1}.", action.Action, action.Connection);
             }
         }
 
         private void ValidateRelationships() {
             if (Entities.Count > 1 && Relationships.Count + 1 < Entities.Count) {
-                AddProblem("You have {0} entities, but only {1} relationships.  Once you have more than one entity, you should create relationships between them.", Entities.Count, Relationships.Count);
+                Error("You have {0} entities, but only {1} relationships.  Once you have more than one entity, you should create relationships between them.", Entities.Count, Relationships.Count);
             }
         }
 
@@ -476,7 +485,7 @@ namespace Transformalize.Configuration {
                 return;
 
             foreach (var log in Log.Where(log => log.Connection != Common.DefaultValue).Where(log => Connections.All(c => c.Name != log.Connection))) {
-                AddProblem(string.Format("Log {0}'s connection {1} doesn't exist.", log.Name, log.Connection));
+                Error(string.Format("Log {0}'s connection {1} doesn't exist.", log.Name, log.Connection));
             }
         }
 
@@ -490,7 +499,7 @@ namespace Transformalize.Configuration {
                 .Select(group => @group.Key)
                 .ToArray();
             foreach (var duplicate in fieldDuplicates) {
-                AddProblem(
+                Error(
                     string.Format(
                         "The entity field '{0}' occurs more than once. Remove, alias, or prefix one.",
                         duplicate));
@@ -504,7 +513,7 @@ namespace Transformalize.Configuration {
                 .Select(group => @group.Key)
                 .ToArray();
             foreach (var duplicate in entityDuplicates) {
-                AddProblem(string.Format("The '{0}' entity occurs more than once. Remove or alias one.", duplicate));
+                Error(string.Format("The '{0}' entity occurs more than once. Remove or alias one.", duplicate));
             }
         }
 

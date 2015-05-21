@@ -88,7 +88,7 @@ namespace Transformalize.Orchard.Controllers {
             _transformalize.InitializeFiles(part, query);
 
             // ready
-            var viewModel = Run(new TransformalizeRequest(part, query, null));
+            var viewModel = Run(new TransformalizeRequest(part, query, null, Logger));
 
             var returnUrl = (Request.Form["ReturnUrl"] ?? Request.QueryString["ReturnUrl"]) ?? string.Empty;
             if (!returnUrl.Equals(string.Empty))

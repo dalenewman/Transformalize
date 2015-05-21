@@ -174,7 +174,7 @@ namespace Transformalize.Configuration {
             if (aliases.Contains(Version))
                 return;
 
-            AddProblem("Cant't find version field '{0}' in entity '{1}'", Version, Name);
+            Error("Cant't find version field '{0}' in entity '{1}'", Version, Name);
         }
 
         private void ValidateFilter(ICollection<string> names, ICollection<string> aliases) {
@@ -191,7 +191,7 @@ namespace Transformalize.Configuration {
                 if (aliases.Contains(f.Left))
                     continue;
 
-                AddProblem("A filter's left attribute must reference a defined field. '{0}' is not defined.", f.Left);
+                Error("A filter's left attribute must reference a defined field. '{0}' is not defined.", f.Left);
             }
         }
 
@@ -206,7 +206,7 @@ namespace Transformalize.Configuration {
             foreach (var field in Fields) {
                 foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty)) {
                     if (transform.Parameter == "*") {
-                        AddProblem("You can not reference all parameters within an entity's field: {0}", field.Name);
+                        Error("You can not reference all parameters within an entity's field: {0}", field.Name);
                     } else {
                         transform.Parameters.Add(GetParameter(Alias, transform.Parameter));
                     }

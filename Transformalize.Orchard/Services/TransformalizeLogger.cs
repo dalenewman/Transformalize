@@ -4,19 +4,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Orchard.Logging;
 using Transformalize.Configuration;
-using tflLogger = Transformalize.Logging.ILogger;
 using Transformalize.Extensions;
+using ILogger = Transformalize.Logging.ILogger;
 
-namespace Transformalize.Orchard {
+namespace Transformalize.Orchard.Services {
 
     /// <summary>
     /// This logger implementation wraps whatever Orchard CMS is using 
     /// and also records an in-memory log for reporting back to the TFL execute view.
     /// </summary>
-    public class TransformalizeLogger : tflLogger {
+    public class TransformalizeLogger : ILogger {
 
         private readonly string _level;
-        private readonly ILogger _orchardLogger;
+        private readonly global::Orchard.Logging.ILogger _orchardLogger;
         private readonly string _orchardVersion;
         private readonly string _moduleVersion;
         private readonly ConcurrentQueue<string[]> _log = new ConcurrentQueue<string[]>();
@@ -30,7 +30,7 @@ namespace Transformalize.Orchard {
         public string DatetimeFormat { get; set; }
         public string Name { get; set; }
 
-        public TransformalizeLogger(string name, string level, ILogger orchardLogger, string orchardVersion, string moduleVersion) {
+        public TransformalizeLogger(string name, string level, global::Orchard.Logging.ILogger orchardLogger, string orchardVersion, string moduleVersion) {
             _level = level.ToLower().Left(4);
             Name = name;
             _orchardLogger = orchardLogger;

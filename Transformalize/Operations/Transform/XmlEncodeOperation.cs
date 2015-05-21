@@ -6,10 +6,13 @@ using System.Web;
 using Transformalize.Libs.Rhino.Etl;
 
 namespace Transformalize.Operations.Transform {
+
+
     public class XmlEncodeOperation : ShouldRunOperation {
+
         public XmlEncodeOperation(string inKey, string outKey)
             : base(inKey, outKey) {
-            Name = string.Format("XmlEncodeOperation ({0})", outKey);
+            Name = string.Format("XmlEncode({0}=>{1})", inKey, outKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

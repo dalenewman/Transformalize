@@ -27,6 +27,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;
@@ -43,7 +44,7 @@ namespace Transformalize.Test {
 
         public TestWithProcess() {
             var cfg = new TflRoot(File.ReadAllText(@"TestFiles\Test.xml"), null);
-            foreach (var problem in cfg.Problems()) {
+            foreach (var problem in cfg.Errors()) {
                 Console.WriteLine(problem);
             }
 

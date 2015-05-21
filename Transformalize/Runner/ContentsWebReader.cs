@@ -28,7 +28,7 @@ namespace Transformalize.Runner {
                 }
             }
 
-            var response = Web.Get(uri.OriginalString);
+            var response = Web.Get(uri.OriginalString, 100000);
             if (response.Code == HttpStatusCode.OK) {
                 response.Content = response.Content;
             } else {

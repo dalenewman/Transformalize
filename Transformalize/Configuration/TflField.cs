@@ -204,11 +204,11 @@ namespace Transformalize.Configuration {
                 int number;
                 if (int.TryParse(value, out number)) {
                     if (number <= 0) {
-                        AddProblem("A field's length must be a number greater than zero, or max.");
+                        Error("A field's length must be a number greater than zero, or max.");
                     }
                 } else {
-                    if (value != "max") {
-                        AddProblem("A field's length must be a number greater than zero, or max.");
+                    if (!value.Equals("max", StringComparison.OrdinalIgnoreCase)) {
+                        Error("A field's length must be a number greater than zero, or max.");
                     }
                 }
                 _length = value;

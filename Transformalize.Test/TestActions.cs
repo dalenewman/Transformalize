@@ -26,7 +26,6 @@ using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
 using Transformalize.Libs.Dapper;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {

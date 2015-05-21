@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Orchard.Logging;
 using Transformalize.Configuration;
 using Transformalize.Main;
+using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Models {
     public class TransformalizeRequest {
@@ -15,12 +17,13 @@ namespace Transformalize.Orchard.Models {
             ConfigurationPart part,
             Dictionary<string, string> query,
             string modifiedConfiguration,
+            ILogger logger,
             TflRoot root = null) {
                 Part = part;
                 Configuration = modifiedConfiguration ?? part.Configuration;
                 Query = query ?? new Dictionary<string, string>();
                 Options = Query.ContainsKey("Mode") ? new Options { Mode = Query["Mode"] } : new Options();
-                Root = root ?? new TflRoot(modifiedConfiguration ?? part.Configuration, query);
+                Root = root ?? new TflRoot(modifiedConfiguration ?? part.Configuration, query, new CfgNetLogger(logger));
         }
     }
 

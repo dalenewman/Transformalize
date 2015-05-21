@@ -16,7 +16,7 @@ namespace Transformalize.Main.Transform {
         private readonly Dictionary<string, string> _methods;
         private readonly Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> _functions;
         private readonly Dictionary<string, byte> _maps;
-        private readonly CfgProblems _problems = new CfgProblems();
+        private readonly List<string> _problems = new List<string>();
         private readonly TflTransform _guard;
 
         public ShortHandFactory(TflProcess process) {
@@ -99,7 +99,10 @@ namespace Transformalize.Main.Transform {
             {"isempty","isempty"},
             {"isblank","isempty"},
             {"equals","equals"},
-            {"isequalto", "equals"}
+            {"isequalto", "equals"},
+            {"xmlencode","xmlencode"},
+            {"xmldecode","htmldecode"},
+            {"htmldecode", "htmldecode"}
         };
             _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
             {"replace", Replace},
@@ -136,6 +139,8 @@ namespace Transformalize.Main.Transform {
             {"substring", Substring},
             {"map", Map},
             {"urlencode", UrlEncode},
+            {"xmlencode", XmlEncode},
+            {"htmldecode", HtmlDecode},
             {"web", Web},
             {"add", Add},
             {"fromjson", (arg,root, last) => NotImplemented("fromjson", root, last)},
@@ -239,7 +244,7 @@ namespace Transformalize.Main.Transform {
         }
 
         private TflTransform NotImplemented(string arg, TflField field, TflTransform lastTransform) {
-            _problems.AddCustomProblem("The {0} method is not implemented as a shorthand transform.", arg);
+            _problems.Add(string.Format("The {0} method is not implemented as a shorthand transform.", arg));
             return _guard;
         }
 
@@ -300,7 +305,7 @@ namespace Transformalize.Main.Transform {
             foreach (var field in _process.CalculatedFields) {
                 ExpandShortHandTransforms(field);
             }
-            return _problems.Yield();
+            return _problems.ToArray();
         }
 
         private TflTransform ToJson(string arg, TflField field, TflTransform lastTransform) {
@@ -421,7 +426,7 @@ namespace Transformalize.Main.Transform {
             if (int.TryParse(split[0], out totalWidth)) {
                 element.TotalWidth = totalWidth;
             } else {
-                _problems.AddCustomProblem("The {0} method requires the first parameter to be total width; an integer. {1} is not an integer", method, split[0]);
+                _problems.Add(string.Format("The {0} method requires the first parameter to be total width; an integer. {1} is not an integer", method, split[0]));
                 return _guard;
             }
 
@@ -530,7 +535,7 @@ namespace Transformalize.Main.Transform {
                 });
             }
 
-            _problems.AddCustomProblem("The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg);
+            _problems.Add(string.Format("The substring method requires two integers indicating start index and length. '{0}' doesn't represent two integers.", arg));
             return _guard;
         }
 
@@ -552,7 +557,7 @@ namespace Transformalize.Main.Transform {
                 });
             }
 
-            _problems.AddCustomProblem("The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg);
+            _problems.Add(string.Format("The remove method requires two integer parameters indicating start index and length. '{0}' doesn't represent two integers.", arg));
             return _guard;
         }
 
@@ -597,7 +602,7 @@ namespace Transformalize.Main.Transform {
             if (int.TryParse(split[0], out interval)) {
                 element.Interval = interval;
             } else {
-                _problems.AddCustomProblem("The insertinterval method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+                _problems.Add(string.Format("The insertinterval method's first parameter must be an integer.  {0} is not an integer.", split[0]));
                 return _guard;
             }
 
@@ -623,7 +628,7 @@ namespace Transformalize.Main.Transform {
             if (int.TryParse(split[0], out startIndex)) {
                 element.StartIndex = startIndex;
             } else {
-                _problems.AddCustomProblem("The insert method's first parameter must be an integer.  {0} is not an integer.", split[0]);
+                _problems.Add(string.Format("The insert method's first parameter must be an integer.  {0} is not an integer.", split[0]));
                 return _guard;
             }
 
@@ -940,6 +945,14 @@ namespace Transformalize.Main.Transform {
             return Parameterless("urlencode", "url-encoded", arg, field, lastTransform);
         }
 
+        private TflTransform XmlEncode(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("xmlencode", "xml-encoded", arg, field, lastTransform);
+        }
+
+        private TflTransform HtmlDecode(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("htmldecode", "html-decoded", arg, field, lastTransform);
+        }
+
         private TflTransform HtmlEncode(string arg, TflField field, TflTransform lastTransform) {
             return Parameterless("htmlencode", "html-encoded", arg, field, lastTransform);
         }
@@ -1141,7 +1154,7 @@ namespace Transformalize.Main.Transform {
                     if (string.IsNullOrEmpty(element.Parameter)) {
                         element.Parameter = p;
                     } else {
-                        _problems.AddCustomProblem("The timezone method already has a parameter of {0}, and it can't interpret {1} as a valid time-zone identifer. {2}", element.Parameter, p, ex.Message);
+                        _problems.Add(string.Format("The timezone method already has a parameter of {0}, and it can't interpret {1} as a valid time-zone identifer. {2}", element.Parameter, p, ex.Message));
                         return _guard;
                     }
                 }

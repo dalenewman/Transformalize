@@ -1,4 +1,5 @@
 using System.Web.Mvc;
+using Transformalize.Libs.Ninject.Activation;
 using Transformalize.Orchard.Handlers;
 
 namespace Transformalize.Orchard.Models {

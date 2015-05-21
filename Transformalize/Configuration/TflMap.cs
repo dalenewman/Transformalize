@@ -17,7 +17,7 @@ namespace Transformalize.Configuration {
 
         protected override void Validate() {
             if (Items.Count == 0 && Query == string.Empty) {
-                AddProblem(string.Format("Map '{0}' needs items or a query.", Name));
+                Error(string.Format("Map '{0}' needs items or a query.", Name));
             }
         }
     }

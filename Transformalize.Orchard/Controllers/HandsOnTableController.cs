@@ -7,6 +7,7 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
 using Transformalize.Configuration;
+using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -60,16 +61,16 @@ namespace Transformalize.Orchard.Controllers {
             request.RequestType = ApiRequestType.Execute;
 
             var root = new TflRoot(part.Configuration, _query);
-            var problems = root.Problems();
-            if (problems.Any()) {
+            var errors = root.Errors();
+            if (errors.Any()) {
                 request.Status = 500;
-                request.Message = string.Join(Environment.NewLine, problems);
+                request.Message = string.Join(Environment.NewLine, errors);
                 return new ApiResponse(request, root.ToString(), new TransformalizeResponse()).ContentResult(_query["format"], _query["flavor"]);
             }
 
             TransformConfigurationForLoad(root);
 
-            var transformalizeRequest = new TransformalizeRequest(part, _query, null, root);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null, Logger, root);
 
             return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }
@@ -95,7 +96,7 @@ namespace Transformalize.Orchard.Controllers {
 
             request.RequestType = ApiRequestType.Execute;
             _query.Add("data", Request.Form["data"]);
-            var transformalizeRequest = new TransformalizeRequest(part, _query, null);
+            var transformalizeRequest = new TransformalizeRequest(part, _query, null, Logger);
 
             return Run(request, transformalizeRequest).ContentResult(_query["format"], _query["flavor"]);
         }

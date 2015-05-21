@@ -26,6 +26,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
+using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -169,7 +170,7 @@ namespace Transformalize.Test {
         [Ignore("requires db.")]
         public void TestError() {
             var cfg = new TflRoot(File.ReadAllText(@"C:\Temp\test.xml"), null);
-            Assert.AreEqual(0, cfg.Problems().Count);
+            Assert.AreEqual(0, cfg.Errors().Length);
 
             var process = ProcessFactory.CreateSingle(@"C:\Temp\test.xml", new TestLogger());
             Assert.IsNotNull(process);

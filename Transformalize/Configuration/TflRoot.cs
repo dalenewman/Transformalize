@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using System.Web.WebSockets;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Cfg.Net.Loggers;
+using Transformalize.Libs.Cfg.Net.Parsers;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration {
@@ -13,9 +14,13 @@ namespace Transformalize.Configuration {
         [Cfg()]
         public List<TflResponse> Response { get; set; }
 
-        // Normal Constructor taking an XML or JSON confuration.
-        public TflRoot(string cfg, Dictionary<string, string> parameters = null) {
-            Load(cfg, parameters);
+        public TflRoot(
+                string xml, 
+                Dictionary<string, string> parameters = null,
+                ILogger logger = null)
+            : base(new XDocumentParser(), logger) {
+
+            Load(xml, parameters) ;
         }
 
         // Custom constructor takeing an already created TflProcess

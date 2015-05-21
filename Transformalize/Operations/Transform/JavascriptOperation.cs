@@ -70,7 +70,7 @@ namespace Transformalize.Operations.Transform {
             logger.Debug(externalScripts.Replace("{","{{").Replace("}","}}"));
             _jint.Execute(externalScripts);
 
-            Name = string.Format("JavascriptOperation ({0})", outKey);
+            Name = string.Format("Javascript({0}=>{1})", InKey, OutKey);
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

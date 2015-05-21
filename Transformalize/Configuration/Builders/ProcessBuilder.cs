@@ -11,7 +11,7 @@ namespace Transformalize.Configuration.Builders {
         private readonly TflProcess _process;
 
         public ProcessBuilder(string name) {
-            _process = new TflProcess() { Name = name };
+            _process = new TflRoot().GetDefaultOf<TflProcess>(p => { p.Name = name; });
         }
 
         public ProcessBuilder(TflProcess element) {
@@ -23,28 +23,35 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ConnectionBuilder Connection(string name) {
-            var connection = _process.GetDefaultOf<TflConnection>();
-            connection.Name = name;
+            if (_process.Connections.Any(c => c.Name == name)) {
+                return new ConnectionBuilder(this, _process.Connections.First(c => c.Name == name));
+            }
+            var connection = _process.GetDefaultOf<TflConnection>(c => { c.Name = name; });
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
 
         public ConnectionBuilder Connection(TflConnection connection) {
+            var name = connection.Name;
+            if (_process.Connections.Any(c => c.Name == name)) {
+                var cn = _process.Connections.First(c => c.Name == name);
+                _process.Connections.Remove(cn);
+                _process.Connections.Add(connection);
+                return new ConnectionBuilder(this, connection);
+            }
+
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
 
         public MapBuilder Map(string name) {
-            var map = _process.GetDefaultOf<TflMap>();
-            map.Name = name;
+            var map = _process.GetDefaultOf<TflMap>(m => { m.Name = name; });
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
 
         public MapBuilder Map(string name, string sql) {
-            var map = _process.GetDefaultOf<TflMap>();
-            map.Name = name;
-            map.Query = sql;
+            var map = _process.GetDefaultOf<TflMap>(m => { m.Name = name; m.Query = sql; });
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
@@ -70,8 +77,7 @@ namespace Transformalize.Configuration.Builders {
 
 
         public ActionBuilder Action(string action) {
-            var a = _process.GetDefaultOf<TflAction>();
-            a.Action = action;
+            var a = _process.GetDefaultOf<TflAction>(tflAction => { tflAction.Action = action; });
             _process.Actions.Add(a);
             return new ActionBuilder(this, a);
         }
@@ -149,7 +155,7 @@ namespace Transformalize.Configuration.Builders {
             return this;
         }
 
-        public ProcessBuilder DataSet(string name, IEnumerable<Dictionary<string,string>> rows) {
+        public ProcessBuilder DataSet(string name, IEnumerable<Dictionary<string, string>> rows) {
             var dataSet = new TflDataSet { Name = name, Rows = rows.ToList() };
             _process.DataSets.Add(dataSet);
             return this;

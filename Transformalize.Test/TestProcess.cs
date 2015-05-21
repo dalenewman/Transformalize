@@ -130,8 +130,8 @@ namespace Transformalize.Test {
         public void NorthWindProcessBuiltFromScratch() {
 
             var process = new ProcessBuilder("Test")
-                .Connection("input").Database("NorthWind")
-                .Connection("output").Database("NorthWindStar")
+                .Connection("input").Provider("SqlServer").Database("NorthWind")
+                .Connection("output").Provider("SqlServer").Database("NorthWindStar")
                 .Connection("sass").Database("NorthWind").Provider("AnalysisServices")
                 .Template("solr-data-handler").File("solr-data-handler.cshtml").Cache(true)
                     .Action("copy").File(@"C:\Solr\NorthWind\conf\data-config.xml")

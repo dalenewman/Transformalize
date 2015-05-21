@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using Microsoft.Build.Utilities;
 using Orchard.ContentManagement;
 using Orchard.Environment.Extensions;
 using Orchard.Localization;
@@ -77,15 +76,15 @@ namespace Transformalize.Orchard.Controllers {
 
             request.RequestType = ApiRequestType.MetaData;
             var query = GetQuery();
-            var transformalizeRequest = new TransformalizeRequest(part, query, null);
+            var transformalizeRequest = new TransformalizeRequest(part, query, null, Logger);
             var logger = new TransformalizeLogger(transformalizeRequest.Part.Title(), part.LogLevel, Logger, OrchardVersion, _moduleVersion);
 
-            var problems = transformalizeRequest.Root.Problems();
-            if (problems.Any()) {
+            var errors = transformalizeRequest.Root.Errors();
+            if (errors.Any()) {
                 var bad = new TransformalizeResponse();
                 request.Status = 501;
-                request.Message = "Configuration Problem" + problems.Count.Plural();
-                bad.Log.AddRange(problems.Select(p => new[]{DateTime.Now.ToString(),"error",".",".",p}));
+                request.Message = "Configuration Problem" + errors.Length.Plural();
+                bad.Log.AddRange(errors.Select(p => new[]{DateTime.Now.ToString(CultureInfo.InvariantCulture),"error",".",".",p}));
                 return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
                     query["format"] ?? DefaultFormat,
                     query["flavor"] ?? DefaultFlavor
@@ -122,7 +121,7 @@ namespace Transformalize.Orchard.Controllers {
 
             // ready
             var processes = new TransformalizeResponse();
-            var transformalizeRequest = new TransformalizeRequest(part, query, null);
+            var transformalizeRequest = new TransformalizeRequest(part, query, null, Logger);
 
             try {
                 processes = _transformalize.Run(transformalizeRequest);

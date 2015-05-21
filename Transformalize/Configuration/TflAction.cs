@@ -58,7 +58,7 @@ namespace Transformalize.Configuration {
 
         protected override void Validate() {
             if (Before && After) {
-                AddProblem("The {0} action is set to run before AND after.  Please choose before OR after.", Action);
+                Error("The {0} action is set to run before AND after.  Please choose before OR after.", Action);
             }
         }
     }

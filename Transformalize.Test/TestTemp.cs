@@ -10,7 +10,7 @@ namespace Transformalize.Test {
         [Ignore("test")]
         public void OneOff() {
 
-            const string file = "http://localhost/Orchard181/Transformalize/Api/Configuration/1725";
+            const string file = "http://localhost/Orchard181/Transformalize/Api/Configuration/26";
             ProcessFactory.CreateSingle(file, new TestLogger()).ExecuteScaler();
             Assert.AreEqual(2, 2);
 

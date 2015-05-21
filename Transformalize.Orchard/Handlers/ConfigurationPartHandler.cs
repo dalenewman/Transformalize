@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Web.Routing;
 using Orchard.ContentManagement;
@@ -10,13 +9,13 @@ using Orchard.Logging;
 using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Orchard.Models;
+using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Handlers {
     public class ConfigurationPartHandler : ContentHandler {
         private readonly INotifier _notifier;
 
         public Localizer T { get; set; }
-        public ILogger Log { get; set; }
 
         public ConfigurationPartHandler(
             IRepository<ConfigurationPartRecord> repository,
@@ -24,7 +23,7 @@ namespace Transformalize.Orchard.Handlers {
             ) {
             _notifier = notifier;
             T = NullLocalizer.Instance;
-            Log = NullLogger.Instance;
+            Logger = NullLogger.Instance;
             Filters.Add(StorageFilter.For(repository));
         }
 
@@ -49,19 +48,17 @@ namespace Transformalize.Orchard.Handlers {
                 return;
             try {
                 //test if configuration works
-                var root = new TflRoot(part.Configuration, null);
-                var problems = root.Problems();
-                if (problems.Any()) {
-                    foreach (var problem in problems) {
-                        _notifier.Add(NotifyType.Warning, T(problem));
-                    }
-                }
+                var root = new TflRoot(
+                    part.Configuration,
+                    null,
+                    new CfgNetNotifier(_notifier)
+                );
                 CheckAddress(part.StartAddress);
                 CheckAddress(part.EndAddress);
-                Log.Information("Successfully loaded {0}.", part.Title());
+                Logger.Information("Loaded {0} with {1} warnings, and {2} errors.", part.Title(), root.Warnings().Length, root.Errors().Length);
             } catch (Exception ex) {
                 _notifier.Add(NotifyType.Warning, T(ex.Message));
-                Log.Warning(ex.Message);
+                Logger.Warning(ex.Message);
             }
         }
 

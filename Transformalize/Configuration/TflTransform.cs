@@ -184,12 +184,12 @@ namespace Transformalize.Configuration {
             switch (Method) {
                 case "shorthand":
                     if (string.IsNullOrEmpty(T)) {
-                        AddProblem("shorthand transform requires t attribute.");
+                        Error("shorthand transform requires t attribute.");
                     }
                     break;
                 case "copy":
                     if (Parameter == string.Empty && !Parameters.Any()) {
-                        AddProblem("copy transform requires a parameter (or parameters).");
+                        Error("copy transform requires a parameter (or parameters).");
                     }
                     break;
             }

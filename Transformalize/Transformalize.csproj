@@ -45,9 +45,9 @@
     </DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="CfgNet, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.0.7\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.1.1\lib\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -117,6 +117,8 @@
     <Compile Include="Configuration\TflTemplate.cs" />
     <Compile Include="Configuration\TflTransform.cs" />
     <Compile Include="Configuration\TflType.cs" />
+    <Compile Include="Configuration\XDocumentNode.cs" />
+    <Compile Include="Configuration\XDocumentParser.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="Extensions\CharExtensions.cs" />
     <Compile Include="Extensions\ListExtension.cs" />

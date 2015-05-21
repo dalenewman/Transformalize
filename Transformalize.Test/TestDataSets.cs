@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
+using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Logging;
 using Transformalize.Main;
 
@@ -50,12 +51,12 @@ namespace Transformalize.Test {
 ".Replace("'","\"");
             var root = new TflRoot(xml);
 
-            var problems = root.Problems();
+            var problems = root.Errors();
             foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
 
-            Assert.AreEqual(0, problems.Count);
+            Assert.AreEqual(0, problems.Length);
 
             Assert.AreEqual(3, root.Processes.First().DataSets.First().Rows.Count);
 
@@ -76,23 +77,19 @@ namespace Transformalize.Test {
 
             var process = new ProcessBuilder("test")
                 .DataSet("one", data)
-                .Connection("input")
-                    .Provider("internal")
-                .Connection("output")
-                    .Provider("internal")
                 .Entity("one")
                     .Field("f1").PrimaryKey()
                     .Field("f2").Type("int")
                     .Field("f3").Type("datetime")
                 .Process();
 
-            var problems = process.Problems();
+            var problems = process.Errors();
 
             foreach (var problem in problems) {
                 Console.WriteLine(problem);
             }
 
-            Assert.AreEqual(0, problems.Count);
+            Assert.AreEqual(0, problems.Length);
             Assert.AreEqual(3, process.DataSets.First().Rows.Count);
 
             var rows = ProcessFactory.CreateSingle(process, new TestLogger()).Execute().ToList();
