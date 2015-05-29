@@ -10,6 +10,7 @@
     Script.Include("HandsOnTable-0.11.4/jquery.handsontable.full.min.js").AtFoot();
     Script.Include("jquery.blockUI.min.js").AtFoot();
     Script.Include("jquery.toastmessage.min.js").AtFoot();
+    Script.Include("common.ajax.min.js").AtFoot();
     Script.Include("HandsOnTable-0.11.4/shims/array.filter.min.js").AtFoot();
     Script.Include("HandsOnTable-0.11.4/numeral.min.js").AtFoot();
 
@@ -45,30 +46,6 @@
             save: '@(Url.Action("Save", "HandsOnTable", new { id = Model.Id }))',
             token: '@Html.AntiForgeryTokenValueOrchard()'
         };
-
-        $(document).ajaxStart(function () {
-            $.blockUI({
-                css: {
-                    border: 'none',
-                    padding: '15px',
-                    backgroundColor: '#000',
-                    '-webkit-border-radius': '10px',
-                    '-moz-border-radius': '10px',
-                    opacity: .5,
-                    color: '#fff',
-                    baseZ: 1021
-                }
-            });
-        });
-
-        $(document).ajaxComplete(function () {
-            $.unblockUI();
-        });
-
-        $(document).ajaxError(function (event, request) {
-            $.unblockUI();
-            $().toastmessage('showErrorToast', request.responseText);
-        });
 
         var dateMap = [];
 

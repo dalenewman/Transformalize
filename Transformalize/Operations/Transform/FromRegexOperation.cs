@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {

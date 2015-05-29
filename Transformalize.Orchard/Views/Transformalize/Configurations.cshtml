@@ -1,11 +1,47 @@
 ﻿@using Orchard.ContentManagement
 @using Orchard.Core.Title.Models
-@model Transformalize.Orchard.Models.Configurations
+@using Transformalize.Orchard.Models
+@model Configurations
 @{
     Style.Include("configurations-001.min.css").AtHead();
-    Script.Require("jQuery").AtHead();
-    Script.Include("configurations-001.min.js").AtHead();
+    Style.Include("jquery.toastmessage.min.css").AtHead();
+    
+    Script.Require("jQuery").AtFoot();
+    Script.Include("jquery.blockUI.min.js").AtFoot();
+    Script.Include("jquery.toastmessage.min.js").AtFoot();
+    Script.Include("common.ajax.min.js").AtFoot();
+    Script.Include("configurations-002.min.js").AtFoot();
+    
     Layout.Title = "Configurations";
+}
+
+
+<script type="text/javascript">
+    //<!--
+    var settings = {
+        token: '@(Html.AntiForgeryTokenValueOrchard())',
+        jobQueueLink : '@(Url.Action("List","Admin", new RouteValueDictionary { {"area","Orchard.JobsQueue"}}))'
+    }
+    //-->
+</script>
+
+@if (Model.Enqueue) {
+    <div class="row">
+        <div class="col-md-12">
+            <div class="btn-group pull-right">
+                <button onclick="javascript: window.open('@(Url.Action("List","Admin",new RouteValueDictionary { {"area","Orchard.JobsQueue"}}))', '_blank');"
+                        type="button"
+                        class="btn btn-xs btn-warning">
+                    <span class="glyphicon glyphicon-share"></span> Queue
+                </button>
+                <button onclick="javascript: window.open('@(Url.Content("~/Admin/Reports"))', '_blank');"
+                        type="button"
+                        class="btn btn-xs btn-info">
+                    <span class="glyphicon glyphicon-inbox"></span> Reports
+                </button>
+            </div>
+        </div>
+    </div>
 }
 
 <table class="table table-condensed table-hover" style="font-size: smaller;">
@@ -50,12 +86,12 @@
                                 <div class="btn-group btn-group-xs" data-toggle="buttons">
                                     @foreach (var mode in part.ToModes()) {
                                         <label class="mode btn btn-default @(mode.IsDefault || Model.Mode.Equals(mode.Name) ? "active" : string.Empty)">
-                                            <input type="radio" name="Mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
+                                            <input type="radio" name="mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
                                         </label>
                                     }
                                 </div>
                             } else {
-                                <input type="hidden" name="Mode" value="@(part.ToModes()[0].Name)"/>
+                                <input type="hidden" name="mode" value="@(part.ToModes()[0].Name)"/>
                             }
                         }                            
                     </td>
@@ -80,12 +116,12 @@
                                 <div class="btn-group btn-group-xs" data-toggle="buttons">
                                     @foreach (var mode in part.ToModes()) {
                                         <label class="mode btn btn-default @(mode.IsDefault || Model.Mode.Equals(mode.Name) ? "active" : string.Empty)">
-                                            <input type="radio" name="Mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
+                                            <input type="radio" name="mode" value="@(mode.Name)" checked="@(mode.IsDefault)" data-toggle="button"> @mode.Name
                                         </label>
                                     }
                                 </div>
                             } else {
-                                <input type="hidden" name="Mode" value="@(part.ToModes()[0].Name)" />
+                                <input type="hidden" name="mode" value="@(part.ToModes()[0].Name)" />
                             }
                         }
                     </td>
@@ -95,6 +131,11 @@
                              <button type="submit" class="btn btn-primary btn-xs">
                                  <span class="glyphicon glyphicon-play-circle"></span> Run
                              </button>
+                            @if (Model.Enqueue && Model.InputFileId == 0) {
+                                <button id="enqueue_@(part.Id)" value="@(Url.Action("Api/Enqueue","Api",new { id=part.Id}))" type="button" class="btn btn-warning btn-xs enqueue">
+                                    <span class="glyphicon glyphicon-share"></span> Job
+                                </button>
+                             }
                             @if (Model.Edit) {
                                 <button type="button" class="btn btn-info btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))','_self');">
                                     <span class="glyphicon glyphicon-edit"></span> Edit

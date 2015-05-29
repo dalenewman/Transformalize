@@ -6,7 +6,6 @@ using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
-
     public class TimeZoneOperation : ShouldRunOperation {
 
         private readonly TimeZoneInfo _toTimeZoneInfo;

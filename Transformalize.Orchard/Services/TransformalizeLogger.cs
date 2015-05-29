@@ -36,7 +36,7 @@ namespace Transformalize.Orchard.Services {
             _orchardLogger = orchardLogger;
             _orchardVersion = orchardVersion;
             _moduleVersion = moduleVersion;
-            DatetimeFormat = "HH:mm:ss";
+            DatetimeFormat = "yyyy-MM-dd HH:mm:ss";
 
             var levels = GetLevels(_level);
             _debugEnabled = levels[0];

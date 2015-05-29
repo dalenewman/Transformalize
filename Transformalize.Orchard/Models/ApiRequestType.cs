@@ -2,6 +2,7 @@
     public enum ApiRequestType {
         MetaData,
         Configuration,
+        Enqueue,
         Execute
     }
 }

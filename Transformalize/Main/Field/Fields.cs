@@ -142,7 +142,7 @@ namespace Transformalize.Main {
         }
 
         public IEnumerable<Sort> Sorts() {
-            return Storage.Where(f => !string.IsNullOrEmpty(f.Sort)).Select(f => new Sort(f.Alias, f.Sort));
+            return Storage.Where(f => f.Sort != "none").Select(f => new Sort(f.Alias, f.Sort));
         }
 
         public Fields WithString() {

@@ -21,6 +21,18 @@
         $(this).children().first().attr('checked', 'checked');
     });
 
+    $('button.enqueue').click(function () {
+        var action = $(this).attr('value');
+        var mode = $(this).parent().prev().find('input[name=mode]:checked').val() || $(this).parent().prev().find('input[name=mode]').val();
+        $.get(action + '?format=json&mode=' + mode, function (data) {
+            if (data.response[0].status === 200) {
+                $().toastmessage('showSuccessToast', '<a style="color:white;" href="' + settings.jobQueueLink + '">Job Enqueued</a>');
+            } else {
+                $().toastmessage('showErrorToast', data.response[0].message);
+            }
+        }, "json");
+    });
+
     function removeMessages() {
         $(".zone-messages").fadeOut().hide();
     }

@@ -3373,6 +3373,7 @@
     <Compile Include="Operations\Transform\SplitIndexOperation.cs" />
     <Compile Include="Operations\Transform\TagOperation.cs" />
     <Compile Include="Operations\Transform\TemplateOperation.cs" />
+    <Compile Include="Operations\Transform\TimeAgoOperation.cs" />
     <Compile Include="Operations\Transform\TimeSpanOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
     <Compile Include="Operations\Transform\TransliterateOperation.cs" />

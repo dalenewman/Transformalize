@@ -38,7 +38,7 @@ namespace Transformalize.Orchard.Handlers {
             var xmlBuilder = new StringBuilder();
             var xmlWriter = XmlWriter.Create(xmlBuilder, new XmlWriterSettings() { ConformanceLevel = ConformanceLevel.Fragment });
             foreach (var log in logs) {
-                if (log.Length <= 4) 
+                if (log.Length <= 4)
                     continue;
                 xmlWriter.WriteStartElement("add");
                 xmlWriter.WriteAttributeString("time", log[0]);
@@ -68,6 +68,10 @@ namespace Transformalize.Orchard.Handlers {
                 case ApiRequestType.Configuration:
                     builder.Append(configuration);
                     builder.InsertFormat(builder.LastIndexOf('<'), MINIMAL_RESPONSE_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds);
+                    return builder.ToString();
+
+                case ApiRequestType.Enqueue:
+                    builder.AppendFormat(XML_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, string.Empty, processes, results, LogsToXml(response.Log), content);
                     return builder.ToString();
 
                 case ApiRequestType.Execute:

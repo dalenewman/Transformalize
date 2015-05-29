@@ -57,7 +57,7 @@ namespace Transformalize.Orchard.Controllers {
 
                 ViewBag.CurrentId = id;
                 ViewBag.SelectFor = Convert.ToInt32(Request.QueryString["SelectFor"] ?? "0");
-                ViewBag.Mode = Request.QueryString["Mode"] ?? string.Empty;
+                ViewBag.Mode = Request.QueryString["mode"] ?? string.Empty;
 
                 var response = new FilesResponse() {
                     TimeZoneInfo = _orchardServices.WorkContext.CurrentTimeZone,

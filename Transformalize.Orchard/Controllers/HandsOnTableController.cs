@@ -55,7 +55,7 @@ namespace Transformalize.Orchard.Controllers {
             ApiRequest request;
 
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
-                return rejection.ContentResult(_query["format"], _query["flavor"]);
+                return rejection.ContentResult(_query["format"].ToString(), _query["flavor"].ToString());
             }
 
             request.RequestType = ApiRequestType.Execute;

@@ -19,6 +19,7 @@ namespace Transformalize.Orchard {
                 RouteDescriptor("Api", "Api/Configuration"),
                 RouteDescriptor("Api", "Api/Execute"),
                 RouteDescriptor("Api", "Api/MetaData"),
+                RouteDescriptor("Api", "Api/Enqueue"),
                 RouteDescriptor("File", "Files"),
                 RouteDescriptor("File", "Upload"),
                 RouteDescriptor("File", "Download"),

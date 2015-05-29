@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.Cfg.Net.Loggers;
-using Transformalize.Libs.Cfg.Net.Parsers;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration {
@@ -20,7 +19,7 @@ namespace Transformalize.Configuration {
                 ILogger logger = null)
             : base(new XDocumentParser(), logger) {
 
-            Load(xml, parameters) ;
+            Load(xml, parameters);
         }
 
         // Custom constructor takeing an already created TflProcess

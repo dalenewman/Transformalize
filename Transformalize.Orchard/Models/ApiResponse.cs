@@ -1,5 +1,4 @@
 using System.Web.Mvc;
-using Transformalize.Libs.Ninject.Activation;
 using Transformalize.Orchard.Handlers;
 
 namespace Transformalize.Orchard.Models {
@@ -25,7 +24,7 @@ namespace Transformalize.Orchard.Models {
         }
 
         public ContentResult ContentResult(string format, string flavor = null) {
-            return new ContentResult() {
+            return new ContentResult {
                 Content = Content(format, flavor),
                 ContentType = MimeType(format)
             };

@@ -6,7 +6,6 @@ namespace Transformalize.Orchard.Models {
         private readonly IFileService _fileService;
         private string _inputFileName = string.Empty;
         private string _outputFileName = string.Empty;
-        private string _mode = string.Empty;
         private int _inputFileId;
         private int _outputFileId;
 
@@ -45,6 +44,7 @@ namespace Transformalize.Orchard.Models {
         public string Mode { get; set; }
         public int CurrentId { get; set; }
         public bool Edit { get; set; }
+        public bool Enqueue { get; set; }
 
         public Configurations(IFileService fileService) {
             _fileService = fileService;

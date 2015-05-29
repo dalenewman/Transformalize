@@ -31,7 +31,7 @@ namespace Transformalize.Orchard.Handlers {
             var writer = new JsonTextWriter(sw);
             writer.WriteStartArray();
             foreach (var log in logs) {
-                if (log.Length <= 4) 
+                if (log.Length <= 4)
                     continue;
                 writer.WriteStartObject(); //add
                 writer.WritePropertyName("time");
@@ -74,6 +74,10 @@ namespace Transformalize.Orchard.Handlers {
                 case ApiRequestType.Configuration:
                     processes = JsonConvert.SerializeObject(tfl.Processes, Formatting.None, settings);
                     environments = JsonConvert.SerializeObject(tfl.Environments, Formatting.None, settings);
+                    builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
+                    return builder.ToString();
+
+                case ApiRequestType.Enqueue:
                     builder.AppendFormat(JSON_TEMPLATE, request.RequestType, request.Status, request.Message, request.Stopwatch.ElapsedMilliseconds, environments, processes, results, LogsToJson(response.Log), content);
                     return builder.ToString();
 

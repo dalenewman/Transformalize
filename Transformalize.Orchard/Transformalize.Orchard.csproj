@@ -218,13 +218,13 @@
     <Content Include="Scripts\common.ajax.min.js">
       <DependentUpon>common.ajax.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\configurations-001.js" />
+    <Content Include="Scripts\configurations-002.js" />
     <Content Include="Scripts\configuration-editor-004.js" />
     <Content Include="Scripts\configuration-editor-004.min.js">
       <DependentUpon>configuration-editor-004.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\configurations-001.min.js">
-      <DependentUpon>configurations-001.js</DependentUpon>
+    <Content Include="Scripts\configurations-002.min.js">
+      <DependentUpon>configurations-002.js</DependentUpon>
     </Content>
     <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.js" />
     <Content Include="Scripts\HandsOnTable-0.11.4\jquery-ui\js\jquery-ui.custom.min.js" />
@@ -644,6 +644,10 @@
     <Content Include="Module.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\IJobsQueueService.cs" />
+    <Compile Include="Services\ITransformalizeTaskManager.cs" />
+    <Compile Include="Services\ITransformalizeJobService.cs" />
+    <Compile Include="Services\TransformalizeTaskHandler.cs" />
     <Compile Include="Services\CfgNetLogger.cs" />
     <Compile Include="Services\CfgNetNotifier.cs" />
     <Compile Include="Controllers\ApiController.cs" />
@@ -691,6 +695,7 @@
     <Compile Include="Services\ITransformalizeService.cs" />
     <Compile Include="Services\IFileService.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\TransformalizeTaskManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\EditorTemplates\Parts\Configuration.cshtml" />
@@ -905,8 +910,8 @@
     <Content Include="Scripts\common.ajax.min.js.map">
       <DependentUpon>common.ajax.min.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\configurations-001.min.js.map">
-      <DependentUpon>configurations-001.min.js</DependentUpon>
+    <Content Include="Scripts\configurations-002.min.js.map">
+      <DependentUpon>configurations-002.min.js</DependentUpon>
     </Content>
   </ItemGroup>
   <ItemGroup>

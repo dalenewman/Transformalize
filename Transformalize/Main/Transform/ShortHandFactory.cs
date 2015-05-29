@@ -102,7 +102,8 @@ namespace Transformalize.Main.Transform {
             {"isequalto", "equals"},
             {"xmlencode","xmlencode"},
             {"xmldecode","htmldecode"},
-            {"htmldecode", "htmldecode"}
+            {"htmldecode", "htmldecode"},
+            {"timeago","timeago"}
         };
             _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
             {"replace", Replace},
@@ -167,8 +168,34 @@ namespace Transformalize.Main.Transform {
             {"collapse", Collapse},
             {"timespan", Timespan},
             {"isempty", IsEmpty},
-            {"equals", Equals}
+            {"equals", Equals},
+            {"timeago", TimeAgo}
         };
+        }
+
+        private TflTransform TimeAgo(string arg, TflField field, TflTransform lastTransform) {
+            var split = SplitComma(arg);
+            if (split.Length == 0) {
+                return field.GetDefaultOf<TflTransform>(t => {
+                    t.Method = "timeago";
+                    t.FromTimeZone = "UTC";
+                    t.IsShortHand = true;
+                });
+            }
+
+            var p = split[0];
+            try {
+                TimeZoneInfo.FindSystemTimeZoneById(p);
+                return field.GetDefaultOf<TflTransform>(t => {
+                    t.Method = "timeago";
+                    t.FromTimeZone = p;
+                    t.IsShortHand = true;
+                });
+            } catch (Exception ex) {
+                var message = string.Format("TimeAgo from time zone is {0} is invalid. {1}", p, ex.Message);
+                _problems.Add(message);
+                return _guard;
+            }
         }
 
         private TflTransform IsEmpty(string arg, TflField field, TflTransform lastTransform) {

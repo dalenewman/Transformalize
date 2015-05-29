@@ -1198,6 +1198,14 @@ namespace Transformalize.Test {
         }
 
         [Test]
+        public void TimeAgo() {
+            var input = new RowsBuilder().Row("out", "").Field("date",DateTime.UtcNow.AddMinutes(-3.0)).ToOperation();
+            var timeAgoOperation = new TimeAgoOperation("date", "out", "UTC");
+            var output = TestOperation(input, timeAgoOperation);
+            Assert.AreEqual("3 minutes ago", output[0]["out"]);
+        }
+
+        [Test]
         public void Substring() {
             var input = new RowsBuilder().Row("in", "sdfkj2334").Field("out", "").ToOperation();
             var substringOperation = new SubstringOperation("in", "out", 3, 0);

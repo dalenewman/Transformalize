@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
-using Transformalize.Libs.Nest.DSL.Repository;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Logging;
@@ -471,6 +470,13 @@ namespace Transformalize.Main {
                         outKey,
                         element.FromTimeZone,
                         element.ToTimeZone
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "timeago":
+                    return new TimeAgoOperation(
+                        inKey,
+                        outKey,
+                        element.FromTimeZone
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "timezone":

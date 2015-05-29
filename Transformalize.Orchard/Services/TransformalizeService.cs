@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.UI;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
@@ -10,7 +11,11 @@ using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
+using Orchard.Reports;
+using Orchard.Reports.Services;
+using Orchard.Services;
 using Orchard.Utility.Extensions;
+using Transformalize.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
@@ -20,15 +25,16 @@ using Transformalize.Orchard.Models;
 
 namespace Transformalize.Orchard.Services {
 
-    public class TransformalizeService : ITransformalizeService {
+    public class TransformalizeService : ITransformalizeService, ITransformalizeJobService {
         private const StringComparison IGNORE_CASE = StringComparison.OrdinalIgnoreCase;
 
         private readonly IOrchardServices _orchardServices;
         private readonly IFileService _fileService;
         private readonly IAppDataFolder _appDataFolder;
         private readonly IExtensionManager _extensionManager;
+        private readonly IReportsManager _reportsManager;
         private readonly List<int> _filesCreated = new List<int>();
-        private static readonly string OrchardVersion = typeof (ContentItem).Assembly.GetName().Version.ToString();
+        private static readonly string OrchardVersion = typeof(ContentItem).Assembly.GetName().Version.ToString();
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -38,21 +44,23 @@ namespace Transformalize.Orchard.Services {
             IOrchardServices orchardServices,
             IFileService fileService,
             IAppDataFolder appDataFolder,
-            IExtensionManager extensionManager
+            IExtensionManager extensionManager,
+            IReportsManager reportsManager
             ) {
             _orchardServices = orchardServices;
             _fileService = fileService;
             _appDataFolder = appDataFolder;
             _extensionManager = extensionManager;
+            _reportsManager = reportsManager;
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
 
         public void InitializeFiles(ConfigurationPart part, IDictionary<string, string> query) {
             _filesCreated.Clear();
-            if(query.ContainsKey("InputFile") && part.RequiresInputFile() == true)
+            if (query.ContainsKey("InputFile") && part.RequiresInputFile() == true)
                 InitializeFile(part, query, "InputFile");
-            if(query.ContainsKey("OutputFile") && part.RequiresOutputFile() == true)
+            if (query.ContainsKey("OutputFile") && part.RequiresOutputFile() == true)
                 InitializeFile(part, query, "OutputFile");
         }
 
@@ -75,7 +83,7 @@ namespace Transformalize.Orchard.Services {
 
             var moduleVersion = _extensionManager.GetExtension("Transformalize.Orchard").Version;
             var logger = new TransformalizeLogger(request.Part.Title(), request.Part.LogLevel, Logger, OrchardVersion, moduleVersion);
-            var processes = new List<Process>(); 
+            var processes = new List<Process>();
 
             //transitioning to using TflRoot instead of string configuration
             if (request.Root != null) {
@@ -90,11 +98,11 @@ namespace Transformalize.Orchard.Services {
             } else {  //legacy
                 if (request.Options.Mode.Equals("rebuild", IGNORE_CASE)) {
                     request.Options.Mode = "init";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
                     request.Options.Mode = "first";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
                 } else {
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
+                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
                 }
             }
 
@@ -110,6 +118,55 @@ namespace Transformalize.Orchard.Services {
             };
         }
 
+        public void Run(string args) {
+
+            var split = args.Split(',');
+            var id = Convert.ToInt32(split[0]);
+            var mode = split[1];
+
+            var part = GetConfiguration(id);
+            var request = new TransformalizeRequest(part, new Dictionary<string, string>(), null, Logger) { Options = new Options() { Mode = mode } };
+
+            if (request.Root.Errors().Any()) {
+                foreach (var error in request.Root.Errors()) {
+                    Logger.Error(error);
+                }
+            } else {
+                var response = Run(request);
+
+                if (!response.Log.Any())
+                    return;
+
+                var name = TransformalizeTaskHandler.GetName(part.Title());
+                var reportId = _reportsManager.CreateReport(mode.Left(1).ToUpper() + mode.Substring(1), name);
+                var report = _reportsManager.Get(reportId);
+
+                var status = string.Empty;
+                foreach (var log in response.Log) {
+                    var level = log[1].Left(4);
+                    var utc = Convert.ToDateTime(log[0]).ToUniversalTime();
+                    var data = log.Skip(3);
+                    switch (level) {
+                        case "erro":
+                            report.Entries.Add(new ReportEntry { Message = string.Join(" | ", data), Type = ReportEntryType.Error, Utc = utc });
+                            status = "with Error(s)";
+                            break;
+                        case "warn":
+                            report.Entries.Add(new ReportEntry { Message = string.Join(" | ", data), Type = ReportEntryType.Warning, Utc = utc });
+                            if (status != "with Error(s)") {
+                                status = "with Warning(s)";
+                            }
+                            break;
+                        default:
+                            report.Entries.Add(new ReportEntry { Message = string.Join(" | ", data), Type = ReportEntryType.Information, Utc = utc });
+                            break;
+                    }
+                }
+                report.ActivityName += " " + status;
+                _reportsManager.Flush();
+            }
+        }
+
         private static void CreateInputOperation(Process process, TransformalizeRequest request) {
 
             if (!request.Query.ContainsKey("data")) {
@@ -122,7 +179,7 @@ namespace Transformalize.Orchard.Services {
                 return;
 
             var rows = new List<Row>();
-            var sr = new StringReader(request.Query["data"]);
+            var sr = new StringReader(request.Query["data"].ToString());
             var reader = new JsonTextReader(sr);
             reader.Read();
             if (reader.TokenType != JsonToken.StartArray)

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Environment.Features;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
@@ -21,30 +22,34 @@ namespace Transformalize.Orchard.Controllers {
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
         private readonly IFileService _fileService;
+        private readonly IFeatureManager _featureManager;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
         public TransformalizeController(
             IOrchardServices services,
             ITransformalizeService transformalize,
-            IFileService fileService
+            IFileService fileService,
+            IFeatureManager featureManager
         ) {
             _orchardServices = services;
             _transformalize = transformalize;
             _fileService = fileService;
+            _featureManager = featureManager;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
 
         [Themed]
-        public ActionResult Configurations(int id) {
+        public ActionResult Configurations(int id)
+        {
 
             if (!User.Identity.IsAuthenticated)
                 System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
 
             var inputFileId = Convert.ToInt32(Request.QueryString["InputFile"] ?? "0");
             var outputFileId = Convert.ToInt32(Request.QueryString["OutputFile"] ?? "0");
-            var mode = Request.QueryString["Mode"] ?? string.Empty;
+            var mode = Request.QueryString["mode"] ?? string.Empty;
 
             var viewModel = new Configurations(_fileService) {
                 ConfigurationParts = _transformalize.GetAuthorizedConfigurations(),
@@ -52,7 +57,8 @@ namespace Transformalize.Orchard.Controllers {
                 OutputFileId = outputFileId,
                 CurrentId = id,
                 Mode = mode,
-                Edit = _orchardServices.Authorizer.Authorize(global::Orchard.Security.StandardPermissions.SiteOwner)
+                Edit = _orchardServices.Authorizer.Authorize(global::Orchard.Security.StandardPermissions.SiteOwner),
+                Enqueue = _featureManager.GetEnabledFeatures().Any(f => f.Id == "Orchard.JobsQueue")
             };
 
             return View(viewModel);

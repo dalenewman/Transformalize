@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -19,8 +20,10 @@ namespace Transformalize.Orchard.Controllers {
         private static readonly string OrchardVersion = typeof(ContentItem).Assembly.GetName().Version.ToString();
         private readonly ITransformalizeService _transformalize;
         private readonly IApiService _apiService;
+        private readonly IJobsQueueService _jobQueueService;
         private readonly string _moduleVersion;
         private readonly Stopwatch _stopwatch = new Stopwatch();
+        private static int _jobPriority = 100000;
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -28,11 +31,13 @@ namespace Transformalize.Orchard.Controllers {
         public ApiController(
             ITransformalizeService transformalize,
             IApiService apiService,
-            IExtensionManager extensionManager
+            IExtensionManager extensionManager,
+            IJobsQueueService jobQueueService
         ) {
             _stopwatch.Start();
             _transformalize = transformalize;
             _apiService = apiService;
+            _jobQueueService = jobQueueService;
             _moduleVersion = extensionManager.GetExtension("Transformalize.Orchard").Version;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -84,7 +89,7 @@ namespace Transformalize.Orchard.Controllers {
                 var bad = new TransformalizeResponse();
                 request.Status = 501;
                 request.Message = "Configuration Problem" + errors.Length.Plural();
-                bad.Log.AddRange(errors.Select(p => new[]{DateTime.Now.ToString(CultureInfo.InvariantCulture),"error",".",".",p}));
+                bad.Log.AddRange(errors.Select(p => new[] { DateTime.Now.ToString(CultureInfo.InvariantCulture), "error", ".", ".", p }));
                 return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
                     query["format"] ?? DefaultFormat,
                     query["flavor"] ?? DefaultFlavor
@@ -98,6 +103,30 @@ namespace Transformalize.Orchard.Controllers {
             );
         }
 
+        [ActionName("Api/Enqueue"), ValidateInput(false)]
+        public ActionResult Enqueue(int id) {
+            ConfigurationPart part;
+            ApiRequest request;
+
+            foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
+                return rejection.ContentResult(
+                    DefaultFormat,
+                    DefaultFlavor
+                );
+            }
+
+            var query = GetQuery();
+            request.RequestType = ApiRequestType.Enqueue;
+
+            var args = string.Concat(part.Id, ",", query["mode"]);
+            var parameters = new Dictionary<string, object> { { "args", args } };
+            _jobQueueService.Enqueue("ITransformalizeJobService.Run", parameters, _jobPriority--);
+
+            return new ApiResponse(request, part.Configuration).ContentResult(
+                query["format"],
+                query["flavor"]
+            );
+        }
 
         [ActionName("Api/Execute"), ValidateInput(false)]
         public ActionResult Execute(int id) {
@@ -131,8 +160,8 @@ namespace Transformalize.Orchard.Controllers {
             }
 
             return new ApiResponse(request, transformalizeRequest.Configuration, processes).ContentResult(
-                transformalizeRequest.Query["format"],
-                transformalizeRequest.Query["flavor"]
+                transformalizeRequest.Query["format"].ToString(),
+                transformalizeRequest.Query["flavor"].ToString()
             );
         }
 
