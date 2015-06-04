@@ -15,7 +15,7 @@ using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Controllers {
-    public class ApiController : TflController {
+    public class ApiController : Controller {
 
         private static readonly string OrchardVersion = typeof(ContentItem).Assembly.GetName().Version.ToString();
         private readonly ITransformalizeService _transformalize;
@@ -50,18 +50,18 @@ namespace Transformalize.Orchard.Controllers {
             ConfigurationPart part;
             ApiRequest request;
 
+            var query = _transformalize.GetQuery();
+
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DefaultFormat,
-                    DefaultFlavor
+                    query["format"],
+                    query["flavor"]
                 );
             }
 
-            var query = GetQuery();
-
             return new ApiResponse(request, part.Configuration).ContentResult(
-                query["format"] ?? DefaultFormat,
-                query["flavor"] ?? DefaultFlavor
+                query["format"],
+                query["flavor"]
             );
         }
 
@@ -72,15 +72,16 @@ namespace Transformalize.Orchard.Controllers {
             ConfigurationPart part;
             ApiRequest request;
 
+            var query = _transformalize.GetQuery();
+
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DefaultFormat,
-                    DefaultFlavor
+                    query["format"],
+                    query["flavor"]
                 );
             }
 
             request.RequestType = ApiRequestType.MetaData;
-            var query = GetQuery();
             var transformalizeRequest = new TransformalizeRequest(part, query, null, Logger);
             var logger = new TransformalizeLogger(transformalizeRequest.Part.Title(), part.LogLevel, Logger, OrchardVersion, _moduleVersion);
 
@@ -91,15 +92,15 @@ namespace Transformalize.Orchard.Controllers {
                 request.Message = "Configuration Problem" + errors.Length.Plural();
                 bad.Log.AddRange(errors.Select(p => new[] { DateTime.Now.ToString(CultureInfo.InvariantCulture), "error", ".", ".", p }));
                 return new ApiResponse(request, "<tfl></tfl>", bad).ContentResult(
-                    query["format"] ?? DefaultFormat,
-                    query["flavor"] ?? DefaultFlavor
+                    query["format"],
+                    query["flavor"]
                 );
             }
 
             var metaData = new MetaDataWriter(ProcessFactory.CreateSingle(transformalizeRequest.Root.Processes[0], logger, new Options { Mode = "metadata" })).Write();
             return new ApiResponse(request, metaData).ContentResult(
-                query["format"] ?? DefaultFormat,
-                query["flavor"] ?? DefaultFlavor
+                query["format"],
+                query["flavor"]
             );
         }
 
@@ -108,14 +109,15 @@ namespace Transformalize.Orchard.Controllers {
             ConfigurationPart part;
             ApiRequest request;
 
+            var query = _transformalize.GetQuery();
+
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DefaultFormat,
-                    DefaultFlavor
+                    query["format"],
+                    query["flavor"]
                 );
             }
 
-            var query = GetQuery();
             request.RequestType = ApiRequestType.Enqueue;
 
             var args = string.Concat(part.Id, ",", query["mode"]);
@@ -135,17 +137,16 @@ namespace Transformalize.Orchard.Controllers {
             ConfigurationPart part;
             ApiRequest request;
 
+            var query = _transformalize.GetQuery();
+
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
                 return rejection.ContentResult(
-                    DefaultFormat,
-                    DefaultFlavor
+                    query["format"],
+                    query["flavor"]
                 );
             }
 
             request.RequestType = ApiRequestType.Execute;
-
-            var query = GetQuery();
-
             _transformalize.InitializeFiles(part, query);
 
             // ready

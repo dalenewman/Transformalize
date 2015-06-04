@@ -18,7 +18,7 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IApiService _apiService;
-        private readonly Dictionary<string, string> _query = new Dictionary<string, string>(3);
+        private readonly Dictionary<string, string> _query = new Dictionary<string, string>(3, StringComparer.OrdinalIgnoreCase);
 
         public HandsOnTableController(
             IOrchardServices services,
@@ -30,6 +30,7 @@ namespace Transformalize.Orchard.Controllers {
             _apiService = apiService;
             _query.Add("format", "json");
             _query.Add("flavor", "arrays");
+            _query.Add("mode", "default");
         }
 
         public ActionResult Index(int id) {
@@ -55,7 +56,7 @@ namespace Transformalize.Orchard.Controllers {
             ApiRequest request;
 
             foreach (var rejection in _apiService.Rejections(id, out request, out part)) {
-                return rejection.ContentResult(_query["format"].ToString(), _query["flavor"].ToString());
+                return rejection.ContentResult(_query["format"], _query["flavor"]);
             }
 
             request.RequestType = ApiRequestType.Execute;

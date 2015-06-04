@@ -61,7 +61,6 @@ namespace Transformalize.Runner {
             foreach (var error in errors) {
                 _logger.Error(error);
             }
-            _logger.Debug(content);
             throw new TransformalizeException(_logger, string.Join(Environment.NewLine, errors));
         }
 

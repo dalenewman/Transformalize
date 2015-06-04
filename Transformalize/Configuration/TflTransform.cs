@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Transformalize.Libs.Cfg.Net;
+using Transformalize.Libs.Jint.Parser;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -169,6 +172,12 @@ namespace Transformalize.Configuration {
 
         public bool IsShortHand { get; set; }
 
+        [Cfg(value = "firstday", domain = "firstday,firstfourdayweek,firstfullweek", toLower = true)]
+        public string CalendarWeekRule { get; set; }
+
+        [Cfg(value = "sunday", domain = "friday,monday,saturday,sunday,tuesday,thursday,wednesday", toLower = true)]
+        public string DayOfWeek { get; set; }
+
         protected override void Modify() {
             switch (Method) {
                 case "trimstartappend":
@@ -192,7 +201,25 @@ namespace Transformalize.Configuration {
                         Error("copy transform requires a parameter (or parameters).");
                     }
                     break;
+                case "javascript":
+                    ValidateJavascript();
+                    break;
             }
         }
+
+        private void ValidateJavascript() {
+            //TODO: extract interface and inject parser
+            try {
+                var program = new JavaScriptParser().Parse(Script, new ParserOptions() { Tolerant = true });
+                if (program.Errors == null)
+                    return;
+                foreach (var parserError in program.Errors) {
+                    Error("Javascript parse error. {0}", parserError.Message);
+                }
+            } catch (Exception ex) {
+                Error("Javascript parse error. {0}", ex.Message);
+            }
+        }
+
     }
 }

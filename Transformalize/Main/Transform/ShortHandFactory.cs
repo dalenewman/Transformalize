@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
@@ -103,7 +104,8 @@ namespace Transformalize.Main.Transform {
             {"xmlencode","xmlencode"},
             {"xmldecode","htmldecode"},
             {"htmldecode", "htmldecode"},
-            {"timeago","timeago"}
+            {"timeago","timeago"},
+            {"weekofyear","weekofyear"}
         };
             _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
             {"replace", Replace},
@@ -169,8 +171,39 @@ namespace Transformalize.Main.Transform {
             {"timespan", Timespan},
             {"isempty", IsEmpty},
             {"equals", Equals},
-            {"timeago", TimeAgo}
+            {"timeago", TimeAgo},
+            {"weekofyear",WeekOfYear}
         };
+        }
+
+        private TflTransform WeekOfYear(string arg, TflField field, TflTransform lastTransform) {
+            var split = new Queue<string>(SplitComma(arg));
+
+            var transform = field.GetDefaultOf<TflTransform>(t => {
+                t.Method = "weekofyear";
+                t.IsShortHand = true;
+            });
+
+            if (split.Count == 0) {
+                return transform;
+            }
+
+            while (split.Count > 0) {
+                var subject = split.Dequeue();
+                CalendarWeekRule calendarWeekRule;
+                DayOfWeek dayOfWeek;
+
+                if (Enum.TryParse(subject, true, out calendarWeekRule)) {
+                    transform.CalendarWeekRule = calendarWeekRule.ToString().ToLower();
+                } else if (Enum.TryParse(subject, true, out dayOfWeek)) {
+                    transform.DayOfWeek = dayOfWeek.ToString().ToLower();
+                } else {
+                    var message = string.Format("WeekOfYear argument '{0}' is invalid. You may only pass in a calendar week rule [(firstday),firstfourdayweek,firstfullweek] and/or first day of week [(sunday),monday,tuesday,wednesday,thursday,friday,saturday].", subject);
+                    _problems.Add(message);
+                    return _guard;
+                }
+            }
+            return transform;
         }
 
         private TflTransform TimeAgo(string arg, TflField field, TflTransform lastTransform) {

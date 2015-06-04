@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using Transformalize.Main;
 using Transformalize.Run.Libs.SemanticLogging;
 using Transformalize.Run.Logging;
@@ -59,7 +58,6 @@ namespace Transformalize.Run {
                 if (OptionsMayExist(args)) {
                     
                     if (_options.Valid()) {
-
                         if (_options.Mode == "rebuild") {
                             _options.Mode = "init";
                             processes.AddRange(ProcessFactory.Create(resource, new RunLogger(), _options));

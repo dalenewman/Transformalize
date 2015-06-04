@@ -20,7 +20,9 @@
 
 #endregion
 
-using System.Runtime.InteropServices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Main.Transform;
@@ -29,14 +31,36 @@ namespace Transformalize.Test {
     [TestFixture]
     public class TestShortHand {
 
-        public TflField GetField() {
-            var process = new TflRoot().GetDefaultOf<TflProcess>(p => { p.Name = "Test"; });
-            return process.GetDefaultOf<TflField>(f => { f.Name = "Test"; });
+        public TflField GetField(string expression = null) {
+            var field = new TflField().GetDefaultOf<TflField>(f => { f.Name = "Test"; });
+            if (expression != null) {
+                field.T = expression;
+            }
+            return field;
         }
 
-        public ShortHandFactory GetFactory() {
-            var process = new TflRoot().GetDefaultOf<TflProcess>(p => { p.Name = "Test"; });
+        public ShortHandFactory GetFactory(TflField field = null) {
+            var process = new TflRoot().GetDefaultOf<TflProcess>(p => {
+                p.Name = "Test";
+                p.Entities = new List<TflEntity>{
+                    new TflEntity().GetDefaultOf<TflEntity>(e => { e.Name = "Test"; })
+                };
+            });
+            if (field != null) {
+                process.Entities.First().Fields.Add(field);
+            }
             return new ShortHandFactory(process);
+        }
+
+        [Test]
+        public void WeekOfYear() {
+            var field = GetField("weekofyear(firstday,monday)");
+            var issues = GetFactory(field).ExpandShortHandTransforms();
+            Assert.AreEqual(0, issues.Count());
+            Assert.AreEqual(1, field.Transforms.Count);
+            Assert.AreEqual("weekofyear", field.Transforms.First().Method);
+            Assert.AreEqual("firstday", field.Transforms.First().CalendarWeekRule);
+            Assert.AreEqual("monday", field.Transforms.First().DayOfWeek);
         }
 
         [Test]

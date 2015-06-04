@@ -1,17 +1,30 @@
 ﻿using System;
 using Transformalize.Configuration;
+using Transformalize.Extensions;
 using Transformalize.Logging;
 
 namespace Transformalize.Test {
 
     public class TestLogger : ILogger {
+        private readonly string _level;
 
         private const string LAYOUT = "{0:hh:mm:ss} | {1} | {2} | {3} | {4}";
         private readonly Func<string, string, string, string, object[], string> _formatter = (message, level, process, entity, args) => string.Format(string.Format(LAYOUT, DateTime.Now, level, process, entity, message), args);
+        private readonly bool _infoEnabled;
+        private readonly bool _debugEnabled;
+        private readonly bool _warnEnabled;
+        private readonly bool _errorEnabled;
 
         public string Name { get; set; }
 
-        public TestLogger() {
+        public TestLogger(string level = "info")
+        {
+            _level = level.ToLower().Left(4);
+            var levels = GetLevels(_level);
+            _debugEnabled = levels[0];
+            _infoEnabled = levels[1];
+            _warnEnabled = levels[2];
+            _errorEnabled = levels[3];
             Name = "Test";
         }
 
@@ -36,19 +49,23 @@ namespace Transformalize.Test {
         }
 
         public void EntityInfo(string entity, string message, params object[] args) {
-            Console.WriteLine(_formatter(message, "info ", Name, entity, args));
+            if(_infoEnabled)
+                Console.WriteLine(_formatter(message, "info ", Name, entity, args));
         }
 
         public void EntityDebug(string entity, string message, params object[] args) {
-            Console.WriteLine(_formatter(message, "debug", Name, entity, args));
+            if(_debugEnabled)
+                Console.WriteLine(_formatter(message, "debug", Name, entity, args));
         }
 
         public void EntityWarn(string entity, string message, params object[] args) {
-            Console.WriteLine(_formatter(message, "warn ", Name, entity, args));
+            if(_warnEnabled)
+                Console.WriteLine(_formatter(message, "warn ", Name, entity, args));
         }
 
         public void EntityError(string entity, string message, params object[] args) {
-            Console.Error.WriteLine(_formatter(message, "ERROR", Name, entity, args));
+            if(_errorEnabled)
+                Console.Error.WriteLine(_formatter(message, "ERROR", Name, entity, args));
         }
 
         public void EntityError(string entity, Exception exception, string message, params object[] args) {
@@ -63,6 +80,23 @@ namespace Transformalize.Test {
 
         public void Stop() {
             Info("Stop logging {0}!", Name);
+        }
+
+        private static bool[] GetLevels(string level) {
+            switch (level) {
+                case "debu":
+                    return new[] { true, true, true, true };
+                case "info":
+                    return new[] { false, true, true, true };
+                case "warn":
+                    return new[] { false, false, true, true };
+                case "erro":
+                    return new[] { false, false, false, true };
+                case "none":
+                    return new[] { false, false, false, false };
+                default:
+                    goto case "info";
+            }
         }
     }
 }

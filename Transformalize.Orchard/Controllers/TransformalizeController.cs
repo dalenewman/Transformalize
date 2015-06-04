@@ -17,7 +17,7 @@ using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Controllers {
 
-    public class TransformalizeController : TflController {
+    public class TransformalizeController : Controller {
 
         private readonly IOrchardServices _orchardServices;
         private readonly ITransformalizeService _transformalize;
@@ -87,7 +87,7 @@ namespace Transformalize.Orchard.Controllers {
                 }
             }
 
-            var query = GetQuery();
+            var query = _transformalize.GetQuery();
 
             // files
             HandleInputFile(part, query);
@@ -131,7 +131,7 @@ namespace Transformalize.Orchard.Controllers {
 
         private ExecuteViewModel Run(TransformalizeRequest request) {
 
-            var model = new ExecuteViewModel() { DisplayLog = request.Part.DisplayLog };
+            var model = new ExecuteViewModel { DisplayLog = request.Part.DisplayLog };
 
             if (request.Part.TryCatch) {
                 try {

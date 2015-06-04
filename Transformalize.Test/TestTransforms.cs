@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -1487,6 +1488,25 @@ It is False#end", templates, parameters);
             Assert.AreEqual(1, output.Count);
             Assert.AreEqual("UwAAAB+LCAAAAAAABADzSM3JyVcIzy/KSVHwoA4bAOnjsbBTAAAA", compressed);
             Assert.Less(compressed.Length, normal.Length);
+        }
+
+
+        [Test]
+        public void TestWeekOfYear()
+        {
+            var input = new RowsBuilder()
+                .Row("date1", new DateTime(2015,6,4))
+                .Field("date2", new DateTime(2015, 6, 4).AddDays(7))
+                .Field("woy1", null, "int")
+                .Field("woy2", null, "int")
+                .ToOperation();
+            var weekOfYear1 = new WeekOfYearOperation("date1", "woy1", CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+            var weekOfYear2 = new WeekOfYearOperation("date2", "woy2", CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+            var output = TestOperation(input, weekOfYear1, weekOfYear2);
+
+            Assert.AreEqual(1, output.Count);
+            Assert.AreEqual(23, output[0]["woy1"]);
+            Assert.AreEqual(24, output[0]["woy2"]);
         }
 
         [Test]

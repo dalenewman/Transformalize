@@ -30,12 +30,11 @@ namespace Transformalize.Operations.Transform {
             _parameters = parameters;
             _addSelf = !parameters.Any();
 
-            Program program;
-
             foreach (var pair in scripts) {
                 logger.Debug("Running script {0}.", pair.Value.File);
-                try {
-                    program = new JavaScriptParser().Parse(pair.Value.Content);
+                try
+                {
+                    var program = new JavaScriptParser().Parse(pair.Value.Content, new ParserOptions { Tolerant = true});
                     if (program.Errors != null && program.Errors.Count > 0) {
                         logger.Warn("Javascript Parse Failed. Script: {0}.", pair.Value.Name);
                         foreach (var error in program.Errors) {
@@ -44,22 +43,11 @@ namespace Transformalize.Operations.Transform {
                     } else {
                         _scriptAppender.AppendLine(pair.Value.Content);
                     }
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     logger.Error("Javascript Parse Failed. Name: {0}. Script: {1}.", pair.Value.Name, pair.Value.Content);
                     logger.Error(e.Message);
                 }
-            }
-
-            try {
-                program = new JavaScriptParser().Parse(_script);
-                if (program.Errors != null && program.Errors.Count > 0) {
-                    logger.Warn("Javascript Parse Failed. Inline: {0}.", _script.Replace("{","{{").Replace("}","}}"));
-                    foreach (var error in program.Errors) {
-                        logger.Warn(error.Description);
-                    }
-                }
-            } catch (Exception e) {
-                logger.Error("Javascript Parse Failed. Inline: '{0}'. Message: ", _script, e.Message);
             }
 
             var externalScripts = _scriptAppender.ToString();

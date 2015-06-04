@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -644,6 +645,14 @@ namespace Transformalize.Main {
                         inKey,
                         _process.Connections.GetConnectionByName(element.Connection).Connection,
                         element.TimeOut
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "weekofyear":
+                    return new WeekOfYearOperation(
+                        inKey, 
+                        outKey, 
+                        (CalendarWeekRule)Enum.Parse(typeof(CalendarWeekRule),element.CalendarWeekRule, true), 
+                        (DayOfWeek)Enum.Parse(typeof(DayOfWeek),element.DayOfWeek, true)
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 // validators

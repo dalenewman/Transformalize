@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web.UI;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
@@ -13,7 +13,6 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Reports;
 using Orchard.Reports.Services;
-using Orchard.Services;
 using Orchard.Utility.Extensions;
 using Transformalize.Extensions;
 using Transformalize.Libs.Newtonsoft.Json;
@@ -26,7 +25,10 @@ using Transformalize.Orchard.Models;
 namespace Transformalize.Orchard.Services {
 
     public class TransformalizeService : ITransformalizeService, ITransformalizeJobService {
-        private const StringComparison IGNORE_CASE = StringComparison.OrdinalIgnoreCase;
+
+        protected const string DefaultFormat = "xml";
+        protected const string DefaultFlavor = "attributes";
+        protected const string DefaultMode = "default";
 
         private readonly IOrchardServices _orchardServices;
         private readonly IFileService _fileService;
@@ -87,23 +89,9 @@ namespace Transformalize.Orchard.Services {
 
             //transitioning to using TflRoot instead of string configuration
             if (request.Root != null) {
-                if (request.Options.Mode.Equals("rebuild", IGNORE_CASE)) {
-                    request.Options.Mode = "init";
-                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
-                    request.Options.Mode = "first";
-                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
-                } else {
-                    processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
-                }
+                processes.AddRange(ProcessFactory.Create(request.Root, logger, request.Options));
             } else {  //legacy
-                if (request.Options.Mode.Equals("rebuild", IGNORE_CASE)) {
-                    request.Options.Mode = "init";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
-                    request.Options.Mode = "first";
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
-                } else {
-                    processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query.ToDictionary(k => k.Key, v => v.Value.ToString())));
-                }
+                processes.AddRange(ProcessFactory.Create(request.Configuration, logger, request.Options, request.Query));
             }
 
             for (var i = 0; i < processes.Count; i++) {
@@ -118,6 +106,25 @@ namespace Transformalize.Orchard.Services {
             };
         }
 
+        public Dictionary<string, string> GetQuery() {
+            var request = System.Web.HttpContext.Current.Request;
+            var collection = new NameValueCollection { request.Form, request.QueryString };
+            var result = new Dictionary<string, string>(collection.Count, StringComparer.OrdinalIgnoreCase);
+            foreach (var key in collection.AllKeys) {
+                result[key] = collection[key];
+            }
+            if (!result.ContainsKey("flavor")) {
+                result["flavor"] = DefaultFlavor;
+            }
+            if (!result.ContainsKey("format")) {
+                result["format"] = DefaultFormat;
+            }
+            if (!result.ContainsKey("mode")) {
+                result["mode"] = DefaultMode;
+            }
+            return result;
+        }
+
         public void Run(string args) {
 
             var split = args.Split(',');
@@ -125,7 +132,7 @@ namespace Transformalize.Orchard.Services {
             var mode = split[1];
 
             var part = GetConfiguration(id);
-            var request = new TransformalizeRequest(part, new Dictionary<string, string>(), null, Logger) { Options = new Options() { Mode = mode } };
+            var request = new TransformalizeRequest(part, GetQuery(), null, Logger) { Options = new Options() { Mode = mode } };
 
             if (request.Root.Errors().Any()) {
                 foreach (var error in request.Root.Errors()) {

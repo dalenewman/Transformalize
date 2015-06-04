@@ -3382,6 +3382,7 @@
     <Compile Include="Operations\Transform\ValueOperation.cs" />
     <Compile Include="Operations\Transform\VelocityOperation.cs" />
     <Compile Include="Operations\Transform\WebOperation.cs" />
+    <Compile Include="Operations\Transform\WeekOfYearOperation.cs" />
     <Compile Include="Operations\Transform\XmlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\XmlMode.cs" />
     <Compile Include="Operations\Transform\XpathOperation.cs" />

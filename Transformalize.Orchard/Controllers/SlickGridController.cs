@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net.Loggers;
-using Transformalize.Libs.FileHelpers.Events;
-using Transformalize.Main;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 
@@ -20,7 +16,7 @@ namespace Transformalize.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IApiService _apiService;
-        private readonly Dictionary<string,string> _query = new Dictionary<string, string>(3);
+        private readonly Dictionary<string,string> _query = new Dictionary<string, string>(3, StringComparer.OrdinalIgnoreCase);
 
         public SlickGridController(
             IOrchardServices services,
@@ -32,6 +28,7 @@ namespace Transformalize.Orchard.Controllers {
             _apiService = apiService;
             _query.Add("format", "json");
             _query.Add("flavor", "objects");
+            _query.Add("mode", "default");
         }
 
         public ActionResult Index(int id) {

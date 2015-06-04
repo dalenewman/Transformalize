@@ -10,6 +10,7 @@ namespace Transformalize.Orchard.Services {
         IEnumerable<ConfigurationPart> GetAuthorizedConfigurations();
         ConfigurationPart GetConfiguration(int id);
         TransformalizeResponse Run(TransformalizeRequest request);
+        Dictionary<string, string> GetQuery();
     }
 }
 
