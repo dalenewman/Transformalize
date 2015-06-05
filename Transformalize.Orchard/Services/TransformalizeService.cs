@@ -107,9 +107,13 @@ namespace Transformalize.Orchard.Services {
         }
 
         public Dictionary<string, string> GetQuery() {
-            var request = System.Web.HttpContext.Current.Request;
-            var collection = new NameValueCollection { request.Form, request.QueryString };
+
+            var context = System.Web.HttpContext.Current;
+            var collection = context == null ?
+                new NameValueCollection() :
+                new NameValueCollection { context.Request.Form, context.Request.QueryString };
             var result = new Dictionary<string, string>(collection.Count, StringComparer.OrdinalIgnoreCase);
+
             foreach (var key in collection.AllKeys) {
                 result[key] = collection[key];
             }

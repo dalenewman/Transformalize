@@ -44,7 +44,7 @@ namespace Transformalize.Main {
             if (!string.IsNullOrEmpty(action.Command)) {
                 var response = action.Connection.ExecuteScript(action.Command, action.Timeout);
                 if (response.Success) {
-                    _logger.Info("Command: {0} ran ok.", action.Command);
+                    _logger.Info("Command: {0} ran ok.", action.Command.Left(20)+"...");
                     _logger.Debug("Command: {0} affected {1} rows.", action.Command, response.RowsAffected < 0 ? 0 : response.RowsAffected);
                 } else {
                     _logger.Error("Failed to run command: {0}. {1} Error{2}.", action.Command, response.Messages.Count, response.Messages.Count.Plural());
