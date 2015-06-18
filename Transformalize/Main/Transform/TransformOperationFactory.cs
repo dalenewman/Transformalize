@@ -474,10 +474,19 @@ namespace Transformalize.Main {
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "timeago":
-                    return new TimeAgoOperation(
+                    return new RelativeTimeOperation(
                         inKey,
                         outKey,
-                        element.FromTimeZone
+                        element.FromTimeZone,
+                        true
+                    ) { ShouldRun = shouldRun, EntityName = _entityName };
+
+                case "timeahead":
+                    return new RelativeTimeOperation(
+                        inKey,
+                        outKey,
+                        element.FromTimeZone,
+                        false
                     ) { ShouldRun = shouldRun, EntityName = _entityName };
 
                 case "timezone":

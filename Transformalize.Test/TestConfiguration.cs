@@ -158,12 +158,12 @@ namespace Transformalize.Test {
             Assert.AreEqual("field2 > 6", filters[1].ResolveExpression("'"));
             Assert.AreEqual("field3 != 'literal3'", filters[2].ResolveExpression("'"));
 
-            Assert.AreEqual("field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", filters.ResolveExpression("'"));
+            Assert.AreEqual("(field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3')", filters.ResolveExpression("'"));
 
             var sql = process.Entities[0].Input[0].Connection.KeyAllQuery(process.Entities[0]);
 
             Assert.AreEqual(@"
-                SELECT [field1] FROM [dbo].[entity] WHERE field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3'", sql);
+                SELECT [field1] FROM [dbo].[entity] WHERE [field1] IS NOT NULL AND (field1 != 'literal1' AND field2 > 6 OR field3 != 'literal3')", sql);
         }
 
         [Test()]

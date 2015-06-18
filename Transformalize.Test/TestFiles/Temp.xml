@@ -1,0 +1,261 @@
+﻿<transformalize>
+  <environments default="prod">
+    <add name="dev">
+      <parameters>
+        <add name="Mode" value="default" />
+        <add name="SolrServer" value="http://localhost:8983/solr-4.7.0" />
+        <add name="SolrCoresFolder" value="C:\Solr4.7\" />
+        <add name="SolrCore" value="CatsCandidate" />
+      </parameters>
+    </add>
+    <add name="prod">
+      <parameters>
+        <add name="Mode" value="default" />
+        <add name="SolrServer" value="http://sbsearchsrv.mwf.local:8080/solr" />
+        <add name="SolrCoresFolder" value="\\sbsearchsrv.mwf.local\solr\" />
+        <add name="SolrCore" value="CatsCandidate" />
+      </parameters>
+    </add>
+  </environments>
+  <processes>
+    <add name="CatsCandidate" mode="@(Mode)">
+      <connections>
+        <add name="input" provider="mysql" server="192.168.0.19" database="cats" user="dnewman" password="KAL1nk$!" port="3306" />
+        <add name="output" server="SBSQL1.mwf.local" database="TflCats" />
+        <add name="forms" server="SBSQL1.mwf.local" database="TflForms" />
+      </connections>
+
+      <templates>
+        <add name="solr-data-handler" file="http://config.mwf.local/Templates/Solr/solr-data-handler-003.cshtml" cache="true">
+          <actions>
+            <add action="copy" mode="init" file="@(SolrCoresFolder)\@(SolrCore)\conf\data-config.xml"/>
+          </actions>
+        </add>
+        <add name="solr-schema" file="http://config.mwf.local/Templates/Solr/solr-schema-002.cshtml" cache="true">
+          <actions>
+            <add action="copy" mode="init" file="@(SolrCoresFolder)\@(SolrCore)\conf\schema.xml"/>
+            <add action="web" mode="init" url="@(SolrServer)/admin/cores?action=RELOAD&amp;core=@(SolrCore)"/>
+            <add action="web" mode="first" url="@(SolrServer)/@(SolrCore)/dataimport?command=full-import&amp;clean=true&amp;commit=true&amp;optimize=true"/>
+          </actions>
+        </add>
+      </templates>
+
+      <actions>
+        <add action="web" mode="default" url="@(SolrServer)/@(SolrCore)/dataimport?command=delta-import&amp;clean=false&amp;commit=true&amp;optimize=false"/>
+      </actions>
+
+      <search-types>
+        <add name="default" store="true" index="true" />
+        <add name="standard" analyzer="text_en_splitting" store="false" index="true" />
+        <add name="store" store="true" index="false" />
+      </search-types>
+
+      <entities>
+        <add name="candidate" alias="Candidate" prefix="candidate_" version="date_modified">
+          <fields>
+            <add name="candidate_id" type="int32" primary-key="true"/>
+            <add name="site_id" type="int32"/>
+            <add name="last_name"/>
+            <add name="first_name"/>
+            <add name="middle_name" length="32"/>
+            <add name="phone_home" length="40"/>
+            <add name="phone_cell" length="40"/>
+            <add name="phone_work" length="40"/>
+            <add name="address" length="max"/>
+            <add name="city"/>
+            <add name="state"/>
+            <add name="zip" length="16"/>
+            <add name="source" length="128"/>
+            <add name="date_available" type="datetime"/>
+            <add name="can_relocate" type="int32"/>
+            <add name="notes" length="max"/>
+            <add name="key_skills" length="max"/>
+            <add name="current_employer" length="128"/>
+            <add name="entered_by" type="int32"/>
+            <add name="owner" type="int32"/>
+            <add name="date_created" type="datetime"/>
+            <add name="date_modified" type="datetime"/>
+            <add name="email1" length="128" t="lower().trim()" default="None" default-blank="true" default-white-space="true"/>
+            <add name="email2" length="128" t="lower().trim()" default="None" default-blank="true" default-white-space="true"/>
+            <add name="web_site" length="128"/>
+            <add name="import_id" type="int32"/>
+            <add name="is_hot" type="int32"/>
+            <add name="eeo_ethnic_type_id" type="int32"/>
+            <add name="eeo_veteran_type_id" type="int32"/>
+            <add name="eeo_disability_status" length="5"/>
+            <add name="eeo_gender" length="5"/>
+            <add name="desired_pay"/>
+            <add name="current_pay"/>
+            <add name="is_active" type="int32" default="0"/>
+            <add name="is_admin_hidden" type="int32"/>
+            <add name="best_time_to_call" length="255"/>
+          </fields>
+          <calculated-fields>
+            <add name="candidate_is_active_yes_no" length="3" t="copy(is_active).map(0=No,1=Yes)" />
+            <add name="candidate_full_name" length="160" t="copy(first_name,middle_name,last_name).join( ).regexreplace(\s{2}, )" />
+            <add name="email1_clean" length="128" t="copy(email1).replace(@, ).replace(., )" output="false" />
+            <add name="email2_clean" length="128" t="copy(email2).replace(@, ).replace(., )" output="false" />
+            <add name="candidate_search" length="max" t="copy(first_name,middle_name,last_name,notes,email1,email1_clean,email2,email2_clean,key_skills,address).join( )" search-type="standard" />
+            <add name="candidate_application_link" length="128" t="copy(candidate_id).format(https://forms.scope-services.com/form/input/JobApplication/C{0})" search-type="store"/>
+            <add name="candidate_application_tag" length="255" search-type="store">
+              <transforms>
+                <add method="tojson">
+                  <parameters>
+                    <add name="tag" value="a" />
+                    <add name="href" field="candidate_application_link" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="candidate_has_email" type="bool">
+              <transforms>
+                <add method="javascript" script="candidate_email1!='none'">
+                  <parameters>
+                    <add field="candidate_email1" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="candidate_email_link" length="128" t="copy(candidate_email1).format(mailto:{0})"  search-type="store" />
+            <add name="candidate_email_tag" length="255" search-type="store" default="None" raw="true">
+              <transforms>
+                <add method="tag" tag="a" encode="false" decode="false" run-field="candidate_has_email" run-value="true">
+                  <parameters>
+                    <add name="href" field="candidate_email_link" />
+                    <add name="target" value="_blank" />
+                    <add name="content" field="candidate_email1" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="candidate_phone"
+                 length="10"
+                 output="false"
+                 t="copy(candidate_phone_cell,candidate_phone_home,candidate_phone_work).concat().regexreplace([^\d],).left(10)" />
+            <add name="candidate_phone_formatted" t="copy(candidate_phone).formatphone()" />
+            <add name="candidate_phone_link" t="if(candidate_phone_formatted,,#,candidate_phone_formatted).copy(candidate_phone_formatted).format(tel:{0})" />
+            <add name="candidate_phone_tag" length="255" search-type="store">
+              <transforms>
+                <add method="tojson">
+                  <parameters>
+                    <add name="tag" value="a" />
+                    <add name="href" field="candidate_phone_link" />
+                    <add name="text" field="candidate_phone_formatted" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="candidate_cats_link" length="255" t="copy(candidate_id).format(http://ssats.scope-services.local/cats/index.php?m=candidates&amp;a=show&amp;candidateID={0})" />
+            <add name="candidate_cats_tag" length="255" search-type="store">
+              <transforms>
+                <add method="tojson">
+                  <parameters>
+                    <add name="tag" value="a" />
+                    <add name="class" value="btn btn-primary btn-xs" />
+                    <add name="role" value="button" />
+                    <add name="href" field="candidate_cats_link" />
+                    <add name="text" value="CATS" />
+                    <add name="target" value="_blank" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+            <add name="cats_check" length="255" t="tag(span,style:color\:#73a839;,class:glyphicon glyphicon-thumbs-up)" output="false" />
+            <add name="candidate_cats_check" length="255" raw="true">
+              <transforms>
+                <add method="tag" tag="a" decode="false" encode="false">
+                  <parameters>
+                    <add name="href" field="candidate_cats_link" />
+                    <add name="content" field="cats_check" />
+                  </parameters>
+                </add>
+              </transforms>
+            </add>
+          </calculated-fields>
+        </add>
+
+        <add name="user" alias="Owner" prefix="owner_" version="owner_hashcode">
+          <fields>
+            <add name="user_id" type="int32" primary-key="true"/>
+            <add name="site_id" type="int32"/>
+            <add name="user_name"/>
+            <add name="email" length="128"/>
+            <!--<add name="password" length="128"/>-->
+            <add name="access_level" type="int32"/>
+            <add name="can_change_password" type="int32"/>
+            <add name="is_test_user" type="int32"/>
+            <add name="last_name" length="40" default-white-space="true"/>
+            <add name="first_name" length="40" default-white-space="true"/>
+            <add name="is_demo" type="int32"/>
+            <add name="categories" length="192"/>
+            <!--<add name="session_cookie" length="48"/>-->
+            <!--<add name="pipeline_entries_per_page" type="int32"/>-->
+            <!--<add name="column_preferences"/>-->
+            <add name="force_logout" type="int32"/>
+            <add name="title"/>
+            <add name="phone_work"/>
+            <add name="phone_cell"/>
+            <add name="phone_other"/>
+            <add name="address" length="max"/>
+            <add name="notes" length="max"/>
+            <add name="company" length="255"/>
+            <add name="city"/>
+            <add name="state"/>
+            <add name="zip_code" length="16"/>
+            <add name="country" length="128"/>
+          </fields>
+          <calculated-fields>
+            <add name="owner_hashcode" type="int" t="copy(*).concat().hashcode()" />
+            <add name="owner_full_name"
+                 length="160"
+                 t="copy(first_name,last_name).format({0} {1}).collapse().trim().javascript(owner_full_name == '' ? 'None' : owner_full_name)"
+                 default="None"/>
+          </calculated-fields>
+        </add>
+
+        <add name="JobApplicationJOB_APPLICATION_CORE"
+             connection="forms"
+             group="true">
+          <fields>
+            <add name="UserEmail" alias="job_application_last_user_email" default="x" default-blank="true" length="128" aggregate="group" primary-key="true" />
+            <add name="_LAST_UPDATE_DATE" alias="job_application_last_update" type="datetime" aggregate="max" />
+          </fields>
+        </add>
+
+        <add name="JobApplicationStar"
+             connection="forms"
+             version="_LAST_UPDATE_DATE">
+          <fields>
+            <add name="_URI" primary-key="true" />
+            <add name="UserEmail" alias="job_application_user_email" length="128" default="" default-blank="true" />
+            <add name="REFERRER" alias="job_application_REFERRER" length="255" />
+            <add name="_LAST_UPDATE_DATE" alias="job_application_update" type="datetime" />
+            <add name="_URI" alias="job_application_URI" />
+            <add name="LINK" alias="job_application_link" length="128" />
+            <add name="LINK_TAG" alias="job_application_tag" length="255" default="&lt;span style=&quot;color:#c71c22;&quot; class=&quot;glyphicon glyphicon-thumbs-down&quot;&gt;&lt;/span&gt;" />
+          </fields>
+          <calculated-fields>
+            <add name="job_application_yes_no" length="3" default="No">
+              <transforms>
+                <add method="if" left="_URI" right="" then="No" else="Yes" />
+              </transforms>
+            </add>
+          </calculated-fields>
+        </add>
+
+      </entities>
+
+      <relationships>
+        <add left-entity="Candidate" left-field="owner" right-entity="Owner" right-field="user_id" />
+        <add left-entity="Candidate" left-field="candidate_email1" right-entity="JobApplicationJOB_APPLICATION_CORE" right-field="UserEmail" />
+        <add left-entity="JobApplicationJOB_APPLICATION_CORE" right-entity="JobApplicationStar">
+          <join>
+            <add left-field="UserEmail" right-field="UserEmail" />
+            <add left-field="_LAST_UPDATE_DATE" right-field="_LAST_UPDATE_DATE" />
+          </join>
+        </add>
+      </relationships>
+
+    </add>
+  </processes>
+</transformalize>

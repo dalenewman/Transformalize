@@ -31,7 +31,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public void Drop(Process process) {
 
-            if (!process.StarEnabled || process.Relationships.Count == 0)
+            if (!process.StarEnabled)
                 return;
 
             using (var cn = process.OutputConnection.GetConnection()) {
@@ -46,7 +46,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public void Create(Process process) {
 
-            if (!process.StarEnabled || process.Relationships.Count == 0)
+            if (!process.StarEnabled)
                 return;
 
             Drop(process);

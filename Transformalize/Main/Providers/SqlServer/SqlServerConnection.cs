@@ -25,7 +25,6 @@ using System.Data;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Transformalize.Logging;
 using Transformalize.Main.Providers.Sql;
 using Transformalize.Operations;
 using Transformalize.Processes;
@@ -89,6 +88,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 SELECT {0}
                 FROM [{1}].[{2}] WITH (NOLOCK)
                 WHERE [{3}] BETWEEN @Begin AND @End
+                AND [{4}] IS NOT NULL
             ";
 
             var sql = string.Format(
@@ -96,7 +96,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                 string.Join(", ", entity.SelectKeys(this)),
                 string.IsNullOrEmpty(entity.Schema) ? DefaultSchema : entity.Schema,
                 entity.Name,
-                entity.Version.Name
+                entity.Version.Name,
+                entity.PrimaryKey.WithInput().First().Name
             );
 
             if (entity.Filters.Any()) {
@@ -112,6 +113,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 SELECT {0}
                 FROM [{1}].[{2}] WITH (NOLOCK)
                 WHERE [{3}] <= @End
+                AND [{4}] IS NOT NULL
             ";
 
             var sql = string.Format(
@@ -119,7 +121,8 @@ namespace Transformalize.Main.Providers.SqlServer {
                 string.Join(", ", entity.SelectKeys(this)),
                 string.IsNullOrEmpty(entity.Schema) ? DefaultSchema : entity.Schema,
                 entity.Name,
-                entity.Version.Name
+                entity.Version.Name,
+                entity.PrimaryKey.WithInput().First().Name
             );
 
             if (entity.Filters.Any()) {
@@ -149,8 +152,10 @@ namespace Transformalize.Main.Providers.SqlServer {
                 sql += string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
             }
 
+            sql += " WHERE [" + entity.PrimaryKey.WithInput().First().Name + "] IS NOT NULL"; 
+
             if (entity.Filters.Any()) {
-                sql += " WHERE " + entity.Filters.ResolveExpression(TextQualifier);
+                sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
             }
             return sql;
         }

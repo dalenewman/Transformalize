@@ -139,15 +139,19 @@ namespace Transformalize.Main.Providers {
             foreach (var row in rows) {
                 var values = new List<string>();
                 foreach (var field in preProcessed) {
-                    var value = row[field[0]].ToString();
+                    var value = row[field[0]];
+                    if (value == null)
+                        continue;
+
+                    var strValue = value.ToString();
+                    if (string.IsNullOrWhiteSpace(strValue))
+                        continue;
+
                     if (field[1].StartsWith("bool")) {
-                        value = value.Equals("True", StringComparison.Ordinal) ? "1" : "0";
+                        strValue = strValue.Equals("True", StringComparison.Ordinal) ? "1" : "0";
                     }
-                    values.Add(
-                        field[2] == string.Empty
-                            ? value
-                            : string.Concat(field[2], value.Replace("'", "''"), field[2])
-                        );
+
+                    values.Add(field[2] == string.Empty ? strValue : string.Concat(field[2], strValue.Replace("'", "''"), field[2]));
                 }
                 yield return string.Join(",", values);
             }

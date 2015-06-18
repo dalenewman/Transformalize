@@ -198,6 +198,9 @@
     <Content Include="TestFiles\Test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestFiles\Temp.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="TestFiles\Headers\Single.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

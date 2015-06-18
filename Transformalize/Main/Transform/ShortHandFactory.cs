@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Transformalize.Libs.Cfg.Net;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
 using Transformalize.Operations.Transform;
 
@@ -105,6 +104,7 @@ namespace Transformalize.Main.Transform {
             {"xmldecode","htmldecode"},
             {"htmldecode", "htmldecode"},
             {"timeago","timeago"},
+            {"timeahead","timeahead"},
             {"weekofyear","weekofyear"}
         };
             _functions = new Dictionary<string, Func<string, TflField, TflTransform, TflTransform>> {
@@ -172,6 +172,7 @@ namespace Transformalize.Main.Transform {
             {"isempty", IsEmpty},
             {"equals", Equals},
             {"timeago", TimeAgo},
+            {"timeahead", TimeAhead},
             {"weekofyear",WeekOfYear}
         };
         }
@@ -207,10 +208,18 @@ namespace Transformalize.Main.Transform {
         }
 
         private TflTransform TimeAgo(string arg, TflField field, TflTransform lastTransform) {
+            return TimeOperation(arg, field, true);
+        }
+
+        private TflTransform TimeAhead(string arg, TflField field, TflTransform lastTransform) {
+            return TimeOperation(arg, field, false);
+        }
+
+        private TflTransform TimeOperation(string arg, TflField field, bool past) {
             var split = SplitComma(arg);
             if (split.Length == 0) {
                 return field.GetDefaultOf<TflTransform>(t => {
-                    t.Method = "timeago";
+                    t.Method = "time" + (past ? "ago" : "ahead");
                     t.FromTimeZone = "UTC";
                     t.IsShortHand = true;
                 });
@@ -220,12 +229,12 @@ namespace Transformalize.Main.Transform {
             try {
                 TimeZoneInfo.FindSystemTimeZoneById(p);
                 return field.GetDefaultOf<TflTransform>(t => {
-                    t.Method = "timeago";
+                    t.Method = "time" + (past ? "ago" : "ahead");
                     t.FromTimeZone = p;
                     t.IsShortHand = true;
                 });
             } catch (Exception ex) {
-                var message = string.Format("TimeAgo from time zone is {0} is invalid. {1}", p, ex.Message);
+                var message = string.Format("Time" + (past ? "Ago" : "Ahead") + " from time zone is {0} is invalid. {1}", p, ex.Message);
                 _problems.Add(message);
                 return _guard;
             }

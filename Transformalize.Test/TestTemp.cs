@@ -10,8 +10,8 @@ namespace Transformalize.Test {
         [Ignore("test")]
         public void OneOff() {
 
-            const string file = "http://localhost/Orchard181/Transformalize/Api/Configuration/26?Mode=init";
-            ProcessFactory.CreateSingle(file, new TestLogger()).ExecuteScaler();
+            const string file = @"path to config here";
+            ProcessFactory.CreateSingle(file, new TestLogger(), new Options() { Mode="init"}).ExecuteScaler();
             Assert.AreEqual(2, 2);
 
         }

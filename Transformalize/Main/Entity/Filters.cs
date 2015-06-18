@@ -6,8 +6,9 @@ namespace Transformalize.Main {
     public class Filters : List<Filter> {
 
         public string ResolveExpression(string textQualifier) {
-            var builder = new StringBuilder();
-            var last = this.Count - 1;
+            var builder = new StringBuilder("(");
+            var last = Count - 1;
+
             for (var i = 0; i < this.Count; i++) {
                 var filter = this[i];
                 builder.Append(filter.ResolveExpression(textQualifier));
@@ -16,6 +17,8 @@ namespace Transformalize.Main {
                 builder.Append(filter.Continuation);
                 builder.Append(" ");
             }
+
+            builder.Append(")");
             return builder.ToString();
         }
     }
