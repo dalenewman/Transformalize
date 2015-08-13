@@ -1,16 +1,6 @@
-using System.Collections.Generic;
 using Transformalize.Libs.Cfg.Net;
 
 namespace Transformalize.Configuration {
-
-    public class TflDataSet : CfgNode {
-        [Cfg(required = true)]
-        public string Name { get; set; }
-
-        [Cfg()]
-        public List<Dictionary<string,string>> Rows { get; set; }
-    }
-
     public class TflSearchType : CfgNode {
         [Cfg(value = "", required = true, unique = true)]
         public string Name { get; set; }

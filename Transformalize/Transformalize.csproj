@@ -46,8 +46,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CfgNet, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.1.1\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.1.4\lib\CfgNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,6 +92,7 @@
     <Compile Include="Configuration\TflAction.cs" />
     <Compile Include="Configuration\TflBranch.cs" />
     <Compile Include="Configuration\TflConnection.cs" />
+    <Compile Include="Configuration\TflDataSet.cs" />
     <Compile Include="Configuration\TflDelimiter.cs" />
     <Compile Include="Configuration\TflEntity.cs" />
     <Compile Include="Configuration\TflEnvironment.cs" />
@@ -3376,6 +3377,7 @@
     <Compile Include="Operations\Transform\TimeAgoOperation.cs" />
     <Compile Include="Operations\Transform\TimeSpanOperation.cs" />
     <Compile Include="Operations\Transform\TimeZoneOperation.cs" />
+    <Compile Include="Operations\Transform\ToYesNoOperation.cs" />
     <Compile Include="Operations\Transform\TransliterateOperation.cs" />
     <Compile Include="Operations\Transform\UrlEncodeOperation.cs" />
     <Compile Include="Operations\Transform\UtcNowOperation.cs" />
@@ -3590,7 +3592,6 @@
   <ItemGroup>
     <Folder Include="Libs\SharpZLib\obj\Debug\TempPE\" />
     <Folder Include="Main\Providers\Sqloogle\" />
-    <Folder Include="Model\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Libs\EnterpriseLibrary\Common\Configuration\DesignResources.resx" />

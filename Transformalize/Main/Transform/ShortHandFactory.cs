@@ -86,6 +86,7 @@ namespace Transformalize.Main.Transform {
             {"tostring","tostring"},
             {"totitlecase","totitlecase"},
             {"toupper","toupper"},
+            {"toyesno","toyesno"},
             {"transliterate","transliterate"},
             {"trim","trim"},
             {"trimend","trimend"},
@@ -160,6 +161,7 @@ namespace Transformalize.Main.Transform {
             {"timezone", TimeZone},
             {"toint", ToInt},
             {"tojson", ToJson},
+            {"toyesno", ToYesNo},
             {"fromxml", (arg,root, last) => NotImplemented("fromxml", root, last)},
             {"fromregex", (arg,root, last) => NotImplemented("fromregex", root, last)},
             {"fromsplit", (arg,root, last) => NotImplemented("fromsplit", root, last)},
@@ -175,6 +177,10 @@ namespace Transformalize.Main.Transform {
             {"timeahead", TimeAhead},
             {"weekofyear",WeekOfYear}
         };
+        }
+
+        private TflTransform ToYesNo(string arg, TflField field, TflTransform lastTransform) {
+            return Parameterless("toyesno", "yes or no", arg, field, lastTransform);
         }
 
         private TflTransform WeekOfYear(string arg, TflField field, TflTransform lastTransform) {

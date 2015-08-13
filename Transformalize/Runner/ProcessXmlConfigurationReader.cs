@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Main;
 using ILogger = Transformalize.Logging.ILogger;
 
@@ -43,25 +42,32 @@ namespace Transformalize.Runner {
         }
 
         public List<TflProcess> Read(Dictionary<string, string> parameters) {
+
+            var shouldThrow = false;
             var content = _contentsReader.Read(_resource).Content;
             var cfg = new TflRoot(content, parameters);
 
             if (cfg.Response.Any()) {
-                foreach (var response in cfg.Response) {
-                    if (response.Status != (short)200) {
-                        _logger.Warn("API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
-                    }
+                foreach (var response in cfg.Response.Where(response => response.Status != (short)200)) {
+                    _logger.Warn("API at {0} responded with {1} {2}.", _resource, response.Status, response.Message);
                 }
             }
 
-            var errors = cfg.Errors();
-            if (!errors.Any()) 
-                return cfg.Processes;
+            foreach (var warning in cfg.Warnings()) {
+                _logger.Warn(warning);
+            }
 
-            foreach (var error in errors) {
+            foreach (var error in cfg.Errors()) {
+                shouldThrow = true;
                 _logger.Error(error);
             }
-            throw new TransformalizeException(_logger, string.Join(Environment.NewLine, errors));
+
+            if (shouldThrow) {
+                throw new TransformalizeException(_logger, string.Join(Environment.NewLine, cfg.Errors()));
+            }
+
+            return cfg.Processes;
+
         }
 
     }

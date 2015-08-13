@@ -67,8 +67,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CfgNet, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Cfg-NET.0.1.1\lib\CfgNet.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.0.1.4\lib\CfgNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AnalysisServices, Version=11.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

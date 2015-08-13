@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading;
 using Transformalize.Libs.Jint;
 using Transformalize.Libs.Jint.Parser;
-using Transformalize.Libs.Jint.Parser.Ast;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
 using Transformalize.Main;

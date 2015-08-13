@@ -1372,6 +1372,14 @@ It is False#end", templates, parameters);
         }
 
         [Test]
+        public void ToYesNo() {
+            var input = new RowsBuilder().Row("answer", true).ToOperation();
+            var transform = new ToYesNoOperation("answer", "answer");
+            var output = TestOperation(input, transform);
+            Assert.AreEqual("Yes", output[0]["answer"]);
+        }
+
+        [Test]
         public void ToLower() {
             var input = new RowsBuilder().Row("name", "DalE").ToOperation();
             var transform = new ToLowerOperation("name", "name");

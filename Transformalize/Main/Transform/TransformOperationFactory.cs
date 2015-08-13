@@ -111,6 +111,9 @@ namespace Transformalize.Main {
                 case "compress":
                     return new CompressOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 
+                case "toyesno":
+                    return new ToYesNoOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName =  _entityName};
+
                 case "decompress":
                     return new DecompressOperation(inKey, outKey) { ShouldRun = shouldRun, EntityName = _entityName };
 

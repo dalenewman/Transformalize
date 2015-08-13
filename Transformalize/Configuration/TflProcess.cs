@@ -16,6 +16,7 @@ using Transformalize.Main;
 using Transformalize.Main.Providers;
 using Transformalize.Main.Providers.Solr;
 using Transformalize.Main.Transform;
+using Transformalize.Operations.Transform;
 
 namespace Transformalize.Configuration {
 
@@ -475,9 +476,76 @@ namespace Transformalize.Configuration {
         }
 
         private void ValidateRelationships() {
+            // count check
             if (Entities.Count > 1 && Relationships.Count + 1 < Entities.Count) {
-                Error("You have {0} entities, but only {1} relationships.  Once you have more than one entity, you should create relationships between them.", Entities.Count, Relationships.Count);
+                Error("You have {0} entities so you need {1} relationships. You have {2} relationships.", Entities.Count, Entities.Count - 1, Relationships.Count);
             }
+
+            //entity alias, name check, and if that passes, do field alias, name check
+            //TODO: refactor left and right side to single method
+            var keys = GetEntityNames();
+            foreach (var relationship in Relationships) {
+
+                // validate left side
+                if (keys.Contains(relationship.LeftEntity)) {
+                    var fieldKeys = GetEntityFieldKeys(relationship.LeftEntity);
+                    if (relationship.Join.Count == 0) {
+                        if (!fieldKeys.Contains(relationship.LeftField)) {
+                            Error("A relationship references a left-field that doesn't exist: {0}", relationship.LeftField);
+                        }
+                    } else {
+                        foreach (var j in relationship.Join.Where(j => !fieldKeys.Contains(j.LeftField))) {
+                            Error("A relationship join references a left-field that doesn't exist: {0}", j.LeftField);
+                        }
+                    }
+                } else {
+                    Error("A relationship references a left-entity that doesn't exist: {0}", relationship.LeftEntity);
+                }
+
+                //validate right side
+                if (keys.Contains(relationship.RightEntity)) {
+                    var fieldKeys = GetEntityFieldKeys(relationship.RightEntity);
+                    if (relationship.Join.Count == 0) {
+                        if (!fieldKeys.Contains(relationship.RightField)) {
+                            Error("A relationship references a right-field that doesn't exist: {0}",
+                                relationship.RightField);
+                        }
+                    } else {
+                        foreach (var j in relationship.Join.Where(j => !fieldKeys.Contains(j.RightField))) {
+                            Error("A relationship join references a right-field that doesn't exist: {0}", j.RightField);
+                        }
+                    }
+                } else {
+                    Error("A relationship references a right-entity that doesn't exist: {0}", relationship.LeftEntity);
+                }
+            }
+
+        }
+
+        private HashSet<string> GetEntityFieldKeys(string nameOrAlias) {
+            var keys = new HashSet<string>();
+            var entity = Entities.FirstOrDefault(e => e.Alias == nameOrAlias || e.Name == nameOrAlias);
+            if (entity == null)
+                return keys;
+
+            foreach (var field in entity.GetAllFields()) {
+                keys.Add(field.Alias);
+                if (field.Alias != field.Name) {
+                    keys.Add(field.Name);
+                }
+            }
+            return keys;
+        }
+
+        private HashSet<string> GetEntityNames() {
+            var keys = new HashSet<string>();
+            foreach (var entity in Entities) {
+                keys.Add(entity.Alias);
+                if (entity.Alias != entity.Name) {
+                    keys.Add(entity.Name);
+                }
+            }
+            return keys;
         }
 
         private void ValidateLogConnections() {

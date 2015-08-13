@@ -58,50 +58,71 @@ namespace Transformalize.Orchard {
                 );
 
             } catch (Exception e) {
-                Logger.Warning("Creating Transformalize Configuration. Error Message: {0}", e.Message);
-                throw new Exception(e.Message);
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
             }
             return 1;
         }
 
         public int UpdateFrom1() {
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("Modes", DbType.String));
+            try {
+
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("Modes", DbType.String));
+            } catch (Exception e) {
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
+            }
 
             return 2;
         }
 
         public int UpdateFrom2() {
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("LogLevel", DbType.String));
+            try {
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("LogLevel", DbType.String));
+            } catch (Exception e) {
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
+            }
 
             return 3;
         }
 
         public int UpdateFrom3() {
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("OutputFileExtension", DbType.String));
+            try {
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("OutputFileExtension", DbType.String));
+
+            } catch (Exception e) {
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
+            }
 
             return 4;
         }
 
         public int UpdateFrom4() {
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("StartAddress", DbType.String));
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("EndAddress", DbType.String));
+            try {
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("StartAddress", DbType.String));
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("EndAddress", DbType.String));
+            } catch (Exception e) {
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
+            }
             return 5;
         }
 
         public int UpdateFrom5() {
-            SchemaBuilder.AlterTable("ConfigurationPartRecord",
-                table => table
-                    .AddColumn("EditorTheme", DbType.String));
+            try {
+                SchemaBuilder.AlterTable("ConfigurationPartRecord",
+                    table => table
+                        .AddColumn("EditorTheme", DbType.String));
+            } catch (Exception e) {
+                Logger.Error("Creating Transformalize Configuration. Error Message: {0}", e.Message);
+            }
             return 6;
         }
 
