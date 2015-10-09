@@ -1,4 +1,4 @@
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class TflType : CfgNode {

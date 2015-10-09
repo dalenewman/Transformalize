@@ -9,18 +9,18 @@
         <add name="output" database="TestOutput"/>
       </connections>
 
-      <scripts path="Scripts">
-        <add name="test" file="test.js"></add>
+      <scripts>
+        <add name="test" file="Scripts\test.js"></add>
       </scripts>
 
-      <templates path="Templates">
-        <add name="double" file="double.cshtml"></add>
-        <add name="solr-data-handler" file="solr-data-handler.cshtml" cache="true">
+      <templates>
+        <add name="double" file="Templates\double.cshtml"></add>
+        <add name="solr-data-handler" file="Templates\solr-data-handler.cshtml" cache="true">
           <actions>
             <add action="copy" file="C:\Solr\Test\conf\data-config.xml"/>
           </actions>
         </add>
-        <add name="solr-schema" file="solr-schema.cshtml" cache="true">
+        <add name="solr-schema" file="Templates\solr-schema.cshtml" cache="true">
           <actions>
             <add action="copy" file="C:\Solr\Test\conf\schema.xml"/>
             <add action="open" file="C:\Solr\Test\conf\schema.xml"/>

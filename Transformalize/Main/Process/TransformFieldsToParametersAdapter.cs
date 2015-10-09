@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Configuration;
 
 namespace Transformalize.Main {

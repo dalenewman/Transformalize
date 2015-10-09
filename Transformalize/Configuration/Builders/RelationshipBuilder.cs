@@ -1,3 +1,6 @@
+using Cfg.Net;
+using Cfg.Net.Ext;
+
 namespace Transformalize.Configuration.Builders {
 
     public class RelationshipBuilder {

@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Libs.Ninject;
 using Transformalize.Libs.Ninject.Parameters;
 using Transformalize.Libs.Ninject.Syntax;
@@ -201,7 +202,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Logs](/log)
         /// </summary>
-        [Cfg(sharedProperty = "rows", sharedValue = (long)10000)]
+        [Cfg()]
         public List<TflLog> Log { get; set; }
 
         /// <summary>
@@ -219,7 +220,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Scripts](/script)
         /// </summary>
-        [Cfg(sharedProperty = "path", sharedValue = "")]
+        [Cfg()]
         public List<TflScript> Scripts { get; set; }
 
         /// <summary>
@@ -231,7 +232,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// A collection of [Templates](/template)
         /// </summary>
-        [Cfg(sharedProperty = "path", sharedValue = "")]
+        [Cfg()]
         public List<TflTemplate> Templates { get; set; }
 
         /// <summary>
@@ -240,7 +241,7 @@ namespace Transformalize.Configuration {
         [Cfg()]
         public List<TflDataSet> DataSets { get; set; }
 
-        protected override void Modify() {
+        protected override void PreValidate() {
 
             if (String.IsNullOrEmpty(Star)) {
                 Star = Name + "Star";
@@ -328,20 +329,20 @@ namespace Transformalize.Configuration {
         }
 
         private TflParameter GetParameter(string field) {
-            return GetDefaultOf<TflParameter>(p => {
+            return this.GetDefaultOf<TflParameter>(p => {
                 p.Field = field;
             });
         }
 
         private TflParameter GetParameter(string entity, string field) {
-            return GetDefaultOf<TflParameter>(p => {
+            return this.GetDefaultOf<TflParameter>(p => {
                 p.Entity = entity;
                 p.Field = field;
             });
         }
 
         private TflParameter GetParameter(string entity, string field, string type) {
-            return GetDefaultOf<TflParameter>(p => {
+            return this.GetDefaultOf<TflParameter>(p => {
                 p.Entity = entity;
                 p.Field = field;
                 p.Type = type;

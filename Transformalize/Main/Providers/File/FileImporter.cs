@@ -2,7 +2,8 @@
 using System.Globalization;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Logging;
 
 namespace Transformalize.Main.Providers.File {

@@ -27,7 +27,6 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main;

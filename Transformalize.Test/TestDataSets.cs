@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
-using Transformalize.Libs.Cfg.Net.Loggers;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Test {

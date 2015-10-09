@@ -1,9 +1,10 @@
 ﻿using Orchard.Localization;
 using Orchard.UI.Notify;
+using Cfg.Net.Contracts;
 
 namespace Transformalize.Orchard.Services {
 
-    public class CfgNetNotifier : Libs.Cfg.Net.Loggers.ILogger {
+    public class CfgNetNotifier : ILogger {
 
         private readonly INotifier _notifier;
         public Localizer T { get; set; }

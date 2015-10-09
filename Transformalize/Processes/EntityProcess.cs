@@ -61,7 +61,7 @@ namespace Transformalize.Processes {
             } else {
                 var union = new ParallelUnionAllOperation();
                 foreach (var input in _entity.Input) {
-                    union.Add(input.Connection.Extract(_process, _entity, Process.IsFirstRun));
+                    union.Add(input.Connection.Extract(_process, _entity, _process.IsFirstRun));
                 }
                 Register(union);
             }

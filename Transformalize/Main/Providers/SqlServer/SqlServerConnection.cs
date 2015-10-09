@@ -152,7 +152,7 @@ namespace Transformalize.Main.Providers.SqlServer {
                 sql += string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
             }
 
-            sql += " WHERE [" + entity.PrimaryKey.WithInput().First().Name + "] IS NOT NULL"; 
+            sql += " WHERE [" + entity.PrimaryKey.WithInput().First().Name + "] IS NOT NULL";
 
             if (entity.Filters.Any()) {
                 sql += " AND " + entity.Filters.ResolveExpression(TextQualifier);
@@ -281,9 +281,17 @@ namespace Transformalize.Main.Providers.SqlServer {
         }
 
         public override IOperation Extract(Process process, Entity entity, bool firstRun) {
+
             if (Schemas && entity.Schema.Equals(string.Empty)) {
                 entity.Schema = DefaultSchema;
             }
+
+            // temporary attempt to make initial load faster
+            if (firstRun && ! entity.HasSqlOverride()) {
+                entity.SqlOverride = SqlTemplates.Select(entity, this);
+                return new SqlOverrideOperation(entity, this);
+            }
+
             var p = new PartialProcessOperation(process);
             if (entity.HasSqlOverride()) {
                 p.Register(new SqlOverrideOperation(entity, this));

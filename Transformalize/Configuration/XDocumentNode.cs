@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using Transformalize.Libs.Cfg.Net.Parsers;
+using Cfg.Net.Contracts;
+using Cfg.Net.Parsers;
 
 namespace Transformalize.Configuration {
 

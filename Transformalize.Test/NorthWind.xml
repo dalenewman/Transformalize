@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<transformalize>
+<transformalize environment="test">
 
-  <environments default="test" >
+  <environments>
     <add name="prod" >
       <parameters>
         <add name="SqlServer" value="127.0.0.1" />
@@ -44,15 +44,15 @@
         <add name="ssas" database="NorthWind" provider="analysisservices" />
       </connections>
       
-      <templates path="Templates">
+      <templates>
 
-        <add name="solr-data-handler" file="solr-data-handler.cshtml" cache="true">
+        <add name="solr-data-handler" file="Templates\solr-data-handler.cshtml" cache="true">
           <actions>
             <add action="copy" file="C:\Solr\NorthWind\conf\data-config.xml" />
           </actions>
         </add>
 
-        <add name="solr-schema" file="solr-schema.cshtml" cache="true">
+        <add name="solr-schema" file="Templates\solr-schema.cshtml" cache="true">
           <actions>
             <add action="copy" file="C:\Solr\NorthWind\conf\schema.xml"/>
             <add action="web" mode="init" url="http://localhost:8983/solr/admin/cores?action=RELOAD&amp;core=NorthWind"/>

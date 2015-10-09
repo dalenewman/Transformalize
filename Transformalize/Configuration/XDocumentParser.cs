@@ -1,5 +1,5 @@
 ﻿using System.Xml.Linq;
-using Transformalize.Libs.Cfg.Net.Parsers;
+using Cfg.Net.Contracts;
 
 namespace Transformalize.Configuration {
     public class XDocumentParser : IParser {

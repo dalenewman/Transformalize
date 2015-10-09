@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Extensions;
 using Transformalize.Libs.RazorEngine;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
@@ -28,14 +27,11 @@ namespace Transformalize.Main {
         }
 
         public static Process[] Create(string resource, ILogger logger, Options options = null, Dictionary<string, string> parameters = null) {
-            var source = ConfigurationFactory.DetermineConfigurationSource(resource);
-            logger.Info("Process Requested from {0}", source.ToString());
-
             return Create(
                 new ConfigurationFactory(
                     resource, 
                     logger, 
-                    CombineParameters(source, resource, parameters)
+                    parameters
                 ).Create(), 
                 logger, 
                 options
@@ -43,14 +39,12 @@ namespace Transformalize.Main {
         }
 
         public static Process CreateSingle(string resource, ILogger logger, Options options = null, Dictionary<string, string> parameters = null) {
-            var source = ConfigurationFactory.DetermineConfigurationSource(resource);
-            logger.Info("Process Requested from {0}", source.ToString());
 
             return CreateSingle(
                 new ConfigurationFactory(
                     resource, 
                     logger, 
-                    CombineParameters(source, resource, parameters)
+                    parameters
                 ).Create()[0], 
                 logger, 
                 options
@@ -70,19 +64,6 @@ namespace Transformalize.Main {
 
         public static Process CreateSingle(TflProcess process, ILogger logger, Options options = null) {
             return Create(new List<TflProcess> { process }, logger, options)[0];
-        }
-
-        private static Dictionary<string, string> CombineParameters(ConfigurationSource source, string resource, Dictionary<string, string> parameters) {
-            if (source == ConfigurationSource.Xml || resource.IndexOf('?') <= 0)
-                return parameters;
-
-            if (parameters == null) {
-                parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            }
-            foreach (var pair in Common.ParseQueryString(resource.Substring(resource.IndexOf('?')))) {
-                parameters[pair.Key] = pair.Value;
-            }
-            return parameters;
         }
 
         private class ProcessReader {

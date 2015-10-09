@@ -2,7 +2,7 @@
 
 namespace Transformalize.Orchard.Services {
 
-    public class CfgNetLogger : Libs.Cfg.Net.Loggers.ILogger {
+    public class CfgNetLogger : Cfg.Net.Contracts.ILogger {
 
         private readonly ILogger _logger;
 

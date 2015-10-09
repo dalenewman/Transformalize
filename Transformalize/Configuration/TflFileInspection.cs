@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 using Transformalize.Main.Providers.File;
 
 namespace Transformalize.Configuration {

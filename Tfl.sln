@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize", "Transformalize\Transformalize.csproj", "{154566AF-2842-44C8-985B-F8D809E8FD79}"
 EndProject
@@ -22,6 +22,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7963D
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037}"
+	ProjectSection(SolutionItems) = preProject
+		Articles\BackupSqlExpress.md = Articles\BackupSqlExpress.md
+		Articles\FantasyFootballKibana.md = Articles\FantasyFootballKibana.md
+		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
 	EndProjectSection
 EndProject
 Global
@@ -99,5 +106,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 	EndGlobalSection
 EndGlobal

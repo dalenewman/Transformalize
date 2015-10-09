@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Transformalize.Libs.Cfg.Net.Parsers.fastJSON;
+using Cfg.Net.Parsers.fastJSON;
 using Transformalize.Libs.Newtonsoft.Json;
-using Transformalize.Libs.Newtonsoft.Json.Linq;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 using Transformalize.Main.Parameters;
@@ -18,7 +17,7 @@ namespace Transformalize.Operations.Transform {
         public FromJsonOperation(string inKey, IParameters parameters)
             : base(inKey, string.Empty) {
             _parameters = parameters.ToEnumerable().ToArray();
-            Name = string.Format("FromJsonOperation (in:{0})", inKey);
+            Name = $"FromJsonOperation (in:{inKey})";
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

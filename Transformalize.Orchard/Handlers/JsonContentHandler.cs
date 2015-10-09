@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using Orchard.Logging;
 using Transformalize.Configuration;
 using Transformalize.Libs.Newtonsoft.Json;
 using Transformalize.Libs.Newtonsoft.Json.Serialization;
 using Transformalize.Orchard.Models;
-using Transformalize.Orchard.Services;
 
 namespace Transformalize.Orchard.Handlers {
     public static class JsonContentHandler {

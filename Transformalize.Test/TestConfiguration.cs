@@ -21,12 +21,10 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Main;
 
 namespace Transformalize.Test {
@@ -45,8 +43,8 @@ namespace Transformalize.Test {
 
         [Test]
         public void TestDefaultParameters() {
-            const string xml = @"<transformalize>
-    <environments default='@(Environment)'>
+            const string xml = @"<transformalize environment='@(Environment)'>
+    <environments>
         <add name='one'>
             <parameters>
                 <add name=""t1"" value=""v1"" />

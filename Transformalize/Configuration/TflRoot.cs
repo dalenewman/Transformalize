@@ -1,25 +1,32 @@
 using System.Collections.Generic;
-using Transformalize.Libs.Cfg.Net;
-using Transformalize.Libs.Cfg.Net.Loggers;
+using Cfg.Net;
+using Cfg.Net.Contracts;
+using Cfg.Net.Reader;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration {
     public class TflRoot : CfgNode {
 
-        [Cfg(sharedProperty = "default", sharedValue = "")]
+        [Cfg()]
+        public string Environment { get; set; }
+
+        [Cfg()]
         public List<TflEnvironment> Environments { get; set; }
         [Cfg(required = true)]
+
         public List<TflProcess> Processes { get; set; }
         [Cfg()]
         public List<TflResponse> Response { get; set; }
 
         public TflRoot(
-                string xml, 
+                string cfg, 
                 Dictionary<string, string> parameters = null,
-                ILogger logger = null)
-            : base(new XDocumentParser(), logger) {
-
-            Load(xml, parameters);
+                IDependency logger = null)
+            : base(
+                  new DefaultReader(new SourceDetector(), new FileReader(), new WebReader()), 
+                  logger
+            ) {
+            Load(cfg, parameters);
         }
 
         // Custom constructor takeing an already created TflProcess

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 using Transformalize.Libs.Jint.Parser;
 using Transformalize.Main;
 
@@ -178,7 +178,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "sunday", domain = "friday,monday,saturday,sunday,tuesday,thursday,wednesday", toLower = true)]
         public string DayOfWeek { get; set; }
 
-        protected override void Modify() {
+        protected override void PreValidate() {
             switch (Method) {
                 case "trimstartappend":
                     if (Separator.Equals(Common.DefaultValue)) {

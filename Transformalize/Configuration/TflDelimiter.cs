@@ -1,5 +1,5 @@
 using System;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 
 namespace Transformalize.Configuration {
 

@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration {
@@ -336,7 +336,7 @@ namespace Transformalize.Configuration {
         public List<string> Domain { get; set; }
 
         //custom
-        protected override void Modify() {
+        protected override void PreValidate() {
             if (Alias == string.Empty) { Alias = Name; }
             if (Label == string.Empty) { Label = Alias; }
             if (Type != "string") { DefaultBlank = true; }

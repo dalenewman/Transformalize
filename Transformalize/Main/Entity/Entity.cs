@@ -109,6 +109,8 @@ namespace Transformalize.Main {
         public short Index { get; set; }
         public Filters Filters { get; set; }
 
+        public int ReadSize { get; set; }
+
         public string FirstKey() {
             return PrimaryKey.First().Alias;
         }

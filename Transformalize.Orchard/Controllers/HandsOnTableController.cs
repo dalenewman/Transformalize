@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Themes;
 using Transformalize.Configuration;
-using Transformalize.Libs.Cfg.Net.Loggers;
 using Transformalize.Orchard.Models;
 using Transformalize.Orchard.Services;
 

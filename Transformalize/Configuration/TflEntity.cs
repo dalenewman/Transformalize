@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Libs.Rhino.Etl.Operations;
 
 namespace Transformalize.Configuration {
@@ -98,6 +99,9 @@ namespace Transformalize.Configuration {
 
         public IOperation InputOperation { get; set; }
 
+        [Cfg(value=0)]
+        public int ReadSize { get; set; }
+
         public IEnumerable<TflField> GetAllFields() {
             var fields = new List<TflField>();
             foreach (var f in Fields) {
@@ -108,7 +112,7 @@ namespace Transformalize.Configuration {
             return fields;
         }
 
-        protected override void Modify() {
+        protected override void PreValidate() {
             if (string.IsNullOrEmpty(Alias)) {
                 Alias = Name;
             }
@@ -138,7 +142,7 @@ namespace Transformalize.Configuration {
                 return;
 
             if (!CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
-                var pk = GetDefaultOf<TflField>(f => {
+                var pk = this.GetDefaultOf<TflField>(f => {
                     f.Name = "TflHashCode";
                     f.Type = "int";
                     f.PrimaryKey = true;
@@ -236,7 +240,7 @@ namespace Transformalize.Configuration {
         }
 
         private TflParameter GetParameter(string entity, string field, string type) {
-            return GetDefaultOf<TflParameter>(p => {
+            return this.GetDefaultOf<TflParameter>(p => {
                 p.Entity = entity;
                 p.Field = field;
                 p.Type = type;
@@ -244,7 +248,7 @@ namespace Transformalize.Configuration {
         }
 
         private TflParameter GetParameter(string entity, string field) {
-            return GetDefaultOf<TflParameter>(p => {
+            return this.GetDefaultOf<TflParameter>(p => {
                 p.Entity = entity;
                 p.Field = field;
             });

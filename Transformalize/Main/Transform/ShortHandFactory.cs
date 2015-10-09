@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;

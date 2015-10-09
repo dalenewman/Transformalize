@@ -1,5 +1,5 @@
 using System;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 
@@ -78,7 +78,7 @@ namespace Transformalize.Configuration {
 
         public AbstractConnection Connection { get; set; }
 
-        protected override void Modify() {
+        protected override void PreValidate() {
             ModifyProvider();
         }
 

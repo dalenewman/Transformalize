@@ -1,5 +1,5 @@
 ﻿using Transformalize.Extensions;
-using Transformalize.Libs.Cfg.Net;
+using Cfg.Net;
 using Transformalize.Main;
 using Transformalize.Main.Providers;
 

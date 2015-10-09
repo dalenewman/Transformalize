@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Main.Transform;

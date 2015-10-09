@@ -22,6 +22,8 @@
 
 using System.IO;
 using System.Linq;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using NUnit.Framework;
 using Transformalize.Configuration;
 using Transformalize.Configuration.Builders;
@@ -101,7 +103,7 @@ namespace Transformalize.Test {
                 c.Database = "TestOutput";
             }).Connection;
 
-            var rows = sqlServer.GetConnection().Query(string.Format("SELECT f1, f2, f3 FROM {0}", expected)).ToArray();
+            var rows = sqlServer.GetConnection().Query($"SELECT f1, f2, f3 FROM {expected}").ToArray();
             Assert.AreEqual(1, rows.Length);
             Assert.AreEqual("v1", rows[0].f1);
             Assert.AreEqual("v2", rows[0].f2);

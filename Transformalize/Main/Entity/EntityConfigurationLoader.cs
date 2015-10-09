@@ -23,6 +23,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Libs.EnterpriseLibrary.Validation;
 using Transformalize.Libs.EnterpriseLibrary.Validation.Validators;
@@ -63,7 +65,8 @@ namespace Transformalize.Main {
                 SqlKeysOverride = element.QueryKeys,
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InputOperation = element.InputOperation,
-                Index = entityIndex
+                Index = entityIndex,
+                ReadSize = element.ReadSize
             };
 
             // wire up connections

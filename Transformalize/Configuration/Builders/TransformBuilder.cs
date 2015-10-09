@@ -1,4 +1,6 @@
 using System;
+using Cfg.Net;
+using Cfg.Net.Ext;
 using Transformalize.Libs.Newtonsoft.Json;
 
 namespace Transformalize.Configuration.Builders {
