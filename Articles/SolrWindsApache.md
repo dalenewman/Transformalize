@@ -4,7 +4,7 @@
 
 [SOLR](http://lucene.apache.org/solr/) is:
 
-> the popular, blazing-fast, open source enterprise search platform built on Apache Lucene™.
+> the popular, blazing-fast, open source enterprise search platform built on Apache Lucene.
 
 It's FREE and it is amazing.  It's an immediate value-add to nearly any data-set.
 
@@ -79,3 +79,7 @@ Using Tomcat Monitor, restart the service.  Check [http://localhost:8080/solr-x.
 
 ### Trouble-shooting
 If anything goes wrong, use the SOLR and Tomcat logs (e.g. `C:\Program Files\Apache Software Foundation\Tomcat x.x\logs`).
+
+### Updates
+A lot has changed in SOLR 5.*.  No more war file.  Check out this [post](http://www.norconex.com/how-to-run-solr5-as-a-service-on-windows) to 
+see how to install SOLR 5 as a service on Windows.

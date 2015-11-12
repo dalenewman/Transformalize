@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cfg.Net.Ext;
 using Transformalize.Logging;
 using Transformalize.Main;
 

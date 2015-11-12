@@ -79,17 +79,17 @@ namespace Transformalize.Orchard.Controllers {
                 return;
 
             entity.Delete = false;
-            entity.Filter.Add(entity.GetDefaultOf<TflFilter>(f => {
-                f.Left = "TflDeleted";
-                f.Right = "0";
-            }));
+            entity.Filter.Add(new TflFilter {
+                Left = "TflDeleted",
+                Right = "0"
+            }.WithDefaults());
 
-            entity.Fields.Add(entity.GetDefaultOf<TflField>(f => {
-                f.Name = "TflDeleted";
-                f.Type = "bool";
-                f.Output = false;
-                f.Label = "Deleted";
-            }));
+            entity.Fields.Add(new TflField {
+                Name = "TflDeleted",
+                Type = "bool",
+                Output = false,
+                Label = "Deleted"
+            }.WithDefaults());
         }
 
         protected static string GetEntityOutputName(TflEntity entity, string processName) {

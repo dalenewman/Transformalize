@@ -34,7 +34,7 @@ namespace Transformalize.Test {
     public class TestShortHand {
 
         public TflField GetField(string expression = null) {
-            var field = new TflField().GetDefaultOf<TflField>(f => { f.Name = "Test"; });
+            var field = new TflField{ Name = "Test" }.WithDefaults();
             if (expression != null) {
                 field.T = expression;
             }
@@ -42,12 +42,12 @@ namespace Transformalize.Test {
         }
 
         public ShortHandFactory GetFactory(TflField field = null) {
-            var process = new TflRoot().GetDefaultOf<TflProcess>(p => {
-                p.Name = "Test";
-                p.Entities = new List<TflEntity>{
-                    new TflEntity().GetDefaultOf<TflEntity>(e => { e.Name = "Test"; })
-                };
-            });
+            var process = new TflProcess {
+                Name = "Test",
+                Entities = new List<TflEntity>{
+                    new TflEntity { Name = "Test" }.WithDefaults()
+                }
+            }.WithDefaults();
             if (field != null) {
                 process.Entities.First().Fields.Add(field);
             }
@@ -561,10 +561,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethods() {
-            var field = new TflField().GetDefaultOf<TflField>(f => {
-                f.Name = "test";
-                f.T = "left(10).right(2)";
-            });
+            var field = new TflField {
+                Name = "test",
+                T = "left(10).right(2)"
+            }.WithDefaults();
             GetFactory().ExpandShortHandTransforms(field);
 
             Assert.AreEqual(2, field.Transforms.Count);
@@ -576,10 +576,10 @@ namespace Transformalize.Test {
 
         [Test]
         public void TwoMethodsShorter() {
-            var field = new TflField().GetDefaultOf<TflField>(f => {
-                f.Name = "test";
-                f.T = "left(10).right(2)";
-            });
+            var field = new TflField {
+                Name = "test",
+                T = "left(10).right(2)"
+            }.WithDefaults();
             GetFactory().ExpandShortHandTransforms(field);
 
             Assert.AreEqual(2, field.Transforms.Count);

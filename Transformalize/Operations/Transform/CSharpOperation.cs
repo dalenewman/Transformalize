@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading;
 using Microsoft.CSharp;
 using Transformalize.Libs.Rhino.Etl;
-using Transformalize.Logging;
 using Transformalize.Main;
 
 namespace Transformalize.Operations.Transform {
@@ -33,45 +32,45 @@ namespace Transformalize.Operations.Transform {
 
             var scriptBuilder = new StringBuilder(string.Empty);
             foreach (var s in scripts) {
-                scriptBuilder.AppendLine(string.Format("// {0} script", s.Value.Name));
+                scriptBuilder.AppendLine($"// {s.Value.Name} script");
                 scriptBuilder.AppendLine(s.Value.Content);
             }
 
             var castBuilder = new StringBuilder(string.Empty);
 
             if (!parameters.Any()) {
-                castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", OutKey, Common.ToSystemType(outType)));
+                castBuilder.AppendLine(string.Format("{1} {0} = ({1}) row[\"{0}\"];", OutKey, Common.ToSystemType(outType)));
                 testRow[OutKey] = new DefaultFactory(Logger).Convert(null, outType);
             } else {
                 var map = Common.GetLiteral();
                 foreach (var pair in parameters) {
                     if (pair.Value.HasValue()) {
-                        castBuilder.AppendLine(String.Format("{0} {1} = {2};", Common.ToSystemType(pair.Value.SimpleType), pair.Value.Name, map[pair.Value.SimpleType](pair.Value.Value)));
+                        castBuilder.AppendLine($"{Common.ToSystemType(pair.Value.SimpleType)} {pair.Value.Name} = {map[pair.Value.SimpleType](pair.Value.Value)};");
                     } else {
-                        castBuilder.AppendLine(String.Format("{1} {0} = ({1}) row[\"{0}\"];", pair.Value.Name, Common.ToSystemType(pair.Value.SimpleType)));
+                        castBuilder.AppendLine(string.Format("{1} {0} = ({1}) row[\"{0}\"];", pair.Value.Name, Common.ToSystemType(pair.Value.SimpleType)));
                     }
                     testRow[pair.Value.Name] = new DefaultFactory(Logger).Convert(null, pair.Value.SimpleType);
                 }
             }
 
-            var code = string.Format(@"using System;
+            var code = $@"using System;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Operations.Transform;
 using Transformalize.Libs.Rhino.Etl;
 
-{0}
+{scriptBuilder}
 
 public class Transformer : ITransformer
 {{
     public object Transform(Row row)
     {{
-        {1}
+        {castBuilder}
         //User's script
-        {2}
+        {script}
     }}
-}}", scriptBuilder, castBuilder, script);
+}}";
 
             Logger.EntityDebug(EntityName, "Compiling this code:");
             Logger.EntityDebug(EntityName, code);
@@ -98,7 +97,7 @@ public class Transformer : ITransformer
                 throw new TransformalizeException(Logger, EntityName, "Failed to compile code. {0}", code);
             }
 
-            Name = string.Format("CSharpOperation ({0})", outKey);
+            Name = $"CSharpOperation ({outKey})";
         }
 
         public override IEnumerable<Row> Execute(IEnumerable<Row> rows) {

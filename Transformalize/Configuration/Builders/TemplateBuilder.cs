@@ -43,7 +43,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ActionBuilder Action(string action) {
-            var a = _template.GetDefaultOf<TflAction>(x => x.Action = action);
+            var a = new TflAction { Action = action}.WithDefaults();
             _template.Actions.Add(a);
             return new ActionBuilder(this, a);
         }
@@ -69,20 +69,21 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TemplateBuilder Parameter(string name, object value) {
-            var parameter = _template.GetDefaultOf<TflParameter>(p => {
-                p.Name = name;
-                p.Value = value.ToString();
-            });
+            var parameter = new TflParameter {
+                Name = name,
+                Value = value.ToString()
+            }.WithDefaults();
             _template.Parameters.Add(parameter);
             return this;
         }
 
         public TemplateBuilder Parameter(string name, object value, string type) {
-            var parameter = _template.GetDefaultOf<TflParameter>(p => {
-                p.Name = name;
-                p.Value = value.ToString();
-                p.Type = type;
-            }); _template.Parameters.Add(parameter);
+            var parameter = new TflParameter {
+                Name = name,
+                Value = value.ToString(),
+                Type = type
+            }.WithDefaults();
+            _template.Parameters.Add(parameter);
             return this;
         }
 

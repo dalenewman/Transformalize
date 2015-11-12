@@ -54,7 +54,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder Field(string name) {
-            var field = _entity.GetDefaultOf<TflField>(f => f.Name = name);
+            var field = new TflField { Name = name }.WithDefaults();
             _entity.Fields.Add(field);
             return new FieldBuilder(this, field);
         }
@@ -74,7 +74,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public FieldBuilder CalculatedField(string name) {
-            var calculatedField = _entity.GetDefaultOf<TflField>(f => f.Name = name);
+            var calculatedField = new TflField {Name = name}.WithDefaults();
             _entity.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
@@ -120,19 +120,19 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public IoBuilder Output(string name, string connectionName) {
-            var output = _entity.GetDefaultOf<TflIo>(io => {
-                io.Name = name;
-                io.Connection = connectionName;
-            });
+            var output = new TflIo{
+                Name = name,
+                Connection = connectionName
+            }.WithDefaults();
             _entity.Output.Add(output);
             return new IoBuilder(this, output);
         }
 
         public IoBuilder Input(string name, string connectionName) {
-            var input = _entity.GetDefaultOf<TflIo>(io => {
-                io.Name = name;
-                io.Connection = connectionName;
-            });
+            var input = new TflIo {
+                Name = name,
+                Connection = connectionName
+            }.WithDefaults();
             _entity.Input.Add(input);
             return new IoBuilder(this, input);
         }

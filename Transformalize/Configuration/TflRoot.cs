@@ -23,7 +23,7 @@ namespace Transformalize.Configuration {
                 Dictionary<string, string> parameters = null,
                 IDependency logger = null)
             : base(
-                  new DefaultReader(new SourceDetector(), new FileReader(), new WebReader()), 
+                  new DefaultReader(new SourceDetector(), new FileReader(), new ReTryingReader(new WebReader(), 3)), 
                   logger
             ) {
             Load(cfg, parameters);

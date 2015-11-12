@@ -73,7 +73,7 @@ namespace Transformalize.Operations {
                 _connection.TableQueryWriter.WriteTemporary(_connection, tableName, _key, false) +
                 SqlTemplates.BatchInsertValues(50, tableName, _key, rows, _connection) + Environment.NewLine +
                 SqlTemplates.Select(_entity.Fields, _entity.Name, tableName, _connection, _entity.Schema, string.Empty) +
-                (_connection.TableVariable ? string.Empty : string.Format("DROP TABLE {0};", tableName));
+                (_connection.TableVariable ? string.Empty : $"DROP TABLE {_connection.L}{tableName}{_connection.R};");
 
             Debug(sql);
 

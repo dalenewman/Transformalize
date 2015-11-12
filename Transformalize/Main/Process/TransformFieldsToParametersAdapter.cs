@@ -52,12 +52,12 @@ namespace Transformalize.Main {
 
                     for (var i = 0; i < transform.Fields.Count; i++) {
                         var tField = transform.Fields[i];
-                        transform.Parameters.Add(tField.GetDefaultOf<TflParameter>(p => {
-                            p.Entity = entity;
-                            p.Field = tField.Alias;
-                            p.Name = tField.Name;
-                            p.Input = false;
-                        }));
+                        transform.Parameters.Add(new TflParameter{
+                            Entity = entity,
+                            Field = tField.Alias,
+                            Name = tField.Name,
+                            Input = false
+                        }.WithDefaults());
                         count++;
                     }
                 }

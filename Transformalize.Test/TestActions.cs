@@ -97,11 +97,11 @@ namespace Transformalize.Test {
 
             process.ExecuteScaler();
             var expected = Common.CleanIdentifier(Path.GetFileNameWithoutExtension(file1));
-            var sqlServer = element.GetDefaultOf<TflConnection>(c => {
-                c.Name = "test";
-                c.Provider = "sqlserver";
-                c.Database = "TestOutput";
-            }).Connection;
+            var sqlServer = new TflConnection{
+                Name = "test",
+                Provider = "sqlserver",
+                Database = "TestOutput"
+            }.WithDefaults().Connection;
 
             var rows = sqlServer.GetConnection().Query($"SELECT f1, f2, f3 FROM {expected}").ToArray();
             Assert.AreEqual(1, rows.Length);

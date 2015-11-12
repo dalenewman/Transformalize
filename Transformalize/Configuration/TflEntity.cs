@@ -99,7 +99,7 @@ namespace Transformalize.Configuration {
 
         public IOperation InputOperation { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int ReadSize { get; set; }
 
         public IEnumerable<TflField> GetAllFields() {
@@ -142,13 +142,14 @@ namespace Transformalize.Configuration {
                 return;
 
             if (!CalculatedFields.Any(cf => cf.Name.Equals("TflHashCode", StringComparison.OrdinalIgnoreCase))) {
-                var pk = this.GetDefaultOf<TflField>(f => {
-                    f.Name = "TflHashCode";
-                    f.Type = "int";
-                    f.PrimaryKey = true;
-                    f.T = "copy(*).concat().hashcode()";
-                });
-
+                var pk =
+                    new TflField {
+                        Name = "TflHashCode",
+                        Alias = "TflHashCode",
+                        Type = "int",
+                        PrimaryKey = true,
+                        T = "copy(*).concat().hashcode()"
+                    }.WithDefaults();
                 CalculatedFields.Add(pk);
             }
 
@@ -240,18 +241,18 @@ namespace Transformalize.Configuration {
         }
 
         private TflParameter GetParameter(string entity, string field, string type) {
-            return this.GetDefaultOf<TflParameter>(p => {
-                p.Entity = entity;
-                p.Field = field;
-                p.Type = type;
-            });
+            return new TflParameter {
+                Entity = entity,
+                Field = field,
+                Type = type
+            }.WithDefaults();
         }
 
         private TflParameter GetParameter(string entity, string field) {
-            return this.GetDefaultOf<TflParameter>(p => {
-                p.Entity = entity;
-                p.Field = field;
-            });
+            return new TflParameter {
+                Entity = entity,
+                Field = field
+            }.WithDefaults();
         }
 
         public bool HasConnection() {

@@ -66,7 +66,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder Transform(string method = "") {
-            var transform = _field.GetDefaultOf<TflTransform>(t => t.Method = method);
+            var transform = new TflTransform { Method = method }.WithDefaults();
             _field.Transforms.Add(transform);
             return new TransformBuilder(this, transform);
         }

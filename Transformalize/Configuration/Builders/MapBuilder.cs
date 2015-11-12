@@ -22,7 +22,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ItemBuilder Item() {
-            var item = _map.GetDefaultOf<TflMapItem>();
+            var item = new TflMapItem().WithDefaults();
             _map.Items.Add(item);
             return new ItemBuilder(_processBuilder, this, item);
         }

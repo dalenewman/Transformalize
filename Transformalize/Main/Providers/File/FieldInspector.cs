@@ -26,44 +26,44 @@ namespace Transformalize.Main.Providers.File {
 
         public Fields Inspect(FileInformation fileInformation, FileInspectionRequest request) {
 
-            var process = new TflRoot().GetDefaultOf<TflProcess>(p => {
-                p.Name = request.ProcessName;
-                p.StarEnabled = false;
-                p.ViewEnabled = false;
-                p.PipelineThreading = "MultiThreaded";
-            });
+            var process = new TflProcess{
+                Name = request.ProcessName,
+                StarEnabled = false,
+                ViewEnabled = false,
+                PipelineThreading = "MultiThreaded"
+            }.WithDefaults();
 
             process.Connections = new List<TflConnection> {
-                process.GetDefaultOf<TflConnection>(c => {
-                    c.Name = "input";
-                    c.Provider = "file";
-                    c.File = fileInformation.FileInfo.FullName;
-                    c.Delimiter = fileInformation.Delimiter == default(char)
+                new TflConnection {
+                    Name = "input",
+                    Provider = "file",
+                    File = fileInformation.FileInfo.FullName,
+                    Delimiter = fileInformation.Delimiter == default(char)
                         ? "|"
-                        : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
-                    c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
-                }),
-                process.GetDefaultOf<TflConnection>(c => {
-                    c.Name = "output";
-                    c.Provider = "internal";
-                })
+                        : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture),
+                    Start = fileInformation.FirstRowIsHeader ? 2 : 1
+                }.WithDefaults(),
+                new TflConnection {
+                    Name = "output",
+                    Provider = "internal"
+                }.WithDefaults()
             };
 
-            process.Entities.Add(process.GetDefaultOf<TflEntity>(e => {
-                e.Name = request.EntityName;
-                e.PrependProcessNameToOutputName = false;
-                e.DetectChanges = false;
-                e.Sample = System.Convert.ToInt32(request.Sample);
-            }));
+            process.Entities.Add(new TflEntity {
+                Name = request.EntityName,
+                PrependProcessNameToOutputName = false,
+                DetectChanges = false,
+                Sample = System.Convert.ToInt32(request.Sample)
+            }.WithDefaults());
 
             foreach (var fd in fileInformation.Fields) {
                 var field = fd;
-                process.Entities[0].Fields.Add(process.GetDefaultOf<TflField>(f => {
-                    f.Name = field.Name;
-                    f.Length = field.Length;
-                    f.Type = field.Type;
-                    f.QuotedWith = field.QuotedWith;
-                }));
+                process.Entities[0].Fields.Add(new TflField{
+                    Name = field.Name,
+                    Length = field.Length,
+                    Type = field.Type,
+                    QuotedWith = field.QuotedWith
+                }.WithDefaults());
             }
 
             for (var i = 0; i < request.DataTypes.Count; i++) {
@@ -71,19 +71,19 @@ namespace Transformalize.Main.Providers.File {
                 foreach (var field in fileInformation.Fields) {
                     var result = IsDataTypeField(field.Name, dataType);
                     process.Entities[0].CalculatedFields.Add(
-                        process.GetDefaultOf<TflField>(f => {
-                            f.Name = result;
-                            f.Type = "bool";
-                            f.Input = false;
-                            f.Transforms = new List<TflTransform> {
-                                f.GetDefaultOf<TflTransform>(t => {
-                                    t.Method = "typeconversion";
-                                    t.Type = dataType;
-                                    t.Parameter = field.Name;
-                                    t.IgnoreEmpty = request.IgnoreEmpty;
-                                })
-                            };
-                        })
+                        new TflField{
+                            Name = result,
+                            Type = "bool",
+                            Input = false,
+                            Transforms = new List<TflTransform> {
+                                new TflTransform {
+                                    Method = "typeconversion",
+                                    Type = dataType,
+                                    Parameter = field.Name,
+                                    IgnoreEmpty = request.IgnoreEmpty
+                                }.WithDefaults()
+                            }
+                        }.WithDefaults()
                     );
                 }
             }
@@ -91,16 +91,16 @@ namespace Transformalize.Main.Providers.File {
             foreach (var field in fileInformation.Fields) {
                 var result = LengthField(field.Name);
                 process.Entities[0].CalculatedFields.Add(
-                    process.GetDefaultOf<TflField>(f => {
-                        f.Name = result;
-                        f.Type = "int32";
-                        f.Transforms = new List<TflTransform> {
-                            f.GetDefaultOf<TflTransform>(t => {
-                                t.Method = "length";
-                                t.Parameter = field.Name;
-                            })
-                        };
-                    })
+                    new TflField {
+                        Name = result,
+                        Type = "int32",
+                        Transforms = new List<TflTransform> {
+                            new TflTransform {
+                                Method = "length",
+                                Parameter = field.Name
+                            }.WithDefaults()
+                        }
+                    }.WithDefaults()
                 );
             }
 

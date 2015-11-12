@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net;
 using Cfg.Net.Ext;
-using Transformalize.Libs.Newtonsoft.Json;
-using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Main;
 
 namespace Transformalize.Configuration.Builders {
@@ -13,7 +10,7 @@ namespace Transformalize.Configuration.Builders {
         private readonly TflProcess _process;
 
         public ProcessBuilder(string name) {
-            _process = new TflRoot().GetDefaultOf<TflProcess>(p => { p.Name = name; });
+            _process = new TflProcess { Name = name }.WithDefaults();
         }
 
         public ProcessBuilder(TflProcess element) {
@@ -28,7 +25,7 @@ namespace Transformalize.Configuration.Builders {
             if (_process.Connections.Any(c => c.Name == name)) {
                 return new ConnectionBuilder(this, _process.Connections.First(c => c.Name == name));
             }
-            var connection = _process.GetDefaultOf<TflConnection>(c => { c.Name = name; });
+            var connection = new TflConnection { Name = name }.WithDefaults();
             _process.Connections.Add(connection);
             return new ConnectionBuilder(this, connection);
         }
@@ -47,31 +44,31 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public MapBuilder Map(string name) {
-            var map = _process.GetDefaultOf<TflMap>(m => { m.Name = name; });
+            var map = new TflMap { Name = name }.WithDefaults();
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
 
         public MapBuilder Map(string name, string sql) {
-            var map = _process.GetDefaultOf<TflMap>(m => { m.Name = name; m.Query = sql; });
+            var map = new TflMap { Name = name, Query = sql }.WithDefaults();
             _process.Maps.Add(map);
             return new MapBuilder(this, map);
         }
 
         public EntityBuilder Entity(string name) {
-            var entity = _process.GetDefaultOf<TflEntity>(e => e.Name = name);
+            var entity = new TflEntity { Name = name }.WithDefaults();
             _process.Entities.Add(entity);
             return new EntityBuilder(this, entity);
         }
 
         public RelationshipBuilder Relationship() {
-            var relationship = _process.GetDefaultOf<TflRelationship>();
+            var relationship = new TflRelationship().WithDefaults();
             _process.Relationships.Add(relationship);
             return new RelationshipBuilder(this, relationship);
         }
 
         public TemplateBuilder Template(string name) {
-            var template = _process.GetDefaultOf<TflTemplate>();
+            var template = new TflTemplate().WithDefaults();
             template.Name = name;
             _process.Templates.Add(template);
             return new TemplateBuilder(this, template);
@@ -79,26 +76,26 @@ namespace Transformalize.Configuration.Builders {
 
 
         public ActionBuilder Action(string action) {
-            var a = _process.GetDefaultOf<TflAction>(tflAction => { tflAction.Action = action; });
+            var a = new TflAction { Action = action }.WithDefaults();
             _process.Actions.Add(a);
             return new ActionBuilder(this, a);
         }
 
         public SearchTypeBuilder SearchType(string name) {
-            var searchType = _process.GetDefaultOf<TflSearchType>();
+            var searchType = new TflSearchType().WithDefaults();
             searchType.Name = name;
             _process.SearchTypes.Add(searchType);
             return new SearchTypeBuilder(this, searchType);
         }
 
         public FieldBuilder CalculatedField(string name) {
-            var cf = _process.GetDefaultOf<TflField>(f => f.Name = name);
+            var cf = new TflField { Name = name }.WithDefaults();
             _process.CalculatedFields.Add(cf);
             return new FieldBuilder(this, cf);
         }
 
         public FieldBuilder Field(string name) {
-            var calculatedField = _process.GetDefaultOf<TflField>(f => f.Name = name);
+            var calculatedField = new TflField { Name = name }.WithDefaults();
             _process.CalculatedFields.Add(calculatedField);
             return new FieldBuilder(this, calculatedField);
         }
@@ -123,16 +120,17 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public ScriptBuilder Script(string name) {
-            var script = _process.GetDefaultOf<TflScript>();
+            var script = new TflScript().WithDefaults();
             script.Name = name;
             _process.Scripts.Add(script);
             return new ScriptBuilder(this, script);
         }
 
         public ProcessBuilder Script(string name, string fileName) {
-            var script = _process.GetDefaultOf<TflScript>();
-            script.Name = name;
-            script.File = fileName;
+            var script = new TflScript {
+                Name = name,
+                File = fileName
+            }.WithDefaults();
             _process.Scripts.Add(script);
             return this;
         }

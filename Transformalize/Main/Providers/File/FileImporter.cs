@@ -75,39 +75,39 @@ namespace Transformalize.Main.Providers.File {
             TflConnection output,
             ILogger logger) {
 
-            var process = new TflRoot().GetDefaultOf<TflProcess>(p => {
-                p.Name = request.EntityName;
-                p.Star = request.ProcessName;
-                p.StarEnabled = false;
-                p.ViewEnabled = false;
-                p.PipelineThreading = "MultiThreaded";
-                p.Connections = new List<TflConnection> {
-                    p.GetDefaultOf<TflConnection>(c => {
-                        c.Name = "input";
-                        c.Provider = "file";
-                        c.File = fileInformation.FileInfo.FullName;
-                        c.Delimiter = fileInformation.Delimiter == default(char)
+            var process = new TflProcess{
+                Name = request.EntityName,
+                Star = request.ProcessName,
+                StarEnabled = false,
+                ViewEnabled = false,
+                PipelineThreading = "MultiThreaded",
+                Connections = new List<TflConnection> {
+                    new TflConnection{
+                        Name = "input",
+                        Provider = "file",
+                        File = fileInformation.FileInfo.FullName,
+                        Delimiter = fileInformation.Delimiter == default(char)
                             ? "|"
-                            : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture);
-                        c.Start = fileInformation.FirstRowIsHeader ? 2 : 1;
-                    }),
+                            : fileInformation.Delimiter.ToString(CultureInfo.InvariantCulture),
+                        Start = fileInformation.FirstRowIsHeader ? 2 : 1
+                    }.WithDefaults(),
                     output
-                };
-                p.Entities = new List<TflEntity> {
-                    p.GetDefaultOf<TflEntity>(e => {
-                        e.Name = request.EntityName;
-                        e.Connection = "input";
-                        e.PrependProcessNameToOutputName = false;
-                        e.DetectChanges = false;
-                        e.Fields = GetFields(p, new FieldInspector(logger).Inspect(fileInformation, request), logger, request.EntityName);
-                    })
-                };
-            });
+                },
+                Entities = new List<TflEntity> {
+                    new TflEntity{
+                        Name = request.EntityName,
+                        Connection = "input",
+                        PrependProcessNameToOutputName = false,
+                        DetectChanges = false,
+                        Fields = GetFields(new FieldInspector(logger).Inspect(fileInformation, request), logger, request.EntityName)
+                    }.WithDefaults()
+                }
+            }.WithDefaults();
 
             return process;
         }
 
-        private static List<TflField> GetFields(CfgNode process, IEnumerable<Field> fieldDefinitions, ILogger logger, string entityName) {
+        private static List<TflField> GetFields(IEnumerable<Field> fieldDefinitions, ILogger logger, string entityName) {
             var fields = new List<TflField>();
             foreach (var fd in fieldDefinitions) {
                 if (fd.Type.Equals("string")) {
@@ -117,12 +117,12 @@ namespace Transformalize.Main.Providers.File {
                 }
 
                 var field = fd;
-                fields.Add(process.GetDefaultOf<TflField>(f => {
-                    f.Name = field.Name;
-                    f.Length = field.Length;
-                    f.Type = field.Type;
-                    f.QuotedWith = field.QuotedWith;
-                }));
+                fields.Add(new TflField{
+                    Name = field.Name,
+                    Length = field.Length,
+                    Type = field.Type,
+                    QuotedWith = field.QuotedWith
+                }.WithDefaults());
             }
             return fields;
         }

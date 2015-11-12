@@ -1,16 +1,16 @@
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Security;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Transformalize.Orchard")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An Orchard CMS Module for Transformalize")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Transformalize.Orchard")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCompany("Transformalize")]
+[assembly: AssemblyProduct("Transformalize.Orchard.Properties")]
+[assembly: AssemblyCopyright("Copyright 2015 - Dale Newman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Security;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("f6d5b086-b005-42ab-bcd2-7bce68c0c2a1")]
+[assembly: Guid("e46432d0-7583-4b29-ada4-7397bd64d774")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -29,8 +29,5 @@ using System.Security;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-
+[assembly: AssemblyVersion("0.7.1.0")]
+[assembly: AssemblyFileVersion("0.7.1.0")]

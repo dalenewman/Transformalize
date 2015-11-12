@@ -189,20 +189,24 @@ namespace Transformalize.Main {
                         return;
 
                     foreach (var field in fields) {
-                        if (String.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
+                        if (string.IsNullOrEmpty(field.Label) || field.Label.Equals(field.Alias)) {
                             field.Label = MetaDataWriter.AddSpacesToSentence(field.Alias, true).Replace("_", " ");
                         }
                         var name = field.Name;
-                        var f = element.GetDefaultOf<TflField>(x => x.Name = name);
-                        f.Type = field.Type;
-                        f.Length = field.Length;
-                        f.PrimaryKey = field.FieldType.Equals(FieldType.PrimaryKey) || field.FieldType.Equals(FieldType.MasterKey);
-                        f.Output = true;
-                        f.Default = string.Empty;
-                        f.Input = true;
-                        f.Precision = field.Precision;
-                        f.Scale = field.Scale;
-                        f.Label = field.Label;
+                        var f = new TflField {
+                            Name = name,
+                            Type = field.Type,
+                            Length = field.Length,
+                            PrimaryKey =
+                                field.FieldType.Equals(FieldType.PrimaryKey) ||
+                                field.FieldType.Equals(FieldType.MasterKey),
+                            Output = true,
+                            Default = string.Empty,
+                            Input = true,
+                            Precision = field.Precision,
+                            Scale = field.Scale,
+                            Label = field.Label
+                        }.WithDefaults();
                         element.Fields.Add(f);
                     }
                     _process.Logger.EntityInfo(entity.Name, "Detected {0} fields.", fields.Count);

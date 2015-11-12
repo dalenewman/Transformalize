@@ -289,10 +289,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public TransformBuilder Parameter(object value, string type) {
-            var parameter = _transform.GetDefaultOf<TflParameter>(p => {
-                p.Type = type;
-                p.Value = value.ToString();
-            });
+            var parameter = new TflParameter { Type = type, Value = value.ToString()}.WithDefaults();
             _transform.Parameters.Add(parameter);
             return this;
         }
@@ -309,10 +306,10 @@ namespace Transformalize.Configuration.Builders {
             if (field.Equals("*")) {
                 _transform.Parameter = field;
             } else {
-                var parameter = _transform.GetDefaultOf<TflParameter>(p => {
-                    p.Entity = entity;
-                    p.Field = field;
-                });
+                var parameter = new TflParameter{
+                    Entity = entity,
+                    Field = field
+                }.WithDefaults();
                 _transform.Parameters.Add(parameter);
             }
             return this;
@@ -322,7 +319,7 @@ namespace Transformalize.Configuration.Builders {
             if (_fieldBuilder == null) {
                 return _branchBuilder.Branch(name);
             }
-            var branch = _transform.GetDefaultOf<TflBranch>(b => b.Name = name);
+            var branch = new TflBranch { Name = name}.WithDefaults();
             _transform.Branches.Add(branch);
             return new BranchBuilder(this, branch);
         }

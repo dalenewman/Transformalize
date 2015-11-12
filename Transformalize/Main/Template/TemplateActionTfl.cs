@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using Transformalize.Logging;
 
 namespace Transformalize.Main {
-
     public class TemplateActionTfl : TemplateActionHandler {
 
         private readonly ILogger _logger;
@@ -13,14 +10,9 @@ namespace Transformalize.Main {
         }
 
         public override void Handle(TemplateAction action) {
-            Dictionary<string, string> parameters = null;
-
-            if (action.Url.IndexOf('?') > 0) {
-                parameters = Common.ParseQueryString(new Uri(action.Url).Query);
-            }
-
-            var name = _logger.Name; 
-            var processes = ProcessFactory.Create(action.Url, _logger, new Options(), parameters);
+            var name = _logger.Name;
+            var resource = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
+            var processes = ProcessFactory.Create(resource, _logger, new Options());
             foreach (var process in processes) {
                 _logger.Warn("Executing {0}", process.Name);
                 _logger.Name = process.Name;

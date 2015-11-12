@@ -37,7 +37,7 @@ namespace Transformalize.Configuration.Builders {
         }
 
         public JoinBuilder Join() {
-            var join = _relationship.GetDefaultOf<TflJoin>();
+            var join = new TflJoin().WithDefaults();
             _relationship.Join.Add(join);
             return new JoinBuilder(this, join);
         }

@@ -4,6 +4,13 @@ Released under GNU General Public License, version 3 (GPL-3.0).
 
 Combining de-normalization, transformation, replication, and awesome-ness.
 
+### Update
+
+This code-base is a mess.  I am re-writing Transformalize with 
+dependency injection in mind [here](https://github.com/dalenewman/Pipeline.Net). 
+Pipeline.Net (aka Transformalize 2), is licensed nder Apache 2 instead 
+of GPL3.
+
 ### Introduction
 
 Transformalize aims to transform and denormalize relational data in near real-time. The resulting data may be used in several ways:

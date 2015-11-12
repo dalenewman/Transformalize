@@ -29,12 +29,7 @@ namespace Transformalize.Main.Providers.SqlServer {
 
         public string CreateTable(string name, IEnumerable<string> defs) {
             var defList = string.Join(",", defs);
-            
-            return string.Format(
-                "CREATE TABLE [{0}]({1});",
-                SqlIdentifier(name),
-                defList
-            );
+            return $"CREATE TABLE [{SqlIdentifier(name)}]({defList});";
         }
 
         public string AddPrimaryKey(string name, IEnumerable<string> primaryKey) {

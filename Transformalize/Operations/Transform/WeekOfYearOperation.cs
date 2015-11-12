@@ -8,7 +8,7 @@ namespace Transformalize.Operations.Transform {
 
         private readonly CalendarWeekRule _calendarWeekRule;
         private readonly DayOfWeek _dayOfWeek;
-
+        
         public WeekOfYearOperation(string inKey, string outKey, CalendarWeekRule calendarWeekRule, DayOfWeek dayOfWeek)
             : base(inKey, outKey) {
             _calendarWeekRule = calendarWeekRule;

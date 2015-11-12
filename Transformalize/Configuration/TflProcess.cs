@@ -293,7 +293,7 @@ namespace Transformalize.Configuration {
 
         private void ModifyDefaultConnection(string name) {
             if (Connections.All(c => c.Name != name)) {
-                this.Connections.Add(this.GetDefaultOf<TflConnection>(c => { c.Name = name; }));
+                Connections.Add(new TflConnection { Name = name }.WithDefaults());
             }
         }
 
@@ -329,24 +329,24 @@ namespace Transformalize.Configuration {
         }
 
         private TflParameter GetParameter(string field) {
-            return this.GetDefaultOf<TflParameter>(p => {
-                p.Field = field;
-            });
+            return new TflParameter {
+                Field = field
+            }.WithDefaults();
         }
 
         private TflParameter GetParameter(string entity, string field) {
-            return this.GetDefaultOf<TflParameter>(p => {
-                p.Entity = entity;
-                p.Field = field;
-            });
+            return new TflParameter {
+                Entity = entity,
+                Field = field
+            }.WithDefaults();
         }
 
         private TflParameter GetParameter(string entity, string field, string type) {
-            return this.GetDefaultOf<TflParameter>(p => {
-                p.Entity = entity;
-                p.Field = field;
-                p.Type = type;
-            });
+            return new TflParameter {
+                Entity = entity,
+                Field = field,
+                Type = type
+            }.WithDefaults();
         }
 
         /// <summary>
@@ -380,28 +380,28 @@ namespace Transformalize.Configuration {
         private void ModifyDefaultSearchTypes() {
 
             if (SearchTypes.All(st => st.Name != "none"))
-                SearchTypes.Add(this.GetDefaultOf<TflSearchType>(st => {
-                    st.Name = "none";
-                    st.MultiValued = false;
-                    st.Store = false;
-                    st.Index = false;
-                }));
+                SearchTypes.Add(new TflSearchType {
+                    Name = "none",
+                    MultiValued = false,
+                    Store = false,
+                    Index = false
+                }.WithDefaults());
 
             if (SearchTypes.All(st => st.Name != "default"))
-                SearchTypes.Add(this.GetDefaultOf<TflSearchType>(st => {
-                    st.Name = "default";
-                    st.MultiValued = false;
-                    st.Store = true;
-                    st.Index = true;
-                }));
+                SearchTypes.Add(new TflSearchType {
+                    Name = "default",
+                    MultiValued = false,
+                    Store = true,
+                    Index = true
+                }.WithDefaults());
         }
 
         private void ModifyDefaultOutput() {
             if (Connections.All(c => c.Name != "output"))
-                Connections.Add(this.GetDefaultOf<TflConnection>(c => {
-                    c.Name = "output";
-                    c.Provider = "internal";
-                }));
+                Connections.Add(new TflConnection {
+                    Name = "output",
+                    Provider = "internal"
+                }.WithDefaults());
         }
 
         private void AdaptFieldsCreatedFromTransforms(IEnumerable<string> transformToFields) {
