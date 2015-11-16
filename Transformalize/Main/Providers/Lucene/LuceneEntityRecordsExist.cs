@@ -1,5 +1,5 @@
 using System.IO;
-using Transformalize.Libs.Lucene.Net.Index;
+using Lucene.Net.Index;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneEntityRecordsExist : IEntityRecordsExist {

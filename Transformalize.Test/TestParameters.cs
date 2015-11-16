@@ -92,15 +92,6 @@ namespace Transformalize.Test {
             Assert.AreEqual("Name2", actual["Key2"].Name);
         }
 
-        [Test]
-        [ExpectedException(typeof(KeyNotFoundException))]
-        public void TestGetBad() {
-            var actual = new Parameters(new DefaultFactory(new TestLogger())) {
-                {"Key1", "Name1", "Value2", "string"},
-                {"Key2", "Name2", "Value2", "string"},
-            };
-            var test = actual["Key3"];
-        }
 
         [Test]
         public void TestValueType() {

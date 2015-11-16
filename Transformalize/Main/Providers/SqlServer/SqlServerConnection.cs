@@ -287,7 +287,7 @@ namespace Transformalize.Main.Providers.SqlServer {
             }
 
             // temporary attempt to make initial load faster
-            if (firstRun && ! entity.HasSqlOverride()) {
+            if (firstRun && !entity.HasSqlOverride()) {
                 entity.SqlOverride = SqlTemplates.Select(entity, this);
                 return new SqlOverrideOperation(entity, this);
             }

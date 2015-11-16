@@ -1,13 +1,13 @@
 using System;
 using Transformalize.Configuration;
-using Transformalize.Libs.Lucene.Net.Analysis;
-using Transformalize.Libs.Lucene.Net.Document;
-using Transformalize.Libs.Lucene.Net.Index;
-using Transformalize.Libs.Lucene.Net.QueryParser;
-using Transformalize.Libs.Lucene.Net.Search;
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.QueryParsers;
+using Lucene.Net.Search;
 using Transformalize.Libs.Rhino.Etl.Operations;
-using Sort = Transformalize.Libs.Lucene.Net.Search.Sort;
-using Version = Transformalize.Libs.Lucene.Net.Util.Version;
+using Sort = Lucene.Net.Search.Sort;
+using Version = Lucene.Net.Util.Version;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneConnection : AbstractConnection {
@@ -17,24 +17,23 @@ namespace Transformalize.Main.Providers.Lucene {
             Type = ProviderType.Lucene;
             IsDatabase = true;
             TextQualifier = string.Empty;
-            }
+        }
 
         public override int NextBatchId(string processName) {
             if (!TflBatchRecordsExist(processName)) {
                 return 1;
             }
-            using (var searcher = LuceneSearcherFactory.Create(this, TflBatchEntity(processName))) {
+            var searcher = LuceneSearcherFactory.Create(this, TflBatchEntity(processName));
 
-                var query = new TermQuery(new Term("process", processName));
-                var sort = new Sort(new SortField("id", SortField.INT, true));
-                var hits = searcher.Search(query, null, 1, sort);
+            var query = new TermQuery(new Term("process", processName));
+            var sort = new Sort(new SortField("id", SortField.INT, true));
+            var hits = searcher.Search(query, null, 1, sort);
 
-                if (hits.TotalHits <= 0)
-                    return 1;
+            if (hits.TotalHits <= 0)
+                return 1;
 
-                var doc = searcher.Doc(0);
-                return Convert.ToInt32(doc.GetField("id").StringValue) + 1;
-            }
+            var doc = searcher.Doc(0);
+            return Convert.ToInt32(doc.GetField("id").StringValue) + 1;
         }
 
         public override void WriteEndVersion(Process process, AbstractConnection input, Entity entity, bool force = false) {
@@ -47,16 +46,16 @@ namespace Transformalize.Main.Providers.Lucene {
             using (var dir = LuceneDirectoryFactory.Create(this, TflBatchEntity(entity.ProcessName))) {
                 using (var writer = new IndexWriter(dir, new KeywordAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED)) {
                     var doc = new Document();
-                    doc.fields.Add(new NumericField("id", Libs.Lucene.Net.Document.Field.Store.YES, true).SetIntValue(entity.TflBatchId));
-                    doc.fields.Add(new Libs.Lucene.Net.Document.Field("process", entity.ProcessName, Libs.Lucene.Net.Document.Field.Store.YES, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.fields.Add(new Libs.Lucene.Net.Document.Field("connection", input.Name, Libs.Lucene.Net.Document.Field.Store.YES, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.fields.Add(new Libs.Lucene.Net.Document.Field("entity", entity.Alias, Libs.Lucene.Net.Document.Field.Store.YES, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.fields.Add(new NumericField("updates", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Updates));
-                    doc.fields.Add(new NumericField("inserts", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Inserts));
-                    doc.fields.Add(new NumericField("deletes", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(entity.Deletes));
-                    doc.fields.Add(LuceneWriter.CreateField("version", versionType, new SearchType { Analyzer = "keyword" }, end));
-                    doc.fields.Add(new Libs.Lucene.Net.Document.Field("version_type", versionType, Libs.Lucene.Net.Document.Field.Store.YES, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS));
-                    doc.fields.Add(new NumericField("tflupdate", Libs.Lucene.Net.Document.Field.Store.YES, true).SetLongValue(DateTime.UtcNow.Ticks));
+                    doc.Add(new NumericField("id", global::Lucene.Net.Documents.Field.Store.YES, true).SetIntValue(entity.TflBatchId));
+                    doc.Add(new global::Lucene.Net.Documents.Field("process", entity.ProcessName, global::Lucene.Net.Documents.Field.Store.YES, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.Add(new global::Lucene.Net.Documents.Field("connection", input.Name, global::Lucene.Net.Documents.Field.Store.YES, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.Add(new global::Lucene.Net.Documents.Field("entity", entity.Alias, global::Lucene.Net.Documents.Field.Store.YES, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.Add(new NumericField("updates", global::Lucene.Net.Documents.Field.Store.YES, true).SetLongValue(entity.Updates));
+                    doc.Add(new NumericField("inserts", global::Lucene.Net.Documents.Field.Store.YES, true).SetLongValue(entity.Inserts));
+                    doc.Add(new NumericField("deletes", global::Lucene.Net.Documents.Field.Store.YES, true).SetLongValue(entity.Deletes));
+                    doc.Add(LuceneWriter.CreateField("version", versionType, new SearchType { Analyzer = "keyword" }, end));
+                    doc.Add(new global::Lucene.Net.Documents.Field("version_type", versionType, global::Lucene.Net.Documents.Field.Store.YES, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS));
+                    doc.Add(new NumericField("tflupdate", global::Lucene.Net.Documents.Field.Store.YES, true).SetLongValue(DateTime.UtcNow.Ticks));
                     writer.AddDocument(doc);
                     writer.Commit();
                     writer.Optimize();
@@ -88,7 +87,7 @@ namespace Transformalize.Main.Providers.Lucene {
             using (var searcher = LuceneSearcherFactory.Create(this, TflBatchEntity(entity.ProcessName))) {
 
                 var parser = new MultiFieldQueryParser(LuceneVersion(), new[] { "process", "entity" }, new KeywordAnalyzer());
-                var query = parser.Parse(string.Format("process:\"{0}\" AND entity:\"{1}\"", entity.ProcessName, entity.Alias));
+                var query = parser.Parse($"process:\"{entity.ProcessName}\" AND entity:\"{entity.Alias}\"");
                 var sort = new Sort(new SortField("id", SortField.INT, true));
                 var hits = searcher.Search(query, null, 1, sort);
 
@@ -135,7 +134,7 @@ namespace Transformalize.Main.Providers.Lucene {
         public static Version GetLuceneVersion(string version) {
             Version v;
             if (version == Common.DefaultValue || !Enum.TryParse(version, true, out v)) {
-                v = Libs.Lucene.Net.Util.Version.LUCENE_30;
+                v = global::Lucene.Net.Util.Version.LUCENE_30;
             }
             return v;
         }

@@ -2,17 +2,16 @@ using System;
 using System.Data;
 using System.Linq;
 
-namespace Transformalize.Main.Providers.Sql
-{
+namespace Transformalize.Main.Providers.Sql {
     public class SqlEntitySchemaReader {
-        private readonly AbstractConnection _connection;
+        readonly AbstractConnection _connection;
 
         public SqlEntitySchemaReader(AbstractConnection connection) {
             _connection = connection;
         }
 
         public Fields Read(string name, string schema) {
-            var result = new Fields();
+            var fields = new Fields();
 
             using (var cn = _connection.GetConnection()) {
 
@@ -30,9 +29,9 @@ namespace Transformalize.Main.Providers.Sql
                         var columnName = row["ColumnName"].ToString();
 
                         var field = new Field(keys.Contains(columnName) ? FieldType.PrimaryKey : FieldType.NonKey) {
-                                                                                                                      Name = columnName,
-                                                                                                                      Type = Common.ToSimpleType(row["DataType"].ToString())
-                                                                                                                  };
+                            Name = columnName,
+                            Type = Common.ToSimpleType(row["DataType"].ToString())
+                        };
 
                         if (field.Type.Equals("string")) {
                             field.Length = row["ColumnSize"].ToString();
@@ -45,14 +44,11 @@ namespace Transformalize.Main.Providers.Sql
                             field.Length = "8";
                             field.Type = "rowversion";
                         }
-                        result.Add(field);
+                        fields.Add(field);
                     }
                 }
-
-            };
-
-            return result;
-
+            }
+            return fields;
         }
     }
 }

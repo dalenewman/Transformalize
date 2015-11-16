@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using Transformalize.Libs.Lucene.Net.Store;
+using Lucene.Net.Store;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneDirectoryFactory {

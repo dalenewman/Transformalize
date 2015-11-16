@@ -28,7 +28,6 @@ using Transformalize.Main.Providers.Folder;
 using Transformalize.Main.Providers.Html;
 using Transformalize.Main.Providers.Internal;
 using Transformalize.Main.Providers.Log;
-using Transformalize.Main.Providers.Lucene;
 using Transformalize.Main.Providers.Mail;
 using Transformalize.Main.Providers.MySql;
 using Transformalize.Main.Providers.PostgreSql;
@@ -205,10 +204,6 @@ namespace Transformalize.Main {
                                     .WithConstructorArgument("basicServer", ctx => ctx.Kernel.Get(solrBasicReadOnlyOperations, bindingMetaData => bindingMetaData.Has(CORE_ID) && bindingMetaData.Get<string>(CORE_ID).Equals(coreUrl)));
                             }
                         }
-                        break;
-                    case "lucene":
-                        Bind<AbstractConnectionDependencies>().To<LuceneDependencies>().WhenInjectedInto<LuceneConnection>().WithConstructorArgument("processName", _process.Name);
-                        Bind<AbstractConnection>().To<LuceneConnection>().Named(provider);
                         break;
                     case "web":
                         Bind<AbstractConnectionDependencies>().To<WebDependencies>().WhenInjectedInto<WebConnection>();

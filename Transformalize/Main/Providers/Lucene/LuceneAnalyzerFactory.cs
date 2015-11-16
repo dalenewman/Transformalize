@@ -1,5 +1,5 @@
-using Transformalize.Libs.Lucene.Net.Analysis;
-using Transformalize.Libs.Lucene.Net.Analysis.Standard;
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneAnalyzerFactory {

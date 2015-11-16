@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Libs.Lucene.Net.Document;
+using Lucene.Net.Documents;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 

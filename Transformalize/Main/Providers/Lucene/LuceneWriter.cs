@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Transformalize.Libs.Lucene.Net.Analysis;
-using Transformalize.Libs.Lucene.Net.Document;
-using Transformalize.Libs.Lucene.Net.Index;
-using Transformalize.Libs.Lucene.Net.Search;
+using Lucene.Net.Analysis;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Logging;
+using Lucene.Net.Documents;
 
 namespace Transformalize.Main.Providers.Lucene {
 
@@ -89,7 +89,7 @@ namespace Transformalize.Main.Providers.Lucene {
         }
 
         public static AbstractField CreateField(string name, string type, SearchType searchType, object value) {
-            var s = searchType.Store ? Libs.Lucene.Net.Document.Field.Store.YES : Libs.Lucene.Net.Document.Field.Store.NO;
+            var s = searchType.Store ? global::Lucene.Net.Documents.Field.Store.YES : global::Lucene.Net.Documents.Field.Store.NO;
             AbstractField abstractField;
             switch (type) {
                 case "byte":
@@ -121,28 +121,28 @@ namespace Transformalize.Main.Providers.Lucene {
                     break;
                 case "byte[]":
                     abstractField = searchType.Index ?
-                        new Libs.Lucene.Net.Document.Field(name, Common.BytesToHexString((byte[])value), s, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS) :
-                        new Libs.Lucene.Net.Document.Field(name, (byte[])value, Libs.Lucene.Net.Document.Field.Store.YES);
+                        new global::Lucene.Net.Documents.Field(name, Common.BytesToHexString((byte[])value), s, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS) :
+                        new global::Lucene.Net.Documents.Field(name, (byte[])value, global::Lucene.Net.Documents.Field.Store.YES);
                     break;
                 case "rowversion":
                     abstractField = searchType.Index ?
-                        new Libs.Lucene.Net.Document.Field(name, Common.BytesToHexString((byte[])value), s, Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS) :
-                        new Libs.Lucene.Net.Document.Field(name, (byte[])value, Libs.Lucene.Net.Document.Field.Store.YES);
+                        new global::Lucene.Net.Documents.Field(name, Common.BytesToHexString((byte[])value), s, global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS) :
+                        new global::Lucene.Net.Documents.Field(name, (byte[])value, global::Lucene.Net.Documents.Field.Store.YES);
                     break;
                 case "string":
                     var iString = searchType.Index ? (
                             searchType.Analyzer.Equals("keyword") ?
-                            (searchType.Norms ? Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED : Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS) :
-                            (searchType.Norms ? Libs.Lucene.Net.Document.Field.Index.ANALYZED : Libs.Lucene.Net.Document.Field.Index.ANALYZED_NO_NORMS)
+                            (searchType.Norms ? global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED : global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS) :
+                            (searchType.Norms ? global::Lucene.Net.Documents.Field.Index.ANALYZED : global::Lucene.Net.Documents.Field.Index.ANALYZED_NO_NORMS)
                          ) :
-                            Libs.Lucene.Net.Document.Field.Index.NO;
-                    abstractField = new Libs.Lucene.Net.Document.Field(name, value.ToString(), s, iString);
+                            global::Lucene.Net.Documents.Field.Index.NO;
+                    abstractField = new global::Lucene.Net.Documents.Field(name, value.ToString(), s, iString);
                     break;
                 default:
                     var i = searchType.Index ?
-                        (searchType.Norms ? Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED : Libs.Lucene.Net.Document.Field.Index.NOT_ANALYZED_NO_NORMS) :
-                        Libs.Lucene.Net.Document.Field.Index.NO;
-                    abstractField = new Libs.Lucene.Net.Document.Field(name, value.ToString(), s, i);
+                        (searchType.Norms ? global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED : global::Lucene.Net.Documents.Field.Index.NOT_ANALYZED_NO_NORMS) :
+                        global::Lucene.Net.Documents.Field.Index.NO;
+                    abstractField = new global::Lucene.Net.Documents.Field(name, value.ToString(), s, i);
                     break;
 
             }

@@ -1,4 +1,4 @@
-using Transformalize.Libs.Lucene.Net.Index;
+using Lucene.Net.Index;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneReaderFactory {

@@ -1,4 +1,4 @@
-using Transformalize.Libs.Lucene.Net.Search;
+using Lucene.Net.Search;
 
 namespace Transformalize.Main.Providers.Lucene {
     public class LuceneSearcherFactory {

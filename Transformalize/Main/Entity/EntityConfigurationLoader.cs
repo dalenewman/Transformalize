@@ -66,7 +66,8 @@ namespace Transformalize.Main {
                 Alias = string.IsNullOrEmpty(element.Alias) ? element.Name : element.Alias,
                 InputOperation = element.InputOperation,
                 Index = entityIndex,
-                ReadSize = element.ReadSize
+                ReadSize = element.ReadSize,
+                Order = element.Order
             };
 
             // wire up connections

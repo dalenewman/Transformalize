@@ -85,13 +85,12 @@ namespace Transformalize.Main.Providers {
 
         public static string Select(Entity entity, AbstractConnection connection) {
 
-            var maxDop = connection.MaxDop ? " OPTION (MAXDOP 2)" : string.Empty;
             var withNoLock = entity.NoLock && connection.NoLock ? " WITH(NOLOCK)" : string.Empty;
 
             var tableSample = string.Empty;
             if (entity.Sample > 0m && entity.Sample < 100m && connection.TableSample) {
                 connection.Logger.EntityInfo(entity.Name, "Sample enforced at query level: {0:##} percent.", entity.Sample);
-                tableSample = string.Format(" TABLESAMPLE ({0:##} PERCENT)", entity.Sample);
+                tableSample = $" TABLESAMPLE ({entity.Sample:##} PERCENT)";
             }
 
             var where = string.Empty;
@@ -99,7 +98,13 @@ namespace Transformalize.Main.Providers {
                 where = " WHERE " + entity.Filters.ResolveExpression(connection.TextQualifier);
             }
 
-            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + tableSample + withNoLock + where + maxDop + ";";
+            var order = string.Empty;
+            if (entity.Order.Any()) {
+                var orderBy = string.Join(", ", entity.Order.Select(o => $"[{o.Field}] {o.Sort.ToUpper()}"));
+                order = " ORDER BY " + orderBy;
+            }
+
+            var sqlPattern = "\r\nSELECT\r\n    {0}\r\nFROM {1}" + tableSample + withNoLock + where + order + ";";
             var columns = new FieldSqlWriter(entity.Fields.WithInput()).Select(connection).Write(",\r\n    ");
 
             var sql = string.Format(sqlPattern, columns, SafeTable(entity.Name, connection, entity.Schema));

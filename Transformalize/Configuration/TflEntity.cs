@@ -88,6 +88,11 @@ namespace Transformalize.Configuration {
 
         [Cfg(required = false)]
         public List<TflFilter> Filter { get; set; }
+
+
+        [Cfg(required=false)]
+        public List<TflOrder> Order { get; set; }
+
         [Cfg(required = false)]
         public List<TflField> Fields { get; set; }
         [Cfg(required = false)]

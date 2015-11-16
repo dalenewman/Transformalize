@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Libs.Rhino.Etl;
 using Transformalize.Libs.Rhino.Etl.Operations;
 using Transformalize.Main.Providers;
@@ -86,6 +87,7 @@ namespace Transformalize.Main {
             Input = new List<NamedConnection>();
             DetectChanges = true;
             Filters = new Filters();
+            Order = new List<TflOrder>();
         }
 
         public IEnumerable<Row> Rows {
@@ -108,6 +110,8 @@ namespace Transformalize.Main {
         public bool Sampled { get; set; }
         public short Index { get; set; }
         public Filters Filters { get; set; }
+
+        public List<TflOrder> Order { get; set; } 
 
         public int ReadSize { get; set; }
 

@@ -2,7 +2,7 @@
 AntiForgery: enabled
 Author: Dale Newman
 Website: http://www.transformalize.com
-Version: 0.7.1
+Version: 0.7.2
 OrchardVersion: 1.8.1
 Description: Transformalize in Orchard CMS
 Dependencies: Orchard.jQuery, Orchard.ContentPermissions
