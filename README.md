@@ -11,7 +11,7 @@ Transformalize with dependency injection in mind.  I will
 publish the code here shortly.  It will be licensed under 
 Apache 2 instead of GPL3.
 
-### Introduction
+=======
 
 Transformalize aims to transform and denormalize relational data in near real-time. The resulting data may be used in several ways:
 
@@ -155,7 +155,7 @@ tfl NorthWind.xml
 00:00:23 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.6042720.
 ```
 
-Now it doesn't update data unnecessarily.  It's using the version field to sense that the data hasn't been updated.  Let's view the output.
+Now it doesn't update data unnecessarily. Â It's using the version field to sense that the data hasn't been updated. Â Let's view the output.
 
 ```sql
 SELECT TOP 10
@@ -435,7 +435,7 @@ Calculated fields project new fields based on the values of other fields and pre
 You may add multiple parameters in this way. &nbsp;However, if you only have a single parameter, you can specify it in the parameter attribute in the transform element itself, like this:
 
 ```xml
-<transform method="format" format="{0} is a big city!" parameter="City" /> 
+<transform method="format" format="{0} is a big city!" parameter="City" />Â 
 ```
 
 Another short-cut is to set the parameter attribute to &quot;*&quot; to include all fields.
