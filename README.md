@@ -4,12 +4,12 @@ Released under GNU General Public License, version 3 (GPL-3.0).
 
 Combining de-normalization, transformation, replication, and awesome-ness.
 
-### Update
+### !!! Update !!!
 
-This code-base is a mess.  I am re-writing Transformalize with 
-dependency injection in mind [here](https://github.com/dalenewman/Pipeline.Net). 
-Pipeline.Net (aka Transformalize 2), is licensed nder Apache 2 instead 
-of GPL3.
+This code-base has "expired" (so to speak).  I am re-writing 
+Transformalize with dependency injection in mind.  I will 
+publish the code here shortly.  It will be licensed under 
+Apache 2 instead of GPL3.
 
 ### Introduction
 
