@@ -5,22 +5,21 @@ Transformalize is released under the Apache 2 license.
 
 
 ## What is it?
-Transformalize is a .NET based configurable ETL library 
-specializing in incremental denormalization.  It follows 
-these key principles:
+Transformalize is a .NET based configurable ETL solution 
+specializing in incremental denormalization. It is:
 
-1. [ETL](#ETL) (Extract, Transform, and Load)
+1. An [ETL](#ETL) (Extract, Transform, and Load) tool
 1. [Configurable](#CFG)
-1. [Denormalization](#DEN)
-1. [Incremental](#INC)
-1. [Embrace Change](#CHG)
+1. A [Denormalization](#DEN) tool
+1. An [Incremental](#INC) Updater
+1. A tool that [Embraces Change](#CHG)
 
 ### <a name="ETL"></a>ETL
-Fundamentally, a Transformalize process:
+Fundamentally, a Transformalize process is an ETL process.  It:
 
 - defines input(s) from which to **extract** data from 
-- optionally defines **transformations** to the data
-- **Loads** the data into a consistent *transformalized* output
+- optionally defines **transformations** to said data
+- **Loads** the data into a *transformalized* output
 
 ### <a name="CFG"></a>Configurable
 Instead of:
@@ -30,8 +29,8 @@ Instead of:
 1. Compiling
 1. Deploying
 
-Transformalize's executable (tfl.exe) runs your 
-XML or JSON configurations.
+Transformalize runs according to your configurations. It's executable (tfl.exe) 
+runs your XML or JSON configurations as ETL processes.
 
 ### <a name="DEN"></a>Denormalization
 Relational data is usually normalized to minimize data redundancy. 
