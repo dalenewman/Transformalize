@@ -22,12 +22,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Pipeline.Desktop")]
+[assembly: AssemblyTitle("Transformalize Pipeline - Command")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Transformalize")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyProduct("Transformalize Pipeline - Command")]
+[assembly: AssemblyCopyright("Copyright 2015 - Dale Newman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ee20183d-3771-4d5e-890e-cf51eb696f89")]
+[assembly: Guid("c0ad9d94-4126-4452-bd01-1118fb827f39")]
 
 // Version information for an assembly consists of the following four values:
 //
