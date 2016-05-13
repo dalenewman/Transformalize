@@ -24,9 +24,9 @@ Fundamentally, a Transformalize process:
 Instead of:
 
 1. Starting a project in an IDE
-2, Coding
-3. Compiling
-4. Deploying
+1. Coding
+1. Compiling
+1. Deploying
 
 Once deployed, a Transformalize runs ETL as defined 
 by an arrangement (aka configuration). Currently that is 
