@@ -33,7 +33,7 @@ by an arrangement (aka configuration). Currently that is
 an XML or JSON document.
 
 ### Denormalization
-Relational data is usually normalized to minimize data redundancy.  
+Relational data is usually normalized to minimize data redundancy. 
 This means the data is separated into specific entities 
 and related with keys.
 
@@ -54,7 +54,7 @@ row is updated), subsequent processing can be very fast and efficient.
 ### Embrace Change
 Usually, when you gather data from many sources, it's for something like 
 a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or 
-[data mart](https://en.wikipedia.org/wiki/Data_mart). These support 
+[search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
 analysis, browsing, and/or searching the data.
 
 In business, when your present data to whomever is asking for it, 
