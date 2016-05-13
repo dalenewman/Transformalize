@@ -1,6 +1,6 @@
 ﻿#region license
 // Transformalize
-// A Configurable ETL solution specializing in incremental denormalization.
+// A Configurable ETL Solution Specializing in Incremental Denormalization.
 // Copyright 2013 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");

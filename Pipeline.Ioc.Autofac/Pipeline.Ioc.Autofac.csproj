@@ -1,0 +1,210 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{58FF362E-4A8D-459E-A174-5AAAE7EA8953}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pipeline.Ioc.Autofac</RootNamespace>
+    <AssemblyName>Pipeline.Ioc.Autofac</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cfg.Net.Environment, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Environment.0.0.1\lib\Cfg.Net.Environment.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Shorthand.0.0.4\lib\Cfg.Net.Shorthand.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="CfgNet, Version=0.6.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.6.7\lib\CfgNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Elasticsearch.Net.2.3.1\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Nest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <HintPath>..\packages\NEST.2.3.1\lib\net45\Nest.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Quartz, Version=2.3.3.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SolrNet.0.5.0.1001\lib\SolrNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FolderReader.cs" />
+    <Compile Include="JsonNetSerializer.cs" />
+    <Compile Include="Modules\ActionModule.cs" />
+    <Compile Include="Modules\ConnectionModule.cs" />
+    <Compile Include="Modules\ExcelModule.cs" />
+    <Compile Include="Modules\FileModule.cs" />
+    <Compile Include="Modules\FolderModule.cs" />
+    <Compile Include="Modules\InternalModule.cs" />
+    <Compile Include="Modules\SolrModule.cs" />
+    <Compile Include="Modules\ElasticModule.cs" />
+    <Compile Include="Modules\RootModule.cs" />
+    <Compile Include="Modules\AdoModule.cs" />
+    <Compile Include="Modules\LuceneModule.cs" />
+    <Compile Include="Modules\ContextModule.cs" />
+    <Compile Include="Modules\EntityModule.cs" />
+    <Compile Include="Modules\EntityPipelineModule.cs" />
+    <Compile Include="Modules\MapModule.cs" />
+    <Compile Include="Modules\ProcessControlModule.cs" />
+    <Compile Include="Modules\ProcessPipelineModule.cs" />
+    <Compile Include="Modules\TemplateModule.cs" />
+    <Compile Include="Modules\TransformFactory.cs" />
+    <Compile Include="Modules\UnloadedRootModule.cs" />
+    <Compile Include="PipelineAction.cs" />
+    <Compile Include="RunTimeDataReader.cs" />
+    <Compile Include="RunTimeRunner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RunTimeSchemaReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
+      <Project>{EE20183D-3771-4D5E-890E-CF51EB696F89}</Project>
+      <Name>Pipeline.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
+      <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
+      <Name>Pipeline.Logging.NLog</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
+      <Project>{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}</Project>
+      <Name>Pipeline.Portable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
+      <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
+      <Name>Pipeline.Provider.Ado</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.csproj">
+      <Project>{2b364bae-3d5b-467d-aa19-20ec929d14ea}</Project>
+      <Name>Pipeline.Provider.Elastic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.Excel\Pipeline.Provider.Excel.csproj">
+      <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>
+      <Name>Pipeline.Provider.Excel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.File\Pipeline.Provider.File.csproj">
+      <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
+      <Name>Pipeline.Provider.File</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.csproj">
+      <Project>{E84D0CB1-8DE6-413B-B2F1-2A8E6F7A994C}</Project>
+      <Name>Pipeline.Provider.Lucene</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.MySql\Pipeline.Provider.MySql.csproj">
+      <Project>{b0015b18-f29c-469a-a2af-18c21ac8e4d9}</Project>
+      <Name>Pipeline.Provider.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.csproj">
+      <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
+      <Name>Pipeline.Provider.PostgreSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.Solr\Pipeline.Provider.Solr.csproj">
+      <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
+      <Name>Pipeline.Provider.Solr</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.csproj">
+      <Project>{ff1350dd-5297-4100-bb8f-6a3047ed8ad5}</Project>
+      <Name>Pipeline.Provider.SQLite</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.csproj">
+      <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
+      <Name>Pipeline.Provider.SqlServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
+      <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
+      <Name>Pipeline.Scheduler.Quartz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Scripting.Jint\Pipeline.Scripting.Jint.csproj">
+      <Project>{384c4b16-ae30-4b0a-970e-d1a7470e5235}</Project>
+      <Name>Pipeline.Scripting.Jint</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
+      <Project>{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}</Project>
+      <Name>Pipeline.Template.Razor</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
