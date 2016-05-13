@@ -68,7 +68,7 @@ easy way to handle change:
 1. Re-process (initialize)
 1. Re-enable incremental processing
 
-In other words, destroy it, modify it, and re-create it.
+Transformalize has the power to create and destroy.
 
 ## Getting Started
 
