@@ -60,7 +60,7 @@ analysis, browsing, and/or searching the data.
 In business, when your present data to whomever is asking for it, 
 they're first response is to ask for more or different data :-)
 
-Because this is the *nature of the business*, Transformalize has an 
+Because this is the *nature of the beast*, Transformalize has an 
 easy way to handle change:
 
 1. Stop incremental processing
