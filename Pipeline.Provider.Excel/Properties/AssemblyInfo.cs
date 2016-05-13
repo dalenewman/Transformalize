@@ -22,12 +22,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Pipeline.Provider.PostgreSql")]
+[assembly: AssemblyTitle("Pipeline.Provider.Excel")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Pipeline.Provider.PostgreSql")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyProduct("Pipeline.Provider.Excel")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("d0e681f8-9694-4d89-b2d9-2d94862467a8")]
+[assembly: Guid("c0ce8961-4137-4ca6-ad0e-0d69a55a3b16")]
 
 // Version information for an assembly consists of the following four values:
 //
