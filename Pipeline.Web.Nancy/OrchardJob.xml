@@ -1,0 +1,31 @@
+﻿<add name="Service">
+
+  <environments>
+    <add name="default">
+      <parameters>
+        <add name="id" type="int" value="16" />
+      </parameters>
+    </add>
+  </environments>
+
+  <connections>
+    <add name="input" provider="sqlserver" server="localhost" database="Orchard192" />
+  </connections>
+
+  <entities>
+    <add name="Pipe" alias="Job">
+      <filter>
+        <add field="id" value="@(id)" />
+      </filter>
+      <fields>
+        <add name="id" type="int" primary-key="true" />
+        <add name="configuration" length="max" />
+      </fields>
+    </add>
+  </entities>
+
+  <response>
+    <add request="Configuration" status="200" message="Ok" time="1" />
+  </response>
+
+</add>
