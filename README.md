@@ -47,8 +47,8 @@ them.
 
 #### <a name="INC"></a>Incremental
 Initially, Transformalize processes all of your data.  Subsequent 
-processing attempts to pull incremental updates from your input and 
-apply them to your output.
+processing pulls incremental updates from your input and 
+applies them to your output.
 
 Setup correctly with *version* fields (a field that increments everytime a 
 row is updated), subsequent processing can be very fast and efficient.
@@ -70,7 +70,7 @@ easy way to handle change:
 1. Re-process (initialize)
 1. Re-enable incremental processing
 
-Transformalize has the power to create and destroy.
+Transformalize has the power to create and destroy (the beast?).
 
 ---
 

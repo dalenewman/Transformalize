@@ -1,0 +1,50 @@
+﻿using System.Xml;
+using Pipeline.Configuration;
+using Pipeline.Contracts;
+using Pipeline.Transforms;
+
+namespace Pipeline.Desktop.Transforms {
+    public class XPathTransform : BaseTransform, ITransform {
+
+        private readonly Field _input;
+        private readonly bool _hasNamespace;
+        private readonly bool _xPathIsField;
+        private readonly Field _xPathField;
+
+        public XPathTransform(IContext context) : base(context) {
+            _input = SingleInput();
+            _xPathIsField = context.Process.TryGetField(context.Transform.XPath, out _xPathField);
+            _hasNamespace = !string.IsNullOrEmpty(context.Transform.NameSpace);
+        }
+
+        public IRow Transform(IRow row) {
+
+            var xml = (string)row[_input];
+
+            var doc = new XmlDocument();
+            var xPath = _xPathIsField ? row[_xPathField].ToString() : Context.Transform.XPath;
+            doc.LoadXml(xml);
+
+            XmlNode node;
+            if (_hasNamespace) {
+                var ns = new XmlNamespaceManager(doc.NameTable);
+                ns.AddNamespace(Context.Transform.NameSpace, Context.Transform.Url);
+                node = doc.SelectSingleNode(xPath, ns);
+            } else {
+                node = doc.SelectSingleNode(xPath);
+            }
+
+            if (node == null) {
+                if (Context.Field.Default == Constants.DefaultSetting) {
+                    row[Context.Field] = Constants.TypeDefaults()[Context.Field.Type];
+                } else {
+                    row[Context.Field] = Context.Field.Convert(Context.Field.Default);
+                }
+            } else {
+                row[Context.Field] = Context.Field.Convert(node.InnerText);
+            }
+
+            return row;
+        }
+    }
+}

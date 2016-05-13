@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Scheduler.Quartz",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.Ado", "Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj", "{03AB8B72-1A0C-4238-B369-C37147C42A48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Desktop", "Pipeline.Desktop\Pipeline.Desktop.csproj", "{EE20183D-3771-4D5E-890E-CF51EB696F89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE20183D-3771-4D5E-890E-CF51EB696F89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE20183D-3771-4D5E-890E-CF51EB696F89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE20183D-3771-4D5E-890E-CF51EB696F89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE20183D-3771-4D5E-890E-CF51EB696F89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
