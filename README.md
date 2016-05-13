@@ -1,13 +1,13 @@
 # Transformalize
 Transformalize is released under the Apache 2 license.
 
-## What is it?
-Transformalize is a configurable ETL library specializing in 
-incremental denormalization.
-
 **Caution**: It is still under development.  Breaking changes are guarenteed.
 
-### Key Principles
+
+## What is it?
+Transformalize is a .NET based configurable ETL library 
+specializing in incremental denormalization.  It follows 
+these key principles:
 
 1. [ETL](#ETL) (Extract, Transform, and Load)
 1. [Configurable](#CFG)
@@ -15,14 +15,14 @@ incremental denormalization.
 1. [Incremental](#INC)
 1. [Embrace Change](#CHG)
 
-#### <a name="ETL"></a>ETL
+### <a name="ETL"></a>ETL
 Fundamentally, a Transformalize process:
 
 - defines input(s) from which to **extract** data from 
 - optionally defines **transformations** to the data
 - **Loads** the data into a consistent *transformalized* output
 
-#### <a name="CFG"></a>Configurable
+### <a name="CFG"></a>Configurable
 Instead of:
 
 1. Starting a project in an IDE
@@ -30,11 +30,10 @@ Instead of:
 1. Compiling
 1. Deploying
 
-Once deployed, a Transformalize runs ETL as defined 
-by an arrangement (aka configuration). Currently that is 
-an XML or JSON document.
+Transformalize's executable (tfl.exe) runs your 
+XML or JSON configurations.
 
-#### <a name="DEN"></a>Denormalization
+### <a name="DEN"></a>Denormalization
 Relational data is usually normalized to minimize data redundancy. 
 This means the data is separated into specific entities 
 and related with keys.
@@ -45,7 +44,7 @@ them.
 
 **Note**: Denormalization only occurs when you define more than one entity.
 
-#### <a name="INC"></a>Incremental
+### <a name="INC"></a>Incremental
 Initially, Transformalize processes all of your data.  Subsequent 
 processing pulls incremental updates from your input and 
 applies them to your output.
@@ -53,7 +52,10 @@ applies them to your output.
 Setup correctly with *version* fields (a field that increments everytime a 
 row is updated), subsequent processing can be very fast and efficient.
 
-#### <a name="CHG"></a>Embrace Change
+Transformalize's executable (tfl.exe) can run your 
+incrementals based on a cron expression (enabled by [Quartz.net](http://www.quartz-scheduler.net/)).
+
+### <a name="CHG"></a>Embrace Change
 Usually, when you gather data from many sources, it's for something like 
 a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or 
 [search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
