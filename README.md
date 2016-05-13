@@ -61,7 +61,7 @@ a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or
 [search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
 analysis, browsing, and/or searching the data.
 
-In business, when your present data to whomever is asking for it, 
+In business, when you present data to whomever is asking for it, 
 they're first response is to ask for more or different data :-)
 
 Because this is the *nature of the beast*, Transformalize has an 
