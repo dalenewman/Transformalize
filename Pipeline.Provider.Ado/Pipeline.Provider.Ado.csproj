@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</ProjectGuid>
+    <ProjectGuid>{03AB8B72-1A0C-4238-B369-C37147C42A48}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipeline.Scheduler.Quartz</RootNamespace>
-    <AssemblyName>Pipeline.Scheduler.Quartz</AssemblyName>
+    <RootNamespace>Pipeline.Provider.Ado</RootNamespace>
+    <AssemblyName>Pipeline.Provider.Ado</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet />
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -30,27 +31,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <CodeAnalysisRuleSet />
+    <CodeAnalysisRuleSet>
+    </CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="CfgNet, Version=0.6.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.0.6.7\lib\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Quartz, Version=2.3.3.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quartz.2.3.3\lib\net40\Quartz.dll</HintPath>
+    <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -63,21 +53,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CronExpressionValidator.cs" />
-    <Compile Include="QuartzLogAdaptor.cs" />
+    <Compile Include="Actions\AdoRunAction.cs" />
+    <Compile Include="AdoCalculatedFieldUpdater.cs" />
+    <Compile Include="AdoConstants.cs" />
+    <Compile Include="AdoDeleter.cs" />
+    <Compile Include="AdoEntityInitializer.cs" />
+    <Compile Include="AdoEntityInserter.cs" />
+    <Compile Include="AdoEntityMatchingFieldsReader.cs" />
+    <Compile Include="AdoEntityMatchingKeysReader.cs" />
+    <Compile Include="AdoEntityUpdater.cs" />
+    <Compile Include="AdoInitializer.cs" />
+    <Compile Include="AdoInputBatchReader.cs" />
+    <Compile Include="AdoMasterUpdater.cs" />
+    <Compile Include="AdoOutputController.cs" />
+    <Compile Include="AdoOutputVersionDetector.cs" />
+    <Compile Include="AdoProvider.cs" />
+    <Compile Include="AdoReader.cs" />
+    <Compile Include="AdoRowCreator.cs" />
+    <Compile Include="AdoSchemaReader.cs" />
+    <Compile Include="AdoStarController.cs" />
+    <Compile Include="AdoStarParametersReader.cs" />
+    <Compile Include="AdoStarViewCreator.cs" />
+    <Compile Include="AdoEntityWriter.cs" />
+    <Compile Include="ConnectionStringParser.cs" />
+    <Compile Include="Ext\AdoExtensions.cs" />
+    <Compile Include="Ext\AdoFilterExtensions.cs" />
+    <Compile Include="IConnectionFactory.cs" />
+    <Compile Include="AdoMapReader.cs" />
+    <Compile Include="AdoInputVersionDetector.cs" />
+    <Compile Include="NullConnectionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuartzLogger.cs" />
-    <Compile Include="Utility.cs" />
+    <Compile Include="AdoInputReader.cs" />
+    <Compile Include="AdoTwoPartMasterUpdater.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="job_scheduling_data_2_0.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="packages.config" />
-    <None Include="quartz.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">

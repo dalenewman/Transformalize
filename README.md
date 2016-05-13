@@ -5,22 +5,24 @@ Transformalize is released under the Apache 2 license.
 Transformalize is a configurable ETL library specializing in 
 incremental denormalization.
 
-**Key Principles**
+**Caution**: It is still under development.  Breaking changes are guarenteed.
 
-1. ETL (Extract, Transform, and Load)
-1. Configurable
-1. Denormalization
-1. Incremental
-1. Embrace Change
+### Key Principles
 
-### ETL
+1. [ETL](#ETL) (Extract, Transform, and Load)
+1. [Configurable](#CFG)
+1. [Denormalization](#DEN)
+1. [Incremental](#INC)
+1. [Embrace Change](#CHG)
+
+#### <a name="ETL"></a>ETL
 Fundamentally, a Transformalize process:
 
 - defines input(s) from which to **extract** data from 
 - optionally defines **transformations** to the data
 - **Loads** the data into a consistent *transformalized* output
 
-### Configurable
+#### <a name="CFG"></a>Configurable
 Instead of:
 
 1. Starting a project in an IDE
@@ -32,7 +34,7 @@ Once deployed, a Transformalize runs ETL as defined
 by an arrangement (aka configuration). Currently that is 
 an XML or JSON document.
 
-### Denormalization
+#### <a name="DEN"></a>Denormalization
 Relational data is usually normalized to minimize data redundancy. 
 This means the data is separated into specific entities 
 and related with keys.
@@ -43,7 +45,7 @@ them.
 
 **Note**: Denormalization only occurs when you define more than one entity.
 
-### Incremental
+#### <a name="INC"></a>Incremental
 Initially, Transformalize processes all of your data.  Subsequent 
 processing attempts to pull incremental updates from your input and 
 apply them to your output.
@@ -51,7 +53,7 @@ apply them to your output.
 Setup correctly with *version* fields (a field that increments everytime a 
 row is updated), subsequent processing can be very fast and efficient.
 
-### Embrace Change
+#### <a name="CHG"></a>Embrace Change
 Usually, when you gather data from many sources, it's for something like 
 a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or 
 [search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
@@ -69,6 +71,8 @@ easy way to handle change:
 1. Re-enable incremental processing
 
 Transformalize has the power to create and destroy.
+
+---
 
 ## Getting Started
 
