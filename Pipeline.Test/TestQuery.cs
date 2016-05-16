@@ -70,57 +70,5 @@ namespace Pipeline.Test {
             }
         }
 
-        [Test]
-        [Ignore("for now")]
-        public void Test2()
-        {
-
-            const string cfg = @"
-<cfg name='query'>
-    <connections>
-        <add name='input' provider='sqlserver' server='x' database='y' />
-        <add name='output' provider='console' />
-    </connections>
-    <entities>
-        <add name='query' query=""
-select
-	oh.Id, 
-	oh.OrderKey, 
-	oh.DataXml
-from OrderHistory oh WITH (NOLOCK)
-inner join WorkOrder wo WITH (NOLOCK) on (oh.OrderKey = wo.WorkOrderKey)
-inner join OrderCategory oc WITH (NOLOCK) on (wo.CategoryKey = oc.OrderCategoryKey)
-inner join EventType et WITH (NOLOCK) ON (oh.EventTypeKey = et.EventTypeKey)
-where oc.Name = 'UTC'
-AND et.Name IN ('UpdateEntity','UpdateEntityByApi')
-"">
-            <fields>
-                <add name='Id' type='long' primary-key='true' />
-                <add name='OrderKey' type='guid' />
-                <add name='DataXml' length='max' output='false'>
-                    <transforms>    
-                        <add method='fromxml'>
-                            <fields>
-                                <add name='GZipCompression' length='max' output='false' />
-                            </fields>
-                        </add>
-                    </transforms>
-                </add>
-            </fields>
-            <calculated-fields>
-                <add name='decompressed' t='copy(GZipCompression).decompress()' length='max' output='false' />
-                <add name='CategoryKey' t='copy(decompressed).xpath(/WorkOrder/c\:CategoryKey,c,http\://www.mobilefieldforce.com/)' type='guid' />
-            </calculated-fields>
-        </add>
-    </entities>
-</cfg>
-";
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(cfg);
-            controller.Execute();
-
-
-        }
-
     }
 }

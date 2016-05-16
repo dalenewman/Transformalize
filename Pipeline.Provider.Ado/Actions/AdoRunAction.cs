@@ -39,7 +39,7 @@ namespace Pipeline.Provider.Ado.Actions {
                     response.Content = $"{cn.Execute(_node.Command,commandTimeout:_node.TimeOut)} rows affected.";
                 } catch (Exception ex) {
                     response.Code = 500;
-                    response.Content = ex.Message + " " + ex.StackTrace + " " + _node.Command;
+                    response.Content = ex.Message + " " + ex.StackTrace + " " + _node.Command.Replace("{","{{").Replace("}","}}");
                 }
             }
             return response;

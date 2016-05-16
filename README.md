@@ -35,7 +35,7 @@ runs your XML or JSON configurations as ETL processes.
 ### <a name="DEN"></a>Denormalization
 Relational data is usually normalized to minimize data redundancy. 
 This means the data is separated into specific entities 
-and related with keys.
+with related keys.
 
 A Transformalize configuration models the relationships between 
 input entities and outputs a star-schema and denormalized view of 
@@ -48,8 +48,8 @@ Initially, Transformalize processes all of your data.  Subsequent
 processing pulls incremental updates from your input and 
 applies them to your output.
 
-Setup correctly with *version* fields (a field that increments everytime a 
-row is updated), subsequent processing can be very fast and efficient.
+Setup with *version* fields (a field that increments on every update), subsequent 
+processing can be very fast and efficient.
 
 Transformalize's executable (tfl.exe) can run your 
 incrementals based on a cron expression (enabled by [Quartz.net](http://www.quartz-scheduler.net/)).
