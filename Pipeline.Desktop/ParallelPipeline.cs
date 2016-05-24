@@ -23,6 +23,8 @@ namespace Pipeline.Desktop {
     public class ParallelPipeline : IPipeline {
         readonly IPipeline _pipeline;
 
+        public IContext Context => _pipeline.Context;
+
         public ParallelPipeline(IPipeline pipeline) {
             _pipeline = pipeline;
         }

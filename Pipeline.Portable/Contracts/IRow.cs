@@ -26,7 +26,7 @@ namespace Pipeline.Contracts {
         void SetString(IField field, string value);
         string ToString();
         ExpandoObject ToExpandoObject(Field[] fields);
-        Dictionary<string, string> ToStringDictionary(Field[] fields);
+        CfgRow ToCfgRow(IField[] fields, string[] keys);
         ExpandoObject ToFriendlyExpandoObject(Field[] fields);
         IEnumerable<object> ToEnumerable(Field[] fields);
         bool Match(Field[] fields, IRow other);

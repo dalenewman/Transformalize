@@ -27,6 +27,7 @@ namespace Pipeline.Transforms.System {
         readonly StringLength[] _strings;
 
         internal class StringLength : IField {
+            public string Alias { get; }
             public short Index { get; set; }
             public short MasterIndex { get; set; }
             public short KeyIndex { get; set; }
@@ -34,7 +35,8 @@ namespace Pipeline.Transforms.System {
 
             public string Type => "string";
 
-            public StringLength(short index, short masterIndex, int length) {
+            public StringLength(string alias, short index, short masterIndex, int length) {
+                Alias = alias;
                 Index = index;
                 MasterIndex = masterIndex;
                 Length = length;
@@ -43,7 +45,7 @@ namespace Pipeline.Transforms.System {
 
         public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context) {
             fields = fields ?? context.Entity.GetAllFields();
-            _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
+            _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
         }
 
         public IRow Transform(IRow row) {

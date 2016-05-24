@@ -1,0 +1,58 @@
+﻿@using System.Web.Mvc.Html
+@model Pipeline.Web.Orchard.Models.PipelineConfigurationPart
+
+@{
+    const string theme = "rubyblue";
+    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Shared/XmlConfigurationEditor.cshtml", new[] { "PipelineConfiguration_Configuration", theme, ".6" });
+}
+
+<div class="edit-item-secondary group">
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Index","Configurations",new {area = "Pipeline.Web.Orchard"}))','_self');">Jobs</button>
+</div>
+
+<div class="editor-field">
+    @Html.LabelFor(x => x.Configuration, T("Configuration"))
+    @Html.TextAreaFor(x => x.Configuration)
+</div>
+
+<div class="hint" style="font-size: smaller;">
+    <strong>F11</strong>: <span>Full Screen</span>,
+    <strong>Esc</strong>: <span>Exit Full Screen</span>,
+    <strong>Ctrl-S</strong>: <span>Save</span>,
+    <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
+    <strong>Ctrl-F</strong>: <span>Find</span>,
+    <strong>Ctrl-G</strong>: <span>Find next</span>,
+    <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
+    <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
+    <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
+</div>
+
+<hr />
+
+<fieldset>
+    <legend>Allow Access by IP</legend>
+    <table>
+        <tr>
+            <td>
+                <div class="editor-field">
+                    @Html.LabelFor(x => x.StartAddress, T("Start Address"))
+                    @Html.EditorFor(x => x.StartAddress)
+                    @Html.ValidationMessageFor(x => x.StartAddress)
+                </div>
+                <div class="hint">@T("Starting IP Address")</div>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;</td>
+            <td>
+                <div class="editor-field">
+                    @Html.LabelFor(x => x.EndAddress, T("End Address"))
+                    @Html.EditorFor(x => x.EndAddress)
+                    @Html.ValidationMessageFor(x => x.EndAddress)
+                </div>
+                <div class="hint">@T("Ending IP Address")</div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">@T("Your IP is {0}", Request.UserHostAddress)</td>
+        </tr>
+    </table>
+</fieldset>

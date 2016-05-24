@@ -28,6 +28,7 @@ using Pipeline.Logging;
 
 namespace Pipeline.Configuration {
 
+    [Cfg(name = "cfg")]
     public class Process : CfgNode {
 
         private string _name;
@@ -421,12 +422,6 @@ namespace Pipeline.Configuration {
                 }
             }
             return starFields;
-        }
-
-        public void RemoveSystemFields() {
-            foreach (var entity in Entities) {
-                entity.Fields.RemoveAll(f => f.System);
-            }
         }
 
         public Connection Output() {

@@ -261,7 +261,6 @@ namespace Pipeline.Configuration.Ext {
             }
         }
 
-
         static void ValidateSearchTypes(Process p, Action<string> error) {
             foreach (var name in p.GetAllFields().Select(f => f.SearchType).Distinct()) {
                 if (p.SearchTypes.All(st => st.Name != name)) {
@@ -273,7 +272,8 @@ namespace Pipeline.Configuration.Ext {
         static void ValidateTransform(IContext context, Transform lastTransform, Action<string> error) {
 
             var t = context.Transform;
-            var input = context.Process.ParametersToFields(context.Transform.Parameters, context.Field).First();
+            var fields = context.Process.ParametersToFields(context.Transform.Parameters, context.Field);
+            var input = fields.First();
 
             // check input types
             switch (t.Method) {
@@ -284,7 +284,14 @@ namespace Pipeline.Configuration.Ext {
                 case "timeahead":
                 case "last":
                     if (input.Type != "datetime") {
-                        error($"The {t.Method} expects a datetime input, but {input.Alias} is {input.Type}.");
+                        error($"The {t.Method} method expects a datetime input, but {input.Alias} is {input.Type}.");
+                    }
+                    break;
+                case "datediff":
+                    foreach (var f in fields) {
+                        if (!f.Type.StartsWith("date")) {
+                            error($"The {t.Method} method expects date/time parameters. {f.Alias} is type: {f.Type}.");
+                        }
                     }
                     break;
                 case "toyesno":

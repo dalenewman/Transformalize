@@ -29,7 +29,7 @@ namespace Pipeline.Configuration.Ext {
                 p.Star = p.Name + "Star";
             }
 
-            // calculated fields are not input
+            // process-level calculated fields are not input
             foreach (var calculatedField in p.CalculatedFields) {
                 calculatedField.Input = false;
                 calculatedField.IsCalculated = true;
@@ -42,6 +42,22 @@ namespace Pipeline.Configuration.Ext {
             DefaultSearchTypes(p);
             DefaultFileInspection(p);
 
+            foreach (var entity in p.Entities) {
+                var isInternal = p.Output().IsInternal();
+                if (isInternal) {
+                    entity.CalculateHashCode = false;
+                }
+                try {
+                    entity.AdaptFieldsCreatedFromTransforms();
+                } catch (Exception ex) {
+                    error($"Trouble adapting fields created from transforms. {ex.Message}");
+                }
+
+                entity.AddSystemFields(!isInternal);
+                entity.ModifyMissingPrimaryKey();
+                entity.ModifyIndexes();
+            }
+
             try {
                 ExpandShortHandTransforms(p);
             } catch (Exception ex) {
@@ -51,7 +67,7 @@ namespace Pipeline.Configuration.Ext {
             // possible candidates for PostValidate
             MergeParameters(p);
             SetPrimaryKeys(p);
-           
+
         }
 
         /// <summary>
@@ -139,7 +155,7 @@ namespace Pipeline.Configuration.Ext {
                         }
                         transform.Parameter = string.Empty;
                     }
-                    
+
                 }
                 index++;
             }

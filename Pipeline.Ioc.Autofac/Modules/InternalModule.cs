@@ -51,7 +51,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                     switch (input.Connection.Provider) {
                         case "internal":
-                            return new DataSetEntityReader(input, rowFactory);
+                            return new InternalReader(input, rowFactory);
                         case "console":
                             // todo: take standard input
                             return new NullReader(input);

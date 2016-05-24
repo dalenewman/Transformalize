@@ -15,70 +15,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline {
-    public class MasterRow : IRow {
+    public class MasterRow : BaseRow, IRow {
 
-        public object[] Storage { get; set; }
-
-        public MasterRow(int capacity) {
+        public MasterRow(int capacity) : base(capacity) {
             Storage = new object[capacity];
         }
 
-        public object this[IField field] {
+        public override object GetValue(IField field) {
+            return Storage[field.MasterIndex];
+        }
+
+        public override void SetValue(IField field, object value) {
+            Storage[field.MasterIndex] = value;
+        }
+
+        public object this[IField field]
+        {
             get { return Storage[field.MasterIndex]; }
             set { Storage[field.MasterIndex] = value; }
         }
-
-        public ExpandoObject ToExpandoObject(Field[] fields) {
-            var parameters = new ExpandoObject();
-            var dict = ((IDictionary<string, object>)parameters);
-            foreach (var field in fields) {
-                dict.Add(field.FieldName(), this[field]);
-            }
-            return parameters;
-        }
-
-        public Dictionary<string, string> ToStringDictionary(Field[] fields) {
-            return fields.ToDictionary(f => f.Alias, f => this[f].ToString());
-        }
-
-        public ExpandoObject ToFriendlyExpandoObject(Field[] fields) {
-            var parameters = new ExpandoObject();
-            var dict = ((IDictionary<string, object>)parameters);
-            foreach (var field in fields) {
-                dict.Add(field.Alias, this[field]);
-            }
-            return parameters;
-        }
-
-        public IEnumerable<object> ToEnumerable(Field[] fields) {
-            return fields.Select(f => this[f]);
-        }
-
-        public bool Match(Field[] fields, IRow other) {
-            return fields.Length > 1 ?
-                fields.Select(f => this[f]).SequenceEqual(fields.Select(f => other[f])) :
-                this[fields[0]].Equals(other[fields[0]]);
-        }
-
-        public override string ToString() {
-            return string.Join("|", Storage);
-        }
-
-        public string GetString(IField f) {
-            return this[f].ToString();
-        }
-
-        public void SetString(IField f, string value) {
-            this[f] = value;
-        }
-
     }
 }

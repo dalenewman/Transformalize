@@ -17,6 +17,7 @@
 #endregion
 namespace Pipeline.Contracts {
     public interface IField {
+        string Alias { get; }
         short Index { get; }
         short MasterIndex { get; }
         short KeyIndex { get; }

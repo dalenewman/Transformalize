@@ -17,6 +17,7 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Pipeline.Contracts;
 
 namespace Pipeline {
@@ -75,7 +76,6 @@ namespace Pipeline {
         }
 
         public IEnumerable<IRow> Read() {
-            // todo, flatten and send all entity data back, for now, take first entity
             return _pipelines.First().Read();
         }
 

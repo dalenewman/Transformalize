@@ -97,6 +97,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "next": return new NextTransform(context);
                 case "last": return new LastTransform(context);
                 case "datepart": return new DatePartTransform(context);
+                case "datediff": return new DateDiffTransform(context);
                 case "totime": return new ToTimeTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
                 case "any": return new AnyTransform(context);

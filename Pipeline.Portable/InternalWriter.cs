@@ -31,9 +31,13 @@ namespace Pipeline {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            var fields = _entity.GetAllOutputFields().ToArray();
+
+            var fields = _entity.GetAllOutputFields().Cast<IField>().ToArray();
+            var keys = fields.Select(f => f.Alias).ToArray();
+            _entity.Rows.Clear();
+
             foreach (var row in rows) {
-                _entity.Rows.Add(row.ToStringDictionary(fields));
+                _entity.Rows.Add(row.ToCfgRow(fields, keys));
             }
         }
     }

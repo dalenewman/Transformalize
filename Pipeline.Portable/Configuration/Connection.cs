@@ -261,8 +261,15 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// An option full path to a tool you would use to open a database or query with
         /// </summary>
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string OpenWith { get; set; }
 
+        public bool IsInternal() {
+            return Provider == "internal";
+        }
+
+        public bool IsNotInternal() {
+            return Provider != "internal";
+        }
     }
 }

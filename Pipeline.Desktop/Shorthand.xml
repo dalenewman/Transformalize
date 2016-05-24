@@ -130,6 +130,12 @@
         <add name="url" value="" />
       </parameters>
     </add>
+    <add name="datediff">
+      <parameters>
+        <add name="timecomponent" />
+        <add name="fromtimezone" value="UTC" />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -190,6 +196,7 @@
     <add name="filepath" signature="file" target="t" />
     <add name="fileext" signature="none" target="t" />
     <add name="xpath" signature="xpath" target="t" />
+    <add name="datediff" signature="datediff" target="t" />
   </methods>
 
 </cfg>

@@ -21,41 +21,40 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline {
-    public class DataSetEntityReader : IRead {
+    public class InternalReader : IRead {
 
         readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
+        private readonly HashSet<string> _missing;
 
-        public DataSetEntityReader(InputContext input, IRowFactory rowFactory)
-        {
+        public InternalReader(InputContext input, IRowFactory rowFactory) {
             _input = input;
             _rowFactory = rowFactory;
+            _missing = new HashSet<string>();
         }
 
         public IEnumerable<IRow> Read() {
-            return GetTypedDataSet(_input.Entity.Name);
+            var fields = _input.Entity.Fields.Where(f => f.Input).ToArray();
+            var rows = new List<IRow>();
+            foreach (var row in _input.Entity.Rows) {
+
+                var typed = _rowFactory.Create();
+                foreach (var field in fields) {
+                    if (row.Map.ContainsKey(field.Name)) {
+                        typed[field] = field.Convert(row[field.Name]);
+                    } else {
+                        if (_missing.Add(field.Name)) {
+                            _input.Warn($"An internal row in {_input.Entity.Alias} is missing the field {field.Name}.");
+                        }
+                    }
+                }
+                rows.Add(typed);
+            }
+            return rows;
         }
 
         public object GetVersion() {
             return null;
         }
-
-        public IEnumerable<IRow> GetTypedDataSet(string name) {
-            var rows = new List<IRow>();
-
-            var lookup = _input.Entity.Fields.ToDictionary(k => k.Name, v => v);
-            foreach (var row in _input.Entity.Rows) {
-                var pipelineRow = _rowFactory.Create();
-                foreach (var pair in row) {
-                    if (!lookup.ContainsKey(pair.Key))
-                        continue;
-                    var field = lookup[pair.Key];
-                    pipelineRow[field] = field.Convert(pair.Value);
-                }
-                rows.Add(pipelineRow);
-            }
-            return rows;
-        }
-
     }
 }

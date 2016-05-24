@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Context;
 using Pipeline.Contracts;
-using Pipeline.Nulls;
 
 namespace Pipeline {
     public class DefaultPipeline : IPipeline {
@@ -31,6 +30,8 @@ namespace Pipeline {
         protected IUpdate Updater { get; private set; }
         protected IEntityDeleteHandler DeleteHandler { get; private set; }
         protected List<ITransform> Transformers { get; }
+
+        public IContext Context => _context;
 
         readonly PipelineContext _context;
 

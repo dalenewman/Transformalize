@@ -33,7 +33,7 @@ namespace Pipeline.Desktop.Transforms {
         const int Day = 24 * Hour;
         const int Month = 30 * Day;
 
-        public RelativeTimeTransform(PipelineContext context, bool past) : base(context) {
+        public RelativeTimeTransform(IContext context, bool past) : base(context) {
             _input = SingleInput();
             _past = past;
             var fromTimeZone = context.Transform.FromTimeZone == Constants.DefaultSetting

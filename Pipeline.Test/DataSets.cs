@@ -17,14 +17,17 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using Autofac;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
 using NUnit.Framework;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop.Loggers;
+using Pipeline.Ioc.Autofac;
+using Pipeline.Ioc.Autofac.Modules;
 using Pipeline.Logging;
 using Pipeline.Scripting.Jint;
 
@@ -47,7 +50,7 @@ namespace Pipeline.Test {
             var personContext = new PipelineContext(new DebugLogger(), process, process.Entities.Last());
             var entityInput = new InputContext(personContext, new Incrementer(personContext));
             var rowFactory = new RowFactory(entityInput.RowCapacity, entityInput.Entity.IsMaster, false);
-            var rows = new DataSetEntityReader(entityInput, rowFactory).Read().ToArray();
+            var rows = new InternalReader(entityInput, rowFactory).Read().ToArray();
 
             Assert.IsInstanceOf<IEnumerable<IRow>>(rows);
             Assert.AreEqual(3, rows.Length);
@@ -63,5 +66,38 @@ namespace Pipeline.Test {
                 Console.WriteLine(row);
             }
         }
+
+
+        [Test(Description = "")]
+        public void GetTypedDataSet2() { 
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.Register((c,p) => new RunTimeExecutor(new PipelineContext(new TraceLogger(),p.TypedAs<Process>()))).As<IRunTimeExecute>();
+
+            using (var scope = builder.Build().BeginLifetimeScope())
+            {
+                var process = scope.Resolve<Process>(new NamedParameter("cfg", @"Files\PersonAndPet.xml"));
+                var runner = scope.Resolve<IRunTimeExecute>(new TypedParameter(typeof (Process), process));
+
+                runner.Execute(process);
+
+                var people = process.Entities.First(e=>e.Name=="Person").Rows;
+                Assert.IsInstanceOf<IEnumerable<IRow>>(people);
+                Assert.AreEqual(3, people.Count);
+
+                var pets = process.Entities.First(e=>e.Name=="Pet").Rows;
+                Assert.AreEqual(2, pets.Count);
+
+                var dale = people[0];
+                var micheal = people[1];
+                Assert.IsInstanceOf<int>(dale["PersonId"]);
+                Assert.AreEqual(1, dale["PersonId"]);
+                Assert.AreEqual("Dale", dale["FirstName"]);
+                Assert.AreEqual("Michael", micheal["FirstName"]);
+
+            }
+
+        }
+
     }
 }

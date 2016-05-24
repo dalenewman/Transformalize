@@ -25,6 +25,6 @@ namespace Pipeline.Nulls {
             Name = name;
         }
         public string Name { get; set; }
-        public void Modify(INode node, string value, IDictionary<string, string> parameters) { }
+        public void Modify(INode node, object value, IDictionary<string, string> parameters) { }
     }
 }

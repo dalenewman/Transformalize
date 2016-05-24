@@ -44,11 +44,11 @@ namespace Pipeline.Configuration {
         public string Name { get; set; }
 
         [Cfg]
-        public List<Dictionary<string, string>> Rows { get; set; }
+        public List<CfgRow> Rows { get; set; }
 
         /// <summary>
         /// Optional.  Defaults to `linq`.
-        /// 
+        /// I
         /// A choice between `linq`, `parallel.linq`, `streams`, `parallel.streams`.
         /// 
         /// **Note**: You can set each entity if you want, or control all entities from the Process' pipeline attribute.
@@ -177,15 +177,6 @@ namespace Pipeline.Configuration {
                 }
             }
 
-            try {
-                AdaptFieldsCreatedFromTransforms();
-            } catch (Exception ex) {
-                Error("Trouble adapting fields created from transforms. {0}", ex.Message);
-            }
-
-            AddSystemFields();
-            ModifyMissingPrimaryKey();
-            ModifyIndexes();
         }
 
         public void ModifyIndexes() {
@@ -199,28 +190,22 @@ namespace Pipeline.Configuration {
             }
         }
 
-        void AddSystemFields() {
+        public void AddSystemFields(bool output = true) {
             var fields = new List<Field> {
                 new Field {
                     Name = Constants.TflKey,
                     Alias = Constants.TflKey,
-                    System = true,
-                    Type = "int",
-                    Input = false
+                    Type = "int"
                 }.WithDefaults(),
                 new Field {
                     Name = Constants.TflBatchId,
                     Alias = Constants.TflBatchId,
-                    System = true,
-                    Type = "int",
-                    Input = false
+                    Type = "int"
                 }.WithDefaults(),
                 new Field {
                     Name = Constants.TflHashCode,
                     Alias = Constants.TflHashCode,
                     Type = "int",
-                    System = true,
-                    Input = false,
                     Transforms = CalculateHashCode ? new List<Transform> {
                         new Transform {
                             Method = "hashcode",
@@ -231,14 +216,14 @@ namespace Pipeline.Configuration {
                 new Field {
                     Name = Constants.TflDeleted,
                     Alias = Constants.TflDeleted,
-                    System = true,
-                    Type = "bool",
-                    Input = false
+                    Type = "bool"
                 }.WithDefaults()
             };
 
             foreach (var field in fields) {
+                field.System = true;
                 field.Input = false;
+                field.Output = output;
             }
 
             Fields.InsertRange(0, fields);
@@ -251,7 +236,7 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// Adds a primary key if there isn't one.
         /// </summary>
-        void ModifyMissingPrimaryKey() {
+        public void ModifyMissingPrimaryKey() {
 
             if (!Fields.Any())
                 return;
@@ -391,7 +376,7 @@ namespace Pipeline.Configuration {
             return Connection != string.Empty;
         }
 
-        void AdaptFieldsCreatedFromTransforms() {
+        public void AdaptFieldsCreatedFromTransforms() {
             foreach (var method in Transform.Producers()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);

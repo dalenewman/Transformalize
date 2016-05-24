@@ -1,0 +1,12 @@
+﻿Name: Pipeline.Web.Orchard
+AntiForgery: enabled
+Author: Dale Newman
+Website: 
+Version: 0.1.1
+OrchardVersion: 1.8.1
+Description: Pipeline.Web.Orchard
+Dependencies: Orchard.ContentPermissions
+Features:
+    Pipeline.Web.Orchard:
+        Description: Pipeline.Web.Orchard
+		Category: Content

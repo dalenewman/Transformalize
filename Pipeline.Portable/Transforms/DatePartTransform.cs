@@ -58,7 +58,7 @@ namespace Pipeline.Transforms {
         private readonly Field _input;
         private readonly Action<IRow> _transform;
 
-        public DatePartTransform(PipelineContext context) : base(context) {
+        public DatePartTransform(IContext context) : base(context) {
             _input = SingleInput();
             if (_input.Type == PartReturns[context.Transform.TimeComponent]) {
                 _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[_input]);

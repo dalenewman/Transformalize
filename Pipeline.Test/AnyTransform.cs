@@ -29,7 +29,7 @@ namespace Pipeline.Test {
             var xml = @"
     <add name='TestProcess'>
       <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData' pipeline='linq'>
           <rows>
             <add Field1='1' Field2='2' Field3='3' />
           </rows>

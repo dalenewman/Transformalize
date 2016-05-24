@@ -28,6 +28,8 @@ namespace Pipeline.Contracts {
         void Register(IUpdate updater);
         void Register(IEntityDeleteHandler deleteHandler);
         void Execute();
+
+        IContext Context { get; }
     }
 
 }
