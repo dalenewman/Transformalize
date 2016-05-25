@@ -1,3 +1,0 @@
-Pipeline.Web.Orchard.csproj
-Pipeline.Web.Orchard.csproj.user
-XCopyExclude.txt

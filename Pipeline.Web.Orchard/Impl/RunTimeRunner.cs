@@ -60,6 +60,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new SolrModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
             container.RegisterCallback(new FileModule(process).Configure);
+            container.RegisterCallback(new ExcelModule(process).Configure);
 
             container.RegisterCallback(new EntityPipelineModule(process).Configure);
             container.RegisterCallback(new ProcessPipelineModule(process).Configure);

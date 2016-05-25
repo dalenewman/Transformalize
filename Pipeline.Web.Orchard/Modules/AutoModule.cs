@@ -48,7 +48,6 @@ namespace Pipeline.Web.Orchard.Modules {
             var sh = new ShorthandRoot(cfg);
 
             builder.Register(c => new XmlProcess(
-                new NanoXmlParser(),
                 new XmlSerializer(),
                 new JintValidator("js"),
                 new ShorthandValidator(sh, "sh"),
@@ -59,7 +58,6 @@ namespace Pipeline.Web.Orchard.Modules {
                 )).As<XmlProcess>();
 
             builder.Register(c => new JsonProcess(
-                new NanoXmlParser(),
                 new JsonSerializer(),
                 new JintValidator("js"),
                 new ShorthandValidator(sh, "sh"),
@@ -70,6 +68,7 @@ namespace Pipeline.Web.Orchard.Modules {
             )).As<JsonProcess>();
 
             builder.Register(c => new RunTimeDataReader(new OrchardLogger())).As<IRunTimeRun>();
+            builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(new PipelineContext(new OrchardLogger(), new Process {Name = "RunTimeSchemaReader", Key = "RunTimeSchemaReader"}.WithDefaults())))).As<IRunTimeSchemaReader>();
             builder.Register(c => new RunTimeExecuter(new PipelineContext(new OrchardLogger(), new Process { Name = "RunTimeExecuter", Key = "RunTimeExecutor"}.WithDefaults()))).As<IRunTimeExecute>();
 
         }

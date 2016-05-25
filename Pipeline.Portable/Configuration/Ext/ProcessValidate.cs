@@ -42,7 +42,7 @@ namespace Pipeline.Configuration.Ext {
             ValidateTransforms(p, error);
             ValidateShouldRuns(p, error, warn);
             ValidateScripts(p, error);
-            ValidateEntityFields(p, error);
+            ValidateEntityFields(p, warn);
             ValidateCalculatedFields(p, error);
         }
 
@@ -63,13 +63,9 @@ namespace Pipeline.Configuration.Ext {
             }
         }
 
-        static void ValidateEntityFields(Process p, Action<string> error) {
-            if (p.Mode != "meta" && !p.Actions.Any()) {
-                foreach (var entity in p.Entities) {
-                    if (!entity.Fields.Any(f => f.Input)) {
-                        error($"The {entity.Alias} doesn't have any input fields defined.");
-                    }
-                }
+        static void ValidateEntityFields(Process p, Action<string> warn) {
+            foreach (var entity in p.Entities.Where(entity => !entity.Fields.Any(f => f.Input))) {
+                warn($"The entity {entity.Alias} doesn't have any input fields defined.");
             }
         }
 

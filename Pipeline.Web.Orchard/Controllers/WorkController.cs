@@ -51,54 +51,6 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
 
-        [ActionName("Api/Page")]
-        public ContentResult Page(int id) {
-
-            var timer = new Stopwatch();
-            timer.Start();
-            var format = Request.QueryString["format"] == "json" ? "json" : "xml";
-
-            Response.AddHeader("Access-Control-Allow-Origin", "*");
-            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
-
-
-            if (part == null) {
-                return Get404("Page", _orchardServices, format);
-            }
-
-            if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress) || _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-
-                var process = format == "json" ? _orchardServices.WorkContext.Resolve<JsonProcess>() : _orchardServices.WorkContext.Resolve<XmlProcess>() as Process;
-                var parameters = GetParameters(Request);
-                process.Load(part.Configuration, parameters);
-
-                if (process.Errors().Any()) {
-                    return Get503("Page", process, format, timer.ElapsedMilliseconds);
-                }
-
-                var runner = _orchardServices.WorkContext.Resolve<IRunTimeRun>();
-                try {
-                    var entity = process.Entities.First();
-                    var fields = entity.GetAllOutputFields().Where(f => !f.System).Cast<IField>().ToArray();
-                    var keys = fields.Select(f => f.Alias).ToArray();
-                    entity.Page = Request.QueryString["page"] != null ? int.Parse(Request.QueryString["page"]) : 1;
-                    entity.PageSize = Request.QueryString["size"] != null ? int.Parse(Request.QueryString["size"]) : 10;
-                    entity.Rows = runner.Run(process).Select(r => r.ToCfgRow(fields, keys)).ToList();
-                    process.Status = 200;
-                    process.Message = string.Empty;
-                    process.Request = "Page";
-                    process.Time = timer.ElapsedMilliseconds;
-                    return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
-                } catch (Exception ex) {
-                    return Get501(Request, _orchardServices, "Page", ex.Message, timer.ElapsedMilliseconds);
-                }
-
-            }
-
-            return Get401(format, _orchardServices, "Page");
-
-        }
-
         [ActionName("Api/Run")]
         public ContentResult Run(int id) {
 
@@ -108,7 +60,6 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
-
 
             if (part == null) {
                 return Get404("Run", _orchardServices, format);
@@ -124,6 +75,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503("Run", process, format, timer.ElapsedMilliseconds);
                 }
 
+                PageHelper(process);
+                if (SchemaHelper(process, parameters)) {
+                    if (process.Errors().Any()) {
+                        return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                    }
+                }
+
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                 try {
                     runner.Execute(process);
@@ -131,6 +89,8 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Message = "Ok";
                     process.Request = "Run";
                     process.Time = timer.ElapsedMilliseconds;
+                    SystemFieldHelper(process);
+                    ShorthandHelper(process);
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     return Get501(Request, _orchardServices, "Run", ex.Message, timer.ElapsedMilliseconds);
@@ -141,7 +101,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             return Get401(format, _orchardServices, "Run");
 
         }
-        
+
         [ActionName("Api/Cfg")]
         public ContentResult Configuration(int id) {
             Response.AddHeader("Access-Control-Allow-Origin", "*");
@@ -183,10 +143,20 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (process.Errors().Any()) {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
+
+                if (SchemaHelper(process, parameters)) {
+                    if (process.Errors().Any()) {
+                        return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                    }
+                }
+
+                SystemFieldHelper(process);
+                ShorthandHelper(process);
                 process.Request = "Load";
                 process.Status = 200;
                 process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
                 process.Message = "Ok";
+
 
                 return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
             }
@@ -194,6 +164,80 @@ namespace Pipeline.Web.Orchard.Controllers {
             return Get401(action, _orchardServices, format);
 
         }
+
+        private static void SystemFieldHelper(Process process) {
+            foreach (var connection in process.Connections) {
+                connection.ConnectionString = string.Empty;
+                connection.User = string.Empty;
+                connection.Password = string.Empty;
+            }
+            if (!process.Output().IsInternal()) {
+                return;
+            }
+            foreach (var entity in process.Entities) {
+                entity.Fields.RemoveAll(f => f.System);
+            }
+        }
+
+        private static void ShorthandHelper(Process process) {
+            foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
+                field.T = string.Empty;
+            }
+        }
+
+        private bool SchemaHelper(Process process, IDictionary<string, string> parameters) {
+            var result = false;
+            foreach (var entity in process.Entities) {
+
+                if (entity.Fields.Any(f => f.Input)) {
+                    continue;
+                }
+
+                var schemaReader = _orchardServices.WorkContext.Resolve<IRunTimeSchemaReader>();
+                schemaReader.Process = process;
+                var schema = schemaReader.Read(entity);
+                if (!schema.Entities.Any()) {
+                    continue;
+                }
+
+                var e = schema.Entities.First();
+                var fields = e.Fields;
+                foreach (var field in fields.Where(field => Constants.InvalidFieldNames.Contains(field.Name) && Constants.InvalidFieldNames.Contains(field.Alias))) {
+                    field.Alias = e.Alias + field.Name;
+                }
+                entity.Fields = schema.Entities.First().Fields.Where(f=>!f.System).ToList();
+                result = true;
+            }
+
+            if (result) {
+                var cfg = process.Serialize();
+                process.Load(cfg, parameters);
+            }
+
+            return result;
+        }
+
+        private void PageHelper(Process process) {
+            if (Request.QueryString["page"] == null) {
+                return;
+            }
+
+            var page = 0;
+            if (!int.TryParse(Request.QueryString["page"], out page) || page <= 0) {
+                return;
+            }
+
+            var size = 0;
+            if (!int.TryParse((Request.QueryString["size"] ?? "0"), out size)) {
+                return;
+            }
+
+            foreach (var entity in process.Entities) {
+                entity.Page = page;
+                entity.PageSize = size > 0 ? size : entity.PageSize;
+            }
+        }
+
 
         private static IDictionary<string, string> GetParameters(HttpRequestBase request) {
             var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);

@@ -52,7 +52,7 @@
   <ItemGroup>
     <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Code\Orchard.Source.1.8.1\lib\autofac\Autofac.dll</HintPath>
+      <HintPath>..\..\..\..\lib\autofac\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Environment, Version=0.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.Environment.0.0.2\lib\Cfg.Net.Environment.dll</HintPath>
@@ -62,12 +62,20 @@
       <HintPath>..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Shorthand.0.0.5\lib\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net\bin\Debug\CfgNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Jint, Version=2.7.1.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
@@ -83,13 +91,53 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Orchard.1.8.1\newtonsoft.json\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Orchard.Core, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Pipeline.Desktop, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\Orchard.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\Debug\Pipeline.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="Orchard.Framework, Version=1.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Pipeline.Portable, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\Orchard.Framework.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Portable\bin\Debug\Pipeline.Portable.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.Ado, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Ado\bin\Debug\Pipeline.Provider.Ado.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.Excel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Excel\bin\Debug\Pipeline.Provider.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.File, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.File\bin\Debug\Pipeline.Provider.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\Debug\Pipeline.Provider.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.PostgreSql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.PostgreSql\bin\Debug\Pipeline.Provider.PostgreSql.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.Solr, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Solr\bin\Debug\Pipeline.Provider.Solr.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.SQLite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SQLite\bin\Debug\Pipeline.Provider.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.SqlServer, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\Debug\Pipeline.Provider.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Scripting.Jint, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Scripting.Jint\bin\Debug\Pipeline.Scripting.Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Template.Razor, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Template.Razor\bin\Debug\Pipeline.Template.Razor.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine, Version=3.8.2.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <HintPath>..\packages\RazorEngine.3.8.2\lib\net45\RazorEngine.dll</HintPath>
@@ -100,48 +148,40 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
-    <Reference Include="System.ComponentModel.DataAnnotations">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Orchard.1.8.1\aspnetmvc\System.Web.Helpers.dll</HintPath>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.Helpers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="System.Web.Mvc, Version=4.0.0.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Orchard.1.8.1\aspnetmvc\System.Web.Mvc.dll</HintPath>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Routing" />
     <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Orchard.1.8.1\aspnetmvc\System.Web.WebPages.dll</HintPath>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.WebPages.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Orchard.1.8.1\aspnetmvc\System.Web.WebPages.Deployment.dll</HintPath>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.WebPages.Deployment.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Orchard.1.8.1\aspnetmvc\System.Web.WebPages.Razor.dll</HintPath>
+      <HintPath>..\..\..\..\lib\aspnetmvc\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Configuration" />
+    <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\..\..\..\Code\Transformalize\Pipeline.Desktop\Shorthand.xml">
+    <EmbeddedResource Include="..\..\..\..\..\Transformalize\Pipeline.Desktop\Shorthand.xml">
       <Link>Shorthand.xml</Link>
     </EmbeddedResource>
-    <Content Include="Libs\Orchard.Core.dll" />
-    <Content Include="Libs\Orchard.Core.pdb" />
-    <Content Include="Libs\Orchard.Framework.dll" />
-    <Content Include="Libs\Orchard.Framework.pdb" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />
@@ -150,6 +190,7 @@
   <ItemGroup>
     <Compile Include="Impl\RunTimeExecuter.cs" />
     <Compile Include="Impl\RunTimeRunner.cs" />
+    <Compile Include="Impl\RunTimeSchemaReader.cs" />
     <Compile Include="Models\JsonProcess.cs" />
     <Compile Include="Models\XmlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
@@ -158,6 +199,7 @@
     <Compile Include="Modules\ContextModule.cs" />
     <Compile Include="Modules\EntityModule.cs" />
     <Compile Include="Modules\EntityPipelineModule.cs" />
+    <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
     <Compile Include="Modules\MapModule.cs" />
@@ -199,53 +241,13 @@
     <None Include="Properties\PublishProfiles\local.pubxml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
-      <Project>{ee20183d-3771-4d5e-890e-cf51eb696f89}</Project>
-      <Name>Pipeline.Desktop</Name>
+    <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">
+      <Project>{2d1d92bb-4555-4cbe-8d0e-63563d6ce4c6}</Project>
+      <Name>Orchard.Framework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
-      <Project>{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}</Project>
-      <Name>Pipeline.Portable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
-      <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
-      <Name>Pipeline.Provider.Ado</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Excel\Pipeline.Provider.Excel.csproj">
-      <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>
-      <Name>Pipeline.Provider.Excel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.File\Pipeline.Provider.File.csproj">
-      <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
-      <Name>Pipeline.Provider.File</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.MySql\Pipeline.Provider.MySql.csproj">
-      <Project>{b0015b18-f29c-469a-a2af-18c21ac8e4d9}</Project>
-      <Name>Pipeline.Provider.MySql</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.csproj">
-      <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
-      <Name>Pipeline.Provider.PostgreSql</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Solr\Pipeline.Provider.Solr.csproj">
-      <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
-      <Name>Pipeline.Provider.Solr</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.csproj">
-      <Project>{ff1350dd-5297-4100-bb8f-6a3047ed8ad5}</Project>
-      <Name>Pipeline.Provider.SQLite</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.csproj">
-      <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
-      <Name>Pipeline.Provider.SqlServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.Jint\Pipeline.Scripting.Jint.csproj">
-      <Project>{384c4b16-ae30-4b0a-970e-d1a7470e5235}</Project>
-      <Name>Pipeline.Scripting.Jint</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
-      <Project>{71372f65-12f1-4a72-ab2d-2c5eadbf75e0}</Project>
-      <Name>Pipeline.Template.Razor</Name>
+    <ProjectReference Include="..\..\Core\Orchard.Core.csproj">
+      <Project>{9916839c-39fc-4ceb-a5af-89ca7e87119f}</Project>
+      <Name>Orchard.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -293,8 +295,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>IF EXIST C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Pipeline.Web.Orchard XCOPY $(TargetDir)..\..\Pipeline.Web.Orchard\*.* C:\Code\Orchard.Source.1.8.1\src\Orchard.Web\Modules\Pipeline.Web.Orchard\ /s /y /exclude:$(ProjectDir)XCopyExclude.txt
-IF EXIST C:\Code\Orchard.Source.1.9.1\src\Orchard.Web\Modules\Pipeline.Web.Orchard XCOPY $(TargetDir)..\..\Pipeline.Web.Orchard\*.* C:\Code\Orchard.Source.1.9.1\src\Orchard.Web\Modules\Pipeline.Web.Orchard\ /s /y /exclude:$(ProjectDir)XCopyExclude.txt
-IF EXIST C:\Code\Orchard.Source.1.9.2\src\Orchard.Web\Modules\Pipeline.Web.Orchard XCOPY $(TargetDir)..\..\Pipeline.Web.Orchard\*.* C:\Code\Orchard.Source.1.9.2\src\Orchard.Web\Modules\Pipeline.Web.Orchard\ /s /y /exclude:$(ProjectDir)XCopyExclude.txt</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

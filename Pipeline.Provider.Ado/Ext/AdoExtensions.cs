@@ -82,6 +82,9 @@ namespace Pipeline.Provider.Ado.Ext {
                         rowNumber = $", ROW_NUMBER() OVER ({orderBy(cf)}) AS TflRow";
                     } else {
                         var keys = string.Join(", ", fields.Where(f => f.PrimaryKey).Select(f => cf.Enclose(f.Name)));
+                        if (string.IsNullOrEmpty(keys)) {
+                            keys = fields.First(f => f.Input).Name;
+                        }
                         rowNumber = $", ROW_NUMBER() OVER (ORDER BY {keys}) AS TflRow";
                     }
 

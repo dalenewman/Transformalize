@@ -63,7 +63,7 @@ namespace Pipeline.Scripting.Jint {
                 }
             }
 
-            // make self reference the host field
+            // make this reference the host field
             context.Transform.Script = $"var self = {context.Field.Alias};\r\n{context.Transform.Script}";
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Transform.Script.Replace("{", "{{").Replace("}", "}}")}");
         }

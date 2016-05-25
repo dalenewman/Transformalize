@@ -100,6 +100,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.RegisterCallback(new SolrModule(root).Configure);
                     builder.RegisterCallback(new InternalModule(root).Configure);
                     builder.RegisterCallback(new FileModule().Configure);
+                    builder.RegisterCallback(new ExcelModule().Configure);
 
                     builder.RegisterCallback(new MapModule(root).Configure);
                     //builder.RegisterCallback(new TemplateModule(root));
