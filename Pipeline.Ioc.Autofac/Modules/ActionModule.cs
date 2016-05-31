@@ -79,7 +79,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         context.Warn(warning);
                     }
                     if (root.Errors().Any()) {
-                        context.Error($"TFL Pipeline Action '{cfg.Left(20) + "..."}' has errors!");
+                        context.Error($"TFL Pipeline Action '{cfg.Left(15) + "..." + cfg.Right(15)}' has errors!");
                         foreach (var error in root.Errors()) {
                             context.Error(error);
                         }

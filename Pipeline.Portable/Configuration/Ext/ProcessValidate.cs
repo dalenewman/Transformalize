@@ -212,7 +212,7 @@ namespace Pipeline.Configuration.Ext {
         static void ValidateDuplicateFields(Process p, Action<string> error) {
             var fieldDuplicates = p.Entities
                 .SelectMany(e => e.GetAllFields())
-                .Where(f => !f.PrimaryKey && !f.System)
+                .Where(f => f.Output && !f.PrimaryKey && !f.System)
                 .Concat(p.CalculatedFields)
                 .GroupBy(f => f.Alias.ToLower())
                 .Where(group => @group.Count() > 1)

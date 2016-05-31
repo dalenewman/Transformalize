@@ -6,20 +6,19 @@ Transformalize is released under the Apache 2 license.
 
 ## What is it?
 Transformalize is a .NET based configurable ETL solution 
-specializing in incremental denormalization. It is:
-
-1. An [ETL](#ETL) (Extract, Transform, and Load) tool
-1. [Configurable](#CFG)
-1. A [Denormalization](#DEN) tool
-1. An [Incremental](#INC) Updater
-1. A tool that [Embraces Change](#CHG)
+specializing in incremental denormalization.
 
 ### <a name="ETL"></a>ETL
-Fundamentally, a Transformalize process is an ETL process.  It:
+It's just an **E**xtract, **T**ransform, and **L**oad process. 
+Every Transformalize arrangement defines three things:
 
-- defines input(s) from which to **extract** data from 
-- optionally defines **transformations** to said data
-- **Loads** the data into a *transformalized* output
+- input from which to **extract** data
+- **transformations** to said data
+- output where data is **Loaded**
+
+It's not a general ETL tool where you could *load* data into any output structure. 
+Instead, depending on the output provider, your data is loaded into a 
+[star-schema](https://en.wikipedia.org/wiki/Star_schema).
 
 ### <a name="CFG"></a>Configurable
 Instead of:
@@ -29,32 +28,46 @@ Instead of:
 1. Compiling
 1. Deploying
 
-Transformalize runs according to your configurations. It's executable (tfl.exe) 
-runs your XML or JSON configurations as ETL processes.
+Transformalize runs your XML or JSON [Cfg-NET](https://github.com/dalenewman/Cfg-NET) configurations.
 
 ### <a name="DEN"></a>Denormalization
-Relational data is usually normalized to minimize data redundancy. 
-This means the data is separated into specific entities 
-with related keys.
+Relational data is normalized to minimize data redundancy. 
+This means data is separated into specific entities with related keys. This is 
+optimal for storage, but can introduce complexity and performance 
+issues for retrieval.
 
-A Transformalize configuration models the relationships between 
-input entities and outputs a star-schema and denormalized view of 
-them.
+Using an [RDBMS](https://en.wikipedia.org/wiki/Relational_database_management_system) 
+based input and output, Transformalize re-arranges the 
+entities into a simpler star-schema model and provides a 
+de-normalized (flat) view of the data.
 
-**Note**: Denormalization only occurs when you define more than one entity.
+Currently implemented SQL-based providers are:
+
+* SQL Server
+* Postgres
+* MySQL
+* SQLite
+
+There are additional providers that do not support 
+de-normalization, but may be used to push denormalized data 
+elsewhere, they are:
+
+* Elastic(Search)
+* SOLR
+* Lucene
+* Files
+* Memory (to be used in other types of presentation)
 
 ### <a name="INC"></a>Incremental
-Initially, Transformalize processes all of your data.  Subsequent 
-processing pulls incremental updates from your input and 
-applies them to your output.
+Initially, Transformalize processes all your data. Subsequent 
+processing targets new, updated, and/or deleted data.  Setup 
+with *version* fields (a field that increments on every update), 
+subsequent processing can be very fast and efficient.
 
-Setup with *version* fields (a field that increments on every update), subsequent 
-processing can be very fast and efficient.
+Transformalize may be setup as a service to run 
+incrementals based on a cron expression (enabled by [Quartz.net](http://www.quartz-scheduler.net/)). 
 
-Transformalize's executable (tfl.exe) can run your 
-incrementals based on a cron expression (enabled by [Quartz.net](http://www.quartz-scheduler.net/)).
-
-### <a name="CHG"></a>Embrace Change
+### <a name="CHG"></a>Embracing Change
 Usually, when you gather data from many sources, it's for something like 
 a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or 
 [search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
@@ -71,7 +84,8 @@ easy way to handle change:
 1. Re-process (initialize)
 1. Re-enable incremental processing
 
-Transformalize has the power to create and destroy (the beast?).
+The *transformalized* output is usually treated as 
+disposable.  It is routine to create and destroy it.
 
 ---
 
