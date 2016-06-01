@@ -41,8 +41,15 @@ namespace Pipeline.Ioc.Autofac.Modules {
             if (_process == null)
                 return;
 
+            // Connections
+            foreach (var connection in _process.Connections.Where(c => c.IsInternal())) {
+                builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
+            }
+
             // Entity input
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider.In(_internal))) {
+
+                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
 
                 // READER
                 builder.Register<IRead>(ctx => {
