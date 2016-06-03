@@ -1,6 +1,6 @@
-#Transformalizing Northwind
+# Transformalizing Northwind
 
-###Introduction###
+### Introduction
 
 Transformalize aims to transform and denormalize relational data in near real-time. The resulting data may be used in several ways:
 
@@ -15,7 +15,7 @@ referenced and run directly in code, or run within
 an included console application (`tfl.exe`).
 It's source code is hosted on [GitHub](https://github.com/dalenewman/Transformalize).
 
-###Demo###
+### Demo
 
 Start with a process configuration:
 
@@ -46,7 +46,7 @@ SQL Server databases.  Connections are trusted *sqlserver* by default.
 If you're following along at home, create these databases first.  Then, populate the 
 Northwind database with this [sql script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
 
-####The NorthWind Schema...
+#### The NorthWind Schema...
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
@@ -371,7 +371,7 @@ FieldCount
 
 As you can see in the diagram above, I haven&#39;t completely de-normalized the data. &nbsp;Instead, I have created a [star schema](http://en.wikipedia.org/wiki/Star_schema), where every related table has a single join to the master table. &nbsp;In addition, I have created a view (e.g. NorthWind**Star**) so users may query it as if it we&#39;re a single table.&nbsp; Having this single view of the duplicated data allows us to quickly create simple cubes or integrate with search engines:&nbsp;
 
-####Leveraging SQL Server Analysis Services
+#### Leveraging SQL Server Analysis Services
 
 Open up [BIDS](http://technet.microsoft.com/en-us/library/ms173767%28v=sql.105%29.aspx), and create an Analysis Services Project (or cube) to browse the data.
 
@@ -498,7 +498,7 @@ tfl NorthWind.xml
 00:14:31 | Info | NorthWind | All............ | Process completed in 00:00:03.8312882.
 </pre>
 
-####Leveraging Apache SOLR
+#### Leveraging Apache SOLR
 
 With more complex templates, and an Apache [SOLR](http://lucene.apache.org/solr/) server, it is possible to integrate full text search into the process as well. &nbsp;Transformalize comes with a pair of templates that can build the necessary SOLR configuration files for schema, and data import handling.&nbsp;
 
@@ -548,7 +548,7 @@ Now, if you schedule Transformalize to run every couple minutes, you have near r
 
 When Transformalize reads your production databases, it attempts to do so introducing as little contention as possible.  Using version fields, it can keep a star-schema copy of very large databases up to date very quickly.
 
-###Summary
+### Summary
 
 The NorthWind data is fairly clean. In reality, you&#39;ll face more challenging data sources.
 
