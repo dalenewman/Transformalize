@@ -86,7 +86,107 @@ create and destroy it.
 
 ## Getting Started
 
-**TODO**: Write Getting Started...
+### Sample Data
+To demonstrate, I need data.  So, using [SQLite Browser](http://sqlitebrowser.org/), 
+I created the database: [business.sqlite3](Files\business.sqlite3). 
+The script is also [available](Files\business.sql).  There are five small 
+tables: `Company`, `Product`, `Customer`, `OrderHeader`, and `OrderLine`.  To retrieve all 
+the data from it, we'd write a query like this:
+
+```sql
+SELECT
+	ol.OrderHeaderId,
+	ol.ProductId,
+	ol.UnitPrice,
+	ol.Quantity,
+	oh.CustomerId,
+	oh.Created AS OrderDate,
+	cu.Prefix AS CustomerPrefix,
+	cu.FirstName AS CustomerFirstName,
+	cu.MiddleName AS CustomerMiddleName,
+	cu.LastName AS CustomerLastName,
+	cu.Suffix AS CustomerSuffix,
+	p.Name AS ProductName,
+	p.UnitPrice AS ProductUnitPrice,
+	p.CompanyId,
+	co.Name as CompanyName
+FROM OrderLine ol
+INNER JOIN OrderHeader oh ON (oh.Id = ol.OrderHeaderId)
+INNER JOIN Customer cu ON (cu.Id = oh.CustomerId)
+INNER JOIN Product p ON (p.Id = ol.ProductId)
+INNER JOIN Company co ON (co.Id = p.CompanyId);
+```
+
+As the model and data grow, the query's complexity will 
+increase, and it's performance will decrease.
+
+#### Order Line
+Let's start with `OrderLine` since it's related to everything. 
+Create *c:\temp\Business.Xml* and copy the XML:
+
+```xml
+<cfg name="Business">
+    <connections>
+        <add name="input" provider="sqlite" file="c:\temp\business.sqlite3" />
+    </connections>
+    <entities>
+        <add name="OrderLine" />
+    </entities>
+</cfg>
+```
+
+Run `tfl.exe -ac:\temp\Business.xml`.  This should produce the warning:
+
+> The entity OrderLine doesn't have any input fields defined.
+
+Your *c:\temp\Business.xml* is checked everytime you try and 
+run it.  Any errors found will stop it from running.  The above 
+was a warning.  It was followed by the line:
+
+> Detected 6 fields in OrderLine.
+
+So, Transformalize saw that we hadn't defined any fields, or 
+an output, and it detected the fields and output to the console:
+
+```bash
+OrderHeaderId,ProductId,UnitPrice,Quantity,Created,Modified
+1,1,3000,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+1,6,1.19,6,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+2,2,1499,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+2,6,1.09,12,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+3,3,15,2,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+3,6,1.29,4,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+4,6,1.19,6,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+5,4,499,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+5,9,26.95,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+5,10,19.99,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+5,8,1.19,3,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+6,4,399,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+6,5,699,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+6,7,3.19,1,6/3/2016 1:49:11 PM,6/3/2016 1:49:11 PM
+```
+
+By default, the output is `csv`, but you can change it to `json` 
+with the -o flag if you want.
+
+Transformalize is **e**xtracting `OrderLine` from the 
+SQLite database and **l**oading it to the console.  So, this is 
+still ETL; just minus the **T** at this point.
+
+It's nice that it detected fields, but I need them recorded 
+in the arrangement file *Business.xml*. So, I run `tfl` in `check` mode, pipe the output to *c:\temp\check.xml*, 
+and open *c:\temp\check.xml* in whatever Windows associates XML file
+with:
+
+`tfl -ac:\temp\Business.xml -lnone -mcheck > c:\temp\check.xml && start c:\temp\check.xml`
+
+![NotePad++ Screen Shot](Files/notepadpp.png)
+
+---
+
+TBC (To be Continued)...
+
+---
 
 **NOTE**: This code-base is the second implementation of the idea and principles 
 defined above.  To find out more about how Transformalize works, 

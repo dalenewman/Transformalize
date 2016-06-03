@@ -29,11 +29,15 @@ namespace Pipeline.Ioc.Autofac.Modules {
     public class InternalModule : Module {
         private readonly Process _process;
         private readonly string[] _internal = { "internal", "console", "trace" };
+        private readonly string _consoleOutput = "csv";
 
         public InternalModule() { }
 
-        public InternalModule(Process process) {
+        public InternalModule(Process process, string consoleOutput = "csv") {
             _process = process;
+            if (!string.IsNullOrEmpty(consoleOutput)) {
+                _consoleOutput = consoleOutput.ToLower();
+            }
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -85,7 +89,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "console":
-                                return new ConsoleWriter(new JsonNetSerializer(output));
+                                return new ConsoleWriter(_consoleOutput == "json" ? new JsonNetSerializer(output) : new CsvSerializer(output) as ISerialize);
                             case "trace":
                                 return new TraceWriter(new JsonNetSerializer(output));
                             case "internal":

@@ -32,6 +32,7 @@ namespace Pipeline.Command {
             };
 
             var options = new Options();
+
             if (CommandLine.Parser.Default.ParseArguments(args, options)) {
                 Environment.ExitCode = 0;
                 var builder = new ContainerBuilder();

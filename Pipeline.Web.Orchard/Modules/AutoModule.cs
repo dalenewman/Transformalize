@@ -67,9 +67,13 @@ namespace Pipeline.Web.Orchard.Modules {
                 new PlaceHolderValidator()
             )).As<JsonProcess>();
 
-            builder.Register(c => new RunTimeDataReader(new OrchardLogger())).As<IRunTimeRun>();
-            builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(new PipelineContext(new OrchardLogger(), new Process {Name = "RunTimeSchemaReader", Key = "RunTimeSchemaReader"}.WithDefaults())))).As<IRunTimeSchemaReader>();
-            builder.Register(c => new RunTimeExecuter(new PipelineContext(new OrchardLogger(), new Process { Name = "RunTimeExecuter", Key = "RunTimeExecutor"}.WithDefaults()))).As<IRunTimeExecute>();
+            var logger = new OrchardLogger();
+            var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" }.WithDefaults());
+
+            builder.Register(c => new RunTimeDataReader(logger)).As<IRunTimeRun>();
+            builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context))).As<IRunTimeSchemaReader>();
+            builder.Register(c => new SchemaHelper(context, c.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
+            builder.Register(c => new RunTimeExecuter(context)).As<IRunTimeExecute>();
 
         }
     }

@@ -43,8 +43,7 @@ namespace Pipeline.Configuration.Ext {
             DefaultFileInspection(p);
 
             foreach (var entity in p.Entities) {
-                var isInternal = p.Output().IsInternal();
-                if (isInternal) {
+                if (p.Output().IsInternal()) {
                     entity.CalculateHashCode = false;
                 }
                 try {
@@ -53,7 +52,7 @@ namespace Pipeline.Configuration.Ext {
                     error($"Trouble adapting fields created from transforms. {ex.Message}");
                 }
 
-                entity.AddSystemFields(!isInternal);
+                entity.AddSystemFields(p.Output().IsNotInternal());
                 entity.ModifyMissingPrimaryKey();
                 entity.ModifyIndexes();
             }
@@ -67,6 +66,14 @@ namespace Pipeline.Configuration.Ext {
             // possible candidates for PostValidate
             MergeParameters(p);
             SetPrimaryKeys(p);
+
+            // force primary key to output if not internal
+            if (p.Output().IsNotInternal()) {
+                foreach (var field in p.Entities.SelectMany(entity => p.GetAllFields().Where(field => field.PrimaryKey && !field.Output))) {
+                    warn($"Primary Keys must be output. Overriding output to true for {field.Alias}.");
+                    field.Output = true;
+                }
+            }
 
         }
 

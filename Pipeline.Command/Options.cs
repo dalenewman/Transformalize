@@ -23,20 +23,23 @@ namespace Pipeline.Command {
 
     public class Options {
 
-        [Option('c', "configuration", Required = true, HelpText = "The configuration file, or web address.")]
-        public string Configuration { get; set; }
+        [Option('a', "arrangement", Required = true, HelpText = "an arrangement (aka configuration) file, or url.")]
+        public string Arrangement { get; set; }
 
-        [Option('s', "schedule", Required = false, DefaultValue = "", HelpText = "cron expression (http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger)")]
-        public string CronExpression { get; set; }
+        [Option('s', "schedule", Required = false, HelpText = "a cron expression (http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger)")]
+        public string Schedule { get; set; }
 
-        [Option('l', "loglevel", Required = false, DefaultValue = LogLevel.Info, HelpText = "The log level (i.e. none, info, debug, warn, error).")]
+        [Option('l', "loglevel", Required = false, DefaultValue = LogLevel.Info, HelpText = "log level (i.e. none, info, debug, warn, error).")]
         public LogLevel LogLevel { get; set; }
 
-        [Option('t', "shorthand transformations", Required = false, DefaultValue = "Shorthand.xml", HelpText = "The shorthand transformations configuration file.")]
+        [Option('t', "shorthand transformations", Required = false, DefaultValue = "Shorthand.xml", HelpText = "shorthand transformations file.")]
         public string Shorthand { get; set; }
 
-        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode. WARNING: the mode 'init' destroys and rebuilds everything from scratch.")]
+        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
         public string Mode { get; set; }
+
+        [Option('o',"output", DefaultValue = "csv", Required = false, HelpText = "Output type (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
+        public string Output { get; set; }
 
         [HelpOption]
         public string GetUsage() {

@@ -21,6 +21,7 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
+using Pipeline.Logging;
 using Pipeline.Logging.NLog;
 using Quartz.Spi;
 
@@ -35,14 +36,17 @@ namespace Pipeline.Command {
 
         protected override void Load(ContainerBuilder builder) {
 
-            var name = Utility.Identifier(_options.Configuration, "-");
-            builder.Register((ctx, p) => new NLogPipelineLogger(name, _options.LogLevel)).As<IPipelineLogger>().SingleInstance();
-            builder.Register<IContext>(ctx => new PipelineContext(ctx.Resolve<IPipelineLogger>(), new Process { Name = "Scheduler", Key = "Scheduler" }.WithDefaults())).As<IContext>().SingleInstance();
-            builder.Register((ctx, p) => new QuartzJobFactory(ctx.Resolve<IContext>())).As<IJobFactory>().SingleInstance();
+            var name = Utility.Identifier(_options.Arrangement, "-");
+            var logger = _options.LogLevel == LogLevel.None ? new NullLogger() : new NLogPipelineLogger(name, _options.LogLevel) as IPipelineLogger;
+            var context = new PipelineContext(logger, new Process { Name = "Command"}.WithDefaults());
+
+            builder.RegisterInstance(context).As<IContext>().SingleInstance();
+            builder.Register(c => new RunTimeSchemaReader(c.Resolve<IContext>())).As<IRunTimeSchemaReader>();
+            builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(),ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
+            builder.Register((ctx, p) => new QuartzJobFactory(_options, ctx.Resolve<IContext>(), ctx.Resolve<ISchemaHelper>())).As<IJobFactory>().SingleInstance();
 
             builder.Register<IScheduler>((ctx, p) => {
-                var context = ctx.Resolve<IContext>();
-                if (string.IsNullOrEmpty(_options.CronExpression) || _options.Mode.In("init", "meta")) {
+                if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode.In("init", "check")) {
                     return new QuartzNowScheduler(_options, context, ctx.Resolve<IJobFactory>());
                 }
                 return new QuartzCronScheduler(_options, context, ctx.Resolve<IJobFactory>());

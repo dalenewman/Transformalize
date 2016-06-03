@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Pipeline.Contracts;
 
 namespace Pipeline {
@@ -30,7 +31,7 @@ namespace Pipeline {
         }
 
         public IRow Create() {
-            if(_keys)
+            if (_keys)
                 return new KeyRow(_capacity);
 
             return _isMaster ? new MasterRow(_capacity) : (IRow)new SlaveRow(_capacity);

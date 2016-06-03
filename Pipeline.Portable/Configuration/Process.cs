@@ -103,6 +103,7 @@ namespace Pipeline.Configuration {
         /// A mode reflects the intent of running the process.
         ///  
         /// * `init` wipes everything out
+        /// * `validate` just loads, validates the configuration
         /// * <strong>`default`</strong> moves data through the pipeline, from input to output.
         /// 
         /// Aside from these, you may use any mode (of your choosing).  Then, you can control

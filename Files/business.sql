@@ -20,7 +20,7 @@ CREATE TABLE `OrderHeader` (
 	`CustomerId` INTEGER NOT NULL,
 	`Created` TIMESTAMP NOT NULL,
 	`Modified` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-)
+);
 
 CREATE TABLE `Customer` (
 	`Id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
@@ -31,7 +31,7 @@ CREATE TABLE `Customer` (
 	`Suffix` TEXT NOT NULL,
 	`Created` TIMESTAMP NOT NULL,
 	`Modified` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-)
+);
 
 CREATE TABLE `OrderLine` (
 	`OrderHeaderId` INTEGER NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `OrderLine` (
 	`Created` TIMESTAMP NOT NULL,
 	`Modified` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	PRIMARY KEY (OrderHeaderId, ProductId)
-)
+);
 
 INSERT INTO Customer(Prefix,FirstName,MiddleName,LastName,Suffix,Created) VALUES ('Mr.','Derp','','Noobman','Jr',CURRENT_TIMESTAMP);
 INSERT INTO Customer(Prefix,FirstName,MiddleName,LastName,Suffix,Created) VALUES ('Mr.','Derl','P','Nooberman','',CURRENT_TIMESTAMP);

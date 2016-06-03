@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Newtonsoft.Json;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -30,5 +31,11 @@ namespace Pipeline.Ioc.Autofac {
         public string Serialize(IRow row) {
             return JsonConvert.SerializeObject(row.ToFriendlyExpandoObject(_context.OutputFields));
         }
+
+        string ISerialize.Header { get; } = "[";
+        string ISerialize.Footer { get; } = "]";
+        string ISerialize.RowSuffix { get; } = ",";
+        public string RowPrefix { get; } = "   ";
+
     }
 }

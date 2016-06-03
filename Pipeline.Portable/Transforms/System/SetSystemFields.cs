@@ -27,7 +27,6 @@ namespace Pipeline.Transforms.System {
         public SetSystemFields(IContext context) : base(context) {
             _tflBatchId = context.Entity.TflBatchId();
             _tflKey = context.Entity.TflKey();
-
         }
 
         public IRow Transform(IRow row) {

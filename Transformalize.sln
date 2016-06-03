@@ -23,6 +23,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{20
 		Articles\BackupSqlExpress.md = Articles\BackupSqlExpress.md
 		Articles\FantasyFootballKibana.md = Articles\FantasyFootballKibana.md
 		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
+		Articles\TransformalizeNorthWind.md = Articles\TransformalizeNorthWind.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Portable", "Pipeline.Portable\Pipeline.Portable.csproj", "{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}"
@@ -66,6 +67,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Command", "Pipeline.Command\Pipeline.Command.csproj", "{C0AD9D94-4126-4452-BD01-1118FB827F39}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Test", "Pipeline.Test\Pipeline.Test.csproj", "{BCA826D4-686E-4030-863A-27DB352C551C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326-F1A6-486F-89D1-ACA0E2A24720}"
+	ProjectSection(SolutionItems) = preProject
+		Files\business.sql = Files\business.sql
+		Files\business.sqlite3 = Files\business.sqlite3
+		Files\er-to-star.png = Files\er-to-star.png
+		Files\notepadpp.png = Files\notepadpp.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -170,5 +179,6 @@ Global
 		{0B7C9925-B90C-4E40-974A-EF1862D8728C} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{16042794-2E30-42D8-A6F9-F5D8020F9EF3} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
+		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 	EndGlobalSection
 EndGlobal

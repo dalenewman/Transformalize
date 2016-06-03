@@ -25,7 +25,7 @@ namespace Pipeline.Configuration {
     public class Entity : CfgNode {
         public bool IsMaster { get; set; }
 
-        [Cfg(required = false, unique = true)]
+        [Cfg(required = false, unique = true, value=null)]
         public string Alias { get; set; }
 
         [Cfg(value = "input", toLower = true)]

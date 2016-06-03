@@ -2,7 +2,7 @@
 AntiForgery: enabled
 Author: Dale Newman
 Website: 
-Version: 0.1.2
+Version: 0.1.3
 OrchardVersion: 1.8.1
 Description: Pipeline.Web.Orchard
 Dependencies: Orchard.ContentPermissions

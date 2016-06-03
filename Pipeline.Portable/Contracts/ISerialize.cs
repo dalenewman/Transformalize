@@ -18,5 +18,9 @@
 namespace Pipeline.Contracts {
     public interface ISerialize {
         string Serialize(IRow row);
+        string Header { get; }
+        string Footer { get; }
+        string RowSuffix { get; }
+        string RowPrefix { get; }
     }
 }

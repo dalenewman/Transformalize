@@ -28,10 +28,15 @@ namespace Pipeline.Command {
 
     [DisallowConcurrentExecution]
     public class RunTimeExecutor : IRunTimeExecute, IJob {
+        private readonly Options _options;
         private readonly IContext _context;
+        private readonly ISchemaHelper _schemaHelper;
+        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public RunTimeExecutor(IContext context) {
+        public RunTimeExecutor(Options options, IContext context, ISchemaHelper schemaHelper) {
+            _options = options;
             _context = context;
+            _schemaHelper = schemaHelper;
         }
 
         public void Execute(Process process) {
@@ -39,13 +44,52 @@ namespace Pipeline.Command {
             foreach (var warning in process.Warnings()) {
                 _context.Warn(warning);
             }
-            
+
             if (process.Errors().Any()) {
                 foreach (var error in process.Errors()) {
                     _context.Error(error);
                 }
                 _context.Error("The configuration errors must be fixed before this job will run.");
                 return;
+            }
+
+            if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
+                if (_schemaHelper.Help(process)) {
+                    if (process.Errors().Any()) {
+                        foreach (var error in process.Errors()) {
+                            _context.Error(error);
+                        }
+                        _context.Error("The configuration errors must be fixed before this job will run.");
+                        return;
+                    }
+                }
+            }
+
+            if (_options.Mode != null && _options.Mode.ToLower() == "check") {
+                foreach (var entity in process.Entities) {
+                    if (entity.Name == entity.Alias) {
+                        entity.Alias = null;
+                    }
+                    entity.Fields.RemoveAll(f => f.System);
+                }
+                foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
+                    field.T = string.Empty;
+                }
+                foreach (var field in process.GetAllFields()) {
+                    if (field.Name == field.Alias) {
+                        field.Alias = null;
+                    }
+                    if (field.Name == field.Label) {
+                        field.Label = string.Empty;
+                    }
+                }
+                Console.WriteLine(process.Serialize());
+                return;
+            }
+
+            // Since we're in a Console app
+            if (process.Output().IsInternal()) {
+                process.Output().Provider = "console";
             }
 
             var builder = new ContainerBuilder();
@@ -58,7 +102,7 @@ namespace Pipeline.Command {
             builder.RegisterCallback(new LuceneModule(process).Configure);
             builder.RegisterCallback(new SolrModule(process).Configure);
             builder.RegisterCallback(new ElasticModule(process).Configure);
-            builder.RegisterCallback(new InternalModule(process).Configure);
+            builder.RegisterCallback(new InternalModule(process, _options.Output).Configure);
             builder.RegisterCallback(new FileModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);
@@ -95,8 +139,8 @@ namespace Pipeline.Command {
         public void Execute(IJobExecutionContext context) {
             var cfg = context.MergedJobDataMap.Get("cfg") as string;
             var shorthand = context.MergedJobDataMap.Get("shorthand") as string;
-            var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { { "mode", context.MergedJobDataMap.Get("mode") as string } };
-            Execute(cfg, shorthand, parameters);
+            Parameters.Add("mode", context.MergedJobDataMap.Get("mode") as string);
+            Execute(cfg, shorthand, Parameters);
         }
 
     }

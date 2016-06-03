@@ -30,7 +30,6 @@ namespace Pipeline.Configuration {
 
         string _type;
         string _length;
-        string _alias;
         private int _precision;
         private int _scale;
 
@@ -265,20 +264,8 @@ namespace Pipeline.Configuration {
         /// else.  An alias must be unique across the entire process.  The only exception to this rule is when the 
         /// field is a primary key that is related to another entity's foreign key (of the same name).
         /// </summary>
-        [Cfg(required = false, unique = true)]
-        public string Alias
-        {
-            get
-            {
-                return _alias;
-            }
-            set
-            {
-                if (value != null) {
-                    _alias = value;
-                }
-            }
-        }
+        [Cfg(required = false, unique = true, value = null)]
+        public string Alias { get; set; }
 
         /// <summary>
         /// Optional. The default varies based on type.
@@ -406,10 +393,6 @@ namespace Pipeline.Configuration {
 
             if (Label == string.Empty) { Label = Alias; }
 
-            if (Type != "string") {
-                DefaultBlank = true;
-            }
-
             if (Type == "rowversion") { Length = "8"; }
 
             if (Type == "char" && Length == "64") {
@@ -417,11 +400,6 @@ namespace Pipeline.Configuration {
                     Warn($"The field {Alias} is a char, but has a length of {Length}.  A char may only hold 1 character, so it's length is set to 1.");
                 }
                 Length = "1";
-            }
-
-            if (PrimaryKey && !Output) {
-                Warn("Primary Keys must be output. Overriding output to true for {0}.", Alias);
-                Output = true;
             }
 
         }

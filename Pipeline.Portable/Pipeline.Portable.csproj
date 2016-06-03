@@ -56,6 +56,7 @@
     <Compile Include="Contracts\IRunTimeExecute.cs" />
     <Compile Include="Contracts\IRunTimeRun.cs" />
     <Compile Include="Contracts\IRunTimeSchemaReader.cs" />
+    <Compile Include="Contracts\ISchemaHelper.cs" />
     <Compile Include="Contracts\IWriteMasterUpdateQuery.cs" />
     <Compile Include="CfgRow.cs" />
     <Compile Include="EntityStatus.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadFrom.cs" />
     <Compile Include="RowFactory.cs" />
+    <Compile Include="SchemaHelper.cs" />
     <Compile Include="SlaveRow.cs" />
     <Compile Include="Transforms\AnyTransform.cs" />
     <Compile Include="Transforms\BaseTransform.cs" />

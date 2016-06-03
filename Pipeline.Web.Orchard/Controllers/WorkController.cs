@@ -76,10 +76,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                 }
 
                 PageHelper(process);
-                if (SchemaHelper(process, parameters)) {
+                if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
+                    var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
+                    if (schemaHelper.Help(process)) {
                     if (process.Errors().Any()) {
                         return Get503("Run", process, format, timer.ElapsedMilliseconds);
                     }
+                }
                 }
 
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
@@ -118,10 +121,10 @@ namespace Pipeline.Web.Orchard.Controllers {
             return Get401("Cfg", _orchardServices, "xml");
         }
 
-        [ActionName("Api/Load")]
-        public ContentResult Load(int id) {
+        [ActionName("Api/Check")]
+        public ContentResult Validate(int id) {
 
-            const string action = "Load";
+            const string action = "Check";
             var timer = new Stopwatch();
             timer.Start();
 
@@ -144,15 +147,18 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
-                if (SchemaHelper(process, parameters)) {
+                if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
+                    var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
+                    if (schemaHelper.Help(process)) {
                     if (process.Errors().Any()) {
-                        return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                            return Get503(action, process, format, timer.ElapsedMilliseconds);
+                        }
                     }
                 }
 
                 SystemFieldHelper(process);
                 ShorthandHelper(process);
-                process.Request = "Load";
+                process.Request = action;
                 process.Status = 200;
                 process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
                 process.Message = "Ok";
@@ -183,38 +189,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
                 field.T = string.Empty;
             }
-        }
-
-        private bool SchemaHelper(Process process, IDictionary<string, string> parameters) {
-            var result = false;
-            foreach (var entity in process.Entities) {
-
-                if (entity.Fields.Any(f => f.Input)) {
-                    continue;
-                }
-
-                var schemaReader = _orchardServices.WorkContext.Resolve<IRunTimeSchemaReader>();
-                schemaReader.Process = process;
-                var schema = schemaReader.Read(entity);
-                if (!schema.Entities.Any()) {
-                    continue;
-                }
-
-                var e = schema.Entities.First();
-                var fields = e.Fields;
-                foreach (var field in fields.Where(field => Constants.InvalidFieldNames.Contains(field.Name) && Constants.InvalidFieldNames.Contains(field.Alias))) {
-                    field.Alias = e.Alias + field.Name;
-                }
-                entity.Fields = schema.Entities.First().Fields.Where(f=>!f.System).ToList();
-                result = true;
-            }
-
-            if (result) {
-                var cfg = process.Serialize();
-                process.Load(cfg, parameters);
-            }
-
-            return result;
         }
 
         private void PageHelper(Process process) {

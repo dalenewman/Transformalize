@@ -101,6 +101,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CsvSerializer.cs" />
     <Compile Include="FolderReader.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="Modules\ActionModule.cs" />

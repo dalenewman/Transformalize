@@ -33,7 +33,7 @@ namespace Pipeline.Web.Orchard {
 
                 RouteDescriptor("Work", "Api/Cfg"),
                 RouteDescriptor("Work", "Api/Cfg", "Api/Configuration"),
-                RouteDescriptor("Work", "Api/Load"),
+                RouteDescriptor("Work", "Api/Check"),
                 RouteDescriptor("Work", "Api/Run"),
 
                 new RouteDescriptor {

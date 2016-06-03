@@ -28,8 +28,24 @@ namespace Pipeline.Desktop.Writers {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            foreach (var row in rows) {
-                Console.Out.WriteLine(_serializer.Serialize(row));
+            if (!string.IsNullOrEmpty(_serializer.Header)) {
+                Console.Out.WriteLine(_serializer.Header);
+            }
+
+            using (var enumerator = rows.GetEnumerator()) {
+                var last = !enumerator.MoveNext();
+
+                while (!last) {
+                    var current = enumerator.Current;
+                    last = !enumerator.MoveNext();
+                    Console.Out.Write(_serializer.RowPrefix);
+                    Console.Out.Write(_serializer.Serialize(current));
+                    Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_serializer.Footer)) {
+                Console.Out.WriteLine(_serializer.Footer);
             }
         }
     }

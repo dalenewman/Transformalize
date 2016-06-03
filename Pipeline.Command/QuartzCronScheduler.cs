@@ -37,7 +37,7 @@ namespace Pipeline.Command {
         }
 
         public void Start() {
-            _context.Info("Starting Scheduler: {0}", _options.CronExpression);
+            _context.Info("Starting Scheduler: {0}", _options.Schedule);
             _scheduler.Start();
             var group = "Pipeline.Net";
 
@@ -46,7 +46,7 @@ namespace Pipeline.Command {
                 .StoreDurably(false)
                 .RequestRecovery(false)
                 .WithDescription("Pipeline.Net Quartz Job")
-                .UsingJobData("cfg", _options.Configuration)
+                .UsingJobData("cfg", _options.Arrangement)
                 .UsingJobData("shorthand", _options.Shorthand)
                 .UsingJobData("mode", _options.Mode)
                 .Build();
@@ -54,7 +54,7 @@ namespace Pipeline.Command {
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("Tgr", group)
                 .StartNow()
-                .WithCronSchedule(_options.CronExpression, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
+                .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
                 .Build();
 
             _scheduler.ScheduleJob(job, trigger);

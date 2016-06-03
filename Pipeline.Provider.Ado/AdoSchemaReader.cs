@@ -91,11 +91,19 @@ namespace Pipeline.Provider.Ado {
 
         private static void AddLengthAndPrecision(Field field, DataRow row) {
             if (field.Type.In("string", "byte[]")) {
-                var l = Convert.ToInt32(row["ColumnSize"]);
-                field.Length = l == 2147483647 || l < 0 ? "max" : row["ColumnSize"].ToString();
+
+                if (row["ColumnSize"] != DBNull.Value) {
+                    var size = Convert.ToInt32(row["ColumnSize"]);
+                    field.Length = size == 2147483647 || size < 0 ? "max" : row["ColumnSize"].ToString();
+                }
+
             } else if (field.Type == "decimal") {
-                field.Precision = Convert.ToInt32(row["NumericPrecision"]);
-                field.Scale = Convert.ToInt32(row["NumericScale"]);
+
+                if (row["NumericPrecision"] != DBNull.Value)
+                    field.Precision = Convert.ToInt32(row["NumericPrecision"]);
+
+                if (row["NumericScale"] != DBNull.Value)
+                    field.Scale = Convert.ToInt32(row["NumericScale"]);
             }
         }
 
