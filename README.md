@@ -5,39 +5,69 @@ Transformalize is released under the Apache 2 license.
 
 
 ## What is it?
-Transformalize is a configurable ETL solution specializing in incremental 
-de-normalization.
+Transformalize is a configurable [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) solution specializing in incremental 
+[denormalization](https://en.wikipedia.org/wiki/Denormalization). It is used to prepare data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse), 
+[search engines](https://en.wikipedia.org/wiki/Search_engine_(computing)), and other 
+forms of analysis and/or presentation. Transformalize may also be referred to as *TFL*.
+
 
 ### <a name="CFG"></a>Configurable
+TFL processes are designed in an [XML](https://en.wikipedia.org/wiki/XML) or 
+[JSON](https://en.wikipedia.org/wiki/JSON) editor. Designing a process is writing a 
+configuration. A TFL process *configuration* may also be referred to as an *arrangement*.
 
-Transformalize processes are designed in an [XML](https://en.wikipedia.org/wiki/XML) or 
-[JSON](https://en.wikipedia.org/wiki/JSON) editor. Designing a process is the same 
-as writing a configuration.
+TFL is configurable in order to embrace change.  To incorpate a change request:
+
+1. Disable incremental processing
+1. Edit your XML or JSON arrangement.
+1. Execute TFL in `init` mode (to rebuild it)
+1. Enable incremental processing
+
+A TFL output is disposable.  You may routinely create and destroy it.
 
 ### <a name="ETL"></a>ETL
-At it's heart, Transformalize is an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) (**E**xtract, 
-**T**ransform, and **L**oad) solution. 
-It's not for general-purpose ETL.  Instead, it's for transforming relational tables into 
-[star-schemas](https://en.wikipedia.org/wiki/Star_schema).
+At it's heart, TFL is an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
+(**E**xtract, **T**ransform, and **L**oad) solution. However, it doesn't cover all forms of ETL. 
+Instead, it specializes in transforming relational models 
+into [star-schemas](https://en.wikipedia.org/wiki/Star_schema).  While the input varies, the 
+output is predetermined.
 
-### <a name="DEN"></a>Denormalization
+### <a name="DEN"></a>De-normalization
 [Normalization](https://en.wikipedia.org/wiki/Database_normalization) of data is 
-performed to minimize data redundancy. Data is separated into meaningful entities 
-and related with keys. This is optimal for storage with integrity, but introduces 
-complexity and performance issues for retrieval.
+performed to maintain data integrity and minimize data redundancy. Data is separated into meaningful 
+entities and related with keys.  Integrity is enforced by constraints and relationships. While 
+this is optimal for storage, it introduces some complexity and performance issues for retrieval.
 
-[Denormalization](https://en.wikipedia.org/wiki/Denormalization) reverses normalization 
+[De-normalization](https://en.wikipedia.org/wiki/Denormalization) reverses normalization 
 in order to reduce complexity and improve performance of retrieval.
 
-Ideally, we want the benefits of both normalized and de-normalized data. So, we store 
+Ideally, we want the benefits of normalized and de-normalized data. So, we store 
 data in a normalized [RDBMS](https://en.wikipedia.org/wiki/Relational_database_management_system), 
-and de-normalize it for our data-warehouses.
+and we de-normalize it for our [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse), 
+[search engines](https://en.wikipedia.org/wiki/Search_engine_(computing)), and other needs.
 
-Using relational input and output, a Transformalize process re-arranges related entities 
+Using relational input and output, a TFL process re-arranges related entities 
 into a star-schema and provides a de-normalized (flat) view of the data.
 
 ![Relational to Star](Files/er-to-star.png)
 
+In the graphic above, TFL transforms the relational model (on the left), to the star-schema (on the right). 
+It is easier for other value-adding data services to take advantage of the star-schema.  The data in 
+the star-schema is kept updated by TFL's ability to process incrementals.
+
+### Incrementals
+Initially, TFL processes all of your data per the arrangement. Subsequent 
+processing targets new, updated, and deleted data. If you do not physically 
+delete rows, but instead mark rows as *deleted*, then you may omit checking 
+for deletes. Setup with *version* fields (a field that increments it's value on update), 
+incrementals are fast and efficient.
+
+TFL may be setup as a service with [nssm](https://nssm.cc) and run 
+incrementals based on cron expressions (enabled by [Quartz.net](http://www.quartz-scheduler.net/)).
+
+---
+
+<!--
 Currently implemented SQL-based providers are:
 
 * SQL Server
@@ -54,44 +84,16 @@ to push denormalized data elsewhere. They are:
 * Files
 * Memory (for other forms of presentation)
 
-### <a name="INC"></a>Incremental
-Initially, Transformalize processes all your data. Subsequent 
-processing targets new, updated, and/or deleted data.  Setup 
-with *version* fields (a field that increments on every update), 
-subsequent processing can be very fast and efficient.
+-->
 
-Transformalize may be setup as a service to run 
-incrementals based on a cron expression (enabled by [Quartz.net](http://www.quartz-scheduler.net/)). 
+### Getting Started
 
-### <a name="CHG"></a>Agile
-Usually, when you gather data from many sources, it's for something like 
-a [data warehouse](https://en.wikipedia.org/wiki/Data_warehouse) or 
-[search engine](https://en.wikipedia.org/wiki/Search_engine_(computing)). These support 
-analysis, browsing, and/or searching.
+The best way you can understand how to use TFL is by reviewing samples.
 
-In business, when you present data to whomever is asking for it, 
-they're first response is to ask for more or different data :-)  This is the 
-*nature of the beast*, so you need to be able to add more and/or different 
-data quickly.  Transformalize has an easy way to handle change requests:
-
-1. Stop incremental processing
-1. Modify your configuration
-1. Re-process (initialize)
-1. Re-enable incremental processing
-
-*Transformalized* output is usually treated as disposable.  It is routine to 
-create and destroy it.
-
----
-
-## Getting Started
-
-### Sample Data
-To demonstrate, I need data.  So, using [SQLite Browser](http://sqlitebrowser.org/), 
-I created the database: [business.sqlite3](Files\business.sqlite3). 
-The script is also [available](Files\business.sql).  There are five small 
-tables: `Company`, `Product`, `Customer`, `OrderHeader`, and `OrderLine`.  To retrieve all 
-the data from it, we'd write a query like this:
+#### Sample Data
+I used [SQLite Browser](http://sqlitebrowser.org/) to create the database: [business.sqlite3](Files/business.sqlite3) with 
+this [script](Files/business.sql). There are five small entities: `Company`, `Product`, `Customer`, `OrderHeader`, and `OrderLine`. 
+To retrieve all relevent data from it, one writes a query like this:
 
 ```sql
 SELECT
@@ -117,12 +119,14 @@ INNER JOIN Product p ON (p.Id = ol.ProductId)
 INNER JOIN Company co ON (co.Id = p.CompanyId);
 ```
 
-As the model and data grow, the query's complexity will 
-increase, and it's performance will decrease.
+As you can see by the query above, with just five entities, there is some 
+complexity in retrieving the data.  Moreover, as the model and data grow, the query's complexity 
+increases, and retrieval performance decreases.
 
-#### Order Line
-Let's start with `OrderLine` since it's related to everything. 
-Create *c:\temp\Business.Xml* and copy the XML:
+#### A Single Entity: OrderLine
+
+Let's start with `OrderLine` since it is the most important fact in our model, and it is related 
+to everything.  Create the file *c:\temp\Business.Xml* and copy/paste the XML below into it:
 
 ```xml
 <cfg name="Business">
@@ -188,10 +192,9 @@ TBC (To be Continued)...
 
 ---
 
-**NOTE**: This code-base is the second implementation of the idea and principles 
-defined above.  To find out more about how Transformalize works, 
-you can read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind) 
-on Code Project (based on the first implementation).
+**NOTE**: This code-base is the 2nd implementation.  To find out more about 
+how Transformalize works, you can read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind) 
+on Code Project (based on the 1st implementation).
 
  
 
