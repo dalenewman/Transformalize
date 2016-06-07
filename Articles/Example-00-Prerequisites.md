@@ -47,7 +47,7 @@ making them easier and faster to query.
 
 To setup your development environment:
 
-- download and decompress the latest release of Transformalize to *c:\tfl*. 
+- download and decompress the [latest release](https://github.com/dalenewman/Transformalize/releases) of TFL to *c:\tfl*. 
 - download [business.sqlite3](../Files/business.sqlite3) and place in *c:\tfl\data*.
 - open a command prompt, and run:
 
