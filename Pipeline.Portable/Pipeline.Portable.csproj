@@ -167,6 +167,7 @@
     <Compile Include="RowFactory.cs" />
     <Compile Include="SchemaHelper.cs" />
     <Compile Include="SlaveRow.cs" />
+    <Compile Include="Transforms\AddTransform.cs" />
     <Compile Include="Transforms\AnyTransform.cs" />
     <Compile Include="Transforms\BaseTransform.cs" />
     <Compile Include="Transforms\ConcatTransform.cs" />
@@ -184,8 +185,8 @@
     <Compile Include="Transforms\LastTransform.cs" />
     <Compile Include="Transforms\LeftTransform.cs" />
     <Compile Include="Transforms\MapTransform.cs" />
+    <Compile Include="Transforms\MultiplyTransform.cs" />
     <Compile Include="Transforms\NextTransform.cs" />
-    <Compile Include="Transforms\NowTransform.cs" />
     <Compile Include="Transforms\PadLeftTransform.cs" />
     <Compile Include="Transforms\PadRightTransform.cs" />
     <Compile Include="Transforms\RegexReplaceTransform.cs" />

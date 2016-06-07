@@ -39,11 +39,8 @@ namespace Pipeline.Test {
           </fields>
           <calculated-fields>
             <add name='c1' type='bool' t='copy(Field1).contains(1)' />
-            <add name='c2' type='string' t='copy(Field1).contains(2)' />
             <add name='c3' type='bool' t='copy(Field2).contains(1).contains(2)' />
             <add name='c4' type='bool' t='copy(Field2).contains(1).contains(3)' />
-            <add name='c5' t='copy(Field2).contains(1).contains(2)' />
-            <add name='c6' t='copy(Field2).contains(1).contains(3)' />
           </calculated-fields>
         </add>
       </entities>
@@ -57,13 +54,10 @@ namespace Pipeline.Test {
             var process = composer.Process;
 
             Assert.AreEqual(true, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c1")]);
-            Assert.AreEqual("Field1 does not contain 2.", output[0][process.Entities.First().CalculatedFields.First(cf=>cf.Name=="c2")]);
 
             Assert.AreEqual(true, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c3")]);
             Assert.AreEqual(false, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c4")]);
 
-            Assert.AreEqual(string.Empty, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c5")]);
-            Assert.AreEqual("Field2 does not contain 3.", output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c6")]);
 
         }
     }

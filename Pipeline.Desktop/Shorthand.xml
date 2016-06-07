@@ -33,7 +33,7 @@
       <parameters>
         <add name="from-time-zone" value="UTC" />
       </parameters>
-    </add>    
+    </add>
     <add name="value">
       <parameters>
         <add name="value" />
@@ -144,14 +144,21 @@
   </targets>
 
   <methods>
+    <add name="add" signature="none" target="t" />
+    <add name="any" signature="any" target="t" />
     <add name="concat" signature="none" target="t" />
-    <add name="convert" signature="type" target="t" />
+    <add name="connection" signature="property" target="t" />
     <add name="contains" signature="value" target="t" />
+    <add name="convert" signature="type" target="t" />
     <add name="copy" signature="none" target="ignore" />
     <add name="cs" signature="script" target="t" />
     <add name="csharp" signature="script" target="t" />
+    <add name="datediff" signature="datediff" target="t" />
     <add name="datepart" signature="datepart" target="t" />
     <add name="decompress" signature="none" target="t" />
+    <add name="fileext" signature="none" target="t" />
+    <add name="filename" signature="file" target="t" />
+    <add name="filepath" signature="file" target="t" />
     <add name="format" signature="format" target="t" />
     <add name="formatphone" signature="none" target="t" />
     <add name="hashcode" signature="none" target="t" />
@@ -163,40 +170,36 @@
     <add name="js" signature="script" target="t" />
     <add name="last" signature="dayofweek" target="t" />
     <add name="left" signature="length" target="t" />
+    <add name="lower" signature="none" target="t" />
     <add name="map" signature="map" target="t" />
+    <add name="multiply" signature="none" target="t" />
     <add name="next" signature="dayofweek" target="t" />
     <add name="now" signature="none" target="t" />
     <add name="padleft" signature="padding" target="t" />
     <add name="padright" signature="padding" target="t" />
+    <add name="razor" signature="razor" target="t" />
     <add name="regexreplace" signature="regexreplace" target="t" />
     <add name="remove" signature="remove" target="t" />
     <add name="replace" signature="replace" target="t" />
     <add name="right" signature="length" target="t" />
     <add name="splitlength" signature="separator" target="t" />
     <add name="substring" signature="substring" target="t" />
+    <add name="sum" signature="none" target="t" />
     <add name="timeago" signature="fromtimezone" target="t" />
     <add name="timeahead" signature="fromtimezone" target="t" />
     <add name="timezone" signature="timezone" target="t" />
     <add name="tolower" signature="none" target="t" />
-    <add name="lower" signature="none" target="t" />
     <add name="tostring" signature="format" target="t" />
+    <add name="totime" signature="none" target="t" />
     <add name="toupper" signature="none" target="t" />
-    <add name="upper" signature="none" target="t" />
     <add name="toyesno" signature="none" target="t" />
     <add name="trim" signature="trim" target="t" />
     <add name="trimend" signature="trim" target="t" />
     <add name="trimstart" signature="trim" target="t" />
+    <add name="upper" signature="none" target="t" />
     <add name="utcnow" signature="none" target="t" />
     <add name="xmldecode" signature="none" target="t" />
-    <add name="totime" signature="none" target="t" />
-    <add name="razor" signature="razor" target="t" />
-    <add name="any" signature="any" target="t" />
-    <add name="connection" signature="property" target="t" />
-    <add name="filename" signature="file" target="t" />
-    <add name="filepath" signature="file" target="t" />
-    <add name="fileext" signature="none" target="t" />
     <add name="xpath" signature="xpath" target="t" />
-    <add name="datediff" signature="datediff" target="t" />
   </methods>
 
 </cfg>

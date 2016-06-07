@@ -21,6 +21,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037}"
 	ProjectSection(SolutionItems) = preProject
 		Articles\BackupSqlExpress.md = Articles\BackupSqlExpress.md
+		Articles\Example-00-Prerequisites.md = Articles\Example-00-Prerequisites.md
+		Articles\Example-01-Single-Entity.md = Articles\Example-01-Single-Entity.md
 		Articles\FantasyFootballKibana.md = Articles\FantasyFootballKibana.md
 		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
 		Articles\TransformalizeNorthWind.md = Articles\TransformalizeNorthWind.md
@@ -74,6 +76,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 		Files\business.sqlite3 = Files\business.sqlite3
 		Files\er-to-star.png = Files\er-to-star.png
 		Files\notepadpp.png = Files\notepadpp.png
+		Files\npp-orderline-csv.jpg = Files\npp-orderline-csv.jpg
+		Files\vscode-orderline-json.jpg = Files\vscode-orderline-json.jpg
 	EndProjectSection
 EndProject
 Global

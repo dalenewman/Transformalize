@@ -47,7 +47,6 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
             builder.Register(ctx => new JintValidator("js")).Named<IValidator>("js");
 
             builder.Register(ctx => new EnvironmentModifier(
@@ -77,7 +76,6 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
-                    ctx.Resolve<ISerializer>(),
                     new PlaceHolderModifier(),
                     ctx.Resolve<IRootModifier>(),
                     ctx.ResolveNamed<IValidator>("js"),

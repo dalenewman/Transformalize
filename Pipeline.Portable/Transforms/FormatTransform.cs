@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -25,7 +26,7 @@ namespace Pipeline.Transforms {
 
         readonly Field[] _input;
 
-        public FormatTransform(PipelineContext context)
+        public FormatTransform(IContext context)
             : base(context) {
             _input = MultipleInput();
         }

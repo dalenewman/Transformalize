@@ -52,14 +52,18 @@ namespace Pipeline.Ioc.Autofac.Modules {
         static ITransform SwitchTransform(IComponentContext ctx, PipelineContext context) {
 
             switch (context.Transform.Method) {
+                case "add":
+                case "sum":
+                    return new AddTransform(context);
+                case "multiply":
+                    return new MultiplyTransform(context);
                 case "convert": return new ConvertTransform(context);
-                case "now": return new NowTransform(context);
                 case "toyesno": return new ToYesNoTransform(context);
                 case "regexreplace": return new CompiledRegexReplaceTransform(context);
                 // (portable) case "regexreplace": return new RegexReplaceTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "formatphone": return new FormatPhoneTransform(context);
-                case "utcnow":return new UtcNowTransform(context);
+                case "now": return new UtcNowTransform(context);
                 case "timeago": return new RelativeTimeTransform(context, true);
                 case "timeahead": return new RelativeTimeTransform(context, false);
                 case "format": return new FormatTransform(context);

@@ -23,7 +23,8 @@ namespace Pipeline {
     public static class Constants {
 
         static HashSet<string> _types;
-        private static HashSet<string> _providers;
+        static HashSet<string> _numericTypes;
+        static HashSet<string> _providers;
         static Dictionary<string, object> _typeDefaults;
         static Dictionary<string, string> _stringDefaults;
         static Dictionary<string, Type> _typeSystem;
@@ -35,6 +36,7 @@ namespace Pipeline {
         public const string ProviderDomain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
+        public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
 
         public const string ComparisonDomain = "equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=";
         public const string ValidatorDomain = "contains";
@@ -49,6 +51,9 @@ namespace Pipeline {
             return _types ?? (_types = new HashSet<string>(TypeDomain.Split(',')));
         }
 
+        public static HashSet<string> NumericTypeSet() {
+            return _numericTypes ?? (_numericTypes = new HashSet<string>(NumericTypeDomain.Split(',')));
+        }
         public static HashSet<string> ProviderSet() {
             return _providers ?? (_providers = new HashSet<string>(ProviderDomain.Split(',')));
         }

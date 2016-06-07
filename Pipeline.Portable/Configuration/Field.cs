@@ -505,5 +505,8 @@ namespace Pipeline.Configuration {
         [Cfg(value = "none", domain = "asc,desc,none", toLower = true, ignoreCase = true)]
         public string Order { get; set; }
 
+        public bool IsNumeric() {
+            return Constants.NumericTypeSet().Contains(Type);
+        }
     }
 }

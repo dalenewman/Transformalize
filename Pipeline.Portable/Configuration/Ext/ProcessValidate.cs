@@ -273,6 +273,15 @@ namespace Pipeline.Configuration.Ext {
 
             // check input types
             switch (t.Method) {
+                case "add":
+                case "sum":
+                case "multiply":
+                    foreach (var f in fields) {
+                        if (!f.IsNumeric()) {
+                            error($" The {t.Method} method expects numeric input, but {input.Alias} is {input.Type}.");
+                        }
+                    }
+                    break;
                 case "timezone":
                 case "datepart":
                 case "next":
@@ -516,6 +525,13 @@ namespace Pipeline.Configuration.Ext {
             // check output types
             if (context.Transform == lastTransform) {
                 switch (lastTransform.Method) {
+                    case "sum":
+                    case "add":
+                    case "multiply":
+                        if (!context.Field.IsNumeric()) {
+                            error($"The {context.Field.Alias} field is a {context.Field.Type}, but it needs to be numeric to accept the output of the {lastTransform.Method} method.");
+                        }
+                        break;
                     case "convert":
                         if (lastTransform.Type != Constants.DefaultSetting && lastTransform.Type != context.Field.Type) {
                             error($"The {context.Field.Alias} field is a {context.Field.Type}, but your last transform is converting to a {lastTransform.Type}.");
