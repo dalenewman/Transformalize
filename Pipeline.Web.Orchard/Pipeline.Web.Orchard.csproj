@@ -25,6 +25,7 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>6150715d</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,16 +56,16 @@
       <HintPath>..\..\..\..\lib\autofac\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Environment, Version=0.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Environment.0.0.2\lib\Cfg.Net.Environment.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Environment\bin\Debug\Cfg.Net.Environment.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Reader\bin\Debug\Cfg.Net.Reader.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Shorthand\bin\Debug\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
     <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -188,6 +189,8 @@
     <Content Include="Module.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Impl\RunTimeExecuter.cs" />
     <Compile Include="Impl\RunTimeRunner.cs" />
     <Compile Include="Impl\RunTimeSchemaReader.cs" />
@@ -212,8 +215,8 @@
     <Compile Include="Impl\OrchardLogger.cs" />
     <Compile Include="Impl\PipelineAction.cs" />
     <Compile Include="Modules\AutoModule.cs" />
-    <Compile Include="Controllers\WorkController.cs" />
-    <Compile Include="Controllers\ConfigurationsController.cs" />
+    <Compile Include="Controllers\ApiController.cs" />
+    <Compile Include="Controllers\ListController.cs" />
     <Compile Include="Drivers\PipelineConfigurationPartDriver.cs" />
     <Compile Include="Handlers\PipelineConfigurationPartHandler.cs" />
     <Compile Include="Migrations.cs" />
@@ -227,7 +230,7 @@
     <Compile Include="Services\IpRangeService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Configurations\Index.cshtml" />
+    <Content Include="Views\List\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineConfiguration.cshtml" />
     <Content Include="Views\Shared\XmlConfigurationEditor.cshtml" />
   </ItemGroup>
@@ -239,6 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
+    <Content Include="Views\Report\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">

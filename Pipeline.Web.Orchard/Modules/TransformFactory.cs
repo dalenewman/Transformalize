@@ -53,8 +53,12 @@ namespace Pipeline.Web.Orchard.Modules {
         static ITransform SwitchTransform(IComponentContext ctx, PipelineContext context) {
 
             switch (context.Transform.Method) {
+                case "sum":
+                case "add": return new AddTransform(context);
+                case "multiply":
+                    return new MultiplyTransform(context);
                 case "convert": return new ConvertTransform(context);
-                case "now": return new NowTransform(context);
+                case "now": return new UtcNowTransform(context);
                 case "toyesno": return new ToYesNoTransform(context);
                 case "regexreplace": return new CompiledRegexReplaceTransform(context);
                 // (portable) case "regexreplace": return new RegexReplaceTransform(context);

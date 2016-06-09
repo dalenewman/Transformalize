@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Cfg.Net;
 
@@ -27,20 +29,25 @@ namespace Pipeline.Configuration {
         string _type;
         private string _field;
         private string _entity;
+        private readonly HashSet<char> _illegal = new HashSet<char> { ';', '\'', '`', '"' };
 
         [Cfg(value = "")]
-        public string Entity {
+        public string Entity
+        {
             get { return _entity; }
-            set {
+            set
+            {
                 _entity = value;
                 _loadedField = null;  //invalidate cache
             }
         }
 
         [Cfg(value = "")]
-        public string Field {
+        public string Field
+        {
             get { return _field; }
-            set {
+            set
+            {
                 _field = value;
                 _loadedField = null; //invalidate cache
             }
@@ -53,8 +60,25 @@ namespace Pipeline.Configuration {
         [Cfg(value = true)]
         public bool Input { get; set; }
 
+        protected override void Validate() {
+            switch (Type) {
+                case "string":
+                    if (!string.IsNullOrEmpty(Value) && Value.ToCharArray().Any(c => _illegal.Contains(c))) {
+                        Error($"The parameter {Name} contains an illegal character (e.g. {string.Join(",", _illegal)}).");
+                    }
+                    break;
+                default:
+                    if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
+                        Error($"The parameter {Name} is supposed to be a {Type}, but it can not be parsed as such.");
+                    }
+                    break;
+            }
+
+        }
+
         [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
-        public string Type {
+        public string Type
+        {
             get { return _type; }
             set { _type = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
         }
@@ -99,6 +123,8 @@ namespace Pipeline.Configuration {
             }
             return null;
         }
+
+
     }
 
 }

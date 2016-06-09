@@ -62,6 +62,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new FileModule(process).Configure);
             container.RegisterCallback(new ExcelModule(process).Configure);
 
+            container.RegisterCallback(new MapModule(process).Configure);
+
             container.RegisterCallback(new EntityPipelineModule(process).Configure);
             container.RegisterCallback(new ProcessPipelineModule(process).Configure);
             container.RegisterCallback(new ProcessControlModule(process).Configure);

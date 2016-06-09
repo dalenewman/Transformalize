@@ -47,6 +47,8 @@ namespace Pipeline.Web.Orchard.Impl {
             nested.RegisterCallback(new FileModule(process).Configure);
             nested.RegisterCallback(new ExcelModule(process).Configure);
 
+            nested.RegisterCallback(new MapModule(process).Configure);
+
             nested.RegisterType<NullOutputController>().Named<IOutputController>(entity.Key);
             nested.RegisterType<NullWriter>().Named<IWrite>(entity.Key);
             nested.RegisterType<NullUpdater>().Named<IUpdate>(entity.Key);
