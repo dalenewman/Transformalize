@@ -1,0 +1,98 @@
+﻿@using Pipeline.Configuration
+@model Process
+@{
+    Style.Require("jQueryUI_Orchard");
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+
+    var parameters = !string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First(e => e.Name == Model.Environment).Parameters : Model.Environments.First().Parameters;
+}
+
+<h3>@Model.Name</h3>
+@if (Model.Errors().Any()) {
+    foreach (var error in Model.Errors()) {
+        <div class="alert alert-danger" role="alert">@error</div>
+    }
+} else {
+    foreach (var warning in Model.Warnings()) {
+        <div class="alert alert-warning" role="alert">@warning</div>
+    }
+    if (Model.Environments.Any()) {
+        <div class="row">
+            <form id="id_report" role="form">
+                @for (var i = 0; i < parameters.Count; i++) {
+                    var parameter = parameters[i];
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-1 control-label" for="@parameter.Name">@parameter.Name</label>
+                        <div class="col-sm-10">
+                            @switch (parameter.Type) {
+                                case "date":
+                                case "datetime":
+                                    <input class="form-control date"
+                                           name="@parameter.Name" 
+                                           value="@(string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value)" />
+                                    break;
+                                default:
+                                    <input class="form-control"
+                                           name="@parameter.Name" 
+                                           value="@parameter.Value" />
+                                    break;
+                            }
+                        </div>
+                        @if (i == parameters.Count - 1) {
+                            <div class="col-sm-1">
+                                <button type="submit" class="btn btn-warning btn-sm pull-right">Submit</button>
+                            </div>
+                        }
+                    </div>
+                }
+            </form>
+        </div>
+    }
+
+    foreach (var entity in Model.Entities) {
+        <div class="row">
+            <div class="table-responsive col-sm-12">
+                <table class="table table-condensed table-hover table-striped">
+                    <thead>
+                        <tr>
+                            @foreach (var field in entity.GetAllOutputFields()) {
+                                <th>@field.Label</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in entity.Rows) {
+                            <tr>
+                                @foreach (var field in entity.GetAllOutputFields()) {
+                                    <td>
+                                        @if (field.Type.StartsWith("bool")) {
+                                            if ((bool)row[field.Alias]) {
+                                                <span style="color:#73a839;" class="glyphicon glyphicon-ok"></span>
+                                            } else {
+                                                <span style="color:#c71c22;" class="glyphicon glyphicon-remove"></span>
+                                            }
+                                        } else {
+                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    <script type="text/javascript">
+        //<!--
+        $(document).ready(function () {
+            $('.form-control.date').datepicker();
+        });
+        //-->
+    </script>
+
+}
+
+
+

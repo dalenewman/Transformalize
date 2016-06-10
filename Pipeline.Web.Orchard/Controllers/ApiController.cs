@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -32,7 +31,7 @@ using Process = Pipeline.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    public class WorkController : Controller {
+    public class ApiController : Controller {
 
         readonly IOrchardServices _orchardServices;
         readonly IIpRangeService _ipRangeService;
@@ -40,7 +39,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public WorkController(
+        public ApiController(
             IOrchardServices orchardServices,
             IIpRangeService ipRangeService
         ) {
@@ -65,24 +64,25 @@ namespace Pipeline.Web.Orchard.Controllers {
                 return Get404("Run", _orchardServices, format);
             }
 
-            if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress) || _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+            if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
 
                 var process = format == "json" ? _orchardServices.WorkContext.Resolve<JsonProcess>() : _orchardServices.WorkContext.Resolve<XmlProcess>() as Process;
-                var parameters = GetParameters(Request);
+                var parameters = Common.GetParameters(Request);
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any()) {
                     return Get503("Run", process, format, timer.ElapsedMilliseconds);
                 }
 
-                PageHelper(process);
+                Common.PageHelper(process, Request);
+
                 if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                     var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
                     if (schemaHelper.Help(process)) {
-                    if (process.Errors().Any()) {
-                        return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                        if (process.Errors().Any()) {
+                            return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                        }
                     }
-                }
                 }
 
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
@@ -137,10 +137,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                 return Get404(action, _orchardServices, format, timer.ElapsedMilliseconds);
             }
 
-            if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress) || _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+            if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
 
                 var process = format == "json" ? _orchardServices.WorkContext.Resolve<JsonProcess>() : _orchardServices.WorkContext.Resolve<XmlProcess>() as Process;
-                var parameters = GetParameters(Request);
+                var parameters = Common.GetParameters(Request);
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any()) {
@@ -150,7 +150,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                     var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
                     if (schemaHelper.Help(process)) {
-                    if (process.Errors().Any()) {
+                        if (process.Errors().Any()) {
                             return Get503(action, process, format, timer.ElapsedMilliseconds);
                         }
                     }
@@ -189,38 +189,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
                 field.T = string.Empty;
             }
-        }
-
-        private void PageHelper(Process process) {
-            if (Request.QueryString["page"] == null) {
-                return;
-            }
-
-            var page = 0;
-            if (!int.TryParse(Request.QueryString["page"], out page) || page <= 0) {
-                return;
-            }
-
-            var size = 0;
-            if (!int.TryParse((Request.QueryString["size"] ?? "0"), out size)) {
-                return;
-            }
-
-            foreach (var entity in process.Entities) {
-                entity.Page = page;
-                entity.PageSize = size > 0 ? size : entity.PageSize;
-            }
-        }
-
-
-        private static IDictionary<string, string> GetParameters(HttpRequestBase request) {
-            var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if (request != null && request.QueryString != null) {
-                foreach (string key in request.QueryString) {
-                    parameters[key] = request.QueryString[key];
-                }
-            }
-            return parameters;
         }
 
         private static ContentResult Get404(string action, IOrchardServices services, string format, long time = 5) {

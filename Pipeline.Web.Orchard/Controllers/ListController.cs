@@ -27,13 +27,13 @@ using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    public class ConfigurationsController : Controller {
+    public class ListController : Controller {
 
         private readonly IOrchardServices _orchardServices;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public ConfigurationsController(
+        public ListController(
             IOrchardServices services
             ) {
             _orchardServices = services;
@@ -42,7 +42,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
         [Themed]
-        public ActionResult Index() {
+        public ActionResult List() {
 
             if (!User.Identity.IsAuthenticated)
                 System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
