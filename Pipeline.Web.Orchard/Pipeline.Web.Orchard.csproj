@@ -55,21 +55,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\lib\autofac\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Environment\bin\Debug\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.0.3\lib\Cfg.Net.Environment.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Reader\bin\Debug\Cfg.Net.Reader.dll</HintPath>
+      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Shorthand\bin\Debug\Cfg.Net.Shorthand.dll</HintPath>
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net\bin\Debug\CfgNet.dll</HintPath>
+      <HintPath>..\..\..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
@@ -180,9 +180,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\..\..\..\Transformalize\Pipeline.Desktop\Shorthand.xml">
-      <Link>Shorthand.xml</Link>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Shorthand.xml" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />

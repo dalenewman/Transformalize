@@ -61,9 +61,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Cfg.Net\Cfg.Net.Environment\bin\Debug\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Environment.0.0.3\lib\Cfg.Net.Environment.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
