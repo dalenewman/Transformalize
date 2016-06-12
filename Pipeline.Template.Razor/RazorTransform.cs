@@ -16,7 +16,11 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
+using System.Runtime.InteropServices;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
@@ -26,14 +30,20 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 
 namespace Pipeline.Template.Razor {
+
     public class RazorTransform : BaseTransform, ITransform {
 
         private readonly IRazorEngineService _service;
         private readonly Field[] _input;
-        private readonly bool _compiled;
+        private static readonly ConcurrentDictionary<int, IRazorEngineService> Cache = new ConcurrentDictionary<int, IRazorEngineService>();
 
         public RazorTransform(IContext context) : base(context) {
             _input = MultipleInput();
+
+            var key = GetHashCode(context.Transform.Template, _input);
+
+            if (Cache.TryGetValue(key, out _service))
+                return;
 
             var config = new TemplateServiceConfiguration {
                 DisableTempFileLocking = true,
@@ -45,9 +55,10 @@ namespace Pipeline.Template.Razor {
             };
 
             _service = RazorEngineService.Create(config);
+
             try {
                 _service.Compile(Context.Transform.Template, Context.Key, typeof(ExpandoObject));
-                _compiled = true;
+                Cache[key] = _service;
             } catch (Exception ex) {
                 Context.Warn(Context.Transform.Template.Replace("{", "{{").Replace("}", "}}"));
                 Context.Warn(ex.Message);
@@ -56,10 +67,28 @@ namespace Pipeline.Template.Razor {
         }
 
         public IRow Transform(IRow row) {
-            if (_compiled)
-                row[Context.Field] = Context.Field.Convert(_service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input)));
+            row[Context.Field] = Context.Field.Convert(_service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input)));
             Increment();
             return row;
+        }
+
+        /// <summary>
+        /// Jon Skeet's Answer from Stack Overflow
+        /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+        /// http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        private static int GetHashCode(string template, IEnumerable<Field> fields) {
+            unchecked {
+                var hash = (int)2166136261;
+                hash = hash * 16777619 ^ template.GetHashCode();
+                foreach (var field in fields) {
+                    hash = hash * 16777619 ^ field.Type.GetHashCode();
+                }
+                return hash;
+            }
         }
     }
 }

@@ -63,7 +63,8 @@ namespace Pipeline.Template.Razor {
 
             // get template
             _context.Debug(() => $"Reading {_template.File}");
-            var result = _templateReader.Read(_template.File, p, l);
+            var templateContent = _templateReader.Read(_template.File, p, l);
+
             if (l.Errors().Any()) {
                 foreach (var error in l.Errors()) {
                     _context.Error(error);
@@ -84,7 +85,7 @@ namespace Pipeline.Template.Razor {
 
             try {
                 _context.Debug(() => $"Compiling {_template.Name}.");
-                return _service.RunCompile(result, _template.Name, null, new {
+                return _service.RunCompile(templateContent, _template.Name, null, new {
                     _context.Process,
                     Parameters = parameters
                 });

@@ -5,32 +5,34 @@ Transformalize is released under the Apache 2 license.
 
 
 ## What is it?
-Transformalize is a configurable [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) solution specializing in incremental 
-[denormalization](https://en.wikipedia.org/wiki/Denormalization). It is used to prepare data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse), 
-[search engines](https://en.wikipedia.org/wiki/Search_engine_(computing)), and other 
-forms of analysis and/or presentation. Transformalize may also be referred to as *TFL*.
-
+Transformalize (aka TFL) is a configurable [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
+solution specializing in incremental [de-normalization](https://en.wikipedia.org/wiki/Denormalization). 
+It is used to prepare data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse), 
+[search engines](https://en.wikipedia.org/wiki/Search_engine_%28computing%29), 
+and other forms of analysis and/or presentation.
 
 ### <a name="CFG"></a>Configurable
-TFL processes are designed in an [XML](https://en.wikipedia.org/wiki/XML) or 
-[JSON](https://en.wikipedia.org/wiki/JSON) editor. Designing a process is writing a 
-configuration. A TFL process *configuration* may also be referred to as an *arrangement*.
+TFL processes (aka arrangements) are created and modified in an [XML](https://en.wikipedia.org/wiki/XML) or 
+[JSON](https://en.wikipedia.org/wiki/JSON) editor. Creating an arrangement is writing a 
+configuration.
 
-TFL is configurable in order to embrace change.  To incorpate a change request:
+To modify your arrangement:
 
 1. Disable incremental processing
-1. Edit your XML or JSON arrangement.
+1. Edit your XML or JSON.
 1. Execute TFL in `init` mode (to rebuild it)
 1. Enable incremental processing
 
-A TFL output is disposable.  You may routinely create and destroy it.
+A TFL output is disposable. You may routinely create and destroy it.
 
 ### <a name="ETL"></a>ETL
-At it's heart, TFL is an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
-(**E**xtract, **T**ransform, and **L**oad) solution. However, it doesn't cover all forms of ETL. 
+At it's heart, TFL is [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
+(**E**xtract, **T**ransform, and **L**oad). However, it's not general purpose. 
 Instead, it specializes in transforming relational models 
-into [star-schemas](https://en.wikipedia.org/wiki/Star_schema).  While the input varies, the 
-output is predetermined.
+into [star-schemas](https://en.wikipedia.org/wiki/Star_schema). 
+While input varies, output structure is pre-determined.  This is not to 
+say you can't add transformations.  You may add 
+single and multi-entity transformations.
 
 ### <a name="DEN"></a>De-normalization
 [Normalization](https://en.wikipedia.org/wiki/Database_normalization) of data is 
@@ -53,7 +55,7 @@ into a star-schema and provides a de-normalized (flat) view of the data.
 
 In the graphic above, TFL transforms the relational model (on the left), to the star-schema (on the right). 
 It is easier for other value-adding data services to take advantage of the star-schema.  The data in 
-the star-schema is kept updated by TFL's ability to process incrementals.
+the star-schema is kept updated by incrementals.
 
 ### Incrementals
 Initially, TFL processes all of your data per the arrangement. Subsequent 
@@ -88,7 +90,7 @@ to push denormalized data elsewhere. They are:
 
 ### Getting Started
 
-The best way you can understand how to use TFL is by reviewing samples.
+The best way you can understand how to use TFL is by reviewing examples.
 
 1. [Prerequisites](Articles/Example-00-Prerequisites.md)
 1. [Example 1: Working with a Single Entity](Articles/Example-01-Single-Entity.md)
