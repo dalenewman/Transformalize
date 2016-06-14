@@ -4,11 +4,12 @@
 @model PipelineConfigurationPart[]
 @{
     Layout.Title = "Arrangements";
+    var link = Url.Content("~/Admin/Contents/Create/PipelineConfiguration");
 }
 <div class="row">
     <div class="col-md-12">
         <div class="btn-group pull-right">
-            <button onclick="javascript: window.open('Admin/Contents/Create/PipelineConfiguration', '_blank');" type="button" class="btn btn-xs btn-primary">
+            <button onclick="javascript: window.open('@link', '_self');" type="button" class="btn btn-xs btn-primary">
                 <span class="glyphicon glyphicon-plus"></span> New Pipe
             </button>
         </div>
@@ -28,7 +29,7 @@
             var title = part.As<TitlePart>().Title;
             <tr>
                 <td>
-                    <a href="@Url.Action("Api/Cfg","Api",new { id=part.Id})" target="_blank">@part.Id</a>
+                    <a href="@Url.Action("Api/Cfg","Api",new { id=part.Id})">@part.Id</a>
                 </td>
                 <td>@title</td>
                 <td>
@@ -36,7 +37,7 @@
                         <button type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))', '_self');">
                             <span class="glyphicon glyphicon-edit"></span> Edit
                         </button>
-                        <button type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Api/Check", "Api", new {id = part.Id}))', '_blank');">
+                        <button type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Api/Check", "Api", new {id = part.Id}))', '_self');">
                             <span class="glyphicon glyphicon-check"></span> Check
                         </button>
                     </div>

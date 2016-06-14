@@ -23,43 +23,12 @@ namespace Pipeline.Web.Orchard.Models {
         public string Configuration {
             get {
                 if (string.IsNullOrEmpty(Record.Configuration)) {
-                    return @"<process name='me' environment='default'>
-    <environments>
-        <add name='default'>
-            <parameters>
-                <add name='suffix' value='In Production' />
-            </parameters>
-        </add>
-        <add name='test'>
-            <parameters>
-                <add name='suffix' value='In Test' />
-            </parameters>
-        </add>
-    </environments>
-
+                    return @"<cfg name=""name"">
     <connections>
-        <add name='input' provider='internal' />
-        <add name='output' provider='internal' />
     </connections>
-
     <entities>
-        <add name='entity'>
-            <rows>
-                <add first='dale' last='newman' />
-            </rows>
-            <fields>
-                <add name='first' />
-                <add name='last' />
-            </fields>
-            <calculated-fields>
-                <add name='suffix' default='@(suffix)' />
-                <add name='full' t='copy(first,last,suffix).join( )' />
-            </calculated-fields>
-        </add>
     </entities>
-
-</process>
-";
+</cfg>";
                 }
                 return Record.Configuration;
             }

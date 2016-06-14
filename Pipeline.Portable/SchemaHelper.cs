@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
@@ -45,7 +46,12 @@ namespace Pipeline {
                 var add = schema.Entities.First().Fields.Where(f => !f.System).ToList();
                 if (add.Any()) {
                     _context.Info($"Detected {add.Count} field{add.Count.Plural()} in {entity.Alias}.");
-                    entity.Fields.AddRange(add);
+                    var keys = new HashSet<string>(entity.Fields.Select(f=>f.Alias));
+                    foreach (var field in add) {
+                        if (!keys.Contains(field.Alias)) {
+                            entity.Fields.Add(field);
+                        }
+                    }
                     helped = true;
                 } else {
                     _context.Warn($"Could not detect {entity.Alias} fields.");

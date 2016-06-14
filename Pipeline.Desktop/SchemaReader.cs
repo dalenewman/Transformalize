@@ -92,7 +92,12 @@ namespace Pipeline.Desktop {
 
         public Schema Read(Entity entity) {
 
-            entity.Fields = ModifyFields(entity.Fields.Where(f => !f.System)).ToList();
+            var fields = entity.Fields.Where(f => !f.System).ToList();
+            if (!fields.Any() && _process.Entities.Any()) {
+                fields = _process.Entities.First().Fields.Where(f => !f.System).ToList();
+            }
+
+            entity.Fields = ModifyFields(fields).ToList();
 
             return new Schema {
                 Connection = _process.Connections.First(),

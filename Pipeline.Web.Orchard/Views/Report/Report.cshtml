@@ -4,8 +4,6 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
-
-    var parameters = !string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First(e => e.Name == Model.Environment).Parameters : Model.Environments.First().Parameters;
 }
 
 <h3>@Model.Name</h3>
@@ -18,6 +16,7 @@
         <div class="alert alert-warning" role="alert">@warning</div>
     }
     if (Model.Environments.Any()) {
+        var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First(e => e.Name == Model.Environment).Parameters : Model.Environments.First().Parameters;
         <div class="row">
             <form id="id_report" role="form">
                 @for (var i = 0; i < parameters.Count; i++) {

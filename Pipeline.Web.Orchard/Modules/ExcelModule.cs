@@ -27,6 +27,7 @@ using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Provider.Excel;
 using Pipeline.Web.Orchard.Impl;
+using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ExcelModule : Module {
@@ -43,7 +44,8 @@ namespace Pipeline.Web.Orchard.Modules {
                 return;
 
             // connections
-            foreach (var connection in _process.Connections.Where(c => c.Provider == "excel")) {
+            foreach (var c in _process.Connections.Where(c => c.Provider == "excel")) {
+                var connection = c;
                 builder.Register<ISchemaReader>(ctx => {
                     /* file and excel are different, have to load the content and check it to determine schema */
                     var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, connection.File));

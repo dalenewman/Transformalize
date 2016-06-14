@@ -85,9 +85,9 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.RegisterType<SolrDictionarySerializer>().As<ISolrDocumentSerializer<Dictionary<string, object>>>();
             builder.RegisterType<SolrDictionaryDocumentResponseParser>().As<ISolrDocumentResponseParser<Dictionary<string, object>>>();
 
-
             // connections
-            foreach (var connection in _process.Connections.Where(c => c.Provider.In("solr"))) {
+            foreach (var c in _process.Connections.Where(c => c.Provider.In("solr"))) {
+                var connection = c;
 
                 connection.Url = connection.BuildSolrUrl();
                 RegisterCore(builder, connection);
@@ -100,8 +100,8 @@ namespace Pipeline.Web.Orchard.Modules {
             }
 
             // entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "solr")) {
-
+            foreach (var e in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "solr")) {
+                var entity = e;
                 builder.Register<IInputVersionDetector>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
@@ -134,8 +134,9 @@ namespace Pipeline.Web.Orchard.Modules {
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
 
-                foreach (var entity in _process.Entities) {
+                foreach (var e in _process.Entities) {
 
+                    var entity = e;
                     // INPUT VALIDATOR
                     builder.Register<IInputValidator>(ctx => {
                         var input = ctx.ResolveNamed<InputContext>(entity.Key);
@@ -205,31 +206,32 @@ namespace Pipeline.Web.Orchard.Modules {
                     new ResolvedParameter((p, c) => p.Name == "connection", (p, c) => c.ResolveNamed(key, typeof (ISolrConnection))),
             });
 
+            // 4 things you can consume directly, trying as singletons
             builder.RegisterType<SolrBasicServer<Dictionary<string, object>>>()
                 .Named<ISolrBasicOperations<Dictionary<string, object>>>(key)
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "connection", (p, c) => c.ResolveNamed<ISolrConnection>(key)),
                     new ResolvedParameter((p, c) => p.Name == "queryExecuter", (p, c) => c.ResolveNamed<ISolrQueryExecuter<Dictionary<string,object>>>(connection.Key))
-                });
+                }).SingleInstance();
 
             builder.RegisterType<SolrBasicServer<Dictionary<string, object>>>()
                 .Named<ISolrBasicReadOnlyOperations<Dictionary<string, object>>>(key)
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "connection", (p, c) => c.ResolveNamed<ISolrConnection>(key)),
                     new ResolvedParameter((p, c) => p.Name == "queryExecuter", (p, c) => c.ResolveNamed<ISolrQueryExecuter<Dictionary<string,object>>>(key))
-                });
+                }).SingleInstance();
 
             builder.RegisterType<SolrServer<Dictionary<string, object>>>()
                 .Named<ISolrOperations<Dictionary<string, object>>>(key)
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "basicServer", (p, c) => c.ResolveNamed<ISolrBasicOperations<Dictionary<string,object>>>(key)),
-                });
+                }).SingleInstance();
 
             builder.RegisterType<SolrServer<Dictionary<string, object>>>()
                 .Named<ISolrReadOnlyOperations<Dictionary<string, object>>>(key)
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "basicServer", (p, c) => c.ResolveNamed<ISolrBasicOperations<Dictionary<string,object>>>(key)),
-                });
+                }).SingleInstance();
         }
 
     }

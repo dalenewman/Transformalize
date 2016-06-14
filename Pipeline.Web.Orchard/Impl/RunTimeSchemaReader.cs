@@ -20,6 +20,7 @@ using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
+using Pipeline.Nulls;
 using Pipeline.Web.Orchard.Modules;
 
 namespace Pipeline.Web.Orchard.Impl {
@@ -51,8 +52,11 @@ namespace Pipeline.Web.Orchard.Impl {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_host.Logger).SingleInstance();
+            container.Register((c) => new Process(
+                new NullValidator("sh"),
+                new NullNodeModifier("sh")
+            )).As<Process>();
             container.RegisterCallback(new ContextModule(Process).Configure);
-
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
