@@ -14,11 +14,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
+using System.Web.Mvc;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
 
 namespace Pipeline.Web.Orchard.Models {
     public class PipelineConfigurationPart : ContentPart<PipelineConfigurationPartRecord> {
+
+        public List<SelectListItem> EditorModes { get; set; }
+
+        public PipelineConfigurationPart() {
+            EditorModes = new List<SelectListItem> {
+                new SelectListItem {Selected = false, Text = "JSON", Value = "json"}, 
+                new SelectListItem {Selected = false, Text = "XML", Value = "xml"}, 
+                new SelectListItem {Selected = false, Text = "YAML", Value = "yaml"}
+            };
+        }
 
         public string Configuration {
             get {
@@ -49,6 +62,11 @@ namespace Pipeline.Web.Orchard.Models {
         public string EndAddress {
             get { return Record.EndAddress ?? string.Empty; }
             set { Record.EndAddress = value; }
+        }
+
+        public string EditorMode {
+            get { return Record.EditorMode ?? "xml"; }
+            set { Record.EditorMode = value; }
         }
 
         public bool IsValid() {

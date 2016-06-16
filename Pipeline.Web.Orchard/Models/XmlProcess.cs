@@ -7,8 +7,15 @@ namespace Pipeline.Web.Orchard.Models {
     /// A process with XML serializer
     /// </summary>
     public class XmlProcess : Process {
-        public XmlProcess(params IDependency[] dependencies)
-            : base(dependencies) {
-        }
+        public XmlProcess(params IDependency[] dependencies) : base(dependencies) {}
     }
+
+    public class XmlToJsonProcess : Process {
+        public XmlToJsonProcess(params IDependency[] dependencies) : base(dependencies) { }
+    }
+
+    public class XmlToYamlProcess : Process {
+        public XmlToYamlProcess(params IDependency[] dependencies) : base(dependencies) { }
+    }
+    
 }

@@ -21,6 +21,7 @@ using Autofac;
 using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Parsers;
+using Cfg.Net.Parsers.YamlDotNet;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
 using Pipeline.Configuration;
@@ -29,6 +30,8 @@ using Pipeline.Contracts;
 using Pipeline.Scripting.Jint;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 using Module = Autofac.Module;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -48,6 +51,7 @@ namespace Pipeline.Web.Orchard.Modules {
             var sh = new ShorthandRoot(cfg);
 
             builder.Register(c => new XmlProcess(
+                new NanoXmlParser(),
                 new XmlSerializer(),
                 new JintValidator("js"),
                 new ShorthandValidator(sh, "sh"),
@@ -57,7 +61,31 @@ namespace Pipeline.Web.Orchard.Modules {
                 new PlaceHolderValidator()
                 )).As<XmlProcess>();
 
+            builder.Register(c => new XmlToJsonProcess(
+                new NanoXmlParser(),
+                new JsonSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+                )).As<XmlToJsonProcess>();
+
+            builder.Register(c => new XmlToYamlProcess(
+                new NanoXmlParser(),
+                new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+                )).As<XmlToYamlProcess>();
+
+
             builder.Register(c => new JsonProcess(
+                new FastJsonParser(),
                 new JsonSerializer(),
                 new JintValidator("js"),
                 new ShorthandValidator(sh, "sh"),
@@ -66,6 +94,61 @@ namespace Pipeline.Web.Orchard.Modules {
                 new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
                 new PlaceHolderValidator()
             )).As<JsonProcess>();
+
+            builder.Register(c => new JsonToXmlProcess(
+                new FastJsonParser(),
+                new XmlSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+            )).As<JsonToXmlProcess>();
+
+            builder.Register(c => new JsonToYamlProcess(
+                new FastJsonParser(),
+                new YamlDotNetSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+            )).As<JsonToYamlProcess>();
+
+            builder.Register(c => new YamlProcess(
+                new YamlDotNetParser(),
+                new YamlDotNetSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+            )).As<YamlProcess>();
+
+            builder.Register(c => new YamlToXmlProcess(
+                new YamlDotNetParser(),
+                new XmlSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+            )).As<YamlToXmlProcess>();
+
+            builder.Register(c => new YamlToJsonProcess(
+                new YamlDotNetParser(),
+                new JsonSerializer(),
+                new JintValidator("js"),
+                new ShorthandValidator(sh, "sh"),
+                new ShorthandModifier(sh, "sh"),
+                new PlaceHolderModifier(),
+                new EnvironmentModifier(new PlaceHolderModifier(), new Cfg.Net.Environment.ParameterModifier()),
+                new PlaceHolderValidator()
+            )).As<YamlToJsonProcess>();
 
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" }.WithDefaults());

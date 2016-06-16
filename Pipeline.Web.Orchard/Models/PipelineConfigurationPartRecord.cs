@@ -21,6 +21,10 @@ using Orchard.Data.Conventions;
 namespace Pipeline.Web.Orchard.Models {
 
     public class PipelineConfigurationPartRecord : ContentPartRecord {
+
+        [StringLength(64)]
+        public virtual string EditorMode { get; set; }
+
         [StringLengthMax]
         public virtual string Configuration { get; set; }
 

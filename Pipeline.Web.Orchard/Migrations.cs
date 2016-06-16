@@ -73,6 +73,12 @@ namespace Pipeline.Web.Orchard {
             return 1;
         }
 
+        public int UpdateFrom1() {
+            SchemaBuilder.AlterTable("PipelineConfigurationPartRecord",
+                table => table
+                    .AddColumn("EditorMode", DbType.String));
+            return 2;
+        }
 
     }
 }

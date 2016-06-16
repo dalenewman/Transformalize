@@ -15,10 +15,8 @@
 // limitations under the License.
 #endregion
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Web.Routing;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
@@ -26,8 +24,8 @@ using Orchard.Data;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
-using Pipeline.Configuration;
 using Orchard;
+using Pipeline.Configuration;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Handlers {
@@ -60,7 +58,7 @@ namespace Pipeline.Web.Orchard.Handlers {
             context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                 {"Area", "Pipeline.Web.Orchard"},
                 {"Controller", "Api"},
-                {"Action", "Api/Configuration"},
+                {"Action", "Api/Cfg"},
                 {"id", context.ContentItem.Id}
             };
         }
@@ -69,10 +67,19 @@ namespace Pipeline.Web.Orchard.Handlers {
             var part = context.ContentItem.As<PipelineConfigurationPart>();
             if (part == null)
                 return;
-            try
-            {
-
-                var root = _orchard.WorkContext.Resolve<XmlProcess>();
+            try {
+                Process root;
+                switch (part.EditorMode) {
+                    case "json":
+                        root = _orchard.WorkContext.Resolve<JsonProcess>();
+                        break;
+                    case "yaml":
+                        root = _orchard.WorkContext.Resolve<YamlProcess>();
+                        break;
+                    default:
+                        root = _orchard.WorkContext.Resolve<XmlProcess>();
+                        break;
+                }
 
                 root.Load(part.Configuration);
 

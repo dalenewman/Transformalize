@@ -2,7 +2,7 @@
 AntiForgery: enabled
 Author: Dale Newman
 Website: https://github.com/dalenewman/Transformalize
-Version: 0.1.6
+Version: 0.1.7
 OrchardVersion: 1.8.1
 Description: Pipeline.Web.Orchard
 Dependencies: Orchard.ContentPermissions

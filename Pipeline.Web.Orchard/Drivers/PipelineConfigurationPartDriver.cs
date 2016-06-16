@@ -29,12 +29,14 @@ namespace Pipeline.Web.Orchard.Drivers {
 
         //IMPORT, EXPORT
         protected override void Importing(PipelineConfigurationPart part, ImportContentContext context) {
+            part.Record.EditorMode = context.Attribute(part.PartDefinition.Name, "EditorMode");
             part.Record.Configuration = context.Attribute(part.PartDefinition.Name, "Configuration");
             part.Record.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
             part.Record.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
         }
 
         protected override void Exporting(PipelineConfigurationPart part, ExportContentContext context) {
+            context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.Record.EditorMode);
             context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Record.Configuration);
             context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
             context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);

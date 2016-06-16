@@ -59,6 +59,9 @@
       <HintPath>..\..\..\packages\Cfg-NET.Environment.0.0.3\lib\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Cfg.Net.Parsers.YamlDotNet">
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Debug\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
+    </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
@@ -178,9 +181,15 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="YamlDotNet, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\YamlDotNet.3.9.0\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shorthand.xml" />
+    <EmbeddedResource Include="..\..\..\..\..\Transformalize\Pipeline.Desktop\Shorthand.xml">
+      <Link>Shorthand.xml</Link>
+    </EmbeddedResource>
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />
@@ -192,8 +201,10 @@
     <Compile Include="Impl\RunTimeExecuter.cs" />
     <Compile Include="Impl\RunTimeRunner.cs" />
     <Compile Include="Impl\RunTimeSchemaReader.cs" />
+    <Compile Include="Models\Editor.cs" />
     <Compile Include="Models\JsonProcess.cs" />
     <Compile Include="Models\XmlProcess.cs" />
+    <Compile Include="Models\YamlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
     <Compile Include="Modules\ConnectionModule.cs" />
@@ -226,11 +237,12 @@
     <Compile Include="Routes.cs" />
     <Compile Include="Impl\RunTimeDataReader.cs" />
     <Compile Include="Services\IpRangeService.cs" />
+    <Compile Include="Services\ProcessService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\List\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineConfiguration.cshtml" />
-    <Content Include="Views\Shared\XmlConfigurationEditor.cshtml" />
+    <Content Include="Views\Shared\ConfigurationEditor.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Placement.info" />

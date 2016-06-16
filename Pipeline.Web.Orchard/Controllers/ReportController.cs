@@ -29,19 +29,23 @@ using Orchard.Themes;
 using Orchard.UI.Notify;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
     public class ReportController : Controller {
 
         private readonly IOrchardServices _orchardServices;
+        private readonly IProcessService _processService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
         public ReportController(
-            IOrchardServices services
+            IOrchardServices services,
+            IProcessService processService
             ) {
             _orchardServices = services;
+            _processService = processService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -63,7 +67,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             } else {
                 if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
 
-                    process = _orchardServices.WorkContext.Resolve<XmlProcess>();
+                    process = _processService.Resolve(part.EditorMode, part.EditorMode);
                     process.Load(part.Configuration, Common.GetParameters(Request));
 
                     if (process.Output().IsInternal()) {

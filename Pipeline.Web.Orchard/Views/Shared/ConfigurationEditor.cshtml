@@ -1,0 +1,143 @@
+﻿@model Pipeline.Web.Orchard.Models.Editor
+
+@{
+
+    Script.Require("jQuery").AtHead();
+
+    var root = Model.Library.EndsWith("/") ? Model.Library : Model.Library + "/";
+
+    Style.Include(root + "codemirror.min.css").AtHead();
+    Style.Include(root + "addon/display/fullscreen.min.css").AtHead();
+    Style.Include(root + "addon/fold/foldgutter.min.css").AtHead();
+    Style.Include(root + "addon/dialog/dialog.css").AtHead();
+    Style.Include(root + "addon/hint/show-hint.min.css").AtHead();
+    Style.Include(root + "theme/" + Model.Theme + ".min.css").AtHead();
+
+    Script.Include(root + "codemirror.min.js").AtHead();
+    Script.Include(root + "addon/display/fullscreen.min.js").AtHead();
+
+    switch (Model.Mode) {
+        case "json":
+            Script.Include(root + "mode/javascript/javascript.min.js").AtHead();
+            break;
+        case "yaml":
+            Script.Include(root + "mode/yaml/yaml.min.js").AtHead();
+            break;
+        default:
+            Script.Include(root + "mode/xml/xml.min.js").AtHead(); 
+            Script.Include(root + "addon/fold/xml-fold.min.js").AtHead();
+            Script.Include(root + "addon/edit/closetag.min.js").AtHead();
+            Script.Include(root + "addon/edit/matchtags.min.js").AtHead();
+            break;
+    }
+
+    Script.Include(root + "addon/fold/foldcode.min.js").AtHead();
+    Script.Include(root + "addon/fold/foldgutter.min.js").AtHead();
+    Script.Include(root + "addon/dialog/dialog.min.js").AtHead();
+    Script.Include(root + "addon/search/search.min.js").AtHead();
+    Script.Include(root + "addon/search/searchcursor.min.js").AtHead();
+    Script.Include(root + "addon/search/jump-to-line.min.js").AtHead();
+    Script.Include(root + "addon/search/match-highlighter.min.js").AtHead();
+    Script.Include(root + "addon/hint/show-hint.min.js").AtHead();
+    Script.Include(root + "addon/hint/anyword-hint.min.js").AtHead();
+}
+
+<script>
+    $(document).ready(function () {
+
+        var textArea = $('#@(Model.TextAreaId)')[0];
+
+        function completeAfter(cm, pred) {
+            var cur = cm.getCursor();
+            if (!pred || pred()) setTimeout(function () {
+                if (!cm.state.completionActive)
+                    cm.showHint({ completeSingle: false });
+            }, 100);
+            return CodeMirror.Pass;
+        }
+
+        function completeIfAfterLt(cm) {
+            return completeAfter(cm, function () {
+                var cur = cm.getCursor();
+                return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) === "<";
+            });
+        }
+
+        function completeIfInTag(cm) {
+            return completeAfter(cm, function () {
+                var tok = cm.getTokenAt(cm.getCursor());
+                if (tok.type === "string" && (!/['"]/.test(tok.string.charAt(tok.string.length - 1)) || tok.string.length === 1)) return false;
+                var inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
+                return inner.tagName;
+            });
+        }
+
+        function betterTab(cm) {
+            if (cm.somethingSelected()) {
+                cm.indentSelection("add");
+            } else {
+                cm.replaceSelection(cm.getOption("indentWithTabs")? "\t":
+                  Array(cm.getOption("indentUnit") + 1).join(" "), "end", "+input");
+            }
+        }
+
+        var extraKeys = {
+            "Ctrl-Space": "autocomplete",
+            "Ctrl-Q": function (cm) { cm.foldCode(cm.getCursor()); },
+            "Ctrl-S": function () { $('.CodeMirror').closest('form').find(':submit').click(); },
+            "F11": function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            "Esc": function (cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            },
+            "Tab": betterTab
+        }
+
+        var mode = '@Model.Mode';
+
+        switch (mode) {
+            case "json":
+                break;
+            case "yaml":
+                break;
+            default:
+                extraKeys["'<'"] = completeAfter;
+                extraKeys["'/'"] = completeIfAfterLt;
+                extraKeys["' '"] = completeIfInTag;
+                extraKeys["'='"] = completeIfInTag;
+                break;
+        }
+
+        var options = {
+            mode: mode === "json" ? "javascript" : mode,
+            indentUnit: 2,
+            tabSize: 2,
+            htmlMode: false,
+            dragDrop: false,
+            lineNumbers: true,
+            lineWrapping: true,
+            viewPortMargin: Infinity,
+            theme: '@(Model.Theme)',
+            extraKeys: extraKeys,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        };
+
+        switch(mode) {
+            case "json":
+                options.json = true;
+                options.matchBrackets = true;
+                break;
+            case "yaml":
+                break;
+            default:
+                options.matchTags = { bothTags: true }
+                break;
+        }
+
+        var editor = CodeMirror.fromTextArea(textArea, options);
+
+        editor.setSize("100%", Math.round(window.innerHeight * @(Model.Portion)));
+    });
+</script>

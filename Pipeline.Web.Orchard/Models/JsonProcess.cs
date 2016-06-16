@@ -8,4 +8,13 @@ namespace Pipeline.Web.Orchard.Models {
     public class JsonProcess : Process {
         public JsonProcess(params IDependency[] dependencies) : base(dependencies) { }
     }
+
+    public class JsonToXmlProcess : Process {
+        public JsonToXmlProcess(params IDependency[] dependencies) : base(dependencies) { }
+    }
+
+    public class JsonToYamlProcess : Process {
+        public JsonToYamlProcess(params IDependency[] dependencies) : base(dependencies) { }
+    }
+
 }

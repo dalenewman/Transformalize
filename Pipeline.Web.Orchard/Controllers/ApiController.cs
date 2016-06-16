@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
@@ -32,19 +33,24 @@ using Process = Pipeline.Configuration.Process;
 namespace Pipeline.Web.Orchard.Controllers {
 
     public class ApiController : Controller {
+        
+        private static readonly HashSet<string> _formats = new HashSet<string> { "xml","json","yaml"}; 
 
         readonly IOrchardServices _orchardServices;
         readonly IIpRangeService _ipRangeService;
+        private readonly IProcessService _processService;
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
         public ApiController(
             IOrchardServices orchardServices,
-            IIpRangeService ipRangeService
+            IIpRangeService ipRangeService,
+            IProcessService processService
         ) {
             _orchardServices = orchardServices;
             _ipRangeService = ipRangeService;
+            _processService = processService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -53,35 +59,35 @@ namespace Pipeline.Web.Orchard.Controllers {
         [ActionName("Api/Run")]
         public ContentResult Run(int id) {
 
+            const string action = "Run";
             var timer = new Stopwatch();
             timer.Start();
-            var format = Request.QueryString["format"] == "json" ? "json" : "xml";
+            var format = GetFormat(Request);
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
-                return Get404("Run", _orchardServices, format);
+                return Get404(action, _processService, format);
             }
+
+            format = GetFormat(Request, part);
 
             if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
 
-                var process = format == "json" ? _orchardServices.WorkContext.Resolve<JsonProcess>() : _orchardServices.WorkContext.Resolve<XmlProcess>() as Process;
+                var process = _processService.Resolve(part.EditorMode, format);
                 var parameters = Common.GetParameters(Request);
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any()) {
-                    return Get503("Run", process, format, timer.ElapsedMilliseconds);
+                    return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
                 Common.PageHelper(process, Request);
 
-                if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
-                    var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
-                    if (schemaHelper.Help(process)) {
-                        if (process.Errors().Any()) {
-                            return Get503("Run", process, format, timer.ElapsedMilliseconds);
-                        }
+                if (MissingFieldHelper(process, part, format, parameters)) {
+                    if (process.Errors().Any()) {
+                        return Get503(action, process, format, timer.ElapsedMilliseconds);
                     }
                 }
 
@@ -90,18 +96,18 @@ namespace Pipeline.Web.Orchard.Controllers {
                     runner.Execute(process);
                     process.Status = 200;
                     process.Message = "Ok";
-                    process.Request = "Run";
+                    process.Request = action;
                     process.Time = timer.ElapsedMilliseconds;
                     SystemFieldHelper(process);
                     ShorthandHelper(process);
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
-                    return Get501(Request, _orchardServices, "Run", ex.Message, timer.ElapsedMilliseconds);
+                    return Get501(Request, _orchardServices, action, ex.Message, timer.ElapsedMilliseconds);
                 }
 
             }
 
-            return Get401(format, _orchardServices, "Run");
+            return Get401(format, _orchardServices, action);
 
         }
 
@@ -111,14 +117,14 @@ namespace Pipeline.Web.Orchard.Controllers {
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
-                return Get404("Cfg", _orchardServices, "xml");
+                return Get404("Cfg", _processService, "xml");
             }
 
             if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress) || _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
-                return new ContentResult { Content = part.Configuration, ContentType = "text/xml" };
+                return new ContentResult { Content = part.Configuration, ContentType = "text/" + part.EditorMode };
             }
 
-            return Get401("Cfg", _orchardServices, "xml");
+            return Get401("Cfg", _orchardServices, part.EditorMode);
         }
 
         [ActionName("Api/Check")]
@@ -130,16 +136,19 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
-            var format = Request.QueryString["format"] == "json" ? "json" : "xml";
+
+            var format = GetFormat(Request);
 
             if (part == null) {
                 timer.Stop();
-                return Get404(action, _orchardServices, format, timer.ElapsedMilliseconds);
+                return Get404(action, _processService, format, timer.ElapsedMilliseconds);
             }
+
+            format = GetFormat(Request, part);
 
             if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
 
-                var process = format == "json" ? _orchardServices.WorkContext.Resolve<JsonProcess>() : _orchardServices.WorkContext.Resolve<XmlProcess>() as Process;
+                var process = _processService.Resolve(part.EditorMode, format);
                 var parameters = Common.GetParameters(Request);
                 process.Load(part.Configuration, parameters);
 
@@ -147,12 +156,9 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
-                if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
-                    var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
-                    if (schemaHelper.Help(process)) {
-                        if (process.Errors().Any()) {
-                            return Get503(action, process, format, timer.ElapsedMilliseconds);
-                        }
+                if (MissingFieldHelper(process, part, format, parameters)) {
+                    if (process.Errors().Any()) {
+                        return Get503(action, process, format, timer.ElapsedMilliseconds);
                     }
                 }
 
@@ -169,6 +175,23 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             return Get401(action, _orchardServices, format);
 
+        }
+
+        private bool MissingFieldHelper(Process process, PipelineConfigurationPart part, string format, IDictionary<string,string> parameters) {
+            if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
+                var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
+                if (schemaHelper.Help(process)) {
+                    if (part.EditorMode == format) {
+                        process.Load(process.Serialize(), parameters);
+                    } else {
+                        var cfg = process.Serialize();
+                        process = _processService.Resolve(format, format);
+                        process.Load(cfg);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static void SystemFieldHelper(Process process) {
@@ -191,8 +214,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
         }
 
-        private static ContentResult Get404(string action, IOrchardServices services, string format, long time = 5) {
-            var process = format == "json" ? (Process)services.WorkContext.Resolve<JsonProcess>() : services.WorkContext.Resolve<XmlProcess>();
+        private static ContentResult Get404(string action, IProcessService service, string format, long time = 5) {
+            var process = service.Resolve("xml", format);
             process.Request = action;
             process.Status = 404;
             process.Message = "Configuration not found.";
@@ -225,6 +248,15 @@ namespace Pipeline.Web.Orchard.Controllers {
             process.Message = message;
             process.Time = time;
             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+        }
+
+        private static string GetFormat(HttpRequestBase request, PipelineConfigurationPart part = null) {
+            var value = request.QueryString["format"];
+            if (value == null) {
+                return part == null ? "xml" : part.EditorMode;
+            }
+            value = value.ToLower();
+            return _formats.Contains(value) ? value : "xml";
         }
     }
 }

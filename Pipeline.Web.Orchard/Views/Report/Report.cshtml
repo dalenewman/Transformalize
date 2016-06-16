@@ -16,7 +16,7 @@
         <div class="alert alert-warning" role="alert">@warning</div>
     }
     if (Model.Environments.Any()) {
-        var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First(e => e.Name == Model.Environment).Parameters : Model.Environments.First().Parameters;
+        var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters : Model.Environments.First(e => e.Name == Model.Environment).Parameters;
         <div class="row">
             <form id="id_report" role="form">
                 @for (var i = 0; i < parameters.Count; i++) {
