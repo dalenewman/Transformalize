@@ -130,6 +130,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="Files\Headers.csv" />
+    <None Include="Files\PersonAndPet.yml" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
@@ -293,10 +294,8 @@ namespace Pipeline.Configuration.Ext {
                     }
                     break;
                 case "datediff":
-                    foreach (var f in fields) {
-                        if (!f.Type.StartsWith("date")) {
-                            error($"The {t.Method} method expects date/time parameters. {f.Alias} is type: {f.Type}.");
-                        }
+                    if (fields.All(f => !f.Type.StartsWith("date"))) {
+                        error($"The {t.Method} method expects from one to two datetime parameters.");
                     }
                     break;
                 case "toyesno":
@@ -305,8 +304,11 @@ namespace Pipeline.Configuration.Ext {
                     }
                     break;
                 case "totime":
-                    if (!input.Type.In("double", "single", "real", "decimal", "float")) {
-                        error($"The {t.Method} expects an irrational (non-whole) numeric input like a double, single, real, decimal, or float type.");
+                    if (!input.IsNumeric()) {
+                        error($"The {t.Method} expects a numeric input.");
+                    }
+                    if (!t.TimeComponent.In("hour", "minute", "second", "millisecond", "day", "tick")) {
+                        error($"The {t.Method} expects a time component of day, hour, minute, second, millisecond, or tick.");
                     }
                     break;
                 case "contains":

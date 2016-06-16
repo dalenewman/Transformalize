@@ -24,10 +24,33 @@ namespace Pipeline.Transforms {
         private readonly Field _input;
         public ToTimeTransform(IContext context) : base(context) {
             _input = SingleInput();
+
+
         }
 
+        // "day,date,dayofweek,dayofyear,hour,millisecond,minute,month,second,tick,year,weekofyear", toLower = true)]
         public IRow Transform(IRow row) {
-            row[Context.Field] = TimeSpan.FromHours(_input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input])).ToString();
+            var value = _input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input]);
+            switch (Context.Transform.TimeComponent) {
+                case "minute":
+                    row[Context.Field] = TimeSpan.FromMinutes(value).ToString();
+                    break;
+                case "second":
+                    row[Context.Field] = TimeSpan.FromSeconds(value).ToString();
+                    break;
+                case "millisecond":
+                    row[Context.Field] = TimeSpan.FromMilliseconds(value).ToString();
+                    break;
+                case "tick":
+                    row[Context.Field] = TimeSpan.FromTicks(Convert.ToInt64(row[_input])).ToString();
+                    break;
+                case "day":
+                    row[Context.Field] = TimeSpan.FromDays(value).ToString();
+                    break;
+                default:
+                    row[Context.Field] = TimeSpan.FromHours(value).ToString();
+                    break;
+            }
             Increment();
             return row;
         }

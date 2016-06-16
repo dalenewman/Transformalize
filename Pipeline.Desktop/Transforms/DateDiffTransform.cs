@@ -38,7 +38,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly Action<IRow> _transform;
 
         public DateDiffTransform(IContext context) : base(context) {
-            var input = MultipleInput();
+            var input = MultipleInput().TakeWhile(f=>f.Type.StartsWith("date")).ToArray();
 
             _start = input[0];
 

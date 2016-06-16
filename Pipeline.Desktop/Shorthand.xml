@@ -70,7 +70,7 @@
         <add name="length" value="0" />
       </parameters>
     </add>
-    <add name="datepart">
+    <add name="timecomponent">
       <parameters>
         <add name="timecomponent" />
       </parameters>
@@ -154,7 +154,7 @@
     <add name="cs" signature="script" target="t" />
     <add name="csharp" signature="script" target="t" />
     <add name="datediff" signature="datediff" target="t" />
-    <add name="datepart" signature="datepart" target="t" />
+    <add name="datepart" signature="timecomponent" target="t" />
     <add name="decompress" signature="none" target="t" />
     <add name="fileext" signature="none" target="t" />
     <add name="filename" signature="file" target="t" />
@@ -190,7 +190,7 @@
     <add name="timezone" signature="timezone" target="t" />
     <add name="tolower" signature="none" target="t" />
     <add name="tostring" signature="format" target="t" />
-    <add name="totime" signature="none" target="t" />
+    <add name="totime" signature="timecomponent" target="t" />
     <add name="toupper" signature="none" target="t" />
     <add name="toyesno" signature="none" target="t" />
     <add name="trim" signature="trim" target="t" />

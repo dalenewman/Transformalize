@@ -58,11 +58,6 @@ namespace Pipeline {
                 }
             }
 
-            if (helped) {
-                var cfg = process.Serialize();
-                process.Load(cfg);
-            }
-
             return helped;
 
         }
