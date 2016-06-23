@@ -15,11 +15,9 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using Cfg.Net;
 using Cfg.Net.Ext;
 using Orchard;
 using Orchard.ContentManagement;

@@ -1,10 +1,11 @@
 ﻿@using System.Web.Mvc.Html
+@using Orchard.ContentManagement
 @using Pipeline.Web.Orchard.Models
 @model PipelineConfigurationPart
 
 @{
-    const string theme = "rubyblue";
-    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Shared/ConfigurationEditor.cshtml", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode});
+    var theme = WorkContext.CurrentSite.As<PipelineSettingsPart>().EditorTheme;
+    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Shared/ConfigurationEditor.cshtml", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
 }
 
 <div class="editor-field">

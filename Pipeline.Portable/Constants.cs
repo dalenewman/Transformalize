@@ -98,7 +98,7 @@ namespace Pipeline {
                     {"bool","false"},
                     {"boolean","false"},
                     {"byte", default(byte).ToString()},
-                    {"byte[]", Utility.BytesToHexString(new byte[0])},
+                    {"byte[]", "0x0000000000000000"},
                     {"char",default(char).ToString()},
                     {"date","9999-12-31T00:00:00Z"},
                     {"datetime","9999-12-31T00:00:00Z"},

@@ -25,7 +25,7 @@ namespace Pipeline.Configuration {
     public class Entity : CfgNode {
         public bool IsMaster { get; set; }
 
-        [Cfg(required = false, unique = true, value=null)]
+        [Cfg(required = false, unique = true, value = null)]
         public string Alias { get; set; }
 
         [Cfg(value = "input", toLower = true)]
@@ -176,6 +176,11 @@ namespace Pipeline.Configuration {
                     field.Alias = Prefix + field.Name;
                 }
             }
+            if (SearchType != Constants.DefaultSetting) {
+                foreach (var field in Fields) {
+                    field.SearchType = SearchType;
+                }
+            }
 
         }
 
@@ -224,6 +229,9 @@ namespace Pipeline.Configuration {
                 field.System = true;
                 field.Input = false;
                 field.Output = output;
+                if (SearchType != Constants.DefaultSetting) {
+                    field.SearchType = SearchType;
+                }
             }
 
             Fields.InsertRange(0, fields);
@@ -487,5 +495,8 @@ namespace Pipeline.Configuration {
         // Determines whether or not a hash code will be calculated and placed in TflHashCode column (in output).
         [Cfg(value = true)]
         public bool CalculateHashCode { get; set; }
+
+        [Cfg(value = Constants.DefaultSetting, toLower = true)]
+        public string SearchType { get; set; }
     }
 }

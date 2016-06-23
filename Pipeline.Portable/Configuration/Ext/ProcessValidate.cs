@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
@@ -260,8 +259,8 @@ namespace Pipeline.Configuration.Ext {
 
         static void ValidateSearchTypes(Process p, Action<string> error) {
             foreach (var name in p.GetAllFields().Select(f => f.SearchType).Distinct()) {
-                if (p.SearchTypes.All(st => st.Name != name)) {
-                    error($"Search type {name} is invalid.");
+                if (name != "none" && p.SearchTypes.All(st => st.Name != name)) {
+                    error($"Search type {name} is invalid. Add it to search types, or remove it from the field using it.");
                 }
             }
         }

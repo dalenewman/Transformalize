@@ -18,6 +18,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cfg.Net.Ext;
 
 namespace Pipeline.Configuration {
     public class FieldSearchTypes : IEnumerable<FieldSearchType> {
@@ -25,10 +26,17 @@ namespace Pipeline.Configuration {
 
         public FieldSearchTypes(Process process, IEnumerable<Field> fields) {
             foreach (var field in fields) {
+                var searchType = process.SearchTypes.FirstOrDefault(st => st.Name == field.SearchType);
+
                 _fieldSearchTypes.Add(new FieldSearchType {
                     Alias = field.Alias,
                     Field = field,
-                    SearchType = process.SearchTypes.First(st => st.Name == field.SearchType)
+                    SearchType = searchType ?? new SearchType {
+                        Name = "none",
+                        MultiValued = false,
+                        Store = false,
+                        Index = false
+                    }.WithDefaults()
                 });
             }
         }

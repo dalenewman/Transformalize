@@ -91,7 +91,6 @@ namespace Pipeline.Test {
                 Assert.AreEqual(0, cn.ExecuteScalar<int>("SELECT TOP 1 Inserts+Updates+Deletes FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9;"));
             }
 
-
             // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO 
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
                 cn.Open();

@@ -187,9 +187,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\..\..\..\Transformalize\Pipeline.Desktop\Shorthand.xml">
-      <Link>Shorthand.xml</Link>
-    </EmbeddedResource>
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />
@@ -198,11 +195,16 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Drivers\PipelineSettingsPartDriver.cs" />
+    <Compile Include="Handlers\PipelineSettingsPartHandler.cs" />
+    <Compile Include="Impl\CfgNetNotifier.cs" />
     <Compile Include="Impl\RunTimeExecuter.cs" />
     <Compile Include="Impl\RunTimeRunner.cs" />
     <Compile Include="Impl\RunTimeSchemaReader.cs" />
     <Compile Include="Models\Editor.cs" />
     <Compile Include="Models\JsonProcess.cs" />
+    <Compile Include="Models\PipelineSettingsPart.cs" />
+    <Compile Include="Models\PipelineSettingsPartRecord.cs" />
     <Compile Include="Models\XmlProcess.cs" />
     <Compile Include="Models\YamlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
@@ -253,6 +255,7 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\Report\Report.cshtml" />
+    <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">

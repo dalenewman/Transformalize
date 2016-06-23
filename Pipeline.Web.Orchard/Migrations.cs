@@ -80,5 +80,15 @@ namespace Pipeline.Web.Orchard {
             return 2;
         }
 
+        public int UpdateFrom2() {
+            SchemaBuilder.CreateTable("PipelineSettingsPartRecord", table => table
+                .ContentPartRecord()
+                .Column("EditorTheme", DbType.String)
+                .Column("Shorthand", DbType.String, column => column.Unlimited())
+            );
+
+            return 3;
+        }
+
     }
 }

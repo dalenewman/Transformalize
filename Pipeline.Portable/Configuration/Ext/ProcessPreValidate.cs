@@ -115,23 +115,29 @@ namespace Pipeline.Configuration.Ext {
 
         static void DefaultSearchTypes(Process p) {
 
-            if (p.SearchTypes.All(st => st.Name != "none")) {
-                p.SearchTypes.Add(new SearchType {
-                    Name = "none",
-                    MultiValued = false,
-                    Store = false,
-                    Index = false
-                }.WithDefaults());
+            var searchFields = p.GetSearchFields().ToArray();
+
+            if (searchFields.Any()) {
+                if (p.SearchTypes.All(st => st.Name != "none")) {
+                    p.SearchTypes.Add(new SearchType {
+                        Name = "none",
+                        MultiValued = false,
+                        Store = false,
+                        Index = false
+                    }.WithDefaults());
+                }
+
+                if (p.SearchTypes.All(st => st.Name != "default")) {
+                    p.SearchTypes.Add(new SearchType {
+                        Name = "default",
+                        MultiValued = false,
+                        Store = true,
+                        Index = true
+                    }.WithDefaults());
+                }
+
             }
 
-            if (p.SearchTypes.All(st => st.Name != "default")) {
-                p.SearchTypes.Add(new SearchType {
-                    Name = "default",
-                    MultiValued = false,
-                    Store = true,
-                    Index = true
-                }.WithDefaults());
-            }
         }
 
         static void MergeParameters(Process p) {

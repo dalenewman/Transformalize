@@ -44,7 +44,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "MM/dd/yyyy h:mm:ss tt")]
         public string DateFormat { get; set; }
 
-        [Cfg(value = ",")]
+        [Cfg(value = "")]
         public string Delimiter { get; set; }
 
         [Cfg(value = false)]
@@ -154,6 +154,9 @@ namespace Pipeline.Configuration {
         }
 
         private void ModifyDefaultDelimiters() {
+            if (Delimiter != string.Empty)
+                return;
+
             if (Delimiters.Any())
                 return;
 

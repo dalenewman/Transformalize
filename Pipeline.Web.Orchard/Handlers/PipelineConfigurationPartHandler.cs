@@ -31,6 +31,7 @@ using Pipeline.Web.Orchard.Models;
 namespace Pipeline.Web.Orchard.Handlers {
 
     public class PipelineConfigurationPartHandler : ContentHandler {
+
         readonly INotifier _notifier;
         readonly IOrchardServices _orchard;
 
