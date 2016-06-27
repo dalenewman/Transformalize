@@ -114,13 +114,13 @@ namespace Pipeline.Ioc.Autofac.Modules {
             if (_process.Output().Provider == "elastic") {
 
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
+                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 // PROCESS INITIALIZER
                 builder.Register<IInitializer>(ctx => {
-                    var output = ctx.ResolveNamed<OutputContext>(_process.Key);
+                    var output = ctx.Resolve<OutputContext>();
                     return new ElasticInitializer(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key));
-                }).Named<IInitializer>(_process.Key);
+                }).As<IInitializer>();
 
                 foreach (var entity in _process.Entities) {
 

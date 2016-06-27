@@ -71,7 +71,7 @@ namespace Pipeline.Ioc.Autofac {
             container.RegisterCallback(new ProcessControlModule(process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
-                return scope.ResolveNamed<IProcessController>(process.Key).Read();
+                return scope.Resolve<IProcessController>().Read();
             }
         }
     }

@@ -55,7 +55,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
             if (_process.Output().Provider == "folder") {
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
+                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
                     // todo

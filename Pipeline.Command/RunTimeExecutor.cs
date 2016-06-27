@@ -117,7 +117,7 @@ namespace Pipeline.Command {
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 try {
-                    scope.ResolveNamed<IProcessController>(process.Key).Execute();
+                    scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {
                     _context.Error(ex.Message);
                 }

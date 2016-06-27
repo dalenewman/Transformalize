@@ -50,7 +50,7 @@ namespace Pipeline.Context {
             Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty }.WithDefaults();
             Field = field ?? new Field { Name = string.Empty, Alias = string.Empty }.WithDefaults();
             Transform = transform ?? new Transform { Method = string.Empty }.WithDefaults();
-            Key = Process.Key + Entity.Key + Field.Alias + Transform.Method + Transform.Index;
+            Key = Process.Name + Entity.Key + Field.Alias + Transform.Method + Transform.Index;
             ForLog[0] = process.Name.PadRight(process.LogLimit, ' ').Left(process.LogLimit);
             ForLog[1] = Entity.Alias.PadRight(process.EntityLogLimit, ' ').Left(process.EntityLogLimit);
             ForLog[2] = Field.Alias.PadRight(process.FieldLogLimit, ' ').Left(process.FieldLogLimit);

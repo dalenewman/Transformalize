@@ -59,14 +59,14 @@ namespace Pipeline.Test {
 
             builder.RegisterModule(new MapModule(_process));
             builder.RegisterModule(new TemplateModule(_process));
-            builder.RegisterModule(new ActionModule(_process));
+            builder.RegisterModule(new ActionModule());
 
             builder.RegisterModule(new EntityPipelineModule(_process));
             builder.RegisterModule(new ProcessPipelineModule(_process));
             builder.RegisterModule(new ProcessControlModule(_process));
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
-                scope.ResolveNamed<IProcessController>(_process.Key).Execute();
+                scope.Resolve<IProcessController>().Execute();
             }
 
             return response;

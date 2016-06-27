@@ -28,7 +28,7 @@ namespace Pipeline.Test {
             var xml = @"
     <add name='TestProcess'>
       <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
           <rows>
             <add Field1='11' Field2='12' Field3='13' />
           </rows>
@@ -60,5 +60,39 @@ namespace Pipeline.Test {
 
 
         }
+
+        [Test(Description = "Equals Validator")]
+        public void EqualsValidator() {
+            var xml = @"
+    <add name='TestProcess'>
+      <entities>
+        <add name='TestData'>
+          <rows>
+            <add Field1='11' Field2='12' Field3='13' />
+            <add Field1='11' Field2='11' Field3='11' />
+          </rows>
+          <fields>
+            <add name='Field1' />
+            <add name='Field2' />
+            <add name='Field3' />
+          </fields>
+          <calculated-fields>
+            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field2).equal()' />
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>
+            ".Replace('\'', '"');
+
+            var composer = new CompositionRoot();
+            var controller = composer.Compose(xml);
+
+            var output = controller.Read().ToArray();
+            var process = composer.Process;
+
+            Assert.AreEqual(false, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
+            Assert.AreEqual(true, output[1][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
+        }
+
     }
 }

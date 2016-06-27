@@ -113,6 +113,9 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                 case "contains": return new ContainsValidater(context);
                 case "is": return new IsValidator(context);
+                case "equal":
+                case "equals":
+                    return new EqualsValidator(context);
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);

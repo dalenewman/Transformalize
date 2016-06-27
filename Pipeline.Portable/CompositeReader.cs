@@ -17,8 +17,6 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net.Ext;
-using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline {

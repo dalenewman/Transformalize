@@ -40,11 +40,11 @@ namespace Pipeline {
         }
 
         public Schema Read() {
-            if (_cache.ContainsKey(Process.Key)) {
-                return _cache[Process.Key];
+            if (_cache.ContainsKey(Process.Name)) {
+                return _cache[Process.Name];
             }
             var schema = _schemaReader.Read();
-            _cache[Process.Key] = schema;
+            _cache[Process.Name] = schema;
             return schema;
         }
 

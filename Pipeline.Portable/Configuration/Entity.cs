@@ -498,5 +498,9 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = Constants.DefaultSetting, toLower = true)]
         public string SearchType { get; set; }
+
+        public bool HasInput() {
+            return Fields.Any(f => f.Input);
+        }
     }
 }

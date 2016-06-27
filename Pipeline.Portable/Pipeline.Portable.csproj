@@ -214,15 +214,17 @@
     <Compile Include="Utility.cs" />
     <Compile Include="Validators\CompositeValidate.cs" />
     <Compile Include="Validators\ContainsValidate.cs" />
+    <Compile Include="Validators\EqualsValidator.cs" />
     <Compile Include="Validators\IsValidator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="CfgNet">
-      <HintPath>..\..\Cfg.Net\Cfg.Net\bin\Debug\CfgNet.dll</HintPath>
-    </Reference>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

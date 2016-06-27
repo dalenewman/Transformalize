@@ -156,6 +156,8 @@
     <add name="datediff" signature="datediff" target="t" />
     <add name="datepart" signature="timecomponent" target="t" />
     <add name="decompress" signature="none" target="t" />
+    <add name="equal" signature="none" target="t" />
+    <add name="equals" signature="none" target="t" />
     <add name="fileext" signature="none" target="t" />
     <add name="filename" signature="file" target="t" />
     <add name="filepath" signature="file" target="t" />

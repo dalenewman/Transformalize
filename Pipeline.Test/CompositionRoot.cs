@@ -66,7 +66,7 @@ namespace Pipeline.Test {
 
             builder.RegisterModule(new MapModule(Process));
             builder.RegisterModule(new TemplateModule(Process));
-            builder.RegisterModule(new ActionModule(Process));
+            builder.RegisterModule(new ActionModule());
 
             builder.RegisterModule(new EntityPipelineModule(Process));
             builder.RegisterModule(new ProcessPipelineModule(Process));
@@ -74,7 +74,7 @@ namespace Pipeline.Test {
 
             container = builder.Build();
 
-            return container.ResolveNamed<IProcessController>(Process.Key);
+            return container.Resolve<IProcessController>(new NamedParameter("cfg", cfg));
         }
 
     }

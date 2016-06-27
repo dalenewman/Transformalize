@@ -69,23 +69,24 @@ namespace Pipeline.Test {
 
 
         [Test(Description = "")]
-        public void GetTypedDataSet2() { 
+        public void GetTypedDataSet2() {
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
-            builder.Register((c,p) => new RunTimeExecutor(new PipelineContext(new TraceLogger(),p.TypedAs<Process>()))).As<IRunTimeExecute>();
+            builder.Register((ctx, p) => new RunTimeExecutor(new PipelineContext(new TraceLogger(), ctx.Resolve<Process>(p)))).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope())
             {
-                var process = scope.Resolve<Process>(new NamedParameter("cfg", @"Files\PersonAndPet.xml"));
-                var runner = scope.Resolve<IRunTimeExecute>(new TypedParameter(typeof (Process), process));
+                var parameter = new NamedParameter("cfg", @"Files\PersonAndPet.xml");
+                var process = scope.Resolve<Process>(parameter);
+                var runner = scope.Resolve<IRunTimeExecute>(parameter);
 
                 runner.Execute(process);
 
-                var people = process.Entities.First(e=>e.Name=="Person").Rows;
+                var people = process.Entities.First(e => e.Name == "Person").Rows;
                 Assert.IsInstanceOf<IEnumerable<IRow>>(people);
                 Assert.AreEqual(3, people.Count);
 
-                var pets = process.Entities.First(e=>e.Name=="Pet").Rows;
+                var pets = process.Entities.First(e => e.Name == "Pet").Rows;
                 Assert.AreEqual(2, pets.Count);
 
                 var dale = people[0];

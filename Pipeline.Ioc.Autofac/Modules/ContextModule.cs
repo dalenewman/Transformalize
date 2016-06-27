@@ -36,25 +36,25 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 return;
 
             // Process Context
-            builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).Named<IContext>(_process.Key);
+            builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).As<IContext>();
 
             // Process Output Context
             builder.Register(ctx => {
-                var context = ctx.ResolveNamed<IContext>(_process.Key);
+                var context = ctx.Resolve<IContext>();
                 return new OutputContext(context, new Incrementer(context));
-            }).Named<OutputContext>(_process.Key);
+            }).As<OutputContext>();
 
             // Connection and Process Level Output Context
             foreach (var connection in _process.Connections) {
 
-                builder.Register(ctx => new ConnectionContext(ctx.ResolveNamed<IContext>(_process.Key), connection)).Named<IConnectionContext>(connection.Key);
+                builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(connection.Key);
 
                 if (connection.Name != "output")
                     continue;
 
                 // register output for connection
                 builder.Register(ctx => {
-                    var context = ctx.ResolveNamed<IContext>(_process.Key);
+                    var context = ctx.Resolve<IContext>();
                     return new OutputContext(context, new Incrementer(context));
                 }).Named<OutputContext>(connection.Key);
 

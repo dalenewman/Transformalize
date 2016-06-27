@@ -80,7 +80,6 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 }
 
                 return new Process(dependencies.ToArray());
-            }).As<Process>();
 
         }
     }

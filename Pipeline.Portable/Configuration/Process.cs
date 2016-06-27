@@ -240,21 +240,20 @@ namespace Pipeline.Configuration {
         }
 
         public void ModifyKeys() {
-            Key = Name;
 
             // entities
             foreach (var entity in Entities) {
-                entity.Key = Key + entity.Alias;
+                entity.Key = Name + entity.Alias;
             }
 
             // maps
             foreach (var map in Maps) {
-                map.Key = Key + map.Name;
+                map.Key = Name + map.Name;
             }
 
             // templates
             foreach (var template in Templates) {
-                template.Key = Key + template.Name;
+                template.Key = Name + template.Name;
             }
 
             // actions do not have unique names, so they get a counter too
@@ -265,14 +264,9 @@ namespace Pipeline.Configuration {
 
             // connections
             foreach (var connection in Connections) {
-                connection.Key = Key + connection.Name;
+                connection.Key = Name + connection.Name;
             }
         }
-
-        /// <summary>
-        /// Set by Process.ModifyKeys for keyed dependency injection
-        /// </summary>
-        public string Key { get; set; }
 
         /// <summary>
         /// Log limits, set by ModifyLogLimits
@@ -448,7 +442,7 @@ namespace Pipeline.Configuration {
             var entity = new Entity().WithDefaults();
             entity.Name = "Calculated";
             entity.Alias = entity.Name;
-            entity.Key = calc.Key + entity.Alias;
+            entity.Key = calc.Name + entity.Alias;
             entity.Connection = "output";
             entity.Fields.Add(new Field {
                 Name = Constants.TflKey,

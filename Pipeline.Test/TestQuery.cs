@@ -47,7 +47,7 @@ namespace Pipeline.Test {
 
             builder.Register<ISchemaReader>((ctx, p) => {
                 var process = p.TypedAs<Process>();
-                var context = ctx.IsRegisteredWithName<IContext>(process.Key) ? ctx.ResolveNamed<IContext>(process.Key) : new PipelineContext(new NullLogger(), process);
+                var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(new NullLogger(), process);
                 return new RunTimeSchemaReader(process, context);
             }).As<ISchemaReader>();
 

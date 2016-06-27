@@ -56,12 +56,12 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 }
 
                 // process-level pipeline for process level calculated fields
-                if (ctx.IsRegisteredWithName<IPipeline>(_process.Key)) {
-                    pipelines.Add(ctx.ResolveNamed<IPipeline>(_process.Key));
+                if (ctx.IsRegistered<IPipeline>()) {
+                    pipelines.Add(ctx.Resolve<IPipeline>());
                 }
 
                 var outputConnection = _process.Output();
-                var context = ctx.ResolveNamed<IContext>(_process.Key);
+                var context = ctx.Resolve<IContext>();
 
                 var controller = new ProcessController(pipelines, context);
 
@@ -75,7 +75,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         case "sqlserver":
                         case "elastic":
                         case "lucene":
-                            controller.PreActions.Add(ctx.ResolveNamed<IInitializer>(_process.Key));
+                            controller.PreActions.Add(ctx.Resolve<IInitializer>());
                             break;
                         default:
                             output.Warn($"The {outputConnection.Provider} provider does not support initialization.");
@@ -125,7 +125,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 }
 
                 return controller;
-            }).Named<IProcessController>(_process.Key);
+            }).As<IProcessController>();
 
         }
 
