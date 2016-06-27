@@ -131,6 +131,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 }
 
                 return process;
+            }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
 
         }
     }

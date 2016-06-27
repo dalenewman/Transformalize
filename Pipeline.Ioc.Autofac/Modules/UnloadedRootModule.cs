@@ -80,6 +80,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 }
 
                 return new Process(dependencies.ToArray());
+            }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
 
         }
     }
