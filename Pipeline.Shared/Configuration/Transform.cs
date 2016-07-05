@@ -176,18 +176,25 @@ namespace Pipeline.Configuration {
         public string Type { get; set; }
         [Cfg(value = "meters")]
         public string Units { get; set; }
+
         [Cfg(value = null)]
         public object UpperBound { get; set; }
+
         [Cfg(value = "Inclusive", domain = "Inclusive,Exclusive,Ignore", ignoreCase = true)]
         public string UpperBoundType { get; set; }
+
         [Cfg(value = "None")]
         public string UpperUnit { get; set; }
+
         [Cfg(value = "")]
         public string Url { get; set; }
+
         [Cfg(value = false)]
         public bool UseHttps { get; set; }
-        [Cfg(value = "")]
+
+        [Cfg(value = Constants.DefaultSetting)]
         public string Value { get; set; }
+
         [Cfg(value = "GET", domain = "GET,POST", ignoreCase = true)]
         public string WebMethod { get; set; }
         [Cfg(value = "Default")]

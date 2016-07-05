@@ -427,7 +427,7 @@ namespace Pipeline.Configuration.Ext {
                     }
                     break;
                 case "contains":
-                    if (t.Value == string.Empty) {
+                    if (t.Value == Constants.DefaultSetting || t.Value == string.Empty) {
                         error("The contains validator requires a value.");
                     }
                     break;
