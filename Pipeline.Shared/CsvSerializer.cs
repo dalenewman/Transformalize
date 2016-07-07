@@ -3,7 +3,7 @@ using System.Text;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
-namespace Pipeline.Ioc.Autofac {
+namespace Pipeline {
     public class CsvSerializer : ISerialize {
 
         private const string Quote = "\"";

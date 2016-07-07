@@ -97,6 +97,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IWriteMasterUpdateQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IWriteQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\LogLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CsvSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EntityStatus.cs" />

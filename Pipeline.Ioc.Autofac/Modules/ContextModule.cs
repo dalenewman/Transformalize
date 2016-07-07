@@ -21,7 +21,9 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Ioc.Autofac.Modules {
+
     public class ContextModule : Module {
+
         private readonly Process _process;
 
         public ContextModule() { }

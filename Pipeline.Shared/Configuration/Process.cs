@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
@@ -29,7 +31,7 @@ using Pipeline.Logging;
 namespace Pipeline.Configuration {
 
     [Cfg(name = "cfg")]
-    public class Process : CfgNode {
+    public class Process : CfgNode, IDisposable {
 
         private string _name;
 
@@ -495,5 +497,18 @@ namespace Pipeline.Configuration {
             return false;
         }
 
+        public void Dispose() {
+            Log.Clear();
+            Entities.Clear();
+            Actions.Clear();
+            CalculatedFields.Clear();
+            Connections.Clear();
+            Environments.Clear();
+            Maps.Clear();
+            Relationships.Clear();
+            Scripts.Clear();
+            SearchTypes.Clear();
+            Templates.Clear();
+        }
     }
 }
