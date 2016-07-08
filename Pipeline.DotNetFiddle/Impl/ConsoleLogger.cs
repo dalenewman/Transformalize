@@ -37,21 +37,21 @@ namespace Pipeline.DotNetFiddle.Impl {
 
         public void Debug(PipelineContext context, Func<string> lamda) {
             if (DebugEnabled) {
-                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
+                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
             }
         }
 
         public void Info(PipelineContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 var custom = string.Format(message, args);
-                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
+                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
             }
         }
 
         public void Warn(PipelineContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 var custom = string.Format(message, args);
-                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
+                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
             }
         }
 

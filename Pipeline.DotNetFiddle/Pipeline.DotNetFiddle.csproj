@@ -39,6 +39,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cfg.Net.Environment\EnvironmentModifier.cs" />
+    <Compile Include="Cfg.Net.Environment\ParameterModifier.cs" />
+    <Compile Include="Cfg.Net.Environment\PlaceHolderModifier.cs" />
+    <Compile Include="Cfg.Net.Environment\PlaceHolderValidator.cs" />
+    <Compile Include="Cfg.Net.Reader\DefaultReader.cs" />
+    <Compile Include="Cfg.Net.Reader\FileReader.cs" />
+    <Compile Include="Cfg.Net.Reader\HttpUtility.cs" />
+    <Compile Include="Cfg.Net.Reader\ReTryingReader.cs" />
+    <Compile Include="Cfg.Net.Reader\WebReader.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Expression.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Expressions.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Method.cs" />
+    <Compile Include="Cfg.Net.Shorthand\MethodData.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Node.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Parameter.cs" />
+    <Compile Include="Cfg.Net.Shorthand\ShorthandAttribute.cs" />
+    <Compile Include="Cfg.Net.Shorthand\ShorthandModifier.cs" />
+    <Compile Include="Cfg.Net.Shorthand\ShorthandRoot.cs" />
+    <Compile Include="Cfg.Net.Shorthand\ShorthandValidator.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Signature.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Target.cs" />
+    <Compile Include="Cfg.Net.Shorthand\Utility.cs" />
     <Compile Include="Cfg.Net\CfgAttribute.cs" />
     <Compile Include="Cfg.Net\CfgConstants.cs" />
     <Compile Include="Cfg.Net\CfgEvents.cs" />
@@ -82,7 +104,8 @@
     <Compile Include="Cfg.Net\Serializers\XmlSerializer.cs" />
     <Compile Include="Impl\ConsoleLogger.cs" />
     <Compile Include="Impl\ConsoleWriter.cs" />
-    <Compile Include="Impl\ControllerFactory.cs" />
+    <Compile Include="Impl\Settings.cs" />
+    <Compile Include="Impl\Factory.cs" />
     <Compile Include="Impl\TransformFactory.cs" />
     <Compile Include="Impl\Transforms\CompiledRegexReplaceTransform.cs" />
     <Compile Include="Impl\Transforms\CsharpTransform.cs" />
@@ -97,7 +120,6 @@
     <Compile Include="Impl\Transforms\XPathTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="..\Pipeline.Shared\Pipeline.Shared.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -26,8 +26,8 @@ namespace Cfg.Net.Loggers {
         private readonly StringBuilder _warnings;
         private string[] _errorCache;
         private string[] _warningCache;
-        private static Regex LeftBracket = new Regex("[^{][{]{1}[^{]");
-        private static Regex RightBracket = new Regex("[^}][}]{1}[^}]");
+        private static readonly Regex LeftBracket = new Regex("[^{][{]{1}[^{]");
+        private static readonly Regex RightBracket = new Regex("[^}][}]{1}[^}]");
 
 
         public MemoryLogger() {
@@ -61,13 +61,13 @@ namespace Cfg.Net.Loggers {
 
         public string[] Errors() {
             return _errorCache ?? (_errorCache = _errors.ToString()
-                .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { System.Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .ToArray());
         }
 
         public string[] Warnings() {
             return _warningCache ?? (_warningCache = _warnings.ToString()
-                .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(new[] { System.Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .ToArray());
         }
 

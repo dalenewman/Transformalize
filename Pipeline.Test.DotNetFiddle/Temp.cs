@@ -51,8 +51,8 @@ namespace Pipeline.Test.DotNetFiddle {
 	</entities>
 </cfg>";
 
-            var process = new Process(cfg);
-            var controller = ControllerFactory.Create(process);
+            var process = Factory.CreateProcess(cfg);
+            var controller = Factory.CreateController(process);
             controller.Execute();
 
             System.Diagnostics.Trace.WriteLine(string.Join(System.Environment.NewLine, process.Errors()));
