@@ -30,7 +30,7 @@ namespace Pipeline.DotNetFiddle.Impl {
 
         public void Write(IEnumerable<IRow> rows) {
             if (!string.IsNullOrEmpty(_serializer.Header)) {
-                Console.Out.WriteLine(_serializer.Header);
+                Console.WriteLine(_serializer.Header);
             }
 
             using (var enumerator = rows.GetEnumerator()) {
@@ -39,14 +39,14 @@ namespace Pipeline.DotNetFiddle.Impl {
                 while (!last) {
                     var current = enumerator.Current;
                     last = !enumerator.MoveNext();
-                    Console.Out.Write(_serializer.RowPrefix);
-                    Console.Out.Write(_serializer.Serialize(current));
-                    Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
+                    Console.Write(_serializer.RowPrefix);
+                    Console.Write(_serializer.Serialize(current));
+                    Console.WriteLine(last ? string.Empty : _serializer.RowSuffix);
                 }
             }
 
             if (!string.IsNullOrEmpty(_serializer.Footer)) {
-                Console.Out.WriteLine(_serializer.Footer);
+                Console.WriteLine(_serializer.Footer);
             }
         }
     }

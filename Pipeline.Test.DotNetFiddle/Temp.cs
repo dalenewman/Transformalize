@@ -17,8 +17,6 @@
 #endregion
 
 using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 using Pipeline.DotNetFiddle.Impl;
 
 namespace Pipeline.Test.DotNetFiddle {
@@ -57,6 +55,37 @@ namespace Pipeline.Test.DotNetFiddle {
 
             System.Diagnostics.Trace.WriteLine(string.Join(System.Environment.NewLine, process.Errors()));
 
+
+        }
+
+        [Test]
+        public void TestWeb()
+        {
+            const string cfg = @"
+		<cfg name='Hello World'>
+			<connections>
+				<add name='input' 
+                     provider='web' 
+                     url='https://raw.githubusercontent.com/openmundi/world.csv/master/countries(249)_alpha3.csv'
+                     delimiter=','
+                     start='2' />
+				<add name='output' provider='console' />
+			</connections>
+			<entities>
+				<add name='file' page='2' page-size='10'>
+					<fields>
+						<add name='code' length='3' primary-key='true' />
+						<add name='name' />
+					</fields>
+				</add>
+			</entities>
+		</cfg>";
+
+            var process = Factory.CreateProcess(cfg);
+            var controller = Factory.CreateController(process);
+            controller.Execute();
+
+            System.Diagnostics.Trace.WriteLine(string.Join(System.Environment.NewLine, process.Errors()));
 
         }
 

@@ -75,7 +75,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel", toLower = true)]
+        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web", toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
@@ -185,9 +185,11 @@ namespace Pipeline.Configuration {
             }
 
             if (Provider == "file" && string.IsNullOrEmpty(File)) {
-                if (string.IsNullOrEmpty(File)) {
-                    Error("The file provider requires a file.");
-                }
+                Error("The file provider requires a file.");
+            }
+
+            if (Provider == "web" && string.IsNullOrEmpty(Url)) {
+                Error("The file provider requires a url.");
             }
 
             if (Provider == "sqlite" && string.IsNullOrEmpty(File) && string.IsNullOrEmpty(Database)) {

@@ -118,6 +118,7 @@
     <Compile Include="Impl\Transforms\RelativeTimeTransform.cs" />
     <Compile Include="Impl\Transforms\TimeZoneTransform.cs" />
     <Compile Include="Impl\Transforms\XPathTransform.cs" />
+    <Compile Include="Impl\WebCsvReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="..\Pipeline.Shared\Pipeline.Shared.projitems" Label="Shared" />

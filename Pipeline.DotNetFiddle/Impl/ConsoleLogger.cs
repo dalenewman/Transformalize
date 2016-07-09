@@ -37,37 +37,37 @@ namespace Pipeline.DotNetFiddle.Impl {
 
         public void Debug(PipelineContext context, Func<string> lamda) {
             if (DebugEnabled) {
-                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
+                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
             }
         }
 
         public void Info(PipelineContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 var custom = string.Format(message, args);
-                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
+                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
             }
         }
 
         public void Warn(PipelineContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 var custom = string.Format(message, args);
-                Console.Out.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
+                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
             }
         }
 
         public void Error(PipelineContext context, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                Console.Error.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
+                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
             }
         }
 
         public void Error(PipelineContext context, Exception exception, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                Console.Error.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
-                Console.Error.WriteLine(exception.Message);
-                Console.Error.WriteLine(exception.StackTrace);
+                Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
+                Console.WriteLine(exception.Message);
+                Console.WriteLine(exception.StackTrace);
             }
         }
 

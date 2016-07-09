@@ -11,17 +11,26 @@ It is used to prepare data for [data warehouses](https://en.wikipedia.org/wiki/D
 [search engines](https://en.wikipedia.org/wiki/Search_engine_%28computing%29), 
 and other forms of analysis and/or presentation.
 
+For a simple example, check out [Hello Countries](https://dotnetfiddle.net/G2Rbwn) on dotNetFiddle<a href="#dnf">*</a>.
+
 ### <a name="CFG"></a>Configurable
-TFL processes (aka arrangements) are created and modified in an [XML](https://en.wikipedia.org/wiki/XML) or 
-[JSON](https://en.wikipedia.org/wiki/JSON) editor. Creating an arrangement is writing a 
-configuration.
+TFL processes (aka arrangements) are maintained in an [XML](https://en.wikipedia.org/wiki/XML) or 
+[JSON](https://en.wikipedia.org/wiki/JSON) editor.  You do not need to be a programmer 
+to use TFL.
+
+The normal work-flow to deploy an arragement is:
+
+- Create your arrangement
+- Execute TFL in `init` mode
+- Install TFL as a service with [nssm](https://nssm.cc) 
+  - running incrementals on a schedule (using `-s` flag) enabled by [Quartz.net](http://www.quartz-scheduler.net/) cron expression.
 
 To modify your arrangement:
 
-1. Disable incremental processing
+1. Stop the incremental processing (stop the service)
 1. Edit your XML or JSON.
 1. Execute TFL in `init` mode (to rebuild it)
-1. Enable incremental processing
+1. start the incremental processing (start the service)
 
 A TFL output is disposable. You may routinely create and destroy it.
 
@@ -101,7 +110,8 @@ The best way you can understand how to use TFL is by reviewing examples.
 how Transformalize works, you can read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind) 
 on Code Project (based on the 1st implementation).
 
- 
+<a name="dnf">*</a>dotNetFiddle: attempts to run small programs from your web browser.  I created a special [nuget package](https://www.nuget.org/packages/Pipeline.DotNetFiddle) for running limited arrangements on dotNetFiddle. Sometimes 
+executing TFL on dotNetFiddle exceeds the execution time limit.  Often you can just re-run it to get it to work.
 
 
 

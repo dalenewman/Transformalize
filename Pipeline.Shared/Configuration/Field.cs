@@ -343,15 +343,6 @@ namespace Pipeline.Configuration {
         public string SearchType { get; set; }
 
         /// <summary>
-        /// Optional
-        /// 
-        /// * asc
-        /// * desc
-        /// </summary>
-        [Cfg(value = "none", domain = "asc,desc,none", toLower = true)]
-        public string Sort { get; set; }
-
-        /// <summary>
         /// Optional.
         /// 
         /// An alternate (shorter) way to define simple transformations.
@@ -493,17 +484,14 @@ namespace Pipeline.Configuration {
 
         }
 
+        [Cfg(value=true)]
+        public bool Sortable { get; set; }
+
         public override int GetHashCode() {
             return Alias.GetHashCode();
         }
 
         public int Ordinal { get; set; }
-
-        [Cfg(value = "")]
-        public string OrderBy { get; set; }
-
-        [Cfg(value = "none", domain = "asc,desc,none", toLower = true, ignoreCase = true)]
-        public string Order { get; set; }
 
         public bool IsNumeric() {
             return Constants.NumericTypeSet().Contains(Type);

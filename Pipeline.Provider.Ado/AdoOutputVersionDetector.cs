@@ -15,6 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Data;
 using Dapper;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -43,14 +46,19 @@ namespace Pipeline.Provider.Ado {
                     break;
                 default:
                     sql = $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {_cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name))} WHERE {_cf.Enclose(Constants.TflDeleted)} = 0;";
-                    break; 
+                    break;
             }
 
             _context.Debug(() => $"Loading Output Version: {sql}");
 
-            using (var cn = _cf.GetConnection()) {
-                cn.Open();
-                return cn.ExecuteScalar(sql);
+            try {
+                using (var cn = _cf.GetConnection()) {
+                    cn.Open();
+                    return cn.ExecuteScalar(sql);
+                }
+            } catch (Exception ex) {
+                _context.Error(ex, ex.Message + " " + sql);
+                throw;
             }
         }
     }

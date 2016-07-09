@@ -43,7 +43,14 @@ namespace Pipeline.DotNetFiddle.Impl {
                 var entityRowFactory = new RowFactory(entityInputContext.RowCapacity, entity.IsMaster, false);
                 var entityOutputContext = new OutputContext(entityContext, new Incrementer(entityContext));
 
-                entityPipeline.Register(new InternalReader(entityInputContext, entityRowFactory));
+                switch (entityInputContext.Connection.Provider) {
+                    case "web":
+                        entityPipeline.Register(new WebCsvReader(entityInputContext, entityRowFactory));
+                        break;
+                    default:
+                        entityPipeline.Register(new InternalReader(entityInputContext, entityRowFactory));
+                        break;
+                }
 
                 entityPipeline.Register(new SetSystemFields(entityContext));
                 entityPipeline.Register(new DefaultTransform(entityContext, entityContext.GetAllEntityFields()));

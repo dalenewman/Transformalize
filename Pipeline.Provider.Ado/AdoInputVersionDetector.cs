@@ -15,6 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Data;
 using System.Linq;
 using Dapper;
 using Pipeline.Context;
@@ -45,9 +48,14 @@ namespace Pipeline.Provider.Ado {
             }
             _context.Debug(() => $"Loading Input Version: {sql}");
 
-            using (var cn = _cf.GetConnection()) {
-                cn.Open();
-                return cn.ExecuteScalar(sql);
+            try {
+                using (var cn = _cf.GetConnection()) {
+                    cn.Open();
+                    return cn.ExecuteScalar(sql);
+                }
+            } catch (Exception ex) {
+                _context.Error(ex, ex.Message + " " + sql);
+                throw;
             }
         }
     }

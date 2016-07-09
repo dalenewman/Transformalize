@@ -35,8 +35,8 @@
       <HintPath>..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Npgsql, Version=3.1.3.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Npgsql.3.1.3\lib\net45\Npgsql.dll</HintPath>
+    <Reference Include="npgsql, Version=3.1.5.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
+      <HintPath>..\packages\npgsql.3.1.5\lib\net45\npgsql.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
