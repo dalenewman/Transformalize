@@ -25,7 +25,7 @@ namespace Pipeline.Transforms {
         readonly Field _input;
         readonly Func<object, string> _toString;
 
-        public ToStringTransform(PipelineContext context) : base(context) {
+        public ToStringTransform(IContext context) : base(context) {
             _input = SingleInput();
             if (context.Transform.Format == string.Empty) {
                 _toString = (o) => o.ToString();

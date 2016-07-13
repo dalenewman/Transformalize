@@ -23,7 +23,7 @@ namespace Pipeline.Transforms {
     public class ToLowerTransform : BaseTransform, ITransform {
         readonly Field _input;
 
-        public ToLowerTransform(PipelineContext context) : base(context) {
+        public ToLowerTransform(IContext context) : base(context) {
             _input = SingleInput();
         }
         public IRow Transform(IRow row) {

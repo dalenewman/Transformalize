@@ -18,16 +18,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Configuration;
-using Pipeline.Context;
 
 namespace Pipeline.Contracts {
    public interface IMapReader {
-      IEnumerable<MapItem> Read(PipelineContext context); 
+      IEnumerable<MapItem> Read(IContext context); 
    }
 
    public class DefaultMapReader : IMapReader {
 
-      public IEnumerable<MapItem> Read(PipelineContext context) {
+      public IEnumerable<MapItem> Read(IContext context) {
          return context.Process.Maps.First(m => m.Name == context.Transform.Map).Items;
       }
    }

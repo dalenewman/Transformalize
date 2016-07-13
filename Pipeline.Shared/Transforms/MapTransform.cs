@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -29,11 +30,13 @@ namespace Pipeline.Transforms {
         private readonly object _catchAll;
         const string CatchAll = "*";
 
-        public MapTransform(PipelineContext context, IMapReader mapReader) : base(context) {
+        public MapTransform(IContext context) : base(context) {
             _input = SingleInput();
 
+            var map = context.Process.Maps.First(m => m.Name == context.Transform.Map);
+
             // seems like i have over-complicated this...
-            foreach (var item in mapReader.Read(context)) {
+            foreach (var item in map.Items) {
                 if (item.From.Equals(CatchAll)) {
                     _catchAll = context.Field.Convert(item.To);
                     continue;

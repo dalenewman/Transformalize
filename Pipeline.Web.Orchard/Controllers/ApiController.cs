@@ -39,6 +39,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         readonly IOrchardServices _orchardServices;
         readonly IIpRangeService _ipRangeService;
         private readonly IProcessService _processService;
+        private readonly ISortService _sortService;
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -46,11 +47,13 @@ namespace Pipeline.Web.Orchard.Controllers {
         public ApiController(
             IOrchardServices orchardServices,
             IIpRangeService ipRangeService,
-            IProcessService processService
+            IProcessService processService,
+            ISortService sortService
         ) {
             _orchardServices = orchardServices;
             _ipRangeService = ipRangeService;
             _processService = processService;
+            _sortService = sortService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -89,6 +92,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                     if (process.Errors().Any()) {
                         return Get503(action, process, format, timer.ElapsedMilliseconds);
                     }
+                }
+
+                var sort = Request["sort"];
+                if (!string.IsNullOrEmpty(sort)) {
+                    _sortService.AddSortToEntity(process.Entities.First(), sort);
                 }
 
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
@@ -164,6 +172,12 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 SystemFieldHelper(process);
                 ShorthandHelper(process);
+
+                var sort = Request["sort"];
+                if (!string.IsNullOrEmpty(sort)) {
+                    _sortService.AddSortToEntity(process.Entities.First(), sort);
+                }
+
                 process.Request = action;
                 process.Status = 200;
                 process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize

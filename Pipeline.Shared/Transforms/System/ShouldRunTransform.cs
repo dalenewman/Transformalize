@@ -22,7 +22,7 @@ namespace Pipeline.Transforms.System {
     public class ShouldRunTransform : BaseTransform, ITransform {
         private readonly ITransform _transform;
 
-        public ShouldRunTransform(PipelineContext context, ITransform transform) : base(context) {
+        public ShouldRunTransform(IContext context, ITransform transform) : base(context) {
             _transform = transform;
         }
 

@@ -484,6 +484,9 @@ namespace Pipeline.Configuration {
 
         }
 
+        [Cfg(value="")]
+        public string SortField { get; set; }
+
         [Cfg(value=true)]
         public bool Sortable { get; set; }
 

@@ -57,12 +57,12 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         case "sqlite":
                         case "sqlserver":
                             if (connection != null)
-                                return new AdoMapReader(ctx.ResolveNamed<IConnectionFactory>(connection.Key));
+                                return new AdoMapReader(ctx.ResolveNamed<IConnectionFactory>(connection.Key), map.Name);
                             return new DefaultMapReader();
                         default:
                             return new DefaultMapReader();
                     }
-                }).Named<IMapReader>(map.Key);
+                }).Named<IMapReader>(map.Name);
             }
 
         }

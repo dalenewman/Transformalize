@@ -25,7 +25,7 @@ namespace Pipeline.Transforms {
       readonly int _length;
       readonly IField _input;
 
-      public LeftTransform(PipelineContext context)
+      public LeftTransform(IContext context)
             : base(context) {
          _length = context.Transform.Length;
          _input = SingleInput();

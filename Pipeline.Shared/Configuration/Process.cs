@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +47,7 @@ namespace Pipeline.Configuration {
         public long Time { get; set; }
 
         [Cfg]
-        public List<Empty> Log { get; set; }
+        public List<LogEntry> Log { get; set; }
 
         [Cfg(value = "")]
         public string Environment { get; set; }
@@ -246,11 +245,6 @@ namespace Pipeline.Configuration {
             // entities
             foreach (var entity in Entities) {
                 entity.Key = Name + entity.Alias;
-            }
-
-            // maps
-            foreach (var map in Maps) {
-                map.Key = Name + map.Name;
             }
 
             // templates

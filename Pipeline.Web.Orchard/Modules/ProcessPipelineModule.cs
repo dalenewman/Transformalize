@@ -55,10 +55,10 @@ namespace Pipeline.Web.Orchard.Modules {
                 context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
                 switch (_process.Pipeline) {
                     case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(ctx.ResolveNamed<IOutputController>(_process.Key), context));
+                        pipeline = new ParallelPipeline(new DefaultPipeline(ctx.Resolve<IOutputController>(), context));
                         break;
                     default:
-                        pipeline = new DefaultPipeline(ctx.ResolveNamed<IOutputController>(_process.Key), context);
+                        pipeline = new DefaultPipeline(ctx.Resolve<IOutputController>(), context);
                         break;
                 }
 
@@ -79,15 +79,15 @@ namespace Pipeline.Web.Orchard.Modules {
                 // register input and output
                 switch (outputContext.Connection.Provider) {
                     case "sqlserver":
-                        pipeline.Register(ctx.ResolveNamed<IRead>(_process.Key));
-                        pipeline.Register(ctx.ResolveNamed<IWrite>(_process.Key));
+                        pipeline.Register(ctx.Resolve<IRead>());
+                        pipeline.Register(ctx.Resolve<IWrite>());
                         pipeline.Register(new MinDateTransform(context, new DateTime(1753, 1, 1)));
                         break;
                     case "mysql":
                     case "postgresql":
                     case "sqlite":
-                        pipeline.Register(ctx.ResolveNamed<IRead>(_process.Key));
-                        pipeline.Register(ctx.ResolveNamed<IWrite>(_process.Key));
+                        pipeline.Register(ctx.Resolve<IRead>());
+                        pipeline.Register(ctx.Resolve<IWrite>());
                         break;
                     default:
                         pipeline.Register(new NullReader(context));
@@ -96,7 +96,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 }
 
                 return pipeline;
-            }).Named<IPipeline>(_process.Key);
+            }).As<IPipeline>();
 
         }
     }

@@ -26,7 +26,7 @@ namespace Pipeline.Validators {
       readonly Field _input;
       readonly Func<string, object> _canConvert;
 
-      public IsValidator(PipelineContext context)
+      public IsValidator(IContext context)
             : base(context) {
             _input = SingleInput();
             if (context.Field.Type.StartsWith("bool", StringComparison.Ordinal)) {

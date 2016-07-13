@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Orchard;
 using Pipeline.Configuration;
 using Pipeline.Web.Orchard.Models;

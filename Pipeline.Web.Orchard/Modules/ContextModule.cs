@@ -37,32 +37,37 @@ namespace Pipeline.Web.Orchard.Modules {
                 return;
 
             // Process Context
-            builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).Named<IContext>(_process.Key);
+            builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).As<IContext>();
 
             // Process Output Context
             builder.Register(ctx => {
-                var context = ctx.ResolveNamed<IContext>(_process.Key);
+                var context = ctx.Resolve<IContext>();
                 return new OutputContext(context, new Incrementer(context));
-            }).Named<OutputContext>(_process.Key);
+            }).As<OutputContext>();
 
             // Connection and Process Level Output Context
-            foreach (var connection in _process.Connections) {
+            foreach (var cn in _process.Connections) {
 
-                builder.Register(ctx => new ConnectionContext(ctx.ResolveNamed<IContext>(_process.Key), connection)).Named<IConnectionContext>(connection.Key);
+                var connection = cn;
+
+                builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(cn.Key);
 
                 if (connection.Name != "output")
                     continue;
 
                 // register output for connection
                 builder.Register(ctx => {
-                    var context = ctx.ResolveNamed<IContext>(_process.Key);
+                    var context = ctx.Resolve<IContext>();
                     return new OutputContext(context, new Incrementer(context));
-                }).Named<OutputContext>(connection.Key);
+                }).Named<OutputContext>(cn.Key);
 
             }
 
             // Entity Context and RowFactory
-            foreach (var entity in _process.Entities) {
+            foreach (var e in _process.Entities) {
+
+                var entity = e;
+
                 builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process, entity)).Named<IContext>(entity.Key);
 
                 builder.Register<IIncrement>(ctx => new Incrementer(ctx.ResolveNamed<IContext>(entity.Key))).Named<IIncrement>(entity.Key).InstancePerDependency();
@@ -77,7 +82,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 builder.Register(ctx => {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
                     return new OutputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
-                }).Named<OutputContext>(entity.Key);
+                }).Named<OutputContext>(e.Key);
             }
         }
     }

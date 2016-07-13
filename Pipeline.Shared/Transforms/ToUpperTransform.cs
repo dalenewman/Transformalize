@@ -16,14 +16,13 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
    public class ToUpperTransform : BaseTransform, ITransform {
       readonly Field _input;
 
-      public ToUpperTransform(PipelineContext context) : base(context) {
+      public ToUpperTransform(IContext context) : base(context) {
          _input = SingleInput();
       }
       public IRow Transform(IRow row) {

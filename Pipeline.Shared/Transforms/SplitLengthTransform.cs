@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
@@ -24,7 +23,7 @@ namespace Pipeline.Transforms {
         readonly Field _input;
         readonly char[] _separator;
 
-        public SplitLengthTransform(PipelineContext context)
+        public SplitLengthTransform(IContext context)
             : base(context) {
             _input = SingleInput();
             _separator = context.Transform.Separator.ToCharArray();

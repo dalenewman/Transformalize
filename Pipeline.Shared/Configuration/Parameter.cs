@@ -17,8 +17,8 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
+using System.Runtime;
 using Cfg.Net;
 
 namespace Pipeline.Configuration {
@@ -59,6 +59,12 @@ namespace Pipeline.Configuration {
         public string Value { get; set; }
         [Cfg(value = true)]
         public bool Input { get; set; }
+
+        [Cfg(value=false)]
+        public bool Prompt { get; set; }
+
+        [Cfg(value="", toLower = true)]
+        public string Map { get; set; }
 
         protected override void Validate() {
             switch (Type) {

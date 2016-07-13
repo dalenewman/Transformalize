@@ -15,13 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Configuration {
     public class NullTransformer : BaseTransform, ITransform {
-        public NullTransformer(PipelineContext context)
+        public NullTransformer(IContext context)
             : base(context) {
         }
 

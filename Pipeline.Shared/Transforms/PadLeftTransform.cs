@@ -16,14 +16,13 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     public class PadLeftTransform : BaseTransform, ITransform {
         readonly Field _input;
 
-        public PadLeftTransform(PipelineContext context)
+        public PadLeftTransform(IContext context)
             : base(context) {
             _input = SingleInput();
         }

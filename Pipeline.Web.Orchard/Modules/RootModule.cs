@@ -82,7 +82,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 if (!string.IsNullOrEmpty(ctx.ResolveNamed<string>("sh"))) {
                     var shr = new ShorthandRoot(ctx.ResolveNamed<string>("sh"), ctx.ResolveNamed<IReader>("file"));
 					if (shr.Errors().Any()) {
-                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error", Key = "Error" }.WithDefaults());
+                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" }.WithDefaults());
                         foreach (var error in shr.Errors()) {
                             context.Error(error);
                         }

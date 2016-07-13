@@ -24,7 +24,7 @@ namespace Pipeline.Transforms
     public class LastTransform : BaseTransform, ITransform {
         private readonly DateTime _last;
 
-        public LastTransform(PipelineContext context) : base(context) {
+        public LastTransform(IContext context) : base(context) {
             var from = DateTime.Today;
             var to = Enum.Parse(typeof(DayOfWeek), context.Transform.DayOfWeek, true);
             int diff = (int)from.DayOfWeek - (int)to;

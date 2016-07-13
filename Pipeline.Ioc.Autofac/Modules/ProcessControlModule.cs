@@ -124,6 +124,10 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     }
                 }
 
+                foreach (var map in _process.Maps.Where(m => !string.IsNullOrEmpty(m.Query))) {
+                    controller.PreActions.Add(new MapReaderAction(context, map, ctx.ResolveNamed<IMapReader>(map.Name)));
+                }
+
                 return controller;
             }).As<IProcessController>();
 

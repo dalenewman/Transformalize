@@ -44,7 +44,8 @@ namespace Pipeline.Web.Orchard.Handlers {
             try {
                 var cfg = new ShorthandRoot(part.Shorthand, new CfgNetNotifier(_notifier));
                 if (!cfg.Errors().Any()) {
-                    _notifier.Add(NotifyType.Information, T("Shorthand loads correctly"));
+                    _notifier.Add(NotifyType.Information, T("Shorthand loaded correctly"));
+                    _notifier.Add(NotifyType.Warning, T("You will have to recycle the app pool for this to take affect."));
                 }
             } catch (Exception ex) {
                 _notifier.Add(NotifyType.Error, T(ex.Message));

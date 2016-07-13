@@ -75,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
             if (_process.Output().Provider.In(_internal)) {
 
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
+                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
 

@@ -24,7 +24,7 @@ namespace Pipeline.Transforms {
         readonly Field _input;
         readonly char[] _trimChars;
 
-        public TrimTransform(PipelineContext context)
+        public TrimTransform(IContext context)
             : base(context) {
             _input = SingleInput();
             _trimChars = Context.Transform.TrimChars.ToCharArray();

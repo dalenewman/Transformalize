@@ -240,6 +240,8 @@
     <Compile Include="Impl\RunTimeDataReader.cs" />
     <Compile Include="Services\IpRangeService.cs" />
     <Compile Include="Services\ProcessService.cs" />
+    <Compile Include="Services\SortDirection.cs" />
+    <Compile Include="Services\SortService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\List\List.cshtml" />

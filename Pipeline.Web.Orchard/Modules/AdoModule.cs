@@ -141,7 +141,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => {
-                    var output = ctx.ResolveNamed<OutputContext>(_process.Key);
+                    var output = ctx.Resolve<OutputContext>();
                     if (_process.Mode != "init")
                         return new NullOutputController();
 
@@ -154,7 +154,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         default:
                             return new NullOutputController();
                     }
-                }).Named<IOutputController>(_process.Key);
+                }).As<IOutputController>();
 
                 // PROCESS CALCULATED READER
                 builder.Register<IRead>(ctx => {
@@ -164,7 +164,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     var capacity = outputContext.Entity.Fields.Count + outputContext.Entity.CalculatedFields.Count;
                     var rowFactory = new RowFactory(capacity, false, false);
                     return new AdoStarParametersReader(outputContext, _process, cf, rowFactory);
-                }).Named<IRead>(_process.Key);
+                }).As<IRead>();
 
                 // PROCESS CALCULATED FIELD WRITER
                 builder.Register<IWrite>(ctx => {
@@ -172,17 +172,18 @@ namespace Pipeline.Web.Orchard.Modules {
                     var outputContext = new OutputContext(calcContext, new Incrementer(calcContext));
                     var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
                     return new AdoCalculatedFieldUpdater(outputContext, _process, cf);
-                }).Named<IWrite>(_process.Key);
+                }).As<IWrite>();
 
                 // PROCESS INITIALIZER
                 builder.Register<IInitializer>(ctx => {
-                    var output = ctx.ResolveNamed<OutputContext>(_process.Key);
+                    var output = ctx.Resolve<OutputContext>();
                     return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
-                }).Named<IInitializer>(_process.Key);
+                }).As<IInitializer>();
 
                 // ENTITIES
-                foreach (var entity in _process.Entities) {
+                foreach (var e in _process.Entities) {
 
+                    var entity = e;
                     // ENTITY OUTPUT CONTROLLER
                     builder.Register<IOutputController>(ctx => {
 

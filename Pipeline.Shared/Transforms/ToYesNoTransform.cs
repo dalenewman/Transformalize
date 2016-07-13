@@ -23,7 +23,7 @@ namespace Pipeline.Transforms {
     public class ToYesNoTransform : BaseTransform, ITransform {
         private readonly Field _input;
 
-        public ToYesNoTransform(PipelineContext context) : base(context) {
+        public ToYesNoTransform(IContext context) : base(context) {
             _input = SingleInput();
         }
 

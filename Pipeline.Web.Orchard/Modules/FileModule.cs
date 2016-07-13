@@ -104,9 +104,10 @@ namespace Pipeline.Web.Orchard.Modules {
             if (_process.Output().Provider == "file") {
 
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
+                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
-                foreach (var entity in _process.Entities) {
+                foreach (var e in _process.Entities) {
+                    var entity = e;
                     // WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);

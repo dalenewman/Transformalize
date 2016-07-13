@@ -26,7 +26,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly Field _input;
         private readonly Regex _clean = new Regex("[^0-9]", RegexOptions.Compiled);
 
-        public FormatPhoneTransform(PipelineContext context) : base(context) {
+        public FormatPhoneTransform(IContext context) : base(context) {
             _input = SingleInput();
         }
 

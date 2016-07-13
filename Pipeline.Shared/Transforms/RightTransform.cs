@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
 
@@ -24,7 +23,7 @@ namespace Pipeline.Transforms {
    public class RightTransform : BaseTransform, ITransform {
       readonly Field _input;
 
-      public RightTransform(PipelineContext context)
+      public RightTransform(IContext context)
             : base(context) {
          _input = SingleInput();
       }

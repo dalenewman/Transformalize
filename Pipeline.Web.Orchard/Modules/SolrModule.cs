@@ -132,7 +132,7 @@ namespace Pipeline.Web.Orchard.Modules {
             if (_process.Output().Provider == "solr") {
 
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(_process.Key);
+                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var e in _process.Entities) {
 

@@ -46,11 +46,11 @@ namespace Pipeline.Web.Orchard.Modules {
             return transforms;
         }
 
-        public static ITransform ShouldRunTransform(IComponentContext ctx, PipelineContext context) {
+        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
             return context.Transform.ShouldRun == null ? SwitchTransform(ctx, context) : new ShouldRunTransform(context, SwitchTransform(ctx, context));
         }
 
-        static ITransform SwitchTransform(IComponentContext ctx, PipelineContext context) {
+        static ITransform SwitchTransform(IComponentContext ctx, IContext context) {
 
             switch (context.Transform.Method) {
                 case "sum":
@@ -97,7 +97,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 case "lower":
                 case "tolower": return new ToLowerTransform(context);
                 case "join": return new JoinTransform(context);
-                case "map": return new MapTransform(context, ctx.ResolveNamed<IMapReader>(context.Process.Maps.First(m => m.Name == context.Transform.Map).Key));
+                case "map": return new MapTransform(context);
                 case "decompress": return new DecompressTransform(context);
                 case "next": return new NextTransform(context);
                 case "last": return new LastTransform(context);

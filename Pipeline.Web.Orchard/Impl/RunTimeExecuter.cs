@@ -70,7 +70,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new ProcessControlModule(process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
-                scope.ResolveNamed<IProcessController>(process.Key).Execute();
+                scope.Resolve<IProcessController>().Execute();
             }
 
         }

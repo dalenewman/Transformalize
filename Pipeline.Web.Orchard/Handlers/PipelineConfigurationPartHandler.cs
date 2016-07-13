@@ -25,8 +25,10 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
 using Orchard;
+using Orchard.Caching;
 using Pipeline.Configuration;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard.Handlers {
 
@@ -34,16 +36,19 @@ namespace Pipeline.Web.Orchard.Handlers {
 
         readonly INotifier _notifier;
         readonly IOrchardServices _orchard;
+        private readonly IProcessService _processService;
 
         public Localizer T { get; set; }
 
         public PipelineConfigurationPartHandler(
             IOrchardServices orchard,
             IRepository<PipelineConfigurationPartRecord> repository,
+            IProcessService processService,
             INotifier notifier
         ) {
             _notifier = notifier;
             _orchard = orchard;
+            _processService = processService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
             Filters.Add(StorageFilter.For(repository));
@@ -69,19 +74,7 @@ namespace Pipeline.Web.Orchard.Handlers {
             if (part == null)
                 return;
             try {
-                Process root;
-                switch (part.EditorMode) {
-                    case "json":
-                        root = _orchard.WorkContext.Resolve<JsonProcess>();
-                        break;
-                    case "yaml":
-                        root = _orchard.WorkContext.Resolve<YamlProcess>();
-                        break;
-                    default:
-                        root = _orchard.WorkContext.Resolve<XmlProcess>();
-                        break;
-                }
-
+                var root = _processService.Resolve(part.EditorMode, part.EditorMode);
                 root.Load(part.Configuration);
 
                 if (root.Errors().Any()) {
@@ -98,7 +91,9 @@ namespace Pipeline.Web.Orchard.Handlers {
 
                 CheckAddress(part.StartAddress);
                 CheckAddress(part.EndAddress);
+
             } catch (Exception ex) {
+
                 _notifier.Add(NotifyType.Error, T(ex.Message));
                 Logger.Error(ex.Message);
             }

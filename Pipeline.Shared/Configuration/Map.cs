@@ -39,7 +39,5 @@ namespace Pipeline.Configuration {
                 Error($"Map '{Name}' needs items or a query.");
             }
         }
-
-        public string Key { get; set; }
     }
 }

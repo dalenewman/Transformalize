@@ -25,6 +25,7 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
+using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
@@ -35,15 +36,18 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
+        private readonly ISortService _sortService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
         public ReportController(
             IOrchardServices services,
-            IProcessService processService
+            IProcessService processService,
+            ISortService sortService
             ) {
             _orchardServices = services;
             _processService = processService;
+            _sortService = sortService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -68,9 +72,16 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
                     process.Load(part.Configuration, Common.GetParameters(Request));
 
-                    if (process.Output().IsInternal()) {
-                        if (!process.Errors().Any()) {
+                    if (Request["sort"] != null) {
+                        _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
+                    }
 
+                    if (process.Output().IsInternal()) {
+                        if (process.Errors().Any()) {
+                            foreach (var error in process.Errors()) {
+                                _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                            }
+                        } else {
                             if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                                 _orchardServices.WorkContext.Resolve<ISchemaHelper>().Help(process);
                             }
@@ -90,6 +101,8 @@ namespace Pipeline.Web.Orchard.Controllers {
                             }
 
                         }
+                    } else {
+                        _orchardServices.Notifier.Warning(T("Output must be set to internal for report to work."));
                     }
                 }
             }

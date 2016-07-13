@@ -88,7 +88,7 @@ namespace Pipeline.Provider.Ado {
                     if (_input.Entity.IsPageRequest()) {
                         _input.Entity.Hits = cn.ExecuteScalar<int>($"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(_input.Entity.Filter.Any() ? _input.ResolveFilter(_factory) : string.Empty)}");
                     }
-
+                    _input.Entity.Query = cmd.CommandText;
                 } else {
                     cmd.CommandText = _input.Entity.Query;
                 }

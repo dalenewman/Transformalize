@@ -21,6 +21,7 @@ using System.Collections.Generic;
 namespace Pipeline.Contracts {
     public interface IPipeline : IRead, IDisposable {
         void Initialize();
+        void Register(IMapReader mapReader);
         void Register(IRead reader);
         void Register(ITransform transformer);
         void Register(IEnumerable<ITransform> transforms);

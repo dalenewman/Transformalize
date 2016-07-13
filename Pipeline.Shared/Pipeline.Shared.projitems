@@ -22,7 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Action.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Delimiter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Empty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Entity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Environment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Ext\ProcessPreValidate.cs" />

@@ -26,7 +26,7 @@ namespace Pipeline.Transforms {
         readonly Field _input;
         readonly Field[] _output;
 
-        public FromSplitTransform(PipelineContext context)
+        public FromSplitTransform(IContext context)
             : base(context) {
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();

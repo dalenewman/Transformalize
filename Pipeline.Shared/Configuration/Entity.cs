@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 using Cfg.Net.Ext;
+using Pipeline.Transforms;
 
 namespace Pipeline.Configuration {
     public class Entity : CfgNode {
@@ -167,6 +168,13 @@ namespace Pipeline.Configuration {
             if (string.IsNullOrEmpty(Alias)) {
                 Alias = Name;
             }
+
+            foreach (var field in GetAllFields().Where(f => f.Sortable)) {
+                if (string.IsNullOrEmpty(field.SortField)) {
+                    field.SortField = string.IsNullOrEmpty(Query) ? field.Alias : field.Name;
+                }
+            }
+
             foreach (var cf in CalculatedFields) {
                 cf.Input = false;
                 cf.IsCalculated = true;
@@ -270,6 +278,12 @@ namespace Pipeline.Configuration {
             foreach (var field in GetAllFields().Where(f => !f.System)) {
                 if (Constants.InvalidFieldNames.Contains(field.Alias)) {
                     Error($"{field.Alias} is a reserved word in {Alias}.  Please alias it (<a name='{field.Alias}' alias='{Alias}{field.Alias.Remove(0, 3)}' />).");
+                }
+            }
+
+            foreach (var field in GetAllOutputFields().Where(f => f.Sortable && !string.IsNullOrEmpty(f.SortField))) {
+                if (GetField(field.SortField) == null) {
+                    Error($"Can't find sort field {field.SortField} defined in field {field.Alias}.");
                 }
             }
 

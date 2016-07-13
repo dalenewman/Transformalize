@@ -35,7 +35,7 @@ namespace Pipeline.Transforms {
         readonly Field _input;
         private static Dictionary<string, char> _entities;
 
-        public DecodeTransform(PipelineContext context)
+        public DecodeTransform(IContext context)
              : base(context) {
             _input = SingleInput();
         }

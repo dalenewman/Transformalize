@@ -28,7 +28,7 @@ namespace Pipeline.Transforms {
         private readonly Action<IRow> _transform;
         private readonly Func<string, string> _substring;
 
-        public SubStringTransform(PipelineContext context) : base(context) {
+        public SubStringTransform(IContext context) : base(context) {
             _input = SingleInput();
 
             if (context.Transform.Length == 0) {

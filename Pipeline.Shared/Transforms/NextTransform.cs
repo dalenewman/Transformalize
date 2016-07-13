@@ -16,14 +16,13 @@
 // limitations under the License.
 #endregion
 using System;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     public class NextTransform : BaseTransform, ITransform {
         private readonly DateTime _next;
 
-        public NextTransform(PipelineContext context) : base(context) {
+        public NextTransform(IContext context) : base(context) {
             var from = DateTime.Today;
             var to = Enum.Parse(typeof(DayOfWeek), context.Transform.DayOfWeek, true);
             var start = (int)from.DayOfWeek;

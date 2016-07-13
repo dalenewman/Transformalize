@@ -35,7 +35,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 return response;
 
             using (var scope = _container.BeginLifetimeScope()) {
-                scope.ResolveNamed<IProcessController>(_process.Key).Execute();
+                scope.Resolve<IProcessController>().Execute();
             }
 
             return response;

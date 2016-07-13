@@ -17,14 +17,13 @@
 #endregion
 using System.Linq;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     public class ConcatTransform : BaseTransform, ITransform {
         readonly Field[] _input;
 
-        public ConcatTransform(PipelineContext context)
+        public ConcatTransform(IContext context)
             : base(context) {
             _input = MultipleInput();
         }

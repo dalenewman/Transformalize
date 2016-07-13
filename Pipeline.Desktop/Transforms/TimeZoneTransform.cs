@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
@@ -29,7 +28,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
-        public TimeZoneTransform(PipelineContext context) : base(context) {
+        public TimeZoneTransform(IContext context) : base(context) {
             _input = SingleInput();
             _output = context.Field;
 

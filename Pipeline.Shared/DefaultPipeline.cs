@@ -30,6 +30,7 @@ namespace Pipeline {
         protected IUpdate Updater { get; private set; }
         protected IEntityDeleteHandler DeleteHandler { get; private set; }
         protected List<ITransform> Transformers { get; }
+        protected List<IMapReader> MapReaders { get; }
 
         public IContext Context => _context;
 
@@ -39,6 +40,7 @@ namespace Pipeline {
             _context = (PipelineContext)context;
             _controller = controller;
             Transformers = new List<ITransform>();
+            MapReaders = new List<IMapReader>();
 
             _context.Debug(() => $"Registering {GetType().Name}.");
             _context.Debug(() => $"Registering {_controller.GetType().Name}.");
@@ -46,6 +48,11 @@ namespace Pipeline {
 
         public void Initialize() {
             _controller.Initialize();
+        }
+
+        public void Register(IMapReader mapReader) {
+            _context.Debug(() => $"Registering {mapReader.GetType().Name}.");
+            MapReaders.Add(mapReader);
         }
 
         public void Register(IRead reader) {

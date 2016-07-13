@@ -44,6 +44,13 @@ namespace Pipeline.Configuration.Ext {
             ValidateScripts(p, error);
             ValidateEntityFields(p, warn);
             ValidateCalculatedFields(p, error);
+            ValidateParameterMaps(p, error);
+        }
+
+        private static void ValidateParameterMaps(Process process, Action<string> error) {
+            foreach (var parameter in process.Environments.SelectMany(e => e.Parameters.Where(p => p.Map != string.Empty)).Where(parameter => process.Maps.All(m => m.Name != parameter.Map))) {
+                error($"A parameter refers to invalid map: {parameter.Map}.");
+            }
         }
 
         static void ValidateCalculatedFields(Process p, Action<string> error) {
@@ -258,7 +265,7 @@ namespace Pipeline.Configuration.Ext {
         }
 
         static void ValidateSearchTypes(Process p, Action<string> error) {
-            foreach (var name in p.GetAllFields().Where(f=>!f.System).Select(f => f.SearchType).Distinct()) {
+            foreach (var name in p.GetAllFields().Where(f => !f.System).Select(f => f.SearchType).Distinct()) {
                 if (name != "none" && p.SearchTypes.All(st => st.Name != name)) {
                     error($"Search type {name} is invalid. Add it to search types, or remove it from the field using it.");
                 }

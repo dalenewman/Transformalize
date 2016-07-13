@@ -37,6 +37,10 @@ namespace Pipeline.Desktop {
             _pipeline.Initialize();
         }
 
+        public void Register(IMapReader mapReader) {
+            _pipeline.Register(mapReader);
+        }
+
         public void Register(IEnumerable<ITransform> transforms) {
             _pipeline.Register(transforms);
         }

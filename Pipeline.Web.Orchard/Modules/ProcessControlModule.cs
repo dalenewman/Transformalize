@@ -56,12 +56,12 @@ namespace Pipeline.Web.Orchard.Modules {
                 }
 
                 // process-level pipeline for process level calculated fields
-                if (ctx.IsRegisteredWithName<IPipeline>(_process.Key)) {
-                    pipelines.Add(ctx.ResolveNamed<IPipeline>(_process.Key));
+                if (ctx.IsRegistered<IPipeline>()) {
+                    pipelines.Add(ctx.Resolve<IPipeline>());
                 }
 
                 var outputConnection = _process.Output();
-                var context = ctx.ResolveNamed<IContext>(_process.Key);
+                var context = ctx.Resolve<IContext>();
 
                 var controller = new ProcessController(pipelines, context);
 
@@ -75,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "sqlserver":
                         case "elastic":
                         case "lucene":
-                            controller.PreActions.Add(ctx.ResolveNamed<IInitializer>(_process.Key));
+                            controller.PreActions.Add(ctx.Resolve<IInitializer>());
                             break;
                         default:
                             output.Warn("The {0} provider does not support initialization.", outputConnection.Provider);
@@ -91,7 +91,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     foreach (var provider in providers) {
                         switch (provider) {
                             case "solr":
-                                foreach (var connection in _process.Connections.Where(c => c.Provider == "solr")) {
+                                foreach (var cn in _process.Connections.Where(c => c.Provider == "solr")) {
+                                    var connection = cn;
                                     foreach (var entity in _process.Entities.Where(e => e.Connection == connection.Name)) {
                                         controller.PreActions.Add(ctx.ResolveNamed<IInputValidator>(entity.Key));
                                     }
@@ -124,8 +125,12 @@ namespace Pipeline.Web.Orchard.Modules {
                     }
                 }
 
+                foreach(var map in _process.Maps.Where(m=>!string.IsNullOrEmpty(m.Query))){
+                    controller.PreActions.Add(new MapReaderAction(context, map, ctx.ResolveNamed<IMapReader>(map.Name)));
+                }
+
                 return controller;
-            }).Named<IProcessController>(_process.Key);
+            }).As<IProcessController>();
 
         }
 

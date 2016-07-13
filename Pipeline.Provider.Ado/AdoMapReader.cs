@@ -20,21 +20,22 @@ using System.Data;
 using System.Linq;
 using Cfg.Net.Ext;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 
 namespace Pipeline.Provider.Ado {
     public class AdoMapReader : IMapReader {
         private readonly IConnectionFactory _connectionFactory;
+        private readonly string _mapName;
 
-        public AdoMapReader(IConnectionFactory connectionFactory) {
+        public AdoMapReader(IConnectionFactory connectionFactory, string mapName) {
             _connectionFactory = connectionFactory;
+            _mapName = mapName;
         }
 
-        public IEnumerable<MapItem> Read(PipelineContext context) {
+        public IEnumerable<MapItem> Read(IContext context) {
             var items = new List<MapItem>();
-            var map = context.Process.Maps.First(m => m.Name == context.Transform.Map);
+            var map = context.Process.Maps.First(m => m.Name == _mapName);
             var connection = context.Process.Connections.First(cn => cn.Name == map.Connection);
             using (var cn = _connectionFactory.GetConnection()) {
                 cn.Open();

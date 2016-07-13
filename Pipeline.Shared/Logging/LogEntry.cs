@@ -16,22 +16,51 @@
 // limitations under the License.
 #endregion
 using System;
+using Cfg.Net;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Logging {
-    public class LogEntry {
-        public PipelineContext Context { get; private set; }
+    public class LogEntry : CfgNode {
+
+        public PipelineContext Context { get; }
+
+        [Cfg]
         public DateTime Time { get; private set; }
-        public LogLevel Level { get; private set; }
+
+        [Cfg(value = "info")]
+        public string Level { get; set; }
+
+        public LogLevel LogLevel { get; private set; }
+
+        [Cfg(value = "")]
         public string Message { get; private set; }
+
         public Exception Exception { get; set; }
 
         public LogEntry(LogLevel level, PipelineContext context, string message, params object[] args) {
             Time = DateTime.UtcNow;
             Context = context;
-            Level = level;
+            LogLevel = level;
             Message = string.Format(message, args);
         }
+
+        public LogEntry() {
+            Time = DateTime.UtcNow;
+        }
+
+        [Cfg]
+        public string Process => Context?.Process.Name;
+
+        [Cfg]
+        public string Entity => Context?.Entity?.Name;
+
+        [Cfg]
+        public string Field => Context?.Field?.Alias;
+
+        [Cfg]
+        public string Transform => Context?.Transform?.Method;
+
+
     }
 }
