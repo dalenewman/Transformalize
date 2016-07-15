@@ -6,7 +6,7 @@
           "files": [
             "*.cs"
           ],
-          "cwd": "../Pipeline.Portable/Configuration",
+          "cwd": "../Pipeline.Shared/Configuration",
           "exclude": [
             "**/obj/**",
             "**/bin/**",

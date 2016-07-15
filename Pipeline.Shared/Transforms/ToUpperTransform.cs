@@ -19,17 +19,17 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-   public class ToUpperTransform : BaseTransform, ITransform {
-      readonly Field _input;
+    public class ToUpperTransform : BaseTransform, ITransform {
+        readonly Field _input;
 
-      public ToUpperTransform(IContext context) : base(context) {
-         _input = SingleInput();
-      }
-      public IRow Transform(IRow row) {
-         row.SetString(Context.Field, row.GetString(_input).ToUpperInvariant());
-         Increment();
-         return row;
-      }
-   }
-      
+        public ToUpperTransform(IContext context) : base(context) {
+            _input = SingleInput();
+        }
+        public IRow Transform(IRow row) {
+            row.SetString(Context.Field, row.GetString(_input).ToUpperInvariant());
+            Increment();
+            return row;
+        }
+    }
+
 }

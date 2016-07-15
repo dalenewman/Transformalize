@@ -60,6 +60,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "convert": return new ConvertTransform(context);
                 case "toyesno": return new ToYesNoTransform(context);
                 case "regexreplace": return new CompiledRegexReplaceTransform(context);
+                case "match": return new CompiledRegexMatchTransform(context);
                 // (portable) case "regexreplace": return new RegexReplaceTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "formatphone": return new FormatPhoneTransform(context);
@@ -104,18 +105,25 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "datediff": return new DateDiffTransform(context);
                 case "totime": return new ToTimeTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "any": return new AnyTransform(context);
                 case "connection": return new ConnectionTransform(context);
                 case "filename": return new FileNameTransform(context);
                 case "fileext": return new FileExtTransform(context);
                 case "filepath": return new FilePathTransform(context);
                 case "xpath": return new XPathTransform(context);
+                case "coalesce": return new CoalesceTransform(context);
+                case "invert": return new InvertTransform(context);
 
-                case "contains": return new ContainsValidater(context);
+                // return true or false, validators
+                case "any": return new AnyValidator(context);
+                case "startswith": return new StartsWithValidator(context);
+                case "endswith": return new EndsWithValidator(context);
+                case "in": return new InValidator(context);
+                case "contains": return new ContainsValidator(context);
                 case "is": return new IsValidator(context);
                 case "equal":
-                case "equals":
-                    return new EqualsValidator(context);
+                case "equals": return new EqualsValidator(context);
+                case "isempty": return new IsEmptyValidator(context);
+                case "isdefault": return new IsDefaultValidator(context);
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);

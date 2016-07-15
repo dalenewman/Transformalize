@@ -173,14 +173,14 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "datediff": return new DateDiffTransform(context);
                 case "totime": return new ToTimeTransform(context);
                 case "razor": return razor;
-                case "any": return new AnyTransform(context);
+                case "any": return new AnyValidator(context);
                 case "connection": return new ConnectionTransform(context);
                 case "filename": return new FileNameTransform(context);
                 case "fileext": return new FileExtTransform(context);
                 case "filepath": return new FilePathTransform(context);
                 case "xpath": return new XPathTransform(context);
 
-                case "contains": return new ContainsValidater(context);
+                case "contains": return new ContainsValidator(context);
                 case "is": return new IsValidator(context);
                 case "equal":
                 case "equals":

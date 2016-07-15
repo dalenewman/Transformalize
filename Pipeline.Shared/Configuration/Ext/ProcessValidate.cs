@@ -92,11 +92,15 @@ namespace Pipeline.Configuration.Ext {
                 if (p.Maps.All(m => m.Name != transform.Map)) {
                     error($"A map transform references an invalid map: {transform.Map}.");
                 }
-                var map = p.Maps.First(m => m.Name == transform.Map);
-                foreach (var item in map.Items.Where(i => i.Parameter != string.Empty)) {
-                    Field field;
-                    if (!p.TryGetField(item.Parameter, out field)) {
-                        error($"A map transform references an invalid field: {item.Parameter}.");
+                if (p.Maps.All(m => m.Name != transform.Map)) {
+                    error($"The map {transform.Map} is invalid.");
+                } else {
+                    var map = p.Maps.First(m => m.Name == transform.Map);
+                    foreach (var item in map.Items.Where(i => i.Parameter != string.Empty)) {
+                        Field field;
+                        if (!p.TryGetField(item.Parameter, out field)) {
+                            error($"A map transform references an invalid field: {item.Parameter}.");
+                        }
                     }
                 }
             }
@@ -304,6 +308,7 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} method expects from one to two datetime parameters.");
                     }
                     break;
+                case "invert":
                 case "toyesno":
                     if (input.Type != "bool") {
                         error($"The {t.Method} expects a bool input, but {input.Alias} is {input.Type}.");
@@ -340,7 +345,11 @@ namespace Pipeline.Configuration.Ext {
                 case "xmldecode":
                 case "fileext":
                 case "filepath":
+                case "match":
                 case "filename":
+                case "startswith":
+                case "endswith":
+                case "isempty":
                 case "xpath":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string input. {input.Alias} is {input.Type}.");
@@ -433,9 +442,11 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} transform requires a value.");
                     }
                     break;
+                case "startswith":
+                case "endswith":
                 case "contains":
                     if (t.Value == Constants.DefaultSetting || t.Value == string.Empty) {
-                        error("The contains validator requires a value.");
+                        error($"The {t.Method} validator requires a value.");
                     }
                     break;
                 case "is":
@@ -471,6 +482,7 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} transform requires an old-value.");
                     }
                     break;
+                case "match":
                 case "regexreplace":
                     if (t.Pattern == string.Empty) {
                         error($"The {t.Method} transform requires a pattern.");
@@ -526,6 +538,11 @@ namespace Pipeline.Configuration.Ext {
                         error("If you set a namespace, you must also set the url that references the name space.");
                     }
                     break;
+                case "in":
+                    if (string.IsNullOrEmpty(t.Domain)) {
+                        error("The in tranform/validator requires the domain attribute.");
+                    }
+                    break;
                 default:
                     break;
             }
@@ -566,6 +583,16 @@ namespace Pipeline.Configuration.Ext {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
+                    case "equal":
+                    case "equals":
+                    case "startswith":
+                    case "endswith":
+                    case "invert":
+                    case "is":
+                    case "contains":
+                    case "isempty":
+                    case "isdefault":
+                    case "in":
                     case "any":
                         if (!context.Field.Type.StartsWith("bool")) {
                             error($"The {lastTransform.Method} returns a bool, but {context.Field.Alias} is a {context.Field.Type}.");

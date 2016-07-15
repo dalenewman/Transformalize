@@ -53,6 +53,7 @@
     <Compile Include="SchemaReader.cs" />
     <Compile Include="Loggers\ConsoleLogger.cs" />
     <Compile Include="Loggers\TraceLogger.cs" />
+    <Compile Include="Transforms\CompiledRegexMatchTransform.cs" />
     <Compile Include="Transforms\CsharpTransform.cs" />
     <Compile Include="Transforms\DateDiffTransform.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />

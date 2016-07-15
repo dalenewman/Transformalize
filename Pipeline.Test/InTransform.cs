@@ -15,39 +15,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Pipeline.Test {
 
     [TestFixture]
-    public class TestSignature {
+    public class InTransform {
 
-        [Test(Description = "Validator")]
-        public void Validator() {
+        [Test(Description = "In Transformation")]
+        public void In() {
+
             const string xml = @"
-    <add name='TestSignature'>
+    <add name='TestProcess'>
       <entities>
-        <add name='TestData'>
+        <add name='TestData' pipeline='linq'>
           <rows>
-            <add args='10,0' />
+            <add Field1='1' />
+            <add Field1='5' />
           </rows>
           <fields>
-            <add name='args' length='128'>
-                <transforms>
-                    <add method='fromsplit' separator=','>
-                        <fields>
-                            <add name='TotalWidth' />
-                            <add name='PaddingChar' />
-                        </fields>
-                    </add>
-                </transforms>
-            </add>
+            <add name='Field1' />
           </fields>
           <calculated-fields>
-            <add name='length' type='int' t='copy(args).splitlength(\,)' />
-            <add name='TotalWidthCheck' type='bool' t='copy(TotalWidth).is(int)' />
+            <add name='In123' type='bool' t='copy(Field1).in(1,2,3)' />
+            <add name='In456' type='bool' t='copy(Field1).in(4,5,6)' />
           </calculated-fields>
         </add>
       </entities>
@@ -55,15 +47,13 @@ namespace Pipeline.Test {
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml);
-            var process = composer.Process;
             var output = controller.Read().ToArray();
 
-            var field = process.Entities.First().CalculatedFields.First(cf => cf.Name == "length");
-            Assert.AreEqual(2, output[0][field]);
-
-            foreach (var row in output) {
-                Console.WriteLine(row);
-            }
+            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
+            Assert.AreEqual(true, output[0][cf[0]]);
+            Assert.AreEqual(false, output[0][cf[1]]);
+            Assert.AreEqual(false, output[1][cf[0]]);
+            Assert.AreEqual(true, output[1][cf[1]]);
         }
     }
 }

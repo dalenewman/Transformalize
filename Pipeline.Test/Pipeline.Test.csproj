@@ -101,6 +101,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatePartTransform.cs" />
+    <Compile Include="MatchTransform.cs" />
+    <Compile Include="InTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
     <Compile Include="ConnectionTransform.cs" />
     <Compile Include="CopyTransform.cs" />

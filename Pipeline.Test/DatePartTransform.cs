@@ -15,39 +15,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Pipeline.Test {
 
     [TestFixture]
-    public class TestSignature {
+    public class DatePartTransform {
 
-        [Test(Description = "Validator")]
-        public void Validator() {
+        [Test(Description = "DatePart Transformation")]
+        public void DatePart1() {
+
             const string xml = @"
-    <add name='TestSignature'>
+    <add name='TestProcess'>
       <entities>
-        <add name='TestData'>
+        <add name='TestData' >
           <rows>
-            <add args='10,0' />
+            <add StartDate='2016-06-01' EndDate='2016-08-01' />
           </rows>
           <fields>
-            <add name='args' length='128'>
-                <transforms>
-                    <add method='fromsplit' separator=','>
-                        <fields>
-                            <add name='TotalWidth' />
-                            <add name='PaddingChar' />
-                        </fields>
-                    </add>
-                </transforms>
-            </add>
+            <add name='StartDate' type='datetime' />
+            <add name='EndDate' type='datetime' />
           </fields>
           <calculated-fields>
-            <add name='length' type='int' t='copy(args).splitlength(\,)' />
-            <add name='TotalWidthCheck' type='bool' t='copy(TotalWidth).is(int)' />
+            <add name='StartYear' type='int' t='copy(StartDate).datepart(year)' />
+            <add name='EndYear' type='int' t='copy(EndDate).datepart(year)' />
+            <add name='StartWeek' type='int' t='copy(StartDate).datepart(weekofyear)' />
+            <add name='EndWeek' type='int' t='copy(EndDate).datepart(weekofyear)' />
           </calculated-fields>
         </add>
       </entities>
@@ -55,15 +49,13 @@ namespace Pipeline.Test {
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml);
-            var process = composer.Process;
             var output = controller.Read().ToArray();
 
-            var field = process.Entities.First().CalculatedFields.First(cf => cf.Name == "length");
-            Assert.AreEqual(2, output[0][field]);
-
-            foreach (var row in output) {
-                Console.WriteLine(row);
-            }
+            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
+            Assert.AreEqual(2016, output[0][cf[0]]);
+            Assert.AreEqual(2016, output[0][cf[1]]);
+            Assert.AreEqual(23, output[0][cf[2]]);
+            Assert.AreEqual(32, output[0][cf[3]]);
         }
     }
 }

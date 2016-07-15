@@ -55,13 +55,12 @@ namespace Pipeline.Web.Orchard.Modules {
             switch (context.Transform.Method) {
                 case "sum":
                 case "add": return new AddTransform(context);
-                case "multiply":
-                    return new MultiplyTransform(context);
+                case "multiply": return new MultiplyTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "now": return new UtcNowTransform(context);
                 case "toyesno": return new ToYesNoTransform(context);
                 case "regexreplace": return new CompiledRegexReplaceTransform(context);
-                // (portable) case "regexreplace": return new RegexReplaceTransform(context);
+                case "match": return new CompiledRegexMatchTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "formatphone": return new FormatPhoneTransform(context);
                 case "utcnow":return new UtcNowTransform(context);
@@ -104,15 +103,25 @@ namespace Pipeline.Web.Orchard.Modules {
                 case "datepart": return new DatePartTransform(context);
                 case "totime": return new ToTimeTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "any": return new AnyTransform(context);
                 case "connection": return new ConnectionTransform(context);
                 case "filename": return new FileNameTransform(context);
                 case "fileext": return new FileExtTransform(context);
                 case "filepath": return new FilePathTransform(context);
                 case "xpath": return new XPathTransform(context);
+                case "coalesce": return new CoalesceTransform(context);
+                case "invert": return new InvertTransform(context);
 
-                case "contains": return new ContainsValidater(context);
+                // return true or false, validators
+                case "any": return new AnyValidator(context);
+                case "startswith": return new StartsWithValidator(context);
+                case "endswith": return new EndsWithValidator(context);
+                case "in": return new InValidator(context);
+                case "contains": return new ContainsValidator(context);
                 case "is": return new IsValidator(context);
+                case "equal":
+                case "equals": return new EqualsValidator(context);
+                case "isempty": return new IsEmptyValidator(context);
+                case "isdefault": return new IsDefaultValidator(context);
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);

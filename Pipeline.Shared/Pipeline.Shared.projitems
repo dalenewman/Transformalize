@@ -140,8 +140,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BaseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CoalesceTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ConcatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ConnectionTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ConvertTransform.cs" />
@@ -153,6 +153,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromXmlTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\HashcodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\InsertTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\InvertTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\JoinTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LeftTransform.cs" />
@@ -184,9 +185,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\UtcNowTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TypedEntityMatchingKeysReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\AnyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\CompositeValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\ContainsValidate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\EndsWithValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\EqualsValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\InValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\IsDefaultValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\IsEmptyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\StartsWithValidator.cs" />
   </ItemGroup>
 </Project>

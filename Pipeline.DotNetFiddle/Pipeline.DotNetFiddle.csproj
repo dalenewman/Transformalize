@@ -106,7 +106,7 @@
     <Compile Include="Impl\ConsoleWriter.cs" />
     <Compile Include="Impl\Settings.cs" />
     <Compile Include="Impl\Factory.cs" />
-    <Compile Include="Impl\TransformFactory.cs" />
+    <Compile Include="Impl\Transforms\CompiledRegexMatchTransform.cs" />
     <Compile Include="Impl\Transforms\CompiledRegexReplaceTransform.cs" />
     <Compile Include="Impl\Transforms\CsharpTransform.cs" />
     <Compile Include="Impl\Transforms\DateDiffTransform.cs" />

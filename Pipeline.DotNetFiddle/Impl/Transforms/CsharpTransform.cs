@@ -72,7 +72,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
                         type = field.Type;
                         break;
                 }
-                code.AppendLine($"{type} {Pipeline.Utility.Identifier(field.Alias)} = ({type}) row[_input[{i}]];");
+                code.AppendLine($"{type} {Utility.Identifier(field.Alias)} = ({type}) row[_input[{i}]];");
             }
 
             // handles csharp body or an expression
@@ -87,15 +87,14 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             code.AppendLine("Increment();");
             code.AppendLine("return row;");
 
-
             code.AppendLine("}");
             code.AppendLine("}");
 
-            var complete = code.ToString();
-            context.Debug((() => complete));
+            var sourceCode = code.ToString();
+            context.Debug((() => sourceCode));
 
             try {
-                var result = compiler.CompileAssemblyFromSource(parameters, complete);
+                var result = compiler.CompileAssemblyFromSource(parameters, sourceCode);
                 if (result.Errors.Count == 0) {
                     var type = result.CompiledAssembly.GetType("CSharpRunTimeTransform");
                     _transform = (ITransform)Activator.CreateInstance(type, context);
@@ -119,9 +118,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
         }
 
         public IRow Transform(IRow row) {
-            _transform.Transform(row);
-            Increment();
-            return row;
+            return _transform.Transform(row);
         }
     }
 

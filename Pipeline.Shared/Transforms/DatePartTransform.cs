@@ -28,7 +28,7 @@ namespace Pipeline.Transforms {
         public static readonly Dictionary<string, Func<DateTime, object>> Parts = new Dictionary<string, Func<DateTime, object>>() {
             {"day", x => x.Day},
             {"date", x=>x.Date},
-            {"dayofweek", x=>x.DayOfWeek},
+            {"dayofweek", x=>x.DayOfWeek.ToString()},
             {"dayofyear", x=>x.DayOfYear},
             {"hour", x=>x.Hour},
             {"millisecond", x=>x.Millisecond},
@@ -42,7 +42,7 @@ namespace Pipeline.Transforms {
 
         public static readonly Dictionary<string, string> PartReturns = new Dictionary<string, string>() {
             {"day", "int"},
-            {"date", "date"},
+            {"date", "datetime"},
             {"dayofweek", "string"},
             {"dayofyear", "int"},
             {"hour", "int"},
@@ -50,7 +50,7 @@ namespace Pipeline.Transforms {
             {"minute","int"},
             {"month","int"},
             {"second","int"},
-            {"tick","int"},
+            {"tick","long"},
             {"year","int"},
             {"weekofyear","int" }
         };

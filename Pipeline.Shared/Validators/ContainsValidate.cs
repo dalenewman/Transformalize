@@ -21,11 +21,11 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class ContainsValidater : BaseTransform, ITransform {
+    public class ContainsValidator : BaseTransform, ITransform {
 
         readonly Field[] _input;
 
-        public ContainsValidater(IContext context)
+        public ContainsValidator(IContext context)
               : base(context) {
 
             _input = MultipleInput();
