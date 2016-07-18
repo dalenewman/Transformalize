@@ -47,7 +47,7 @@ namespace Pipeline.Command {
 
             builder.Register<IScheduler>((ctx, p) => {
                 if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode.In("init", "check")) {
-                    return new QuartzNowScheduler(_options, context, ctx.Resolve<IJobFactory>());
+                    return new NowScheduler(_options, new RunTimeExecutor(_options, context, ctx.Resolve<ISchemaHelper>()));
                 }
                 return new QuartzCronScheduler(_options, context, ctx.Resolve<IJobFactory>());
             }).As<IScheduler>().SingleInstance();

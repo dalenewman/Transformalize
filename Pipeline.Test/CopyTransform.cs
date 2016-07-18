@@ -17,7 +17,6 @@
 #endregion
 using System.Linq;
 using NUnit.Framework;
-using Pipeline.Contracts;
 
 namespace Pipeline.Test {
 
@@ -27,10 +26,10 @@ namespace Pipeline.Test {
         [Test(Description = "Copy Transform")]
         public void CopyTransform1() {
 
-            var xml = @"
+            const string xml = @"
 <add name='TestProcess'>
     <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
             <rows>
                 <add Field1='1' Field2='2' />
             </rows>

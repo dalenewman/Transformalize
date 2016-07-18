@@ -15,22 +15,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
+using System.Collections.Generic;
 using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Validators {
-    public class StartsWithValidator : BaseTransform, ITransform {
-        private readonly Field _input;
+namespace Pipeline.Command {
+    public class NowScheduler : IScheduler {
+        private readonly Options _options;
+        private readonly IRunTimeExecute _runTimeExecute;
 
-        public StartsWithValidator(IContext context) : base(context) {
-            _input = SingleInput();
+        public NowScheduler(Options options, IRunTimeExecute runTimeExecute) {
+            _options = options;
+            _runTimeExecute = runTimeExecute;
         }
 
-        public IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].ToString().StartsWith(Context.Transform.Value);
-            Increment();
-            return row;
+        public void Start() {
+            var parameters = new Dictionary<string, string> { { "mode", _options.Mode } };
+            _runTimeExecute.Execute(_options.Arrangement, _options.Shorthand, parameters);
+        }
+
+        public void Stop() {
         }
     }
 }

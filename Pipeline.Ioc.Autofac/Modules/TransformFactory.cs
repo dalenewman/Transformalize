@@ -55,8 +55,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "add":
                 case "sum":
                     return new AddTransform(context);
-                case "multiply":
-                    return new MultiplyTransform(context);
+                case "multiply": return new MultiplyTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "toyesno": return new ToYesNoTransform(context);
                 case "regexreplace": return new CompiledRegexReplaceTransform(context);

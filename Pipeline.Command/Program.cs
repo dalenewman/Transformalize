@@ -41,13 +41,12 @@ namespace Pipeline.Command {
                 using (var scope = builder.Build().BeginLifetimeScope()) {
                     var scheduler = scope.Resolve<IScheduler>();
                     scheduler.Start();
-                    if (scheduler is QuartzNowScheduler) {
-                        scheduler.Stop();
-                    } else {
-                        QuitEvent.WaitOne();
-                        Console.WriteLine("Stopping...");
-                        scheduler.Stop();
-                    }
+                    if (scheduler is NowScheduler)
+                        return;
+
+                    QuitEvent.WaitOne();
+                    Console.WriteLine("Stopping...");
+                    scheduler.Stop();
                 }
             } else {
                 Environment.ExitCode = 1;

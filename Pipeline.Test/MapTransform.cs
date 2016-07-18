@@ -26,7 +26,7 @@ namespace Pipeline.Test {
         [Test(Description = "Map Transform")]
         public void MapTransformAdd() {
 
-            var xml = @"
+            const string xml = @"
 <add name='TestProcess'>
 
     <maps>
@@ -40,7 +40,7 @@ namespace Pipeline.Test {
     </maps>
 
     <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
             <rows>
                 <add Field1='1' Field3='^' />
                 <add Field1='2' Field3='#' />

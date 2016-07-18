@@ -131,7 +131,7 @@ namespace Pipeline.Configuration {
         /// 
         /// The default `defer` defers this decision to the entity's Pipeline setting.
         /// </summary>
-        [Cfg(value = "defer", domain = "defer,linq,streams,parallel.linq,parallel.streams,linq.optimizer,parallel.linq.optimizer", toLower = true)]
+        [Cfg(value = "defer", domain = "defer,linq,parallel.linq,parallel.linq.optimizer", toLower = true)]
         public string Pipeline { get; set; }
 
         /// <summary>

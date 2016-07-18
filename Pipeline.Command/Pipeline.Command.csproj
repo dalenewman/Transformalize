@@ -105,9 +105,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NowScheduler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="QuartzJobFactory.cs" />
-    <Compile Include="QuartzNowScheduler.cs" />
     <Compile Include="QuartzCronScheduler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

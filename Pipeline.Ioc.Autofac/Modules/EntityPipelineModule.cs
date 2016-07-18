@@ -21,6 +21,7 @@ using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Desktop;
+using Pipeline.Linq.Optimizer;
 using Pipeline.Nulls;
 using Pipeline.Transforms.System;
 
@@ -45,6 +46,9 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 switch (type) {
                     case "parallel.linq":
                         pipeline = new ParallelPipeline(new DefaultPipeline(ctx.ResolveNamed<IOutputController>(entity.Key), context));
+                        break;
+                    case "parallel.linq.optimizer":
+                        pipeline = new LinqOptimizerPipeline(new DefaultPipeline(ctx.ResolveNamed<IOutputController>(entity.Key), context));
                         break;
                     default:
                         pipeline = new DefaultPipeline(ctx.ResolveNamed<IOutputController>(entity.Key), context);

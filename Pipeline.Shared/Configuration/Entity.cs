@@ -49,14 +49,12 @@ namespace Pipeline.Configuration {
 
         /// <summary>
         /// Optional.  Defaults to `linq`.
-        /// I
-        /// A choice between `linq`, `parallel.linq`, `streams`, `parallel.streams`.
         /// 
-        /// **Note**: You can set each entity if you want, or control all entities from the Process' pipeline attribute.
+        ///  **Note**: You can set each entity if you want, or control all entities from the Process' pipeline attribute.
         /// 
         /// In general, you should develop using `linq`, and once everything is stable, switch over to `parallel.linq`.
         /// </summary>
-        [Cfg(value = "linq", domain = "linq,streams,parallel.linq,parallel.streams,linq.optimizer,parallel.linq.optimizer", toLower = true)]
+        [Cfg(value = "linq", domain = "linq,parallel.linq,parallel.linq.optimizer", toLower = true)]
         public string Pipeline { get; set; }
 
         [Cfg(value = "")]

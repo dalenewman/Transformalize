@@ -27,10 +27,10 @@ namespace Pipeline.Test {
         [Test(Description = "C# Transform")]
         public void CSharpTransformAdd() {
 
-            var xml = @"
+            const string xml = @"
 <add name='TestProcess'>
     <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
             <rows>
                 <add Field1='1' Field2='2' Field3='3' />
             </rows>

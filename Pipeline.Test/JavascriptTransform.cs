@@ -15,9 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Linq;
-using Jint;
 using NUnit.Framework;
 
 namespace Pipeline.Test {
@@ -28,10 +26,10 @@ namespace Pipeline.Test {
         [Test(Description = "Javascript Transform")]
         public void JavascriptTransformAdd() {
 
-            var xml = @"
+            const string xml = @"
 <add name='TestProcess'>
     <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
             <rows>
                 <add Field1='1' Field2='2' Field3='3' />
             </rows>

@@ -107,6 +107,11 @@ namespace Pipeline.DotNetFiddle.Impl {
         <add name='count' value='0' />
       </parameters>
     </add>
+    <add name='pattern'>
+      <parameters>
+        <add name='pattern' />
+      </parameters>
+    </add>
     <add name='insert'>
       <parameters>
         <add name='startindex' />
@@ -153,6 +158,11 @@ namespace Pipeline.DotNetFiddle.Impl {
       <parameters>
         <add name='timecomponent' />
         <add name='fromtimezone' value='UTC' />
+      </parameters>
+    </add>
+    <add name='domain'>
+      <parameters>
+        <add name='domain' />
       </parameters>
     </add>
   </signatures>
@@ -221,6 +231,14 @@ namespace Pipeline.DotNetFiddle.Impl {
     <add name='utcnow' signature='none' target='t' />
     <add name='xmldecode' signature='none' target='t' />
     <add name='xpath' signature='xpath' target='t' />
+    <add name='in' signature='domain' target='t' />
+    <add name='match' signature='pattern' target='t' />
+    <add name='coalesce' signature='none' target='t' />
+    <add name='startswith' signature='value' target='t' />
+    <add name='endswith' signature='value' target='t' />
+    <add name='invert' signature='none' target='t' />
+    <add name='isdefault' signature='none' target='t' />
+    <add name='isempty' signature='none' target='t' />
   </methods>
 
 </cfg>";

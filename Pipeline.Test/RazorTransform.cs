@@ -26,10 +26,10 @@ namespace Pipeline.Test {
         [Test(Description = "C# Transform")]
         public void RazorTransformAdd() {
 
-            var xml = @"
+            const string xml = @"
 <add name='TestProcess'>
     <entities>
-        <add name='TestData' pipeline='streams'>
+        <add name='TestData'>
             <rows>
                 <add Field1='1' Field2='2' Field3='3' />
             </rows>
@@ -45,7 +45,6 @@ namespace Pipeline.Test {
         </add>
     </entities>
 </add>";
-
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml);
