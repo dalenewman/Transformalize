@@ -54,7 +54,7 @@ namespace Pipeline.Configuration {
         /// 
         /// In general, you should develop using `linq`, and once everything is stable, switch over to `parallel.linq`.
         /// </summary>
-        [Cfg(value = "linq", domain = "linq,parallel.linq,parallel.linq.optimizer", toLower = true)]
+        [Cfg(value = "linq", domain = "linq,parallel.linq", toLower = true)]
         public string Pipeline { get; set; }
 
         [Cfg(value = "")]

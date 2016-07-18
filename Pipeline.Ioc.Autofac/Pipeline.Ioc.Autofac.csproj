@@ -135,10 +135,6 @@
       <Project>{EE20183D-3771-4D5E-890E-CF51EB696F89}</Project>
       <Name>Pipeline.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Linq.Optimizer\Pipeline.Linq.Optimizer.csproj">
-      <Project>{64934dc3-991d-4782-bcfa-83f34969cc5a}</Project>
-      <Name>Pipeline.Linq.Optimizer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
