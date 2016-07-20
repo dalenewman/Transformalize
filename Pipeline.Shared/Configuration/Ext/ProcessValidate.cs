@@ -369,9 +369,14 @@ namespace Pipeline.Configuration.Ext {
                         error("The shorthand transform requires t attribute.");
                     }
                     break;
+                case "tag":
+                    if (string.IsNullOrEmpty(context.Transform.Tag)) {
+                        error($"The {t.Method} transform requires a tag (e.g. a, span, div, etc).");
+                    }
+                    break;
                 case "format":
                     if (!context.Transform.Parameters.Any()) {
-                        error("The format transform requires parameters.  In long-hand, add <parameters/> collection, in short-hand, preceed format method with copy(field1,field2,etc).");
+                        error($"The {t.Method} transform requires parameters.  In long-hand, add <parameters/> collection, in short-hand, proceed format method with copy(field1,field2,etc).");
                     }
 
                     if (t.Format == string.Empty) {
@@ -578,6 +583,7 @@ namespace Pipeline.Configuration.Ext {
                     case "filename":
                     case "filepath":
                     case "fileext":
+                    case "tag":
                     case "totime":
                         if (context.Field.Type != "string") {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");

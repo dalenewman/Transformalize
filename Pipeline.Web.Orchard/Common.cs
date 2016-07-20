@@ -7,6 +7,7 @@ namespace Pipeline.Web.Orchard {
     public static class Common {
 
         public const string DefaultShortHand = @"<cfg>
+
   <signatures>
     <add name='none' />
     <add name='format'>
@@ -43,7 +44,7 @@ namespace Pipeline.Web.Orchard {
     </add>
     <add name='value'>
       <parameters>
-        <add name='value' />
+        <add name='value' value='[default]' />
       </parameters>
     </add>
     <add name='type'>
@@ -95,6 +96,11 @@ namespace Pipeline.Web.Orchard {
         <add name='count' value='0' />
       </parameters>
     </add>
+    <add name='pattern'>
+      <parameters>
+        <add name='pattern' />
+      </parameters>
+    </add>
     <add name='insert'>
       <parameters>
         <add name='startindex' />
@@ -143,6 +149,19 @@ namespace Pipeline.Web.Orchard {
         <add name='fromtimezone' value='UTC' />
       </parameters>
     </add>
+    <add name='domain'>
+      <parameters>
+        <add name='domain' />
+      </parameters>
+    </add>
+    <add name='tag'>
+      <parameters>
+        <add name='tag' />
+        <add name='class' value='' />
+        <add name='style' value='' />
+        <add name='title' value='' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -163,6 +182,8 @@ namespace Pipeline.Web.Orchard {
     <add name='datediff' signature='datediff' target='t' />
     <add name='datepart' signature='timecomponent' target='t' />
     <add name='decompress' signature='none' target='t' />
+    <add name='equal' signature='value' target='t' />
+    <add name='equals' signature='value' target='t' />
     <add name='fileext' signature='none' target='t' />
     <add name='filename' signature='file' target='t' />
     <add name='filepath' signature='file' target='t' />
@@ -207,6 +228,15 @@ namespace Pipeline.Web.Orchard {
     <add name='utcnow' signature='none' target='t' />
     <add name='xmldecode' signature='none' target='t' />
     <add name='xpath' signature='xpath' target='t' />
+    <add name='in' signature='domain' target='t' />
+    <add name='match' signature='pattern' target='t' />
+    <add name='coalesce' signature='none' target='t' />
+    <add name='startswith' signature='value' target='t' />
+    <add name='endswith' signature='value' target='t' />
+    <add name='invert' signature='none' target='t' />
+    <add name='isdefault' signature='none' target='t' />
+    <add name='isempty' signature='none' target='t' />
+    <add name='tag' signature='tag' target='t' />
   </methods>
 
 </cfg>";

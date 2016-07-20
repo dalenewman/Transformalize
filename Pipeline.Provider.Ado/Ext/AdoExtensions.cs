@@ -90,12 +90,14 @@ namespace Pipeline.Provider.Ado.Ext {
 
                 }
             }
+
             var sql = $@"
                 SELECT {fieldList}{rowNumber}
                 FROM {SqlInputName(c, cf)} {(cf.AdoProvider == AdoProvider.SqlServer && c.Entity.NoLock ? " WITH (NOLOCK) " : string.Empty)}
                 {(c.Entity.Filter.Any() ? " WHERE " + c.ResolveFilter(cf) : string.Empty)}
             ";
-            if (orderBy != null) {
+
+            if (!c.Entity.IsPageRequest() && orderBy != null) {
                 sql += orderBy(cf);
             }
 

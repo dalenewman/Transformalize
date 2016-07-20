@@ -179,6 +179,7 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "xpath": return new XPathTransform(context);
                 case "coalesce": return new CoalesceTransform(context);
                 case "invert": return new InvertTransform(context);
+                case "tag": return new TagTransform(context);
 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);

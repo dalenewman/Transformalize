@@ -46,7 +46,7 @@ namespace Pipeline.Transforms {
             return row;
         }
 
-        static string Decode(string input) {
+        public static string Decode(string input) {
             if (input.IndexOf(EntityStart) == -1) {
                 return input;
             }

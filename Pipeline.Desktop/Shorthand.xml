@@ -146,6 +146,14 @@
         <add name='domain' />
       </parameters>
     </add>
+    <add name='tag'>
+      <parameters>
+        <add name='tag' />
+        <add name='class' value='' />
+        <add name='style' value='' />
+        <add name='title' value='' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -220,6 +228,7 @@
     <add name='invert' signature='none' target='t' />
     <add name='isdefault' signature='none' target='t' />
     <add name='isempty' signature='none' target='t' />
+    <add name='tag' signature='tag' target='t' />
   </methods>
 
 </cfg>

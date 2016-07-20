@@ -102,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DatePartTransform.cs" />
+    <Compile Include="TagTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="InTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
