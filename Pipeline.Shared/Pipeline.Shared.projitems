@@ -36,6 +36,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\NameReference.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\NullTransformer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Order.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\PageSize.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Pagination.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Parameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Process.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Relationship.cs" />

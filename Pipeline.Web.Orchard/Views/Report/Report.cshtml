@@ -1,6 +1,6 @@
 ﻿@using Pipeline.Configuration
 @using Pipeline.Web.Orchard.Services
-@using SortDirection = Pipeline.Web.Orchard.Services.SortDirection
+
 @model Process
 @{
     Style.Require("jQueryUI_Orchard");
@@ -38,7 +38,9 @@
 }
 
 <form id="id_report" role="form">
-    <input type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+
+    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
+
     @if (Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt))) {
         var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters.Where(p => p.Prompt).ToArray() : Model.Environments.First(e => e.Name == Model.Environment).Parameters.Where(p => p.Prompt).ToArray();
         for (var i = 0; i < parameters.Length; i++) {
@@ -62,7 +64,8 @@
                                     <input class="form-control"
                                            name="@parameter.Name"
                                            value="@(requestedValue)"/>
-                                } else {
+                                }
+                                else {
                                     <select class="form-control" name="@parameter.Name">
                                         @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
                                             <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
@@ -84,6 +87,70 @@
 
     @foreach (var entity in Model.Entities) {
         var fields = entity.GetAllOutputFields().ToArray();
+
+        if (entity.Page > 0) {
+            <input id="id_page" type="hidden" name="page" value="@entity.Page"/>
+            <input id="id_size" type="hidden" name="size" value="@entity.PageSize"/>
+        
+            <div class="row">
+
+                <div class="col-md-4">&nbsp;</div>
+
+                <div class="col-md-4">
+                    <ul class="pagination pagination-sm" style="display: inline;">
+                        @if (entity.Pagination.HasPrevious) {
+                            <li><a href="javascript:submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                            <li><a href="javascript:submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                        }
+                        else {
+                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                        }
+
+                        <li class="disabled"><a href="#">@entity.Hits found, Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
+
+                        @if (entity.Pagination.HasNext) {
+                            <li><a href="javascript:submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                            <li><a href="javascript:submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                        }
+                        else {
+                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+
+                    @if (entity.PageSizes.Any()) {
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-sm">Page Size</button>
+                            <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
+                                    if (entity.PageSize.Equals(pageSize)) {
+                                        <li class="active">
+                                            <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                        </li>
+                                    }
+                                    else {
+                                        <li>
+                                            <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    } else {
+                        @:&nbsp;
+                    }
+                </div>
+
+            </div>
+        }
+
         <div class="row">
             <div class="table-responsive col-sm-12">
                 <table class="table table-condensed table-hover table-striped">
@@ -102,10 +169,10 @@
                                 if (field.Sortable) {
                                     <th class="sorter" data-order-by="@(number)">
                                         <div aclass="btn-group btn-group-xs">
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == SortDirection.Asc ? "btn-primary" : "btn-sort") sortable">
+                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
                                                 <span class="glyphicon glyphicon-chevron-up"></span>
                                             </a>
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == SortDirection.Desc ? "btn-primary" : "btn-sort") sortable">
+                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
                                                 <span class="glyphicon glyphicon-chevron-down"></span>
                                             </a>
                                         </div>
@@ -147,6 +214,24 @@
 
 <script type="text/javascript">
     //<!--
+
+    function submit(page) {
+        setPage(page);
+        $("#id_report").submit();
+    }
+
+    function setPage(page) {
+        $('#id_page').val(page);
+    }
+
+    function setSize(size) {
+        $('#id_size').val(size);
+    }
+
+    function setSort(sort) {
+        $('#id_sort').val(sort);
+    }
+
     $(document).ready(function () {
         $('.form-control.date').datepicker();
 
@@ -183,8 +268,9 @@
             });
             var expression = sort.replace(/^\.+|\.+$/gm, '');
             console.log(expression);
-            $("#id_report input[name=sort]").val(expression);
-            $("#id_report").submit();
+            setSort(expression);
+            setPage(1);
+            submit();
         });
     });
 

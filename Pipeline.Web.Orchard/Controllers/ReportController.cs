@@ -25,7 +25,6 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
@@ -87,6 +86,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                             }
 
                             if (!process.Errors().Any()) {
+                                Common.PageHelper(process, Request);
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
                                     runner.Execute(process);
@@ -102,7 +102,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                         }
                     } else {
-                        _orchardServices.Notifier.Warning(T("Output must be set to internal for report to work."));
+                        _orchardServices.Notifier.Warning(T("Output must be set to internal for reporting."));
                     }
                 }
             }

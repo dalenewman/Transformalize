@@ -1,5 +1,5 @@
 namespace Pipeline.Web.Orchard.Services {
-    public enum SortDirection {
+    public enum Direction {
         None,
         Asc,
         Desc

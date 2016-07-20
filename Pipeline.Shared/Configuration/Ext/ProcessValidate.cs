@@ -57,12 +57,12 @@ namespace Pipeline.Configuration.Ext {
             foreach (var entity in p.Entities) {
                 foreach (var field in entity.CalculatedFields.Where(f => !f.Produced)) {
                     var transform = field.Transforms.FirstOrDefault();
-                    if (transform != null && Transform.Transforms().Contains(transform.Method) && !transform.Parameters.Any()) {
-                        if (Transform.TransformProducers().Contains(transform.Method)) {
+                    if (transform != null && Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
+                        if (Transform.TransformProducerSet().Contains(transform.Method)) {
                             continue;
                         }
 
-                        if (Transform.Transforms().Contains(transform.Method) && !transform.Parameters.Any()) {
+                        if (Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
                             error($"The transform {transform.Method} in {entity.Alias}.{field.Alias} requires input.  If using short-hand, use copy().  Otherwise, set the parameter attribute, or define a parameters collection.");
                         }
                     }

@@ -146,7 +146,7 @@ namespace Pipeline.Configuration.Ext {
             }
             var index = 0;
             foreach (var field in p.CalculatedFields) {
-                foreach (var transform in field.Transforms.Where(t => !Transform.Producers().Contains(t.Method))) {
+                foreach (var transform in field.Transforms.Where(t => !Transform.ProducerSet().Contains(t.Method))) {
                     if (!string.IsNullOrEmpty(transform.Parameter)) {
                         if (transform.Parameter == All) {
                             foreach (var entity in p.Entities) {

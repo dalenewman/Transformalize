@@ -20,10 +20,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 using Cfg.Net.Ext;
-using Pipeline.Transforms;
 
 namespace Pipeline.Configuration {
     public class Entity : CfgNode {
+
+        private Pagination _pagination;
+
         public bool IsMaster { get; set; }
 
         [Cfg(required = false, unique = true, value = null)]
@@ -285,6 +287,13 @@ namespace Pipeline.Configuration {
                 }
             }
 
+            if (Page > 0 && !PageSizes.Any()) {
+                PageSizes.Add(new PageSize { Size = 10 });
+                PageSizes.Add(new PageSize { Size = 15 });
+                PageSizes.Add(new PageSize { Size = 20 });
+                PageSizes.Add(new PageSize { Size = 25 });
+            }
+
         }
 
         void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
@@ -337,7 +346,7 @@ namespace Pipeline.Configuration {
         public void MergeParameters() {
 
             foreach (var field in Fields) {
-                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !Transform.Producers().Contains(t.Method))) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !Transform.ProducerSet().Contains(t.Method))) {
                     if (transform.Parameter == "*") {
                         foreach (var f in Fields.Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != f.Alias)) {
@@ -358,7 +367,7 @@ namespace Pipeline.Configuration {
 
             var index = 0;
             foreach (var calculatedField in CalculatedFields) {
-                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !Transform.Producers().Contains(t.Method))) {
+                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !Transform.ProducerSet().Contains(t.Method))) {
                     if (transform.Parameter == "*") {
                         foreach (var field in GetAllFields().Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != field.Alias)) {
@@ -397,7 +406,7 @@ namespace Pipeline.Configuration {
         }
 
         public void AdaptFieldsCreatedFromTransforms() {
-            foreach (var method in Transform.Producers()) {
+            foreach (var method in Transform.ProducerSet()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);
                 }
@@ -511,8 +520,13 @@ namespace Pipeline.Configuration {
         [Cfg(value = Constants.DefaultSetting, toLower = true)]
         public string SearchType { get; set; }
 
+        [Cfg]
+        public List<PageSize> PageSizes { get; set; }
+
         public bool HasInput() {
             return Fields.Any(f => f.Input);
         }
+
+        public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, PageSize));
     }
 }

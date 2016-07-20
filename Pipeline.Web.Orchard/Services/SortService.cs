@@ -8,7 +8,7 @@ using Pipeline.Configuration;
 namespace Pipeline.Web.Orchard.Services {
 
     public interface ISortService : IDependency {
-        SortDirection Sort(int fieldNumber, string expression);
+        Direction Sort(int fieldNumber, string expression);
         void AddSortToEntity(Entity entity, string expression);
     }
 
@@ -31,14 +31,14 @@ namespace Pipeline.Web.Orchard.Services {
             return dict;
         }
 
-        public SortDirection Sort(int fieldNumber, string expression) {
+        public Direction Sort(int fieldNumber, string expression) {
             var lookup = _cache ?? ProcessExpression(expression);
 
             if (lookup.ContainsKey(fieldNumber)) {
-                return lookup[fieldNumber] == 'a' ? SortDirection.Asc : SortDirection.Desc;
+                return lookup[fieldNumber] == 'a' ? Direction.Asc : Direction.Desc;
             }
 
-            return SortDirection.None;
+            return Direction.None;
         }
 
         public void AddSortToEntity(Entity entity, string expression) {
@@ -51,15 +51,15 @@ namespace Pipeline.Web.Orchard.Services {
                 }
                 var number = i + 1;
                 var sort = Sort(number, expression);
-                if (sort != SortDirection.None) {
+                if (sort != Direction.None) {
                     if (string.IsNullOrEmpty(entity.Query)) {
-                        entity.Order.Add(new Order { Field = field.SortField, Sort = sort == SortDirection.Asc ? "asc" : "desc" }.WithDefaults());
+                        entity.Order.Add(new Order { Field = field.SortField, Sort = sort == Direction.Asc ? "asc" : "desc" }.WithDefaults());
                     } else {
                         if (orderBy == null) {
                             entity.Query = entity.Query.TrimEnd(';');
                             orderBy = " ORDER BY ";
                         }
-                        orderBy += " [" + field.SortField + "] " + (sort == SortDirection.Asc ? "ASC" : "DESC") + ",";
+                        orderBy += " [" + field.SortField + "] " + (sort == Direction.Asc ? "ASC" : "DESC") + ",";
                     }
                 }
             }

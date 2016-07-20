@@ -213,7 +213,7 @@ namespace Pipeline.Configuration {
         public bool IsShortHand { get; set; }
 
         public bool IsValidator() {
-            return Validators().Contains(Method);
+            return ValidatorSet().Contains(Method);
         }
 
         [Cfg(value = "firstday", domain = "firstday,firstfourdayweek,firstfullweek", toLower = true)]
@@ -239,20 +239,20 @@ namespace Pipeline.Configuration {
         [Cfg(value="")]
         public string XPath { get; set; }
 
-        public static HashSet<string> Transforms() {
-            return _transformSet ?? (_transformSet = new HashSet<string>(TransformerDomain.Split(new[] { ',' })));
+        public static HashSet<string> TransformSet() {
+            return _transformSet ?? (_transformSet = new HashSet<string>(TransformerDomain.Split(',')));
         }
 
-        public static HashSet<string> TransformProducers() {
-            return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(new[] { ',' })));
+        public static HashSet<string> TransformProducerSet() {
+            return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }
 
-        public static HashSet<string> Validators() {
-            return _validateSet ?? (_validateSet = new HashSet<string>(ValidatorDomain.Split(new[] { ',' })));
+        public static HashSet<string> ValidatorSet() {
+            return _validateSet ?? (_validateSet = new HashSet<string>(ValidatorDomain.Split(',')));
         }
 
-        public static HashSet<string> Producers() {
-            return _producerSet ?? (_producerSet = new HashSet<string>(ProducerDomain.Split(new[] { ',' })));
+        public static HashSet<string> ProducerSet() {
+            return _producerSet ?? (_producerSet = new HashSet<string>(ProducerDomain.Split(',')));
         }
 
         public override string ToString() {

@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime;
 using Cfg.Net;
 
 namespace Pipeline.Configuration {
@@ -60,10 +59,10 @@ namespace Pipeline.Configuration {
         [Cfg(value = true)]
         public bool Input { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Prompt { get; set; }
 
-        [Cfg(value="", toLower = true)]
+        [Cfg(value = "", toLower = true)]
         public string Map { get; set; }
 
         protected override void Validate() {
@@ -83,8 +82,7 @@ namespace Pipeline.Configuration {
         }
 
         [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
-        public string Type
-        {
+        public string Type {
             get { return _type; }
             set { _type = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
         }
