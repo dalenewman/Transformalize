@@ -499,5 +499,10 @@ namespace Pipeline.Configuration {
         public bool IsNumeric() {
             return Constants.NumericTypeSet().Contains(Type);
         }
+
+        [Cfg(value="")]
+        public string Class { get; set; }
+        [Cfg(value="")]
+        public string Style { get; set; }
     }
 }

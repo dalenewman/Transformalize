@@ -31,7 +31,6 @@ namespace Pipeline.Command {
         private readonly Options _options;
         private readonly IContext _context;
         private readonly ISchemaHelper _schemaHelper;
-        public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public RunTimeExecutor(Options options, IContext context, ISchemaHelper schemaHelper) {
             _options = options;
@@ -85,6 +84,10 @@ namespace Pipeline.Command {
                 }
                 Console.WriteLine(process.Serialize());
                 return;
+            } else {
+                if (_options.Mode != null) {
+                    process.Mode = _options.Mode;
+                }
             }
 
             // Since we're in a Console app
@@ -137,10 +140,7 @@ namespace Pipeline.Command {
         }
 
         public void Execute(IJobExecutionContext context) {
-            var cfg = context.MergedJobDataMap.Get("cfg") as string;
-            var shorthand = context.MergedJobDataMap.Get("shorthand") as string;
-            Parameters.Add("mode", context.MergedJobDataMap.Get("mode") as string);
-            Execute(cfg, shorthand, Parameters);
+            Execute(_options.Arrangement, _options.Shorthand, null);
         }
 
     }

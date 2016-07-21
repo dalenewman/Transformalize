@@ -29,8 +29,7 @@ namespace Pipeline.Command {
         }
 
         public void Start() {
-            var parameters = new Dictionary<string, string> { { "mode", _options.Mode } };
-            _runTimeExecute.Execute(_options.Arrangement, _options.Shorthand, parameters);
+            _runTimeExecute.Execute(_options.Arrangement, _options.Shorthand, null);
         }
 
         public void Stop() {

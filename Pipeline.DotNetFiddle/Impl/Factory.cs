@@ -142,8 +142,6 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "right": return new RightTransform(context);
                 case "copy": return new CopyTransform(context);
                 case "concat": return new ConcatTransform(context);
-                case "fromxml": return new FromXmlTransform(context);
-                case "fromsplit": return new FromSplitTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
                 case "xmldecode": return new DecodeTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
@@ -180,6 +178,10 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "coalesce": return new CoalesceTransform(context);
                 case "invert": return new InvertTransform(context);
                 case "tag": return new TagTransform(context);
+
+                case "fromxml": return new FromXmlTransform(context);
+                case "fromsplit": return new FromSplitTransform(context);
+                case "fromlengths": return new FromLengthsTranform(context);
 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);

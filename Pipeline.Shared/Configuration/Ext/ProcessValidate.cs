@@ -349,6 +349,9 @@ namespace Pipeline.Configuration.Ext {
                 case "filename":
                 case "startswith":
                 case "endswith":
+                case "fromsplit":
+                case "fromlengths":
+                case "fromxml":
                 case "isempty":
                 case "xpath":
                     if (input.Type != "string") {
@@ -400,6 +403,7 @@ namespace Pipeline.Configuration.Ext {
                         error("The copy transform requires at least one parameter.");
                     }
                     break;
+                case "fromlengths":
                 case "fromsplit":
                 case "fromxml":
                     if (!t.Parameters.Any()) {
@@ -407,6 +411,9 @@ namespace Pipeline.Configuration.Ext {
                     }
                     if (t.Method == "fromsplit" && t.Separator == Constants.DefaultSetting) {
                         error("The fromsplit method requires a separator.");
+                    }
+                    if (t.Method == "fromlengths" && fields.Any(f => f.Length == "max")) {
+                        error("The can not max length fields in a fromlengths transform. Set it to a numeric length.");
                     }
                     break;
                 case "padleft":
@@ -545,7 +552,7 @@ namespace Pipeline.Configuration.Ext {
                     break;
                 case "in":
                     if (string.IsNullOrEmpty(t.Domain)) {
-                        error("The in tranform/validator requires the domain attribute.");
+                        error("The in transform requires a domain (a list of allowed values).");
                     }
                     break;
                 default:

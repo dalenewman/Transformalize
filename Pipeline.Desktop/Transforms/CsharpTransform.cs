@@ -39,6 +39,7 @@ namespace Pipeline.Desktop.Transforms {
             var input = MultipleInput();
 
             var compiler = new Microsoft.CSharp.CSharpCodeProvider();
+
             var assembly = Assembly.GetExecutingAssembly();
             var parameters = new CompilerParameters { GenerateInMemory = true };
             parameters.ReferencedAssemblies.Add("System.dll");
@@ -121,9 +122,7 @@ namespace Pipeline.Desktop.Transforms {
         }
 
         public IRow Transform(IRow row) {
-            _transform.Transform(row);
-            Increment();
-            return row;
+            return _transform.Transform(row);
         }
     }
 

@@ -7,6 +7,7 @@
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
     var sortService = WorkContext.Resolve<ISortService>();
+    var hasParameters = Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
 }
 
 <style>
@@ -31,15 +32,17 @@
     }
 </style>
 
-<h3>@Model.Name</h3>
+@if (hasParameters) {
+    <h3>@Model.Name</h3>
+}
 
 @foreach (var warning in Model.Warnings()) {
     <div class="alert alert-warning" role="alert">@warning</div>
 }
 
-<form id="id_report" role="form">
+<form id="id_report" role="form" method="GET">
 
-    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
+    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
 
     @if (Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt))) {
         var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters.Where(p => p.Prompt).ToArray() : Model.Environments.First(e => e.Name == Model.Environment).Parameters.Where(p => p.Prompt).ToArray();
@@ -56,16 +59,15 @@
                                 <input class="form-control date"
                                        type="datetime"
                                        name="@parameter.Name"
-                                       value="@(requestedDate)"/>
+                                       value="@(requestedDate)" />
                                 break;
                             default:
                                 var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
                                 if (string.IsNullOrEmpty(parameter.Map)) {
                                     <input class="form-control"
                                            name="@parameter.Name"
-                                           value="@(requestedValue)"/>
-                                }
-                                else {
+                                           value="@(requestedValue)" />
+                                } else {
                                     <select class="form-control" name="@parameter.Name">
                                         @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
                                             <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
@@ -89,20 +91,19 @@
         var fields = entity.GetAllOutputFields().ToArray();
 
         if (entity.Page > 0) {
-            <input id="id_page" type="hidden" name="page" value="@entity.Page"/>
-            <input id="id_size" type="hidden" name="size" value="@entity.PageSize"/>
-        
+            <input id="id_page" type="hidden" name="page" value="@entity.Page" />
+            <input id="id_size" type="hidden" name="size" value="@entity.PageSize" />
+
             <div class="row">
 
-                <div class="col-md-4">&nbsp;</div>
+                <div class="col-md-4"><strong style="font-size: larger;">@(hasParameters ? "&nbsp;" : Model.Name)</strong></div>
 
                 <div class="col-md-4">
                     <ul class="pagination pagination-sm" style="display: inline;">
                         @if (entity.Pagination.HasPrevious) {
                             <li><a href="javascript:submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
                             <li><a href="javascript:submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                        }
-                        else {
+                        } else {
                             <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
                             <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
                         }
@@ -112,8 +113,7 @@
                         @if (entity.Pagination.HasNext) {
                             <li><a href="javascript:submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                             <li><a href="javascript:submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                        }
-                        else {
+                        } else {
                             <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                             <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
                         }
@@ -134,8 +134,7 @@
                                         <li class="active">
                                             <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
                                         </li>
-                                    }
-                                    else {
+                                    } else {
                                         <li>
                                             <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
                                         </li>
@@ -155,62 +154,61 @@
             <div class="table-responsive col-sm-12">
                 <table class="table table-condensed table-hover table-striped">
                     <thead>
-                    <tr>
-                        @foreach (var field in fields) {
-                            <th>@field.Label</th>
-                        }
-                    </tr>
-                    @if (fields.Any(f => f.Sortable)) {
-                        var expression = Request["sort"] ?? string.Empty;
                         <tr>
-                            @for (var i = 0; i < fields.Length; i++) {
-                                var field = fields[i];
-                                var number = i + 1;
-                                if (field.Sortable) {
-                                    <th class="sorter" data-order-by="@(number)">
-                                        <div aclass="btn-group btn-group-xs">
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
-                                                <span class="glyphicon glyphicon-chevron-up"></span>
-                                            </a>
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
-                                                <span class="glyphicon glyphicon-chevron-down"></span>
-                                            </a>
-                                        </div>
-                                    </th>
-                                }
-                                else {
-                                    <th style="padding: 0 3px 3px 1px;">&nbsp;</th>
-                                }
+                            @foreach (var field in fields) {
+                                <th>@field.Label</th>
                             }
                         </tr>
-                    }
+                        @if (fields.Any(f => f.Sortable)) {
+                            var expression = Request["sort"] ?? string.Empty;
+                            <tr>
+                                @for (var i = 0; i < fields.Length; i++) {
+                                    var field = fields[i];
+                                    var number = i + 1;
+                                    if (field.Sortable) {
+                                        <th class="sorter" data-order-by="@(number)">
+                                            <div aclass="btn-group btn-group-xs">
+                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                                    <span class="glyphicon glyphicon-chevron-up"></span>
+                                                </a>
+                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                                </a>
+                                            </div>
+                                        </th>
+                                    } else {
+                                        <th style="padding: 0 3px 3px 1px;">&nbsp;</th>
+                                    }
+                                }
+                            </tr>
+                        }
                     </thead>
                     <tbody>
-                    @foreach (var row in entity.Rows) {
-                        <tr>
-                            @foreach (var field in entity.GetAllOutputFields()) {
-                                <td>
-                                    @if (field.Type.StartsWith("bool")) {
-                                        if ((bool) row[field.Alias]) {
-                                            <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
+                        @foreach (var row in entity.Rows) {
+                            <tr>
+                                @foreach (var field in entity.GetAllOutputFields()) {
+                                    <td>
+                                        @if (field.Type.StartsWith("bool")) {
+                                            if ((bool)row[field.Alias]) {
+                                                <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
+                                            } else {
+                                                <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
+                                            }
+                                        } else {
+                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
                                         }
-                                        else {
-                                            <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
-                                        }
-                                    }
-                                    else {
-                                        @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
-                                    }
-                                </td>
-                            }
-                        </tr>
-                    }
+                                    </td>
+                                }
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
         </div>
     }
 </form>
+
+
 
 <script type="text/javascript">
     //<!--

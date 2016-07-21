@@ -35,7 +35,7 @@ namespace Pipeline.Command {
         [Option('t', "shorthand transformations", Required = false, DefaultValue = "Shorthand.xml", HelpText = "shorthand transformations file.")]
         public string Shorthand { get; set; }
 
-        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
+        [Option('m', "mode", DefaultValue = null, Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
         public string Mode { get; set; }
 
         [Option('o',"output", DefaultValue = "csv", Required = false, HelpText = "Output type (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]

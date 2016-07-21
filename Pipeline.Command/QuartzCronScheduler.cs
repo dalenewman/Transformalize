@@ -46,9 +46,6 @@ namespace Pipeline.Command {
                 .StoreDurably(false)
                 .RequestRecovery(false)
                 .WithDescription("Pipeline.Net Quartz Job")
-                .UsingJobData("cfg", _options.Arrangement)
-                .UsingJobData("shorthand", _options.Shorthand)
-                .UsingJobData("mode", _options.Mode)
                 .Build();
 
             var trigger = TriggerBuilder.Create()

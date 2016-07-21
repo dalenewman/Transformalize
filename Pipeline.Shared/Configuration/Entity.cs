@@ -291,7 +291,6 @@ namespace Pipeline.Configuration {
                 PageSizes.Add(new PageSize { Size = 10 });
                 PageSizes.Add(new PageSize { Size = 15 });
                 PageSizes.Add(new PageSize { Size = 20 });
-                PageSizes.Add(new PageSize { Size = 25 });
             }
 
         }
