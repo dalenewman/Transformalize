@@ -57,6 +57,7 @@ namespace Pipeline.Ioc.Autofac {
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
+            container.RegisterCallback(new WebModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {

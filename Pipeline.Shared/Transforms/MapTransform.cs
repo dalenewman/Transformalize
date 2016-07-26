@@ -19,11 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class MapTransform : BaseTransform, ITransform {
+    public class MapTransform : BaseTransform {
 
         readonly Field _input;
         readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
@@ -54,7 +53,7 @@ namespace Pipeline.Transforms {
                 _catchAll = context.Field.Convert(context.Field.Default);
             }
         }
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
 
             Func<IRow, object> objects;
             if (_map.TryGetValue(row[_input], out objects)) {

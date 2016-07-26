@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Pipeline.Contracts;
 
 namespace Pipeline {
@@ -34,6 +36,14 @@ namespace Pipeline {
                 return new KeyRow(_capacity);
 
             return _isMaster ? new MasterRow(_capacity) : (IRow)new SlaveRow(_capacity);
+        }
+
+        public IRow Clone(IRow row, IEnumerable<IField> fields) {
+            var newRow = Create();
+            foreach (var field in fields) {
+                newRow[field] = row[field];
+            }
+            return newRow;
         }
     }
 }

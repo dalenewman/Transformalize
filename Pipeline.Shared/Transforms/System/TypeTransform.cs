@@ -22,22 +22,17 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms.System {
-    public class TypeTransform : ITransform {
+    public class TypeTransform : BaseTransform {
         private readonly Tuple<Field, Type>[] _fieldTypes;
         private readonly object _locker = new object();
         private byte[] _cache;
 
-        public IContext Context {
-            get {
-                throw new NotImplementedException();
-            }
-        }
 
-        public TypeTransform(IEnumerable<Field> fields) {
+        public TypeTransform(IContext context, IEnumerable<Field> fields):base(context) {
             _fieldTypes = fields.Where(f => f.Type != "string").ToArray().Select(f => new Tuple<Field, Type>(f, Constants.TypeSystem()[f.Type])).ToArray();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             // only check the types on the first row because the answer is the same for every row. 
             if (_cache == null) {
                 lock (_locker) {
@@ -64,5 +59,6 @@ namespace Pipeline.Transforms.System {
             }
             return row;
         }
+
     }
 }

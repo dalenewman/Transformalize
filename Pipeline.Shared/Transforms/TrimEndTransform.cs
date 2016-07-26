@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
@@ -30,8 +29,8 @@ namespace Pipeline.Transforms {
             _trimChars = Context.Transform.TrimChars.ToCharArray();
         }
 
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, row.GetString(_input).TrimEnd(_trimChars));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = row[_input].ToString().TrimEnd(_trimChars);
             Increment();
             return row;
         }

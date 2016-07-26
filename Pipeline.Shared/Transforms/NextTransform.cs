@@ -32,7 +32,7 @@ namespace Pipeline.Transforms {
             _next = from.AddDays(target - start);
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _next;
             Increment();
             return row;

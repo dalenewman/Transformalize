@@ -29,7 +29,7 @@ namespace Pipeline.Validators {
             _default = _input.Convert(_input.Default);
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = row[_input].Equals(_default);
             Increment();
             return row;

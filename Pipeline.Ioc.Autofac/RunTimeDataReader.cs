@@ -46,6 +46,7 @@ namespace Pipeline.Ioc.Autofac {
             nested.RegisterCallback(new ElasticModule(process).Configure);
             nested.RegisterCallback(new InternalModule(process).Configure);
             nested.RegisterCallback(new FileModule(process).Configure);
+            nested.RegisterCallback(new WebModule(process).Configure);
             nested.RegisterCallback(new FolderModule(process).Configure);
             nested.RegisterCallback(new ExcelModule(process).Configure);
 

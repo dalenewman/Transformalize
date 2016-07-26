@@ -30,7 +30,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             foreach (var field in _input) {
                 var match = _regex.Match(row[field].ToString());
                 if (!match.Success) continue;

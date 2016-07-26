@@ -19,23 +19,14 @@ using System;
 using Pipeline.Contracts;
 using Quartz;
 using Quartz.Spi;
+using IScheduler = Quartz.IScheduler;
 
 namespace Pipeline.Command {
 
     public class QuartzJobFactory : IJobFactory {
-        private readonly Options _options;
-        private readonly IContext _context;
-        private readonly ISchemaHelper _schemaHelper;
 
-        public QuartzJobFactory(Options options, IContext context, ISchemaHelper schemaHelper) {
-            _options = options;
-            _context = context;
-            _schemaHelper = schemaHelper;
-        }
-
-        public IJob NewJob(TriggerFiredBundle bundle, Quartz.IScheduler scheduler) {
-            _context.Debug(() => "Scheduler creating new RunTimeExecutor.");
-            return new RunTimeExecutor(_options, _context, _schemaHelper);
+        public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) {
+            return new RunTimeExecutor();
         }
 
         public void ReturnJob(IJob job) {

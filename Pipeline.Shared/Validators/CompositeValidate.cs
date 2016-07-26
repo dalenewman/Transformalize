@@ -37,7 +37,7 @@ namespace Pipeline.Validators {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _validate(row);
             Increment();
             return row;

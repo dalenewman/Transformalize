@@ -55,7 +55,7 @@ namespace Pipeline.Desktop.Transforms {
             code.AppendLine("using System;");
             code.AppendLine();
 
-            code.AppendLine("public class CSharpRunTimeTransform : Pipeline.Transforms.BaseTransform, Pipeline.Contracts.ITransform {");
+            code.AppendLine("public class CSharpRunTimeTransform : Pipeline.Transforms.BaseTransform {");
 
             code.AppendLine(@"private readonly Pipeline.Configuration.Field[] _input;
     public CSharpRunTimeTransform(Pipeline.Contracts.IContext context) : base(context)     {
@@ -84,7 +84,7 @@ namespace Pipeline.Desktop.Transforms {
 
             code.AppendLine("}");
 
-            code.AppendLine("public Pipeline.Contracts.IRow Transform(Pipeline.Contracts.IRow row) {");
+            code.AppendLine("public override Pipeline.Contracts.IRow Transform(Pipeline.Contracts.IRow row) {");
 
             code.AppendLine("row[Context.Field] = UsersCode(row);");
             code.AppendLine("Increment();");
@@ -121,7 +121,7 @@ namespace Pipeline.Desktop.Transforms {
             context.Info($"Compiled in {timer.Elapsed}");
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             return _transform.Transform(row);
         }
     }

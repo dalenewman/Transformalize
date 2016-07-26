@@ -20,7 +20,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class ConcatTransform : BaseTransform, ITransform {
+    public class ConcatTransform : BaseTransform {
         readonly Field[] _input;
 
         public ConcatTransform(IContext context)
@@ -28,8 +28,8 @@ namespace Pipeline.Transforms {
             _input = MultipleInput();
         }
 
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, string.Concat(_input.Select(f => row.GetString(f))));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = string.Concat(_input.Select(f => row[f]));
             Increment();
             return row;
         }

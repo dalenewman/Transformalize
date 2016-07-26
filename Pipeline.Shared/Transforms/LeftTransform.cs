@@ -31,8 +31,8 @@ namespace Pipeline.Transforms {
          _input = SingleInput();
       }
 
-      public IRow Transform(IRow row) {
-         row.SetString(Context.Field, row.GetString(_input).Left(_length));
+      public override IRow Transform(IRow row) {
+         row[Context.Field] = row[_input].ToString().Left(_length);
          Increment();
          return row;
       }

@@ -24,7 +24,7 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.DotNetFiddle.Impl.Transforms {
-    public class DecompressTransform : BaseTransform, ITransform {
+    public class DecompressTransform : BaseTransform {
         readonly Field _input;
         readonly Field _output;
 
@@ -32,8 +32,8 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _input = SingleInput();
             _output = context.Field;
         }
-        public IRow Transform(IRow row) {
-            row.SetString(_output, Decompress(row.GetString(_input)));
+        public override IRow Transform(IRow row) {
+            row[_output] = Decompress(row[_input] as string);
             Increment();
             return row;
         }

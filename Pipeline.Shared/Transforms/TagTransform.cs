@@ -44,8 +44,7 @@ namespace Pipeline.Transforms {
 
         public TagTransform(IContext context) : base(context) {
 
-            if (Context.Transform.Class == string.Empty && Context.Field.Class != string.Empty)
-            {
+            if (Context.Transform.Class == string.Empty && Context.Field.Class != string.Empty) {
                 Context.Transform.Class = Context.Field.Class;
             }
 
@@ -74,7 +73,7 @@ namespace Pipeline.Transforms {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             var sb = new StringBuilder();
 
             // open
@@ -92,7 +91,6 @@ namespace Pipeline.Transforms {
             sb.Append(Encode(row[_contentField].ToString()));
 
             // close
-
             sb.AppendFormat("</{0}>", Context.Transform.Tag);
 
             row[Context.Field] = sb.ToString();

@@ -112,7 +112,7 @@ namespace Pipeline.Scripting.Jint {
             return content;
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             foreach (var field in _input) {
                 _jint.SetValue(field.Alias, row[field]);
             }

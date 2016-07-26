@@ -20,19 +20,19 @@ using Pipeline.Contracts;
 using Pipeline.Extensions;
 
 namespace Pipeline.Transforms {
-   public class RightTransform : BaseTransform, ITransform {
-      readonly Field _input;
+    public class RightTransform : BaseTransform, ITransform {
+        readonly Field _input;
 
-      public RightTransform(IContext context)
-            : base(context) {
-         _input = SingleInput();
-      }
+        public RightTransform(IContext context)
+              : base(context) {
+            _input = SingleInput();
+        }
 
-      public IRow Transform(IRow row) {
-         row.SetString(Context.Field, row.GetString(_input).Right(Context.Transform.Length));
-         Increment();
-         return row;
-      }
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = row[_input].ToString().Right(Context.Transform.Length);
+            Increment();
+            return row;
+        }
 
-   }
+    }
 }

@@ -23,7 +23,7 @@ using Pipeline.Contracts;
 using Pipeline.Extensions;
 
 namespace Pipeline.Transforms.System {
-    public class StringTruncateTransfom : BaseTransform, ITransform {
+    public class StringTruncateTransfom : BaseTransform {
         readonly StringLength[] _strings;
 
         internal class StringLength : IField {
@@ -48,9 +48,9 @@ namespace Pipeline.Transforms.System {
             _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             foreach (var field in _strings) {
-                row.SetString(field, row.GetString(field).Left(field.Length));
+                row[field] = row[field].ToString().Left(field.Length);
             }
             Increment();
             return row;

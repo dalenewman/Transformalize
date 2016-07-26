@@ -27,7 +27,7 @@ namespace Pipeline.Transforms {
             _value = Utility.GetPropValue(connection, context.Transform.Property);
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _value;
             Increment();
             return row;

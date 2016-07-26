@@ -16,13 +16,12 @@
 // limitations under the License.
 #endregion
 using Autofac;
-using Cfg.Net.Ext;
-using Pipeline.Configuration;
+using Common.Logging;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
-using Pipeline.Logging;
 using Pipeline.Logging.NLog;
+using Pipeline.Scheduler.Quartz;
 using Quartz.Spi;
 
 namespace Pipeline.Command {
@@ -36,21 +35,23 @@ namespace Pipeline.Command {
 
         protected override void Load(ContainerBuilder builder) {
 
-            var name = Utility.Identifier(_options.Arrangement, "-");
-            var logger = _options.LogLevel == LogLevel.None ? new NullLogger() : new NLogPipelineLogger(name, _options.LogLevel) as IPipelineLogger;
-            var context = new PipelineContext(logger, new Process { Name = "Command"}.WithDefaults());
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
-            builder.RegisterInstance(context).As<IContext>().SingleInstance();
+            // for now scheduler
             builder.Register(c => new RunTimeSchemaReader(c.Resolve<IContext>())).As<IRunTimeSchemaReader>();
-            builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(),ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
-            builder.Register((ctx, p) => new QuartzJobFactory(_options, ctx.Resolve<IContext>(), ctx.Resolve<ISchemaHelper>())).As<IJobFactory>().SingleInstance();
+            builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(), ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
+
+            // for quartz scheduler
+            builder.RegisterType<QuartzJobFactory>().As<IJobFactory>().SingleInstance();
+            builder.Register<ILoggerFactoryAdapter>((ctx => new QuartzLogAdaptor(ctx.Resolve<IContext>(), Scheduler.Quartz.Utility.ConvertLevel(ctx.Resolve<IContext>().LogLevel), true, true, false, "o"))).As<ILoggerFactoryAdapter>();
 
             builder.Register<IScheduler>((ctx, p) => {
                 if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "check")) {
-                    return new NowScheduler(_options, new RunTimeExecutor(_options, context, ctx.Resolve<ISchemaHelper>()));
+                    return new NowScheduler(_options, ctx.Resolve<ISchemaHelper>());
                 }
-                return new QuartzCronScheduler(_options, context, ctx.Resolve<IJobFactory>());
-            }).As<IScheduler>().SingleInstance();
+                return new QuartzCronScheduler(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+            }).As<IScheduler>();
 
         }
 

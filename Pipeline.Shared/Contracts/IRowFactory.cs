@@ -15,9 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Pipeline.Contracts
-{
+
+using System.Collections.Generic;
+
+namespace Pipeline.Contracts {
     public interface IRowFactory {
         IRow Create();
+
+        /// <summary>
+        /// Create a new row and copy field values into it.
+        /// </summary>
+        /// <param name="row">The row to be cloned.</param>
+        /// <param name="fields">You have to pass in the fields to clone because IRow doesn't know about the fields.</param>
+        /// <returns>A copy of row.</returns>
+        IRow Clone(IRow row, IEnumerable<IField> fields);
     }
 }

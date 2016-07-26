@@ -26,7 +26,7 @@ namespace Pipeline.Transforms.System {
             _transform = transform;
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
 
             return Context.Transform.ShouldRun(row) ? _transform.Transform(row) : row;
         }

@@ -40,8 +40,8 @@ namespace Pipeline.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, Decode(row.GetString(_input)));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = Decode(row[_input] as string);
             Increment();
             return row;
         }

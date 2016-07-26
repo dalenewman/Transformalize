@@ -43,7 +43,7 @@ namespace Pipeline.Provider.Ado {
             _fields = fields;
             _factory = factory;
             _rowCreator = new AdoRowCreator(input, rowFactory);
-            _typeTransform = new TypeTransform(fields);
+            _typeTransform = new TypeTransform(input, fields);
         }
 
         public IEnumerable<IRow> Read() {

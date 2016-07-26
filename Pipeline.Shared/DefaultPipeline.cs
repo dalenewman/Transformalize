@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Context;
@@ -98,7 +100,7 @@ namespace Pipeline {
                         _context.Info("Change Detected: Input:{0} > Output:{1}", _context.Entity.MaxVersion, _context.Entity.MinVersion);
                     }
                 }
-                return Transformers.Aggregate(Reader.Read(), (current, transform) => current.Select(transform.Transform));
+                return Transformers.Aggregate(Reader.Read(), (current, transformer) => transformer.Transform(current));
             }
             _context.Info("Change Detected: No.");
             return Enumerable.Empty<IRow>();

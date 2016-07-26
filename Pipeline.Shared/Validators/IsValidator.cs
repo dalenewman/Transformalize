@@ -36,8 +36,8 @@ namespace Pipeline.Validators {
             }
         }
 
-        public IRow Transform(IRow row) {
-            row[Context.Field] = _canConvert(row.GetString(_input));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = _canConvert(row[_input] as string);
             Increment();
             return row;
         }

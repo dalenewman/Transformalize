@@ -42,7 +42,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
 
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks, _past);
             Increment();
             return row;

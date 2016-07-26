@@ -30,7 +30,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             var clean = _clean.Replace(row[_input].ToString(), string.Empty);
             if (clean.Length == 10) {
                 row[Context.Field] = $"({clean.Substring(0, 3)}) {clean.Substring(3, 3)}-{clean.Substring(6, 4)}";

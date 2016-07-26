@@ -53,7 +53,7 @@ namespace Pipeline.Configuration {
         public bool Enabled { get; set; }
         [Cfg(value = false)]
         public bool EnableSsl { get; set; }
-        [Cfg(value = "utf-8")]
+        [Cfg(value = "UTF8", domain = "ASCII,BigEndianUnicode,Default,UTF32,UTF7,UTF8,Unicode")]
         public string Encoding { get; set; }
         [Cfg(value = 0)]
         public int End { get; set; }
@@ -276,5 +276,8 @@ namespace Pipeline.Configuration {
         public bool IsNotInternal() {
             return Provider != "internal";
         }
+
+        [Cfg(value = "csv", domain = "csv,json")]
+        public string Format { get; set; }
     }
 }

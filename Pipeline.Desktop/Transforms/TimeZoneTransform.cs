@@ -39,7 +39,7 @@ namespace Pipeline.Desktop.Transforms {
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             Increment();
             var date = (DateTime)row[_input];
             if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {

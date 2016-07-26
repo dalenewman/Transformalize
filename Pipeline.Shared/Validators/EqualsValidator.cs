@@ -53,7 +53,7 @@ namespace Pipeline.Validators {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             _validator(row);
             Increment();
             return row;

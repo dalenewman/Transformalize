@@ -18,13 +18,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using FileHelpers;
 using FileHelpers.Dynamic;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Provider.File {
+
     public class DelimitedFileReader : IRead {
+
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
         private readonly IRowCondition _rowCondition;
@@ -70,7 +73,7 @@ namespace Pipeline.Provider.File {
                     for (var i = 0; i < _context.InputFields.Length; i++) {
                         var field = _context.InputFields[i];
                         if (field.Type == "string") {
-                            row.SetString(field, values[i] as string);
+                            row[field] = values[i] as string;
                         } else {
                             row[field] = field.Convert(values[i]);
                         }

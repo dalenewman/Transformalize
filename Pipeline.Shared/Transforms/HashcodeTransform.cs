@@ -33,7 +33,7 @@ namespace Pipeline.Transforms {
             _builder = new StringBuilder();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = GetStringHashCode(_input.Select(f => row[f]));
             Increment();
             return row;

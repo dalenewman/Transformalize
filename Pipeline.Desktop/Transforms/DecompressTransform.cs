@@ -33,8 +33,8 @@ namespace Pipeline.Desktop.Transforms {
             _input = SingleInput();
             _output = context.Field;
         }
-        public IRow Transform(IRow row) {
-            row.SetString(_output, Decompress(row.GetString(_input)));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = Decompress(row[_input] as string);
             Increment();
             return row;
         }

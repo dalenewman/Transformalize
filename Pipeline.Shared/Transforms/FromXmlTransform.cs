@@ -20,14 +20,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Parsers.nanoXML;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     /// <summary>
     /// The default (portable) fromxml transform, based on Cfg-Net's modified copy of NanoXml.
     /// </summary>
-    public class FromXmlTransform : BaseTransform, ITransform {
+    public class FromXmlTransform : BaseTransform {
 
         const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
 
@@ -55,9 +54,9 @@ namespace Pipeline.Transforms {
 
         }
 
-        public IRow Transform(IRow row) {
-            var xml = row.GetString(_input);
-            if (xml.Equals(string.Empty)) {
+        public override IRow Transform(IRow row) {
+            var xml = row[_input] as string;
+            if (string.IsNullOrEmpty(xml)) {
                 Increment();
                 return row;
             }

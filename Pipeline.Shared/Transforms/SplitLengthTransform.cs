@@ -29,8 +29,8 @@ namespace Pipeline.Transforms {
             _separator = context.Transform.Separator.ToCharArray();
         }
 
-        public IRow Transform(IRow row) {
-            row[Context.Field] = row.GetString(_input).Split(_separator).Length;
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = row[_input].ToString().Split(_separator).Length;
             Increment();
             return row;
         }

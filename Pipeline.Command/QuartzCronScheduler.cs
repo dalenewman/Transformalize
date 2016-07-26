@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
-using Pipeline.Scheduler.Quartz;
+
+using Common.Logging;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
@@ -25,45 +25,50 @@ namespace Pipeline.Command {
 
     public class QuartzCronScheduler : Contracts.IScheduler {
         readonly Quartz.IScheduler _scheduler;
-        readonly IContext _context;
         private readonly Options _options;
+        private readonly ILog _logger;
 
-        public QuartzCronScheduler(Options options, IContext context, IJobFactory jobFactory) {
-            Common.Logging.LogManager.Adapter = new QuartzLogAdaptor(context, Scheduler.Quartz.Utility.ConvertLevel(context.LogLevel), true, true, false, "o");
-            _context = context;
+        public QuartzCronScheduler(Options options, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
             _options = options;
             _scheduler = StdSchedulerFactory.GetDefaultScheduler();
             _scheduler.JobFactory = jobFactory;
+
+            LogManager.Adapter = loggerFactory;
+            _logger = LogManager.GetLogger("Quartz.Net");
         }
 
         public void Start() {
-            _context.Info("Starting Scheduler: {0}", _options.Schedule);
+
+            _logger.Info($"Starting Scheduler: {_options.Schedule}");
             _scheduler.Start();
-            var group = "Pipeline.Net";
 
             var job = JobBuilder.Create<RunTimeExecutor>()
-                .WithIdentity("Job", group)
+                .WithIdentity("Job", "TFL")
                 .StoreDurably(false)
                 .RequestRecovery(false)
-                .WithDescription("Pipeline.Net Quartz Job")
+                .WithDescription("Transformalize Quartz.Net Job")
+                .UsingJobData("Cfg", _options.Arrangement)
+                .UsingJobData("Shorthand", _options.Shorthand)
+                .UsingJobData("Mode", _options.Mode)
+                .UsingJobData("Output", _options.Output)
+                .UsingJobData("Schedule", _options.Schedule)
                 .Build();
 
             var trigger = TriggerBuilder.Create()
-                .WithIdentity("Tgr", group)
+                .WithIdentity("Trigger", "TFL")
                 .StartNow()
                 .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
                 .Build();
 
             _scheduler.ScheduleJob(job, trigger);
-            _scheduler.TriggerJob(job.Key);
-
         }
 
         public void Stop() {
-            if (_scheduler.IsStarted) {
-                _context.Info("Stopping Scheduler...");
-                _scheduler.Shutdown(true);
-            }
+            if (!_scheduler.IsStarted)
+                return;
+
+            _logger.Info("Stopping Scheduler...");
+            _scheduler.Shutdown(true);
         }
 
     }

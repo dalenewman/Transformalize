@@ -4,7 +4,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class FromLengthsTranform : BaseTransform, ITransform {
+    public class FromLengthsTranform : BaseTransform {
         readonly Field _input;
         readonly Field[] _output;
         private readonly int[] _lengths;
@@ -15,7 +15,7 @@ namespace Pipeline.Transforms {
             _lengths = _output.Select(f=>Convert.ToInt32(f.Length)).ToArray();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
 
             var line = row[_input] as string;
             if (line == null) {

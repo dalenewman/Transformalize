@@ -68,7 +68,8 @@ namespace Pipeline.DotNetFiddle.Impl {
                         break;
                 }
 
-                entityPipeline.Register(new SetSystemFields(entityContext));
+                entityPipeline.Register(new SetKey(entityContext));
+                entityPipeline.Register(new SetBatchId(entityContext));
                 entityPipeline.Register(new DefaultTransform(entityContext, entityContext.GetAllEntityFields()));
 
                 // js and razor not active (for now)
@@ -121,7 +122,7 @@ namespace Pipeline.DotNetFiddle.Impl {
             return context.Transform.ShouldRun == null ? SwitchTransform(context, js, razor) : new ShouldRunTransform(context, SwitchTransform(context, js, razor));
         }
 
-        private static ITransform SwitchTransform(PipelineContext context, ITransform js, ITransform razor) {
+        private static ITransform SwitchTransform(IContext context, ITransform js, ITransform razor) {
 
             switch (context.Transform.Method) {
                 case "add":

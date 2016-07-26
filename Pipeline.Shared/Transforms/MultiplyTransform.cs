@@ -28,7 +28,7 @@ namespace Pipeline.Transforms {
             _input = MultipleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = Context.Field.Convert(_input.Aggregate<Field, decimal>(1, (current, field) => current * (field.Type == "decimal" ? (decimal)row[field] : Convert.ToDecimal(row[field]))));
             Increment();
             return row;

@@ -67,7 +67,7 @@ namespace Pipeline.Transforms {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             _transform(row);
             Increment();
             return row;

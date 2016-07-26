@@ -117,7 +117,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             context.Info($"Compiled in {timer.Elapsed}");
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             return _transform.Transform(row);
         }
     }

@@ -57,7 +57,8 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
 
                 // transform
-                pipeline.Register(new SetSystemFields(context));
+                pipeline.Register(new SetKey(context));
+                pipeline.Register(new SetBatchId(context));
                 pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields()));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
                 pipeline.Register(new StringTruncateTransfom(context));

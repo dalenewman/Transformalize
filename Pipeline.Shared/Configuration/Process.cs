@@ -32,6 +32,13 @@ namespace Pipeline.Configuration {
     [Cfg(name = "cfg")]
     public class Process : CfgNode, IDisposable {
 
+        /// <summary>
+        /// The default shorthand configuration for children processes
+        /// </summary>
+        [Cfg(value = "Shorthand.xml")]
+        public string Shorthand { get; set; }
+
+
         private string _name;
 
         [Cfg(value = "")]

@@ -24,7 +24,7 @@ namespace Pipeline.Configuration {
             : base(context) {
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             return row;
         }
 

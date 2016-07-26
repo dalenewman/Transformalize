@@ -15,8 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Pipeline.Contracts {
 
+using System.Collections.Generic;
+
+namespace Pipeline.Contracts {
     /// <summary>
     /// all transformers should implement this, they need to transform the data and Increment()
     /// </summary>
@@ -30,6 +32,8 @@ namespace Pipeline.Contracts {
         /// <param name="row"></param>
         /// <returns></returns>
         IRow Transform(IRow row);
+
+        IEnumerable<IRow> Transform(IEnumerable<IRow> rows);
     }
 
 }

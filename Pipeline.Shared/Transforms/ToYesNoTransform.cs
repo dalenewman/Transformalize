@@ -27,7 +27,7 @@ namespace Pipeline.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = (bool)row[_input] ? "Yes" : "No";
             Increment();
             return row;

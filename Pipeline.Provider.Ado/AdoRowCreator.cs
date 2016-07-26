@@ -39,7 +39,7 @@ namespace Pipeline.Provider.Ado {
                 var field = fields[i];
                 if (field.Type == "string") {
                     if (reader.GetFieldType(i) == typeof(string)) {
-                        row.SetString(field, reader.IsDBNull(i) ? null : reader.GetString(i));
+                        row[field] = reader.IsDBNull(i) ? null : reader.GetString(i);
                     } else {
                         TypeMismatch(field, reader, i);
                         var value = reader.GetValue(i);

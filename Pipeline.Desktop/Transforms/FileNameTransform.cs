@@ -28,7 +28,7 @@ namespace Pipeline.Desktop.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = Context.Transform.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
             Increment();
             return row;

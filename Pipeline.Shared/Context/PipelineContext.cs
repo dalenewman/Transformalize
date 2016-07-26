@@ -39,22 +39,22 @@ namespace Pipeline.Context {
 
         public PipelineContext(
             IPipelineLogger logger,
-            Process process,
+            Process process = null,
             Entity entity = null,
             Field field = null,
             Transform transform = null
         ) {
             ForLog = new object[4];
             Logger = logger;
-            Process = process;
+            Process = process ?? new Process { Name = "Process" }.WithDefaults();
             Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty }.WithDefaults();
             Field = field ?? new Field { Name = string.Empty, Alias = string.Empty }.WithDefaults();
             Transform = transform ?? new Transform { Method = string.Empty }.WithDefaults();
             Key = Process.Name + Entity.Key + Field.Alias + Transform.Method + Transform.Index;
-            ForLog[0] = process.Name.PadRight(process.LogLimit, ' ').Left(process.LogLimit);
-            ForLog[1] = Entity.Alias.PadRight(process.EntityLogLimit, ' ').Left(process.EntityLogLimit);
-            ForLog[2] = Field.Alias.PadRight(process.FieldLogLimit, ' ').Left(process.FieldLogLimit);
-            ForLog[3] = Transform.Method.PadRight(process.TransformLogLimit, ' ').Left(process.TransformLogLimit);
+            ForLog[0] = Process.Name.PadRight(Process.LogLimit, ' ').Left(Process.LogLimit);
+            ForLog[1] = Entity.Alias.PadRight(Process.EntityLogLimit, ' ').Left(Process.EntityLogLimit);
+            ForLog[2] = Field.Alias.PadRight(Process.FieldLogLimit, ' ').Left(Process.FieldLogLimit);
+            ForLog[3] = Transform.Method.PadRight(Process.TransformLogLimit, ' ').Left(Process.TransformLogLimit);
         }
 
         public void Info(string message, params object[] args) {

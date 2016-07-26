@@ -92,6 +92,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ISerialize.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITemplateEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITransformRows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IVersionDetector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IWrite.cs" />
@@ -173,7 +174,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SubStringTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\DefaultTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\MinDateTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetSystemFields.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetBatchId.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetKey.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\ShouldRunTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\StringTruncateTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\TypeTransform.cs" />

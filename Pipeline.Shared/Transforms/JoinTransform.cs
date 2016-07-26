@@ -17,18 +17,17 @@
 #endregion
 using System.Linq;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class JoinTransform : BaseTransform, ITransform {
+    public class JoinTransform : BaseTransform {
         readonly Field[] _input;
 
         public JoinTransform(IContext context) : base(context) {
             _input = MultipleInput();
         }
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, string.Join(Context.Transform.Separator, _input.Select(f => row.GetString(f))));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = string.Join(Context.Transform.Separator, _input.Select(f => row[f]));
             Increment();
             return row;
         }

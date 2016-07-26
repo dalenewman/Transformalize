@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
@@ -39,7 +38,7 @@ namespace Pipeline.Transforms {
 
             if (_input.Type == "string" && context.Field.Type == "string") {
                 _transform = row => {
-                    row.SetString(Context.Field, _substring(row.GetString(_input)));
+                    row[Context.Field] = _substring(row[_input] as string);
                 };
             } else {
                 _transform = row => {
@@ -53,7 +52,7 @@ namespace Pipeline.Transforms {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             _transform(row);
             Increment();
             return row;

@@ -55,7 +55,7 @@ namespace Pipeline.Desktop {
 
                 if (checkLength) {
                     Parallel.ForEach(expanded, f => {
-                        var length = _context.Connection.MaxLength == 0 ? rows.Max(row => row.GetString(f).Length) + 1 : Math.Min(rows.Max(row => row.GetString(f).Length) + 1, _context.Connection.MaxLength);
+                        var length = _context.Connection.MaxLength == 0 ? rows.Max(row => row[f].ToString().Length) + 1 : Math.Min(rows.Max(row => row[f].ToString().Length) + 1, _context.Connection.MaxLength);
                         if (_context.Connection.MinLength > 0 && length < _context.Connection.MinLength) {
                             length = _context.Connection.MinLength;
                         }
@@ -67,7 +67,7 @@ namespace Pipeline.Desktop {
                     var canConvert = Constants.CanConvert();
                     Parallel.ForEach(expanded, f => {
                         foreach (var dataType in _context.Connection.Types.Where(t => t.Type != "string")) {
-                            if (rows.All(r => canConvert[dataType.Type](r.GetString(f)))) {
+                            if (rows.All(r => canConvert[dataType.Type](r[f].ToString()))) {
                                 f.Type = dataType.Type;
                                 break;
                             }

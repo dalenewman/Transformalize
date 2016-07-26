@@ -29,7 +29,7 @@ namespace Pipeline.Transforms {
         }
 
         // "day,date,dayofweek,dayofyear,hour,millisecond,minute,month,second,tick,year,weekofyear", toLower = true)]
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             var value = _input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input]);
             switch (Context.Transform.TimeComponent) {
                 case "minute":

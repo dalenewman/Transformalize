@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 
-using System.Text;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
@@ -34,8 +33,8 @@ namespace Pipeline.Transforms {
             _separator = context.Transform.Separator.ToCharArray();
         }
 
-        public IRow Transform(IRow row) {
-            var values = row.GetString(_input).Split(_separator);
+        public override IRow Transform(IRow row) {
+            var values = row[_input].ToString().Split(_separator);
             if (values.Length > 0) {
                 for (var i = 0; i < values.Length && i < _output.Length; i++) {
                     var output = _output[i];

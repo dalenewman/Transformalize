@@ -152,6 +152,7 @@
         <add name='class' value='' />
         <add name='style' value='' />
         <add name='title' value='' />
+        <add name='href' value='' />
       </parameters>
     </add>
   </signatures>

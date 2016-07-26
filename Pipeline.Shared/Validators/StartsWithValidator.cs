@@ -27,7 +27,7 @@ namespace Pipeline.Validators {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = row[_input].ToString().StartsWith(Context.Transform.Value);
             Increment();
             return row;

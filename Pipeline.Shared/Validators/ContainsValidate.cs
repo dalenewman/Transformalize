@@ -32,7 +32,7 @@ namespace Pipeline.Validators {
 
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _input.Any(f => row[f].ToString().Contains(Context.Transform.Value));
             Increment();
             return row;

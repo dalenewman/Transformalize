@@ -86,8 +86,8 @@ namespace Pipeline.Provider.Excel {
                                     }
                                 }
 
-                                if (field.Type == "string") {
-                                    row.SetString(field, reader.IsDBNull(i) ? null : reader.GetValue(i).ToString());
+                                if (field.Type == "string" && reader.GetFieldType(i) == typeof(string)) {
+                                    row[field] = reader.IsDBNull(i) ? null : reader.GetValue(i) as string;
                                 } else {
                                     row[field] = reader.IsDBNull(i) ? null : field.Convert(reader.GetValue(i));
                                 }
@@ -115,8 +115,8 @@ namespace Pipeline.Provider.Excel {
                                 var row = _rowFactory.Create();
                                 for (var i = 0; i < _context.InputFields.Length; i++) {
                                     var field = _context.InputFields[i];
-                                    if (field.Type == "string") {
-                                        row.SetString(field, reader.IsDBNull(i) ? null : reader.GetValue(i).ToString());
+                                    if (field.Type == "string" && reader.GetFieldType(i) == typeof(string)) {
+                                        row[field] = reader.IsDBNull(i) ? null : reader.GetString(i);
                                     } else {
                                         row[field] = reader.IsDBNull(i) ? null : field.Convert(reader.GetValue(i));
                                     }
@@ -159,8 +159,8 @@ namespace Pipeline.Provider.Excel {
                                         _context.Warn($"The {field.Alias} field in {_context.Entity.Alias} expects a {expected}, but is reading a {actual}.");
                                     }
 
-                                    if (field.Type == "string") {
-                                        row.SetString(field, dr.GetValue(i).ToString());
+                                    if (field.Type == "string" && dr.GetFieldType(i) == typeof(string)) {
+                                        row[field] = dr.GetValue(i) as string;
                                     } else {
                                         row[field] = field.Convert(dr.GetValue(i));
                                     }
@@ -181,8 +181,8 @@ namespace Pipeline.Provider.Excel {
                             var row = _rowFactory.Create();
                             for (var i = 0; i < _context.InputFields.Length; i++) {
                                 var field = _context.InputFields[i];
-                                if (field.Type == "string") {
-                                    row.SetString(field, dr.GetValue(i).ToString());
+                                if (field.Type == "string" && dr.GetFieldType(i) == typeof(string)) {
+                                    row[field] = dr.GetString(i);
                                 } else {
                                     row[field] = field.Convert(dr.GetValue(i));
                                 }

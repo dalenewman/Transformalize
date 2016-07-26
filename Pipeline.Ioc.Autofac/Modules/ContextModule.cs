@@ -19,6 +19,7 @@ using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop.Writers;
 
 namespace Pipeline.Ioc.Autofac.Modules {
 
@@ -59,6 +60,10 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var context = ctx.Resolve<IContext>();
                     return new OutputContext(context, new Incrementer(context));
                 }).Named<OutputContext>(connection.Key);
+
+                if (connection.Provider == "console") {
+                    builder.Register(ctx => new ConsoleWriter(connection.Format == "json" ? new JsonNetSerializer(ctx.Resolve<OutputContext>()) : new CsvSerializer(ctx.Resolve<OutputContext>()) as ISerialize)).As<ConsoleWriter>();
+                }
 
             }
 

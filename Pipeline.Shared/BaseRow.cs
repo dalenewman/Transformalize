@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Linq.Expressions;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
@@ -72,15 +71,6 @@ namespace Pipeline {
         public override string ToString() {
             return string.Join("|", Storage);
         }
-
-        public string GetString(IField f) {
-            return GetValue(f).ToString();
-        }
-
-        public void SetString(IField f, string value) {
-            SetValue(f, value);
-        }
-
 
     }
 }

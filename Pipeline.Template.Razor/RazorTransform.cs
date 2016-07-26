@@ -66,7 +66,7 @@ namespace Pipeline.Template.Razor {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = Context.Field.Convert(_service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input)));
             Increment();
             return row;

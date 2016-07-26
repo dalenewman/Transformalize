@@ -20,24 +20,20 @@ using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
-using Pipeline.Desktop;
 using Pipeline.Desktop.Writers;
 using Pipeline.Extensions;
 using Pipeline.Nulls;
 
 namespace Pipeline.Ioc.Autofac.Modules {
+
     public class InternalModule : Module {
         private readonly Process _process;
         private readonly string[] _internal = { "internal", "console", "trace" };
-        private readonly string _consoleOutput = "csv";
 
         public InternalModule() { }
 
-        public InternalModule(Process process, string consoleOutput = "csv") {
+        public InternalModule(Process process) {
             _process = process;
-            if (!string.IsNullOrEmpty(consoleOutput)) {
-                _consoleOutput = consoleOutput.ToLower();
-            }
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -89,7 +85,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "console":
-                                return new ConsoleWriter(_consoleOutput == "json" ? new JsonNetSerializer(output) : new CsvSerializer(output) as ISerialize);
+                                return ctx.Resolve<ConsoleWriter>() ;
                             case "trace":
                                 return new TraceWriter(new JsonNetSerializer(output));
                             case "internal":

@@ -22,7 +22,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms.System {
-    public class DefaultTransform : BaseTransform, ITransform {
+    public class DefaultTransform : BaseTransform {
         class FieldDefault : IField {
 
             private readonly Action<IRow> _setter;
@@ -33,16 +33,16 @@ namespace Pipeline.Transforms.System {
             public string Type { get; }
             public object Value { private get; set; }
             public string StringValue { private get; set; }
-
             public bool DefaultWhiteSpace { get; set; }
 
-            public FieldDefault(string alias, short index, short masterIndex, string type) {
+            public FieldDefault(string alias, short index, short masterIndex, short keyIndex, string type) {
                 Alias = alias;
                 Index = index;
                 MasterIndex = masterIndex;
                 Type = type;
+                KeyIndex = keyIndex;
                 if (type == "string") {
-                    _setter = row => row.SetString(this, StringValue);
+                    _setter = row => row[this] = StringValue;
                 } else {
                     _setter = row => row[this] = Value;
                 }
@@ -59,11 +59,13 @@ namespace Pipeline.Transforms.System {
         public DefaultTransform(IContext context, IEnumerable<Field> fields)
             : base(context) {
             var expanded = fields.ToArray();
+            var defaults = Constants.TypeDefaults();
 
             foreach (var field in expanded) {
-                var fieldDefault = new FieldDefault(field.Alias, field.Index, field.MasterIndex, field.Type) {
-                    Value = field.Default == Constants.DefaultSetting ? Constants.TypeDefaults()[field.Type] : field.Convert(field.Default),
-                    StringValue = field.Default == Constants.DefaultSetting ? string.Empty : field.Default,
+                var hasDefault = field.Default != Constants.DefaultSetting;
+                var fieldDefault = new FieldDefault(field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
+                    Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
+                    StringValue = hasDefault ? field.Default : string.Empty,
                     DefaultWhiteSpace = field.DefaultWhiteSpace
                 };
                 if (field.IsCalculated) {
@@ -74,7 +76,7 @@ namespace Pipeline.Transforms.System {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             foreach (var field in CalculatedFieldDefaults) {
                 field.Setter(row);
             }

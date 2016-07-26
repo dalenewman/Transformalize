@@ -26,11 +26,10 @@ namespace Pipeline.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field,
-                Context.Transform.Count > 0
-                    ? row.GetString(_input).Remove(Context.Transform.StartIndex, Context.Transform.Count)
-                    : row.GetString(_input).Remove(Context.Transform.StartIndex));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = Context.Transform.Count > 0
+                ? row[_input].ToString().Remove(Context.Transform.StartIndex, Context.Transform.Count)
+                : row[_input].ToString().Remove(Context.Transform.StartIndex);
             Increment();
             return row;
         }

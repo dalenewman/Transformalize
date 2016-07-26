@@ -54,8 +54,10 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = "")]
         public string Name { get; set; }
+
         [Cfg(value = null)]
         public string Value { get; set; }
+
         [Cfg(value = true)]
         public bool Input { get; set; }
 

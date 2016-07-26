@@ -208,17 +208,20 @@ namespace Pipeline.Configuration {
                 new Field {
                     Name = Constants.TflKey,
                     Alias = Constants.TflKey,
-                    Type = "int"
+                    Type = "int",
+                    Default = "0"
                 }.WithDefaults(),
                 new Field {
                     Name = Constants.TflBatchId,
                     Alias = Constants.TflBatchId,
-                    Type = "int"
+                    Type = "int",
+                    Default="0"
                 }.WithDefaults(),
                 new Field {
                     Name = Constants.TflHashCode,
                     Alias = Constants.TflHashCode,
                     Type = "int",
+                    Default="0",
                     Transforms = CalculateHashCode ? new List<Transform> {
                         new Transform {
                             Method = "hashcode",
@@ -229,7 +232,8 @@ namespace Pipeline.Configuration {
                 new Field {
                     Name = Constants.TflDeleted,
                     Alias = Constants.TflDeleted,
-                    Type = "bool"
+                    Type = "bool",
+                    Default = "false"
                 }.WithDefaults()
             };
 

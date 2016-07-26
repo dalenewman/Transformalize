@@ -24,6 +24,7 @@ using NLog.Targets.Wrappers;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using LogLevel = Pipeline.Contracts.LogLevel;
+using NLogLevel = global::NLog.LogLevel;
 
 namespace Pipeline.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
@@ -31,46 +32,13 @@ namespace Pipeline.Logging.NLog {
         const string Context = "{0} | {1} | {2} | {3}";
         readonly Logger _log;
 
-        public LogLevel LogLevel { get; }
-
-        public NLogPipelineLogger(string name, LogLevel logLevel = LogLevel.None) {
-            LogLevel = logLevel;
-            _log = LogManager.GetLogger("Pipeline.NET");
-            ReConfiguredLogLevel(name, logLevel);
+        public NLogPipelineLogger(string name) {
+            name = Utility.Identifier(name, "-");
+            ReConfiguredLogLevel(name);
+            _log = LogManager.GetLogger("TFL");
         }
 
-        static void ReConfiguredLogLevel(string name, LogLevel logLevel) {
-            if (LogManager.Configuration == null)
-                return;
-
-            if (logLevel != LogLevel.None) {
-                global::NLog.LogLevel level;
-                switch (logLevel) {
-                    case LogLevel.Debug:
-                        level = global::NLog.LogLevel.Debug;
-                        break;
-                    case LogLevel.Error:
-                        level = global::NLog.LogLevel.Error;
-                        break;
-                    case LogLevel.Warn:
-                        level = global::NLog.LogLevel.Warn;
-                        break;
-                    case LogLevel.None:
-                        level = global::NLog.LogLevel.Off;
-                        break;
-                    case LogLevel.Info:
-                        level = global::NLog.LogLevel.Info;
-                        break;
-                    default:
-                        level = global::NLog.LogLevel.Info;
-                        break;
-                }
-                foreach (var rule in LogManager.Configuration.LoggingRules) {
-                    if (rule.Targets.Any(t => t.Name == "console")) {
-                        rule.EnableLoggingForLevel(level);
-                    }
-                }
-            }
+        static void ReConfiguredLogLevel(string name) {
 
             var target = LogManager.Configuration.FindTargetByName("file");
             if (target != null) {
@@ -82,7 +50,9 @@ namespace Pipeline.Logging.NLog {
                 }
                 try {
                     var info = new FileInfo(file.FileName.Render(new LogEventInfo { TimeStamp = DateTime.Now }));
-                    file.FileName = Path.Combine(info.DirectoryName ?? string.Empty, name + "-" + info.Name);
+                    if (!info.Name.Contains(name)) {
+                        file.FileName = Path.Combine(info.DirectoryName ?? string.Empty, name + "-" + info.Name);
+                    }
                 } catch (Exception) {
                     // eat it
                 }
@@ -91,12 +61,16 @@ namespace Pipeline.Logging.NLog {
             target = LogManager.Configuration.FindTargetByName("mail");
             if (target != null) {
                 MailTarget mail;
-                if (target is AsyncTargetWrapper) {
-                    mail = (MailTarget)((AsyncTargetWrapper)target).WrappedTarget;
-                } else {
+                var wrapper = target as AsyncTargetWrapper;
+                if (wrapper == null) {
                     mail = (MailTarget)target;
+                } else {
+                    mail = (MailTarget)wrapper.WrappedTarget;
                 }
-                mail.Subject = name + " " + mail.Subject.Render(new LogEventInfo { TimeStamp = DateTime.Now });
+                var subject = mail.Subject.Render(new LogEventInfo { TimeStamp = DateTime.Now });
+                if (!subject.Contains(name)) {
+                    mail.Subject = subject + ": " + name;
+                }
             }
 
             LogManager.ReconfigExistingLoggers();
@@ -104,6 +78,25 @@ namespace Pipeline.Logging.NLog {
 
         static string ForLog(PipelineContext context) {
             return string.Format(Context, context.ForLog);
+        }
+
+        public LogLevel LogLevel
+        {
+            get
+            {
+                var cfg = LogManager.Configuration;
+                if (cfg == null) {
+                    return LogLevel.None;
+                }
+                foreach (var rule in LogManager.Configuration.LoggingRules) {
+                    if (rule.Targets.Any(t => t.Name == "console")) {
+                        var level = rule.Levels.FirstOrDefault();
+                        return level == null ? LogLevel.None : TranslateLogLevel(level);
+                    }
+                }
+
+                return LogLevel.Info;
+            }
         }
 
         public void Debug(PipelineContext context, Func<string> lamda) {
@@ -146,6 +139,23 @@ namespace Pipeline.Logging.NLog {
 
         public void Clear() {
             LogManager.Flush();
+        }
+
+        public LogLevel TranslateLogLevel(NLogLevel level) {
+            switch (level.Name) {
+                case "Debug":
+                case "Trace":
+                    return LogLevel.Debug;
+                case "Error":
+                    return LogLevel.Error;
+                case "Warn":
+                    return LogLevel.Warn;
+                case "Off":
+                    return LogLevel.None;
+                default:
+                    return LogLevel.Info;
+            }
+
         }
     }
 }

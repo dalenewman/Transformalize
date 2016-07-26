@@ -34,7 +34,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _hasNamespace = !string.IsNullOrEmpty(context.Transform.NameSpace);
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
 
             var xml = (string)row[_input];
 

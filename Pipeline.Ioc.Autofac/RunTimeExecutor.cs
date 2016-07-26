@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Ioc.Autofac.Modules;
 
@@ -59,6 +58,7 @@ namespace Pipeline.Ioc.Autofac {
             builder.RegisterCallback(new ElasticModule(process).Configure);
             builder.RegisterCallback(new InternalModule(process).Configure);
             builder.RegisterCallback(new FileModule(process).Configure);
+            builder.RegisterCallback(new WebModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);
 

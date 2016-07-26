@@ -68,7 +68,7 @@ namespace Pipeline.Provider.File {
                                 //engine[i] = Encoding.UTF8.GetString((byte[])row[field]);
                                 break;
                             case "string":
-                                engine[i] = row.GetString(field);
+                                engine[i] = row[field];
                                 break;
                             case "datetime":
                                 engine[i] = ((DateTime)row[field]).ToString("o");

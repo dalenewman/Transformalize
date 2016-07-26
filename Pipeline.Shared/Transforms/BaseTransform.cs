@@ -23,8 +23,13 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
 
-    public abstract class BaseTransform {
+    public abstract class BaseTransform : ITransform {
         public IContext Context { get; }
+        public abstract IRow Transform(IRow row);
+
+        public virtual IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+            return rows.Select(Transform);
+        }
 
         protected BaseTransform(IContext context) {
             Context = context;
@@ -58,10 +63,8 @@ namespace Pipeline.Transforms {
         public Field SingleInputForMultipleOutput() {
             if (Context.Transform.Parameter != string.Empty) {
                 return Context.Entity == null
-                    ? Context.Process.GetAllFields()
-                        .First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase))
-                    : Context.Entity.GetAllFields()
-                        .First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase));
+                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase))
+                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase));
             }
             return Context.Field;
         }

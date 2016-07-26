@@ -28,7 +28,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             if (Context.Transform.Extension) {
                 row[Context.Field] = Path.GetFullPath((string)row[_input]);
             } else {

@@ -37,7 +37,7 @@ namespace Pipeline.Transforms {
             }
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _set.Contains(row[_input]);
             Increment();
             return row;

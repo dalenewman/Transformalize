@@ -28,7 +28,7 @@ namespace Pipeline {
 
         public TypedEntityMatchingKeysReader(ITakeAndReturnRows reader, IContext context) {
             _reader = reader;
-            _typeTransform = new TypeTransform(CombineFields(context.Entity.GetPrimaryKey(), context.Entity.TflHashCode()));
+            _typeTransform = new TypeTransform(context, CombineFields(context.Entity.GetPrimaryKey(), context.Entity.TflHashCode()));
         }
 
         public IEnumerable<IRow> Read(IEnumerable<IRow> input) {

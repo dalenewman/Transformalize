@@ -35,7 +35,7 @@ namespace Pipeline.Transforms
             _last = from.AddDays(-1 * diff).Date;
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = _last;
             Increment();
             return row;

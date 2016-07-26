@@ -22,8 +22,6 @@ using Pipeline.Configuration;
 namespace Pipeline.Contracts {
     public interface IRow {
         object this[IField field] { get; set; }
-        string GetString(IField field);
-        void SetString(IField field, string value);
         string ToString();
         ExpandoObject ToExpandoObject(Field[] fields);
         CfgRow ToCfgRow(IField[] fields, string[] keys);

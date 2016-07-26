@@ -29,8 +29,8 @@ namespace Pipeline.Transforms {
             _input = MultipleInput();
         }
 
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, string.Format(Context.Transform.Format, _input.Select(f => row[f]).ToArray()));
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = string.Format(Context.Transform.Format, _input.Select(f => row[f]).ToArray());
             Increment();
             return row;
         }

@@ -16,15 +16,12 @@
 // limitations under the License.
 #endregion
 using Pipeline.Contracts;
+using Pipeline.Transforms;
 
 namespace Pipeline.Nulls {
-    public class NullTransform : ITransform {
-        public IContext Context { get; }
-
-        public NullTransform(IContext context) {
-            Context = context;
-        }
-        public IRow Transform(IRow row) {
+    public class NullTransform : BaseTransform {
+        public NullTransform(IContext context) : base(context) { }
+        public override IRow Transform(IRow row) {
             return row;
         }
     }

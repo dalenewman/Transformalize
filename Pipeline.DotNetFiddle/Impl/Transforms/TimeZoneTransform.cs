@@ -16,20 +16,21 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.DotNetFiddle.Impl.Transforms {
-    public class TimeZoneTransform : BaseTransform, ITransform {
+    public class TimeZoneTransform : BaseTransform {
         readonly Field _input;
         readonly Field _output;
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
-        public TimeZoneTransform(PipelineContext context) : base(context) {
+        public TimeZoneTransform(IContext context) : base(context) {
             _input = SingleInput();
             _output = context.Field;
 
@@ -40,7 +41,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             Increment();
             var date = (DateTime)row[_input];
             if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {
@@ -50,5 +51,6 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
             }
             return row;
         }
+
     }
 }

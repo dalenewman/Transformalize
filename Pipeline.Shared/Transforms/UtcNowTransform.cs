@@ -19,12 +19,10 @@ using System;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class UtcNowTransform : ITransform {
-        public UtcNowTransform(IContext context) {
-            Context = context;
-        }
-        public IContext Context { get; }
-        public IRow Transform(IRow row) {
+    public class UtcNowTransform : BaseTransform {
+        public UtcNowTransform(IContext context) : base(context) {}
+
+        public override IRow Transform(IRow row) {
             row[Context.Field] = DateTime.UtcNow;
             return row;
         }

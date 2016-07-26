@@ -208,8 +208,10 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = "GET", domain = "GET,POST", ignoreCase = true)]
         public string WebMethod { get; set; }
-        [Cfg(value = "Default")]
+
+        [Cfg(value = "first", domain="first,all")]
         public string XmlMode { get; set; }
+
         [Cfg(value = "")]
         public string Xpath { get; set; }
 

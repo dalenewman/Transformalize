@@ -24,7 +24,7 @@ using Pipeline.Extensions;
 using Pipeline.Transforms;
 
 namespace Pipeline.DotNetFiddle.Impl.Transforms {
-    public class DateDiffTransform : BaseTransform, ITransform {
+    public class DateDiffTransform : BaseTransform {
 
         public static readonly Dictionary<string, Func<DateTime, DateTime, object>> Parts = new Dictionary<string, Func<DateTime, DateTime, object>>() {
             {"day", (x,y) => (y-x).TotalDays},
@@ -91,7 +91,7 @@ namespace Pipeline.DotNetFiddle.Impl.Transforms {
 
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             _transform(row);
             Increment();
             return row;

@@ -27,7 +27,7 @@ namespace Pipeline.Validators {
             _input = SingleInput();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[Context.Field] = (string)row[_input] == string.Empty;
             Increment();
             return row;

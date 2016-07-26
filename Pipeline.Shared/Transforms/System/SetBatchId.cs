@@ -15,23 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Threading;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms.System {
-    public class SetSystemFields : BaseTransform, ITransform {
+    public class SetBatchId : BaseTransform {
         private readonly Field _tflBatchId;
-        private readonly Field _tflKey;
 
-        public SetSystemFields(IContext context) : base(context) {
+        public SetBatchId(IContext context) : base(context) {
             _tflBatchId = context.Entity.TflBatchId();
-            _tflKey = context.Entity.TflKey();
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             row[_tflBatchId] = Context.Entity.BatchId;
-            row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
             Increment();
             return row;
         }

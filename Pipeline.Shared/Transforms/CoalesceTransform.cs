@@ -20,7 +20,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class CoalesceTransform : BaseTransform, ITransform {
+    public class CoalesceTransform : BaseTransform {
         class FieldWithDefault {
             public Field Field { get; set; }
             public object Default { get; set; }
@@ -33,7 +33,7 @@ namespace Pipeline.Transforms {
 
         }
 
-        public IRow Transform(IRow row) {
+        public override IRow Transform(IRow row) {
             var first = _input.FirstOrDefault(f => !row[f.Field].Equals(f.Default));
             if (first != null) {
                 row[Context.Field] = Context.Field.Type == first.Field.Type ? row[first.Field] : Context.Field.Convert(row[first.Field]);

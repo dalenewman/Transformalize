@@ -26,8 +26,8 @@ namespace Pipeline.Transforms {
         public ToLowerTransform(IContext context) : base(context) {
             _input = SingleInput();
         }
-        public IRow Transform(IRow row) {
-            row.SetString(Context.Field, row.GetString(_input).ToLowerInvariant());
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = row[_input].ToString().ToLowerInvariant();
             Increment();
             return row;
         }
