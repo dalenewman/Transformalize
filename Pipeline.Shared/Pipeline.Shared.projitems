@@ -151,6 +151,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CopyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DatePartTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DecodeTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FilterTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromLengthsTranform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromSplitTransform.cs" />

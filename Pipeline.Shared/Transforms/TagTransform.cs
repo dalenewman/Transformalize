@@ -6,7 +6,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class TagTransform : BaseTransform, ITransform {
+    public class TagTransform : BaseTransform {
 
         internal class TagAttribute {
 
@@ -52,11 +52,16 @@ namespace Pipeline.Transforms {
                 Context.Transform.Style = Context.Field.Style;
             }
 
+            if (Context.Transform.Role == string.Empty && Context.Field.Role != string.Empty) {
+                Context.Transform.Role = Context.Field.Role;
+            }
+
             var input = MultipleInput();
             _attributes.Add(new TagAttribute(input, "href", Context.Transform.HRef));
             _attributes.Add(new TagAttribute(input, "class", Context.Transform.Class));
             _attributes.Add(new TagAttribute(input, "title", Context.Transform.Title));
             _attributes.Add(new TagAttribute(input, "style", Context.Transform.Style));
+            _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
 
             _contentField = input.First();
 

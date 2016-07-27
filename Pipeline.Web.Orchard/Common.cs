@@ -160,6 +160,8 @@ namespace Pipeline.Web.Orchard {
         <add name='class' value='' />
         <add name='style' value='' />
         <add name='title' value='' />
+        <add name='href' value='' />
+        <add name='role' value='' />
       </parameters>
     </add>
   </signatures>
@@ -237,6 +239,7 @@ namespace Pipeline.Web.Orchard {
     <add name='isdefault' signature='none' target='t' />
     <add name='isempty' signature='none' target='t' />
     <add name='tag' signature='tag' target='t' />
+    <add name='filter' signature='any' target='t' />
   </methods>
 
 </cfg>";

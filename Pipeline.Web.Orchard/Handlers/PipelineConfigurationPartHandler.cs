@@ -25,8 +25,6 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
 using Orchard;
-using Orchard.Caching;
-using Pipeline.Configuration;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 
@@ -35,7 +33,6 @@ namespace Pipeline.Web.Orchard.Handlers {
     public class PipelineConfigurationPartHandler : ContentHandler {
 
         readonly INotifier _notifier;
-        readonly IOrchardServices _orchard;
         private readonly IProcessService _processService;
 
         public Localizer T { get; set; }
@@ -47,7 +44,6 @@ namespace Pipeline.Web.Orchard.Handlers {
             INotifier notifier
         ) {
             _notifier = notifier;
-            _orchard = orchard;
             _processService = processService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;

@@ -30,6 +30,7 @@ using Pipeline.Provider.PostgreSql;
 using Pipeline.Provider.SqlServer;
 using Pipeline.Provider.SQLite;
 using Pipeline.Transforms.System;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AdoModule : Module {

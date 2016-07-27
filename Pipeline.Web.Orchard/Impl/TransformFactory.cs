@@ -27,7 +27,8 @@ using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
 
-namespace Pipeline.Web.Orchard.Modules {
+namespace Pipeline.Web.Orchard.Impl {
+
     public static class TransformFactory {
 
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
@@ -72,8 +73,6 @@ namespace Pipeline.Web.Orchard.Modules {
                 case "right": return new RightTransform(context);
                 case "copy": return new CopyTransform(context);
                 case "concat": return new ConcatTransform(context);
-                case "fromxml": return new FromXmlTransform(context);
-                case "fromsplit": return new FromSplitTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
                 case "xmldecode": return new DecodeTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
@@ -111,6 +110,11 @@ namespace Pipeline.Web.Orchard.Modules {
                 case "coalesce": return new CoalesceTransform(context);
                 case "invert": return new InvertTransform(context);
                 case "tag": return new TagTransform(context);
+
+                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
+                case "fromsplit": return new FromSplitTransform(context);
+                case "fromlengths": return new FromLengthsTranform(context);
+                case "filter" : return new FilterTransform(context);
 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);

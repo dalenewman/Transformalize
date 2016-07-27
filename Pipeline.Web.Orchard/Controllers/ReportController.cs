@@ -28,6 +28,7 @@ using Orchard.UI.Notify;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
+using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -57,16 +58,13 @@ namespace Pipeline.Web.Orchard.Controllers {
             var timer = new Stopwatch();
             timer.Start();
 
-            if (!User.Identity.IsAuthenticated)
-                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
-
             var process = new Configuration.Process { Name = "Report" }.WithDefaults();
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
                 process.Name = "Not Found";
             } else {
-                if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+                if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
                     process.Load(part.Configuration, Common.GetParameters(Request));

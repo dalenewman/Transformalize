@@ -23,6 +23,7 @@ using Pipeline.Contracts;
 using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Transforms.System;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 
@@ -57,9 +58,10 @@ namespace Pipeline.Web.Orchard.Modules {
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
 
                 // transform
-                pipeline.Register(new SetSystemFields(context));
+                pipeline.Register(new SetBatchId(context));
                 pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields()));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
+                pipeline.Register(new SetKey(context));
                 pipeline.Register(new StringTruncateTransfom(context));
 
                 if (provider == "sqlserver") {

@@ -68,7 +68,6 @@ namespace Pipeline.DotNetFiddle.Impl {
                         break;
                 }
 
-                entityPipeline.Register(new SetKey(entityContext));
                 entityPipeline.Register(new SetBatchId(entityContext));
                 entityPipeline.Register(new DefaultTransform(entityContext, entityContext.GetAllEntityFields()));
 
@@ -77,6 +76,7 @@ namespace Pipeline.DotNetFiddle.Impl {
                 var razor = new NullTransform(entityContext);
 
                 entityPipeline.Register(GetTransforms(process, entity, entity.GetAllFields().Where(f => f.Transforms.Any()), logger, js, razor));
+                entityPipeline.Register(new SetKey(entityContext));
                 entityPipeline.Register(new StringTruncateTransfom(entityContext));
 
                 entityPipeline.Register(new NullUpdater(entityContext, false));

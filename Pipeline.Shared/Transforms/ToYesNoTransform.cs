@@ -20,7 +20,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class ToYesNoTransform : BaseTransform, ITransform {
+    public class ToYesNoTransform : BaseTransform {
         private readonly Field _input;
 
         public ToYesNoTransform(IContext context) : base(context) {

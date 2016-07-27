@@ -25,6 +25,7 @@ using Pipeline.Contracts;
 using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Transforms.System;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 

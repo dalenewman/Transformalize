@@ -135,6 +135,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\Debug\Pipeline.Provider.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Pipeline.Provider.Web">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Pipeline.Provider.Web.dll</HintPath>
+    </Reference>
     <Reference Include="Pipeline.Scripting.Jint, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Scripting.Jint\bin\Debug\Pipeline.Scripting.Jint.dll</HintPath>
@@ -222,7 +225,7 @@
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\SolrModule.cs" />
     <Compile Include="Modules\TemplateModule.cs" />
-    <Compile Include="Modules\TransformFactory.cs" />
+    <Compile Include="Impl\TransformFactory.cs" />
     <Compile Include="Impl\OrchardLogger.cs" />
     <Compile Include="Impl\PipelineAction.cs" />
     <Compile Include="Modules\AutoModule.cs" />

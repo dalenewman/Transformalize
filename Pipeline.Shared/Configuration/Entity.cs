@@ -203,7 +203,8 @@ namespace Pipeline.Configuration {
             }
         }
 
-        public void AddSystemFields(bool output = true) {
+        public void AddSystemFields(bool output = true)
+        {
             var fields = new List<Field> {
                 new Field {
                     Name = Constants.TflKey,

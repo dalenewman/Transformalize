@@ -17,5 +17,17 @@ namespace Pipeline.Web.Orchard.Models {
     public class XmlToYamlProcess : Process {
         public XmlToYamlProcess(params IDependency[] dependencies) : base(dependencies) { }
     }
+
+    public class XmlProcessPass : Process {
+        public XmlProcessPass(params IDependency[] dependencies) : base(dependencies) { }
+    }
+
+    public class XmlToJsonProcessPass : Process {
+        public XmlToJsonProcessPass(params IDependency[] dependencies) : base(dependencies) { }
+    }
+
+    public class XmlToYamlProcessPass : Process {
+        public XmlToYamlProcessPass(params IDependency[] dependencies) : base(dependencies) { }
+    }
     
 }

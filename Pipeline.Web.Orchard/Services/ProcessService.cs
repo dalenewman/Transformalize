@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Orchard;
 using Pipeline.Configuration;
 using Pipeline.Web.Orchard.Models;
@@ -6,7 +5,7 @@ using Pipeline.Web.Orchard.Models;
 namespace Pipeline.Web.Orchard.Services {
 
     public interface IProcessService : IDependency {
-        Process Resolve(string input, string output);
+        Process Resolve(string input, string output, bool pass = false);
     }
 
     /// <summary>
@@ -20,34 +19,34 @@ namespace Pipeline.Web.Orchard.Services {
             _orchard = orchard;
         }
 
-        public Process Resolve(string input, string output) {
+        public Process Resolve(string input, string output, bool pass = false) {
             switch (input) {
                 case "json":
                     switch (output) {
                         case "json":
-                            return _orchard.WorkContext.Resolve<JsonProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<JsonProcessPass>() : _orchard.WorkContext.Resolve<JsonProcess>() as Process;
                         case "yaml":
-                            return _orchard.WorkContext.Resolve<JsonToYamlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<JsonToYamlProcessPass>() : _orchard.WorkContext.Resolve<JsonToYamlProcess>() as Process;
                         default:
-                            return _orchard.WorkContext.Resolve<JsonToXmlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<JsonToXmlProcessPass>() :  _orchard.WorkContext.Resolve<JsonToXmlProcess>() as Process;
                     }
                 case "yaml":
                     switch (output) {
                         case "json":
-                            return _orchard.WorkContext.Resolve<YamlToJsonProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<YamlToJsonProcessPass>() : _orchard.WorkContext.Resolve<YamlToJsonProcess>() as Process;
                         case "yaml":
-                            return _orchard.WorkContext.Resolve<YamlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<YamlProcessPass>() : _orchard.WorkContext.Resolve<YamlProcess>() as Process;
                         default:
-                            return _orchard.WorkContext.Resolve<YamlToXmlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<YamlToXmlProcessPass>() : _orchard.WorkContext.Resolve<YamlToXmlProcess>() as Process;
                     }
                 default:
                     switch (output) {
                         case "json":
-                            return _orchard.WorkContext.Resolve<XmlToJsonProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<XmlToJsonProcessPass>() : _orchard.WorkContext.Resolve<XmlToJsonProcess>() as Process;
                         case "yaml":
-                            return _orchard.WorkContext.Resolve<XmlToYamlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<XmlToYamlProcessPass>() : _orchard.WorkContext.Resolve<XmlToYamlProcess>() as Process;
                         default:
-                            return _orchard.WorkContext.Resolve<XmlProcess>();
+                            return pass ? _orchard.WorkContext.Resolve<XmlProcessPass>() : _orchard.WorkContext.Resolve<XmlProcess>() as Process;
                     }
             }
         }

@@ -29,7 +29,7 @@ using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
 
-    public class CsharpTransform : BaseTransform, ITransform {
+    public class CsharpTransform : BaseTransform {
 
         private readonly ITransform _transform;
         public CsharpTransform(IContext context) : base(context) {
@@ -75,7 +75,7 @@ namespace Pipeline.Desktop.Transforms {
                         type = field.Type;
                         break;
                 }
-                code.AppendLine($"{type} {Pipeline.Utility.Identifier(field.Alias)} = ({type}) row[_input[{i}]];");
+                code.AppendLine($"        {type} {Pipeline.Utility.Identifier(field.Alias)} = ({type}) row[_input[{i}]];");
             }
 
             // handles csharp body or an expression

@@ -29,12 +29,13 @@ using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
 using Process = Pipeline.Configuration.Process;
+using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
     public class ApiController : Controller {
-        
-        private static readonly HashSet<string> _formats = new HashSet<string> { "xml","json","yaml"}; 
+
+        private static readonly HashSet<string> _formats = new HashSet<string> { "xml", "json", "yaml" };
 
         readonly IOrchardServices _orchardServices;
         readonly IIpRangeService _ipRangeService;
@@ -58,7 +59,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             Logger = NullLogger.Instance;
         }
 
-
         [ActionName("Api/Run")]
         public ContentResult Run(int id) {
 
@@ -76,7 +76,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             format = GetFormat(Request, part);
 
-            if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                 var process = _processService.Resolve(part.EditorMode, format);
                 var parameters = Common.GetParameters(Request);
@@ -106,8 +106,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Message = "Ok";
                     process.Request = action;
                     process.Time = timer.ElapsedMilliseconds;
-                    SystemFieldHelper(process);
-                    ShorthandHelper(process);
+                    RemoveCredentials(process);
+                    RemoveShorthand(process);
+                    if (process.Output().IsInternal()) {
+                        RemoveSystemFields(process);
+                    }
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     return Get501(Request, _orchardServices, action, ex.Message, timer.ElapsedMilliseconds);
@@ -122,17 +125,40 @@ namespace Pipeline.Web.Orchard.Controllers {
         [ActionName("Api/Cfg")]
         public ContentResult Configuration(int id) {
             Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+            const string action = "Cfg";
+
+            var timer = new Stopwatch();
+            timer.Start();
+            //var format = GetFormat(Request);
+
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
-                return Get404("Cfg", _processService, "xml");
+                return Get404(action, _processService, "xml");
             }
 
-            if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress) || _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+            if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
                 return new ContentResult { Content = part.Configuration, ContentType = "text/" + part.EditorMode };
             }
 
-            return Get401("Cfg", _orchardServices, part.EditorMode);
+            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                return Get401(action, _orchardServices, part.EditorMode);
+            }
+
+            return new ContentResult { Content = part.Configuration, ContentType = "text/" + part.EditorMode };
+
+            /* can't do this until i move the "adaptors" out of process validate or entity validate
+             var process = _processService.Resolve(part.EditorMode, format, pass:true);  // a pass does not process place-holders or short-hand
+             process.Load(part.Configuration);
+             process.Request = action;
+             process.Status = 200;
+             process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
+             process.Message = "Ok";
+             RemoveCredentials(process);
+             RemoveSystemFields(process);
+             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+             */
         }
 
         [ActionName("Api/Check")]
@@ -154,44 +180,42 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             format = GetFormat(Request, part);
 
-            if (_orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, part)) {
+            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                return Get401(action, _orchardServices, format);
+            }
 
-                var process = _processService.Resolve(part.EditorMode, format);
-                var parameters = Common.GetParameters(Request);
-                process.Load(part.Configuration, parameters);
+            var process = _processService.Resolve(part.EditorMode, format);
+            var parameters = Common.GetParameters(Request);
+            process.Load(part.Configuration, parameters);
 
+            if (process.Errors().Any()) {
+                return Get503(action, process, format, timer.ElapsedMilliseconds);
+            }
+
+            if (MissingFieldHelper(process, part, format, parameters)) {
                 if (process.Errors().Any()) {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
-
-                if (MissingFieldHelper(process, part, format, parameters)) {
-                    if (process.Errors().Any()) {
-                        return Get503(action, process, format, timer.ElapsedMilliseconds);
-                    }
-                }
-
-                SystemFieldHelper(process);
-                ShorthandHelper(process);
-
-                var sort = Request["sort"];
-                if (!string.IsNullOrEmpty(sort)) {
-                    _sortService.AddSortToEntity(process.Entities.First(), sort);
-                }
-
-                process.Request = action;
-                process.Status = 200;
-                process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
-                process.Message = "Ok";
-
-
-                return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
             }
 
-            return Get401(action, _orchardServices, format);
+            RemoveCredentials(process);
+            RemoveShorthand(process);
 
+            var sort = Request["sort"];
+            if (!string.IsNullOrEmpty(sort)) {
+                _sortService.AddSortToEntity(process.Entities.First(), sort);
+            }
+
+            process.Request = action;
+            process.Status = 200;
+            process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
+            process.Message = "Ok";
+
+
+            return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
         }
 
-        private bool MissingFieldHelper(Process process, PipelineConfigurationPart part, string format, IDictionary<string,string> parameters) {
+        private bool MissingFieldHelper(Process process, PipelineConfigurationPart part, string format, IDictionary<string, string> parameters) {
             if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                 var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
                 if (schemaHelper.Help(process)) {
@@ -208,21 +232,21 @@ namespace Pipeline.Web.Orchard.Controllers {
             return false;
         }
 
-        private static void SystemFieldHelper(Process process) {
+        private static void RemoveCredentials(Process process) {
             foreach (var connection in process.Connections) {
                 connection.ConnectionString = string.Empty;
                 connection.User = string.Empty;
                 connection.Password = string.Empty;
             }
-            if (!process.Output().IsInternal()) {
-                return;
-            }
+        }
+
+        private static void RemoveSystemFields(Process process) {
             foreach (var entity in process.Entities) {
                 entity.Fields.RemoveAll(f => f.System);
             }
         }
 
-        private static void ShorthandHelper(Process process) {
+        private static void RemoveShorthand(Process process) {
             foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
                 field.T = string.Empty;
             }

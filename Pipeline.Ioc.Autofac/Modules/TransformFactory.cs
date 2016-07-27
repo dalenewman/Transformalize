@@ -25,7 +25,6 @@ using Pipeline.Desktop.Transforms;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
-using FromXmlTransform = Pipeline.Transforms.FromXmlTransform;
 
 namespace Pipeline.Ioc.Autofac.Modules {
     public static class TransformFactory {
@@ -112,10 +111,11 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "invert": return new InvertTransform(context);
                 case "tag": return new TagTransform(context);
 
-                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new FromXmlTransform(context) as ITransform;
+                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);
                 case "fromlengths": return new FromLengthsTranform(context);
-
+                case "filter": return new FilterTransform(context);
+ 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);
                 case "startswith": return new StartsWithValidator(context);

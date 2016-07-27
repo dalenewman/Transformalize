@@ -284,6 +284,14 @@ namespace Pipeline.Configuration.Ext {
 
             // check input types
             switch (t.Method) {
+                case "filter":
+                    if (input.Type == "byte[]") {
+                        error($"The {t.Method} method doesn't work with byte arrays.");
+                    }
+                    if (input.Type != "string" && !Constants.CanConvert()[input.Type](t.Value)) {
+                        error($"The {t.Method} method's value of {t.Value} can't be converted to a {input.Type} for comparison.");
+                    }
+                    break;
                 case "add":
                 case "sum":
                 case "multiply":
@@ -520,6 +528,7 @@ namespace Pipeline.Configuration.Ext {
                         t.ContentType = "raw"; //other would be html
                     }
                     break;
+                case "filter":
                 case "any":
                     if (string.IsNullOrEmpty(t.Operator)) {
                         error("The any transform requires an operator.");
