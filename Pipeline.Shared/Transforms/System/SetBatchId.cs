@@ -28,7 +28,7 @@ namespace Pipeline.Transforms.System {
 
         public override IRow Transform(IRow row) {
             row[_tflBatchId] = Context.Entity.BatchId;
-            Increment();
+            // Increment();
             return row;
         }
     }

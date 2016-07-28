@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using Autofac;
 using Common.Logging;
 using Pipeline.Context;
@@ -34,6 +36,8 @@ namespace Pipeline.Command {
         }
 
         protected override void Load(ContainerBuilder builder) {
+
+            _options.Arrangement = _options.ArrangementWithMode();
 
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();

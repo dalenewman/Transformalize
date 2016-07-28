@@ -15,11 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms.System {
-    public class ShouldRunTransform : BaseTransform, ITransform {
+    public class ShouldRunTransform : BaseTransform {
         private readonly ITransform _transform;
 
         public ShouldRunTransform(IContext context, ITransform transform) : base(context) {
@@ -27,7 +26,6 @@ namespace Pipeline.Transforms.System {
         }
 
         public override IRow Transform(IRow row) {
-
             return Context.Transform.ShouldRun(row) ? _transform.Transform(row) : row;
         }
     }

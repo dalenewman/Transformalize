@@ -83,7 +83,7 @@ namespace Pipeline.Transforms.System {
             foreach (var field in FieldDefaults.Where(f => row[f] == null || f.DefaultWhiteSpace && f.Type == "string" && string.IsNullOrWhiteSpace((string)row[f]))) {
                 field.Setter(row);
             }
-            Increment();
+            // Increment();
             return row;
         }
 

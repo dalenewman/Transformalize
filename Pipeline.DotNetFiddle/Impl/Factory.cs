@@ -102,7 +102,7 @@ namespace Pipeline.DotNetFiddle.Impl {
             return new ProcessController(pipelines, new PipelineContext(logger, process));
         }
 
-        public static IEnumerable<ITransform> GetTransforms(Process process, Entity entity, IEnumerable<Field> fields, IPipelineLogger logger, ITransform js, ITransform razor) {
+        private static IEnumerable<ITransform> GetTransforms(Process process, Entity entity, IEnumerable<Field> fields, IPipelineLogger logger, ITransform js, ITransform razor) {
             var transforms = new List<ITransform>();
             foreach (var f in fields.Where(f => f.Transforms.Any())) {
                 var field = f;
@@ -118,7 +118,7 @@ namespace Pipeline.DotNetFiddle.Impl {
             return transforms;
         }
 
-        private static ITransform ShouldRunTransform(PipelineContext context, ITransform js, ITransform razor) {
+        private static ITransform ShouldRunTransform(IContext context, ITransform js, ITransform razor) {
             return context.Transform.ShouldRun == null ? SwitchTransform(context, js, razor) : new ShouldRunTransform(context, SwitchTransform(context, js, razor));
         }
 
@@ -180,7 +180,7 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "invert": return new InvertTransform(context);
                 case "tag": return new TagTransform(context);
 
-                case "fromxml": return new FromXmlTransform(context);
+                case "fromxml": return context.Transform.XmlMode == "all" ? new Transforms.FromXmlTransform(context, new RowFactory(context.GetAllEntityFields().Count(), context.Entity.IsMaster, false)) : new Pipeline.Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);
                 case "fromlengths": return new FromLengthsTranform(context);
 

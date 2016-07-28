@@ -12,7 +12,7 @@ namespace Pipeline.Transforms.System {
 
         public override IRow Transform(IRow row) {
             row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
-            Increment();
+            // Increment();
             return row;
         }
     }

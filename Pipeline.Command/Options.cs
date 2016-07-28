@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using CommandLine;
 using CommandLine.Text;
 
 namespace Pipeline.Command {
 
     public class Options {
-
         [Option('a', "arrangement", Required = true, HelpText = "an arrangement (aka configuration) file, or url.")]
         public string Arrangement { get; set; }
 
@@ -34,7 +35,7 @@ namespace Pipeline.Command {
         [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
         public string Mode { get; set; }
 
-        [Option('o',"output", DefaultValue = "csv", Required = false, HelpText = "Output type (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
+        [Option('o', "output", DefaultValue = "csv", Required = false, HelpText = "Output type (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
         public string Output { get; set; }
 
         [HelpOption]
@@ -42,5 +43,14 @@ namespace Pipeline.Command {
             return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
         }
 
+        public string ArrangementWithMode() {
+            if (Mode == "default")
+                return Arrangement;
+
+            if (Arrangement.IndexOf("Mode=", StringComparison.OrdinalIgnoreCase) >= 0)
+                return Arrangement;
+
+            return Arrangement + (Arrangement.IndexOf('?') > 0 ? '&' : '?') + "Mode=" + Mode;
+        }
     }
 }

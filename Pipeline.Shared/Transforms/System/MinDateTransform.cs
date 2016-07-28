@@ -22,7 +22,7 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms.System {
 
-    public class MinDateTransform : BaseTransform, ITransform {
+    public class MinDateTransform : BaseTransform {
         readonly Field[] _dates;
         readonly DateTime _minDate;
         private readonly bool _toString;
@@ -46,7 +46,7 @@ namespace Pipeline.Transforms.System {
                     }
                 }
             }
-            Increment();
+            // Increment();
             return row;
         }
     }

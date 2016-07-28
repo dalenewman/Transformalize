@@ -115,6 +115,7 @@
     <Compile Include="Impl\Transforms\FileNameTransform.cs" />
     <Compile Include="Impl\Transforms\FilePathTransform.cs" />
     <Compile Include="Impl\Transforms\FormatPhoneTransform.cs" />
+    <Compile Include="Impl\Transforms\FromXmlTransform.cs" />
     <Compile Include="Impl\Transforms\RelativeTimeTransform.cs" />
     <Compile Include="Impl\Transforms\TimeZoneTransform.cs" />
     <Compile Include="Impl\Transforms\XPathTransform.cs" />
