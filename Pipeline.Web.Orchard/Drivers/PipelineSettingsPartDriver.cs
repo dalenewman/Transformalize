@@ -8,8 +8,6 @@ namespace Pipeline.Web.Orchard.Drivers {
 
     public class PipelineSettingsPartDriver : ContentPartDriver<PipelineSettingsPart> {
 
-        private const string TemplateName = "Parts/PipelineSettings";
-
         public PipelineSettingsPartDriver() {
             T = NullLocalizer.Instance;
         }
@@ -26,21 +24,21 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("Shorthand", part.Record.Shorthand);
         }
 
-        protected override string Prefix { get { return "PipelineSettings"; } }
+        protected override string Prefix { get { return Common.PipelineSettingsName; } }
 
         // GET EDITOR
         protected override DriverResult Editor(PipelineSettingsPart part, dynamic shapeHelper) {
-            return ContentShape("Parts_PipelineSettings_Edit",
-                    () => shapeHelper.EditorTemplate(TemplateName: TemplateName, Model: part, Prefix: Prefix))
-                    .OnGroup("Pipeline.NET");
+            return ContentShape("Parts_" + Prefix + "_Edit",
+                    () => shapeHelper.EditorTemplate(TemplateName: "Parts/" + Prefix, Model: part, Prefix: Prefix))
+                    .OnGroup(Common.ModuleGroupName);
         }
 
         // POST EDITOR
         protected override DriverResult Editor(PipelineSettingsPart part, IUpdateModel updater, dynamic shapeHelper) {
-            return ContentShape("Parts_PipelineSettings_Edit", () => {
+            return ContentShape("Parts_" + Prefix + "_Edit", () => {
                 updater.TryUpdateModel(part, Prefix, null, null);
-                return shapeHelper.EditorTemplate(TemplateName: TemplateName, Model: part, Prefix: Prefix);
-            }).OnGroup("Pipeline.NET");
+                return shapeHelper.EditorTemplate(TemplateName: "Parts/" + Prefix, Model: part, Prefix: Prefix);
+            }).OnGroup(Common.ModuleGroupName);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Pipeline.Web.Orchard {
 
             try {
 
-                SchemaBuilder.CreateTable("PipelineConfigurationPartRecord", table => table
+                SchemaBuilder.CreateTable(Common.PipelineConfigurationName + "PartRecord", table => table
                     .ContentPartRecord()
                     .Column("Configuration", DbType.String, column => column.Unlimited())
                     .Column("StartAddress", DbType.String)
@@ -43,26 +43,27 @@ namespace Pipeline.Web.Orchard {
                 );
 
                 ContentDefinitionManager.StoreTypeDefinition(
-                    new ContentTypeDefinition("PipelineConfiguration", "Pipeline.Net")
+                    new ContentTypeDefinition(Common.PipelineConfigurationName, "Pipeline")
                 );
 
-                ContentDefinitionManager.AlterTypeDefinition("PipelineConfiguration", cfg => cfg
+                ContentDefinitionManager.AlterTypeDefinition(Common.PipelineConfigurationName, cfg => cfg
                     .Creatable()
-                    .WithPart("PipelineConfigurationPart")
+                    .WithSetting("Description", "An arrangement for a Transformalize pipeline composition.")
+                    .WithPart(Common.PipelineConfigurationName + "Part")
                     .WithPart("CommonPart")
                     .WithPart("TitlePart")
                     .WithPart("IdentityPart")
                     .WithPart("ContentPermissionsPart", builder => builder
                         .WithSetting("ContentPermissionsPartSettings.View", "Administrator")
-                        .WithSetting("ContentPermissionsPartSettings.Publish", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.Edit", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.Delete", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.Preview", "Adminstrator")
+                        .WithSetting("ContentPermissionsPartSettings.Publish", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.Edit", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.Delete", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.Preview", "Administrator")
                         .WithSetting("ContentPermissionsPartSettings.ViewOwn", "Administrator")
-                        .WithSetting("ContentPermissionsPartSettings.PublishOwn", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.EditOwn", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.DeleteOwn", "Adminstrator")
-                        .WithSetting("ContentPermissionsPartSettings.PreviewOwn", "Adminstrator")
+                        .WithSetting("ContentPermissionsPartSettings.PublishOwn", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.EditOwn", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.DeleteOwn", "Administrator")
+                        .WithSetting("ContentPermissionsPartSettings.PreviewOwn", "Administrator")
                         .WithSetting("ContentPermissionsPartSettings.DisplayedRoles", "Authenticated,Anonymous")
                     )
                 );
@@ -74,20 +75,50 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom1() {
-            SchemaBuilder.AlterTable("PipelineConfigurationPartRecord",
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord",
                 table => table
                     .AddColumn("EditorMode", DbType.String));
             return 2;
         }
 
         public int UpdateFrom2() {
-            SchemaBuilder.CreateTable("PipelineSettingsPartRecord", table => table
+            SchemaBuilder.CreateTable(Common.PipelineSettingsName + "PartRecord", table => table
                 .ContentPartRecord()
                 .Column("EditorTheme", DbType.String)
                 .Column("Shorthand", DbType.String, column => column.Unlimited())
             );
 
             return 3;
+        }
+
+        public int UpdateFrom3() {
+            SchemaBuilder.CreateTable(Common.PipelineFileName + "PartRecord", table => table
+                .ContentPartRecord()
+                .Column("FullPath", DbType.String)
+                .Column("Direction", DbType.String)
+            );
+            ContentDefinitionManager.StoreTypeDefinition(
+                new ContentTypeDefinition(Common.PipelineFileName, "Pipeline File")
+            );
+            ContentDefinitionManager.AlterTypeDefinition(Common.PipelineFileName, cfg => cfg
+                .WithSetting("Description", "A file serving as input or output for a Transformalize pipeline.")
+                .WithPart(Common.PipelineFileName + "Part")
+                .WithPart("CommonPart")
+                .WithPart("TagsPart")
+                .WithPart("ContentPermissionsPart", builder => builder
+                    .WithSetting("ContentPermissionsPartSettings.View", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.Publish", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.Edit", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.Delete", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.Preview", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.ViewOwn", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.PublishOwn", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.EditOwn", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.DeleteOwn", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.PreviewOwn", "Administrator")
+                    .WithSetting("ContentPermissionsPartSettings.DisplayedRoles", "Authenticated,Anonymous")
+            ));
+            return 4;
         }
 
     }

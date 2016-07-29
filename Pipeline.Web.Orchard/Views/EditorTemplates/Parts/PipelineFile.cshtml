@@ -1,0 +1,12 @@
+﻿@using Pipeline.Web.Orchard.Models
+@model PipelineFilePart
+
+<div class="editor-field">
+    <label for="FileName">File Name</label>
+    <input id="FileName" name="FileName" type="text" value="@Model.FileName()" readonly="readonly"/>
+</div>
+
+<div class="editor-field">
+    <label for="Direction">Direction</label>
+    <input id="Direction" name="Direction" type="text" value="@Model.Direction" readonly="readonly" />
+</div>

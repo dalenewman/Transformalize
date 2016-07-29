@@ -34,18 +34,23 @@ namespace Pipeline.Web.Orchard.Handlers {
             if (context.ContentItem.ContentType != "Site")
                 return;
             base.GetItemMetadata(context);
-            context.Metadata.EditorGroupInfo.Add(new GroupInfo(T("Pipeline.NET")));
+            context.Metadata.EditorGroupInfo.Add(new GroupInfo(T(Common.ModuleGroupName)));
         }
 
         protected override void Updated(UpdateContentContext context) {
+
             var part = context.ContentItem.As<PipelineSettingsPart>();
             if (part == null)
                 return;
+
             try {
                 var cfg = new ShorthandRoot(part.Shorthand, new CfgNetNotifier(_notifier));
                 if (!cfg.Errors().Any()) {
-                    _notifier.Add(NotifyType.Information, T("Shorthand loaded correctly"));
-                    _notifier.Add(NotifyType.Warning, T("You will have to recycle the app pool for this to take affect."));
+                    return;
+                }
+                _notifier.Add(NotifyType.Error, T("Shorthand is invalid."));
+                foreach (var error in cfg.Errors()) {
+                    _notifier.Add(NotifyType.Error, T(error));
                 }
             } catch (Exception ex) {
                 _notifier.Add(NotifyType.Error, T(ex.Message));

@@ -24,7 +24,6 @@ using Orchard.Data;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
-using Orchard;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 
@@ -38,7 +37,6 @@ namespace Pipeline.Web.Orchard.Handlers {
         public Localizer T { get; set; }
 
         public PipelineConfigurationPartHandler(
-            IOrchardServices orchard,
             IRepository<PipelineConfigurationPartRecord> repository,
             IProcessService processService,
             INotifier notifier
@@ -58,9 +56,9 @@ namespace Pipeline.Web.Orchard.Handlers {
 
             base.GetItemMetadata(context);
             context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                {"Area", "Pipeline.Web.Orchard"},
-                {"Controller", "Api"},
-                {"Action", "Api/Cfg"},
+                {"Area", Common.ModuleName},
+                {"Controller", "Report"},
+                {"Action", "Report"},
                 {"id", context.ContentItem.Id}
             };
         }

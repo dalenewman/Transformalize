@@ -6,6 +6,12 @@ using Pipeline.Configuration;
 namespace Pipeline.Web.Orchard {
     public static class Common {
 
+        public const string ModuleName = "Pipeline.Web.Orchard";
+        public const string ModuleGroupName = "Pipeline.NET";
+        public const string PipelineFileName = "PipelineFile";
+        public const string PipelineConfigurationName = "PipelineConfiguration";
+        public const string PipelineSettingsName = "PipelineSettings";
+
         public const string DefaultShortHand = @"<cfg>
 
   <signatures>
@@ -245,7 +251,6 @@ namespace Pipeline.Web.Orchard {
 </cfg>";
 
 
-        public const string ModuleName = "Pipeline.Web.Orchard";
 
         public static string CacheKey(int id, string feature) {
             return ModuleName + "." + feature + "." + id;

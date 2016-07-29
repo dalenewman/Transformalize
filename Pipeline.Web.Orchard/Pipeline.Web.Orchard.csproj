@@ -197,6 +197,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common.cs" />
+    <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Drivers\PipelineFilePartDriver.cs" />
+    <Compile Include="Handlers\PipelineFilePartHandler.cs" />
+    <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\IFileService.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Drivers\PipelineSettingsPartDriver.cs" />
     <Compile Include="Handlers\PipelineSettingsPartHandler.cs" />
@@ -205,6 +210,8 @@
     <Compile Include="Impl\RunTimeRunner.cs" />
     <Compile Include="Impl\RunTimeSchemaReader.cs" />
     <Compile Include="Models\Editor.cs" />
+    <Compile Include="Models\PipelineFilePart.cs" />
+    <Compile Include="Models\PipelineFilePartRecord.cs" />
     <Compile Include="Models\JsonProcess.cs" />
     <Compile Include="Models\PipelineSettingsPart.cs" />
     <Compile Include="Models\PipelineSettingsPartRecord.cs" />
@@ -261,6 +268,8 @@
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\Report\Report.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
+    <Content Include="Views\File\List.cshtml" />
+    <Content Include="Views\EditorTemplates\Parts\PipelineFile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">

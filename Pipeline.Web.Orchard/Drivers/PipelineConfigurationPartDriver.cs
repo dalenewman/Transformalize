@@ -24,7 +24,7 @@ namespace Pipeline.Web.Orchard.Drivers {
     public class ConfigurationPartDriver : ContentPartDriver<PipelineConfigurationPart> {
 
         protected override string Prefix {
-            get { return "PipelineConfiguration"; }
+            get { return Common.PipelineConfigurationName; }
         }
 
         //IMPORT, EXPORT
@@ -41,11 +41,11 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
             context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
         }
-        
+
         //GET EDITOR
         protected override DriverResult Editor(PipelineConfigurationPart part, dynamic shapeHelper) {
-            return ContentShape("Parts_PipelineConfiguration_Edit", () => shapeHelper
-                .EditorTemplate(TemplateName: "Parts/PipelineConfiguration", Model: part, Prefix: Prefix));
+            return ContentShape("Parts_" + Prefix + "_Edit", () => shapeHelper
+                .EditorTemplate(TemplateName: "Parts/" + Prefix, Model: part, Prefix: Prefix));
         }
 
         //POST EDITOR

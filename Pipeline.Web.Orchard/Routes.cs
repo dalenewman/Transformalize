@@ -34,6 +34,11 @@ namespace Pipeline.Web.Orchard {
                 RouteDescriptorWithId("Api", "Api/Cfg", "Api/Configuration"),
                 RouteDescriptorWithId("Api", "Api/Check"),
                 RouteDescriptorWithId("Api", "Api/Run"),
+                RouteDescriptorWithId("File", "File/Download"),
+                RouteDescriptorWithId("File", "File/Delete"),
+                RouteDescriptorWithId("File", "File/View"),
+                RouteDescriptor("File", "List"),
+                RouteDescriptor("File","Upload"),
                 RouteDescriptor("List"),
                 RouteDescriptorWithId("Report")
             };
@@ -45,13 +50,13 @@ namespace Pipeline.Web.Orchard {
                 Route = new Route(
                     "Pipeline/" + controller + "/{id}",
                     new RouteValueDictionary {
-                        {"area", "Pipeline.Web.Orchard" },
+                        {"area", Common.ModuleName },
                         {"controller", controller },
                         {"action", controller},
                         {"id", 0}
                     },
                     new RouteValueDictionary(),
-                    new RouteValueDictionary { { "area", "Pipeline.Web.Orchard" } },
+                    new RouteValueDictionary { { "area", Common.ModuleName } },
                     new MvcRouteHandler()
                     )
             };
@@ -63,33 +68,37 @@ namespace Pipeline.Web.Orchard {
                 Route = new Route(
                     "Pipeline/" + (alias ?? action) + "/{id}",
                     new RouteValueDictionary {
-                        {"area", "Pipeline.Web.Orchard" },
+                        {"area", Common.ModuleName },
                         {"controller", controller },
                         {"action", action},
                         {"id", 0}
                     },
                     new RouteValueDictionary(),
-                    new RouteValueDictionary { { "area", "Pipeline.Web.Orchard" } },
+                    new RouteValueDictionary { { "area", Common.ModuleName } },
                     new MvcRouteHandler()
                     )
             };
         }
 
-        private static RouteDescriptor RouteDescriptor(string controller) {
+        private static RouteDescriptor RouteDescriptor(string controller, string action = null) {
+            if (action == null) {
+                action = controller;
+            }
             return new RouteDescriptor {
                 Priority = 11,
                 Route = new Route(
-                    "Pipeline/" + controller,
+                    "Pipeline/" + controller + (controller == action ? string.Empty : "/" + action),
                     new RouteValueDictionary {
-                        {"area", "Pipeline.Web.Orchard" },
+                        {"area", Common.ModuleName },
                         {"controller", controller },
-                        {"action", controller}
+                        {"action", action}
                     },
                     new RouteValueDictionary(),
-                    new RouteValueDictionary { { "area", "Pipeline.Web.Orchard" } },
+                    new RouteValueDictionary { { "area", Common.ModuleName } },
                     new MvcRouteHandler()
                     )
             };
         }
+
     }
 }

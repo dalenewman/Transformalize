@@ -1,0 +1,103 @@
+﻿@using Pipeline.Web.Orchard.Models
+@model IEnumerable<PipelineFilePart>
+@{
+    Layout.Title = "Pipeline Files";
+    Script.Require("jQuery").AtHead();
+}
+<style type="text/css">
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 999px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        outline: none;
+        background: white;
+        cursor: inherit;
+        display: block;
+    }
+</style>
+<script type="text/javascript">
+    //<!--
+    $(document).ready(function() {
+        $("input:file").change(function () {
+            var fileName = $(this).val().replace("C:\\fakepath\\", "");
+            $("#instructions").text("Upload " + fileName + ".");
+            var i = $('#upload-file');
+            i.removeAttr('disabled');
+            i.removeClass('btn-disabled');
+            i.addClass('btn-primary');
+        });
+
+        function removeMessages() {
+            $(".zone-messages").fadeOut().hide();
+        }
+
+        setTimeout(removeMessages, 8000);
+    });
+    //-->
+</script>
+
+<table class="table table-condensed table-hover" style="font-size: smaller;">
+    <thead>
+        <tr>
+            <th>
+                @{
+                    using (Html.BeginFormAntiForgeryPost(Url.Action("Upload", new { area = Pipeline.Web.Orchard.Common.ModuleName }), FormMethod.Post, new { enctype = "multipart/form-data" })) {
+                        @Html.ValidationSummary();
+                        <span class="btn btn-default btn-file btn-xs">
+                            Browse <input name="file" type="file">
+                        </span>
+
+                        <button id="upload-file" type="submit" class="btn btn-xs btn-disabled" disabled="disabled">
+                            <span class="glyphicon glyphicon-upload"></span> Upload
+                        </button>
+                    }
+                }    
+            </th>
+            <th>Id</th>
+            <th>File</th>
+            <th>Direction</th>
+            <th>Created On</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var file in Model) {
+            <tr class="">
+                <td>
+                    <button type="button" class="btn btn-primary btn-xs" onclick="javascript: alert('@file.Id');">
+                        <span class="glyphicon glyphicon-ok-circle"></span> Select
+                    </button>
+                </td>
+                <td>@file.Id</td>
+                <td>@file.FileName()</td>
+                <td><span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span></td>
+                <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), WorkContext.CurrentTimeZone))</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-xs" onclick="window.open('@Url.Action("File/Download", "File", new {id = @file.Id})', '_self');">
+                        <span class="glyphicon glyphicon-download"></span> Download
+                    </button>
+
+                    <button type="button" class="btn btn-warning btn-xs" onclick="window.open('@Url.Action("File/View","File",new{id=@file.Id})','_blank');">
+                        <span class="glyphicon glyphicon-eye-open"></span> View
+                    </button>
+
+                    <button type="button" class="btn btn-danger btn-xs pull-right" onclick="window.open('@Url.Action("File/Delete","File",new{id=@file.Id})','_self');">
+                        <span class="glyphicon glyphicon-trash"></span> Delete
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
