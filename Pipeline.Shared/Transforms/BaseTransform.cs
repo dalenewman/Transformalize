@@ -24,7 +24,8 @@ using Pipeline.Contracts;
 namespace Pipeline.Transforms {
 
     public abstract class BaseTransform : ITransform {
-        public IContext Context { get; }
+        public IContext Context { get; private set; }
+
         public abstract IRow Transform(IRow row);
 
         public virtual IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
@@ -77,5 +78,8 @@ namespace Pipeline.Transforms {
             return ParametersToFields().ToArray();
         }
 
+        public virtual void Dispose() {
+            Context = null;
+        }
     }
 }

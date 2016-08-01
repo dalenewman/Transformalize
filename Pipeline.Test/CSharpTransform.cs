@@ -50,8 +50,8 @@ namespace Pipeline.Test {
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml, LogLevel.Debug);
-
             var output = controller.Read().ToArray();
+            controller.Dispose();            
 
             Assert.AreEqual("123", output[0][composer.Process.Entities.First().CalculatedFields.First()]);
             Assert.AreEqual("1-2-3", output[0][composer.Process.Entities.First().CalculatedFields.Last()]);

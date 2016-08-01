@@ -122,7 +122,6 @@
     <Compile Include="Modules\ProcessControlModule.cs" />
     <Compile Include="Modules\ProcessPipelineModule.cs" />
     <Compile Include="Modules\TemplateModule.cs" />
-    <Compile Include="Modules\TransformFactory.cs" />
     <Compile Include="Modules\UnloadedRootModule.cs" />
     <Compile Include="PipelineAction.cs" />
     <Compile Include="RunTimeDataReader.cs" />
@@ -130,6 +129,7 @@
     <Compile Include="RunTimeRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunTimeSchemaReader.cs" />
+    <Compile Include="TransformFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">

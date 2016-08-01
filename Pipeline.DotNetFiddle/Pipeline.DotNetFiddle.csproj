@@ -108,7 +108,6 @@
     <Compile Include="Impl\Factory.cs" />
     <Compile Include="Impl\Transforms\CompiledRegexMatchTransform.cs" />
     <Compile Include="Impl\Transforms\CompiledRegexReplaceTransform.cs" />
-    <Compile Include="Impl\Transforms\CsharpTransform.cs" />
     <Compile Include="Impl\Transforms\DateDiffTransform.cs" />
     <Compile Include="Impl\Transforms\DecompressTransform.cs" />
     <Compile Include="Impl\Transforms\FileExtTransform.cs" />

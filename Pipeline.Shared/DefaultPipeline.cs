@@ -118,6 +118,9 @@ namespace Pipeline {
         /// CAUTION: If you're using Read without Execute, make sure you consume enumerable before disposing
         /// </summary>
         public void Dispose() {
+            foreach (var transform in Transformers) {
+                transform.Dispose();
+            }
             Transformers.Clear();
             Reader = null;
             Writer = null;

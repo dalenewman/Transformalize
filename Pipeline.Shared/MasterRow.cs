@@ -37,5 +37,6 @@ namespace Pipeline {
             get { return Storage[field.MasterIndex]; }
             set { Storage[field.MasterIndex] = value; }
         }
+
     }
 }

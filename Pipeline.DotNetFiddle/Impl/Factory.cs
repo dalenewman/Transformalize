@@ -156,8 +156,6 @@ namespace Pipeline.DotNetFiddle.Impl {
                 case "insert": return new InsertTransform(context);
                 case "remove": return new RemoveTransform(context);
                 case "js": return js;
-                case "cs":
-                case "csharp": return new CsharpTransform(context);
                 case "tostring": return new ToStringTransform(context);
                 case "upper":
                 case "toupper": return new ToUpperTransform(context);

@@ -28,5 +28,6 @@ namespace Pipeline.Contracts {
         ExpandoObject ToFriendlyExpandoObject(Field[] fields);
         IEnumerable<object> ToEnumerable(Field[] fields);
         bool Match(Field[] fields, IRow other);
+        object[] ToArray();
     }
 }

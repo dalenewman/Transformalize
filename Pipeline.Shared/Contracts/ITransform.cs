@@ -16,13 +16,14 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace Pipeline.Contracts {
     /// <summary>
     /// all transformers should implement this, they need to transform the data and Increment()
     /// </summary>
-    public interface ITransform {
+    public interface ITransform : IDisposable {
 
         IContext Context { get; }
 

@@ -72,5 +72,9 @@ namespace Pipeline {
             return string.Join("|", Storage);
         }
 
+        public object[] ToArray() {
+            return Storage;
+        }
+
     }
 }

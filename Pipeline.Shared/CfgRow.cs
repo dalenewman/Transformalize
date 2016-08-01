@@ -53,6 +53,10 @@ namespace Pipeline {
             set { SetValue(field, value); }
         }
 
+        public object[] ToArray() {
+            return Storage;
+        }
+
         public object this[string key]
         {
             get { return Storage[Map[key]]; }

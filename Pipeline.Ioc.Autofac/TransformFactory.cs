@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -26,7 +27,7 @@ using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Pipeline.Ioc.Autofac {
     public static class TransformFactory {
 
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
@@ -87,7 +88,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "js":
                 case "javascript": return ctx.ResolveNamed<ITransform>("js", new TypedParameter(typeof(PipelineContext), context));
                 case "cs":
-                case "csharp": return new CsharpTransform(context);
+                case "csharp": return new CsharpInAppDomainTransform(context);
                 case "tostring": return new ToStringTransform(context);
                 case "upper":
                 case "toupper": return new ToUpperTransform(context);
@@ -115,7 +116,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "fromsplit": return new FromSplitTransform(context);
                 case "fromlengths": return new FromLengthsTranform(context);
                 case "filter": return new FilterTransform(context);
- 
+
                 // return true or false, validators
                 case "any": return new AnyValidator(context);
                 case "startswith": return new StartsWithValidator(context);
