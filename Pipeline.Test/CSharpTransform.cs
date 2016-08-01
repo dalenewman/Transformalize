@@ -33,6 +33,7 @@ namespace Pipeline.Test {
         <add name='TestData'>
             <rows>
                 <add Field1='1' Field2='2' Field3='3' />
+                <add Field1='4' Field2='5' Field3='6' />
             </rows>
             <fields>
                 <add name='Field1' />
@@ -50,12 +51,20 @@ namespace Pipeline.Test {
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml, LogLevel.Debug);
-            var output = controller.Read().ToArray();
-            controller.Dispose();            
+            var process = composer.Process;
+            controller.Execute();
+            controller.Dispose();
 
-            Assert.AreEqual("123", output[0][composer.Process.Entities.First().CalculatedFields.First()]);
-            Assert.AreEqual("1-2-3", output[0][composer.Process.Entities.First().CalculatedFields.Last()]);
+            var entity = process.Entities.First();
 
+            var row1 = entity.Rows[0];
+            var row2 = entity.Rows[1];
+
+            Assert.AreEqual("123",   row1["Add"]);
+            Assert.AreEqual("1-2-3", row1["Format"]);
+
+            Assert.AreEqual("456", row2["Add"]);
+            Assert.AreEqual("4-5-6", row2["Format"]);
 
         }
 

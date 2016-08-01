@@ -215,6 +215,7 @@
     <add name="CountryExchange"
          length="128"
          t="copy(SuppliersCountry,OrdersShipCountry).format(Shipping from {0} to {1})"/>
+    <add name='Test' t='copy(SuppliersCountry,OrdersShipCountry).cs(string.Format("{0} to {1}",SuppliersCountry,OrdersShipCountry))' />
   </calculated-fields>
 
 </add>

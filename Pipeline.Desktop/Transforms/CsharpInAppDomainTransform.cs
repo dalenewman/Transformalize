@@ -18,14 +18,10 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using Pipeline.Contracts;
-using Pipeline.Nulls;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
@@ -79,7 +75,6 @@ namespace Pipeline.Desktop.Transforms {
 
             context.Info("Creating new app domain.");
             _domain = AppDomain.CreateDomain(context.Key);
-
             _compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner");
 
             var errors = _compilerRunner.Compile(code);
@@ -110,7 +105,7 @@ namespace Pipeline.Desktop.Transforms {
 
         private Assembly _assembly;
         private Type _type;
-        private Func<object[],object> _userCode; 
+        private Func<object[], object> _userCode;
 
         public string Compile(string code) {
 
@@ -153,6 +148,17 @@ namespace Pipeline.Desktop.Transforms {
 
         public object Run(object[] data) {
             return _userCode(data);
+        }
+
+        public override object InitializeLifetimeService() {
+            var lease = base.InitializeLifetimeService() as ILease;
+            if (lease == null || lease.CurrentState != LeaseState.Initial)
+                return lease;
+
+            lease.InitialLeaseTime = TimeSpan.FromMinutes(5);
+            lease.SponsorshipTimeout = TimeSpan.FromMinutes(5);
+            lease.RenewOnCallTime = TimeSpan.FromMinutes(5);
+            return lease;
         }
 
     }
