@@ -45,5 +45,9 @@ namespace Pipeline.Web.Orchard.Models {
             return this.As<TagsPart>().CurrentTags;
         }
 
+        public bool IsOnDisk() {
+            return FullPath != string.Empty && File.Exists(FullPath);
+        }
+
     }
 }

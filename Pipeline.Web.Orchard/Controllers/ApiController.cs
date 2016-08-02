@@ -43,6 +43,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         readonly IIpRangeService _ipRangeService;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
+        private readonly IFileService _fileService;
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -51,11 +52,13 @@ namespace Pipeline.Web.Orchard.Controllers {
             IOrchardServices orchardServices,
             IIpRangeService ipRangeService,
             IProcessService processService,
-            ISortService sortService
+            ISortService sortService,
+            IFileService fileService
         ) {
             _orchardServices = orchardServices;
             _ipRangeService = ipRangeService;
             _processService = processService;
+            _fileService = fileService;
             _sortService = sortService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -89,7 +92,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 }
 
                 Common.PageHelper(process, Request);
-
+                
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {
                         return Get503(action, process, format, timer.ElapsedMilliseconds);

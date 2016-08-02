@@ -52,5 +52,16 @@ namespace Pipeline.Web.Orchard.Drivers {
             return Editor(part, shapeHelper);
         }
 
+
+        // FOR ADMIN LIST RESULTS
+        protected override DriverResult Display(PipelineFilePart part, string displayType, dynamic shapeHelper) {
+            if (displayType.StartsWith("Summary")) {
+                return Combined(
+                    ContentShape("Parts_"+Prefix+"_SummaryAdmin", () => shapeHelper.Parts_PipelineFile_SummaryAdmin(Part: part))
+                );
+            }
+            return null;
+        }
+
     }
 }

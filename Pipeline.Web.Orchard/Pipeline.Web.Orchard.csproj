@@ -200,6 +200,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Drivers\PipelineFilePartDriver.cs" />
     <Compile Include="Handlers\PipelineFilePartHandler.cs" />
+    <Compile Include="Services\FileResponse.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\IFileService.cs" />
     <Compile Include="Controllers\ReportController.cs" />
@@ -249,7 +250,9 @@
     <Compile Include="Routes.cs" />
     <Compile Include="Impl\RunTimeDataReader.cs" />
     <Compile Include="Services\IpRangeService.cs" />
+    <Compile Include="Services\ISecureFileService.cs" />
     <Compile Include="Services\ProcessService.cs" />
+    <Compile Include="Services\SecureFileService.cs" />
     <Compile Include="Services\SortDirection.cs" />
     <Compile Include="Services\SortService.cs" />
   </ItemGroup>
@@ -270,6 +273,7 @@
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
     <Content Include="Views\File\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineFile.cshtml" />
+    <Content Include="Views\Parts.PipelineFile_SummaryAdmin.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">
@@ -279,6 +283,10 @@
     <ProjectReference Include="..\..\Core\Orchard.Core.csproj">
       <Project>{9916839c-39fc-4ceb-a5af-89ca7e87119f}</Project>
       <Name>Orchard.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orchard.ContentPermissions\Orchard.ContentPermissions.csproj">
+      <Project>{e826f796-8ce3-4b5b-8423-5aa5f81d2fc3}</Project>
+      <Name>Orchard.ContentPermissions</Name>
     </ProjectReference>
     <ProjectReference Include="..\Orchard.Tags\Orchard.Tags.csproj">
       <Project>{5d0f00f0-26c9-4785-ad61-b85710c60eb0}</Project>

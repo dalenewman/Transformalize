@@ -3,6 +3,7 @@ using System.IO;
 using System.Web;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.ContentPermissions.Models;
 using Orchard.Core.Common.Models;
 using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
@@ -40,8 +41,16 @@ namespace Pipeline.Web.Orchard.Services {
         public PipelineFilePart Upload(HttpPostedFileBase input) {
 
             var part = _orchardServices.ContentManager.New<PipelineFilePart>(Common.PipelineFileName);
+            var permissions = part.As<ContentPermissionsPart>();
+            permissions.Enabled = true;
 
-            part.Settings["ContentPermissionsPartSettings.View"] = "Anonymous";  // a test
+            permissions.ViewContent = "Administrator";
+            permissions.EditContent = "Administrator";
+            permissions.DeleteContent = "Administrator";
+
+            permissions.ViewOwnContent = "Authenticated";
+            permissions.EditOwnContent = "Authenticated";
+            permissions.DeleteOwnContent = "Authenticated";
 
             var exportFile = string.Format("{0}-{1}-{2}",
                 _orchardServices.WorkContext.CurrentUser.UserName,
@@ -94,17 +103,13 @@ namespace Pipeline.Web.Orchard.Services {
             return part;
         }
 
+        /// <summary>
+        /// Apply security after the list() method
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<PipelineFilePart> List() {
-            var isSiteOwner = _orchardServices.Authorizer.Authorize(global::Orchard.Security.StandardPermissions.SiteOwner);
-            if (isSiteOwner) {
-                return _orchardServices.ContentManager.Query<PipelineFilePart, PipelineFilePartRecord>(VersionOptions.Published)
-                    .Join<CommonPartRecord>()
-                    .OrderByDescending(cpr => cpr.CreatedUtc)
-                    .List();
-            }
             return _orchardServices.ContentManager.Query<PipelineFilePart, PipelineFilePartRecord>(VersionOptions.Published)
                 .Join<CommonPartRecord>()
-                .Where(cpr => cpr.OwnerId == _orchardServices.WorkContext.CurrentUser.Id)
                 .OrderByDescending(cpr => cpr.CreatedUtc)
                 .List();
         }
@@ -113,5 +118,20 @@ namespace Pipeline.Web.Orchard.Services {
             return _orchardServices.ContentManager.Get(id).As<PipelineFilePart>();
         }
 
+        public void Delete(PipelineFilePart part) {
+            _orchardServices.ContentManager.Remove(part.ContentItem);
+            if (string.IsNullOrEmpty(part.FullPath)) {
+                _orchardServices.Notifier.Add(NotifyType.Warning, T("The file path associated with this content item is empty."));
+            } else {
+                var fileInfo = new FileInfo(part.FullPath);
+                if (fileInfo.Exists) {
+                    fileInfo.Delete();
+                    _orchardServices.Notifier.Add(NotifyType.Information, T("The file {0} is no more.", part.FileName()));
+                } else {
+                    _orchardServices.Notifier.Add(NotifyType.Warning, T("The file associated with this content item no longer exists."));
+                }
+            }
+
+        }
     }
 }

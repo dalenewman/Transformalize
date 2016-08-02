@@ -1,0 +1,5 @@
+@using Pipeline.Web.Orchard.Models
+@{
+    var name = ((PipelineFilePart) Model.Part).FileName();
+}
+<span>@name</span>

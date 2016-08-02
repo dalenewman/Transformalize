@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Orchard;
@@ -18,12 +19,18 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         private readonly IFileService _fileService;
         private readonly IOrchardServices _orchardServices;
+        private readonly ISecureFileService _secureFileService;
 
         public Localizer T { get; set; }
 
-        public FileController(IOrchardServices services, IFileService fileService) {
+        public FileController(
+            IOrchardServices services,
+            IFileService fileService,
+            ISecureFileService secureFileService
+        ) {
             _orchardServices = services;
             _fileService = fileService;
+            _secureFileService = secureFileService;
             T = NullLocalizer.Instance;
         }
 
@@ -52,7 +59,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public ActionResult List() {
 
             if (User.Identity.IsAuthenticated) {
-                return View(_fileService.List());
+                return View(_fileService.List().Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f)));
             }
 
             System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
@@ -64,68 +71,36 @@ namespace Pipeline.Web.Orchard.Controllers {
         [HttpGet]
         public ActionResult Download(int id) {
 
-            if (!User.Identity.IsAuthenticated)
-                return new HttpUnauthorizedResult("You must be logged in to download files.");
-
-            var part = _fileService.Get(id);
-
-            if (part == null)
-                return new HttpNotFoundResult("The file does not exist.");
-
-            if (string.IsNullOrEmpty(part.FullPath))
-                return new HttpNotFoundResult("The file path is empty.");
-
-            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                return new HttpUnauthorizedResult("You do not have permissions to view this file.");
+            var response = _secureFileService.Get(id);
+            if (response.Status == 200) {
+                return new FilePathResult(new FileInfo(response.Part.FullPath).FullName, response.Part.MimeType()) {
+                    FileDownloadName = response.Part.FileName()
+                };
             }
 
-            var fileInfo = new FileInfo(part.FullPath);
-
-            if (!fileInfo.Exists) {
-                return new HttpNotFoundResult("The file does not exist anymore.");
-            }
-
-            return new FilePathResult(fileInfo.FullName, part.MimeType()) {
-                FileDownloadName = fileInfo.Name
-            };
+            return response.ToActionResult();
         }
 
         [ActionName("File/View")]
         [Themed(false)]
         public ActionResult View(int id) {
-            if (!User.Identity.IsAuthenticated) {
-                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
+
+            var response = _secureFileService.Get(id);
+
+            if (response.Status == 200) {
+                var mimeType = response.Part.MimeType();
+                var fileInfo = new FileInfo(response.Part.FullPath);
+                if (mimeType.StartsWith("text")) {
+                    return new ContentResult {
+                        Content = System.IO.File.ReadAllText(fileInfo.FullName),
+                        ContentType = mimeType
+                    };
+                }
+                return new FileContentResult(System.IO.File.ReadAllBytes(fileInfo.FullName), mimeType);
             }
 
-            var part = _fileService.Get(id);
-
-            if (part == null || string.IsNullOrEmpty(part.FullPath)) {
-                _orchardServices.Notifier.Add(NotifyType.Warning, T("The file you tried to view is missing."));
-                return RedirectToAction("List");
-            }
-
-            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                _orchardServices.Notifier.Add(NotifyType.Warning, T("Sorry.  You do not have permission to view this file."));
-                return RedirectToAction("List");
-            }
-
-            var fileInfo = new FileInfo(part.FullPath);
-
-            if (!fileInfo.Exists) {
-                _orchardServices.Notifier.Add(NotifyType.Warning, T("The file you tried to view is not available anymore."));
-                return RedirectToAction("List");
-            }
-
-            var mimeType = Common.GetMimeType(fileInfo.Extension);
-
-            if (mimeType.StartsWith("text")) {
-                return new ContentResult {
-                    Content = System.IO.File.ReadAllText(fileInfo.FullName),
-                    ContentType = mimeType
-                };
-            }
-
-            return new FileContentResult(System.IO.File.ReadAllBytes(fileInfo.FullName), mimeType);
+            _orchardServices.Notifier.Add(NotifyType.Warning, T(response.Message));
+            return RedirectToAction("List");
         }
 
         [ActionName("File/Delete")]
@@ -148,18 +123,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             try {
-                _orchardServices.ContentManager.Remove(part.ContentItem);
-                if (string.IsNullOrEmpty(part.FullPath)) {
-                    _orchardServices.Notifier.Add(NotifyType.Warning, T("The file path associated with this content item is empty."));
-                } else {
-                    var fileInfo = new FileInfo(part.FullPath);
-                    if (fileInfo.Exists) {
-                        fileInfo.Delete();
-                        _orchardServices.Notifier.Add(NotifyType.Information, T("The file {0} is no more.", part.FileName()));
-                    } else {
-                        _orchardServices.Notifier.Add(NotifyType.Warning, T("The file associated with this content item no longer exists."));
-                    }
-                }
+                _fileService.Delete(part);
             } catch (Exception ex) {
                 _orchardServices.Notifier.Add(NotifyType.Error, T("Does not compute!  My systems are malfunctioning. {0}", ex.Message));
             }

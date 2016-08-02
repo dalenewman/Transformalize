@@ -2,6 +2,7 @@
   <Place Parts_PipelineSettings_Edit="Content:2"/>
   <Place Parts_PipelineConfiguration_Edit="Content:2"/>
   <Place Parts_PipelineFile_Edit="Content:2"/>
+  <Place Parts_PipelineFile_SummaryAdmin="Content:1"/>
   <Match DisplayType="Detail">
     <Place Parts_Title="-"/>
     <Place Parts_Common_Metadata="-"/>

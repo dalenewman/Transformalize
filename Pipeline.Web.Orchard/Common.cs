@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web;
 using Pipeline.Configuration;
+using Pipeline.Web.Orchard.Controllers;
 
 namespace Pipeline.Web.Orchard {
     public static class Common {
@@ -11,6 +12,10 @@ namespace Pipeline.Web.Orchard {
         public const string PipelineFileName = "PipelineFile";
         public const string PipelineConfigurationName = "PipelineConfiguration";
         public const string PipelineSettingsName = "PipelineSettings";
+        public const string InputFileIdName = "InputFileId";
+        public const string InputFileName = "InputFile";
+        public const string OutputFileIdName = "OutputFileId";
+        public const string OutputFileName = "OutputFile";
 
         public const string DefaultShortHand = @"<cfg>
 
@@ -269,6 +274,7 @@ namespace Pipeline.Web.Orchard {
             if (!parameters.ContainsKey("password")) {
                 parameters["password"] = "t1i2t3s4";
             }
+
             return parameters;
         }
 

@@ -112,7 +112,7 @@
             <tr class="">
                 @if (hasReturnUrl) {
                     <td>
-                        <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "FileId=" + file.Id)';">
+                        <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">
                             <span class="glyphicon glyphicon-ok-circle"></span> Select
                         </button>
                     </td>
