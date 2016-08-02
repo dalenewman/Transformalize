@@ -8,10 +8,12 @@ using Orchard.Themes;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
+using Orchard.Environment.Extensions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [Themed]
+    [OrchardFeature("Pipeline.Files")]
+    [ValidateInput(false), Themed]
     public class FileController : Controller {
 
         private readonly IFileService _fileService;
@@ -83,8 +85,9 @@ namespace Pipeline.Web.Orchard.Controllers {
                 return new HttpNotFoundResult("The file does not exist anymore.");
             }
 
-            var ext = Path.GetExtension(part.FullPath);
-            return new FilePathResult(fileInfo.FullName, "application/" + ext.TrimStart('.')) { FileDownloadName = fileInfo.Name };
+            return new FilePathResult(fileInfo.FullName, part.MimeType()) {
+                FileDownloadName = fileInfo.Name
+            };
         }
 
         [ActionName("File/View")]
@@ -113,7 +116,16 @@ namespace Pipeline.Web.Orchard.Controllers {
                 return RedirectToAction("List");
             }
 
-            return new ContentResult { Content = System.IO.File.ReadAllText(fileInfo.FullName), ContentType = "text/plain"};
+            var mimeType = Common.GetMimeType(fileInfo.Extension);
+
+            if (mimeType.StartsWith("text")) {
+                return new ContentResult {
+                    Content = System.IO.File.ReadAllText(fileInfo.FullName),
+                    ContentType = mimeType
+                };
+            }
+
+            return new FileContentResult(System.IO.File.ReadAllBytes(fileInfo.FullName), mimeType);
         }
 
         [ActionName("File/Delete")]

@@ -27,6 +27,7 @@ using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
+    [ValidateInput(false), Themed(true)]
     public class ListController : Controller {
 
         private readonly IOrchardServices _orchardServices;

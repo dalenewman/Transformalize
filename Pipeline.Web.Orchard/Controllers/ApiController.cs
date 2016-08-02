@@ -25,6 +25,7 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Logging;
+using Orchard.Themes;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
@@ -33,6 +34,7 @@ using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
+    [ValidateInput(false), Themed(false)]
     public class ApiController : Controller {
 
         private static readonly HashSet<string> _formats = new HashSet<string> { "xml", "json", "yaml" };

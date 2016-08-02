@@ -17,10 +17,12 @@
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
+using Orchard.Environment.Extensions;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Drivers {
 
+    [OrchardFeature("Pipeline.Files")]
     public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
 
         protected override string Prefix {

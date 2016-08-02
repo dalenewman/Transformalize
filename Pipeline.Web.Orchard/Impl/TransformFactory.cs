@@ -88,7 +88,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "js":
                 case "javascript": return ctx.ResolveNamed<ITransform>("js", new TypedParameter(typeof(PipelineContext), context));
                 case "cs":
-                case "csharp": return new CsharpTransform(context);
+                case "csharp": return new CsharpRemoteTransform(context);
                 case "tostring": return new ToStringTransform(context);
                 case "upper":
                 case "toupper": return new ToUpperTransform(context);

@@ -4,6 +4,7 @@ using System.Web;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
+using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
@@ -13,6 +14,7 @@ using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Services {
 
+    [OrchardFeature("Pipeline.Files")]
     public class FileService : IFileService {
         private readonly IOrchardServices _orchardServices;
         private readonly IAppDataFolder _appDataFolder;

@@ -32,6 +32,7 @@ using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
+    [ValidateInput(false), Themed(true)]
     public class ReportController : Controller {
 
         private readonly IOrchardServices _orchardServices;

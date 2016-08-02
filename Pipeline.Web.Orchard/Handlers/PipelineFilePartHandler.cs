@@ -18,12 +18,14 @@ using System.Web.Routing;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
+using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Handlers {
 
+    [OrchardFeature("Pipeline.Files")]
     public class PipelineFilePartHandler : ContentHandler {
 
         public Localizer T { get; set; }
@@ -46,7 +48,7 @@ namespace Pipeline.Web.Orchard.Handlers {
             context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                 {"Area", Common.ModuleName},
                 {"Controller", "File"},
-                {"Action", "Download"},
+                {"Action", "File/View"},
                 {"id", context.ContentItem.Id}
             };
         }

@@ -1,9 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
+using Orchard.Environment.Extensions;
+using Orchard.Tags.Models;
 
 namespace Pipeline.Web.Orchard.Models {
+
+    [OrchardFeature("Pipeline.Files")]
     public class PipelineFilePart : ContentPart<PipelineFilePartRecord> {
 
         public string FullPath {
@@ -27,5 +32,18 @@ namespace Pipeline.Web.Orchard.Models {
         public DateTime CreatedUtc() {
             return this.As<CommonPart>().CreatedUtc ?? DateTime.UtcNow;
         }
+
+        public string Extension() {
+            return Path.GetExtension(FileName());
+        }
+
+        public string MimeType() {
+            return Common.GetMimeType(Extension());
+        }
+
+        public IEnumerable<string> CurrentTags() {
+            return this.As<TagsPart>().CurrentTags;
+        }
+
     }
 }
