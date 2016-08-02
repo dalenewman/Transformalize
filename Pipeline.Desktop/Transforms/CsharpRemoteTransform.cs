@@ -22,55 +22,22 @@ using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
 using System.Text;
 using Pipeline.Contracts;
-using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
 
-    public class CsharpInAppDomainTransform : BaseTransform {
+    public class CsharpRemoteTransform : CSharpBaseTransform {
 
         private readonly AppDomain _domain;
         private readonly CompilerRunner _compilerRunner;
 
-        public CsharpInAppDomainTransform(IContext context) : base(context) {
+        public CsharpRemoteTransform(IContext context) : base(context) {
 
             var timer = new Stopwatch();
             timer.Start();
 
             var input = MultipleInput();
-            var sb = new StringBuilder();
+            var code = WrapCode(input, context.Transform.Script, context.Entity.IsMaster);
 
-            sb.AppendLine("using System;");
-            sb.AppendLine();
-
-            sb.AppendLine("public class CSharpRunTimeTransform {");
-
-            sb.AppendLine("    public static object UserCode(object[] data) {");
-
-            for (var i = 0; i < input.Length; i++) {
-                var field = input[i];
-                var objectIndex = Context.Entity.IsMaster ? field.MasterIndex : field.Index;
-                string type;
-                switch (field.Type) {
-                    case "date":
-                    case "datetime":
-                        type = "DateTime";
-                        break;
-                    default:
-                        type = field.Type;
-                        break;
-                }
-                sb.AppendLine($"        {type} {Pipeline.Utility.Identifier(field.Alias)} = ({type}) data[{objectIndex}];");
-            }
-
-            sb.Append("        ");
-            // handles csharp body or an expression
-            sb.AppendLine(context.Transform.Script.Contains("return ") ? context.Transform.Script : "return " + (context.Transform.Script.EndsWith(";") ? context.Transform.Script : context.Transform.Script + ";"));
-
-            sb.AppendLine();
-            sb.AppendLine("    }");
-            sb.AppendLine("}");
-
-            var code = sb.ToString();
             context.Debug((() => code));
 
             context.Info("Creating new app domain.");

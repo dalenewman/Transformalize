@@ -28,7 +28,7 @@ namespace Pipeline.Test {
         public void CSharpTransformAdd() {
 
             const string xml = @"
-<add name='TestProcess'>
+<add name='TestProcess' mode='default'>
     <entities>
         <add name='TestData'>
             <rows>

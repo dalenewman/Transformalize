@@ -54,7 +54,9 @@
     <Compile Include="Loggers\ConsoleLogger.cs" />
     <Compile Include="Loggers\TraceLogger.cs" />
     <Compile Include="Transforms\CompiledRegexMatchTransform.cs" />
-    <Compile Include="Transforms\CsharpInAppDomainTransform.cs" />
+    <Compile Include="Transforms\CSharpBaseTransform.cs" />
+    <Compile Include="Transforms\CsharpLocalTransform.cs" />
+    <Compile Include="Transforms\CsharpRemoteTransform.cs" />
     <Compile Include="Transforms\DateDiffTransform.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />
     <Compile Include="Transforms\FileNameTransform.cs" />
