@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Orchard.FileSystems.AppData;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
@@ -27,9 +28,11 @@ namespace Pipeline.Web.Orchard.Impl {
 
     public class RunTimeDataReader : IRunTimeRun {
         private readonly IPipelineLogger _logger;
+        private readonly IAppDataFolder _appDataFolder;
 
-        public RunTimeDataReader(IPipelineLogger logger) {
+        public RunTimeDataReader(IPipelineLogger logger, IAppDataFolder appDataFolder) {
             _logger = logger;
+            _appDataFolder = appDataFolder;
         }
 
         public IEnumerable<IRow> Run(Process process) {
@@ -44,8 +47,8 @@ namespace Pipeline.Web.Orchard.Impl {
             nested.RegisterCallback(new AdoModule(process).Configure);
             nested.RegisterCallback(new SolrModule(process).Configure);
             nested.RegisterCallback(new InternalModule(process).Configure);
-            nested.RegisterCallback(new FileModule(process).Configure);
-            nested.RegisterCallback(new ExcelModule(process).Configure);
+            nested.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
+            nested.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
 
             nested.RegisterCallback(new MapModule(process).Configure);
 

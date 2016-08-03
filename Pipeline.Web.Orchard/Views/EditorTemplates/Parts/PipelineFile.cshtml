@@ -1,12 +1,16 @@
-﻿@using Pipeline.Web.Orchard.Models
+﻿@using Pipeline.Web.Orchard
+@using Pipeline.Web.Orchard.Models
 @model PipelineFilePart
 
 <div class="editor-field">
     <label for="FileName">File Name</label>
-    <input id="FileName" name="FileName" type="text" value="@Model.FileName()" readonly="readonly" style="width: 80%;"/>
+    <input id="FileName" name="FileName" type="text" value="@Model.FileName()" readonly="readonly" style="width: 60%;"/>
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "File", new {area = Common.ModuleName}))', '_self');">Files</button>
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("File/Download", "File", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Download</button>
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("File/View", "File", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">View</button>
 </div>
 
 <div class="editor-field">
     <label for="Direction">Direction</label>
-    <input id="Direction" name="Direction" type="text" value="@Model.Direction" readonly="readonly" style="width: 80%;" />
+    <input id="Direction" name="Direction" type="text" value="@Model.Direction" readonly="readonly" style="width: 60%;" />
 </div>

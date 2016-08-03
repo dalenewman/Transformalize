@@ -74,7 +74,7 @@ namespace Pipeline.Web.Orchard {
                         .WithSetting("ContentPermissionsPartSettings.DisplayedRoles", "Authenticated,Anonymous")
                     )
                 );
-                return 4;
+                return 1;
             } catch (Exception e) {
                 Logger.Error(e.Message);
                 _notifier.Error(T(e.Message));
@@ -99,6 +99,16 @@ namespace Pipeline.Web.Orchard {
             return 3;  // split files into it's own feature
         }
 
+        public int UpdateFrom3() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Runnable", DbType.Boolean));
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Reportable", DbType.Boolean));
+            return 4;
+        }
+
+        public int UpdateFrom4() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("NeedsInputFile", DbType.Boolean));
+            return 5;
+        }
 
     }
 

@@ -51,8 +51,7 @@ namespace Pipeline.Web.Orchard.Drivers {
             updater.TryUpdateModel(part, Prefix, null, null);
             return Editor(part, shapeHelper);
         }
-
-
+        
         // FOR ADMIN LIST RESULTS
         protected override DriverResult Display(PipelineFilePart part, string displayType, dynamic shapeHelper) {
             if (displayType.StartsWith("Summary")) {

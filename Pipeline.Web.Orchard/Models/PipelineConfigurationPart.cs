@@ -64,6 +64,21 @@ namespace Pipeline.Web.Orchard.Models {
             set { Record.EndAddress = value; }
         }
 
+        public bool Runnable {
+            get { return Record.Runnable; }
+            set { Record.Runnable = value; }
+        }
+
+        public bool Reportable {
+            get { return Record.Reportable; }
+            set { Record.Reportable = value; }
+        }
+
+        public bool NeedsInputFile {
+            get { return Record.NeedsInputFile; }
+            set { Record.NeedsInputFile = value; }
+        }
+
         public string EditorMode {
             get { return Record.EditorMode ?? "xml"; }
             set { Record.EditorMode = value; }

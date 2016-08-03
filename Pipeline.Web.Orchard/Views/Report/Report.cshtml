@@ -88,7 +88,7 @@
     }
 
     @foreach (var entity in Model.Entities) {
-        var fields = entity.GetAllOutputFields().ToArray();
+        var fields = entity.GetAllOutputFields().Where(f=>!f.System).ToArray();
 
         if (entity.Page > 0) {
             <input id="id_page" type="hidden" name="page" value="@entity.Page" />
@@ -186,7 +186,7 @@
                     <tbody>
                         @foreach (var row in entity.Rows) {
                             <tr>
-                                @foreach (var field in entity.GetAllOutputFields()) {
+                                @foreach (var field in fields) {
                                     <td>
                                         @if (field.Type.StartsWith("bool")) {
                                             if ((bool)row[field.Alias]) {
@@ -231,7 +231,7 @@
     }
 
     $(document).ready(function () {
-        $('.form-control.date').datepicker();
+        $('.form-control.date').datepicker('option', 'dateFormat', 'yy-mm-dd');
 
         $('.sortable').click(function () {
             $(this).toggleClass('btn-sort').toggleClass('btn-primary');

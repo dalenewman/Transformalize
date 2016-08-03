@@ -7,8 +7,7 @@
     Script.Require("jQueryColorBox").AtHead();
     Script.Require("jQueryFileUpload").AtHead();
 
-    var returnUrl = Request["ReturnUrl"];
-    var hasReturnUrl = !string.IsNullOrEmpty(returnUrl);
+    var returnUrl = string.IsNullOrEmpty(Request["ReturnUrl"]) ? Url.Action("List","List") : Request["ReturnUrl"];
 }
 <style type="text/css">
 
@@ -83,23 +82,7 @@
 <table class="table table-condensed table-hover" style="font-size: smaller;">
     <thead>
     <tr>
-        @if (hasReturnUrl) {
-            <th>&nbsp;</th>
-        }
-        @*<th>
-                @{
-                    using (Html.BeginFormAntiForgeryPost(Url.Action("Upload", new { area = Pipeline.Web.Orchard.Common.ModuleName }), FormMethod.Post, new { enctype = "multipart/form-data" })) {
-                        @Html.ValidationSummary();
-                        <span class="btn btn-default btn-file btn-xs">
-                            Browse <input name="file" type="file">
-                        </span>
-
-                        <button id="upload-file" type="submit" class="btn btn-xs btn-disabled" disabled="disabled">
-                            <span class="glyphicon glyphicon-upload"></span> Upload
-                        </button>
-                    }
-                }    
-            </th>*@
+        <th>&nbsp;</th>
         <th>Id</th>
         <th>File</th>
         <th>Tags</th>
@@ -110,13 +93,11 @@
     <tbody>
         @foreach (var file in Model) {
             <tr class="">
-                @if (hasReturnUrl) {
-                    <td>
-                        <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">
-                            <span class="glyphicon glyphicon-ok-circle"></span> Select
-                        </button>
-                    </td>
-                }
+                <td>
+                    <button title="Select" type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">
+                        <span class="glyphicon glyphicon-ok-circle"></span> 
+                    </button>
+                </td>
                 <td>@file.Id</td>
                 <td>@file.FileName()</td>
                 <td>
@@ -135,8 +116,12 @@
                             <span class="glyphicon glyphicon-download"></span> 
                         </button>
 
-                        <button @*disabled="@(!file.MimeType().StartsWith("text"))"*@ title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("File/View", "File", new {id = @file.Id})">
+                        <button title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("File/View", "File", new {id = @file.Id})">
                             <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+
+                        <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + file.Id))', '_self');">
+                            <span class="glyphicon glyphicon-edit"></span>
                         </button>
 
                         <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="window.open('@Url.Action("File/Delete", "File", new {id = @file.Id})', '_self');">

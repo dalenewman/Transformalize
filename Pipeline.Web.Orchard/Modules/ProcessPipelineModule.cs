@@ -73,16 +73,16 @@ namespace Pipeline.Web.Orchard.Modules {
                 }
 
                 // register transforms
-                pipeline.Register(new DefaultTransform(context, entity.CalculatedFields));
+                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, calc, entity, entity.CalculatedFields));
-                pipeline.Register(new StringTruncateTransfom(context));
+                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
                 // register input and output
                 switch (outputContext.Connection.Provider) {
                     case "sqlserver":
                         pipeline.Register(ctx.Resolve<IRead>());
                         pipeline.Register(ctx.Resolve<IWrite>());
-                        pipeline.Register(new MinDateTransform(context, new DateTime(1753, 1, 1)));
+                        pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), new DateTime(1753, 1, 1)));
                         break;
                     case "mysql":
                     case "postgresql":

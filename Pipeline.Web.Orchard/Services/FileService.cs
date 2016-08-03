@@ -21,7 +21,6 @@ namespace Pipeline.Web.Orchard.Services {
         private readonly IAppDataFolder _appDataFolder;
         private readonly IClock _clock;
 
-        const string FileFolder = "Transformalize";
         const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
 
         public FileService(
@@ -58,11 +57,11 @@ namespace Pipeline.Web.Orchard.Services {
                 Path.GetFileName(input.FileName)
             );
 
-            if (!_appDataFolder.DirectoryExists(FileFolder)) {
-                _appDataFolder.CreateDirectory(FileFolder);
+            if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
+                _appDataFolder.CreateDirectory(Common.FileFolder);
             }
 
-            part.FullPath = _appDataFolder.MapPath(_appDataFolder.Combine(FileFolder, exportFile));
+            part.FullPath = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, exportFile));
             part.Direction = "In";
             input.SaveAs(part.FullPath);
             _orchardServices.ContentManager.Create(part);
@@ -88,11 +87,12 @@ namespace Pipeline.Web.Orchard.Services {
                 name,
                 extension.TrimStart(".".ToCharArray())
             );
-            if (!_appDataFolder.DirectoryExists(FileFolder)) {
-                _appDataFolder.CreateDirectory(FileFolder);
+            var fileFolder = Common.FileFolder;
+            if (!_appDataFolder.DirectoryExists(fileFolder)) {
+                _appDataFolder.CreateDirectory(fileFolder);
             }
 
-            var path = _appDataFolder.Combine(FileFolder, file);
+            var path = _appDataFolder.Combine(fileFolder, file);
             _appDataFolder.CreateFile(path, string.Empty);
 
             var part = _orchardServices.ContentManager.New<PipelineFilePart>(Common.PipelineFileName);

@@ -29,6 +29,7 @@ namespace Pipeline.Desktop.Transforms {
 
         private readonly AppDomain _domain;
         private readonly CompilerRunner _compilerRunner;
+        private readonly Sponsor _sponsor;
 
         public CsharpRemoteTransform(IContext context) : base(context) {
 
@@ -40,9 +41,14 @@ namespace Pipeline.Desktop.Transforms {
 
             context.Debug((() => code));
 
-            context.Info("Creating new app domain.");
+            context.Info("Creating new app domain and sponsor.");
             _domain = AppDomain.CreateDomain(context.Key);
+
+            _sponsor = new Sponsor();  // manages lifetime of the object in otherDomain
             _compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner");
+
+            var lease = _compilerRunner.InitializeLifetimeService() as ILease;
+            lease?.Register(_sponsor);
 
             var errors = _compilerRunner.Compile(code);
             if (string.IsNullOrEmpty(errors)) {
@@ -62,9 +68,22 @@ namespace Pipeline.Desktop.Transforms {
         }
 
         public override void Dispose() {
-            Context.Info("Unload app domain.");
+            Context.Info("Release lease and unload app domain.");
+            _sponsor.Release = true;
             AppDomain.Unload(_domain);
             base.Dispose();
+        }
+    }
+
+
+    class Sponsor : MarshalByRefObject, ISponsor {
+        public bool Release { get; set; }
+
+        public TimeSpan Renewal(ILease lease) {
+            // if any of these cases is true
+            if (lease == null || lease.CurrentState != LeaseState.Renewing || Release)
+                return TimeSpan.Zero; // don't renew
+            return TimeSpan.FromSeconds(10); // renew for 10 seconds
         }
     }
 
@@ -102,8 +121,6 @@ namespace Pipeline.Desktop.Transforms {
                     var methodInfo = _type.GetMethod("UserCode", BindingFlags.Static | BindingFlags.Public);
 
                     _userCode = (Func<object[], object>)Delegate.CreateDelegate(typeof(Func<object[], object>), methodInfo);
-
-                    //_userCode = (data)=> methodInfo.Invoke(null, new object[] { data });
                 }
             } catch (Exception ex) {
                 sb.AppendLine("CSharp Compiler Exception!");
@@ -122,9 +139,9 @@ namespace Pipeline.Desktop.Transforms {
             if (lease == null || lease.CurrentState != LeaseState.Initial)
                 return lease;
 
-            lease.InitialLeaseTime = TimeSpan.FromMinutes(5);
-            lease.SponsorshipTimeout = TimeSpan.FromMinutes(5);
-            lease.RenewOnCallTime = TimeSpan.FromMinutes(5);
+            lease.InitialLeaseTime = TimeSpan.FromMinutes(3);
+            lease.SponsorshipTimeout = TimeSpan.FromMinutes(3);
+            lease.RenewOnCallTime = TimeSpan.FromSeconds(10);
             return lease;
         }
 

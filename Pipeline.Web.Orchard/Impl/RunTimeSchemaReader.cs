@@ -18,6 +18,7 @@
 
 using System.Linq;
 using Autofac;
+using Orchard.FileSystems.AppData;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
@@ -34,14 +35,17 @@ namespace Pipeline.Web.Orchard.Impl {
         }
 
         private readonly IContext _host;
+        private readonly IAppDataFolder _appDataFolder;
 
-        public RunTimeSchemaReader(IContext host) {
+        public RunTimeSchemaReader(IContext host, IAppDataFolder appDataFolder) {
             _host = host;
+            _appDataFolder = appDataFolder;
         }
 
-        public RunTimeSchemaReader(Process process, IContext host) {
+        public RunTimeSchemaReader(Process process, IContext host, IAppDataFolder appDataFolder) {
             Process = process;
             _host = host;
+            _appDataFolder = appDataFolder;
         }
 
         public Schema Read(Entity entity) {
@@ -60,8 +64,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
-            container.RegisterCallback(new FileModule(Process).Configure);
-            container.RegisterCallback(new ExcelModule(Process).Configure);
+            container.RegisterCallback(new FileModule(Process, _appDataFolder).Configure);
+            container.RegisterCallback(new ExcelModule(Process, _appDataFolder).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);
@@ -83,8 +87,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
-            container.RegisterCallback(new FileModule(Process).Configure);
-            container.RegisterCallback(new ExcelModule(Process).Configure);
+            container.RegisterCallback(new FileModule(Process, _appDataFolder).Configure);
+            container.RegisterCallback(new ExcelModule(Process, _appDataFolder).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);

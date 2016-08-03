@@ -19,6 +19,7 @@ using System;
 using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
+using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop;
 using Pipeline.Nulls;
@@ -58,14 +59,14 @@ namespace Pipeline.Web.Orchard.Modules {
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
 
                 // transform
-                pipeline.Register(new SetBatchId(context));
-                pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields()));
+                pipeline.Register(new SetBatchId(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields()));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
-                pipeline.Register(new SetKey(context));
-                pipeline.Register(new StringTruncateTransfom(context));
+                pipeline.Register(new SetKey(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
 
                 if (provider == "sqlserver") {
-                    pipeline.Register(new MinDateTransform(context, new DateTime(1753, 1, 1)));
+                    pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
                 }
 
                 //load

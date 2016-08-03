@@ -38,16 +38,19 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
+        private readonly ISecureFileService _secureFileService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
         public ReportController(
             IOrchardServices services,
             IProcessService processService,
-            ISortService sortService
+            ISortService sortService,
+            ISecureFileService secureFileService
             ) {
             _orchardServices = services;
             _processService = processService;
+            _secureFileService = secureFileService;
             _sortService = sortService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -68,7 +71,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
-                    process.Load(part.Configuration, Common.GetParameters(Request));
+                    var parameters = Common.GetParameters(Request, _secureFileService);
+                    if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
+                        _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
+                        process.Name = "File Not Found";
+                    }
+
+                    process.Load(part.Configuration, parameters);
 
                     if (Request["sort"] != null) {
                         _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);

@@ -55,12 +55,21 @@ namespace Pipeline.Web.Orchard.Handlers {
                 return;
 
             base.GetItemMetadata(context);
-            context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                {"Area", Common.ModuleName},
-                {"Controller", "Report"},
-                {"Action", "Report"},
-                {"id", context.ContentItem.Id}
-            };
+            if (part.Reportable) {
+                context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                    {"Area", Common.ModuleName},
+                    {"Controller", "Report"},
+                    {"Action", "Report"},
+                    {"id", context.ContentItem.Id}
+                };
+            } else {
+                context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                    {"Area", Common.ModuleName},
+                    {"Controller", "Api"},
+                    {"Action", "Api/Cfg"},
+                    {"id", context.ContentItem.Id}
+                };
+            }
         }
 
         protected override void Updated(UpdateContentContext context) {

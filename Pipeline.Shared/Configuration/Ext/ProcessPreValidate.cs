@@ -52,7 +52,7 @@ namespace Pipeline.Configuration.Ext {
                     error($"Trouble adapting fields created from transforms. {ex.Message}");
                 }
 
-                entity.AddSystemFields(p.Output().IsNotInternal());
+                entity.AddSystemFields();
                 entity.ModifyMissingPrimaryKey();
                 entity.ModifyIndexes();
             }

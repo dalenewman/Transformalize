@@ -34,5 +34,11 @@ namespace Pipeline.Web.Orchard.Models {
         [StringLength(64)]
         public virtual string EndAddress { get; set; }
 
+        public virtual bool Runnable { get; set; }
+
+        public virtual bool Reportable { get; set; }
+
+        public virtual bool NeedsInputFile { get; set; }
+
     }
 }

@@ -43,7 +43,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         readonly IIpRangeService _ipRangeService;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
-        private readonly IFileService _fileService;
+        private readonly ISecureFileService _secureFileService;
 
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -53,13 +53,13 @@ namespace Pipeline.Web.Orchard.Controllers {
             IIpRangeService ipRangeService,
             IProcessService processService,
             ISortService sortService,
-            IFileService fileService
+            ISecureFileService secureFileService
         ) {
             _orchardServices = orchardServices;
             _ipRangeService = ipRangeService;
             _processService = processService;
-            _fileService = fileService;
             _sortService = sortService;
+            _secureFileService = secureFileService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -73,6 +73,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var format = GetFormat(Request);
 
             Response.AddHeader("Access-Control-Allow-Origin", "*");
+
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
@@ -84,7 +85,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                 var process = _processService.Resolve(part.EditorMode, format);
-                var parameters = Common.GetParameters(Request);
+                var parameters = Common.GetParameters(Request, _secureFileService);
+
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any()) {
@@ -112,10 +114,6 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Request = action;
                     process.Time = timer.ElapsedMilliseconds;
                     RemoveCredentials(process);
-                    RemoveShorthand(process);
-                    if (process.Output().IsInternal()) {
-                        RemoveSystemFields(process);
-                    }
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     return Get501(Request, _orchardServices, action, ex.Message, timer.ElapsedMilliseconds);
@@ -190,7 +188,12 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             var process = _processService.Resolve(part.EditorMode, format);
-            var parameters = Common.GetParameters(Request);
+            var parameters = Common.GetParameters(Request, _secureFileService);
+
+            if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
+                return GetStatus(404, "Process needs an input file.", action, _orchardServices, format);
+            }
+
             process.Load(part.Configuration, parameters);
 
             if (process.Errors().Any()) {
@@ -204,7 +207,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             RemoveCredentials(process);
-            RemoveShorthand(process);
 
             var sort = Request["sort"];
             if (!string.IsNullOrEmpty(sort)) {
@@ -224,6 +226,18 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                 var schemaHelper = _orchardServices.WorkContext.Resolve<ISchemaHelper>();
                 if (schemaHelper.Help(process)) {
+
+                    // remove this stuff before serialization
+                    // todo: get clean, unmodified, and unvalidated configuration to to add fields to and serialize
+                    // because below won't work in all cases (i.e. producer transforms...)
+                    foreach (var entity in process.Entities) {
+                        entity.Fields.RemoveAll(f => f.System);
+                    }
+
+                    foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
+                        field.T = string.Empty;
+                    }
+
                     if (part.EditorMode == format) {
                         process.Load(process.Serialize(), parameters);
                     } else {
@@ -245,18 +259,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
         }
 
-        private static void RemoveSystemFields(Process process) {
-            foreach (var entity in process.Entities) {
-                entity.Fields.RemoveAll(f => f.System);
-            }
-        }
-
-        private static void RemoveShorthand(Process process) {
-            foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
-                field.T = string.Empty;
-            }
-        }
-
         private static ContentResult Get404(string action, IProcessService service, string format, long time = 5) {
             var process = service.Resolve("xml", format);
             process.Request = action;
@@ -274,6 +276,16 @@ namespace Pipeline.Web.Orchard.Controllers {
             process.Time = time;
             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
         }
+
+        private static ContentResult GetStatus(int status, string message, string action, IOrchardServices services, string format, long time = 5) {
+            var process = format == "json" ? (Process)services.WorkContext.Resolve<JsonProcess>() : services.WorkContext.Resolve<XmlProcess>();
+            process.Request = action;
+            process.Status = Convert.ToInt16(status);
+            process.Message = message;
+            process.Time = time;
+            return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+        }
+
 
         private static ContentResult Get503(string action, Process process, string format, long time) {
             process.Request = action;

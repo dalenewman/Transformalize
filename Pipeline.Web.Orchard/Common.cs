@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Web;
 using Pipeline.Configuration;
-using Pipeline.Web.Orchard.Controllers;
+using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard {
     public static class Common {
@@ -13,9 +14,11 @@ namespace Pipeline.Web.Orchard {
         public const string PipelineConfigurationName = "PipelineConfiguration";
         public const string PipelineSettingsName = "PipelineSettings";
         public const string InputFileIdName = "InputFileId";
-        public const string InputFileName = "InputFile";
+        public const string InputFilePath = "InputFilePath";
+        public const string InputFileName = "InputFileName";
         public const string OutputFileIdName = "OutputFileId";
         public const string OutputFileName = "OutputFile";
+        public const string FileFolder = "Transformalize";
 
         public const string DefaultShortHand = @"<cfg>
 
@@ -256,12 +259,11 @@ namespace Pipeline.Web.Orchard {
 </cfg>";
 
 
-
         public static string CacheKey(int id, string feature) {
             return ModuleName + "." + feature + "." + id;
         }
 
-        public static IDictionary<string, string> GetParameters(HttpRequestBase request) {
+        public static IDictionary<string, string> GetParameters(HttpRequestBase request, ISecureFileService secureFileService) {
             var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (request != null && request.QueryString != null) {
                 foreach (string key in request.QueryString) {
@@ -269,11 +271,33 @@ namespace Pipeline.Web.Orchard {
                 }
             }
             if (!parameters.ContainsKey("user")) {
-                parameters["user"] = "transformalize";
+                var defaultUser = ConfigurationManager.AppSettings["default-user"];
+                if (!string.IsNullOrEmpty(defaultUser)) {
+                    parameters["user"] = defaultUser;
+                }
             }
             if (!parameters.ContainsKey("password")) {
-                parameters["password"] = "t1i2t3s4";
+                var defaultPassword = ConfigurationManager.AppSettings["default-password"];
+                if (!string.IsNullOrEmpty(defaultPassword)) {
+                    parameters["password"] = defaultPassword;
+                }
             }
+
+            // handle input file
+            int inputFileId;
+            if (parameters.ContainsKey(Common.InputFileIdName) && int.TryParse(parameters[Common.InputFileIdName], out inputFileId)) {
+                var response = secureFileService.Get(inputFileId);
+                if (response.Status == 200) {
+                    parameters[Common.InputFilePath] = response.Part.FullPath;
+                    parameters[Common.InputFileName] = response.Part.FileName();
+                } else {
+                    parameters[Common.InputFilePath] = response.Message;
+                    parameters[Common.InputFileName] = response.Message;
+                }
+            } else {
+                parameters[Common.InputFileIdName] = "0";
+            }
+
 
             return parameters;
         }

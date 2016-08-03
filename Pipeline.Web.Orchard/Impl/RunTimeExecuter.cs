@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Orchard.FileSystems.AppData;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
@@ -27,8 +28,10 @@ using Pipeline.Web.Orchard.Modules;
 namespace Pipeline.Web.Orchard.Impl {
     public class RunTimeExecuter : IRunTimeExecute {
         private readonly IContext _context;
+        private readonly IAppDataFolder _appDataFolder;
 
-        public RunTimeExecuter(IContext context) {
+        public RunTimeExecuter(IContext context, IAppDataFolder appDataFolder) {
+            _appDataFolder = appDataFolder;
             _context = context;
         }
 
@@ -59,8 +62,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new AdoModule(process).Configure);
             container.RegisterCallback(new SolrModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process).Configure);
-            container.RegisterCallback(new ExcelModule(process).Configure);
+            container.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
+            container.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
 
             container.RegisterCallback(new MapModule(process).Configure);
             container.RegisterCallback(new ActionModule(process).Configure);

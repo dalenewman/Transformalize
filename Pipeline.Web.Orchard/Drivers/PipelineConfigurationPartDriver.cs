@@ -14,6 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
@@ -33,6 +35,9 @@ namespace Pipeline.Web.Orchard.Drivers {
             part.Record.Configuration = context.Attribute(part.PartDefinition.Name, "Configuration");
             part.Record.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
             part.Record.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
+            part.Record.Runnable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Runnable"));
+            part.Record.Reportable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Reportable"));
+            part.Record.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
         }
 
         protected override void Exporting(PipelineConfigurationPart part, ExportContentContext context) {
@@ -40,6 +45,9 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Record.Configuration);
             context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
             context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Record.Reportable);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
         }
 
         //GET EDITOR

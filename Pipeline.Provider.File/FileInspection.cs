@@ -46,7 +46,8 @@ namespace Pipeline.Provider.File {
             var quoted = _fileInfo.Extension.ToLower() == ".csv";
 
             var lines = new FileLineReader(_fileInfo, _lines).Read().ToArray();
-            var delimiter = Utility.FindDelimiter(lines, _context.Connection.Delimiters, quoted);
+            var delimiters = _context.Connection.Delimiters.Any() ? _context.Connection.Delimiters : new List<Delimiter> {  new Delimiter { Character = (_context.Connection.Delimiter.Length == 0 ? ',' : _context.Connection.Delimiter[0]), Name = "Delimiter"}.WithDefaults()};
+            var delimiter = Utility.FindDelimiter(lines, delimiters, quoted);
 
             var values = lines.First()
                 .SplitLine(delimiter, quoted)

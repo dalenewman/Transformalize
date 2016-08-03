@@ -156,6 +156,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -220,7 +221,6 @@
     <Compile Include="Models\YamlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
-    <Compile Include="Modules\ConnectionModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
     <Compile Include="Modules\EntityModule.cs" />
     <Compile Include="Modules\EntityPipelineModule.cs" />

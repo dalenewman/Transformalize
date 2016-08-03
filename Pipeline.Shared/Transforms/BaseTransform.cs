@@ -79,7 +79,7 @@ namespace Pipeline.Transforms {
         }
 
         public virtual void Dispose() {
-            Context = null;
+            // Context = null;
         }
     }
 }

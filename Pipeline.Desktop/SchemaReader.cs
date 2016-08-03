@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cfg.Net.Ext;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
@@ -35,7 +36,7 @@ namespace Pipeline.Desktop {
             _process = process;
         }
 
-        private IEnumerable<Field> ModifyFields(IEnumerable<Field> fields) {
+        private void ModifyFields(IEnumerable<Field> fields) {
 
             var expanded = fields.ToArray();
 
@@ -51,7 +52,7 @@ namespace Pipeline.Desktop {
             if (checkTypes || checkLength) {
                 var rows = _runner.Run(_process).ToArray(); // can take a lot of memory
                 if (rows.Length == 0)
-                    return expanded;
+                    return;
 
                 if (checkLength) {
                     Parallel.ForEach(expanded, f => {
@@ -76,32 +77,35 @@ namespace Pipeline.Desktop {
                 }
             }
 
-            return expanded;
         }
 
         public Schema Read() {
             var entity = _process.Entities.First();
-
-            entity.Fields = ModifyFields(entity.Fields.Where(f => !f.System)).ToList();
-
-            return new Schema {
-                Connection = _process.Connections.First(),
-                Entities = new List<Entity> { entity }
-            };
+            return Read(entity);
         }
 
         public Schema Read(Entity entity) {
-
             var fields = entity.Fields.Where(f => !f.System).ToList();
             if (!fields.Any() && _process.Entities.Any()) {
                 fields = _process.Entities.First().Fields.Where(f => !f.System).ToList();
             }
 
-            entity.Fields = ModifyFields(fields).ToList();
+            // clone fields, note: clone only clones cfg-net fields, so we have to copy indexes too
+            var newFields = fields.Select(field => field.Clone()).ToList();
+            for (int i = 0; i < fields.Count; i++) {
+                newFields[i].Index = fields[i].Index;
+                newFields[i].MasterIndex = fields[i].MasterIndex;
+                newFields[i].KeyIndex = fields[i].KeyIndex;
+            }
+
+            ModifyFields(newFields);
+
+            var newEntity = entity.Clone();
+            newEntity.Fields = newFields;
 
             return new Schema {
-                Connection = _process.Connections.First(),
-                Entities = new List<Entity> { entity }
+                Connection = _process.Connections.FirstOrDefault(c => c.Name == entity.Connection),
+                Entities = new List<Entity> { newEntity }
             };
         }
 

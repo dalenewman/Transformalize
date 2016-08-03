@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Autofac;
+using Orchard.FileSystems.AppData;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -30,11 +31,13 @@ using Pipeline.Web.Orchard.Impl;
 namespace Pipeline.Web.Orchard.Modules {
     public class FileModule : Module {
         private readonly Process _process;
+        private readonly IAppDataFolder _appDataFolder;
 
         public FileModule() { }
 
-        public FileModule(Process process) {
+        public FileModule(Process process, IAppDataFolder appDataFolder) {
             _process = process;
+            _appDataFolder = appDataFolder;
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -48,7 +51,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 // Schema Reader
                 builder.Register<ISchemaReader>(ctx => {
                     /* file and excel are different, have to load the content and check it to determine schema */
-                    var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, connection.File));
+                    var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : _appDataFolder.Combine(Common.FileFolder, connection.File));
                     var context = ctx.ResolveNamed<IConnectionContext>(connection.Key);
                     var cfg = new FileInspection(context, fileInfo, 100).Create();
                     var process = ctx.Resolve<Process>();
@@ -65,7 +68,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         return new NullSchemaReader();
                     }
 
-                    return new SchemaReader(context, new RunTimeRunner(context), process);
+                    return new SchemaReader(context, new RunTimeRunner(context, _appDataFolder), process);
 
                 }).Named<ISchemaReader>(connection.Key);
             }
