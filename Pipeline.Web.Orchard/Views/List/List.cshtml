@@ -6,8 +6,7 @@
 @model PipelineConfigurationPart[]
 @{
     Layout.Title = "Arrangements";
-    var link = Url.Content("~/Admin/Contents/Create/PipelineConfiguration");
-    var filesLink = Url.Action("List", "File");
+    var editLink = Url.Content("~/Admin/Contents/Create/PipelineConfiguration");
 
     var response = new FileResponse();
     var inputFileId = 0;
@@ -15,12 +14,16 @@
         var service = WorkContext.Resolve<ISecureFileService>();
         response = service.Get(inputFileId);
     }
+    var arrangementId = 0;
+    if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName])) {
+        int.TryParse(Request[Common.ArrangementIdName], out arrangementId);
+    }
 }
 <div class="row">
     <div class="col-md-12">
         <div class="btn-group pull-right">
-            <button onclick="javascript: window.open('@link', '_self');" type="button" class="btn btn-xs btn-primary">
-                <span class="glyphicon glyphicon-plus"></span> New Pipe
+            <button onclick="javascript: window.open('@editLink', '_self');" type="button" class="btn btn-xs btn-primary">
+                <span class="glyphicon glyphicon-plus"></span> New
             </button>
         </div>
     </div>
@@ -28,62 +31,83 @@
 
 <table class="table table-condensed table-hover" style="font-size: smaller;">
     <thead>
-        <tr>
-            <th>Id</th>
-            <th>Title</th>
-            <th>File</th>
-            <th>Action</th>
-        </tr>
+    <tr>
+        <th>Id</th>
+        <th>Title</th>
+        <th>File</th>
+        <th>&nbsp;</th>
+        <th>&nbsp;</th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var part in Model) {
-            var title = part.As<TitlePart>().Title;
-            <tr>
+    @foreach (var part in Model) {
+        var title = part.As<TitlePart>().Title;
+        <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "active" : string.Empty)">
+            <td>
+                <a href="@Url.Action("Api/Cfg", "Api", new {id = part.Id})">@part.Id</a>
+            </td>
+            <td>@title</td>
+            @if (inputFileId > 0 && part.NeedsInputFile && (arrangementId == 0 || arrangementId == part.Id)) {
                 <td>
-                    <a href="@Url.Action("Api/Cfg","Api",new { id=part.Id})">@part.Id</a>
+                    @if (response.Status == 200) {
+                        <span class="glyphicon glyphicon-file"> @response.Part.Title()</span>
+                    }
+                    else {
+                        <span class="glyphicon glyphicon-exclamation-sign"> @response.Message</span>
+                    }
                 </td>
-                <td>@title</td>
-                @if (inputFileId > 0 && part.NeedsInputFile) {
-                    <td>
-                        @if (response.Status == 200) {
-                            <span class="glyphicon glyphicon-file"> @response.Part.FileName()</span>
-                        }
-                        else {
-                            <span class="glyphicon glyphicon-exclamation-sign"> @response.Message</span>
-                        }
-                    </td>
-                }
-                else {
-                    <td>&nbsp;</td>
-                }
-                <td>
-                    <div class="btn-group" role="group" aria-label="...">
-                        <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))', '_self');">
-                            <span class="glyphicon glyphicon-edit"></span> 
+            } else {
+                <td>&nbsp;</td>
+            }
+            <td>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))', '_self');">
+                        <span class="glyphicon glyphicon-edit"></span> 
+                    </button>
+                    @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
+                        <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Api/Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                            <span class="glyphicon glyphicon-check"></span>
                         </button>
-                        @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Api/Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
-                                <span class="glyphicon glyphicon-check"></span>
-                            </button>
-                        }
-                        @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Report", new { id = part.Id, InputFileId = inputFileId }))', '_self');">
-                                <span class="glyphicon glyphicon-th-list"></span> 
-                            </button>
-                        }
-                        @if (part.Runnable && !part.NeedsInputFile || part.Runnable && part.NeedsInputFile && inputFileId > 0 ) {
-                            <button title="Report" type="button" class="btn btn-danger btn-xs" onclick="window.open('@(@Url.Action("Api/Run", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_blank');">
-                                <span class="glyphicon glyphicon-play-circle"></span>
-                            </button>
-                        }
-                        @if (part.NeedsInputFile && inputFileId == 0) {
-                            <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(@Url.Action("List", "File", new {id = part.Id }))', '_self');">
-                                <span class="glyphicon glyphicon-file"></span>
-                            </button>
-                        }
-                    </div>
-                </td>
-            </tr>
-        }
+                    }
+                    @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
+                        <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Report", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                            <span class="glyphicon glyphicon-th-list"></span> 
+                        </button>
+                    }
+                    @if (part.NeedsInputFile) {
+                        <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(@Url.Action("List", "File", new {ArrangementId = part.Id}))', '_self');">
+                            <span class="glyphicon glyphicon-file"></span>
+                        </button>
+                    }
+                </div>
+            </td>
+            <td>
+                @if (part.Runnable && !part.NeedsInputFile || part.Runnable && part.NeedsInputFile && inputFileId > 0) {
+                    <form class="form-inline" action="@Url.Action("Api/Run", "Api", new RouteValueDictionary {{"id",part.Id}})" method="POST">
+                        <input type="hidden" name="__requestverificationtoken" value="@Html.AntiForgeryTokenValueOrchard()" />
+                        <input type="hidden" name="InputFileId" value="@inputFileId"/>
+                        <select title="Mode" id="id_mode" class="form-control" name="Mode" size="1" style="padding: 1px; font-size:12.5px">
+                            <option key="default" selected="selected">default</option>
+                            <option key="init" value="init">init</option>
+                        </select>
+                        <button title="Run" type="submit" class="btn btn-danger btn-xs">Run</button>
+                    </form>
+                } else {
+                    <text>&nbsp;</text>
+                }
+            </td>
+
+        </tr>
+    }
     </tbody>
 </table>
+
+<script type="text/javascript">
+    //<!--
+    function removeMessages() {
+        $(".zone-messages").fadeOut();
+    }
+
+    setTimeout(removeMessages, 5000);
+    //-->
+</script>

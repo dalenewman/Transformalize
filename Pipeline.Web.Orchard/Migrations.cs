@@ -138,6 +138,7 @@ namespace Pipeline.Web.Orchard {
                 ContentDefinitionManager.AlterTypeDefinition(Common.PipelineFileName, cfg => cfg
                     .WithSetting("Description", "A file serving as input or output for a Transformalize pipeline.")
                     .WithPart(Common.PipelineFileName + "Part")
+                    .WithPart("TitlePart")
                     .WithPart("CommonPart")
                     .WithPart("TagsPart")
                     .WithPart("ContentPermissionsPart", builder => builder

@@ -1,4 +1,6 @@
-﻿@using Pipeline.Web.Orchard.Models
+﻿@using Orchard.Roles.Services
+@using Pipeline.Web.Orchard
+@using Pipeline.Web.Orchard.Models
 @model IEnumerable<PipelineFilePart>
 @{
     Layout.Title = "Pipeline Files";
@@ -7,7 +9,12 @@
     Script.Require("jQueryColorBox").AtHead();
     Script.Require("jQueryFileUpload").AtHead();
 
-    var returnUrl = string.IsNullOrEmpty(Request["ReturnUrl"]) ? Url.Action("List","List") : Request["ReturnUrl"];
+    var returnUrl = string.IsNullOrEmpty(Request[Common.ReturnUrlName]) ? Url.Action("List","List") : Request[Common.ReturnUrlName];
+    int arrangementId;
+    if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName]) && int.TryParse(Request[Common.ArrangementIdName], out arrangementId)) {
+        returnUrl += (returnUrl.Contains('?') ? '&' : '?') + "ArrangementId=" + arrangementId;
+    }
+    var roles = WorkContext.Resolve<IRoleService>().GetRoles().Select(r => r.Name).Where(s => s != "Administrator").Union(new [] { "Private"}).OrderBy(s=>s).ToArray();
 }
 <style type="text/css">
 
@@ -30,12 +37,99 @@
     }
 
 </style>
+
+@if (User.Identity.IsAuthenticated) {
+    <form class="form-inline" id="fileupload">
+        <input type="hidden" name="__requestverificationtoken" value="@Html.AntiForgeryTokenValueOrchard()" />
+        <div class="row">
+            <div class="col-md-4">
+                <span class="btn btn-primary btn-xs fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add</span>
+                    <!-- The file input field used as target for the file upload widget -->
+                    <input type="file" name="files[]">
+                </span>
+            </div>
+            <div class="col-md-2">
+                <select title="Sharing" id="id_role" class="form-control" name="Role" size="1" style="padding: 1px; font-size: 12.5px;">
+                    @foreach (var role in roles) {
+                        <option key="@role" selected="@(role == "Private")" value="@role">@role</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <div id="progress" class="progress" style="margin-bottom: 10px; margin-top: 1px;">
+                    <div class="progress-bar progress-bar-success"></div>
+                </div>
+                <!-- The container for the uploaded files -->
+                <div id="files" class="files"></div>
+            </div>
+        </div>
+    </form>
+}
+
+    <table class="table table-condensed table-hover" style="font-size: smaller;">
+        <thead>
+        <tr>
+            <th>&nbsp;</th>
+            <th>Id</th>
+            <th>File</th>
+            <th>Tags</th>
+            <th>Created On</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model) {
+                <tr class="">
+                    <td>
+                        <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">Select</button>
+                    </td>
+                    <td>@file.Id</td>
+                    <td>@file.Title()</td>
+                    <td>
+                        <span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span>
+                        @if (file.CurrentTags().Any()) {
+                            foreach (var tag in file.CurrentTags()) {
+                                <span class="label label-info">@tag</span>
+                            }
+                        }
+                    </td>
+                    <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), WorkContext.CurrentTimeZone))</td>
+                    <td>
+                        <div class="btn-group btn-group-xs" role="group" aria-label="...">
+
+                            <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("File/Download", "File", new {id = @file.Id})', '_self');">
+                                <span class="glyphicon glyphicon-download"></span>
+                            </button>
+
+                            <button title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("File/View", "File", new {id = @file.Id})">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                            </button>
+
+                            <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + file.Id))', '_self');">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </button>
+
+                            @if (User.Identity.IsAuthenticated) {
+                                <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="window.open('@Url.Action("File/Delete", "File", new {id = @file.Id})', '_self');">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </button>
+                            }
+
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
 <script type="text/javascript">
     //<!--
     $(document).ready(function () {
 
         function removeMessages() {
-            $(".zone-messages").fadeOut().hide();
+            $(".zone-messages").fadeOut();
         }
 
         setTimeout(removeMessages, 5000);
@@ -44,11 +138,8 @@
 
         $("#fileupload").fileupload({
             url: '@Url.Action("Upload", new { area = Pipeline.Web.Orchard.Common.ModuleName })',
-            formData: {
-                __RequestVerificationToken: '@Html.AntiForgeryTokenValueOrchard()'
-            },
             dataType: "html",
-            done: function(e, data) {
+            done: function (e, data) {
                 window.location = '@Url.Action("List", new { area = Pipeline.Web.Orchard.Common.ModuleName })' + '?ReturnUrl=@returnUrl';
             },
             progressall: function (e, data) {
@@ -60,78 +151,3 @@
     });
     //-->
 </script>
-
-<div class="row">
-    <div class="col-md-4">
-        <span class="btn btn-primary btn-xs fileinput-button">
-            <i class="glyphicon glyphicon-plus"></i>
-            <span>Add</span>
-            <!-- The file input field used as target for the file upload widget -->
-            <input id="fileupload" type="file" name="files[]">
-        </span>
-    </div>
-    <div class="col-md-8">
-        <div id="progress" class="progress">
-            <div class="progress-bar progress-bar-success"></div>
-        </div>
-        <!-- The container for the uploaded files -->
-        <div id="files" class="files"></div>
-    </div>
-</div>
-
-<table class="table table-condensed table-hover" style="font-size: smaller;">
-    <thead>
-    <tr>
-        <th>&nbsp;</th>
-        <th>Id</th>
-        <th>File</th>
-        <th>Tags</th>
-        <th>Created On</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-        @foreach (var file in Model) {
-            <tr class="">
-                <td>
-                    <button title="Select" type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">
-                        <span class="glyphicon glyphicon-ok-circle"></span> 
-                    </button>
-                </td>
-                <td>@file.Id</td>
-                <td>@file.FileName()</td>
-                <td>
-                    <span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span>
-                    @if (file.CurrentTags().Any()) {
-                        foreach (var tag in file.CurrentTags()) {
-                            <span class="label label-info">@tag</span>
-                        }
-                    }
-                </td>
-                <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), WorkContext.CurrentTimeZone))</td>
-                <td>
-                    <div class="btn-group btn-group-xs" role="group" aria-label="...">
-
-                        <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("File/Download", "File", new {id = @file.Id})', '_self');">
-                            <span class="glyphicon glyphicon-download"></span> 
-                        </button>
-
-                        <button title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("File/View", "File", new {id = @file.Id})">
-                            <span class="glyphicon glyphicon-eye-open"></span>
-                        </button>
-
-                        <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + file.Id))', '_self');">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </button>
-
-                        <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="window.open('@Url.Action("File/Delete", "File", new {id = @file.Id})', '_self');">
-                            <span class="glyphicon glyphicon-trash"></span> 
-                        </button>
-
-                    </div>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-

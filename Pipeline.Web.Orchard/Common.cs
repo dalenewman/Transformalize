@@ -16,9 +16,12 @@ namespace Pipeline.Web.Orchard {
         public const string InputFileIdName = "InputFileId";
         public const string InputFilePath = "InputFilePath";
         public const string InputFileName = "InputFileName";
+        public const string InputFileTitleName = "InputFileTitle";
         public const string OutputFileIdName = "OutputFileId";
         public const string OutputFileName = "OutputFile";
         public const string FileFolder = "Transformalize";
+        public const string ArrangementIdName = "ArrangementId";
+        public const string ReturnUrlName = "ReturnUrl";
 
         public const string DefaultShortHand = @"<cfg>
 
@@ -265,9 +268,18 @@ namespace Pipeline.Web.Orchard {
 
         public static IDictionary<string, string> GetParameters(HttpRequestBase request, ISecureFileService secureFileService) {
             var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            if (request != null && request.QueryString != null) {
-                foreach (string key in request.QueryString) {
-                    parameters[key] = request.QueryString[key];
+            if (request != null) {
+                if (request.QueryString != null) {
+                    foreach (string key in request.QueryString) {
+                        parameters[key] = request.QueryString[key];
+                    }
+                }
+                if (request.Form != null) {
+                    foreach (string key in request.Form) {
+                        if (!key.Equals("__requestverificationtoken", StringComparison.OrdinalIgnoreCase)) {
+                            parameters[key] = request.Form[key];
+                        }
+                    }
                 }
             }
             if (!parameters.ContainsKey("user")) {
@@ -290,9 +302,11 @@ namespace Pipeline.Web.Orchard {
                 if (response.Status == 200) {
                     parameters[Common.InputFilePath] = response.Part.FullPath;
                     parameters[Common.InputFileName] = response.Part.FileName();
+                    parameters[Common.InputFileTitleName] = response.Part.Title();
                 } else {
                     parameters[Common.InputFilePath] = response.Message;
                     parameters[Common.InputFileName] = response.Message;
+                    parameters[Common.InputFileTitleName] = response.Message;
                 }
             } else {
                 parameters[Common.InputFileIdName] = "0";
@@ -302,19 +316,19 @@ namespace Pipeline.Web.Orchard {
             return parameters;
         }
 
-        public static void PageHelper(Process process, HttpRequestBase request) {
-            if (request.QueryString["page"] == null) {
+        public static void PageHelper(Process process, IDictionary<string,string> parameters) {
+
+            if (!parameters.ContainsKey("page"))
                 return;
-            }
 
             var page = 0;
-            if (!int.TryParse(request.QueryString["page"], out page) || page <= 0) {
+            if (!int.TryParse(parameters["page"], out page) || page <= 0) {
                 return;
             }
 
             var size = 0;
-            if (!int.TryParse((request.QueryString["size"] ?? "0"), out size)) {
-                return;
+            if (parameters.ContainsKey("size")) {
+                int.TryParse(parameters["size"], out size);
             }
 
             foreach (var entity in process.Entities) {

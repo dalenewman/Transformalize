@@ -86,6 +86,12 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     switch (input.Connection.Provider) {
                         case "file":
+
+                            if (input.Connection.Delimiter == string.Empty &&
+                                input.Entity.Fields.Count(f => f.Input) == 1) {
+                                return new FileReader(input, rowFactory);
+                            }
+
                             IRowCondition condition = new NullRowCondition();
                             if (input.Entity.Filter.Any()) {
                                 var expression = input.Entity.Filter.First().Expression;

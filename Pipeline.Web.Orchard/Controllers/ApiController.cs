@@ -93,7 +93,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
-                Common.PageHelper(process, Request);
+                Common.PageHelper(process, parameters);
                 
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {
@@ -308,7 +308,10 @@ namespace Pipeline.Web.Orchard.Controllers {
         private static string GetFormat(HttpRequestBase request, PipelineConfigurationPart part = null) {
             var value = request.QueryString["format"];
             if (value == null) {
-                return part == null ? "xml" : part.EditorMode;
+                value = request.Form["format"];
+                if (value == null) {
+                    return part == null ? "xml" : part.EditorMode;
+                }
             }
             value = value.ToLower();
             return _formats.Contains(value) ? value : "xml";

@@ -94,7 +94,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                             }
 
                             if (!process.Errors().Any()) {
-                                Common.PageHelper(process, Request);
+                                Common.PageHelper(process, parameters);
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
                                     runner.Execute(process);

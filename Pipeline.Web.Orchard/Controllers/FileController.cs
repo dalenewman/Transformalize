@@ -45,7 +45,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (Request.Files != null && Request.Files.Count > 0) {
                 var input = Request.Files.Get(0);
                 if (input != null && input.ContentLength > 0) {
-                    var filePart = _fileService.Upload(input);
+                    var filePart = _fileService.Upload(input, Request.Form["Role"]);
                     return RedirectToAction("List", new { id = filePart.Id });
                 }
                 _orchardServices.Notifier.Error(T("Please choose a file."));
@@ -57,13 +57,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
         public ActionResult List() {
-
-            if (User.Identity.IsAuthenticated) {
-                return View(_fileService.List().Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f)));
-            }
-
-            System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
-            return null;
+            return View(_fileService.List().Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f)));
         }
 
         [ActionName("File/Download")]

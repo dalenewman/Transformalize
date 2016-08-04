@@ -53,8 +53,11 @@ namespace Pipeline.Configuration {
         public bool Enabled { get; set; }
         [Cfg(value = false)]
         public bool EnableSsl { get; set; }
-        [Cfg(value = "UTF8", domain = "ASCII,BigEndianUnicode,Default,UTF32,UTF7,UTF8,Unicode")]
+
+        // "ASCII,BigEndianUnicode,Default,UTF32,UTF7,UTF8,Unicode"
+        [Cfg(value = "utf-8", domain = "UTF-16LE,utf-16,ucs-2,unicode,ISO-10646-UCS-2,UTF-16BE,unicodeFFFE,windows-1252,utf-7,csUnicode11UTF7,unicode-1-1-utf-7,unicode-2-0-utf-7,x-unicode-1-1-utf-7,x-unicode-2-0-utf-7,utf-8,unicode-1-1-utf-8,unicode-2-0-utf-8,x-unicode-1-1-utf-8,x-unicode-2-0-utf-8,us-ascii,us,ascii,ANSI_X3.4-1968,ANSI_X3.4-1986,cp367,csASCII,IBM367,iso-ir-6,ISO646-US,ISO_646.irv:1991,GB18030")]
         public string Encoding { get; set; }
+
         [Cfg(value = 0)]
         public int End { get; set; }
         [Cfg(value = "SaveAndContinue", domain = "ThrowException,SaveAndContinue,IgnoreAndContinue", ignoreCase = true)]

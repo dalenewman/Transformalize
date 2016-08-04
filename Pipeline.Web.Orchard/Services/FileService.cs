@@ -5,6 +5,7 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentPermissions.Models;
 using Orchard.Core.Common.Models;
+using Orchard.Core.Title.Models;
 using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
@@ -37,7 +38,7 @@ namespace Pipeline.Web.Orchard.Services {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public PipelineFilePart Upload(HttpPostedFileBase input) {
+        public PipelineFilePart Upload(HttpPostedFileBase input, string role) {
 
             var part = _orchardServices.ContentManager.New<PipelineFilePart>(Common.PipelineFileName);
             var permissions = part.As<ContentPermissionsPart>();
@@ -50,6 +51,12 @@ namespace Pipeline.Web.Orchard.Services {
             permissions.ViewOwnContent = "Authenticated";
             permissions.EditOwnContent = "Authenticated";
             permissions.DeleteOwnContent = "Authenticated";
+
+            if (role != "Private") {
+                permissions.ViewContent += "," + role;
+            }
+            
+            part.As<TitlePart>().Title = input.FileName;
 
             var exportFile = string.Format("{0}-{1}-{2}",
                 _orchardServices.WorkContext.CurrentUser.UserName,
