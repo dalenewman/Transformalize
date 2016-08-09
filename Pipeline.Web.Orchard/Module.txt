@@ -2,10 +2,10 @@
 AntiForgery: enabled
 Author: Dale Newman
 Website: https://github.com/dalenewman/Transformalize
-Version: 0.2.2
+Version: 0.2.5
 OrchardVersion: 1.8.1
 Description: Transformalize ETL or LTE Pipelines Module
-Dependencies: Orchard.ContentPermissions, Orchard.Tags
+Dependencies: Orchard.ContentPermissions, Orchard.Tags, Orchard.Roles
 Category: Workflows
 Features:
 	Pipeline.Files

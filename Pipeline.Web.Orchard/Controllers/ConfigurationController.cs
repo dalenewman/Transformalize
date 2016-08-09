@@ -15,12 +15,14 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Cfg.Net.Ext;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Core.Contents;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
@@ -28,35 +30,49 @@ using Orchard.UI.Notify;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
-using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
     [ValidateInput(false), Themed(true)]
-    public class ReportController : Controller {
+    public class ConfigurationController : Controller {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
+        private readonly ICfgService _cfgService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public ReportController(
+        public ConfigurationController(
             IOrchardServices services,
             IProcessService processService,
             ISortService sortService,
-            ISecureFileService secureFileService
+            ISecureFileService secureFileService,
+            ICfgService cfgService
             ) {
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
+            _cfgService = cfgService;
             _sortService = sortService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
 
-        [Themed]
+        public ActionResult List(string tagFilter) {
+
+            if (!User.Identity.IsAuthenticated)
+                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
+
+            var viewModel = new ConfigurationListViewModel(
+                _cfgService.List(tagFilter), 
+                Common.Tags<PipelineConfigurationPart, PipelineConfigurationPartRecord>(_orchardServices)
+            );
+
+            return View(viewModel);
+        }
+
         public ActionResult Report(int id) {
 
             var timer = new Stopwatch();
@@ -118,5 +134,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             return View(process);
 
         }
+
     }
 }

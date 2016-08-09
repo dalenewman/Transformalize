@@ -4,12 +4,17 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Orchard;
+using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
 using Orchard.Environment.Extensions;
+using Orchard.Roles.Services;
+using Orchard.Tags.Models;
+using Orchard.Tags.Services;
+using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -20,16 +25,20 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IFileService _fileService;
         private readonly IOrchardServices _orchardServices;
         private readonly ISecureFileService _secureFileService;
+        private readonly IRoleService _roleService;
 
         public Localizer T { get; set; }
 
         public FileController(
             IOrchardServices services,
             IFileService fileService,
+            IRoleService roleService,
+            ITagService tagService,
             ISecureFileService secureFileService
         ) {
             _orchardServices = services;
             _fileService = fileService;
+            _roleService = roleService;
             _secureFileService = secureFileService;
             T = NullLocalizer.Instance;
         }
@@ -45,7 +54,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (Request.Files != null && Request.Files.Count > 0) {
                 var input = Request.Files.Get(0);
                 if (input != null && input.ContentLength > 0) {
-                    var filePart = _fileService.Upload(input, Request.Form["Role"]);
+                    var filePart = _fileService.Upload(input, Request.Form["Role"], Request.Form["Tag"]);
                     return RedirectToAction("List", new { id = filePart.Id });
                 }
                 _orchardServices.Notifier.Error(T("Please choose a file."));
@@ -56,11 +65,16 @@ namespace Pipeline.Web.Orchard.Controllers {
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
 
-        public ActionResult List() {
-            return View(_fileService.List().Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f)));
+        public ActionResult List(string tagFilter) {
+
+            var files = _fileService.List(tagFilter).Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f));
+            var roles = _roleService.GetRoles().Select(r => r.Name).Where(s => s != "Administrator").Union(new[] { "Private" }).OrderBy(s => s);
+            var tags = Common.Tags<PipelineFilePart, PipelineFilePartRecord>(_orchardServices);
+
+            var viewModel = new FileListViewModel(files, roles, tags);
+            return View(viewModel);
         }
 
-        [ActionName("File/Download")]
         [Themed(false)]
         [HttpGet]
         public ActionResult Download(int id) {
@@ -75,7 +89,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             return response.ToActionResult();
         }
 
-        [ActionName("File/View")]
         [Themed(false)]
         public ActionResult View(int id) {
 
@@ -97,7 +110,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             return RedirectToAction("List");
         }
 
-        [ActionName("File/Delete")]
         public ActionResult Delete(int id) {
 
             if (!User.Identity.IsAuthenticated) {

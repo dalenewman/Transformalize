@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Web;
 using Orchard;
 using Orchard.ContentManagement;
@@ -11,25 +13,30 @@ using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Services;
+using Orchard.Tags.Models;
+using Orchard.Tags.Services;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Services {
-
     [OrchardFeature("Pipeline.Files")]
     public class FileService : IFileService {
+
         private readonly IOrchardServices _orchardServices;
         private readonly IAppDataFolder _appDataFolder;
         private readonly IClock _clock;
+        private readonly ITagService _tagService;
 
         const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
 
         public FileService(
             IOrchardServices orchardServices,
             IAppDataFolder appDataFolder,
+            ITagService tagService,
             IClock clock) {
             _orchardServices = orchardServices;
             _appDataFolder = appDataFolder;
+            _tagService = tagService;
             _clock = clock;
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
@@ -38,7 +45,7 @@ namespace Pipeline.Web.Orchard.Services {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public PipelineFilePart Upload(HttpPostedFileBase input, string role) {
+        public PipelineFilePart Upload(HttpPostedFileBase input, string role, string tag) {
 
             var part = _orchardServices.ContentManager.New<PipelineFilePart>(Common.PipelineFileName);
             var permissions = part.As<ContentPermissionsPart>();
@@ -55,8 +62,15 @@ namespace Pipeline.Web.Orchard.Services {
             if (role != "Private") {
                 permissions.ViewContent += "," + role;
             }
-            
+
             part.As<TitlePart>().Title = input.FileName;
+
+            if (tag != string.Empty) {
+                var tags = tag.Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).Where(t => !t.Equals(Common.AllTag, StringComparison.OrdinalIgnoreCase)).ToArray();
+                if (tags.Any()) {
+                    _tagService.UpdateTagsForContentItem(part.ContentItem, tags);
+                }
+            }
 
             var exportFile = string.Format("{0}-{1}-{2}",
                 _orchardServices.WorkContext.CurrentUser.UserName,
@@ -114,11 +128,22 @@ namespace Pipeline.Web.Orchard.Services {
         /// Apply security after the list() method
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<PipelineFilePart> List() {
+        public IEnumerable<PipelineFilePart> List(string tag, int top = 15) {
+
+            if (string.IsNullOrEmpty(tag) || tag.Equals(Common.AllTag, StringComparison.OrdinalIgnoreCase) ) {
+                return _orchardServices.ContentManager.Query<PipelineFilePart, PipelineFilePartRecord>(VersionOptions.Published)
+                    .Join<CommonPartRecord>()
+                    .OrderByDescending(cpr => cpr.CreatedUtc)
+                    .Slice(0, top);
+            }
+
             return _orchardServices.ContentManager.Query<PipelineFilePart, PipelineFilePartRecord>(VersionOptions.Published)
+                .Join<TagsPartRecord>()
+                .Where(tpr => tpr.Tags.Any(t => t.TagRecord.TagName.Equals(tag, StringComparison.OrdinalIgnoreCase)))
                 .Join<CommonPartRecord>()
                 .OrderByDescending(cpr => cpr.CreatedUtc)
-                .List();
+                .Slice(0, top);
+
         }
 
         public PipelineFilePart Get(int id) {

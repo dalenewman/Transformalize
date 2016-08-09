@@ -201,10 +201,13 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Drivers\PipelineFilePartDriver.cs" />
     <Compile Include="Handlers\PipelineFilePartHandler.cs" />
+    <Compile Include="Models\ConfigurationListViewModel.cs" />
+    <Compile Include="Models\FileListViewModel.cs" />
+    <Compile Include="Services\CfgService.cs" />
     <Compile Include="Services\FileResponse.cs" />
     <Compile Include="Services\FileService.cs" />
+    <Compile Include="Services\ICfgService.cs" />
     <Compile Include="Services\IFileService.cs" />
-    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Drivers\PipelineSettingsPartDriver.cs" />
     <Compile Include="Handlers\PipelineSettingsPartHandler.cs" />
     <Compile Include="Impl\CfgNetNotifier.cs" />
@@ -238,7 +241,7 @@
     <Compile Include="Impl\PipelineAction.cs" />
     <Compile Include="Modules\AutoModule.cs" />
     <Compile Include="Controllers\ApiController.cs" />
-    <Compile Include="Controllers\ListController.cs" />
+    <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Drivers\PipelineConfigurationPartDriver.cs" />
     <Compile Include="Handlers\PipelineConfigurationPartHandler.cs" />
     <Compile Include="Migrations.cs" />
@@ -257,7 +260,7 @@
     <Compile Include="Services\SortService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\List\List.cshtml" />
+    <Content Include="Views\Configuration\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineConfiguration.cshtml" />
     <Content Include="Views\Shared\ConfigurationEditor.cshtml" />
   </ItemGroup>
@@ -269,7 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
-    <Content Include="Views\Report\Report.cshtml" />
+    <Content Include="Views\Configuration\Report.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
     <Content Include="Views\File\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineFile.cshtml" />
@@ -287,6 +290,10 @@
     <ProjectReference Include="..\Orchard.ContentPermissions\Orchard.ContentPermissions.csproj">
       <Project>{e826f796-8ce3-4b5b-8423-5aa5f81d2fc3}</Project>
       <Name>Orchard.ContentPermissions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orchard.Roles\Orchard.Roles.csproj">
+      <Project>{d10ad48f-407d-4db5-a328-173ec7cb010f}</Project>
+      <Name>Orchard.Roles</Name>
     </ProjectReference>
     <ProjectReference Include="..\Orchard.Tags\Orchard.Tags.csproj">
       <Project>{5d0f00f0-26c9-4785-ad61-b85710c60eb0}</Project>

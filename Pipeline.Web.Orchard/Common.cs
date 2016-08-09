@@ -1,8 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Linq;
 using System.Web;
+using Orchard;
+using Orchard.ContentManagement;
+using Orchard.ContentManagement.Records;
+using Orchard.Tags.Models;
 using Pipeline.Configuration;
+using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard {
@@ -22,6 +28,7 @@ namespace Pipeline.Web.Orchard {
         public const string FileFolder = "Transformalize";
         public const string ArrangementIdName = "ArrangementId";
         public const string ReturnUrlName = "ReturnUrl";
+        public const string AllTag = "All";
 
         public const string DefaultShortHand = @"<cfg>
 
@@ -316,7 +323,7 @@ namespace Pipeline.Web.Orchard {
             return parameters;
         }
 
-        public static void PageHelper(Process process, IDictionary<string,string> parameters) {
+        public static void PageHelper(Process process, IDictionary<string, string> parameters) {
 
             if (!parameters.ContainsKey("page"))
                 return;
@@ -915,6 +922,26 @@ namespace Pipeline.Web.Orchard {
             string mime;
 
             return _mappings.TryGetValue(extension, out mime) ? mime : "application/octet-stream";
+        }
+
+        /// <summary>
+        /// Geez how to you get a distinct list of tags used on a particular content type (without writing sql)
+        /// </summary>
+        /// <typeparam name="TPart"></typeparam>
+        /// <typeparam name="TRecord"></typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IEnumerable<string> Tags<TPart, TRecord>(IOrchardServices services)
+            where TPart : ContentPart<TRecord>
+            where TRecord : ContentPartRecord {
+            return services.ContentManager.Query<TPart, TRecord>(VersionOptions.Published)
+                .Join<TagsPartRecord>()
+                .Where(tpr => tpr.Tags.Any())
+                .List()
+                .SelectMany(pfp => pfp.As<TagsPart>().CurrentTags)
+                .Distinct()
+                .Union(new[] { Common.AllTag })
+                .OrderBy(s => s);
         }
     }
 }

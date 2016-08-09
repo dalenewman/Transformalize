@@ -111,7 +111,11 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
-                    // WRITER
+
+                    // ENTITY OUTPUT CONTROLLER
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+                    // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 

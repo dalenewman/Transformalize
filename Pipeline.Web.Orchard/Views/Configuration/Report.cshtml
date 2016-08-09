@@ -1,4 +1,5 @@
 ﻿@using Pipeline.Configuration
+@using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
 
 @model Process
@@ -6,8 +7,12 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
+    
     var sortService = WorkContext.Resolve<ISortService>();
     var hasParameters = Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
+    
+    AppendMeta("description", Model.Name, ",");
+    Layout.Title = Model.Name;
 }
 
 <style>
@@ -42,7 +47,8 @@
 
 <form id="id_report" role="form" method="GET">
 
-    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
+    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])"/>
 
     @if (Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt))) {
         var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters.Where(p => p.Prompt).ToArray() : Model.Environments.First(e => e.Name == Model.Environment).Parameters.Where(p => p.Prompt).ToArray();

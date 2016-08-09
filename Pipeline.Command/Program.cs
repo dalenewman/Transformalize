@@ -41,6 +41,10 @@ namespace Pipeline.Command {
                 using (var scope = builder.Build().BeginLifetimeScope()) {
                     var scheduler = scope.Resolve<IScheduler>();
                     scheduler.Start();
+
+                    //Console.WriteLine("Press any key to continue...");
+                    //Console.ReadKey();
+
                     if (scheduler is NowScheduler)
                         return;
 
@@ -52,8 +56,6 @@ namespace Pipeline.Command {
                 Environment.ExitCode = 1;
             }
 
-            //Console.WriteLine("Press any key to continue...");
-            //Console.ReadKey();
         }
     }
 }

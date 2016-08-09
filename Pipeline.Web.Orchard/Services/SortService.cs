@@ -43,7 +43,7 @@ namespace Pipeline.Web.Orchard.Services {
 
         public void AddSortToEntity(Entity entity, string expression) {
             string orderBy = null;
-            var fields = entity.GetAllOutputFields().ToArray();
+            var fields = entity.GetAllOutputFields().Where(f=>!f.System).ToArray();
             for (var i = 0; i < fields.Length; i++) {
                 var field = fields[i];
                 if (!field.Sortable) {

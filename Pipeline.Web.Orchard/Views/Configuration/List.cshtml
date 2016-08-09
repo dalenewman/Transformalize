@@ -3,7 +3,7 @@
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
 @using Pipeline.Web.Orchard.Services
-@model PipelineConfigurationPart[]
+@model ConfigurationListViewModel
 @{
     Layout.Title = "Arrangements";
     var editLink = Url.Content("~/Admin/Contents/Create/PipelineConfiguration");
@@ -18,15 +18,40 @@
     if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName])) {
         int.TryParse(Request[Common.ArrangementIdName], out arrangementId);
     }
+
+    var tagFilter = ViewContext.RouteData.Values["tagFilter"].ToString();
+    if (string.IsNullOrEmpty(tagFilter)) {
+        tagFilter = Common.AllTag;
+    }
 }
 <div class="row">
-    <div class="col-md-12">
-        <div class="btn-group pull-right">
+    
+    <div class="col-md-6">
+        <div class="btn-group pull-left">
             <button onclick="javascript: window.open('@editLink', '_self');" type="button" class="btn btn-xs btn-primary">
                 <span class="glyphicon glyphicon-plus"></span> New
             </button>
         </div>
     </div>
+
+    <div class="col-md-6">
+        <div class="btn-group pull-right">
+            <select title="Tag Filter"
+                    class="form-control input-sm"
+                    name="tagFilter"
+                    size="1"
+                    id="id_tag_filter"
+                    style="padding: 1px; font-size: 12.5px; height: 21px;"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    onchange="javascript: window.location = '@(Url.Action("List", "Configuration", new {area = Common.ModuleName, tagFilter = Common.AllTag}) + "/")' + $('#id_tag_filter').val();">
+                @foreach (var tag in Model.Tags) {
+                    <option key="@tag" selected="@(tag.Equals(tagFilter, StringComparison.OrdinalIgnoreCase))" value="@tag">@tag</option>
+                }
+            </select>
+        </div>
+    </div>
+
 </div>
 
 <table class="table table-condensed table-hover" style="font-size: smaller;">
@@ -34,19 +59,25 @@
     <tr>
         <th>Id</th>
         <th>Title</th>
+        <th>Tags</th>
         <th>File</th>
         <th>&nbsp;</th>
         <th>&nbsp;</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var part in Model) {
+    @foreach (var part in Model.Configurations) {
         var title = part.As<TitlePart>().Title;
         <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "active" : string.Empty)">
             <td>
-                <a href="@Url.Action("Api/Cfg", "Api", new {id = part.Id})">@part.Id</a>
+                <a href="@Url.Action("Cfg", "Api", new {id = part.Id})">@part.Id</a>
             </td>
             <td>@title</td>
+            <td>
+                @foreach (var tag in part.Tags()) {
+                    <span class="label label-info">@tag</span>
+                }
+            </td>
             @if (inputFileId > 0 && part.NeedsInputFile && (arrangementId == 0 || arrangementId == part.Id)) {
                 <td>
                     @if (response.Status == 200) {
@@ -61,16 +92,16 @@
             }
             <td>
                 <div class="btn-group" role="group" aria-label="...">
-                    <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id))', '_self');">
+                    <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
                         <span class="glyphicon glyphicon-edit"></span> 
                     </button>
                     @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
-                        <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Api/Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                        <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                             <span class="glyphicon glyphicon-check"></span>
                         </button>
                     }
                     @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
-                        <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Report", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                        <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Configuration", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                             <span class="glyphicon glyphicon-th-list"></span> 
                         </button>
                     }
@@ -83,13 +114,20 @@
             </td>
             <td>
                 @if (part.Runnable && !part.NeedsInputFile || part.Runnable && part.NeedsInputFile && inputFileId > 0) {
-                    <form class="form-inline" action="@Url.Action("Api/Run", "Api", new RouteValueDictionary {{"id",part.Id}})" method="POST">
+                    <form class="form-inline" action="@Url.Action("Run", "Api", new RouteValueDictionary {{"id",part.Id}})" method="POST">
                         <input type="hidden" name="__requestverificationtoken" value="@Html.AntiForgeryTokenValueOrchard()" />
                         <input type="hidden" name="InputFileId" value="@inputFileId"/>
-                        <select title="Mode" id="id_mode" class="form-control" name="Mode" size="1" style="padding: 1px; font-size:12.5px">
+                        <select title="Mode"
+                                class="form-control input-sm"
+                                name="Mode"
+                                size="1"
+                                style="font-size: 12.5px; height: 21px; padding: 1px;"
+                                data-toggle="tooltip"
+                                data-placement="top">
                             <option key="default" selected="selected">default</option>
                             <option key="init" value="init">init</option>
                         </select>
+
                         <button title="Run" type="submit" class="btn btn-danger btn-xs">Run</button>
                     </form>
                 } else {
@@ -109,5 +147,7 @@
     }
 
     setTimeout(removeMessages, 5000);
+
+    $('[data-toggle="tooltip"]').tooltip();
     //-->
 </script>

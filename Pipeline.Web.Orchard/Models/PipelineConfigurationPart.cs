@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
+using Orchard.Tags.Models;
 
 namespace Pipeline.Web.Orchard.Models {
     public class PipelineConfigurationPart : ContentPart<PipelineConfigurationPartRecord> {
@@ -53,6 +54,10 @@ namespace Pipeline.Web.Orchard.Models {
         public string Title() {
             return this.As<TitlePart>().Title;
         }
+
+        public IEnumerable<string> Tags() {
+            return this.As<TagsPart>().CurrentTags;
+        } 
 
         public string StartAddress {
             get { return Record.StartAddress ?? string.Empty; }

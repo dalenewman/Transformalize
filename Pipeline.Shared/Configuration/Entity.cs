@@ -399,7 +399,7 @@ namespace Pipeline.Configuration {
         }
 
         public Field TflHashCode() {
-            return Fields.FirstOrDefault(f => f.Name == Constants.TflHashCode) ?? new Field {
+            return Fields.FirstOrDefault(f => f.System && f.Name == Constants.TflHashCode) ?? new Field {
                 Name = Constants.TflHashCode,
                 Alias = Constants.TflHashCode,
                 System = true,
@@ -416,20 +416,20 @@ namespace Pipeline.Configuration {
         }
 
         public Field TflKey() {
-            return Fields.FirstOrDefault(f => f.Name == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
+            return Fields.FirstOrDefault(f => f.System && f.Name == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
         }
 
         public Field TflDeleted() {
-            return Fields.FirstOrDefault(f => f.Name == Constants.TflDeleted) ?? new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }.WithDefaults();
+            return Fields.FirstOrDefault(f => f.System && f.Name == Constants.TflDeleted) ?? new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }.WithDefaults();
         }
 
         public Field TflBatchId() {
-            return Fields.FirstOrDefault(f => f.Name == Constants.TflBatchId) ?? new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0"}.WithDefaults();
+            return Fields.FirstOrDefault(f => f.System && f.Name == Constants.TflBatchId) ?? new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
         }
 
         public Field GetVersionField() {
             var fields = GetAllFields().ToArray();
-            return fields.FirstOrDefault(f => !f.System && f.Alias.Equals(Version, StringComparison.OrdinalIgnoreCase)) ?? fields.FirstOrDefault(f => !f.System && f.Name.Equals(Version, StringComparison.OrdinalIgnoreCase));
+            return fields.LastOrDefault(f => !f.System && f.Name.Equals(Version, StringComparison.OrdinalIgnoreCase)) ?? fields.LastOrDefault(f => !f.System && f.Alias.Equals(Version, StringComparison.OrdinalIgnoreCase));
         }
 
         public Field GetField(string aliasOrName) {

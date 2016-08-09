@@ -64,7 +64,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             Logger = NullLogger.Instance;
         }
 
-        [ActionName("Api/Run")]
         public ContentResult Run(int id) {
 
             const string action = "Run";
@@ -125,8 +124,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         }
 
-        [ActionName("Api/Cfg")]
-        public ContentResult Configuration(int id) {
+        public ContentResult Cfg(int id) {
             Response.AddHeader("Access-Control-Allow-Origin", "*");
 
             const string action = "Cfg";
@@ -164,8 +162,7 @@ namespace Pipeline.Web.Orchard.Controllers {
              */
         }
 
-        [ActionName("Api/Check")]
-        public ContentResult Validate(int id) {
+        public ContentResult Check(int id) {
 
             const string action = "Check";
             var timer = new Stopwatch();
@@ -217,7 +214,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             process.Status = 200;
             process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
             process.Message = "Ok";
-
 
             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
         }

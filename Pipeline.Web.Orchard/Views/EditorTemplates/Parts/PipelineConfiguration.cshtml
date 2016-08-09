@@ -1,10 +1,21 @@
 ﻿@using System.Web.Mvc.Html
 @using Orchard.ContentManagement
+@using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
 @model PipelineConfigurationPart
 
 @{
     var theme = WorkContext.CurrentSite.As<PipelineSettingsPart>().EditorTheme;
+    string returnUrl;
+    string returnName;
+    if (string.IsNullOrEmpty(Request.QueryString[Common.ReturnUrlName])) {
+        returnUrl = Url.Action("List", "Configuration", new {area = Common.ModuleName});
+        returnName = "Jobs";
+    } else {
+        returnUrl = Request.QueryString[Common.ReturnUrlName];
+        returnName = "Back";
+    }
+    
     Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Shared/ConfigurationEditor.cshtml", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
 }
 
@@ -12,9 +23,12 @@
     @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
     @Html.DropDownListFor(x => x.EditorMode, Model.EditorModes)
     @Html.ValidationMessageFor(x => x.EditorMode)
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "List", new {area = "Pipeline.Web.Orchard"}))', '_self');">Jobs</button>
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Api/Check", "Api", new {id = Model.Id, area = "Pipeline.Web.Orchard"}))', '_blank');">Check</button>
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Api/Cfg", "Api", new {id = Model.Id, area = "Pipeline.Web.Orchard"}))', '_blank');">Cfg</button>
+
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
+    @if(!Model.NeedsInputFile) {
+        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Check", "Api", new {id = Model.Id, area = Common.ModuleName}))', '_blank');">Check</button>
+    }
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Cfg", "Api", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Cfg</button>
 </div>
 
 <div class="editor-field">

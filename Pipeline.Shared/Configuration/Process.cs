@@ -498,6 +498,9 @@ namespace Pipeline.Configuration {
             return false;
         }
 
+        [Cfg(value="")]
+        public string Description { get; set; }
+
         public void Dispose() {
             Log.Clear();
             Entities.Clear();

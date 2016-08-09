@@ -46,7 +46,7 @@ namespace Pipeline.Web.Orchard.Models {
             return Common.GetMimeType(Extension());
         }
 
-        public IEnumerable<string> CurrentTags() {
+        public IEnumerable<string> Tags() {
             return this.As<TagsPart>().CurrentTags;
         }
 

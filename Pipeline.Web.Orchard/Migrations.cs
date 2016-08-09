@@ -110,6 +110,11 @@ namespace Pipeline.Web.Orchard {
             return 5;
         }
 
+        public int UpdateFrom5() {
+            ContentDefinitionManager.AlterTypeDefinition(Common.PipelineConfigurationName, cfg => cfg.WithPart("TagsPart"));
+            return 6;
+        }
+
     }
 
     [OrchardFeature("Pipeline.Files")]

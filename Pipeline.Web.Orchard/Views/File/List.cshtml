@@ -1,75 +1,112 @@
 ﻿@using Orchard.Roles.Services
+@using Orchard.Tags.Services
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
-@model IEnumerable<PipelineFilePart>
+@model FileListViewModel
 @{
     Layout.Title = "Pipeline Files";
     Style.Require("jQueryColorBox");
+
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryColorBox").AtHead();
     Script.Require("jQueryFileUpload").AtHead();
 
-    var returnUrl = string.IsNullOrEmpty(Request[Common.ReturnUrlName]) ? Url.Action("List","List") : Request[Common.ReturnUrlName];
+    var returnUrl = string.IsNullOrEmpty(Request[Common.ReturnUrlName]) ? Url.Action("List", "Configuration") : Request[Common.ReturnUrlName];
     int arrangementId;
     if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName]) && int.TryParse(Request[Common.ArrangementIdName], out arrangementId)) {
         returnUrl += (returnUrl.Contains('?') ? '&' : '?') + "ArrangementId=" + arrangementId;
     }
-    var roles = WorkContext.Resolve<IRoleService>().GetRoles().Select(r => r.Name).Where(s => s != "Administrator").Union(new [] { "Private"}).OrderBy(s=>s).ToArray();
+
+    var tagFilter = ViewContext.RouteData.Values["tagFilter"].ToString();
+    if (string.IsNullOrEmpty(tagFilter)) {
+        tagFilter = Common.AllTag;
+    }
 }
 <style type="text/css">
-
     .fileinput-button {
         position: relative;
         overflow: hidden;
         display: inline-block;
     }
 
-    .fileinput-button input {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        opacity: 0;
-        -ms-filter: 'alpha(opacity=0)';
-        font-size: 200px;
-        direction: ltr;
-        cursor: pointer;
-    }
-
+        .fileinput-button input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            opacity: 0;
+            -ms-filter: 'alpha(opacity=0)';
+            font-size: 200px;
+            direction: ltr;
+            cursor: pointer;
+        }
 </style>
 
 @if (User.Identity.IsAuthenticated) {
     <form class="form-inline" id="fileupload">
         <input type="hidden" name="__requestverificationtoken" value="@Html.AntiForgeryTokenValueOrchard()" />
         <div class="row">
-            <div class="col-md-4">
-                <span class="btn btn-primary btn-xs fileinput-button">
+            <div class="col-md-6">
+                <span class="btn btn-primary btn-xs fileinput-button" style="margin-right: 5px;">
                     <i class="glyphicon glyphicon-plus"></i>
                     <span>Add</span>
                     <!-- The file input field used as target for the file upload widget -->
                     <input type="file" name="files[]">
                 </span>
-            </div>
-            <div class="col-md-2">
-                <select title="Sharing" id="id_role" class="form-control" name="Role" size="1" style="padding: 1px; font-size: 12.5px;">
-                    @foreach (var role in roles) {
+
+                <select title="Sharing"
+                        id="id_role"
+                        class="form-control input-sm"
+                        name="Role"
+                        size="1"
+                        style="padding: 1px; font-size: 12.5px; height: 21px; margin-right: 5px;"
+                        data-toggle="tooltip"
+                        data-placement="top">
+                    @foreach (var role in Model.Roles) {
                         <option key="@role" selected="@(role == "Private")" value="@role">@role</option>
                     }
                 </select>
+
+                <input type="text"
+                       name="Tag"
+                       id="id_tag"
+                       class="form-control input-sm"
+                       placeholder="Tags"
+                       title="Tag"
+                       style="font-size: 12.5px; height: 21px;"
+                       data-toggle="tooltip"
+                       data-placement="top" />
+
             </div>
-            <div class="col-md-6">
+
+            <div class="col-md-5">
                 <div id="progress" class="progress" style="margin-bottom: 10px; margin-top: 1px;">
                     <div class="progress-bar progress-bar-success"></div>
                 </div>
                 <!-- The container for the uploaded files -->
                 <div id="files" class="files"></div>
             </div>
+            <div class="col-md-1">
+                <select title="Tag Filter"
+                        class="form-control input-sm"
+                        name="tagFilter"
+                        size="1"
+                        id="id_tag_filter"
+                        style="padding: 1px; font-size: 12.5px; height: 21px; margin-right: 5px;"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        onchange="javascript: window.location = '@(Url.Action("List", "File", new { area = Common.ModuleName, tagFilter = Common.AllTag }) + "/")' + $('#id_tag_filter').val();">
+                    @foreach (var tag in Model.Tags) {
+                        <option key="@tag" selected="@(tag.Equals(tagFilter, StringComparison.OrdinalIgnoreCase))" value="@tag">@tag</option>
+                    }
+                </select>
+            </div>
         </div>
     </form>
 }
 
-    <table class="table table-condensed table-hover" style="font-size: smaller;">
-        <thead>
+<table class="table table-condensed table-hover" style="font-size: smaller;">
+    <thead>
         <tr>
             <th>&nbsp;</th>
             <th>Id</th>
@@ -78,51 +115,51 @@
             <th>Created On</th>
             <th>Action</th>
         </tr>
-        </thead>
-        <tbody>
-            @foreach (var file in Model) {
-                <tr class="">
-                    <td>
-                        <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">Select</button>
-                    </td>
-                    <td>@file.Id</td>
-                    <td>@file.Title()</td>
-                    <td>
-                        <span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span>
-                        @if (file.CurrentTags().Any()) {
-                            foreach (var tag in file.CurrentTags()) {
-                                <span class="label label-info">@tag</span>
-                            }
+    </thead>
+    <tbody>
+        @foreach (var file in Model.Files) {
+            <tr class="">
+                <td>
+                    <button type="button" class="btn btn-primary btn-xs" onclick="javascript: window.location = '@(returnUrl + (returnUrl.Contains('?') ? "&" : "?") + "InputFileId=" + file.Id)';">Select</button>
+                </td>
+                <td>@file.Id</td>
+                <td>@file.Title()</td>
+                <td>
+                    <span class="label @(file.Direction.Equals("Out") ? "label-warning" : "label-success")">@file.Direction</span>
+                    @if (file.Tags().Any()) {
+                        foreach (var tag in file.Tags()) {
+                            <span class="label label-info">@tag</span>
                         }
-                    </td>
-                    <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), WorkContext.CurrentTimeZone))</td>
-                    <td>
-                        <div class="btn-group btn-group-xs" role="group" aria-label="...">
+                    }
+                </td>
+                <td>@(TimeZoneInfo.ConvertTimeFromUtc(file.CreatedUtc(), WorkContext.CurrentTimeZone))</td>
+                <td>
+                    <div class="btn-group btn-group-xs" role="group" aria-label="...">
 
-                            <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("File/Download", "File", new {id = @file.Id})', '_self');">
-                                <span class="glyphicon glyphicon-download"></span>
+                        <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("Download", "File", new {id = @file.Id})', '_self');">
+                            <span class="glyphicon glyphicon-download"></span>
+                        </button>
+
+                        <button title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("View", "File", new {id = @file.Id})">
+                            <span class="glyphicon glyphicon-eye-open"></span>
+                        </button>
+
+                        <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + file.Id))', '_self');">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+
+                        @if (User.Identity.IsAuthenticated) {
+                            <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="window.open('@Url.Action("Delete", "File", new {id = @file.Id})', '_self');">
+                                <span class="glyphicon glyphicon-trash"></span>
                             </button>
+                        }
 
-                            <button title="Open" type="button" class="btn btn-warning btn-xs view" href="@Url.Action("File/View", "File", new {id = @file.Id})">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                            </button>
-
-                            <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + file.Id))', '_self');">
-                                <span class="glyphicon glyphicon-edit"></span>
-                            </button>
-
-                            @if (User.Identity.IsAuthenticated) {
-                                <button type="button" class="btn btn-danger btn-xs" title="Delete" onclick="window.open('@Url.Action("File/Delete", "File", new {id = @file.Id})', '_self');">
-                                    <span class="glyphicon glyphicon-trash"></span>
-                                </button>
-                            }
-
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
 <script type="text/javascript">
     //<!--
@@ -139,14 +176,16 @@
         $("#fileupload").fileupload({
             url: '@Url.Action("Upload", new { area = Pipeline.Web.Orchard.Common.ModuleName })',
             dataType: "html",
-            done: function (e, data) {
-                window.location = '@Url.Action("List", new { area = Pipeline.Web.Orchard.Common.ModuleName })' + '?ReturnUrl=@returnUrl';
+            done: function () {
+                window.location = '@Url.Action("List", new { area = Pipeline.Web.Orchard.Common.ModuleName, tagFilter = Common.AllTag })' + '?ReturnUrl=@returnUrl';
             },
             progressall: function (e, data) {
                 var progress = data.loaded / data.total * 100;
                 $("#progress .progress-bar").css("width", progress + "%");
             }
         });
+
+        $('[data-toggle="tooltip"]').tooltip();
 
     });
     //-->
