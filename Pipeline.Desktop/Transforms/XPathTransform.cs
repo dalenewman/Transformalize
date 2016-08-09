@@ -58,7 +58,11 @@ namespace Pipeline.Desktop.Transforms {
                     row[Context.Field] = Context.Field.Convert(Context.Field.Default);
                 }
             } else {
-                row[Context.Field] = Context.Field.Convert(node.InnerText);
+                var content = Context.Field.ReadInnerXml ? node.InnerXml : node.OuterXml;
+                if (string.IsNullOrEmpty(content)) {
+                    content = node.InnerText;
+                }
+                row[Context.Field] = Context.Field.Convert(content);
             }
 
             return row;

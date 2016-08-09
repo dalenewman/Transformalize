@@ -15,15 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.IO;
 using System.Linq;
 using Autofac;
-using Cfg.Net.Reader;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
-using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Provider.File;
 
@@ -49,7 +45,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
             }
 
             // entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "file")) {
+            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "web")) {
 
                 // input version detector
                 builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
@@ -72,23 +68,21 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
             }
 
-            // Entity Output
-            if (_process.Output().Provider == "file") {
+            // TODO: be able to post (write) to web
+            if (_process.Output().Provider == "web") {
 
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
-                    // WRITER
+
+                    // ENTITY OUTPUT CONTROLLER
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+                    // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-
-                        switch (output.Connection.Provider) {
-                            case "file":
-                                return new DelimitedFileWriter(output, output.Connection.File);
-                            default:
-                                return new NullWriter(output);
-                        }
+                        return new NullWriter(output);
                     }).Named<IWrite>(entity.Key);
 
                 }

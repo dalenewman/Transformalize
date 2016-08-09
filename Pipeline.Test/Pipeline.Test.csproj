@@ -104,6 +104,7 @@
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="FromLengthsTransform.cs" />
+    <Compile Include="WebReader.cs" />
     <Compile Include="TagTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="InTransform.cs" />
