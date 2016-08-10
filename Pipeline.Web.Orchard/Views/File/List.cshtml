@@ -1,6 +1,4 @@
-﻿@using Orchard.Roles.Services
-@using Orchard.Tags.Services
-@using Pipeline.Web.Orchard
+﻿@using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
 @model FileListViewModel
 @{
@@ -11,7 +9,7 @@
     Script.Require("jQueryColorBox").AtHead();
     Script.Require("jQueryFileUpload").AtHead();
 
-    var returnUrl = string.IsNullOrEmpty(Request[Common.ReturnUrlName]) ? Url.Action("List", "Configuration") : Request[Common.ReturnUrlName];
+    var returnUrl = string.IsNullOrEmpty(Request[Common.ReturnUrlName]) ? Url.Action("List", "Cfg") : Request[Common.ReturnUrlName];
     int arrangementId;
     if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName]) && int.TryParse(Request[Common.ArrangementIdName], out arrangementId)) {
         returnUrl += (returnUrl.Contains('?') ? '&' : '?') + "ArrangementId=" + arrangementId;

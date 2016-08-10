@@ -15,25 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
-using Pipeline.Desktop.Writers;
-using Pipeline.Extensions;
-using Pipeline.Logging.NLog;
 using Pipeline.Nulls;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Pipeline.Web.Orchard.Modules {
 
-    public class InternalModule : Module {
+    public class WebModule : Module {
+
         private readonly Process _process;
-        private readonly string[] _internal = { "internal", "console", "trace", "log" };
 
-        public InternalModule() { }
+        public WebModule() { }
 
-        public InternalModule(Process process) {
+        public WebModule(Process process) {
             _process = process;
         }
 
@@ -43,26 +41,28 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 return;
 
             // Connections
-            foreach (var connection in _process.Connections.Where(c => c.IsInternal())) {
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "web")) {
+                // Schema Reader
                 builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
             }
 
-            // Entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider.In(_internal))) {
+            // entity input
+            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "web")) {
 
+                // input version detector
                 builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
 
-                // READER
+                // input read
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
                     switch (input.Connection.Provider) {
-                        case "internal":
-                            return new InternalReader(input, rowFactory);
-                        case "console":
-                            // todo: take standard input
-                            return new NullReader(input);
+                        case "web":
+                            if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
+                                return new Provider.Web.WebReader(input, rowFactory);
+                            }
+                            return new Provider.Web.WebCsvReader(input, rowFactory);
                         default:
                             return new NullReader(input, false);
                     }
@@ -70,35 +70,26 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
             }
 
-            // Entity Output
-            if (_process.Output().Provider.In(_internal)) {
+            // TODO: be able to post (write) to web
+            if (_process.Output().Provider == "web") {
 
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
 
+                    // ENTITY OUTPUT CONTROLLER
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
-                    // WRITER
+                    // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-
-                        switch (output.Connection.Provider) {
-                            case "console":
-                                return ctx.Resolve<ConsoleWriter>() ;
-                            case "trace":
-                                return new TraceWriter(new JsonNetSerializer(output));
-                            case "internal":
-                                return new InternalWriter(entity);
-                            case "log":
-                                return new NLogWriter(output);
-                            default:
-                                return new NullWriter(output);
-                        }
+                        return new NullWriter(output);
                     }).Named<IWrite>(entity.Key);
+
                 }
             }
+
         }
     }
 }

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using FileHelpers;
 using FileHelpers.Dynamic;
 using Pipeline.Context;
@@ -52,7 +53,15 @@ namespace Pipeline.Provider.File {
 
             ErrorMode errorMode;
             Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
-            var engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode };
+
+            FileHelperAsyncEngine engine;
+
+            if (_context.Connection.Header == Constants.DefaultSetting) {
+                var headerText = string.Join(_context.Connection.Delimiter, _context.OutputFields.Select(f => f.Label.Replace(_context.Connection.Delimiter, " ")));
+                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = headerText };
+            } else {
+                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode };
+            }
 
             var file = Path.Combine(_context.Connection.Folder, _fileName ?? _context.Entity.OutputTableName(_context.Process.Name));
             _context.Debug(() => $"Writing {file}.");

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -24,21 +25,25 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Provider.Web {
+
     public class WebCsvReader : IRead {
 
         private readonly InputContext _context;
         private readonly Regex _regex = new Regex(@"""?\s*,\s*""?", RegexOptions.Compiled);
         private readonly IRowFactory _rowFactory;
+        private readonly WebClient _client;
 
         public WebCsvReader(InputContext context, IRowFactory rowFactory) {
             _context = context;
             _rowFactory = rowFactory;
+            _client = string.IsNullOrEmpty(context.Connection.User) ? new WebClient() : new WebClient { Credentials = new NetworkCredential(_context.Connection.User, _context.Connection.Password) };
+            _client.Headers[HttpRequestHeader.Authorization] = $"{"Basic"} {Convert.ToBase64String(System.Text.Encoding.Default.GetBytes($"{_context.Connection.User}:{_context.Connection.Password}"))}";
+
         }
 
         public IEnumerable<IRow> Read() {
 
-            var client = new WebClient();
-            var stream = client.OpenRead(_context.Connection.Url);
+            var stream = _client.OpenRead(_context.Connection.Url);
 
             if (stream == null) {
                 _context.Error("Could not open {0}.", _context.Connection.Url);

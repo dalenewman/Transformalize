@@ -66,6 +66,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process, _appDataFolder).Configure);
             container.RegisterCallback(new ExcelModule(Process, _appDataFolder).Configure);
+            container.RegisterCallback(new WebModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);

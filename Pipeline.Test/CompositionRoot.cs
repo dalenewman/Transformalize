@@ -28,7 +28,7 @@ namespace Pipeline.Test {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Debug) {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.None) {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));

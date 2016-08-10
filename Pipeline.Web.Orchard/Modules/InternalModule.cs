@@ -22,13 +22,14 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
 using Pipeline.Nulls;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 
     public class InternalModule : Module {
 
         private readonly Process _process;
-        private readonly string[] _internal = { "internal", "console", "trace" };
+        private readonly string[] _internal = { "internal", "console", "trace", "log" };
 
         public InternalModule() { }
 
@@ -90,6 +91,8 @@ namespace Pipeline.Web.Orchard.Modules {
                         switch (output.Connection.Provider) {
                             case "internal":
                                 return new InternalWriter(e);
+                            case "log":
+                                return new OrchardLogWriter(output);
                             default:
                                 return new NullWriter(output);
                         }

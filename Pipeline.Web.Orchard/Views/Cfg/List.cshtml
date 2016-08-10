@@ -44,7 +44,7 @@
                     style="padding: 1px; font-size: 12.5px; height: 21px;"
                     data-toggle="tooltip"
                     data-placement="top"
-                    onchange="javascript: window.location = '@(Url.Action("List", "Configuration", new {area = Common.ModuleName, tagFilter = Common.AllTag}) + "/")' + $('#id_tag_filter').val();">
+                    onchange="javascript: window.location = '@(Url.Action("List", "Cfg", new {area = Common.ModuleName, tagFilter = Common.AllTag}) + "/")' + $('#id_tag_filter').val();">
                 @foreach (var tag in Model.Tags) {
                     <option key="@tag" selected="@(tag.Equals(tagFilter, StringComparison.OrdinalIgnoreCase))" value="@tag">@tag</option>
                 }
@@ -101,7 +101,7 @@
                         </button>
                     }
                     @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
-                        <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Configuration", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                        <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Cfg", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                             <span class="glyphicon glyphicon-th-list"></span> 
                         </button>
                     }

@@ -34,7 +34,7 @@ using Pipeline.Web.Orchard.Services;
 namespace Pipeline.Web.Orchard.Controllers {
 
     [ValidateInput(false), Themed(true)]
-    public class ConfigurationController : Controller {
+    public class CfgController : Controller {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -44,7 +44,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public ConfigurationController(
+        public CfgController(
             IOrchardServices services,
             IProcessService processService,
             ISortService sortService,

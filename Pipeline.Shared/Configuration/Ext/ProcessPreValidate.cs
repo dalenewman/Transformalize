@@ -35,6 +35,7 @@ namespace Pipeline.Configuration.Ext {
                 calculatedField.IsCalculated = true;
             }
 
+            AddDefaultDelimiters(p);
             DefaultConnection(p, "input");
             DefaultConnection(p, "output");
             DefaultEntityConnections(p);
@@ -75,6 +76,18 @@ namespace Pipeline.Configuration.Ext {
                 }
             }
 
+            // verify entities have level and message field for log output
+            if (p.Output().Provider == "log") {
+                foreach (var fields in p.Entities.Select(entity => entity.GetAllFields().ToArray())) {
+                    if (!fields.Any(f => f.Alias.Equals("message"))) {
+                        error("Log output requires a message field");
+                    }
+                    if (!fields.Any(f => f.Alias.Equals("level"))) {
+                        error("Log output requires a level field");
+                    }
+                }
+            }
+
         }
 
         /// <summary>
@@ -92,6 +105,17 @@ namespace Pipeline.Configuration.Ext {
             var connection = (p.Connections.FirstOrDefault(cn => cn.Provider == "file" && cn.Name == "input") ?? p.Connections.First(cn => cn.Provider == "file"));
             p.Entities.Add(new Entity { Name = connection.Name, Alias = connection.Name, Connection = connection.Name }.WithDefaults());
         }
+
+        static void AddDefaultDelimiters(Process p) {
+            foreach (var connection in p.Connections.Where(c => c.Provider == "file" && c.Delimiter == string.Empty && !c.Delimiters.Any())) {
+                connection.Delimiters.Add(new Delimiter { Name = "comma", Character = ',' });
+                connection.Delimiters.Add(new Delimiter { Name = "tab", Character = '\t' });
+                connection.Delimiters.Add(new Delimiter { Name = "pipe", Character = '|' });
+                connection.Delimiters.Add(new Delimiter { Name = "semicolon", Character = ';' });
+                //Delimiters.Add(new Delimiter { Name = "unit", Character = Convert.ToChar(31) });
+            }
+        }
+
 
         static void DefaultConnection(Process p, string name) {
             if (p.Connections.All(c => c.Name != name)) {

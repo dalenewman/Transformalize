@@ -9,7 +9,7 @@
     string returnUrl;
     string returnName;
     if (string.IsNullOrEmpty(Request.QueryString[Common.ReturnUrlName])) {
-        returnUrl = Url.Action("List", "Configuration", new {area = Common.ModuleName});
+        returnUrl = Url.Action("List", "Cfg", new {area = Common.ModuleName});
         returnName = "Jobs";
     } else {
         returnUrl = Request.QueryString[Common.ReturnUrlName];

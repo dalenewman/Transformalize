@@ -57,15 +57,17 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                 // register output for connection
                 builder.Register(ctx => {
-                    var context = ctx.Resolve<IContext>();
+                    var context = ctx.ResolveNamed<IConnectionContext>(connection.Key);
                     return new OutputContext(context, new Incrementer(context));
                 }).Named<OutputContext>(connection.Key);
 
                 if (connection.Provider == "console") {
-                    builder.Register(ctx => new ConsoleWriter(connection.Format == "json" ? new JsonNetSerializer(ctx.Resolve<OutputContext>()) : new CsvSerializer(ctx.Resolve<OutputContext>()) as ISerialize)).As<ConsoleWriter>();
+                    builder.Register(ctx => new ConsoleWriter(connection.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(connection.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(connection.Key)) as ISerialize)).As<ConsoleWriter>();
                 }
 
             }
+
+            var output = _process.Output();
 
             // Entity Context and RowFactory
             foreach (var entity in _process.Entities) {
@@ -84,6 +86,11 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
                     return new OutputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
                 }).Named<OutputContext>(entity.Key);
+
+                if (output.Provider == "console") {
+                    builder.Register(ctx => new ConsoleWriter(output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize)).As<ConsoleWriter>();
+                }
+                
             }
         }
     }

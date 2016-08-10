@@ -201,8 +201,10 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Drivers\PipelineFilePartDriver.cs" />
     <Compile Include="Handlers\PipelineFilePartHandler.cs" />
+    <Compile Include="Impl\OrchardLogWriter.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
+    <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\CfgService.cs" />
     <Compile Include="Services\FileResponse.cs" />
     <Compile Include="Services\FileService.cs" />
@@ -241,7 +243,7 @@
     <Compile Include="Impl\PipelineAction.cs" />
     <Compile Include="Modules\AutoModule.cs" />
     <Compile Include="Controllers\ApiController.cs" />
-    <Compile Include="Controllers\ConfigurationController.cs" />
+    <Compile Include="Controllers\CfgController.cs" />
     <Compile Include="Drivers\PipelineConfigurationPartDriver.cs" />
     <Compile Include="Handlers\PipelineConfigurationPartHandler.cs" />
     <Compile Include="Migrations.cs" />
@@ -260,7 +262,7 @@
     <Compile Include="Services\SortService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Configuration\List.cshtml" />
+    <Content Include="Views\Cfg\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineConfiguration.cshtml" />
     <Content Include="Views\Shared\ConfigurationEditor.cshtml" />
   </ItemGroup>
@@ -272,7 +274,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\local.pubxml" />
-    <Content Include="Views\Configuration\Report.cshtml" />
+    <Content Include="Views\Cfg\Report.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
     <Content Include="Views\File\List.cshtml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineFile.cshtml" />

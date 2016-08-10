@@ -49,6 +49,7 @@ namespace Pipeline.Web.Orchard.Impl {
             nested.RegisterCallback(new InternalModule(process).Configure);
             nested.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
             nested.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
+            nested.RegisterCallback(new WebModule(process).Configure);
 
             nested.RegisterCallback(new MapModule(process).Configure);
 

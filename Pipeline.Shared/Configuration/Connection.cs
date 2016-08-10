@@ -78,7 +78,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web", toLower = true)]
+        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web,log", toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
@@ -151,23 +151,6 @@ namespace Pipeline.Configuration {
             if (file.EndsWith(".xls") || file.EndsWith(".xlsx")) {
                 Provider = "excel";
             }
-
-            ModifyDefaultDelimiters();
-
-        }
-
-        private void ModifyDefaultDelimiters() {
-            if (Delimiter != string.Empty)
-                return;
-
-            if (Delimiters.Any())
-                return;
-
-            Delimiters.Add(new Delimiter { Name = "comma", Character = ',' });
-            Delimiters.Add(new Delimiter { Name = "tab", Character = '\t' });
-            Delimiters.Add(new Delimiter { Name = "pipe", Character = '|' });
-            Delimiters.Add(new Delimiter { Name = "semicolon", Character = ';' });
-            //Delimiters.Add(new Delimiter { Name = "unit", Character = Convert.ToChar(31) });
 
         }
 
