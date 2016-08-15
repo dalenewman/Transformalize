@@ -52,8 +52,7 @@ namespace Pipeline.Web.Orchard.Services {
 
             _addressFamily = startAddress.AddressFamily;
             _lowerBytes = startAddress.GetAddressBytes();
-            _upperBytes = endAddress.GetAddressBytes();
-
+            _upperBytes = endAddress.GetAddressBytes(); 
             if (clientAddress.AddressFamily != _addressFamily) {
                 return false;
             }
@@ -62,10 +61,8 @@ namespace Pipeline.Web.Orchard.Services {
 
             bool lowerBoundary = true, upperBoundary = true;
 
-            for (var i = 0; i < _lowerBytes.Length &&
-                            (lowerBoundary || upperBoundary); i++) {
-                if ((lowerBoundary && addressBytes[i] < _lowerBytes[i]) ||
-                    (upperBoundary && addressBytes[i] > _upperBytes[i])) {
+            for (var i = 0; i < _lowerBytes.Length && (lowerBoundary || upperBoundary); i++) {
+                if ((lowerBoundary && addressBytes[i] < _lowerBytes[i]) || (upperBoundary && addressBytes[i] > _upperBytes[i])) {
                     return false;
                 }
 

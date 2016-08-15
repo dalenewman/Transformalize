@@ -8,7 +8,6 @@ using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
 using Orchard.Tags.Models;
 using Pipeline.Configuration;
-using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard {
@@ -29,6 +28,7 @@ namespace Pipeline.Web.Orchard {
         public const string ArrangementIdName = "ArrangementId";
         public const string ReturnUrlName = "ReturnUrl";
         public const string AllTag = "All";
+        public const string TagFilterName = "tagFilter";
 
         public const string DefaultShortHand = @"<cfg>
 
@@ -186,6 +186,7 @@ namespace Pipeline.Web.Orchard {
         <add name='title' value='' />
         <add name='href' value='' />
         <add name='role' value='' />
+        <add name='target' value='' />
       </parameters>
     </add>
   </signatures>
@@ -263,7 +264,8 @@ namespace Pipeline.Web.Orchard {
     <add name='isdefault' signature='none' target='t' />
     <add name='isempty' signature='none' target='t' />
     <add name='tag' signature='tag' target='t' />
-    <add name='filter' signature='any' target='t' />
+    <add name='include' signature='any' target='t' />
+    <add name='exclude' signature='any' target='t' />
   </methods>
 
 </cfg>";

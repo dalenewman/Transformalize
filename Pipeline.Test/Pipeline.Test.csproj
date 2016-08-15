@@ -101,6 +101,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterTransform.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="FromLengthsTransform.cs" />

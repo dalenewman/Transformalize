@@ -5,13 +5,19 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class FilterTransform : BaseTransform {
-        private readonly Field _input;
-        private Func<IRow, bool> _filter;
 
-        public FilterTransform(IContext context) : base(context) {
-            _input = SingleInput();
-            _filter = GetFunc(context.Transform.Operator, _input.Convert(context.Transform.Value));
+    public enum FilterType {
+        Exclude,
+        Include
+    }
+
+    public class FilterTransform : BaseTransform {
+        private readonly Func<IRow, bool> _filter;
+        private readonly FilterType _filterType;
+
+        public FilterTransform(IContext context, FilterType filterType) : base(context) {
+            _filterType = filterType;
+            _filter = GetFunc(SingleInput(), context.Transform.Operator, SingleInput().Convert(context.Transform.Value));
         }
 
         public override IRow Transform(IRow row) {
@@ -19,29 +25,29 @@ namespace Pipeline.Transforms {
         }
 
         public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
-            return rows.Where(row => !_filter(row));
+            return _filterType == FilterType.Include ? rows.Where(row => _filter(row)) : rows.Where(row => !_filter(row));
         }
 
-        private Func<IRow, bool> GetFunc(string @operator, object value) {
+        public static Func<IRow, bool> GetFunc(Field input, string @operator, object value) {
             // equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=
             switch (@operator) {
                 case "notequal":
                 case "!=":
-                    return row => !row[_input].Equals(value);
+                    return row => row[input].Equals(value);
                 case "lessthan":
                 case "<":
-                    return row => ((IComparable)row[_input]).CompareTo(value) < 0;
+                    return row => ((IComparable)row[input]).CompareTo(value) < 0;
                 case "lessthanequal":
                 case "<=":
-                    return row => ((IComparable)row[_input]).CompareTo(value) < 0;
+                    return row => ((IComparable)row[input]).CompareTo(value) < 0;
                 case "greaterthan":
                 case ">":
-                    return row => ((IComparable)row[_input]).CompareTo(value) > 0;
+                    return row => ((IComparable)row[input]).CompareTo(value) > 0;
                 case "greaterthanequal":
                 case ">=":
-                    return row => ((IComparable)row[_input]).CompareTo(value) >= 0;
+                    return row => ((IComparable)row[input]).CompareTo(value) >= 0;
                 default:
-                    return row => row[_input].Equals(value);
+                    return row => row[input].Equals(value);
             }
         }
     }

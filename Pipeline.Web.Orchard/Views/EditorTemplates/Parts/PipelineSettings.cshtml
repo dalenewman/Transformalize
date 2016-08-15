@@ -10,7 +10,7 @@
     @Html.LabelFor(x => x.EditorTheme, T("Default Editor Theme"))
     @Html.DropDownListFor(x => x.EditorTheme, Model.EditorThemes)
     @Html.ValidationMessageFor(x => x.EditorTheme)
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "List", new {area = "Pipeline.Web.Orchard"}))', '_self');">Jobs</button>
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "Cfg", new {area = "Pipeline.Web.Orchard"}))', '_self');">Jobs</button>
 </div>
 
 <div class="editor-field">

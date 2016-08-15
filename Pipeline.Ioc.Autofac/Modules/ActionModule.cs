@@ -101,6 +101,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     builder.RegisterCallback(new FileModule(root).Configure);
                     builder.RegisterCallback(new FolderModule(root).Configure);
                     builder.RegisterCallback(new ExcelModule(root).Configure);
+                    builder.RegisterCallback(new WebModule(root).Configure);
 
                     builder.RegisterCallback(new MapModule(root).Configure);
                     builder.RegisterCallback(new TemplateModule(root).Configure);

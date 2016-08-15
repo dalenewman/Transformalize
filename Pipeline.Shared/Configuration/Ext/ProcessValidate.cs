@@ -284,7 +284,8 @@ namespace Pipeline.Configuration.Ext {
 
             // check input types
             switch (t.Method) {
-                case "filter":
+                case "include":
+                case "exclude":
                     if (input.Type == "byte[]") {
                         error($"The {t.Method} method doesn't work with byte arrays.");
                     }
@@ -528,14 +529,15 @@ namespace Pipeline.Configuration.Ext {
                         t.ContentType = "raw"; //other would be html
                     }
                     break;
-                case "filter":
+                case "include":
+                case "exclude":
                 case "any":
                     if (string.IsNullOrEmpty(t.Operator)) {
-                        error("The any transform requires an operator.");
+                        error($"The {t.Method} transform requires an operator.");
 
                     }
                     if (string.IsNullOrEmpty(t.Value)) {
-                        error("The any transform requires a value.");
+                        error($"The {t.Method} transform requires a value.");
                     }
                     break;
                 case "connection":

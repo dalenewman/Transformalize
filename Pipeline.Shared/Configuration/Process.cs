@@ -502,17 +502,17 @@ namespace Pipeline.Configuration {
         public string Description { get; set; }
 
         public void Dispose() {
-            Log.Clear();
-            Entities.Clear();
-            Actions.Clear();
-            CalculatedFields.Clear();
-            Connections.Clear();
-            Environments.Clear();
-            Maps.Clear();
-            Relationships.Clear();
-            Scripts.Clear();
-            SearchTypes.Clear();
-            Templates.Clear();
+            Log?.Clear();
+            Entities?.Clear();
+            Actions?.Clear();
+            CalculatedFields?.Clear();
+            Connections?.Clear();
+            Environments?.Clear();
+            Maps?.Clear();
+            Relationships?.Clear();
+            Scripts?.Clear();
+            SearchTypes?.Clear();
+            Templates?.Clear();
         }
     }
 }

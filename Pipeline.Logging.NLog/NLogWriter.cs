@@ -14,7 +14,7 @@ namespace Pipeline.Logging.NLog {
         private readonly Field _message;
 
         public NLogWriter(OutputContext context) {
-            _logger = LogManager.GetLogger("output");
+            _logger = LogManager.GetLogger(context.Process.Name);
             _level = context.OutputFields.First(f => f.Name.Equals("level", StringComparison.OrdinalIgnoreCase));
             _message = context.OutputFields.First(f => f.Name.Equals("message", StringComparison.OrdinalIgnoreCase));
         }

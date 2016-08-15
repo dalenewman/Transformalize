@@ -506,5 +506,9 @@ namespace Pipeline.Configuration {
         public string Style { get; set; }
         [Cfg(value="")]
         public string Role { get; set; }
+        [Cfg(value = "")]
+        public string HRef { get; set; }
+        [Cfg(value = "")]
+        public string Target { get; set; }
     }
 }

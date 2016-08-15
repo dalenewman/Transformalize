@@ -24,7 +24,7 @@ using Pipeline.Extensions;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class DateDiffTransform : BaseTransform, ITransform {
+    public class DateDiffTransform : BaseTransform {
 
         public static readonly Dictionary<string, Func<DateTime, DateTime, object>> Parts = new Dictionary<string, Func<DateTime, DateTime, object>>() {
             {"day", (x,y) => (y-x).TotalDays},

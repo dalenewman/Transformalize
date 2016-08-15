@@ -18,11 +18,6 @@
     if (!string.IsNullOrEmpty(Request[Common.ArrangementIdName])) {
         int.TryParse(Request[Common.ArrangementIdName], out arrangementId);
     }
-
-    var tagFilter = ViewContext.RouteData.Values["tagFilter"].ToString();
-    if (string.IsNullOrEmpty(tagFilter)) {
-        tagFilter = Common.AllTag;
-    }
 }
 <div class="row">
     
@@ -46,7 +41,7 @@
                     data-placement="top"
                     onchange="javascript: window.location = '@(Url.Action("List", "Cfg", new {area = Common.ModuleName, tagFilter = Common.AllTag}) + "/")' + $('#id_tag_filter').val();">
                 @foreach (var tag in Model.Tags) {
-                    <option key="@tag" selected="@(tag.Equals(tagFilter, StringComparison.OrdinalIgnoreCase))" value="@tag">@tag</option>
+                    <option key="@tag" selected="@(tag.Equals(Model.TagFilter, StringComparison.OrdinalIgnoreCase))" value="@tag">@tag</option>
                 }
             </select>
         </div>

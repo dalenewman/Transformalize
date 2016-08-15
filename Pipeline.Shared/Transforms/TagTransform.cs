@@ -56,12 +56,21 @@ namespace Pipeline.Transforms {
                 Context.Transform.Role = Context.Field.Role;
             }
 
+            if (Context.Transform.HRef == string.Empty && Context.Field.HRef != string.Empty) {
+                Context.Transform.HRef = Context.Field.HRef;
+            }
+
+            if (Context.Transform.Target == string.Empty && Context.Field.Target != string.Empty) {
+                Context.Transform.Target = Context.Field.Target;
+            }
+
             var input = MultipleInput();
             _attributes.Add(new TagAttribute(input, "href", Context.Transform.HRef));
             _attributes.Add(new TagAttribute(input, "class", Context.Transform.Class));
             _attributes.Add(new TagAttribute(input, "title", Context.Transform.Title));
             _attributes.Add(new TagAttribute(input, "style", Context.Transform.Style));
             _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
+            _attributes.Add(new TagAttribute(input, "target", Context.Transform.Target));
 
             _contentField = input.First();
 

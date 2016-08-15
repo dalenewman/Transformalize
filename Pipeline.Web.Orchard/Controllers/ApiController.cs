@@ -81,7 +81,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             format = GetFormat(Request, part);
 
-            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part) || part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase) && _ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
 
                 var process = _processService.Resolve(part.EditorMode, format);
                 var parameters = Common.GetParameters(Request, _secureFileService);

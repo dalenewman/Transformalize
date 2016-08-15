@@ -54,79 +54,76 @@ namespace Pipeline.Web.Orchard.Impl {
         static ITransform SwitchTransform(IComponentContext ctx, IContext context) {
 
             switch (context.Transform.Method) {
-                case "sum":
-                case "add": return new AddTransform(context);
-                case "multiply": return new MultiplyTransform(context);
-                case "convert": return new ConvertTransform(context);
-                case "now": return new UtcNowTransform(context);
-                case "toyesno": return new ToYesNoTransform(context);
-                case "regexreplace": return new CompiledRegexReplaceTransform(context);
-                case "match": return new CompiledRegexMatchTransform(context);
-                case "replace": return new ReplaceTransform(context);
-                case "formatphone": return new FormatPhoneTransform(context);
-                case "utcnow":return new UtcNowTransform(context);
-                case "timeago": return new RelativeTimeTransform(context, true);
-                case "timeahead": return new RelativeTimeTransform(context, false);
-                case "format": return new FormatTransform(context);
-                case "substring": return new SubStringTransform(context);
-                case "left": return new LeftTransform(context);
-                case "right": return new RightTransform(context);
-                case "copy": return new CopyTransform(context);
+
+                case "add": case "sum": return new AddTransform(context);
+                case "coalesce": return new CoalesceTransform(context);
                 case "concat": return new ConcatTransform(context);
-                case "htmldecode": return new DecodeTransform(context);
-                case "xmldecode": return new DecodeTransform(context);
+                case "connection": return new ConnectionTransform(context);
+                case "convert": return new ConvertTransform(context);
+                case "copy": return new CopyTransform(context);
+                case "cs": case "csharp": return new CsharpRemoteTransform(context);
+                case "datediff": return new DateDiffTransform(context);
+                case "datepart": return new DatePartTransform(context);
+                case "decompress": return new DecompressTransform(context);
+                case "fileext": return new FileExtTransform(context);
+                case "filename": return new FileNameTransform(context);
+                case "filepath": return new FilePathTransform(context);
+                case "format": return new FormatTransform(context);
+                case "formatphone": return new FormatPhoneTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
+                case "htmldecode": return new DecodeTransform(context);
+                case "insert": return new InsertTransform(context);
+                case "invert": return new InvertTransform(context);
+                case "join": return new JoinTransform(context);
+                case "js": case "javascript": return ctx.ResolveNamed<ITransform>("js", new TypedParameter(typeof(PipelineContext), context));
+                case "last": return new LastTransform(context);
+                case "left": return new LeftTransform(context);
+                case "lower": case "tolower": return new ToLowerTransform(context);
+                case "map": return new MapTransform(context);
+                case "match": return new CompiledRegexMatchTransform(context);
+                case "multiply": return new MultiplyTransform(context);
+                case "next": return new NextTransform(context);
+                case "now": return new UtcNowTransform(context);
                 case "padleft": return new PadLeftTransform(context);
                 case "padright": return new PadRightTransform(context);
-                case "splitlength": return new SplitLengthTransform(context);
-                case "timezone": return new TimeZoneTransform(context);
-                case "trim": return new TrimTransform(context);
-                case "trimstart": return new TrimStartTransform(context);
-                case "trimend": return new TrimEndTransform(context);
-                case "insert": return new InsertTransform(context);
-                case "remove": return new RemoveTransform(context);
-                case "js":
-                case "javascript": return ctx.ResolveNamed<ITransform>("js", new TypedParameter(typeof(PipelineContext), context));
-                case "cs":
-                case "csharp": return new CsharpRemoteTransform(context);
-                case "tostring": return new ToStringTransform(context);
-                case "upper":
-                case "toupper": return new ToUpperTransform(context);
-                case "lower":
-                case "tolower": return new ToLowerTransform(context);
-                case "join": return new JoinTransform(context);
-                case "map": return new MapTransform(context);
-                case "decompress": return new DecompressTransform(context);
-                case "next": return new NextTransform(context);
-                case "last": return new LastTransform(context);
-                case "datepart": return new DatePartTransform(context);
-                case "totime": return new ToTimeTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "connection": return new ConnectionTransform(context);
-                case "filename": return new FileNameTransform(context);
-                case "fileext": return new FileExtTransform(context);
-                case "filepath": return new FilePathTransform(context);
-                case "xpath": return new XPathTransform(context);
-                case "coalesce": return new CoalesceTransform(context);
-                case "invert": return new InvertTransform(context);
+                case "regexreplace": return new CompiledRegexReplaceTransform(context);
+                case "remove": return new RemoveTransform(context);
+                case "replace": return new ReplaceTransform(context);
+                case "right": return new RightTransform(context);
+                case "splitlength": return new SplitLengthTransform(context);
+                case "substring": return new SubStringTransform(context);
                 case "tag": return new TagTransform(context);
+                case "timeago": return new RelativeTimeTransform(context, true);
+                case "timeahead": return new RelativeTimeTransform(context, false);
+                case "timezone": return new TimeZoneTransform(context);
+                case "tostring": return new ToStringTransform(context);
+                case "totime": return new ToTimeTransform(context);
+                case "toyesno": return new ToYesNoTransform(context);
+                case "trim": return new TrimTransform(context);
+                case "trimend": return new TrimEndTransform(context);
+                case "trimstart": return new TrimStartTransform(context);
+                case "upper": case "toupper": return new ToUpperTransform(context);
+                case "utcnow":return new UtcNowTransform(context);
+                case "xmldecode": return new DecodeTransform(context);
+                case "xpath": return new XPathTransform(context);
+                case "exclude": return new FilterTransform(context, FilterType.Exclude);
+                case "include": return new FilterTransform(context, FilterType.Include);
 
-                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
-                case "fromsplit": return new FromSplitTransform(context);
                 case "fromlengths": return new FromLengthsTranform(context);
-                case "filter" : return new FilterTransform(context);
+                case "fromsplit": return new FromSplitTransform(context);
+                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);
-                case "startswith": return new StartsWithValidator(context);
-                case "endswith": return new EndsWithValidator(context);
-                case "in": return new InValidator(context);
                 case "contains": return new ContainsValidator(context);
+                case "endswith": return new EndsWithValidator(context);
+                case "equal": case "equals": return new EqualsValidator(context);
+                case "in": return new InValidator(context);
                 case "is": return new IsValidator(context);
-                case "equal":
-                case "equals": return new EqualsValidator(context);
-                case "isempty": return new IsEmptyValidator(context);
                 case "isdefault": return new IsDefaultValidator(context);
+                case "isempty": return new IsEmptyValidator(context);
+                case "startswith": return new StartsWithValidator(context);
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);

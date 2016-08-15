@@ -62,12 +62,20 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         public ActionResult List(string tagFilter) {
 
+            // Sticky Tag Filter
+            if (Request.RawUrl.EndsWith("List")) {
+                tagFilter = Session[Common.TagFilterName] != null ? Session[Common.TagFilterName].ToString() : Common.AllTag;
+            } else {
+                Session[Common.TagFilterName] = tagFilter;
+            }
+
             if (!User.Identity.IsAuthenticated)
                 System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
 
             var viewModel = new ConfigurationListViewModel(
-                _cfgService.List(tagFilter), 
-                Common.Tags<PipelineConfigurationPart, PipelineConfigurationPartRecord>(_orchardServices)
+                _cfgService.List(tagFilter),
+                Common.Tags<PipelineConfigurationPart, PipelineConfigurationPartRecord>(_orchardServices),
+                tagFilter
             );
 
             return View(viewModel);

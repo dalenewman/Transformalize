@@ -57,6 +57,7 @@ namespace Pipeline.Command {
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);
+            container.RegisterCallback(new WebModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);
