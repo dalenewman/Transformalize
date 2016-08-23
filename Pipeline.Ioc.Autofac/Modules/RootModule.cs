@@ -28,6 +28,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Loggers;
 using Pipeline.Nulls;
+using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
 using Pipeline.Template.Razor;
 using IParser = Pipeline.Contracts.IParser;
@@ -63,12 +64,13 @@ namespace Pipeline.Ioc.Autofac.Modules {
             );
 
             // transform choices
-            builder.Register<ITransform>((ctx, p) => new JintTransform(p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
+            // builder.Register<ITransform>((ctx, p) => new JintTransform(p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
+            builder.Register<ITransform>((ctx, p) => new JavascriptTransform("ChakraCoreJsEngine", p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
             builder.Register<ITransform>((ctx, p) => new RazorTransform(p.TypedAs<PipelineContext>())).Named<ITransform>("razor");
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");
-
+             
             // input row condition
             builder.Register<IRowCondition>((ctx, p) => new JintRowCondition(p.TypedAs<InputContext>(), p.TypedAs<string>())).As<IRowCondition>();
 
@@ -79,6 +81,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     new PlaceHolderModifier(),
                     ctx.Resolve<IRootModifier>(),
                     ctx.ResolveNamed<IValidator>("js"),
+                    new IllegalCharacterValidator("ipc"),
                     new PlaceHolderValidator()
                 };
 

@@ -59,7 +59,7 @@ namespace Pipeline.Test {
 
             builder.RegisterModule(new MapModule(_process));
             builder.RegisterModule(new TemplateModule(_process));
-            builder.RegisterModule(new ActionModule());
+            builder.RegisterModule(new ActionModule(_process));
 
             builder.RegisterModule(new EntityPipelineModule(_process));
             builder.RegisterModule(new ProcessPipelineModule(_process));

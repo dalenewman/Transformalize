@@ -22,37 +22,44 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
+
     public class MapTransform : BaseTransform {
 
         readonly Field _input;
         readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
-        private readonly object _catchAll;
+        private object _catchAll;
         const string CatchAll = "*";
 
         public MapTransform(IContext context) : base(context) {
             _input = SingleInput();
+        }
 
-            var map = context.Process.Maps.First(m => m.Name == context.Transform.Map);
+        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+
+            var map = Context.Process.Maps.First(m => m.Name == Context.Transform.Map);
 
             // seems like i have over-complicated this...
             foreach (var item in map.Items) {
                 if (item.From.Equals(CatchAll)) {
-                    _catchAll = context.Field.Convert(item.To);
+                    _catchAll = Context.Field.Convert(item.To);
                     continue;
                 }
                 var from = _input.Convert(item.From);
                 if (item.To == null || item.To.Equals(string.Empty)) {
-                    var field = context.Entity.GetField(item.Parameter);
+                    var field = Context.Entity.GetField(item.Parameter);
                     _map[from] = (r) => r[field];
                 } else {
-                    var to = context.Field.Convert(item.To);
+                    var to = Context.Field.Convert(item.To);
                     _map[from] = (r) => to;
                 }
             }
             if (_catchAll == null) {
-                _catchAll = context.Field.Convert(context.Field.Default);
+                _catchAll = Context.Field.Convert(Context.Field.Default);
             }
+
+            return base.Transform(rows);
         }
+
         public override IRow Transform(IRow row) {
 
             Func<IRow, object> objects;

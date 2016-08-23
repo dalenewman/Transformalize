@@ -189,8 +189,10 @@ namespace Pipeline.Configuration {
         public string ToTimeZone { get; set; }
         [Cfg(value = " ")]
         public string TrimChars { get; set; }
+
         [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Constants.TypeDomain)]
         public string Type { get; set; }
+
         [Cfg(value = "meters")]
         public string Units { get; set; }
 

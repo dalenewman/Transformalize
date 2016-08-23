@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
@@ -27,22 +28,31 @@ namespace Pipeline.Desktop.Transforms {
 
     public class CsharpRemoteTransform : CSharpBaseTransform {
 
-        private readonly AppDomain _domain;
-        private readonly CompilerRunner _compilerRunner;
-        private readonly Sponsor _sponsor;
+        private AppDomain _domain;
+        private CompilerRunner _compilerRunner;
+        private Sponsor _sponsor;
 
         public CsharpRemoteTransform(IContext context) : base(context) {
 
+        }
+
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = _compilerRunner.Run(row.ToArray());
+            Increment();
+            return row;
+        }
+
+        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
             var timer = new Stopwatch();
             timer.Start();
 
             var input = MultipleInput();
-            var code = WrapCode(input, context.Transform.Script, context.Entity.IsMaster);
+            var code = WrapCode(input, Context.Transform.Script, Context.Entity.IsMaster);
 
-            context.Debug((() => code));
+            Context.Debug((() => code));
 
-            context.Info("Creating new app domain and sponsor.");
-            _domain = AppDomain.CreateDomain(context.Key);
+            Context.Info("Creating new app domain and sponsor.");
+            _domain = AppDomain.CreateDomain(Context.Key);
 
             _sponsor = new Sponsor();  // manages lifetime of the object in otherDomain
             _compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner");
@@ -52,25 +62,25 @@ namespace Pipeline.Desktop.Transforms {
 
             var errors = _compilerRunner.Compile(code);
             if (string.IsNullOrEmpty(errors)) {
-                context.Info($"Compiled in {timer.Elapsed}");
+                Context.Info($"Compiled in {timer.Elapsed}");
             } else {
-                context.Error(errors);
-                context.Error(context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
+                Context.Error(errors);
+                Context.Error(Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
             }
 
             timer.Stop();
-        }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = _compilerRunner.Run(row.ToArray());
-            Increment();
-            return row;
+            return base.Transform(rows);
         }
 
         public override void Dispose() {
             Context.Info("Release lease and unload app domain.");
-            _sponsor.Release = true;
-            AppDomain.Unload(_domain);
+            if (_sponsor != null) {
+                _sponsor.Release = true;
+            }
+            if (_domain != null) {
+                AppDomain.Unload(_domain);
+            }
             base.Dispose();
         }
     }
@@ -83,7 +93,7 @@ namespace Pipeline.Desktop.Transforms {
             // if any of these cases is true
             if (lease == null || lease.CurrentState != LeaseState.Renewing || Release)
                 return TimeSpan.Zero; // don't renew
-            return TimeSpan.FromSeconds(10); // renew for 10 seconds
+            return TimeSpan.FromSeconds(5); // renew for 5 seconds
         }
     }
 
@@ -139,9 +149,9 @@ namespace Pipeline.Desktop.Transforms {
             if (lease == null || lease.CurrentState != LeaseState.Initial)
                 return lease;
 
-            lease.InitialLeaseTime = TimeSpan.FromMinutes(3);
-            lease.SponsorshipTimeout = TimeSpan.FromMinutes(3);
-            lease.RenewOnCallTime = TimeSpan.FromSeconds(10);
+            lease.InitialLeaseTime = TimeSpan.FromSeconds(10);
+            lease.SponsorshipTimeout = TimeSpan.FromSeconds(10);
+            lease.RenewOnCallTime = TimeSpan.FromSeconds(5);
             return lease;
         }
 

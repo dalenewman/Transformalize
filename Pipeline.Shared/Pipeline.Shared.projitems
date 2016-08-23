@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FieldSearchType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\FieldSearchTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Filter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\IllegalCharacterValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Join.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Map.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\MapItem.cs" />

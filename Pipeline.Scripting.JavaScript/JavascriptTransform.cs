@@ -15,38 +15,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
-using Cfg.Net.Ext;
-using Jint;
+using JavaScriptEngineSwitcher.Core;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
-namespace Pipeline.Scripting.Jint {
-    public class JintTransform : BaseTransform {
+namespace Pipeline.Scripting.JavaScript {
+    public class JavascriptTransform : BaseTransform {
+
         readonly Field[] _input;
-        readonly Engine _jint = new Engine();
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
+        private readonly IJsEngine _engine;
 
-        public JintTransform(PipelineContext context, IReader reader) : base(context) {
+        public JavascriptTransform(string engine, IContext context, IReader reader) : base(context) {
 
-            // automatic parameter binding
-            if (!context.Transform.Parameters.Any()) {
-                var parameters = new global::Jint.Parser.JavaScriptParser().Parse(context.Transform.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
-                    .Where(o => o.Type == global::Jint.Parser.Tokens.Identifier)
-                    .Select(o => o.Value.ToString())
-                    .Intersect(context.GetAllEntityFields().Select(f => f.Alias))
-                    .Distinct()
-                    .ToArray();
-                if (parameters.Any()) {
-                    foreach (var parameter in parameters) {
-                        context.Transform.Parameters.Add(new Parameter { Field = parameter }.WithDefaults());
-                    }
-                }
-            }
+            _engine = JsEngineSwitcher.Current.CreateJsEngineInstance(engine);
 
             // for js, always add the input parameter
             _input = MultipleInput().Union(new[] { context.Field }).Distinct().ToArray();
@@ -68,13 +55,9 @@ namespace Pipeline.Scripting.Jint {
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Transform.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
-        void ProcessScript(PipelineContext context, IReader reader, Script script) {
+        void ProcessScript(IContext context, IReader reader, Script script) {
             script.Content = ReadScript(context, reader, script);
-            var parser = new JintParser();
-
-            if (parser.Parse(script.Content, context.Error)) {
-                _jint.Execute(script.Content);
-            }
+            _engine.Execute(script.Content);
         }
 
         /// <summary>
@@ -85,21 +68,18 @@ namespace Pipeline.Scripting.Jint {
         /// <param name="reader"></param>
         /// <param name="script"></param>
         /// <returns></returns>
-        static string ReadScript(PipelineContext context, IReader reader, Script script) {
+        static string ReadScript(IContext context, IReader reader, Script script) {
             var content = string.Empty;
 
             if (script.Content != string.Empty)
                 content += script.Content + "\r\n";
 
-            
-
             if (script.File != string.Empty) {
-                var p = new Dictionary<string,string>();
+                var p = new Dictionary<string, string>();
                 var l = new Cfg.Net.Loggers.MemoryLogger();
                 var response = reader.Read(script.File, p, l);
                 if (l.Errors().Any()) {
-                    foreach (var error in l.Errors())
-                    {
+                    foreach (var error in l.Errors()) {
                         context.Error(error);
                     }
                     context.Error($"Could not load {script.File}.");
@@ -114,17 +94,17 @@ namespace Pipeline.Scripting.Jint {
 
         public override IRow Transform(IRow row) {
             foreach (var field in _input) {
-                _jint.SetValue(field.Alias, row[field]);
+                _engine.SetVariableValue(field.Alias, row[field]);
             }
             try {
-                var value = Context.Field.Convert(_jint.Execute(Context.Transform.Script).GetCompletionValue().ToObject());
+                var value = Context.Field.Convert(_engine.Evaluate(Context.Transform.Script));
                 if (value == null && !_errors.ContainsKey(0)) {
-                    Context.Error($"Jint transform in {Context.Field.Alias} returns null!");
-                    _errors[0] = $"Jint transform in {Context.Field.Alias} returns null!";
+                    Context.Error($"{_engine.Name} transform in {Context.Field.Alias} returns null!");
+                    _errors[0] = $"{_engine.Name} transform in {Context.Field.Alias} returns null!";
                 } else {
                     row[Context.Field] = value;
                 }
-            } catch (global::Jint.Runtime.JavaScriptException jse) {
+            } catch (JsRuntimeException jse) {
                 if (!_errors.ContainsKey(jse.LineNumber)) {
                     Context.Error("Script: " + Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
                     Context.Error(jse, "Error Message: " + jse.Message);

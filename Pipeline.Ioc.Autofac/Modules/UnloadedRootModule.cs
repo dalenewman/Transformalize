@@ -68,7 +68,8 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     new PlaceHolderModifier(),
                     ctx.Resolve<IRootModifier>(),
                     ctx.ResolveNamed<IValidator>("js"),
-                    new PlaceHolderValidator()
+                    new PlaceHolderValidator(),
+                    new IllegalCharacterValidator("ipc")
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {

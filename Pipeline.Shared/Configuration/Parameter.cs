@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 
@@ -28,7 +27,6 @@ namespace Pipeline.Configuration {
         string _type;
         private string _field;
         private string _entity;
-        private readonly HashSet<char> _illegal = new HashSet<char> { ';', '\'', '`', '"' };
 
         [Cfg(value = "")]
         public string Entity
@@ -55,7 +53,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "")]
         public string Name { get; set; }
 
-        [Cfg(value = null)]
+        [Cfg(value = null, validators = "ipc")] // illegal parameter characters
         public string Value { get; set; }
 
         [Cfg(value = true)]
@@ -70,9 +68,6 @@ namespace Pipeline.Configuration {
         protected override void Validate() {
             switch (Type) {
                 case "string":
-                    if (!string.IsNullOrEmpty(Value) && Value.ToCharArray().Any(c => _illegal.Contains(c))) {
-                        Error($"The parameter {Name} contains an illegal character (e.g. {string.Join(",", _illegal)}).");
-                    }
                     break;
                 default:
                     if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
@@ -84,7 +79,8 @@ namespace Pipeline.Configuration {
         }
 
         [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
-        public string Type {
+        public string Type
+        {
             get { return _type; }
             set { _type = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
         }

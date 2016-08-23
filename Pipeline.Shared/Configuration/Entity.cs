@@ -100,14 +100,15 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// Currently only supported for ADO based input.
         /// The default is true, which pulls any record with version >= TFL's max version.
-        /// This means you may re-loading records from the source that the destination
+        /// This means you may re-load records from the source that the destination
         /// already has.
         /// 
         /// If you're certain you've retrieved all the records for TFL's max version, you can 
         /// set this to false, which pulls any record with version > TFL's max version.
         /// 
         /// This saves you from re-loading the same records from the source.  However, if your 
-        /// source added to those records with that same version, you wouldn't get them.
+        /// source added to those records using the same version as when you queried them, 
+        /// you wouldn't get them the next time around.
         /// </summary>
         [Cfg(value = true)]
         public bool Overlap { get; set; }

@@ -85,7 +85,7 @@ namespace Pipeline.Provider.Excel {
                                 }
 
                                 if (field.Type == "string") {
-                                    row[field] = reader.IsDBNull(i) ? null : reader.GetValue(i) as string;
+                                    row[field] = reader.IsDBNull(i) ? null : reader.GetValue(i).ToString();
                                 } else {
                                     row[field] = reader.IsDBNull(i) ? null : field.Convert(reader.GetValue(i));
                                 }

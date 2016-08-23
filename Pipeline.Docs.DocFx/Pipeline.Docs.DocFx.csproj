@@ -175,9 +175,9 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\docfx.msbuild.2.2.0\build\docfx.msbuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\docfx.msbuild.2.2.0\build\docfx.msbuild.targets'))" />
+    <Error Condition="!Exists('..\packages\docfx.msbuild.2.3.0\build\docfx.msbuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\docfx.msbuild.2.3.0\build\docfx.msbuild.targets'))" />
   </Target>
-  <Import Project="..\packages\docfx.msbuild.2.2.0\build\docfx.msbuild.targets" Condition="Exists('..\packages\docfx.msbuild.2.2.0\build\docfx.msbuild.targets')" />
+  <Import Project="..\packages\docfx.msbuild.2.3.0\build\docfx.msbuild.targets" Condition="Exists('..\packages\docfx.msbuild.2.3.0\build\docfx.msbuild.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

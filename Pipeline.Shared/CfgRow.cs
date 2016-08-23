@@ -47,18 +47,12 @@ namespace Pipeline {
             throw new NotImplementedException("This method is not meant to be called for serializable rows.  They are not aware of IField properties.");
         }
 
-        public object this[IField field]
-        {
+        public object this[IField field] {
             get { return GetValue(field); }
             set { SetValue(field, value); }
         }
 
-        public object[] ToArray() {
-            return Storage;
-        }
-
-        public object this[string key]
-        {
+        public object this[string key] {
             get { return Storage[Map[key]]; }
             set { Storage[Map[key]] = value; }
         }
