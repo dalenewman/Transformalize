@@ -28,7 +28,7 @@ namespace Pipeline.Provider.Web {
 
     public class WebCsvReader : IRead {
 
-        private readonly InputContext _context;
+        private InputContext _context;
         private readonly Regex _regex = new Regex(@"""?\s*,\s*""?", RegexOptions.Compiled);
         private readonly IRowFactory _rowFactory;
         private readonly WebClient _client;
@@ -52,30 +52,36 @@ namespace Pipeline.Provider.Web {
 
             var start = _context.Connection.Start;
             var end = _context.Connection.End;
+            var isPageRequest = _context.Entity.IsPageRequest();
 
-            if (_context.Entity.IsPageRequest()) {
+            if (isPageRequest) {
                 start += ((_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize);
                 end = start + _context.Entity.PageSize;
             }
 
-
             using (var reader = new StreamReader(stream)) {
                 string line;
-                var counter = 1;
+
+                _context.Entity.Hits = 1;
 
                 if (start > 1) {
                     for (var i = 1; i < start; i++) {
                         reader.ReadLine();
-                        counter++;
+                        _context.Entity.Hits++;
                     }
                 }
 
                 while ((line = reader.ReadLine()) != null) {
-                    if (end > 0 && counter == end) {
+                    if (end > 0 && _context.Entity.Hits >= end) {
+                        if (isPageRequest) {
+                            _context.Entity.Hits++;
+                            continue;
+                        }
+
                         yield break;
                     }
 
-                    counter++;
+                    _context.Entity.Hits++;
                     var tokens = _regex.Split(line.Trim('"'));
                     if (tokens.Length > 0) {
                         var row = _rowFactory.Create();
@@ -85,6 +91,10 @@ namespace Pipeline.Provider.Web {
                         }
                         yield return row;
                     }
+                }
+
+                if (isPageRequest && start > 1) {
+                    _context.Entity.Hits -= (start - 1);
                 }
             }
         }

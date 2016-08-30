@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System;
-using Pipeline.Contracts;
 using Quartz;
 using Quartz.Spi;
 using IScheduler = Quartz.IScheduler;

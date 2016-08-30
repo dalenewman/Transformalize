@@ -29,22 +29,13 @@ namespace Pipeline.Desktop.Transforms {
     public class CsharpRemoteTransform : CSharpBaseTransform {
 
         private AppDomain _domain;
-        private CompilerRunner _compilerRunner;
         private Sponsor _sponsor;
 
         public CsharpRemoteTransform(IContext context) : base(context) {
 
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = _compilerRunner.Run(row.ToArray());
-            Increment();
-            return row;
-        }
-
         public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
-            var timer = new Stopwatch();
-            timer.Start();
 
             var input = MultipleInput();
             var code = WrapCode(input, Context.Transform.Script, Context.Entity.IsMaster);
@@ -53,32 +44,39 @@ namespace Pipeline.Desktop.Transforms {
 
             Context.Info("Creating new app domain and sponsor.");
             _domain = AppDomain.CreateDomain(Context.Key);
-
             _sponsor = new Sponsor();  // manages lifetime of the object in otherDomain
-            _compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner");
 
-            var lease = _compilerRunner.InitializeLifetimeService() as ILease;
-            lease?.Register(_sponsor);
+            using (var compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner")) {
+                var lease = compilerRunner.InitializeLifetimeService() as ILease;
+                lease?.Register(_sponsor);
 
-            var errors = _compilerRunner.Compile(code);
-            if (string.IsNullOrEmpty(errors)) {
-                Context.Info($"Compiled in {timer.Elapsed}");
-            } else {
-                Context.Error(errors);
-                Context.Error(Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
+                var timer = new Stopwatch();
+                timer.Start();
+
+                var errors = compilerRunner.Compile(code);
+                if (string.IsNullOrEmpty(errors)) {
+                    Context.Info($"Compiled in {timer.Elapsed}");
+                    timer.Stop();
+                } else {
+                    Context.Error(errors);
+                    Context.Error(Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
+                }
+
+                foreach (var row in rows) {
+                    row[Context.Field] = compilerRunner.Run(row.ToArray());
+                    Increment();
+                    yield return row;
+                }
             }
-
-            timer.Stop();
-
-            return base.Transform(rows);
         }
 
         public override void Dispose() {
-            Context.Info("Release lease and unload app domain.");
             if (_sponsor != null) {
+                Context.Info("Release lease.");
                 _sponsor.Release = true;
             }
             if (_domain != null) {
+                Context.Info("Unload app domain.");
                 AppDomain.Unload(_domain);
             }
             base.Dispose();
@@ -97,10 +95,8 @@ namespace Pipeline.Desktop.Transforms {
         }
     }
 
-    public class CompilerRunner : MarshalByRefObject {
+    public class CompilerRunner : MarshalByRefObject, IDisposable {
 
-        private Assembly _assembly;
-        private Type _type;
         private Func<object[], object> _userCode;
 
         public string Compile(string code) {
@@ -126,11 +122,7 @@ namespace Pipeline.Desktop.Transforms {
                         sb.AppendLine(error.ToString());
                     }
                 } else {
-                    _assembly = result.CompiledAssembly;
-                    _type = _assembly.GetType("CSharpRunTimeTransform");
-                    var methodInfo = _type.GetMethod("UserCode", BindingFlags.Static | BindingFlags.Public);
-
-                    _userCode = (Func<object[], object>)Delegate.CreateDelegate(typeof(Func<object[], object>), methodInfo);
+                    _userCode = (Func<object[], object>)Delegate.CreateDelegate(typeof(Func<object[], object>), result.CompiledAssembly.GetType("CSharpRunTimeTransform").GetMethod("UserCode", BindingFlags.Static | BindingFlags.Public));
                 }
             } catch (Exception ex) {
                 sb.AppendLine("CSharp Compiler Exception!");
@@ -155,5 +147,8 @@ namespace Pipeline.Desktop.Transforms {
             return lease;
         }
 
+        public void Dispose() {
+            _userCode = null;
+        }
     }
 }

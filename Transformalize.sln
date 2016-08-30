@@ -24,6 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{20
 		Articles\Example-00-Prerequisites.md = Articles\Example-00-Prerequisites.md
 		Articles\Example-01-Single-Entity.md = Articles\Example-01-Single-Entity.md
 		Articles\FantasyFootballKibana.md = Articles\FantasyFootballKibana.md
+		Articles\IncrementalDenormalize.md = Articles\IncrementalDenormalize.md
 		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
 		Articles\TransformalizeNorthWind.md = Articles\TransformalizeNorthWind.md
 	EndProjectSection
@@ -74,6 +75,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 	ProjectSection(SolutionItems) = preProject
 		Files\business.sql = Files\business.sql
 		Files\business.sqlite3 = Files\business.sqlite3
+		Files\edit-hello-world-in-orchard-cms.png = Files\edit-hello-world-in-orchard-cms.png
 		Files\er-to-star.png = Files\er-to-star.png
 		Files\notepadpp.png = Files\notepadpp.png
 		Files\npp-orderline-csv.jpg = Files\npp-orderline-csv.jpg
