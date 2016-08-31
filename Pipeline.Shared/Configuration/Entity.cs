@@ -170,11 +170,8 @@ namespace Pipeline.Configuration {
                 Alias = Name;
             }
 
-            foreach (var field in GetAllFields().Where(f => f.Sortable)) {
-                if (string.IsNullOrEmpty(field.SortField)) {
-                    field.SortField = string.IsNullOrEmpty(Query) ? field.Alias : field.Name;
-                }
-            }
+            PreValidateSorting();
+
 
             foreach (var cf in CalculatedFields) {
                 cf.Input = false;
@@ -189,6 +186,27 @@ namespace Pipeline.Configuration {
                 foreach (var field in Fields) {
                     field.SearchType = SearchType;
                 }
+            }
+
+        }
+
+        private void PreValidateSorting() {
+
+            // if set, an entity's sortable setting will over-ride it's individual input field's sortable settings
+            if (Sortable != Constants.DefaultSetting) {
+                foreach (var field in Fields.Where(f => f.Input)) {
+                    field.Sortable = Sortable;
+                }
+            }
+
+            // if field settings are still default, input fields default to true and other default to false
+            foreach (var field in GetAllFields().Where(f => f.Sortable == Constants.DefaultSetting)) {
+                field.Sortable = field.Input ? "true" : "false";
+            }
+
+            // any fields that are sortable should have sort-field populated
+            foreach (var field in GetAllFields().Where(f => f.Sortable == "true" && string.IsNullOrEmpty(f.SortField))) {
+                field.SortField = string.IsNullOrEmpty(Query) ? field.Alias : field.Name;
             }
 
         }
@@ -260,7 +278,7 @@ namespace Pipeline.Configuration {
                 }
             }
 
-            foreach (var field in GetAllOutputFields().Where(f => f.Sortable && !string.IsNullOrEmpty(f.SortField))) {
+            foreach (var field in GetAllOutputFields().Where(f => f.Sortable == "true" && !string.IsNullOrEmpty(f.SortField))) {
                 if (GetField(field.SortField) == null) {
                     Error($"Can't find sort field {field.SortField} defined in field {field.Alias}.");
                 }
@@ -513,6 +531,9 @@ namespace Pipeline.Configuration {
 
         [Cfg]
         public List<PageSize> PageSizes { get; set; }
+
+        [Cfg(value = Constants.DefaultSetting, domain = "true,false," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
+        public string Sortable { get; set; }
 
         public bool HasInput() {
             return Fields.Any(f => f.Input);

@@ -15,7 +15,6 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
@@ -63,7 +62,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public ActionResult List(string tagFilter) {
 
             // Sticky Tag Filter
-            if (Request.RawUrl.EndsWith("List")) {
+            if (Request.RawUrl.EndsWith("List") || Request.RawUrl.Contains("List?")) {
                 tagFilter = Session[Common.TagFilterName] != null ? Session[Common.TagFilterName].ToString() : Common.AllTag;
             } else {
                 Session[Common.TagFilterName] = tagFilter;

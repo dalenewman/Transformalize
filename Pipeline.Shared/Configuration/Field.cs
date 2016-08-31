@@ -484,11 +484,11 @@ namespace Pipeline.Configuration {
 
         }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string SortField { get; set; }
 
-        [Cfg(value=true)]
-        public bool Sortable { get; set; }
+        [Cfg(value = Constants.DefaultSetting, domain ="true,false," + Constants.DefaultSetting, ignoreCase =true, toLower =true)]
+        public string Sortable { get; set; }
 
         public override int GetHashCode() {
             return Alias.GetHashCode();
@@ -500,15 +500,18 @@ namespace Pipeline.Configuration {
             return Constants.NumericTypeSet().Contains(Type);
         }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Class { get; set; }
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Style { get; set; }
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Role { get; set; }
         [Cfg(value = "")]
         public string HRef { get; set; }
         [Cfg(value = "")]
         public string Target { get; set; }
+
+        [Cfg(value="chakra", domain="chakra,jint", toLower = true)]
+        public string Engine { get; set; }
     }
 }

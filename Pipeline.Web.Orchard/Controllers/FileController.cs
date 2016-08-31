@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using Orchard;
-using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
@@ -12,8 +11,6 @@ using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
 using Orchard.Environment.Extensions;
 using Orchard.Roles.Services;
-using Orchard.Tags.Models;
-using Orchard.Tags.Services;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Controllers {
@@ -33,7 +30,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             IOrchardServices services,
             IFileService fileService,
             IRoleService roleService,
-            ITagService tagService,
             ISecureFileService secureFileService
         ) {
             _orchardServices = services;
@@ -107,7 +103,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             _orchardServices.Notifier.Add(NotifyType.Warning, T(response.Message));
-            return RedirectToAction("List");
+            return response.ToActionResult();
         }
 
         public ActionResult Delete(int id) {

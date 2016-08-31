@@ -79,10 +79,10 @@ namespace Pipeline.Configuration.Ext {
             // verify entities have level and message field for log output
             if (p.Output().Provider == "log") {
                 foreach (var fields in p.Entities.Select(entity => entity.GetAllFields().ToArray())) {
-                    if (!fields.Any(f => f.Alias.Equals("message"))) {
+                    if (!fields.Any(f => f.Alias.Equals("message", StringComparison.OrdinalIgnoreCase))) {
                         error("Log output requires a message field");
                     }
-                    if (!fields.Any(f => f.Alias.Equals("level"))) {
+                    if (!fields.Any(f => f.Alias.Equals("level", StringComparison.OrdinalIgnoreCase))) {
                         error("Log output requires a level field");
                     }
                 }

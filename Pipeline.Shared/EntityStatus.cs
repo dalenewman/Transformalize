@@ -30,7 +30,7 @@ namespace Pipeline {
             var master = ctx.Process.Entities.First(e => e.IsMaster);
 
             FirstRun = master.IsFirstRun;
-            MasterUpserted = master.Updates > 0;
+            MasterUpserted = master.Updates + master.Inserts > 0;
             Modified = ctx.Entity.Updates + ctx.Entity.Inserts + ctx.Entity.Deletes > 0;
             ForeignKeys.AddRange(ctx.Entity.Fields.Where(f => f.KeyType.HasFlag(KeyType.Foreign)));
             HasForeignKeys = ForeignKeys.Count > 0;

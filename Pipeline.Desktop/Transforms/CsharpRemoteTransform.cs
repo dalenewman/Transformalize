@@ -19,6 +19,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.Remoting.Lifetime;
 using System.Text;
@@ -46,7 +47,8 @@ namespace Pipeline.Desktop.Transforms {
             _domain = AppDomain.CreateDomain(Context.Key);
             _sponsor = new Sponsor();  // manages lifetime of the object in otherDomain
 
-            using (var compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap("Pipeline.Desktop.dll", "Pipeline.Desktop.Transforms.CompilerRunner")) {
+            var dll = Path.Combine(AssemblyDirectory, "Pipeline.Desktop.dll");
+            using (var compilerRunner = (CompilerRunner)_domain.CreateInstanceFromAndUnwrap(dll, "Pipeline.Desktop.Transforms.CompilerRunner", false, BindingFlags.Default, null, null, null, null)) {
                 var lease = compilerRunner.InitializeLifetimeService() as ILease;
                 lease?.Register(_sponsor);
 
@@ -80,6 +82,17 @@ namespace Pipeline.Desktop.Transforms {
                 AppDomain.Unload(_domain);
             }
             base.Dispose();
+        }
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
     }
 

@@ -64,8 +64,6 @@ namespace Pipeline.Ioc.Autofac.Modules {
             );
 
             // transform choices
-            // builder.Register<ITransform>((ctx, p) => new JintTransform(p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
-            builder.Register<ITransform>((ctx, p) => new JavascriptTransform("ChakraCoreJsEngine", p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
             builder.Register<ITransform>((ctx, p) => new RazorTransform(p.TypedAs<PipelineContext>())).Named<ITransform>("razor");
 
             // parser choices

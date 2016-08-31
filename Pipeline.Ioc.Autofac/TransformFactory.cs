@@ -19,11 +19,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Cfg.Net.Contracts;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Extensions;
+using Pipeline.Scripting.JavaScript;
+using Pipeline.Scripting.Jint;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
@@ -61,7 +64,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "connection": return new ConnectionTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "copy": return new CopyTransform(context);
-                case "cs": case "csharp": return context.Process.Mode.In("init","check") ? new CsharpLocalTransform(context) : new CsharpRemoteTransform(context) as CSharpBaseTransform;
+                case "cs": case "csharp": return context.Process.Mode.In("init", "check") ? new CsharpLocalTransform(context) : new CsharpRemoteTransform(context) as CSharpBaseTransform;
                 case "datediff": return new DateDiffTransform(context);
                 case "datepart": return new DatePartTransform(context);
                 case "decompress": return new DecompressTransform(context);
@@ -75,7 +78,14 @@ namespace Pipeline.Ioc.Autofac {
                 case "insert": return new InsertTransform(context);
                 case "invert": return new InvertTransform(context);
                 case "join": return new JoinTransform(context);
-                case "js": case "javascript": return ctx.ResolveNamed<ITransform>("js", new TypedParameter(typeof(PipelineContext), context));
+                case "js":
+                case "javascript":
+                    switch (context.Field.Engine) {
+                        case "jint":
+                            return new JintTransform(context, ctx.Resolve<IReader>());
+                        default:
+                            return new JavascriptTransform("ChakraCoreJsEngine", context, ctx.Resolve<IReader>());
+                    }
                 case "last": return new LastTransform(context);
                 case "left": return new LeftTransform(context);
                 case "lower": case "tolower": return new ToLowerTransform(context);

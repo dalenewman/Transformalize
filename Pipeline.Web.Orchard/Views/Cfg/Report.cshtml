@@ -165,13 +165,13 @@
                                 <th>@field.Label</th>
                             }
                         </tr>
-                        @if (fields.Any(f => f.Sortable)) {
+                        @if (fields.Any(f => f.Sortable == "true")) {
                             var expression = Request["sort"] ?? string.Empty;
                             <tr>
                                 @for (var i = 0; i < fields.Length; i++) {
                                     var field = fields[i];
                                     var number = i + 1;
-                                    if (field.Sortable) {
+                                    if (field.Sortable == "true") {
                                         <th class="sorter" data-order-by="@(number)">
                                             <div aclass="btn-group btn-group-xs">
                                                 <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
@@ -237,7 +237,7 @@
     }
 
     $(document).ready(function () {
-        $('.form-control.date').datepicker('option', 'dateFormat', 'yy-mm-dd');
+        $('.form-control.date').datepicker({ dateFormat: 'yy-mm-dd'});
 
         $('.sortable').click(function () {
             $(this).toggleClass('btn-sort').toggleClass('btn-primary');

@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Dapper;
-using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Action = Pipeline.Configuration.Action;
 
@@ -35,8 +34,10 @@ namespace Pipeline.Provider.Ado.Actions {
             var response = new ActionResponse();
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
-                try {
-                    response.Content = $"{cn.Execute(_node.Command,commandTimeout:_node.TimeOut)} rows affected.";
+                try
+                {
+                    _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
+                    response.Content = $"{_node.RowCount} rows affected.";
                 } catch (Exception ex) {
                     response.Code = 500;
                     response.Content = ex.Message + " " + ex.StackTrace + " " + _node.Command.Replace("{","{{").Replace("}","}}");

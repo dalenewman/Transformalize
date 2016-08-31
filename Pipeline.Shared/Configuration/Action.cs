@@ -181,5 +181,7 @@ namespace Pipeline.Configuration {
 
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
+        [Cfg(value = 0)]
+        public int RowCount { get; set; }
     }
 }

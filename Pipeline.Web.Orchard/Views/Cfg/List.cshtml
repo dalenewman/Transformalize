@@ -101,7 +101,7 @@
                         </button>
                     }
                     @if (part.NeedsInputFile) {
-                        <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(@Url.Action("List", "File", new {ArrangementId = part.Id}))', '_self');">
+                        <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(@Url.Action("List", "File", new {tagFilter = Common.AllTag, ArrangementId = part.Id}))', '_self');">
                             <span class="glyphicon glyphicon-file"></span>
                         </button>
                     }

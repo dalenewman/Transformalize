@@ -31,7 +31,7 @@ namespace Pipeline.Scripting.Jint {
         readonly Engine _jint = new Engine();
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
 
-        public JintTransform(PipelineContext context, IReader reader) : base(context) {
+        public JintTransform(IContext context, IReader reader) : base(context) {
 
             // automatic parameter binding
             if (!context.Transform.Parameters.Any()) {
@@ -68,7 +68,7 @@ namespace Pipeline.Scripting.Jint {
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Transform.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
-        void ProcessScript(PipelineContext context, IReader reader, Script script) {
+        void ProcessScript(IContext context, IReader reader, Script script) {
             script.Content = ReadScript(context, reader, script);
             var parser = new JintParser();
 
@@ -85,7 +85,7 @@ namespace Pipeline.Scripting.Jint {
         /// <param name="reader"></param>
         /// <param name="script"></param>
         /// <returns></returns>
-        static string ReadScript(PipelineContext context, IReader reader, Script script) {
+        static string ReadScript(IContext context, IReader reader, Script script) {
             var content = string.Empty;
 
             if (script.Content != string.Empty)

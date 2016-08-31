@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Orchard;
+﻿using Orchard;
 using Orchard.Core.Contents;
 
 namespace Pipeline.Web.Orchard.Services {
@@ -15,9 +14,6 @@ namespace Pipeline.Web.Orchard.Services {
 
         public FileResponse Get(int id) {
             var response = new FileResponse();
-
-            if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-                return new FileResponse { Status = 401, Message = "You must be logged in to access files." };
 
             var part = _fileService.Get(id);
 

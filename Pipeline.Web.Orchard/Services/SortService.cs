@@ -46,7 +46,7 @@ namespace Pipeline.Web.Orchard.Services {
             var fields = entity.GetAllOutputFields().Where(f=>!f.System).ToArray();
             for (var i = 0; i < fields.Length; i++) {
                 var field = fields[i];
-                if (!field.Sortable) {
+                if (field.Sortable == "false") {
                     continue;
                 }
                 var number = i + 1;

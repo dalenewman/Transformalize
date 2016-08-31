@@ -34,10 +34,11 @@ using Permissions = global::Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [ValidateInput(false), Themed(false)]
+    [ValidateInput(false), Themed(false), SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
     public class ApiController : Controller {
 
-        private static readonly HashSet<string> _formats = new HashSet<string> { "xml", "json", "yaml" };
+        private static readonly HashSet<string> _formats = new
+        HashSet<string> { "xml", "json", "yaml" };
 
         readonly IOrchardServices _orchardServices;
         readonly IIpRangeService _ipRangeService;
@@ -76,12 +77,26 @@ namespace Pipeline.Web.Orchard.Controllers {
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
+                Logger.Warning("Request from {0} for missing id {1}.", Request.UserHostAddress, id);
                 return Get404(action, _processService, format);
             }
 
             format = GetFormat(Request, part);
+            var authorized = false;
 
-            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part) || part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase) && _ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
+            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                Logger.Debug("Authorization granted to {0} for id {1}.", User.Identity.Name, id);
+                authorized = true;
+            }
+
+            if (!authorized) {
+                if (part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase) && _ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
+                    Logger.Debug("Authorization granted to {0} for id {1}.", Request.UserHostAddress, id);
+                    authorized = true;
+                }
+            }
+
+            if (authorized) {
 
                 var process = _processService.Resolve(part.EditorMode, format);
                 var parameters = Common.GetParameters(Request, _secureFileService);
@@ -89,6 +104,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any()) {
+                    Logger.Error("Configuration {0} has errors: {1}", id, string.Join(" ", process.Errors()));
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
@@ -96,6 +112,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {
+                        Logger.Error("Configuration from missing fields {0} has errors: {1}", id, string.Join(" ", process.Errors()));
                         return Get503(action, process, format, timer.ElapsedMilliseconds);
                     }
                 }
@@ -115,11 +132,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                     RemoveCredentials(process);
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
+                    Logger.Error(ex, "Executing {0} threw error: {1}", id, ex.Message);
                     return Get501(Request, _orchardServices, action, ex.Message, timer.ElapsedMilliseconds);
                 }
 
             }
 
+            Logger.Warning("Unathorized user {0} attempting access to {1}.", User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous@" + Request.UserHostAddress , id);
             return Get401(format, _orchardServices, action);
 
         }

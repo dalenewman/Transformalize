@@ -19,7 +19,7 @@ using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Services {
-    [OrchardFeature("Pipeline.Files")]
+
     public class FileService : IFileService {
 
         private readonly IOrchardServices _orchardServices;
