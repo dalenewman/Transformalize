@@ -54,6 +54,7 @@
     <Compile Include="FileInspection.cs" />
     <Compile Include="FileLineReader.cs" />
     <Compile Include="FileReader.cs" />
+    <Compile Include="DirectoryReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

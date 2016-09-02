@@ -100,6 +100,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     builder.RegisterCallback(new InternalModule(root).Configure);
                     builder.RegisterCallback(new FileModule(root).Configure);
                     builder.RegisterCallback(new FolderModule(root).Configure);
+                    builder.RegisterCallback(new DirectoryModule(process).Configure);
                     builder.RegisterCallback(new ExcelModule(root).Configure);
                     builder.RegisterCallback(new WebModule(root).Configure);
 

@@ -121,6 +121,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DirectoryReader.cs" />
     <Compile Include="FilterTransform.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="FromXmlTransform.cs" />

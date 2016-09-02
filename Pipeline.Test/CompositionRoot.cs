@@ -62,6 +62,7 @@ namespace Pipeline.Test {
             builder.RegisterModule(new InternalModule(Process));
             builder.RegisterModule(new FileModule(Process));
             builder.RegisterModule(new FolderModule(Process));
+            builder.RegisterCallback(new DirectoryModule(Process).Configure);
             builder.RegisterModule(new ExcelModule(Process));
             builder.RegisterModule(new WebModule(Process));
 

@@ -48,6 +48,7 @@ namespace Pipeline.Ioc.Autofac {
             nested.RegisterCallback(new FileModule(process).Configure);
             nested.RegisterCallback(new WebModule(process).Configure);
             nested.RegisterCallback(new FolderModule(process).Configure);
+            nested.RegisterCallback(new DirectoryModule(process).Configure);
             nested.RegisterCallback(new ExcelModule(process).Configure);
 
             nested.RegisterType<NullOutputController>().Named<IOutputController>(entity.Key);

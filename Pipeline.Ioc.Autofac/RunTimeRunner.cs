@@ -65,6 +65,7 @@ namespace Pipeline.Ioc.Autofac {
             container.RegisterCallback(new FileModule(process).Configure);
             container.RegisterCallback(new WebModule(process).Configure);
             container.RegisterCallback(new FolderModule(process).Configure);
+            container.RegisterCallback(new DirectoryModule(process).Configure);
             container.RegisterCallback(new ExcelModule(process).Configure);
 
             container.RegisterCallback(new EntityPipelineModule(process).Configure);

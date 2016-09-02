@@ -60,6 +60,7 @@ namespace Pipeline.Ioc.Autofac {
             builder.RegisterCallback(new FileModule(process).Configure);
             builder.RegisterCallback(new WebModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);
+            builder.RegisterCallback(new DirectoryModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);
 
             builder.RegisterCallback(new MapModule(process).Configure);

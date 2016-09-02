@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
@@ -45,6 +46,41 @@ namespace Pipeline.Configuration.Ext {
             ValidateEntityFields(p, warn);
             ValidateCalculatedFields(p, error);
             ValidateParameterMaps(p, error);
+            ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
+        }
+
+        private static void ValidateDirectoryReaderHasAtLeastOneValidField(Process process, Action<string> error) {
+
+            var fieldNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+                {"CreationTimeUtc","date"},
+                {"DirectoryName","string"},
+                {"Extension","string"},
+                {"FullName","string"},
+                {"LastWriteTimeUtc","datetime"},
+                {"Length","long"},
+                {"Name","string"}
+            };
+
+            if (process.Connections.All(c => c.Provider != "directory"))
+                return;
+
+            foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "directory").Where(entity => !entity.Fields.Where(f => f.Input).Any(f => fieldNames.ContainsKey(f.Name)))) {
+                error($"The {entity.Alias} entity reads a directory listing. It needs at least one of these valid fields: {(string.Join(", ", fieldNames).Replace(", Name", ", or Name"))}.");
+            }
+
+            foreach (
+                var field in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "directory").SelectMany(e => e.Fields.Where(f => f.Input && fieldNames.ContainsKey(f.Name)))) {
+                var type = fieldNames[field.Name];
+                if (field.Type.StartsWith(type, StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+                if (type == "long" && field.Type.Equals("Int64", StringComparison.OrdinalIgnoreCase)) {
+                    continue;
+                }
+                error($"The field named {field.Name} has an incompatible type of {field.Type}. The type should be {type}.");
+            }
+
+
         }
 
         private static void ValidateParameterMaps(Process process, Action<string> error) {
