@@ -78,6 +78,8 @@ arrangements with the Orchard CMS module (as seen below):
 
 ### Hello World
 
+Let's take a closer look at the arrangement:
+
 ```xml
 <cfg name="Hello World">
   <connections>
@@ -100,6 +102,12 @@ arrangements with the Orchard CMS module (as seen below):
   </entities>
 </cfg>
 ```
+
+Inside the root `cfg` element, there are two collections: **connections**, and **entities**.
+The connection points to a [delimited file with country names and codes](http://www.transformalize.com/Pipeline/File/View/25) 
+on the web. 
+The entity is expecting a `Code` and `Name` field. 
+In addition, it calculates a combined field.
 
 I have this running on [transformalize.com](http://www.transformalize.com), so you can see the output of this arrangement in [report](http://www.transformalize.com/Pipeline/Report/24) mode or [xml](http://www.transformalize.com/Pipeline/Api/Run/24), or [json](http://www.transformalize.com/Pipeline/Api/Run/24?format=json).
 
