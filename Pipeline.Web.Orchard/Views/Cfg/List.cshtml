@@ -49,6 +49,15 @@
 
 </div>
 
+@foreach (var part in Model.Configurations) {
+    <form id="clone_@part.Id" method="POST" action="@(Url.Content("~/Admin/Contents/Clone/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Content("~/Admin/Contents/List/PipelineConfiguration?Options.SelectedCulture=&Options.OrderBy=Modified&Options.ContentsStatus=Draft")))">
+        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()">
+    </form>
+    <form id="remove_@part.Id"  method="POST" action="@(Url.Content("~/Admin/Contents/Remove/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))">
+        <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()">
+    </form>
+}
+
 <table class="table table-condensed table-hover" style="font-size: smaller;">
     <thead>
     <tr>
@@ -63,6 +72,7 @@
     <tbody>
     @foreach (var part in Model.Configurations) {
         var title = part.As<TitlePart>().Title;
+
         <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "active" : string.Empty)">
             <td>
                 <a href="@Url.Action("Cfg", "Api", new {id = part.Id})">@part.Id</a>
@@ -87,9 +97,19 @@
             }
             <td>
                 <div class="btn-group" role="group" aria-label="...">
+
                     <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
                         <span class="glyphicon glyphicon-edit"></span> 
                     </button>
+
+                    <button title="Clone" type="button" class="btn btn-info btn-xs" onclick="$('#clone_@part.Id').submit();">
+                        <span class="glyphicon glyphicon-duplicate"></span>
+                    </button>
+
+                    <button title="Delete" type="button" class="btn btn-danger btn-xs" onclick="if (confirm('Are you sure?')) { $('#remove_@part.Id').submit();}">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+
                     @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
                         <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                             <span class="glyphicon glyphicon-check"></span>

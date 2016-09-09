@@ -1,12 +1,20 @@
 # Transformalize
-Transformalize is released under the Apache 2 license.  Note: It is still under development.
 
-## What is it?
 Transformalize is a configurable [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)
-solution. It is used to prepare data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse),
-[search engines](https://en.wikipedia.org/wiki/Search_engine_%28computing%29), services, reports, and 
-other forms of analysis and/or presentation.  It comes with a CLI (`tfl.exe`) and an [Orchard CMS](https://github.com/OrchardCMS/Orchard) 
-web module
+solution. It is used to expedite data processing tasks such as:
+
+* preparing data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse) and/or [search engines](https://en.wikipedia.org/wiki/Search_engine_%28computing%29)
+* exposing simple JSON and/or XML services
+* reporting
+* other forms of analysis and/or presentation.
+
+It includes:
+
+* c#, .NET class libraries
+* a command-line interface (`tfl.exe`) for repetitive and/or incremental processing tasks. 
+* an [Orchard CMS](https://github.com/OrchardCMS/Orchard) web module. 
+ 
+Transformalize is developed under the Apache 2 license.
 
 ### Data Sources - Inputs and Outputs
 
@@ -68,9 +76,8 @@ web module
 </table>
 
 ### <a name="CFG"></a>Configurable
-TFL arrangements are maintained in an [XML](https://en.wikipedia.org/wiki/XML) or
-[JSON](https://en.wikipedia.org/wiki/JSON) editor.  You may also edit and store 
-arrangements with the Orchard CMS module (as seen below):
+TFL arrangements are designed in an [XML](https://en.wikipedia.org/wiki/XML) or
+[JSON](https://en.wikipedia.org/wiki/JSON) editor.  One is included in the Orchard CMS module (as seen below):
 
 ![Edit in Orchard CMS](Files/edit-hello-world-in-orchard-cms.png)
 
@@ -78,7 +85,7 @@ arrangements with the Orchard CMS module (as seen below):
 
 ### Hello World
 
-Let's take a closer look at the arrangement:
+This first example reads data from a url:
 
 ```xml
 <cfg name="Hello World">
@@ -96,20 +103,35 @@ Let's take a closer look at the arrangement:
         <add name="Name" />
       </fields>
       <calculated-fields>
-        <add name="Combined" t="copy(Name,Code).format(Hello {0} ({1}))" />
+        <add name="Combined">
+            <transforms>
+                <add method="format" format="Hello {0} ({1})">
+                    <parameters>
+                        <add name="Code" />
+                        <add name="Name" />
+                    </parameters>
+                </add>
+            </transforms>
+        </add>
       </calculated-fields>
     </add>
   </entities>
 </cfg>
 ```
 
-Inside the root `cfg` element, there are two collections: **connections**, and **entities**.
-The connection points to a [delimited file with country names and codes](http://www.transformalize.com/Pipeline/File/View/25) 
-on the web. 
-The entity is expecting a `Code` and `Name` field. 
-In addition, it calculates a combined field.
+This example introduces **connections**, and **entities**.
+The connection points to a [delimited file with country names and codes](http://www.transformalize.com/Pipeline/File/View/25).  The file 
+is hosted on my website.  The entity describes the data.  In this case; two 
+fields: `Code`, and `Name`.
+ 
+To demonstrate a transform, a calculated field combines `Code` and `Name`.
 
-I have this running on [transformalize.com](http://www.transformalize.com), so you can see the output of this arrangement in [report](http://www.transformalize.com/Pipeline/Report/24) mode or [xml](http://www.transformalize.com/Pipeline/Api/Run/24), or [json](http://www.transformalize.com/Pipeline/Api/Run/24?format=json).
+This is running on my Orchard CMS website [transformalize.com](http://www.transformalize.com). You may 
+view the output in different ways:
+
+* in [report](http://www.transformalize.com/Pipeline/Report/24) mode
+* as [xml](http://www.transformalize.com/Pipeline/Api/Run/24)
+* as [json](http://www.transformalize.com/Pipeline/Api/Run/24?format=json) 
 
 *to be continued...*
 

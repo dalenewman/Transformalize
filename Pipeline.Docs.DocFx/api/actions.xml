@@ -1,0 +1,13 @@
+<cfg>
+  <actions>
+    <add type="copy" from="file1.txt" to="file2.txt" />
+    <add type="web" method="get" url="https://www.google.com?search=blah+blah+blah" />
+    <add type="web" method="post" content="blah blah blah" url="https://www.google.com/index" />
+    <add type="tfl" url="http://www.url.com/cfg.xml" />
+    <add type="tfl" file="cfg.xml" />
+    <add type="run" 
+         connection="input" 
+         command="update wo set status = 10 from worker wo where status = 9;" />
+    <add type="open" file="file.xml" />
+  </actions>  
+</cfg>

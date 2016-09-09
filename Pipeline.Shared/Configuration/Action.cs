@@ -23,70 +23,43 @@ using Pipeline.Contracts;
 namespace Pipeline.Configuration {
 
     /// <summary>
-    /// An action is performed before or after a pipeline is run.
+    /// An action is performed <see cref="Before"/> or <see cref="After"/> a pipeline is run.
     /// 
-    /// Current actions types are: `copy`, `web`, `tfl`, `run`, and `open`.
-    /// 
-    /// ---
-    /// 
-    /// __Copy__: Copies a file `from`, `to`.
-    /// 
-    /// ```xml
-    /// <actions>
-    ///     <add type="copy" from="c:\file1.txt" to="file2.txt" />
-    /// </actions>
-    /// ```
+    /// Current actions are: `copy`, `web`, `tfl`, `run`, and `open`.
     /// 
     /// ---
     /// 
-    /// __Web__: Executes a GET or POST (as determined by `method`) to a specified `url`.  
+    /// __Copy__: Copies a file <see cref="From"/> somewhere, <see cref="To"/> somewhere.
     /// 
-    /// * If *get*, the web request result is stored in `content`, and is forwarded to the next action's `content`. 
-    /// * If *post*, `content` is posted to the `url`.
+    /// [!code-html[copy](../../api/actions.xml?range=3-3 "copy")]
     /// 
-    /// ```xml
-    /// <actions>
-    ///     <add type="web" 
-    ///          method="get" 
-    ///          url="https://www.google.com?search=blah+blah+blah..." />
-    ///     <add type="web" 
-    ///          method="post" 
-    ///          content="blah blah blah..." 
-    ///          url="https://www.google.com/index" />
-    /// </actions>
-    /// ```
+    /// ---
+    /// 
+    /// __Web__: Executes a GET or POST (as determined by <see cref="Method"/>) to a specified <see cref="Url"/>.  
+    /// 
+    /// * If *get*, the web request result is stored in <see cref="Content"/>, and is forwarded to the next action's <see cref="Content"/>. 
+    /// * If *post*, <see cref="Content"/> is posted to the <see cref="Url"/>.
+    /// 
+    /// [!code-html[web](../../api/actions.xml?range=4-5 "web")]
     /// 
     /// ---
     ///
-    /// __Tfl__: Execute another pipeline as determined by either `url`, `file`, or `content`. 
+    /// __Tfl__: Executes another pipeline as determined by either <see cref="Url"/>, <see cref="File"/>, or <see cref="Content"/>. 
     /// 
-    ///```xml
-    /// <actions>
-    ///     <add type='tfl' url='https://config.com/cfg.xml' />
-    ///     <add type='tfl' file='c:\cfg.xml' />
-    ///     <add type='tfl' content='{ "processes":[ { "name":"process 1" } ]}' />
-    /// </actions>
-    /// ```
+    /// [!code-html[tfl](../../api/actions.xml?range=6-7 "tfl")]
     /// 
     /// ---
     /// 
-    /// __Run__: Runs a `command` against a `connection`.
+    /// __Run__: Runs a <see cref="Command"/> against a <see cref="Connection"/>.
     /// 
-    /// ```xml
-    /// <actions>
-    ///     <add type="run" connection="c1" command="update wo set status = 10 from worker wo where status = 9;" />
-    /// </actions>
-    /// ```
+    /// [!code-html[run](../../api/actions.xml?range=8-10 "run")]
     /// 
     /// ---
     /// 
-    /// __Open__: Opens a `file`.
+    /// __Open__: Opens a <see cref="File"/>.
+    /// TODO: Add support to open Url when in web context and this will perform a redirect (after) the action completes
     /// 
-    /// ```xml
-    /// <actions>
-    ///     <add type="open" file="c:\file1.xml" />
-    /// </actions>
-    /// ```
+    /// [!code-html[open](../../api/actions.xml?range=11-11 "open")]
     /// 
     /// </summary>
     public class Action : CfgNode {
@@ -97,14 +70,24 @@ namespace Pipeline.Configuration {
         [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open", ignoreCase = true)]
         public string Type { get; set; }
 
+        /// <summary>
+        /// Set this to `true` to run the action *after* the pipeline runs.
+        /// </summary>
         [Cfg(value = true)]
         public bool After { get; set; }
+
         [Cfg(value = "")]
         public string Arguments { get; set; }
+
         [Cfg(value = "")]
         public string Bcc { get; set; }
+
+        /// <summary>
+        /// Set this to `true` to run the action *before* the pipeline runs.
+        /// </summary>
         [Cfg(value = false)]
         public bool Before { get; set; }
+
         [Cfg(value = "")]
         public string Body { get; set; }
         [Cfg(value = "")]

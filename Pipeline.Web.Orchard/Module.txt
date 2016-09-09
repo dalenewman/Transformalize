@@ -2,8 +2,8 @@
 AntiForgery: enabled
 Author: Dale Newman
 Website: https://github.com/dalenewman/Transformalize
-Version: 0.2.11
-OrchardVersion: 1.8.1
+Version: 0.3.1
+OrchardVersion: 1.10.1
 Description: Transformalize pipelines in Orchard CMS
 Dependencies: Orchard.ContentPermissions, Orchard.Tags, Orchard.Roles
 Category: Workflows

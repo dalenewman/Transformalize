@@ -63,7 +63,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         public ActionResult List(string tagFilter) {
 
-            var files = _fileService.List(tagFilter).Where(f => _orchardServices.Authorizer.Authorize(Permissions.ViewContent, f));
+            var files = _fileService.List(tagFilter).Where(f => _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.ViewContent, f));
             var roles = _roleService.GetRoles().Select(r => r.Name).Where(s => s != "Administrator").Union(new[] { "Private" }).OrderBy(s => s);
             var tags = Common.Tags<PipelineFilePart, PipelineFilePartRecord>(_orchardServices);
 

@@ -23,6 +23,7 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
+using Pipeline.Nulls;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
@@ -127,7 +128,7 @@ namespace Pipeline.Web.Orchard.Impl {
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);
-                    return new NullTransformer(context);
+                    return new NullTransform(context);
             }
         }
     }

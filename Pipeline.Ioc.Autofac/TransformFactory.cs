@@ -25,6 +25,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Extensions;
+using Pipeline.Nulls;
 using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
 using Pipeline.Transforms;
@@ -138,7 +139,7 @@ namespace Pipeline.Ioc.Autofac {
 
                 default:
                     context.Warn("The {0} method is undefined.", context.Transform.Method);
-                    return new NullTransformer(context);
+                    return new NullTransform(context);
             }
         }
     }
