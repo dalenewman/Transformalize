@@ -1,14 +1,19 @@
 using System;
+using Jint.Parser.Ast;
 using Orchard.Logging;
+using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Logging;
 using LogLevel = Pipeline.Contracts.LogLevel;
+using NullLogger = Orchard.Logging.NullLogger;
 
 namespace Pipeline.Web.Orchard.Impl
 {
     public class OrchardLogger : IPipelineLogger {
         private readonly ILogger _log;
 
+        public Process Process { get; set; }
         public OrchardLogger() {
             _log = NullLogger.Instance;
         }
@@ -22,10 +27,16 @@ namespace Pipeline.Web.Orchard.Impl
 
         public void Warn(PipelineContext context, string message, params object[] args) {
             _log.Warning(message, args);
+            if (Process != null) {
+                Process.Log.Add(new LogEntry(LogLevel.Warn, context, message, args));
+            }
         }
 
         public void Error(PipelineContext context, string message, params object[] args) {
             _log.Error(message, args);
+            if (Process != null) {
+                Process.Log.Add(new LogEntry(LogLevel.Error, context, message, args));
+            }
         }
 
         public void Error(PipelineContext context, Exception exception, string message, params object[] args) {

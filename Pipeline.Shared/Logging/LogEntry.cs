@@ -42,6 +42,7 @@ namespace Pipeline.Logging {
             Time = DateTime.UtcNow;
             Context = context;
             LogLevel = level;
+            Level = level.ToString();
             Message = string.Format(message, args);
         }
 

@@ -265,5 +265,8 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = "csv", domain = "csv,json")]
         public string Format { get; set; }
+
+        [Cfg(value=5)]
+        public int ErrorLimit { get; set; }
     }
 }

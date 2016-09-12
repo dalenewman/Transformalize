@@ -74,6 +74,10 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new ProcessControlModule(process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
+                var logger = scope.Resolve<IPipelineLogger>() as OrchardLogger;
+                if (logger != null) {
+                    logger.Process = process;
+                }
                 scope.Resolve<IProcessController>().Execute();
             }
 

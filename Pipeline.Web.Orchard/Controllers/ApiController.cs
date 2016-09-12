@@ -27,8 +27,10 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Pipeline.Contracts;
+using Pipeline.Extensions;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
+using LogLevel = Pipeline.Contracts.LogLevel;
 using Process = Pipeline.Configuration.Process;
 using Permissions = global::Orchard.Core.Contents.Permissions;
 
@@ -109,7 +111,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 }
 
                 Common.PageHelper(process, parameters);
-                
+
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {
                         Logger.Error("Configuration from missing fields {0} has errors: {1}", id, string.Join(" ", process.Errors()));
@@ -125,8 +127,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                 try {
                     runner.Execute(process);
-                    process.Status = 200;
-                    process.Message = "Ok";
+                    if (process.Log.Any()) {
+                        process.Status = process.Log.Any(le=>le.LogLevel == LogLevel.Error) ? (short)500 : (short)200;
+                        process.Message = string.Format("{0} error{1} and/or warning{1} recorded.", process.Log.Count, process.Log.Count.Plural());
+                    } else {
+                        process.Status = 200;
+                        process.Message = "Ok";
+                    }
                     process.Request = action;
                     process.Time = timer.ElapsedMilliseconds;
                     RemoveCredentials(process);
@@ -138,7 +145,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             }
 
-            Logger.Warning("Unathorized user {0} attempting access to {1}.", User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous@" + Request.UserHostAddress , id);
+            Logger.Warning("Unathorized user {0} attempting access to {1}.", User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous@" + Request.UserHostAddress, id);
             return Get401(format, _orchardServices, action);
 
         }

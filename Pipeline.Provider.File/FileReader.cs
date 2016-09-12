@@ -19,7 +19,10 @@ namespace Pipeline.Provider.File {
 
         public IEnumerable<IRow> Read() {
             var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
+            var lineNo = 0;
             foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
+                ++lineNo;
+                if (lineNo < _context.Connection.Start) continue;
                 var row = _rowFactory.Create();
                 row[_field] = line;
                 yield return row;

@@ -127,7 +127,6 @@
     <Content Include="articles\toc.md" />
     <Content Include="articles\intro.md" />
     <Content Include="api\index.md" />
-    <Content Include="templates\partials\footer.tmpl.partial" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -18,8 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using FileHelpers;
 using FileHelpers.Dynamic;
+using FileHelpers.Options;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
@@ -61,7 +63,9 @@ namespace Pipeline.Provider.File {
             ErrorMode errorMode;
             Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
 
-            var engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode };
+            var engine = new FileHelperAsyncEngine(_builder.CreateRecordClass());
+            engine.ErrorManager.ErrorMode = errorMode;
+            engine.ErrorManager.ErrorLimit = _context.Connection.ErrorLimit;
 
             _context.Debug(() => $"Reading {_fileInfo.Name}.");
 
@@ -81,7 +85,15 @@ namespace Pipeline.Provider.File {
                         yield return row;
                     }
                 }
+
+                if (engine.ErrorManager.HasErrors) {
+                    foreach (var error in engine.ErrorManager.Errors) {
+                        _context.Error(error.ExceptionInfo.Message);
+                    }
+                }
             }
+
+
 
         }
     }
