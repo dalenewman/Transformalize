@@ -17,13 +17,10 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Autofac.Core.Activators.Reflection;
 using Cfg.Net.Loggers;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
-using Nest;
 using NUnit.Framework;
 using Pipeline.Configuration;
 using Pipeline.Scripting.Jint;

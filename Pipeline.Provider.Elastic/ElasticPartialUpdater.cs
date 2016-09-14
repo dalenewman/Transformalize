@@ -15,23 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Nest;
 using Pipeline.Contracts;
 using System.Collections.Generic;
 using System.Linq;
+using Elasticsearch.Net;
 using Pipeline.Context;
 
 namespace Pipeline.Provider.Elastic {
 
     public class ElasticPartialUpdater : IDelete, IWrite {
 
-        readonly IElasticClient _client;
+        readonly IElasticLowLevelClient _client;
         readonly Configuration.Field[] _fields;
         readonly OutputContext _context;
         private readonly string _type;
         private readonly string _index;
 
-        public ElasticPartialUpdater(OutputContext context, Configuration.Field[] fields, IElasticClient client) {
+        public ElasticPartialUpdater(OutputContext context, Configuration.Field[] fields, IElasticLowLevelClient client) {
             _context = context;
             _fields = fields;
             _client = client;
@@ -43,7 +43,7 @@ namespace Pipeline.Provider.Elastic {
             // Could probably do bulk updates with partition and bulk operation
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                _client.Update(new UpdateRequest<dynamic, object>(row.ToExpandoObject(_fields), _index, _type, id));
+                _client.Update<VoidResponse>(_index, _type, id, row.ToExpandoObject(_fields));
                 _context.Increment();
             }
         }
@@ -51,7 +51,7 @@ namespace Pipeline.Provider.Elastic {
         public void Write(IEnumerable<IRow> rows) {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                _client.Update(new UpdateRequest<dynamic, object>(row.ToExpandoObject(_fields), _index, _type, id));
+                _client.Update<VoidResponse>(_index, _type, id, row.ToExpandoObject(_fields));
                 _context.Increment();
             }
         }

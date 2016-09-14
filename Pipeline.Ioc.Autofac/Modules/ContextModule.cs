@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -86,6 +88,9 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
                     return new OutputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
                 }).Named<OutputContext>(entity.Key);
+
+                var connection = _process.Connections.First(c => c.Name == entity.Connection);
+                builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
 
                 if (output.Provider == "console") {
                     builder.Register(ctx => new ConsoleWriter(output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize)).As<ConsoleWriter>();

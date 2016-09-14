@@ -73,7 +73,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         case "postgresql":
                         case "sqlite":
                         case "sqlserver":
-                        case "elastic":
+                        case "elasticsearch":
                         case "lucene":
                             controller.PreActions.Add(ctx.Resolve<IInitializer>());
                             break;

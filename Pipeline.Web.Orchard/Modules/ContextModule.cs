@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -83,6 +84,10 @@ namespace Pipeline.Web.Orchard.Modules {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
                     return new OutputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
                 }).Named<OutputContext>(e.Key);
+
+                var connection = _process.Connections.First(c => c.Name == entity.Connection);
+                builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
+
             }
         }
     }

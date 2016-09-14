@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Autofac;
@@ -28,8 +29,9 @@ using Pipeline.Nulls;
 using Pipeline.Provider.Elastic;
 using Pipeline.Provider.Elastic.Ext;
 using Pipeline.Transforms.System;
+using Pipeline.Web.Orchard.Impl;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Pipeline.Web.Orchard.Modules {
     public class ElasticModule : Module {
         private readonly Process _process;
 

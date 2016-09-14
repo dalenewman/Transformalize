@@ -15,108 +15,206 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Nest;
+
+using System;
 using Pipeline.Contracts;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using Elasticsearch.Net;
+using Newtonsoft.Json;
+using Pipeline.Configuration;
 
 namespace Pipeline.Provider.Elastic {
 
     public class ElasticReader : IRead {
 
+        readonly IElasticLowLevelClient _client;
         readonly IConnectionContext _context;
-        readonly Configuration.Field[] _fields;
-        readonly Field[] _nestFields;
+        readonly Field[] _fields;
         readonly string[] _fieldNames;
-        readonly IElasticClient _client;
         readonly IRowFactory _rowFactory;
         readonly ReadFrom _readFrom;
         readonly string _typeName;
-        readonly QueryContainerDescriptor<dynamic> _query;
 
         public ElasticReader(
             IConnectionContext context,
-            Configuration.Field[] fields,
-            IElasticClient client,
+            Field[] fields,
+            IElasticLowLevelClient client,
             IRowFactory rowFactory,
             ReadFrom readFrom
         ) {
 
-            //TODO: Refactor, got a lot going on here
-
             _context = context;
             _fields = fields;
-            _nestFields = _fields.Select(f => new Field() { Name = f.Name }).ToArray();
-            _fieldNames = fields.Select(f => f.Name).ToArray();
+            _fieldNames = fields.Select(f => _readFrom == ReadFrom.Input ? f.Name : f.Alias.ToLower()).ToArray();
             _client = client;
             _rowFactory = rowFactory;
             _readFrom = readFrom;
             _typeName = readFrom == ReadFrom.Input ? context.Entity.Name : context.Entity.Alias.ToLower();
 
-            _query = new QueryContainerDescriptor<dynamic>();
+        }
 
-            if (readFrom == ReadFrom.Input) {
-                if (context.Entity.Filter.Any()) { 
-                    foreach (var filter in context.Entity.Filter) {
-                        _query.Term(filter.LeftField.Name, filter.Value);
+        private string WriteQuery(
+            IEnumerable<Field> fields,
+            ReadFrom readFrom,
+            IContext context,
+            int from = 0,
+            int size = 10
+        ) {
+
+            var sb = new StringBuilder();
+            var sw = new StringWriter(sb);
+
+            using (var writer = new JsonTextWriter(sw)) {
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("from");
+                writer.WriteValue(from);
+                writer.WritePropertyName("size");
+                writer.WriteValue(size);
+
+                writer.WritePropertyName("_source");
+                writer.WriteStartObject();
+                writer.WritePropertyName("includes");
+                writer.WriteStartArray();
+                foreach (var field in fields) {
+                    writer.WriteValue(readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower());
+                }
+                writer.WriteEndArray();
+                writer.WriteEndObject();
+
+                if (readFrom == ReadFrom.Input) {
+                    if (context.Entity.Filter.Any()) {
+                        writer.WritePropertyName("query");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("constant_score");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("filter");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("bool");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("must");
+                        writer.WriteStartArray();
+
+                        foreach (var filter in context.Entity.Filter) {
+                            writer.WriteStartObject();
+                            writer.WritePropertyName("term");
+                            writer.WriteStartObject();
+                            writer.WritePropertyName(filter.LeftField.Name);
+                            writer.WriteValue(filter.Value);
+                            writer.WriteEndObject();
+                            writer.WriteEndObject();
+                        }
+
+                        writer.WriteEndArray();
+                        writer.WriteEndObject();
+                        writer.WriteEndObject();
+                        writer.WriteEndObject();
+                        writer.WriteEndObject();
                     }
                 } else {
-                    _query.MatchAll();
+                    writer.WritePropertyName("query");
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("constant_score");
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("filter");
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("term");
+                    writer.WriteStartObject();
+                    writer.WritePropertyName("tfldeleted");
+                    writer.WriteValue(false);
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+
                 }
-            } else {
-                _query.Term("tfldeleted", false);
+
+                if (context.Entity.Order.Any()) {
+                    writer.WritePropertyName("sort");
+                    writer.WriteStartArray();
+
+                    foreach (var orderBy in context.Entity.Order) {
+                        Field field;
+                        if (context.Entity.TryGetField(orderBy.Field, out field)) {
+                            var name = _readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower();
+                            writer.WriteStartObject();
+                            writer.WritePropertyName(name);
+                            writer.WriteStartObject();
+                            writer.WritePropertyName("order");
+                            writer.WriteValue(orderBy.Sort);
+                            writer.WriteEndObject();
+                            writer.WriteEndObject();
+                        }
+                    }
+
+                    writer.WriteEndArray();
+
+                }
+
+                writer.WriteEndObject();
+                writer.Flush();
+                return sb.ToString();
             }
 
-            if (context.Entity.Order.Any()) {
-                foreach (var orderBy in context.Entity.Order) {
-                    Configuration.Field field;
-                    if (context.Entity.TryGetField(orderBy.Field, out field)) {
-                        var name = _readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower();
-                        SortFieldDescriptor<dynamic> sortField = new SortFieldDescriptor<dynamic>();
-                        sortField.Field(name);
-                        if (orderBy.Sort == "asc") {
-                            sortField.Ascending();
-                        } else {
-                            sortField.Descending();
+        }
+
+        public IEnumerable<IRow> Read() {
+            ElasticsearchResponse<DynamicResponse> response;
+
+            string body;
+            if (_context.Entity.IsPageRequest()) {
+                var from = (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
+                body = WriteQuery(_fields, _readFrom, _context, from, _context.Entity.PageSize);
+            } else {
+                body = WriteQuery(_fields, _readFrom, _context, 0, 0);
+                response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
+                if (response.Success) {
+                    var hits = response.Body["hits"] as ElasticsearchDynamicValue;
+                    if (hits != null && hits.HasValue) {
+                        var properties = hits.Value as IDictionary<string, object>;
+                        if (properties != null && properties.ContainsKey("total")) {
+                            var size = Convert.ToInt32(properties["total"]) + 1;
+                            body = WriteQuery(_fields, _readFrom, _context, 0, size);
                         }
                     }
                 }
             }
-        }
+            _context.Debug(() => body);
 
-        public IEnumerable<IRow> Read() {
+            response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
 
-            //TODO: Respect filters, and optionally order by
-
-            ISearchResponse<dynamic> scanResults;
-            ISearchResponse<dynamic> results;
-
-            // note: sort is not implemented
-            scanResults = _client.Search<dynamic>(s => s
-                    .Index(_context.Connection.Index)
-                    .Type(_typeName)
-                    .From(0)
-                    .Size(_context.Entity.ReadSize)
-                    .Query(q=>_query)
-                    .Fields(f=>f.Fields(_fieldNames))
-                    .SearchType(Elasticsearch.Net.SearchType.Scan)
-                    .Scroll("2s")
-            );
-
-            results = _client.Scroll<dynamic>("2s", scanResults.ScrollId);
-
-            while (results.Fields.Any()) {
-                var localResults = results;
-                foreach (var hit in localResults.Hits) {
-                    var row = _rowFactory.Create();
-                    for (int i = 0; i < _fields.Length; i++) {
-                        row[_fields[i]] = hit.Fields.Value<object[]>(_nestFields[i]);
+            if (response.Success) {
+                _context.Entity.Hits = Convert.ToInt32((response.Body["hits"]["total"] as ElasticsearchDynamicValue).Value);
+                var hits = response.Body["hits"]["hits"] as ElasticsearchDynamicValue;
+                if (hits != null && hits.HasValue) {
+                    var docs = hits.Value as IEnumerable<object>;
+                    if (docs != null) {
+                        foreach (var doc in docs) {
+                            var row = _rowFactory.Create();
+                            var dict = doc as IDictionary<string, object>;
+                            if (dict != null && dict.ContainsKey("_source")) {
+                                var source = dict["_source"] as IDictionary<string, object>;
+                                if (source != null) {
+                                    for (var i = 0; i < _fields.Length; i++) {
+                                        var field = _fields[i];
+                                        row[field] = field.Convert(source[_fieldNames[i]]);
+                                    }
+                                }
+                            }
+                            _context.Increment();
+                            yield return row;
+                        }
                     }
-                    _context.Increment();
-                    yield return row;
                 }
-                results = _client.Scroll<dynamic>("2s", localResults.ScrollId);
+
+            } else {
+                _context.Error(response.DebugInformation);
             }
+
         }
     }
 }

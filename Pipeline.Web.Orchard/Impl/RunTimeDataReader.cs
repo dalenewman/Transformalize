@@ -46,6 +46,7 @@ namespace Pipeline.Web.Orchard.Impl {
             // providers
             nested.RegisterCallback(new AdoModule(process).Configure);
             nested.RegisterCallback(new SolrModule(process).Configure);
+            nested.RegisterCallback(new ElasticModule(process).Configure);
             nested.RegisterCallback(new InternalModule(process).Configure);
             nested.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
             nested.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);

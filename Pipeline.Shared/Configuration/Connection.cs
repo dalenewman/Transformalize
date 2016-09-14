@@ -17,7 +17,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Cfg.Net;
 
 namespace Pipeline.Configuration {
@@ -78,7 +77,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web,log,directory", toLower = true)]
+        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web,log,directory", toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
@@ -159,7 +158,7 @@ namespace Pipeline.Configuration {
             if (Provider == "internal" && (Database != string.Empty || ConnectionString != string.Empty)) {
                 Provider = "sqlserver";
             }
-            if (Provider == "elastic" && Port == 0) {
+            if (Provider == "elasticsearch" && Port == 0) {
                 Port = 9200;
             }
         }
@@ -196,7 +195,7 @@ namespace Pipeline.Configuration {
                 }
             }
 
-            if (Provider == "elastic") {
+            if (Provider == "elasticsearch") {
                 if (Url == string.Empty) {
                     if (Server == string.Empty || Index == string.Empty) {
                         Error("The server and index are required for the elastic provider. (e.g. <add provider='elastic' server='localhost' port='9200' index='twitter' />)");
@@ -226,7 +225,7 @@ namespace Pipeline.Configuration {
                     return $"{Provider}:{Server}.{Database}";
                 case "lucene":
                     return $"{Provider}:{Folder}";
-                case "elastic":
+                case "elasticsearch":
                 case "solr":
                     return $"{Provider}:{Url}";
                 case "file":

@@ -19,13 +19,17 @@ using NUnit.Framework;
 using Pipeline.Configuration;
 using Pipeline.Provider.SqlServer;
 using Dapper;
-using Nest;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Ext;
 using Elasticsearch.Net;
+using Pipeline.Context;
+using Pipeline.Desktop.Loggers;
 using Pipeline.Ioc.Autofac.Modules;
+using Pipeline.Provider.Elastic;
+using Pipeline.Provider.Elastic.Ext;
 
 namespace Pipeline.Test {
 
@@ -49,7 +53,7 @@ namespace Pipeline.Test {
 
         public Connection ElasticConnection { get; set; } = new Connection {
             Name = "output",
-            Provider = "elastic",
+            Provider = "elasticsearch",
             Index = "northwind",
             Url = "http://localhost:9200"
         }.WithValidation();
@@ -67,8 +71,9 @@ namespace Pipeline.Test {
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
             var container = builder.Build();
 
-            IConnectionSettingsValues settings = new ConnectionSettings(new SingleNodeConnectionPool(new Uri(ElasticConnection.Url)));
-            var es = new ElasticClient(settings);
+            var pool = new SingleNodeConnectionPool(new Uri(ElasticConnection.Url));
+            var settings = new ConnectionConfiguration(pool);
+            var client = new ElasticLowLevelClient(settings);
 
             // CORRECT DATA AND INITIAL LOAD
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
@@ -88,7 +93,7 @@ namespace Pipeline.Test {
             var responseElastic = new PipelineAction(root).Execute();
             Assert.AreEqual(200, responseElastic.Code);
 
-            Assert.AreEqual(2155, es.Count<DynamicResponse>(c => c.Index("northwind").Type("star").QueryOnQueryString("*:*")).Count);
+            Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", "star", "{\"query\" : { \"match_all\" : { }}}").Body["count"].Value);
 
             // FIRST DELTA, NO CHANGES
             root = ResolveRoot(container, ElasticTestFile, false);
@@ -96,8 +101,7 @@ namespace Pipeline.Test {
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Content);
 
-            Assert.AreEqual(2155, es.Count<DynamicResponse>(c => c.Index("northwind").Type("star").QueryOnQueryString("*:*")).Count);
-
+            Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", "star", "{\"query\" : { \"match_all\" : { }}}").Body["count"].Value);
 
             // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO 
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
@@ -126,18 +130,30 @@ namespace Pipeline.Test {
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Content);
 
-            var response = es.Search<DynamicResponse>(s=> s
-                .Index("northwind")
-                .Type("star")
-                .From(0)
-                .Size(1)
-                .DefaultOperator(DefaultOperator.And)
-                .Query(q=>q.Term("orderdetailsorderid",10253) && q.Term("orderdetailsproductid", 39))
-            );
+            var response = client.Search<DynamicResponse>(
+                "northwind",
+                "star", @"{
+   ""query"" : {
+      ""constant_score"" : { 
+         ""filter"" : {
+            ""bool"" : {
+              ""must"" : [
+                 { ""term"" : {""orderdetailsorderid"" : 10253}}, 
+                 { ""term"" : {""orderdetailsproductid"" : 39}} 
+              ]
+           }
+         }
+      }
+   }
+}");
 
-            Assert.AreEqual(response.Documents.First()["orderdetailsunitprice"], 15.0);
-            Assert.AreEqual(response.Documents.First()["orderdetailsquantity"], 40);
-            Assert.AreEqual(response.Documents.First()["orderdetailsextendedprice"], 40*15.0);
+            var hits = (response.Body["hits"]["hits"] as ElasticsearchDynamicValue).Value as IList<object>;
+            var hit = hits[0] as IDictionary<string, object>;
+            var source = hit["_source"] as IDictionary<string, object>;
+
+            Assert.AreEqual(source["orderdetailsunitprice"], 15.0);
+            Assert.AreEqual(source["orderdetailsquantity"], 40);
+            Assert.AreEqual(source["orderdetailsextendedprice"], 40 * 15.0);
 
             // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
@@ -165,17 +181,142 @@ namespace Pipeline.Test {
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Content);
 
-            response = es.Search<DynamicResponse>(s => s
-                .Index("northwind")
-                .Type("star")
-                .From(0)
-                .Size(1)
-                .Query(q => q.Term("orderdetailsorderid", 10254))
-            );
+            response = client.Search<DynamicResponse>(
+                "northwind",
+                "star",
+                @"{
+   ""query"" : {
+      ""constant_score"" : { 
+         ""filter"" : {
+            ""bool"" : {
+              ""must"" : [
+                 { ""term"" : {""orderdetailsorderid"" : 10254}}
+              ]
+           }
+         }
+      }
+   }
+}");
 
-            Assert.AreEqual(response.Documents.First()["orderscustomerid"], "VICTE");
-            Assert.AreEqual(response.Documents.First()["ordersfreight"], 20.11);
+            hits = (response.Body["hits"]["hits"] as ElasticsearchDynamicValue).Value as IList<object>;
+            hit = hits[0] as IDictionary<string, object>;
+            source = hit["_source"] as IDictionary<string, object>;
+
+            Assert.AreEqual(source["orderscustomerid"], "VICTE");
+            Assert.AreEqual(source["ordersfreight"], 20.11);
 
         }
+
+        [Test]
+        [Ignore("Used for development purposes.")]
+        public void TestSingleIndexMapping() {
+
+            var connection = new Connection {
+                Name = "input",
+                Provider = "elasticsearch",
+                Index = "colors",
+                Server = "localhost",
+                Port = 9200
+            }.WithValidation();
+
+            connection.Url = connection.BuildElasticUrl();
+
+            var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
+            var settings = new ConnectionConfiguration(pool);
+            var client = new ElasticLowLevelClient(settings);
+            var context = new ConnectionContext(new PipelineContext(new TraceLogger()), connection);
+            var schemaReader = new ElasticSchemaReader(context, client);
+
+            Assert.AreEqual(11, schemaReader.GetFields("rows").Count());
+
+        }
+
+        [Test]
+        [Ignore("Used for development purposes.")]
+        public void TestAllIndexMapping() {
+
+            var connection = new Connection {
+                Name = "input",
+                Provider = "elasticsearch",
+                Index = "colors",
+                Server = "localhost",
+                Port = 9200
+            }.WithValidation();
+
+            connection.Url = connection.BuildElasticUrl();
+
+            var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
+            var settings = new ConnectionConfiguration(pool);
+            var client = new ElasticLowLevelClient(settings);
+            var context = new ConnectionContext(new PipelineContext(new TraceLogger()), connection);
+            var schemaReader = new ElasticSchemaReader(context, client);
+
+
+            Assert.AreEqual(1, schemaReader.GetEntities().Count());
+
+        }
+
+        [Test]
+        [Ignore("Used for development purposes.")]
+        public void TestReadAll() {
+
+            var connection = new Connection {
+                Name = "input",
+                Provider = "elasticsearch",
+                Index = "colors",
+                Server = "localhost",
+                Port = 9200
+            }.WithValidation();
+
+            connection.Url = connection.BuildElasticUrl();
+
+            var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
+            var settings = new ConnectionConfiguration(pool);
+            var client = new ElasticLowLevelClient(settings);
+            var context = new ConnectionContext(new PipelineContext(new TraceLogger(), null, new Entity { Name = "rows", Alias = "rows" }.WithDefaults()), connection);
+            var code = new Field { Name = "code", Index = 0 }.WithDefaults();
+            var total = new Field { Name = "total", Type = "int", Index = 1 }.WithDefaults();
+
+            var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
+
+            var rows = reader.Read().ToArray();
+            Assert.AreEqual(865, rows.Length);
+
+        }
+
+
+        [Test]
+        [Ignore("Used for development purposes.")]
+        public void TestReadPage() {
+
+            var connection = new Connection {
+                Name = "input",
+                Provider = "elasticsearch",
+                Index = "colors",
+                Server = "localhost",
+                Port = 9200
+            }.WithValidation();
+
+            connection.Url = connection.BuildElasticUrl();
+
+            var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
+            var settings = new ConnectionConfiguration(pool);
+            var client = new ElasticLowLevelClient(settings);
+            var context = new ConnectionContext(new PipelineContext(new TraceLogger(), null, new Entity {
+                Name = "rows",
+                Alias = "rows",
+                Page = 2,
+                PageSize = 20
+            }.WithDefaults()), connection);
+            var code = new Field { Name = "code", Index = 0 }.WithDefaults();
+            var total = new Field { Name = "total", Type = "int", Index = 1 }.WithDefaults();
+
+            var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
+
+            var rows = reader.Read().ToArray();
+            Assert.AreEqual(20, rows.Length);
+
+        }
+
     }
 }

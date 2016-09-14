@@ -48,7 +48,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     switch (provider) {
                         case "solr":
                         case "lucene":
-                        case "elastic":
+                        case "elasticsearch":
                             var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
                             context.Warn($"The {provider} does not support maps yet.");
                             return new DefaultMapReader();

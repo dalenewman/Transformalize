@@ -13,7 +13,7 @@
 
   <connections>
     <add name="input" connection-string="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;" />
-    <add name="output" provider="elastic" server="localhost" port="9200" index="northwind" />
+    <add name="output" provider="elasticsearch" server="localhost" port="9200" index="northwind" />
   </connections>
 
   <entities>

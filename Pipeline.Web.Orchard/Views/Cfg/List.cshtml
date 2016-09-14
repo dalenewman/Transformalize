@@ -87,8 +87,7 @@
                 <td>
                     @if (response.Status == 200) {
                         <span class="glyphicon glyphicon-file"> @response.Part.Title()</span>
-                    }
-                    else {
+                    } else {
                         <span class="glyphicon glyphicon-exclamation-sign"> @response.Message</span>
                     }
                 </td>
@@ -110,8 +109,12 @@
                         <span class="glyphicon glyphicon-trash"></span>
                     </button>
 
+                    <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("Download", "Cfg", new {id = @part.Id})', '_self');">
+                        <span class="glyphicon glyphicon-download"></span>
+                    </button>
+
                     @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
-                        <button title="Check" type="button" class="btn btn-info btn-xs" onclick="window.open('@(@Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                        <button title="Check" type="button" class="btn btn-success btn-xs" onclick="window.open('@(@Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                             <span class="glyphicon glyphicon-check"></span>
                         </button>
                     }

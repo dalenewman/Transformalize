@@ -29,6 +29,8 @@ using Orchard.UI.Notify;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
+using System.IO;
+using Orchard.Autoroute.Services;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -40,6 +42,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
         private readonly ICfgService _cfgService;
+        private readonly ISlugService _slugService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -48,13 +51,15 @@ namespace Pipeline.Web.Orchard.Controllers {
             IProcessService processService,
             ISortService sortService,
             ISecureFileService secureFileService,
-            ICfgService cfgService
+            ICfgService cfgService,
+            ISlugService slugService
             ) {
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
             _cfgService = cfgService;
             _sortService = sortService;
+            _slugService = slugService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -141,6 +146,39 @@ namespace Pipeline.Web.Orchard.Controllers {
             return View(process);
 
         }
+
+        [Themed(false)]
+        [HttpGet]
+        public ActionResult Download(int id) {
+
+            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
+
+            var process = new Configuration.Process { Name = "Export" }.WithDefaults();
+
+            if (part == null) {
+                process.Name = "Not Found";
+                return new FileStreamResult(GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
+            }
+
+            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                process.Name = "Not Authorized";
+                return new FileStreamResult(GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
+            }
+
+            return new FileStreamResult(GenerateStreamFromString(part.Configuration), "text/" + part.EditorMode) { FileDownloadName = _slugService.Slugify(part.Title()) + "." + part.EditorMode };
+
+        }
+
+
+        public Stream GenerateStreamFromString(string s) {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
+        }
+
 
     }
 }

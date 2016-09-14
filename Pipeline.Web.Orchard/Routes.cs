@@ -41,6 +41,7 @@ namespace Pipeline.Web.Orchard {
                 RouteDescriptorWithTagFilter("File", "List"),
 
                 RouteDescriptorWithId("Cfg", "Report"),
+                RouteDescriptorWithId("Cfg", "Download"),
                 RouteDescriptorWithTagFilter("Cfg", "List"),
             };
         }

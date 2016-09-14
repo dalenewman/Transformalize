@@ -70,9 +70,7 @@
                             default:
                                 var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
                                 if (string.IsNullOrEmpty(parameter.Map)) {
-                                    <input class="form-control"
-                                           name="@parameter.Name"
-                                           value="@(requestedValue)" />
+                                    <input class="form-control" name="@parameter.Name" value="@(requestedValue)" />
                                 } else {
                                     <select class="form-control" name="@parameter.Name">
                                         @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
@@ -273,8 +271,7 @@
             var expression = sort.replace(/^\.+|\.+$/gm, '');
             console.log(expression);
             setSort(expression);
-            setPage(1);
-            submit();
+            submit(1);
         });
     });
 

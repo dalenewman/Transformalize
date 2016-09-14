@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -128,7 +129,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 try {
                     runner.Execute(process);
                     if (process.Log.Any()) {
-                        process.Status = process.Log.Any(le=>le.LogLevel == LogLevel.Error) ? (short)500 : (short)200;
+                        process.Status = process.Log.Any(le => le.LogLevel == LogLevel.Error) ? (short)500 : (short)200;
                         process.Message = string.Format("{0} error{1} and/or warning{1} recorded.", process.Log.Count, process.Log.Count.Plural());
                     } else {
                         process.Status = 200;
@@ -157,7 +158,6 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             var timer = new Stopwatch();
             timer.Start();
-            //var format = GetFormat(Request);
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 

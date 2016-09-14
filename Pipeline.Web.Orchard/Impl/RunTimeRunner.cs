@@ -61,6 +61,7 @@ namespace Pipeline.Web.Orchard.Impl {
             // providers
             container.RegisterCallback(new AdoModule(process).Configure);
             container.RegisterCallback(new SolrModule(process).Configure);
+            container.RegisterCallback(new ElasticModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
             container.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
             container.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
