@@ -26,6 +26,7 @@ using Pipeline.Extensions;
 using Pipeline.Provider.Ado;
 using Pipeline.Provider.Ado.Actions;
 using Pipeline.Web.Orchard.Impl;
+using OpenAction = Pipeline.Web.Orchard.Impl.OpenAction;
 
 namespace Pipeline.Web.Orchard.Modules {
     /// <summary>

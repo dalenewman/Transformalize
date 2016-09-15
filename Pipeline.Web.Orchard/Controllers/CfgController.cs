@@ -99,7 +99,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
-                    var parameters = Common.GetParameters(Request, _secureFileService);
+                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
                     if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
                         _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
                         process.Name = "File Not Found";

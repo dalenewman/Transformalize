@@ -26,6 +26,7 @@ using Cfg.Net.Parsers;
 using Cfg.Net.Parsers.YamlDotNet;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
+using Orchard;
 using Orchard.Environment.Configuration;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
@@ -89,7 +90,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
                 new PlaceHolderValidator()
-                )).As<XmlProcess>();
+            )).As<XmlProcess>();
 
             builder.Register(c => new XmlToJsonProcess(
                 new NanoXmlParser(),
@@ -99,9 +100,9 @@ namespace Pipeline.Web.Orchard.Modules {
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
                 new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
+                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()), 
                 new PlaceHolderValidator()
-                )).As<XmlToJsonProcess>();
+            )).As<XmlToJsonProcess>();
 
             builder.Register(c => new XmlToYamlProcess(
                 new NanoXmlParser(),
@@ -125,6 +126,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new JsonSerializer(),
                 new JintValidator("js"),
                 new IllegalCharacterValidator("ipc"),
+                //new OrchardNodeModifier("host", c.Resolve<IOrchardServices>()),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
                 new PlaceHolderModifier(),

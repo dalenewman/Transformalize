@@ -18,14 +18,12 @@ using System.Web.Routing;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
-using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Handlers {
 
-    [OrchardFeature("Pipeline.Files")]
     public class PipelineFilePartHandler : ContentHandler {
 
         public Localizer T { get; set; }

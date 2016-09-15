@@ -73,7 +73,7 @@
     @foreach (var part in Model.Configurations) {
         var title = part.As<TitlePart>().Title;
 
-        <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "active" : string.Empty)">
+        <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "success" : string.Empty)">
             <td>
                 <a href="@Url.Action("Cfg", "Api", new {id = part.Id})">@part.Id</a>
             </td>
@@ -134,7 +134,7 @@
                 @if (part.Runnable && !part.NeedsInputFile || part.Runnable && part.NeedsInputFile && inputFileId > 0) {
                     <form class="form-inline" action="@Url.Action("Run", "Api", new RouteValueDictionary {{"id",part.Id}})" method="POST">
                         <input type="hidden" name="__requestverificationtoken" value="@Html.AntiForgeryTokenValueOrchard()" />
-                        <input type="hidden" name="InputFileId" value="@inputFileId"/>
+                        <input type="hidden" name="InputFileId" value="@inputFileId" />
                         <select title="Mode"
                                 class="form-control input-sm"
                                 name="Mode"
@@ -145,11 +145,14 @@
                             <option key="default" selected="selected">default</option>
                             <option key="init" value="init">init</option>
                         </select>
-
                         <button title="Run" type="submit" class="btn btn-danger btn-xs">Run</button>
                     </form>
                 } else {
-                    <text>&nbsp;</text>
+                    if (part.Runnable && part.NeedsInputFile && inputFileId == 0) {
+                        <span class="text-muted">requires file</span>
+                    } else {
+                        <text>&nbsp;</text>
+                    }
                 }
             </td>
 

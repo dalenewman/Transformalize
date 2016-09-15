@@ -20,7 +20,6 @@ using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Core.Contents.Extensions;
 using Orchard.Data.Migration;
-using Orchard.Environment.Extensions;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
@@ -55,7 +54,7 @@ namespace Pipeline.Web.Orchard {
 
                 ContentDefinitionManager.AlterTypeDefinition(Common.PipelineConfigurationName, cfg => cfg
                     .Creatable()
-                    .WithSetting("Description", "An arrangement for a Transformalize pipeline composition.")
+                    .WithSetting("Description", "Transformalize Pipeline")
                     .WithPart(Common.PipelineConfigurationName + "Part")
                     .WithPart("CommonPart")
                     .WithPart("TitlePart")
@@ -115,9 +114,12 @@ namespace Pipeline.Web.Orchard {
             return 6;
         }
 
+        public int UpdateFrom6() {
+            ContentDefinitionManager.AlterTypeDefinition(Common.PipelineConfigurationName, cfg => cfg.WithSetting("Listable", "True"));
+            return 7;
+        }
     }
 
-    [OrchardFeature("Pipeline.Files")]
     public class FileMigrations : DataMigrationImpl {
         public ILogger Logger { get; set; }
         public Localizer T { get; set; }

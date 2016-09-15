@@ -102,7 +102,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (authorized) {
 
                 var process = _processService.Resolve(part.EditorMode, format);
-                var parameters = Common.GetParameters(Request, _secureFileService);
+                var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
 
                 process.Load(part.Configuration, parameters);
 
@@ -211,7 +211,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             var process = _processService.Resolve(part.EditorMode, format);
-            var parameters = Common.GetParameters(Request, _secureFileService);
+            var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
 
             if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
                 return GetStatus(404, "Process needs an input file.", action, _orchardServices, format);

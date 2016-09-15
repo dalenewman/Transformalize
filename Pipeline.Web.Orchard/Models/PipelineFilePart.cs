@@ -4,12 +4,10 @@ using System.IO;
 using Orchard.ContentManagement;
 using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
-using Orchard.Environment.Extensions;
 using Orchard.Tags.Models;
 
 namespace Pipeline.Web.Orchard.Models {
 
-    [OrchardFeature("Pipeline.Files")]
     public class PipelineFilePart : ContentPart<PipelineFilePartRecord> {
 
         public string Title() {

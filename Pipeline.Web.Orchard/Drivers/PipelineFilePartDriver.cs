@@ -17,19 +17,15 @@
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
-using Orchard.Environment.Extensions;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Drivers {
 
-    [OrchardFeature("Pipeline.Files")]
-    public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
+   public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
 
-        protected override string Prefix {
-            get { return Common.PipelineFileName; }
-        }
+        protected override string Prefix => Common.PipelineFileName;
 
-        //IMPORT, EXPORT
+       //IMPORT, EXPORT
         protected override void Importing(PipelineFilePart part, ImportContentContext context) {
             part.Record.FullPath = context.Attribute(part.PartDefinition.Name, "FullPath");
             part.Record.Direction = context.Attribute(part.PartDefinition.Name, "Direction");

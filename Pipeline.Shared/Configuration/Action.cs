@@ -137,14 +137,11 @@ namespace Pipeline.Configuration {
         }
 
         protected override void Validate() {
-            if (Before && After) {
-                Error("The {0} action is set to run before AND after.  Please choose before OR after.", Type);
-            }
-            if (Type == "open" && File == string.Empty) {
-                Error($"The {Type} action requires a file.");
+            if (Type == "open" && File == string.Empty && Url == string.Empty) {
+                Error($"The {Type} action requires a file or url.");
             }
             if (Type == "run" && string.IsNullOrEmpty(Connection)) {
-                Error("A run action needs it's connection set.");
+                Error("A run action requires a connection.");
             }
         }
 

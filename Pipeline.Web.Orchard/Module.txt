@@ -8,7 +8,5 @@ Description: Transformalize pipelines in Orchard CMS
 Dependencies: Orchard.ContentPermissions, Orchard.Tags, Orchard.Roles
 Category: Workflows
 Features:
-	Pipeline.Files
-		Description: Files for pipelines, etc.
-		Category: Content
-		Dependencies: Pipeline.Web.Orchard
+    Pipeline.Web.Orchard:
+        Description: Transformalize pipelines in Orchard CMS

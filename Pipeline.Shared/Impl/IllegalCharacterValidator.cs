@@ -15,7 +15,6 @@ namespace Pipeline.Configuration {
             _illegalCharacters = illegalCharacters;
         }
 
-
         public string Name { get; set; }
         public void Validate(string name, string value, IDictionary<string, string> parameters, ILogger logger) {
             if (!string.IsNullOrEmpty(value) && value.ToCharArray().Any(c => Illegal.Contains(c))) {

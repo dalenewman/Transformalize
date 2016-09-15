@@ -275,7 +275,11 @@ namespace Pipeline.Web.Orchard {
             return ModuleName + "." + feature + "." + id;
         }
 
-        public static IDictionary<string, string> GetParameters(HttpRequestBase request, ISecureFileService secureFileService) {
+        public static IDictionary<string, string> GetParameters(
+            HttpRequestBase request, 
+            ISecureFileService secureFileService,
+            IOrchardServices orchard
+        ) {
             var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (request != null) {
                 if (request.QueryString != null) {
@@ -321,6 +325,8 @@ namespace Pipeline.Web.Orchard {
                 parameters[Common.InputFileIdName] = "0";
             }
 
+            parameters["Orchard.User"] = orchard.WorkContext.CurrentUser?.UserName;
+            parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser?.Email;
 
             return parameters;
         }

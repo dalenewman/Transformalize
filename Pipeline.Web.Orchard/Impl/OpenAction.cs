@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
+using System.Web;
 using Pipeline.Contracts;
 using Action = Pipeline.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+namespace Pipeline.Web.Orchard.Impl {
     public class OpenAction : IAction {
         private readonly Action _action;
 
@@ -31,7 +33,7 @@ namespace Pipeline.Desktop.Actions {
             var response = new ActionResponse();
             try {
                 var urlOrFile = string.IsNullOrEmpty(_action.File) ? _action.Url : _action.File;
-                System.Diagnostics.Process.Start(urlOrFile);
+                HttpContext.Current.Response.Redirect(urlOrFile, true);
             } catch (Exception ex) {
                 response.Code = 500;
                 response.Content = $"Error opening {_action.File}. {ex.Message}";

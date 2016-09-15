@@ -9,13 +9,11 @@ using Orchard.Themes;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
-using Orchard.Environment.Extensions;
 using Orchard.Roles.Services;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [OrchardFeature("Pipeline.Files")]
     [ValidateInput(false), Themed]
     public class FileController : Controller {
 
