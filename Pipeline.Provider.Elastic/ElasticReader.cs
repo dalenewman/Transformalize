@@ -112,8 +112,8 @@ namespace Pipeline.Provider.Elastic {
                         writer.WriteEndArray();
                         writer.WriteEndObject();
                         writer.WriteEndObject();
-                        writer.WriteEndObject();
-                        writer.WriteEndObject();
+                        writer.WriteEndObject();  
+                        writer.WriteEndObject();  //query
                     }
                 } else {
                     writer.WritePropertyName("query");
@@ -155,6 +155,39 @@ namespace Pipeline.Provider.Elastic {
 
                 }
 
+                if (_readFrom == ReadFrom.Input && context.Entity.Filter.Any(f => f.Type == "facet")) {
+
+                    writer.WritePropertyName("aggs");
+                    writer.WriteStartObject();
+                    foreach (var filter in context.Entity.Filter.Where(f => f.Type == "facet")) {
+
+                        writer.WritePropertyName(filter.Key);
+                        writer.WriteStartObject();
+
+                        writer.WritePropertyName("terms");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName("field");
+                        writer.WriteValue(filter.LeftField.Name);
+                        writer.WritePropertyName("size");
+                        writer.WriteValue(filter.Size);
+                        writer.WritePropertyName("min_doc_count");
+                        writer.WriteValue(filter.Min);
+
+                        writer.WritePropertyName("order");
+                        writer.WriteStartObject();
+                        writer.WritePropertyName(filter.OrderBy);
+                        writer.WriteValue(filter.Order);
+                        writer.WriteEndObject(); //order
+
+
+                        writer.WriteEndObject(); // terms
+
+                        writer.WriteEndObject(); // the field name + _filter
+                    }
+                    writer.WriteEndObject(); //aggs
+                }
+
+
                 writer.WriteEndObject();
                 writer.Flush();
                 return sb.ToString();
@@ -184,6 +217,7 @@ namespace Pipeline.Provider.Elastic {
                 }
             }
             _context.Debug(() => body);
+            _context.Entity.Query = body;
 
             response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
 
@@ -208,6 +242,21 @@ namespace Pipeline.Provider.Elastic {
                             _context.Increment();
                             yield return row;
                         }
+                    }
+                }
+
+                var aggregations = response.Body["aggregations"] as ElasticsearchDynamicValue;
+                if (aggregations != null && aggregations.HasValue)
+                {
+                    var lookup = aggregations.Value as IDictionary<string, object>;
+                    if (lookup != null)
+                    {
+                        foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Parameter))) {
+                            if (lookup.ContainsKey(filter.Key)) {
+
+                            }
+                        }
+
                     }
                 }
 

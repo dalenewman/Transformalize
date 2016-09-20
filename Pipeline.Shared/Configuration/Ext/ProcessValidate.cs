@@ -34,6 +34,7 @@ namespace Pipeline.Configuration.Ext {
             ValidateDuplicateFields(p, error);
             ValidateRelationships(p, error, warn);
             ValidateEntityConnections(p, error);
+            ValidateEntityFilterParameters(p, error);
             ValidateActionConnections(p, error);
             ValidateTemplateActionConnections(p, error);
             ValidateTransformConnections(p, error);
@@ -184,6 +185,19 @@ namespace Pipeline.Configuration.Ext {
         static void ValidateEntityConnections(Process p, Action<string> error) {
             foreach (var entity in p.Entities.Where(entity => p.Connections.All(c => c.Name != entity.Connection))) {
                 error($"The {entity.Name} entity references an invalid connection: {entity.Connection}.");
+            }
+        }
+
+        static void ValidateEntityFilterParameters(Process p, Action<string> error) {
+            var parameters = p.GetActiveParameters().ToArray();
+            foreach (var entity in p.Entities) {
+                foreach (var filter in entity.Filter) {
+                    if (!string.IsNullOrEmpty(filter.Parameter)) {
+                        if (parameters.All(pa => pa.Name != filter.Parameter)) {
+                            error($"The filter on field {filter.Field} in entity {entity.Alias} refers to an invalid parameter {filter.Parameter}");
+                        }
+                    }
+                }
             }
         }
 

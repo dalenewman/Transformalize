@@ -86,7 +86,9 @@ namespace Pipeline.Provider.Ado {
                     }
 
                     if (_input.Entity.IsPageRequest()) {
-                        _input.Entity.Hits = cn.ExecuteScalar<int>($"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(_input.Entity.Filter.Any() ? _input.ResolveFilter(_factory) : string.Empty)}");
+                        var sql = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(_input.Entity.Filter.Any() ? " WHERE " + _input.ResolveFilter(_factory) : string.Empty)}";
+                        _input.Debug(() => sql);
+                        _input.Entity.Hits = cn.ExecuteScalar<int>(sql);
                     }
                     _input.Entity.Query = cmd.CommandText;
                 } else {

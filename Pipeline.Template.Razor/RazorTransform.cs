@@ -31,7 +31,7 @@ using RazorEngine.Text;
 
 namespace Pipeline.Template.Razor {
 
-    public class RazorTransform : BaseTransform, ITransform {
+    public class RazorTransform : BaseTransform {
 
         private readonly IRazorEngineService _service;
         private readonly Field[] _input;
@@ -42,19 +42,17 @@ namespace Pipeline.Template.Razor {
 
             var key = GetHashCode(context.Transform.Template, _input);
 
-            if (Cache.TryGetValue(key, out _service))
-                return;
-
-            var config = new TemplateServiceConfiguration {
-                DisableTempFileLocking = true,
-                EncodedStringFactory = Context.Transform.ContentType == "html"
-                    ? (IEncodedStringFactory)new HtmlEncodedStringFactory()
-                    : new RawStringFactory(),
-                Language = Language.CSharp,
-                CachingProvider = new DefaultCachingProvider(t => { })
-            };
-
-            _service = RazorEngineService.Create(config);
+            if (!Cache.TryGetValue(key, out _service)) {
+                var config = new TemplateServiceConfiguration {
+                    DisableTempFileLocking = true,
+                    EncodedStringFactory = Context.Transform.ContentType == "html"
+                        ? (IEncodedStringFactory)new HtmlEncodedStringFactory()
+                        : new RawStringFactory(),
+                    Language = Language.CSharp,
+                    CachingProvider = new DefaultCachingProvider(t => { })
+                };
+                _service = RazorEngineService.Create(config);
+            }
 
             try {
                 _service.Compile(Context.Transform.Template, Context.Key, typeof(ExpandoObject));

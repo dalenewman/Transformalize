@@ -498,8 +498,15 @@ namespace Pipeline.Configuration {
             return false;
         }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Description { get; set; }
+
+        public IEnumerable<Parameter> GetActiveParameters() {
+            if (!Environments.Any())
+                return Enumerable.Empty<Parameter>();
+
+            return string.IsNullOrEmpty(Environment) ? Environments.First().Parameters : Environments.First(e => e.Name == Environment).Parameters;
+        }
 
         public void Dispose() {
             Log?.Clear();

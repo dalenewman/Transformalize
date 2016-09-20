@@ -165,6 +165,31 @@ namespace Pipeline.Configuration {
             return GetAllFields().Where(f => f.Output);
         }
 
+        protected override void PostValidate() {
+            if (!Errors().Any()) {
+                PostValidateFilters();
+            }
+        }
+
+        private void PostValidateFilters() {
+            if (!Filter.Any())
+                return;
+
+            for (int i = 0; i < Filter.Count; i++) {
+                var filter = Filter[i];
+                Field field;
+                if (TryGetField(filter.Field, out field)) {
+                    filter.LeftField = field;
+                    filter.IsField = true;
+                    filter.Key = field.Name + "_filter_" + i;
+                }
+                if (TryGetField(filter.Value, out field)) {
+                    filter.ValueField = field;
+                    filter.ValueIsField = true;
+                }
+            }
+        }
+
         protected override void PreValidate() {
             if (string.IsNullOrEmpty(Alias)) {
                 Alias = Name;
@@ -319,7 +344,7 @@ namespace Pipeline.Configuration {
                 if (names.Contains(f.Field))
                     continue;
 
-                Error("A filter's left attribute must reference a defined field. '{0}' is not defined.", f.Field);
+                Error("A filter's field attribute must reference a defined field. '{0}' is not defined.", f.Field);
             }
         }
 

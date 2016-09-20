@@ -71,9 +71,29 @@ namespace Pipeline.Configuration {
         [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true, ignoreCase = true)]
         public string Operator { get; set; }
 
-        public bool LeftIsField { get; set; }
-        public bool RightIsField { get; set; }
+        public bool IsField { get; set; }
+        public bool ValueIsField { get; set; }
         public Field LeftField { get; set; }
-        public Field RightField { get; set; }
+        public Field ValueField { get; set; }
+
+        [Cfg(value="search",domain="search,facet,range")]
+        public string Type { get; set; }
+
+        [Cfg(value=100)]
+        public int Size { get; set; }
+
+        [Cfg(value="_term")]
+        public string OrderBy { get; set; }
+
+        [Cfg(value="asc", domain="asc,desc", toLower = true)]
+        public string Order { get; set; }
+
+        [Cfg(value=0)]
+        public int Min { get; set; }
+
+        public string Key { get; set; }
+
+        [Cfg(value="")]
+        public string Parameter { get; set; }
     }
 }

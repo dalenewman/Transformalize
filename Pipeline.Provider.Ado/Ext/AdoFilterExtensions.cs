@@ -28,18 +28,6 @@ namespace Pipeline.Provider.Ado.Ext {
     public static class SqlFilterExtensions {
         public static string ResolveFilter(this IContext c, IConnectionFactory factory) {
 
-            foreach (var filter in c.Entity.Filter) {
-                Field field;
-                if (c.Entity.TryGetField(filter.Field, out field)) {
-                    filter.LeftField = field;
-                    filter.LeftIsField = true;
-                }
-                if (c.Entity.TryGetField(filter.Value, out field)) {
-                    filter.RightField = field;
-                    filter.RightIsField = true;
-                }
-            }
-
             var builder = new StringBuilder("(");
             var last = c.Entity.Filter.Count - 1;
 
@@ -91,14 +79,14 @@ namespace Pipeline.Provider.Ado.Ext {
             Field otherField;
 
             if (side == "left") {
-                isField = filter.LeftIsField;
+                isField = filter.IsField;
                 value = filter.Field;
-                otherIsField = filter.RightIsField;
-                otherField = filter.RightField;
+                otherIsField = filter.ValueIsField;
+                otherField = filter.ValueField;
             } else {
-                isField = filter.RightIsField;
+                isField = filter.ValueIsField;
                 value = filter.Value;
-                otherIsField = filter.LeftIsField;
+                otherIsField = filter.IsField;
                 otherField = filter.LeftField;
             }
 
