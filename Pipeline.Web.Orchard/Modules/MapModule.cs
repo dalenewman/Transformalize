@@ -49,8 +49,6 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "solr":
                         case "lucene":
                         case "elasticsearch":
-                            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
-                            context.Warn("The {0} does not support maps yet.", provider);
                             return new DefaultMapReader();
                         case "mysql":
                         case "postgresql":

@@ -75,6 +75,9 @@ namespace Pipeline.Configuration {
                     }
                     break;
             }
+            if (string.IsNullOrEmpty(Label)) {
+                Label = Name;
+            }
 
         }
 
@@ -125,6 +128,9 @@ namespace Pipeline.Configuration {
             }
             return null;
         }
+
+        [Cfg(value = "")]
+        public string Label { get; set; }
 
 
     }

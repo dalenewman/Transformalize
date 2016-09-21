@@ -49,8 +49,6 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         case "solr":
                         case "lucene":
                         case "elasticsearch":
-                            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
-                            context.Warn($"The {provider} does not support maps yet.");
                             return new DefaultMapReader();
                         case "mysql":
                         case "postgresql":

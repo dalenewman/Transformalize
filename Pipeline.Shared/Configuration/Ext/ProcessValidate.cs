@@ -34,7 +34,7 @@ namespace Pipeline.Configuration.Ext {
             ValidateDuplicateFields(p, error);
             ValidateRelationships(p, error, warn);
             ValidateEntityConnections(p, error);
-            ValidateEntityFilterParameters(p, error);
+            ValidateEntityFilterMaps(p, error);
             ValidateActionConnections(p, error);
             ValidateTemplateActionConnections(p, error);
             ValidateTransformConnections(p, error);
@@ -188,15 +188,10 @@ namespace Pipeline.Configuration.Ext {
             }
         }
 
-        static void ValidateEntityFilterParameters(Process p, Action<string> error) {
-            var parameters = p.GetActiveParameters().ToArray();
+        static void ValidateEntityFilterMaps(Process p, Action<string> error) {
             foreach (var entity in p.Entities) {
-                foreach (var filter in entity.Filter) {
-                    if (!string.IsNullOrEmpty(filter.Parameter)) {
-                        if (parameters.All(pa => pa.Name != filter.Parameter)) {
-                            error($"The filter on field {filter.Field} in entity {entity.Alias} refers to an invalid parameter {filter.Parameter}");
-                        }
-                    }
+                foreach (var filter in entity.Filter.Where(filter => !string.IsNullOrEmpty(filter.Map)).Where(filter => p.Maps.All(m => m.Name != filter.Map))) {
+                    error($"The filter on field {filter.Field} in entity {entity.Alias} refers to invalid map: {filter.Map}");
                 }
             }
         }

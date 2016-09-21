@@ -205,6 +205,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Styles\busy.gif" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />

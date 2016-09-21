@@ -20,14 +20,15 @@ using System.Linq;
 using Pipeline.Configuration;
 
 namespace Pipeline.Contracts {
-   public interface IMapReader {
-      IEnumerable<MapItem> Read(IContext context); 
-   }
+    public interface IMapReader {
+        IEnumerable<MapItem> Read(IContext context);
+    }
 
-   public class DefaultMapReader : IMapReader {
+    public class DefaultMapReader : IMapReader {
 
-      public IEnumerable<MapItem> Read(IContext context) {
-         return context.Process.Maps.First(m => m.Name == context.Transform.Map).Items;
-      }
-   }
+        public IEnumerable<MapItem> Read(IContext context) {
+            var map = context.Process.Maps.FirstOrDefault(m => m.Name == context.Transform.Map);
+            return map == null ? Enumerable.Empty<MapItem>() : map.Items;
+        }
+    }
 }

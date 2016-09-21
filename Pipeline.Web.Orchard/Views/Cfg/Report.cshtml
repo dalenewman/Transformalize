@@ -15,26 +15,46 @@
     Layout.Title = Model.Name;
 }
 
-<style>
-    .btn-sort {
-        background-color: #dbdbdb;
-        border-color: #d2d1d1;
-        color: #727272;
-    }
+<style type="text/css">
+.btn-sort {
+    background-color: #dbdbdb;
+    border-color: #d2d1d1;
+    color: #727272;
+}
 
-    .btn-xs, .btn-group-xs > .btn {
-        border-radius: 3px;
-        font-size: 9px;
-        line-height: 1.5;
-    }
+.btn-xs, .btn-group-xs > .btn {
+    border-radius: 3px;
+    font-size: 9px;
+    line-height: 1.5;
+}
 
-    th.sorter .btn-xs {
-        font-size: 7px !important;
-    }
+th.sorter .btn-xs {
+    font-size: 7px !important;
+}
 
-    th.sorter {
-        padding: 0 3px 3px 4px !important;
-    }
+th.sorter {
+    padding: 0 3px 3px 4px !important;
+}
+
+#busy {
+    position: fixed;
+    left: 46%;
+    top: 40%;
+    display: none;
+    background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+    background-size: 149px 149px;
+    background-repeat:no-repeat;
+    z-index: 1020;
+    height: 150px;
+    width: 150px;
+}
+
+#busy-holder {
+    background: transparent;
+    width: 100%;
+    height: 100%;        
+}
+   
 </style>
 
 @if (hasParameters) {
@@ -45,50 +65,47 @@
     <div class="alert alert-warning" role="alert">@warning</div>
 }
 
-<form id="id_report" role="form" method="GET">
+<form id="id_report" class="form-inline" role="form" method="GET">
 
     <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
     <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])"/>
 
     @if (Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt))) {
+
+        <button type="button"
+                onclick="$('#id_report select').val($('#id_report select option:first').val()); $('#id_report').submit();" 
+                class="btn btn-info btn-sm">Clear</button>
+
         var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters.Where(p => p.Prompt).ToArray() : Model.Environments.First(e => e.Name == Model.Environment).Parameters.Where(p => p.Prompt).ToArray();
-        for (var i = 0; i < parameters.Length; i++) {
-            var parameter = parameters[i];
-            <div class="row">
-                <div class="form-group form-group-sm">
-                    <label class="col-sm-1 control-label" for="@parameter.Name">@parameter.Name</label>
-                    <div class="col-sm-10">
-                        @switch (parameter.Type) {
-                            case "date":
-                            case "datetime":
-                                var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
-                                <input class="form-control date"
-                                       type="datetime"
-                                       name="@parameter.Name"
-                                       value="@(requestedDate)" />
-                                break;
-                            default:
-                                var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
-                                if (string.IsNullOrEmpty(parameter.Map)) {
-                                    <input class="form-control" name="@parameter.Name" value="@(requestedValue)" />
-                                } else {
-                                    <select class="form-control" name="@parameter.Name">
-                                        @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
-                                            <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
-                                        }
-                                    </select>
-                                }
-                                break;
-                        }
-                    </div>
-                    @if (i == parameters.Length - 1) {
-                        <div class="col-sm-1">
-                            <button type="submit" class="btn btn-warning btn-sm pull-right">Submit</button>
-                        </div>
+
+        foreach (var parameter in parameters) {
+            <div class="form-group form-group-sm">
+                <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
+                <div class="input-group input-group-sm">
+                    <div class="input-group-addon">@parameter.Label</div>
+                    @switch (parameter.Type) {
+                        case "date":
+                        case "datetime":
+                            var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
+                            <input class="form-control date" type="datetime" name="@parameter.Name" placeholder="@parameter.Label" value="@requestedDate" />
+                            break;
+                        default:
+                            var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
+                            if (string.IsNullOrEmpty(parameter.Map)) {
+                                <input class="form-control" name="@parameter.Name" value="@requestedValue" placeholder="@parameter.Label" />
+                            } else {
+                                <select class="form-control" onchange="$('#id_report').submit()" name="@parameter.Name">
+                                    @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
+                                        <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                                    }
+                                </select>
+                            }
+                            break;
                     }
                 </div>
             </div>
         }
+        <button id="id_submit" type="submit" class="btn btn-warning btn-sm">Submit</button>
     }
 
     @foreach (var entity in Model.Entities) {
@@ -212,7 +229,9 @@
     }
 </form>
 
-
+<div id="busy_holder">
+    <div id="busy"></div>
+</div>
 
 <script type="text/javascript">
     //<!--
@@ -236,6 +255,11 @@
 
     $(document).ready(function () {
         $('.form-control.date').datepicker({ dateFormat: 'yy-mm-dd'});
+
+        $('#id_report').bind('submit', function(e) {
+            $('#id_submit').prop('disabled', true);
+            $('#busy').show();
+        });
 
         $('.sortable').click(function () {
             $(this).toggleClass('btn-sort').toggleClass('btn-primary');

@@ -23,6 +23,7 @@ using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Cfg.Net.Ext;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Pipeline.Configuration;
@@ -87,7 +88,7 @@ namespace Pipeline.Provider.Elastic {
                 writer.WriteEndObject();
 
                 if (readFrom == ReadFrom.Input) {
-                    if (context.Entity.Filter.Any()) {
+                    if (context.Entity.Filter.Any(f=>f.Value != "*")) {
                         writer.WritePropertyName("query");
                         writer.WriteStartObject();
                         writer.WritePropertyName("constant_score");
@@ -99,7 +100,7 @@ namespace Pipeline.Provider.Elastic {
                         writer.WritePropertyName("must");
                         writer.WriteStartArray();
 
-                        foreach (var filter in context.Entity.Filter) {
+                        foreach (var filter in context.Entity.Filter.Where(f=>f.Value != "*")) {
                             writer.WriteStartObject();
                             writer.WritePropertyName("term");
                             writer.WriteStartObject();
@@ -112,7 +113,7 @@ namespace Pipeline.Provider.Elastic {
                         writer.WriteEndArray();
                         writer.WriteEndObject();
                         writer.WriteEndObject();
-                        writer.WriteEndObject();  
+                        writer.WriteEndObject();
                         writer.WriteEndObject();  //query
                     }
                 } else {
@@ -227,11 +228,10 @@ namespace Pipeline.Provider.Elastic {
                 if (hits != null && hits.HasValue) {
                     var docs = hits.Value as IEnumerable<object>;
                     if (docs != null) {
-                        foreach (var doc in docs) {
+                        foreach (var doc in docs.OfType<IDictionary<string,object>>()) {
                             var row = _rowFactory.Create();
-                            var dict = doc as IDictionary<string, object>;
-                            if (dict != null && dict.ContainsKey("_source")) {
-                                var source = dict["_source"] as IDictionary<string, object>;
+                            if (doc != null && doc.ContainsKey("_source")) {
+                                var source = doc["_source"] as IDictionary<string, object>;
                                 if (source != null) {
                                     for (var i = 0; i < _fields.Length; i++) {
                                         var field = _fields[i];
@@ -245,21 +245,21 @@ namespace Pipeline.Provider.Elastic {
                     }
                 }
 
-                var aggregations = response.Body["aggregations"] as ElasticsearchDynamicValue;
-                if (aggregations != null && aggregations.HasValue)
-                {
-                    var lookup = aggregations.Value as IDictionary<string, object>;
-                    if (lookup != null)
-                    {
-                        foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Parameter))) {
-                            if (lookup.ContainsKey(filter.Key)) {
+                foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
+                    var map = _context.Process.Maps.First(m => m.Name == filter.Map);
+                    var buckets = response.Body["aggregations"][filter.Key]["buckets"] as ElasticsearchDynamicValue;
+                    if (buckets == null || !buckets.HasValue)
+                        continue;
 
-                            }
-                        }
+                    var items = buckets.Value as IEnumerable<object>;
 
+                    if (items == null)
+                        continue;
+
+                    foreach (var item in items.OfType<IDictionary<string, object>>()) {
+                        map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"]}.WithDefaults());
                     }
                 }
-
             } else {
                 _context.Error(response.DebugInformation);
             }

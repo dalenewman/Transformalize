@@ -93,7 +93,7 @@ namespace Pipeline.Configuration {
 
         public string Key { get; set; }
 
-        [Cfg(value="")]
-        public string Parameter { get; set; }
+        [Cfg(value="", toLower = true)]
+        public string Map { get; set; }
     }
 }
