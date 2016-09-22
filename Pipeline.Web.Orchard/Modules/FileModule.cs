@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Web;
 using Autofac;
 using Orchard.FileSystems.AppData;
 using Pipeline.Configuration;
@@ -117,13 +118,17 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 foreach (var e in _process.Entities) {
                     var entity = e;
-                    // WRITER
+
+                    // ENTITY OUTPUT CONTROLLER
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+                    // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
                             case "file":
-                                return new DelimitedFileWriter(output, output.Connection.File);
+                                return new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream);
                             default:
                                 return new NullWriter(output);
                         }

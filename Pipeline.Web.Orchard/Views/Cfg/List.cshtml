@@ -50,7 +50,7 @@
 </div>
 
 @foreach (var part in Model.Configurations) {
-    <form id="clone_@part.Id" method="POST" action="@(Url.Content("~/Admin/Contents/Clone/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Content("~/Admin/Contents/List/PipelineConfiguration?Options.SelectedCulture=&Options.OrderBy=Modified&Options.ContentsStatus=Draft")))">
+    <form id="clone_@part.Id" method="POST" action="@(Url.Content("~/Admin/Contents/Clone/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Url.Content("~/Admin/Contents/List/PipelineConfiguration?Options.SelectedCulture=&Options.OrderBy=Modified&Options.ContentsStatus=Draft"))))">
         <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()">
     </form>
     <form id="remove_@part.Id"  method="POST" action="@(Url.Content("~/Admin/Contents/Remove/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))">

@@ -220,6 +220,7 @@
     <Compile Include="Impl\OrchardLogWriter.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
+    <Compile Include="Models\ReportViewModel.cs" />
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\CfgService.cs" />

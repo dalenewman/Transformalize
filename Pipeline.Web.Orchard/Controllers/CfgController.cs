@@ -15,6 +15,8 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
@@ -30,7 +32,10 @@ using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using System.IO;
+using System.Xml.Linq;
 using Orchard.Autoroute.Services;
+using Pipeline.Extensions;
+using Process = Pipeline.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -99,6 +104,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
+
                     var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
                     if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
                         _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
@@ -107,11 +113,22 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process.Load(part.Configuration, parameters);
 
-                    if (Request["sort"] != null) {
-                        _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
-                    }
+                    var provider = process.Output().Provider;
+                    if (provider.In("internal", "file")) {
 
-                    if (process.Output().IsInternal()) {
+                        // change process for export purposes
+                        var output = Request["output"] ?? "page";
+                        if (part.Reportable && output != "page") {
+                            ConvertToExport(process, part, parameters);
+                            process.Load(process.Serialize(), parameters);
+                            Response.AddHeader("content-disposition", "attachment; filename=" + process.Output().File);
+                            Response.ContentType = "application/csv";
+                        }
+
+                        if (Request["sort"] != null) {
+                            _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
+                        }
+
                         if (process.Errors().Any()) {
                             foreach (var error in process.Errors()) {
                                 _orchardServices.Notifier.Add(NotifyType.Error, T(error));
@@ -130,21 +147,47 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     process.Message = "Ok";
                                     process.Request = "Run";
                                     process.Time = timer.ElapsedMilliseconds;
+                                    if (process.Output().Provider == "file") {
+                                        Response.Flush();
+                                        Response.End();
+                                    }
                                 } catch (Exception ex) {
                                     Logger.Error(ex, ex.Message);
                                     _orchardServices.Notifier.Error(T(ex.Message));
                                 }
                             }
-
                         }
-                    } else {
-                        _orchardServices.Notifier.Warning(T("Output must be set to internal for reporting."));
                     }
+                } else {
+                    _orchardServices.Notifier.Warning(T("Output must be set to internal for reporting."));
                 }
             }
 
-            return View(process);
+            return View(new ReportViewModel(process, part));
 
+        }
+
+        private void ConvertToExport(Process process, PipelineConfigurationPart part, IDictionary<string,string> parameters) {
+            var fileName = _slugService.Slugify(part.Title()) + ".csv";
+            var o = process.Output();
+            o.Provider = "file";
+            o.Delimiter = ",";
+            o.File = fileName;
+            parameters["page"] = "0";
+            foreach (var entity in process.Entities) {
+                entity.Page = 0;
+                foreach (var field in entity.GetAllFields()) {
+                    field.T = "";
+                    if (field.Output && field.Raw && field.Transforms.Any()) {
+                        var lastTransform = field.Transforms.Last();
+                        if (lastTransform.Method.In("tag","razor")) {
+                            var firstParameter = lastTransform.Parameters.First();
+                            field.Transforms.Remove(lastTransform);
+                            field.T = "copy(" + firstParameter.Field + ")";
+                        }
+                    }
+                }
+            }
         }
 
         [Themed(false)]

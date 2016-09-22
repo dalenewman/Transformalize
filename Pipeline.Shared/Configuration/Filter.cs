@@ -88,7 +88,7 @@ namespace Pipeline.Configuration {
         [Cfg(value="asc", domain="asc,desc", toLower = true)]
         public string Order { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value=1)]
         public int Min { get; set; }
 
         public string Key { get; set; }

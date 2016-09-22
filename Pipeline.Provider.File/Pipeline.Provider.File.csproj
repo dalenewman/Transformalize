@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DelimitedFileReader.cs" />
+    <Compile Include="DelimitedFileStreamWriter.cs" />
     <Compile Include="DelimitedFileWriter.cs" />
     <Compile Include="FileImport.cs" />
     <Compile Include="FileInspection.cs" />

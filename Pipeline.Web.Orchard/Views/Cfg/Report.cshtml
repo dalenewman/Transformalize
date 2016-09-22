@@ -1,18 +1,22 @@
-﻿@using Pipeline.Configuration
+﻿@using Orchard
+@using Orchard.Core.Contents
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
+@using Pipeline.Web.Orchard.Models
 
-@model Process
+@model ReportViewModel
 @{
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
-    
+
+    var orchard = WorkContext.Resolve<IOrchardServices>();
     var sortService = WorkContext.Resolve<ISortService>();
-    var hasParameters = Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
-    
-    AppendMeta("description", Model.Name, ",");
-    Layout.Title = Model.Name;
+    var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
+    var optionsDisplayed = false;
+
+    AppendMeta("description", Model.Process.Name, ",");
+    Layout.Title = Model.Process.Name;
 }
 
 <style type="text/css">
@@ -52,31 +56,33 @@ th.sorter {
 #busy-holder {
     background: transparent;
     width: 100%;
-    height: 100%;        
+    height: 100%;
 }
-   
+
 </style>
 
 @if (hasParameters) {
-    <h3>@Model.Name</h3>
+    <h3>@Model.Part.Title()</h3>
 }
 
-@foreach (var warning in Model.Warnings()) {
+@foreach (var warning in Model.Process.Warnings()) {
     <div class="alert alert-warning" role="alert">@warning</div>
 }
 
 <form id="id_report" class="form-inline" role="form" method="GET">
 
-    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
-    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])"/>
+    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
 
-    @if (Model.Environments.Any(e => e.Parameters.Any(p => p.Prompt))) {
+    @if (hasParameters) {
 
         <button type="button"
-                onclick="$('#id_report select').val($('#id_report select option:first').val()); $('#id_report').submit();" 
-                class="btn btn-info btn-sm">Clear</button>
+                onclick="$('#id_report select').val($('#id_report select option:first').val()); $('#id_report').submit();"
+                class="btn btn-info btn-sm">
+            Clear
+        </button>
 
-        var parameters = string.IsNullOrEmpty(Model.Environment) ? Model.Environments.First().Parameters.Where(p => p.Prompt).ToArray() : Model.Environments.First(e => e.Name == Model.Environment).Parameters.Where(p => p.Prompt).ToArray();
+        var parameters = Model.Process.GetActiveParameters().Where(p => p.Prompt).ToArray();
 
         foreach (var parameter in parameters) {
             <div class="form-group form-group-sm">
@@ -95,7 +101,7 @@ th.sorter {
                                 <input class="form-control" name="@parameter.Name" value="@requestedValue" placeholder="@parameter.Label" />
                             } else {
                                 <select class="form-control" onchange="$('#id_report').submit()" name="@parameter.Name">
-                                    @foreach (var item in Model.Maps.First(m => m.Name == parameter.Map).Items) {
+                                    @foreach (var item in Model.Process.Maps.First(m => m.Name == parameter.Map).Items) {
                                         <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
                                     }
                                 </select>
@@ -106,69 +112,115 @@ th.sorter {
             </div>
         }
         <button id="id_submit" type="submit" class="btn btn-warning btn-sm">Submit</button>
+
+        <div class="btn-group pull-right" role="group" aria-label="...">
+            @{ optionsDisplayed = true; }
+            @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+                <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                    <span class="glyphicon glyphicon-edit"></span>
+                </button>
+            }
+            <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
+                <span class="glyphicon glyphicon-floppy-save"></span>
+            </button>
+            <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
+                <span class="glyphicon glyphicon-th-list"></span>
+            </button>
+        </div>
+
     }
 
-    @foreach (var entity in Model.Entities) {
-        var fields = entity.GetAllOutputFields().Where(f=>!f.System).ToArray();
+    @foreach (var entity in Model.Process.Entities) {
+        var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
 
         if (entity.Page > 0) {
             <input id="id_page" type="hidden" name="page" value="@entity.Page" />
             <input id="id_size" type="hidden" name="size" value="@entity.PageSize" />
 
-            <div class="row">
+                    <div class="row">
 
-                <div class="col-md-4"><strong style="font-size: larger;">@(hasParameters ? " " : Model.Name)</strong></div>
+                        <div class="col-md-4"><strong style="font-size: larger;">@(hasParameters ? " " : Model.Process.Name)</strong></div>
 
-                <div class="col-md-4">
-                    <ul class="pagination pagination-sm" style="display: inline;">
-                        @if (entity.Pagination.HasPrevious) {
-                            <li><a href="javascript:submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                            <li><a href="javascript:submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                        } else {
-                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                        }
+                        <div class="col-md-4">
+                            <ul class="pagination pagination-sm" style="display: inline;">
+                                @if (entity.Pagination.HasPrevious) {
+                                    <li><a href="javascript:submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                                    <li><a href="javascript:submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                                } else {
+                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                                }
 
-                        <li class="disabled"><a href="#">@entity.Hits found, Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
+                                <li class="disabled"><a href="#">@entity.Hits found, Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
 
-                        @if (entity.Pagination.HasNext) {
-                            <li><a href="javascript:submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                            <li><a href="javascript:submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                        } else {
-                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                            <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                        }
-                    </ul>
-                </div>
-
-                <div class="col-md-4">
-
-                    @if (entity.PageSizes.Any()) {
-                        <div class="btn-group pull-right">
-                            <button class="btn btn-sm">Page Size</button>
-                            <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
-                                <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
-                                    if (entity.PageSize.Equals(pageSize)) {
-                                        <li class="active">
-                                            <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
-                                        </li>
-                                    } else {
-                                        <li>
-                                            <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
-                                        </li>
-                                    }
+                                @if (entity.Pagination.HasNext) {
+                                    <li><a href="javascript:submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                                    <li><a href="javascript:submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                                } else {
+                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
                                 }
                             </ul>
                         </div>
-                    } else {
-                        @:&nbsp;
-                    }
-                </div>
 
-            </div>
+                        <div class="col-md-4">
+
+                            @if (entity.PageSizes.Any()) {
+                                <div class="btn-group pull-right">
+                                    @if (!optionsDisplayed) {
+                                        if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+                                            <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                                                <span class="glyphicon glyphicon-edit"></span>
+                                            </button>
+                                        }
+                                        <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
+                                            <span class="glyphicon glyphicon-floppy-save"></span>
+                                        </button>
+                                        <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
+                                            <span class="glyphicon glyphicon-th-list"></span>
+                                        </button>
+                                    }
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm">Page Size</button>
+                                        <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
+                                                if (entity.PageSize.Equals(pageSize)) {
+                                                    <li class="active">
+                                                        <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                                    </li>
+                                                } else {
+                                                    <li>
+                                                        <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                                    </li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            } else {
+                                if (!optionsDisplayed) {
+                                    <div class="btn-group pull-right">
+                                        if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+                                        <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                                            <span class="glyphicon glyphicon-edit"></span>
+                                        </button>
+                                        }
+                                        <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
+                                            <span class="glyphicon glyphicon-floppy-save"></span>
+                                        </button>
+                                        <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
+                                            <span class="glyphicon glyphicon-th-list"></span>
+                                        </button>
+                                    </div>
+                                }else {
+                                    <span> </span>   
+                                }
+                            }
+                    </div>
+                </div>
         }
 
         <div class="row">
