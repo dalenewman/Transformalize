@@ -216,6 +216,7 @@ namespace Pipeline.Web.Orchard {
     <add name='filepath' signature='file' target='t' />
     <add name='format' signature='format' target='t' />
     <add name='formatphone' signature='none' target='t' />
+    <add name='formatxml' signature='none' target='t' />
     <add name='hashcode' signature='none' target='t' />
     <add name='htmldecode' signature='none' target='t' />
     <add name='insert' signature='insert' target='t' />
@@ -276,7 +277,7 @@ namespace Pipeline.Web.Orchard {
         }
 
         public static IDictionary<string, string> GetParameters(
-            HttpRequestBase request, 
+            HttpRequestBase request,
             ISecureFileService secureFileService,
             IOrchardServices orchard
         ) {

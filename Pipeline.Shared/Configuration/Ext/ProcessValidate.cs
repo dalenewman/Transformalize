@@ -406,6 +406,7 @@ namespace Pipeline.Configuration.Ext {
                 case "fromsplit":
                 case "fromlengths":
                 case "fromxml":
+                case "formatxml":
                 case "isempty":
                 case "xpath":
                     if (input.Type != "string") {
@@ -647,6 +648,7 @@ namespace Pipeline.Configuration.Ext {
                     case "filepath":
                     case "fileext":
                     case "tag":
+                    case "formatXml":
                     case "totime":
                         if (context.Field.Type != "string") {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");

@@ -123,6 +123,7 @@
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="FromLengthsTransform.cs" />
     <Compile Include="InventoryIntegrationSqlServer.cs" />
+    <Compile Include="FormatXmlTransform.cs" />
     <Compile Include="WebReader.cs" />
     <Compile Include="TagTransform.cs" />
     <Compile Include="MatchTransform.cs" />

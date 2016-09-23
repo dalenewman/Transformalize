@@ -9,6 +9,12 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
+
+    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
+    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
     var orchard = WorkContext.Resolve<IOrchardServices>();
     var sortService = WorkContext.Resolve<ISortService>();
@@ -306,6 +312,7 @@ th.sorter {
     }
 
     $(document).ready(function () {
+
         $('.form-control.date').datepicker({ dateFormat: 'yy-mm-dd'});
 
         $('#id_report').bind('submit', function(e) {
@@ -349,6 +356,9 @@ th.sorter {
             setSort(expression);
             submit(1);
         });
+
+        SyntaxHighlighter.all();
+
     });
 
     //-->

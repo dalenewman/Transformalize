@@ -71,6 +71,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "filepath": return new FilePathTransform(context);
                 case "format": return new FormatTransform(context);
                 case "formatphone": return new FormatPhoneTransform(context);
+                case "formatxml": return new FormatXmlTransfrom(context);
                 case "hashcode": return new HashcodeTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
                 case "insert": return new InsertTransform(context);

@@ -184,6 +184,7 @@
     <add name='filepath' signature='file' target='t' />
     <add name='format' signature='format' target='t' />
     <add name='formatphone' signature='none' target='t' />
+    <add name='formatxml' signature='none' target='t' />
     <add name='hashcode' signature='none' target='t' />
     <add name='htmldecode' signature='none' target='t' />
     <add name='insert' signature='insert' target='t' />

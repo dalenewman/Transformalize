@@ -73,6 +73,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "filename": return new FileNameTransform(context);
                 case "filepath": return new FilePathTransform(context);
                 case "format": return new FormatTransform(context);
+                case "formatxml": return new FormatXmlTransfrom(context);
                 case "formatphone": return new FormatPhoneTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
@@ -138,7 +139,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "isdefault": return new IsDefaultValidator(context);
 
                 default:
-                    context.Warn("The {0} method is undefined.", context.Transform.Method);
+                    context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);
                     return new NullTransform(context);
             }
         }

@@ -20,7 +20,7 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class FormatTransform : BaseTransform, ITransform {
+    public class FormatTransform : BaseTransform {
 
         readonly Field[] _input;
 
