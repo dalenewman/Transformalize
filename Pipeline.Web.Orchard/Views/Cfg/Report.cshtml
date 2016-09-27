@@ -78,7 +78,11 @@ th.sorter {
 <form id="id_report" class="form-inline" role="form" method="GET">
 
     <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
-    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
+    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])"/>
+
+    @foreach (var parameter in Model.Process.GetActiveParameters().Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])"/>
+    }
 
     @if (hasParameters) {
 

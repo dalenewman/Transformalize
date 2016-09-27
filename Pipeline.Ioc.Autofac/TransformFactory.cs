@@ -65,7 +65,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "connection": return new ConnectionTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "copy": return new CopyTransform(context);
-                case "cs": case "csharp": return context.Process.Mode.In("init", "check") ? new CsharpLocalTransform(context) : new CsharpRemoteTransform(context) as CSharpBaseTransform;
+                case "cs": case "csharp": return new CsharpLocalTransform(context);
                 case "datediff": return new DateDiffTransform(context);
                 case "datepart": return new DatePartTransform(context);
                 case "decompress": return new DecompressTransform(context);
