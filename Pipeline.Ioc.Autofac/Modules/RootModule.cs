@@ -27,8 +27,8 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Loggers;
+using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
-using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
 using Pipeline.Template.Razor;
 using IParser = Pipeline.Contracts.IParser;
@@ -68,7 +68,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");
-             
+            
             // input row condition
             builder.Register<IRowCondition>((ctx, p) => new JintRowCondition(p.TypedAs<InputContext>(), p.TypedAs<string>())).As<IRowCondition>();
 

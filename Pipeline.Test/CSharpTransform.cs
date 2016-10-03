@@ -27,6 +27,10 @@ namespace Pipeline.Test {
         [Test(Description = "C# Transform")]
         public void CSharpTransformAdd() {
 
+            // Problem is I am compiling code in advance, 
+            // but not remembering that there are actually two processes that run, 
+            // the entity processes,  and the calculated field process
+
             const string xml = @"
 <add name='TestProcess' mode='default'>
     <entities>

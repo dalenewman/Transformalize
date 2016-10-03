@@ -343,6 +343,14 @@ namespace Pipeline.Configuration {
                     field.Index = ++index;
                 }
             }
+
+            foreach (var field in GetAllFields()) {
+                var tCount = 0;
+                foreach (var transform in field.Transforms) {
+                    transform.Index = tCount++;
+                }
+            }
+
         }
 
         void ModifyRelationshipToMaster() {

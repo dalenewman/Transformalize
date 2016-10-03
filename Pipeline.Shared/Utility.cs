@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Pipeline.Configuration;
+using Pipeline.Contracts;
 using Pipeline.Extensions;
 
 namespace Pipeline {
@@ -158,6 +159,10 @@ namespace Pipeline {
         }
         public static object GetPropValue(object src, string propName) {
             return src.GetType().GetRuntimeProperty(propName).GetValue(src);
+        }
+
+        public static string GetMethodName(IContext context) {
+            return Identifier(context.Field.Alias) + context.Transform.Index;
         }
 
     }

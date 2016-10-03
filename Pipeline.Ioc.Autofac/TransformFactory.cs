@@ -24,7 +24,6 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
-using Pipeline.Extensions;
 using Pipeline.Nulls;
 using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
@@ -65,7 +64,12 @@ namespace Pipeline.Ioc.Autofac {
                 case "connection": return new ConnectionTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "copy": return new CopyTransform(context);
-                case "cs": case "csharp": return new CsharpLocalTransform(context);
+                case "cs":
+                case "csharp":
+                    if (CSharpHost.Cache.IsEmpty) {
+                        ctx.Resolve<CSharpHost>().Start();
+                    }
+                    return new CsharpDynamicMethodTransform(context);
                 case "datediff": return new DateDiffTransform(context);
                 case "datepart": return new DatePartTransform(context);
                 case "decompress": return new DecompressTransform(context);

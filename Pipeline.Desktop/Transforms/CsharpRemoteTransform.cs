@@ -26,15 +26,12 @@ using System.Text;
 using Pipeline.Contracts;
 
 namespace Pipeline.Desktop.Transforms {
-
     public class CsharpRemoteTransform : CSharpBaseTransform {
 
         private AppDomain _domain;
         private Sponsor _sponsor;
 
-        public CsharpRemoteTransform(IContext context) : base(context) {
-
-        }
+        public CsharpRemoteTransform(IContext context) : base(context) {}
 
         public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
 
@@ -83,17 +80,7 @@ namespace Pipeline.Desktop.Transforms {
             }
             base.Dispose();
         }
-
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
+        
     }
 
 
@@ -135,7 +122,8 @@ namespace Pipeline.Desktop.Transforms {
                         sb.AppendLine(error.ToString());
                     }
                 } else {
-                    _userCode = (Func<object[], object>)Delegate.CreateDelegate(typeof(Func<object[], object>), result.CompiledAssembly.GetType("CSharpRunTimeTransform").GetMethod("UserCode", BindingFlags.Static | BindingFlags.Public));
+                    MethodInfo = result.CompiledAssembly.GetType("CSharpRunTimeTransform").GetMethod("UserCode", BindingFlags.Static | BindingFlags.Public);
+                    _userCode = (Func<object[], object>)Delegate.CreateDelegate(typeof(Func<object[], object>), MethodInfo);
                 }
             } catch (Exception ex) {
                 sb.AppendLine("CSharp Compiler Exception!");
@@ -144,6 +132,8 @@ namespace Pipeline.Desktop.Transforms {
 
             return sb.ToString();
         }
+
+        public MethodInfo MethodInfo { get; set; }
 
         public object Run(object[] data) {
             return _userCode(data);
