@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Diagnostics;
 using Quartz;
 using Quartz.Spi;
 using IScheduler = Quartz.IScheduler;

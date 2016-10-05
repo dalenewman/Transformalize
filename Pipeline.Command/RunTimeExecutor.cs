@@ -17,14 +17,17 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
+using Humanizer;
+using Humanizer.Bytes;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Ioc.Autofac.Modules;
 using Pipeline.Logging.NLog;
 using Quartz;
+using Process = Pipeline.Configuration.Process;
 
 namespace Pipeline.Command {
 
@@ -33,8 +36,31 @@ namespace Pipeline.Command {
 
         public void Execute(Process process) {
 
+            var logger = new NLogPipelineLogger(process.Name);
+
+            if (!string.IsNullOrEmpty(process.MaxMemory)) {
+                var context = new PipelineContext(logger, process);
+
+                var timer = new Stopwatch();
+                timer.Start();
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                timer.Stop();
+                context.Info($"Collected free memory. Time taken: {timer.Elapsed}.");
+
+                var currentBytes = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64.Bytes();
+                var maxMemory = ByteSize.Parse(process.MaxMemory);
+
+                if (maxMemory.CompareTo(currentBytes) < 0) {
+                    context.Error($"Process exceeded {maxMemory.Megabytes.ToString("#.0")} Mb. Current memory is {currentBytes.Megabytes.ToString("#.0")} Mb!");
+                    Environment.Exit(1);
+                } else {
+                    context.Info($"The process is using {currentBytes.Megabytes.ToString("#.0")} Mb of it's max {maxMemory.Megabytes.ToString("#.0")} Mb allowed.");
+                }
+            }
+
             var builder = new ContainerBuilder();
-            builder.RegisterInstance(new NLogPipelineLogger(process.Name)).As<IPipelineLogger>().SingleInstance();
+            builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
             builder.RegisterCallback(new RootModule(process.Shorthand).Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 

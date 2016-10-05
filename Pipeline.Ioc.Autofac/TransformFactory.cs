@@ -66,10 +66,11 @@ namespace Pipeline.Ioc.Autofac {
                 case "copy": return new CopyTransform(context);
                 case "cs":
                 case "csharp":
-                    if (CSharpHost.Cache.IsEmpty) {
-                        ctx.Resolve<CSharpHost>().Start();
+                    if (ctx.ResolveNamed<IHost>("cs").Start()) {
+                        return new CsharpTransform(context);
                     }
-                    return new CsharpDynamicMethodTransform(context);
+                    context.Error("Unable to register csharp transform");
+                    return new NullTransform(context);
                 case "datediff": return new DateDiffTransform(context);
                 case "datepart": return new DatePartTransform(context);
                 case "decompress": return new DecompressTransform(context);

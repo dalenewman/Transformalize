@@ -75,7 +75,34 @@ namespace Pipeline {
         }
 
         public IEnumerable<IRow> Read() {
-            return _pipelines.First().Read();
+            if (!_context.Process.Relationships.Any()) {
+                return _pipelines.First().Read();
+            }
+
+            var joinSummary = _context.Process.Relationships.First().Summary;
+
+            var left = joinSummary.LeftEntity;
+            var leftPipeline = _pipelines.First(p => p.Context.Entity.Alias == left.Alias);
+            var leftResults = leftPipeline.Read();
+
+            var right = joinSummary.RightEntity;
+            var rightPipeline = _pipelines.First(p => p.Context.Entity.Alias == right.Alias);
+            var rightResults = rightPipeline.Read();
+
+            var fields = left.GetAllOutputFields().Concat(right.GetAllOutputFields()).Distinct().ToArray();
+            var aliases = fields.Select(f => f.Alias).ToArray();
+            var map = fields.ToDictionary(k => k.Alias, v => v.MasterIndex);
+
+            var joined = leftResults.Join(
+                rightResults,
+                l => l.ToEnumerable(joinSummary.LeftFields),
+                r => r.ToEnumerable(joinSummary.RightFields),
+                (l, r) => new CfgRow(aliases) { Map = map, Storage = l.ToEnumerable(left.GetAllOutputFields()).Concat(r.ToEnumerable(right.GetAllOutputFields())).ToArray() },
+                new ValueComparer()
+            );
+
+            return joined;
+
         }
 
         public void Dispose() {

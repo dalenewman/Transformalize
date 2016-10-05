@@ -15,9 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+
 namespace Pipeline.Contracts {
-    public interface IHost {
-        void Start();
-        void Stop();
+    public interface IHost : IDisposable {
+        bool Start();
+
+        //To Stop, Dispose
     }
 }

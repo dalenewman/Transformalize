@@ -45,7 +45,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
             builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).As<IContext>();
 
             // Register CSharp Host
-            builder.Register((ctx, p) => new CSharpHost(ctx.Resolve<IContext>(), new CSharpCodeWriter(ctx.Resolve<IContext>()))).As<CSharpHost>();
+            builder.Register((ctx, p) => new CSharpHost(ctx.Resolve<IContext>(), new CSharpCodeWriter(ctx.Resolve<IContext>()))).Named<IHost>("cs");
 
             // Process Output Context
             builder.Register(ctx => {

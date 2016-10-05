@@ -1,20 +1,12 @@
-# Transformalize
+This tool expedites mundane data processing tasks 
+like denormalization and reporting.
 
-Transformalize is a configurable [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)
-solution. It is used to expedite data processing tasks such as:
 
-* preparing data for [data warehouses](https://en.wikipedia.org/wiki/Data_warehouse) and/or [search engines](https://en.wikipedia.org/wiki/Search_engine_%28computing%29)
-* exposing simple JSON and/or XML services
-* reporting
-* other forms of analysis and/or presentation.
 
-It includes:
 
-* c#, .NET class libraries
-* a command-line interface (`tfl.exe`) for repetitive and/or incremental processing tasks. 
-* an [Orchard CMS](https://github.com/OrchardCMS/Orchard) web module. 
- 
-Transformalize is developed under the Apache 2 license.
+
+
+
 
 ### Data Sources - Inputs and Outputs
 

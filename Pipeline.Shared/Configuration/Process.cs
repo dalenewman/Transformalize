@@ -509,6 +509,9 @@ namespace Pipeline.Configuration {
         [Cfg(value = "")]
         public string Description { get; set; }
 
+        [Cfg(value="")]
+        public string MaxMemory { get; set; }
+
         public IEnumerable<Parameter> GetActiveParameters() {
             if (!Environments.Any())
                 return Enumerable.Empty<Parameter>();

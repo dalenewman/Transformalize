@@ -1,4 +1,5 @@
 using System;
+using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
@@ -7,52 +8,66 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Desktop.Transforms {
 
-    public class CSharpHost : MarshalByRefObject, IDisposable {
+    public class CSharpHost : IHost {
 
         public delegate object UserCodeInvoker(object[] input);
 
         private readonly IContext _context;
         private readonly IWriteSomething _codeWriter;
         private readonly string _className;
-        private readonly AppDomain _appDomain;
 
-        public static ConcurrentDictionary<string, UserCodeInvoker> Cache { get; } = new ConcurrentDictionary<string, UserCodeInvoker>();
+        public static ConcurrentDictionary<string, ConcurrentDictionary<string, UserCodeInvoker>> Cache { get; } = new ConcurrentDictionary<string, ConcurrentDictionary<string, UserCodeInvoker>>();
 
         public CSharpHost(IContext context, IWriteSomething codeWriter, string className = "UserCode") {
             _context = context;
             _codeWriter = codeWriter;
             _className = className;
-            _context.Info("Creating new app domain.");
-            _appDomain = AppDomain.CreateDomain(_context.Key);
         }
 
-        public void Start() {
-            var host = Path.Combine(AssemblyDirectory, "Pipeline.Desktop.dll");
+        public bool Start() {
+
+            if (Cache.ContainsKey(_context.Process.Name)) {
+                _context.Debug(() => "Using cached user code.");
+                return true;
+            }
+
             var timer = new Stopwatch();
             timer.Start();
 
-            var compiler = (CSharpCompiler)_appDomain.CreateInstanceFromAndUnwrap(host, "Pipeline.Desktop.Transforms.CSharpCompiler", false, BindingFlags.Default, null, null, null, null);
+            var codeProvider = new Microsoft.CSharp.CSharpCodeProvider();
+            var parameters = new CompilerParameters {
+                GenerateInMemory = true,
+                GenerateExecutable = false
+            };
+
+            parameters.ReferencedAssemblies.Add("System.dll");
+            parameters.ReferencedAssemblies.Add("System.Core.dll");
+            parameters.ReferencedAssemblies.Add("mscorlib.dll");
+            parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
             try {
-                compiler.Compile(_codeWriter.Write(_className));
-
-                if (compiler.Assembly == null) {
-                    foreach (var error in compiler.Errors) {
-                        _context.Error(error);
+                var result = codeProvider.CompileAssemblyFromSource(parameters, _codeWriter.Write(_className));
+                if (result.Errors.Count > 0) {
+                    _context.Error("CSharp Compiler Error!");
+                    foreach (var error in result.Errors) {
+                        _context.Error(error.ToString());
                     }
-                    return;
-                }
-                timer.Stop();
-                _context.Info($"Compiled in {timer.Elapsed}");
-
-                foreach (var method in compiler.Assembly.GetType(_className).GetMethods(BindingFlags.Static | BindingFlags.Public)) {
-                    Cache.TryAdd(method.Name, (UserCodeInvoker)DynamicMethodHelper.ConvertFrom(method).CreateDelegate(typeof(UserCodeInvoker)));
+                } else {
+                    timer.Stop();
+                    _context.Info($"Compiled {_context.Process.Name} user code in {timer.Elapsed}.");
+                    if (Cache.TryAdd(_context.Process.Name, new ConcurrentDictionary<string, UserCodeInvoker>())) {
+                        foreach (var method in result.CompiledAssembly.GetType(_className).GetMethods(BindingFlags.Static | BindingFlags.Public)) {
+                            Cache[_context.Process.Name].TryAdd(method.Name, (UserCodeInvoker)DynamicMethodHelper.ConvertFrom(method).CreateDelegate(typeof(UserCodeInvoker)));
+                        }
+                    }
                 }
 
             } catch (Exception ex) {
+                _context.Error("CSharp Compiler Exception!");
                 _context.Error(ex.Message);
+                return false;
             }
-
+            return true;
         }
 
         public static string AssemblyDirectory
@@ -67,9 +82,7 @@ namespace Pipeline.Desktop.Transforms {
         }
 
         public void Dispose() {
-            Cache.Clear();
-            AppDomain.Unload(_appDomain);
-            _context.Info("Unloaded user code app domain.");
+            // leave it, you can't recover the memory used by the dynamically generated assembly
         }
     }
 }

@@ -202,5 +202,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsEmptyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StartsWithValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ValueComparer.cs" />
   </ItemGroup>
 </Project>

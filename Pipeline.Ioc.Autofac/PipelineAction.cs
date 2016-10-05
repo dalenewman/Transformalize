@@ -22,16 +22,17 @@ using Pipeline.Contracts;
 namespace Pipeline.Ioc.Autofac {
     public class PipelineAction : IAction {
         private readonly IContainer _container;
-        private readonly Process _process;
+
+        public Process Process { get; }
 
         public PipelineAction(IContainer container, Process process) {
             _container = container;
-            _process = process;
+            Process = process;
         }
 
         public ActionResponse Execute() {
             var response = new ActionResponse();
-            if (!_process.Enabled)
+            if (!Process.Enabled)
                 return response;
 
             using (var scope = _container.BeginLifetimeScope()) {

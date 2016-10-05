@@ -56,11 +56,8 @@
     <Compile Include="Transforms\CompiledRegexMatchTransform.cs" />
     <Compile Include="Transforms\CSharpBaseTransform.cs" />
     <Compile Include="Transforms\CSharpCodeWriter.cs" />
-    <Compile Include="Transforms\CSharpCompiler.cs" />
-    <Compile Include="Transforms\CsharpDynamicMethodTransform.cs" />
+    <Compile Include="Transforms\CsharpTransform.cs" />
     <Compile Include="Transforms\CSharpHost.cs" />
-    <Compile Include="Transforms\CsharpLocalTransform.cs" />
-    <Compile Include="Transforms\CsharpRemoteTransform.cs" />
     <Compile Include="Transforms\DateDiffTransform.cs" />
     <Compile Include="Transforms\DynamicMethodHelper.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />

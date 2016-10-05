@@ -19,10 +19,11 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Nulls {
     public class NullHost : IHost {
-        public void Start() {
+        public bool Start() {
+            return true;
         }
 
-        public void Stop() {
+        public void Dispose() {
         }
     }
 }

@@ -88,6 +88,12 @@ namespace Pipeline.Desktop.Transforms {
                     case "datetime":
                         type = "DateTime";
                         break;
+                    case "single":
+                    case "int16":
+                    case "int32":
+                    case "int64":
+                        type = field.Type.Left(1).ToUpper() + field.Type.Substring(1);
+                        break;
                     default:
                         type = field.Type;
                         break;

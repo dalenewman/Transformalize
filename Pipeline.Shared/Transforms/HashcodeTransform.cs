@@ -23,7 +23,7 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
 
-    public class HashcodeTransform : BaseTransform, ITransform {
+    public class HashcodeTransform : BaseTransform {
 
         readonly Field[] _input;
         readonly StringBuilder _builder;

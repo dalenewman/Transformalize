@@ -26,7 +26,7 @@ namespace Pipeline.Contracts {
         ExpandoObject ToExpandoObject(Field[] fields);
         CfgRow ToCfgRow(IField[] fields, string[] keys);
         ExpandoObject ToFriendlyExpandoObject(Field[] fields);
-        IEnumerable<object> ToEnumerable(Field[] fields);
+        IEnumerable<object> ToEnumerable(IEnumerable<Field> fields);
         bool Match(Field[] fields, IRow other);
         object[] ToArray();
     }

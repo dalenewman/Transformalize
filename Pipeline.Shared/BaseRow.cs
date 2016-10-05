@@ -58,7 +58,7 @@ namespace Pipeline {
             return parameters;
         }
 
-        public IEnumerable<object> ToEnumerable(Field[] fields) {
+        public IEnumerable<object> ToEnumerable(IEnumerable<Field> fields) {
             return fields.Select(GetValue);
         }
 
@@ -67,7 +67,7 @@ namespace Pipeline {
                 fields.Select(GetValue).SequenceEqual(fields.Select(f => other[f])) :
                 GetValue(fields[0]).Equals(other[fields[0]]);
         }
-
+        
         public override string ToString() {
             return string.Join("|", Storage);
         }

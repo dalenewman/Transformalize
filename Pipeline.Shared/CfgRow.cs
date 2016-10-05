@@ -25,15 +25,15 @@ using Pipeline.Contracts;
 namespace Pipeline {
     public class CfgRow : BaseRow, IRow, IProperties {
 
-        public Dictionary<string, int> Map { get; set; }
+        public Dictionary<string, short> Map { get; set; }
 
         /// <summary>
         /// A constructor for Cfg-Net to handle
         /// </summary>
         /// <param name="names">Names for input, Aliases for output</param>
         public CfgRow(string[] names) : base(names.Length) {
-            Map = new Dictionary<string, int>(names.Length);
-            for (var i = 0; i < names.Length; i++) {
+            Map = new Dictionary<string, short>(names.Length);
+            for (short i = 0; i < Convert.ToInt16(names.Length); i++) {
                 var name = names[i];
                 Map[name] = i;
             }
