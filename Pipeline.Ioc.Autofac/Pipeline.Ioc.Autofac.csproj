@@ -197,6 +197,10 @@
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Scripting.CSharp\Pipeline.Scripting.CSharp.csproj">
+      <Project>{2bbef5b4-f778-461c-9ecf-30500ad8578f}</Project>
+      <Name>Pipeline.Scripting.CSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scripting.JavaScript\Pipeline.Scripting.JavaScript.csproj">
       <Project>{f0cdcecb-91d0-45af-8500-235f58976473}</Project>
       <Name>Pipeline.Scripting.JavaScript</Name>

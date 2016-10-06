@@ -23,6 +23,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Desktop.Writers;
+using Pipeline.Scripting.CSharp;
 
 namespace Pipeline.Ioc.Autofac.Modules {
 

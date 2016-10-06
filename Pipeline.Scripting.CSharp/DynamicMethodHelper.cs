@@ -11,9 +11,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Pipeline.Desktop.Transforms.ILReader;
+using Pipeline.Scripting.CSharp.ILReader;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Pipeline.Scripting.CSharp {
     public class DynamicMethodHelper {
         class IlInfoGetTokenVisitor : ILInstructionVisitor {
             private readonly DynamicILInfo _ilInfo;

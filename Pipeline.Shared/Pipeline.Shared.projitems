@@ -141,8 +141,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)RowFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BaseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CeilingTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CoalesceTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ConcatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ConnectionTransform.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DatePartTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DecodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FilterTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FloorTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatXmlTransfrom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromLengthsTranform.cs" />
@@ -171,6 +174,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RemoveTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ReplaceTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RightTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\RoundTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SplitLengthTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SubStringTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\DefaultTransform.cs" />

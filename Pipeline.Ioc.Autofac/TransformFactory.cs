@@ -25,6 +25,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
+using Pipeline.Scripting.CSharp;
 using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
 using Pipeline.Transforms;
@@ -58,7 +59,9 @@ namespace Pipeline.Ioc.Autofac {
 
             switch (context.Transform.Method) {
 
+                case "abs": return new AbsTransform(context);
                 case "add": case "sum": return new AddTransform(context);
+                case "ceiling": return new CeilingTransform(context);
                 case "coalesce": return new CoalesceTransform(context);
                 case "concat": return new ConcatTransform(context);
                 case "connection": return new ConnectionTransform(context);
@@ -77,6 +80,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "fileext": return new FileExtTransform(context);
                 case "filename": return new FileNameTransform(context);
                 case "filepath": return new FilePathTransform(context);
+                case "floor": return new FloorTransform(context);
                 case "format": return new FormatTransform(context);
                 case "formatxml": return new FormatXmlTransfrom(context);
                 case "formatphone": return new FormatPhoneTransform(context);
@@ -108,6 +112,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "remove": return new RemoveTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "right": return new RightTransform(context);
+                case "round": return new RoundTransform(context);
                 case "splitlength": return new SplitLengthTransform(context);
                 case "substring": return new SubStringTransform(context);
                 case "tag": return new TagTransform(context);

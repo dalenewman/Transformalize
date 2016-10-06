@@ -6,7 +6,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Pipeline.Scripting.CSharp {
 
     public interface IWriteSomething {
         /// <summary>
@@ -98,7 +98,7 @@ namespace Pipeline.Desktop.Transforms {
                         type = field.Type;
                         break;
                 }
-                sb.AppendLine($"        {type} {Pipeline.Utility.Identifier(field.Alias)} = ({type}) data[{objectIndex}];");
+                sb.AppendLine($"        {type} {Utility.Identifier(field.Alias)} = ({type}) data[{objectIndex}];");
             }
 
             sb.Append("        ");

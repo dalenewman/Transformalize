@@ -2,11 +2,10 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using Pipeline.Contracts;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Pipeline.Scripting.CSharp {
 
     public class CSharpHost : IHost {
 
@@ -70,19 +69,8 @@ namespace Pipeline.Desktop.Transforms {
             return true;
         }
 
-        public static string AssemblyDirectory
-        {
-            get
-            {
-                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
-
         public void Dispose() {
-            // leave it, you can't recover the memory used by the dynamically generated assembly
+            // leave it, you can't recover the memory used by the dynamically generated (and loaded) assembly
         }
     }
 }

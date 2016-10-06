@@ -340,6 +340,10 @@ namespace Pipeline.Configuration.Ext {
                     break;
                 case "add":
                 case "sum":
+                case "round":
+                case "abs":
+                case "ceiling":
+                case "floor":
                 case "multiply":
                     foreach (var f in fields) {
                         if (!f.IsNumeric()) {
@@ -621,6 +625,10 @@ namespace Pipeline.Configuration.Ext {
                 switch (lastTransform.Method) {
                     case "sum":
                     case "add":
+                    case "round":
+                    case "abs":
+                    case "ceiling":
+                    case "floor":
                     case "multiply":
                         if (!context.Field.IsNumeric()) {
                             error($"The {context.Field.Alias} field is a {context.Field.Type}, but it needs to be numeric to accept the output of the {lastTransform.Method} method.");

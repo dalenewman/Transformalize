@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Pipeline.Desktop.Transforms.ILReader {
+namespace Pipeline.Scripting.CSharp.ILReader {
     public interface IILStringCollector {
         void Process(ILInstruction ilInstruction, string operandString);
     }

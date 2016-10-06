@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Pipeline.Desktop.Transforms.ILReader {
+namespace Pipeline.Scripting.CSharp.ILReader {
     public abstract class ILInstruction {
         protected Int32 m_offset;
         protected OpCode m_opCode;

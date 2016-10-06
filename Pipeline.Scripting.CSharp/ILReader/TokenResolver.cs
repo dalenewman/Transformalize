@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Pipeline.Desktop.Transforms.ILReader {
+namespace Pipeline.Scripting.CSharp.ILReader {
     public interface ITokenResolver {
         MethodBase AsMethod(int token);
         FieldInfo AsField(int token);
