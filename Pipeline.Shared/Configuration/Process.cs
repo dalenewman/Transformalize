@@ -232,6 +232,9 @@ namespace Pipeline.Configuration {
         [Cfg]
         public List<Template> Templates { get; set; }
 
+        [Cfg]
+        public List<Parameter> Parameters { get; set; } 
+
         protected override void PreValidate() {
             this.PreValidate(e => Error(e), w => Warn(w));
         }

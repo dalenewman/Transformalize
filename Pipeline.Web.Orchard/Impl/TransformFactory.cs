@@ -62,7 +62,9 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "connection": return new ConnectionTransform(context);
                 case "convert": return new ConvertTransform(context);
                 case "copy": return new CopyTransform(context);
-                case "cs": case "csharp": return new CsharpRemoteTransform(context);
+                case "cs": case "csharp":
+                    context.Warn("C# transforms are not allowed in Orchard CMS context (yet).");
+                    return new NullTransform(context);
                 case "datediff": return new DateDiffTransform(context);
                 case "datepart": return new DatePartTransform(context);
                 case "decompress": return new DecompressTransform(context);

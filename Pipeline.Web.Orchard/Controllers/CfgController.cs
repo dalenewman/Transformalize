@@ -34,6 +34,7 @@ using Pipeline.Web.Orchard.Services;
 using System.IO;
 using System.Xml.Linq;
 using Orchard.Autoroute.Services;
+using Orchard.Templates.Services;
 using Pipeline.Extensions;
 using Process = Pipeline.Configuration.Process;
 
@@ -48,6 +49,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly ISecureFileService _secureFileService;
         private readonly ICfgService _cfgService;
         private readonly ISlugService _slugService;
+        private ITemplateProcessor _templateProcessor;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -57,7 +59,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             ISortService sortService,
             ISecureFileService secureFileService,
             ICfgService cfgService,
-            ISlugService slugService
+            ISlugService slugService,
+            ITemplateProcessor templateProcessor
             ) {
             _orchardServices = services;
             _processService = processService;
@@ -65,6 +68,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             _cfgService = cfgService;
             _sortService = sortService;
             _slugService = slugService;
+            _templateProcessor = templateProcessor;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -95,7 +99,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var timer = new Stopwatch();
             timer.Start();
 
-            var process = new Configuration.Process { Name = "Report" }.WithDefaults();
+            var process = new Process { Name = "Report" }.WithDefaults();
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {

@@ -1,0 +1,20 @@
+﻿{
+  "name": "Process",
+  "entities": [
+    {
+      "name": "Greetings",
+      "rows": [
+        { "Noun": "World" }
+      ],
+      "fields": [
+        { "name": "Noun" }
+      ],
+      "calculated-fields": [
+        {
+          "name": "Greeting",
+          "t": "copy(Noun).format(Hello {0})"
+        }
+      ]
+    }
+  ]
+}

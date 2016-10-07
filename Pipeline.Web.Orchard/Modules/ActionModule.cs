@@ -17,6 +17,7 @@
 
 using System.Linq;
 using Autofac;
+using Orchard.Templates.Services;
 using Pipeline.Actions;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -83,7 +84,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         context.Warn(warning);
                     }
                     if (root.Errors().Any()) {
-                        context.Error(string.Format("TFL Pipeline Action '{0}' + ... has errors!", cfg.Left(20)));
+                        context.Error($"TFL Pipeline Action '{cfg.Left(20)}' + ... has errors!");
                         foreach (var error in root.Errors()) {
                             context.Error(error);
                         }
@@ -104,7 +105,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.RegisterCallback(new ExcelModule().Configure);
 
                     builder.RegisterCallback(new MapModule(root).Configure);
-                    //builder.RegisterCallback(new TemplateModule(root));
                     builder.RegisterCallback(new ActionModule(root).Configure);
                     builder.RegisterCallback(new EntityPipelineModule(root).Configure);
                     builder.RegisterCallback(new ProcessPipelineModule(root).Configure);

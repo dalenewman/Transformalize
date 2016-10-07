@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
@@ -29,10 +30,12 @@ namespace Pipeline.Web.Orchard.Impl {
     public class RunTimeDataReader : IRunTimeRun {
         private readonly IPipelineLogger _logger;
         private readonly IAppDataFolder _appDataFolder;
+        private readonly ITemplateProcessor _templateProcessor;
 
-        public RunTimeDataReader(IPipelineLogger logger, IAppDataFolder appDataFolder) {
+        public RunTimeDataReader(IPipelineLogger logger, IAppDataFolder appDataFolder, ITemplateProcessor templateProcessor) {
             _logger = logger;
             _appDataFolder = appDataFolder;
+            _templateProcessor = templateProcessor;
         }
 
         public IEnumerable<IRow> Run(Process process) {
@@ -48,11 +51,12 @@ namespace Pipeline.Web.Orchard.Impl {
             nested.RegisterCallback(new SolrModule(process).Configure);
             nested.RegisterCallback(new ElasticModule(process).Configure);
             nested.RegisterCallback(new InternalModule(process).Configure);
-            nested.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
-            nested.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
+            nested.RegisterCallback(new FileModule(process, _appDataFolder, _templateProcessor).Configure);
+            nested.RegisterCallback(new ExcelModule(process, _appDataFolder, _templateProcessor).Configure);
             nested.RegisterCallback(new WebModule(process).Configure);
 
             nested.RegisterCallback(new MapModule(process).Configure);
+            nested.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
 
             nested.RegisterType<NullOutputController>().Named<IOutputController>(entity.Key);
             nested.RegisterType<NullWriter>().Named<IWrite>(entity.Key);

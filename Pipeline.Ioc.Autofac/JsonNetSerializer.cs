@@ -15,20 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Linq;
 using Newtonsoft.Json;
+using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Ioc.Autofac {
     public class JsonNetSerializer : ISerialize {
-        private readonly OutputContext _context;
+        private readonly Field[] _fields;
 
         public JsonNetSerializer(OutputContext context) {
-            _context = context;
+            _fields = context.OutputFields.Where(f => !f.System).ToArray();
         }
 
         public string Serialize(IRow row) {
-            return JsonConvert.SerializeObject(row.ToFriendlyExpandoObject(_context.OutputFields));
+            return JsonConvert.SerializeObject(row.ToFriendlyExpandoObject(_fields));
         }
 
         string ISerialize.Header { get; } = "[";

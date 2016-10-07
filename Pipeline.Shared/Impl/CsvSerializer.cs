@@ -17,6 +17,7 @@
 #endregion
 using System.Linq;
 using System.Text;
+using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 
@@ -29,15 +30,17 @@ namespace Pipeline {
 
         private readonly OutputContext _context;
         private readonly int _length;
+        private readonly Field[] _fields;
 
         public CsvSerializer(OutputContext context) {
             _context = context;
-            _length = context.OutputFields.Length;
+            _fields = context.OutputFields.Where(f => !f.System).ToArray();
+            _length = _fields.Length;
         }
         public string Serialize(IRow row) {
             var builder = new StringBuilder();
             for (var index = 0; index < _length; index++) {
-                var field = _context.OutputFields[index];
+                var field = _fields[index];
                 builder.Append(Escape(row[field].ToString()));
                 if (index < _length - 1) {
                     builder.Append(",");
@@ -50,14 +53,14 @@ namespace Pipeline {
         {
             get
             {
-                return string.Join(",", _context.OutputFields.Select(f => f.Alias));
+                return string.Join(",", _fields.Select(f => f.Alias));
             }
         }
 
         public string Footer => string.Empty;
         public string RowSuffix { get; } = string.Empty;
         public string RowPrefix { get; } = string.Empty;
-    
+
         public static string Escape(string s) {
             if (s.Contains(Quote))
                 s = s.Replace(Quote, EscapedQuote);

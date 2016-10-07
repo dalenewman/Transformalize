@@ -1,15 +1,10 @@
-This tool expedites mundane data processing tasks 
+## Transformalize
+
+### Intro
+This tool expedites mundane data processing tasks
 like denormalization and reporting.
 
-
-
-
-
-
-
-
-### Data Sources - Inputs and Outputs
-
+It works with multipe data sources:
 <table class="table table-condensed">
     <thead>
         <tr>
@@ -67,68 +62,44 @@ like denormalization and reporting.
     </tbody>
 </table>
 
-### <a name="CFG"></a>Configurable
-TFL arrangements are designed in an [XML](https://en.wikipedia.org/wiki/XML) or
-[JSON](https://en.wikipedia.org/wiki/JSON) editor.  One is included in the Orchard CMS module (as seen below):
+### Configuration
 
-![Edit in Orchard CMS](Files/edit-hello-world-in-orchard-cms.png)
+Jobs are designed in [XML](https://en.wikipedia.org/wiki/XML)
+or [JSON](https://en.wikipedia.org/wiki/JSON).
+They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
 
----
-
-### Hello World
-
-This first example reads data from a url:
+Here is Hello World:
 
 ```xml
-<cfg name="Hello World">
-  <connections>
-    <add name="input" 
-         provider="web" 
-         url="http://www.transformalize.com/Pipeline/File/View/25"
-         delimiter=","
-         start="2" />
-  </connections>
-  <entities>
-    <add name="Countries" page="1">
-      <fields>
-        <add name="Code" primary-key="true" />
-        <add name="Name" />
-      </fields>
-      <calculated-fields>
-        <add name="Combined">
-            <transforms>
-                <add method="format" format="Hello {0} ({1})">
-                    <parameters>
-                        <add name="Code" />
-                        <add name="Name" />
-                    </parameters>
-                </add>
-            </transforms>
+<add name="Process">
+    <entities>
+        <add name="Entity">
+            <rows>
+                <add Noun="World" />
+            </rows>
+            <fields>
+                <add name="Noun" output="false" />
+            </fields>
+            <calculated-fields>
+                <add name="Greeting" t="copy(Noun).format(Hello {0})" />
+            </calculated-fields>
         </add>
-      </calculated-fields>
-    </add>
-  </entities>
-</cfg>
+    </entities>
+</add>
 ```
 
-This example introduces **connections**, and **entities**.
-The connection points to a [delimited file with country names and codes](http://www.transformalize.com/Pipeline/File/View/25).  The file 
-is hosted on my website.  The entity describes the data.  In this case; two 
-fields: `Code`, and `Name`.
- 
-To demonstrate a transform, a calculated field combines `Code` and `Name`.
+Run:
 
-This is running on my Orchard CMS website [transformalize.com](http://www.transformalize.com). You may 
-view the output in different ways:
-
-* in [report](http://www.transformalize.com/Pipeline/Report/24) mode
-* as [xml](http://www.transformalize.com/Pipeline/Api/Run/24)
-* as [json](http://www.transformalize.com/Pipeline/Api/Run/24?format=json) 
+```bash
+> tfl -a HelloWorld.xml
+Greeting
+Hello World
+```
 
 *to be continued...*
 
-**NOTE**: This code-base is the 2nd implementation.  To find out more about
-how Transformalize works, you can read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind)
+**NOTE**: This is the 2nd implementation.  To find out more Transformalize,
+read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind)
 I posted to Code Project (based on the 1st implementation).
 
 

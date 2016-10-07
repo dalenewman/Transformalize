@@ -19,20 +19,23 @@
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
-using Pipeline.Template.Razor;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class TemplateModule : Module {
         private readonly Process _process;
+        private readonly ITemplateProcessor _templateProcessor;
 
         public TemplateModule() { }
 
-        public TemplateModule(Process process) {
+        public TemplateModule(Process process, ITemplateProcessor templateProcessor) {
             _process = process;
+            _templateProcessor = templateProcessor;
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -44,10 +47,10 @@ namespace Pipeline.Web.Orchard.Modules {
                 var template = t;
                 builder.Register<ITemplateEngine>(ctx => {
                     var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
-                    context.Debug(() => string.Format("Registering {0} Engine for {1}",template.Engine, t.Key));
+                    context.Debug(() => $"Registering {template.Engine} Engine for {t.Key}");
                     switch (template.Engine) {
                         case "razor":
-                            return new RazorTemplateEngine(context, template, ctx.Resolve<IReader>());
+                            return new OrchardRazorTemplateEngine(context, _templateProcessor, template, ctx.Resolve<IReader>());
                         default:
                             return new NullTemplateEngine();
                     }

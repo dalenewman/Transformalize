@@ -189,6 +189,11 @@ namespace Pipeline.Web.Orchard {
         <add name='target' value='' />
       </parameters>
     </add>
+    <add name='decimals'>
+      <parameters>
+        <add name='decimals' value='0' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -198,7 +203,9 @@ namespace Pipeline.Web.Orchard {
 
   <methods>
     <add name='add' signature='none' target='t' />
+    <add name='abs' signature='none' target='t' />
     <add name='any' signature='any' target='t' />
+    <add name='ceiling' signature='none' target='t' />
     <add name='concat' signature='none' target='t' />
     <add name='connection' signature='property' target='t' />
     <add name='contains' signature='value' target='t' />
@@ -214,6 +221,7 @@ namespace Pipeline.Web.Orchard {
     <add name='fileext' signature='none' target='t' />
     <add name='filename' signature='file' target='t' />
     <add name='filepath' signature='file' target='t' />
+    <add name='floor' signature='none' target='t' />
     <add name='format' signature='format' target='t' />
     <add name='formatphone' signature='none' target='t' />
     <add name='formatxml' signature='none' target='t' />
@@ -238,6 +246,7 @@ namespace Pipeline.Web.Orchard {
     <add name='remove' signature='remove' target='t' />
     <add name='replace' signature='replace' target='t' />
     <add name='right' signature='length' target='t' />
+    <add name='round' signature='decimals' target='t' />
     <add name='splitlength' signature='separator' target='t' />
     <add name='substring' signature='substring' target='t' />
     <add name='sum' signature='none' target='t' />

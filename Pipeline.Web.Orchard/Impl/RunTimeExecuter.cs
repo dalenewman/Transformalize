@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
@@ -29,9 +30,14 @@ namespace Pipeline.Web.Orchard.Impl {
     public class RunTimeExecuter : IRunTimeExecute {
         private readonly IContext _context;
         private readonly IAppDataFolder _appDataFolder;
+        private readonly ITemplateProcessor _templateProcessor;
 
-        public RunTimeExecuter(IContext context, IAppDataFolder appDataFolder) {
+        public RunTimeExecuter(IContext context, 
+            IAppDataFolder appDataFolder,
+            ITemplateProcessor templateProcessor
+            ) {
             _appDataFolder = appDataFolder;
+            _templateProcessor = templateProcessor;
             _context = context;
         }
 
@@ -55,7 +61,7 @@ namespace Pipeline.Web.Orchard.Impl {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
+            container.RegisterCallback(new RootModule(_templateProcessor).Configure);
             container.RegisterCallback(new ContextModule(process).Configure);
 
             // providers
@@ -63,12 +69,13 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new SolrModule(process).Configure);
             container.RegisterCallback(new ElasticModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
-            container.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
+            container.RegisterCallback(new FileModule(process, _appDataFolder, _templateProcessor).Configure);
+            container.RegisterCallback(new ExcelModule(process, _appDataFolder, _templateProcessor).Configure);
             container.RegisterCallback(new WebModule(process).Configure);
 
             container.RegisterCallback(new MapModule(process).Configure);
             container.RegisterCallback(new ActionModule(process).Configure);
+            container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
 
             container.RegisterCallback(new EntityPipelineModule(process).Configure);
             container.RegisterCallback(new ProcessPipelineModule(process).Configure);
@@ -87,7 +94,7 @@ namespace Pipeline.Web.Orchard.Impl {
         public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
             var container = new ContainerBuilder();
             container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
+            container.RegisterCallback(new RootModule(_templateProcessor).Configure);
 
             var format = parameters.ContainsKey("format") ? parameters["format"] : "xml";
             using (var scope = container.Build().BeginLifetimeScope()) {

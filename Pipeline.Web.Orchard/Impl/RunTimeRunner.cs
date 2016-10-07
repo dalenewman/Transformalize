@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Modules;
@@ -28,10 +29,15 @@ namespace Pipeline.Web.Orchard.Impl {
     public class RunTimeRunner : IRunTimeRun {
         private readonly IContext _context;
         private readonly IAppDataFolder _appDataFolder;
+        private readonly ITemplateProcessor _templateProcessor;
 
-        public RunTimeRunner(IContext context, IAppDataFolder appDataFolder) {
+        public RunTimeRunner(IContext context, 
+            IAppDataFolder appDataFolder,
+            ITemplateProcessor templateProcessor
+        ) {
             _context = context;
             _appDataFolder = appDataFolder;
+            _templateProcessor = templateProcessor;
         }
 
         public IEnumerable<IRow> Run(Process process) {
@@ -55,7 +61,7 @@ namespace Pipeline.Web.Orchard.Impl {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
+            container.RegisterCallback(new RootModule(_templateProcessor).Configure);
             container.RegisterCallback(new ContextModule(process).Configure);
 
             // providers
@@ -63,11 +69,12 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new SolrModule(process).Configure);
             container.RegisterCallback(new ElasticModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process, _appDataFolder).Configure);
-            container.RegisterCallback(new ExcelModule(process, _appDataFolder).Configure);
+            container.RegisterCallback(new FileModule(process, _appDataFolder, _templateProcessor).Configure);
+            container.RegisterCallback(new ExcelModule(process, _appDataFolder, _templateProcessor).Configure);
             container.RegisterCallback(new WebModule(process).Configure);
 
             container.RegisterCallback(new MapModule(process).Configure);
+            container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
 
             container.RegisterCallback(new EntityPipelineModule(process).Configure);
             container.RegisterCallback(new ProcessPipelineModule(process).Configure);

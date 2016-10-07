@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -68,7 +70,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");
-            
+
             // input row condition
             builder.Register<IRowCondition>((ctx, p) => new JintRowCondition(p.TypedAs<InputContext>(), p.TypedAs<string>())).As<IRowCondition>();
 
@@ -130,6 +132,17 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         process = new Process(process.Serialize(), ctx.Resolve<ISerializer>());
                     }
                 }
+
+                // set default output to console if in console window
+                if (process.Output().IsInternal()) {
+                    try {
+                        var height = Console.WindowHeight;
+                        Console.Title = process.Name + " " + height;
+                        process.Output().Provider = "console";
+                    } catch (Exception) {
+                    }
+                }
+
 
                 return process;
             }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good

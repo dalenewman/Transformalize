@@ -24,6 +24,7 @@ using Humanizer;
 using Humanizer.Bytes;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Extensions;
 using Pipeline.Ioc.Autofac.Modules;
 using Pipeline.Logging.NLog;
 using Quartz;
@@ -33,8 +34,28 @@ namespace Pipeline.Command {
 
     [DisallowConcurrentExecution]
     public class RunTimeExecutor : IRunTimeExecute, IJob, IDisposable {
+        private string _mode;
+        private string _format;
+
+        public RunTimeExecutor() {
+            _mode = "default";
+            _format = "csv";
+        }
+
+        public RunTimeExecutor(string mode, string format) {
+            _mode = mode;
+            _format = format;
+        }
 
         public void Execute(Process process) {
+
+            process.Mode = _mode;
+
+            // Since we're in a Console app, and honor output format
+            if (process.Output().Provider.In("internal", "console")) {
+                process.Output().Provider = "console";
+                process.Output().Format = _format;
+            }
 
             var logger = new NLogPipelineLogger(process.Name);
 
@@ -102,10 +123,7 @@ namespace Pipeline.Command {
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();
-                var process = scope.Resolve<Process>(
-                    new NamedParameter("cfg", cfg),
-                    new NamedParameter("parameters", parameters)
-                );
+                var process = scope.Resolve<Process>(new NamedParameter("cfg", cfg));
                 foreach (var warning in process.Warnings()) {
                     context.Warn(warning);
                 }
@@ -118,18 +136,6 @@ namespace Pipeline.Command {
                     return;
                 }
 
-                if (parameters.ContainsKey("Mode")) {
-                    process.Mode = parameters["Mode"];
-                }
-
-                // Since we're in a Console app, and honor output format
-                if (process.Output().IsInternal()) {
-                    process.Output().Provider = "console";
-                    if (parameters.ContainsKey("Output")) {
-                        process.Output().Format = parameters["Output"];
-                    }
-                }
-
                 Execute(process);
             }
         }
@@ -137,11 +143,9 @@ namespace Pipeline.Command {
         public void Execute(IJobExecutionContext context) {
             var cfg = context.MergedJobDataMap.Get("Cfg") as string;
             var shorthand = context.MergedJobDataMap.Get("Shorthand") as string;
-            var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                { "Mode", context.MergedJobDataMap.Get("Mode") as string },
-                { "Output", context.MergedJobDataMap.Get("Output") as string }
-            };
-            Execute(cfg, shorthand, parameters);
+            _mode = context.MergedJobDataMap.Get("CommandLine.Mode") as string;
+            _format = context.MergedJobDataMap.Get("CommandLine.Format") as string;
+            Execute(cfg, shorthand, new Dictionary<string, string>());
         }
 
         public void Dispose() {

@@ -35,8 +35,8 @@ namespace Pipeline.Command {
         [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
         public string Mode { get; set; }
 
-        [Option('o', "output", DefaultValue = "csv", Required = false, HelpText = "Output type (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
-        public string Output { get; set; }
+        [Option('f', "format", DefaultValue = "csv", Required = false, HelpText = "Output format (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
+        public string Format { get; set; }
 
         [HelpOption]
         public string GetUsage() {

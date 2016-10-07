@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
+using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Core;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
@@ -33,7 +34,10 @@ namespace Pipeline.Scripting.JavaScript {
 
         public JavascriptTransform(string engine, IContext context, IReader reader) : base(context) {
 
-            _engine = JsEngineSwitcher.Current.CreateJsEngineInstance(engine);
+            var engineSwitcher = JsEngineSwitcher.Instance;
+            engineSwitcher.EngineFactories.Add(new ChakraCoreJsEngineFactory());
+
+            _engine = engineSwitcher.CreateEngine(engine);
 
             // for js, always add the input parameter
             _input = MultipleInput().Union(new[] { context.Field }).Distinct().ToArray();
@@ -118,6 +122,13 @@ namespace Pipeline.Scripting.JavaScript {
 
             Increment();
             return row;
+        }
+
+        public override void Dispose() {
+            if (_engine.SupportsGarbageCollection) {
+                _engine.CollectGarbage();
+            }
+            _engine.Dispose();
         }
     }
 }

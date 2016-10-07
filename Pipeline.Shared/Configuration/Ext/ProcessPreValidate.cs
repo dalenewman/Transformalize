@@ -35,6 +35,16 @@ namespace Pipeline.Configuration.Ext {
                 calculatedField.IsCalculated = true;
             }
 
+            // Convenience, User can use Parameters collection at root process level instead of creating Environments collection with sets of parameters
+            if (p.Parameters.Any() && p.Environments.Any()) {
+                error("You can not have parameters and environments.  Choose one.");
+            } else {
+                if (p.Parameters.Any() && !p.Environments.Any()) {
+                    p.Environments.Add(new Environment { Name = "One", Parameters = p.Parameters.Select(x => x.Clone()).ToList() }.WithDefaults());
+                    p.Parameters.Clear();
+                }
+            }
+
             AddDefaultDelimiters(p);
             DefaultConnection(p, "input");
             DefaultConnection(p, "output");

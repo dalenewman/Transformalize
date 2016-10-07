@@ -49,8 +49,8 @@ namespace Pipeline.Command {
                 .WithDescription("Transformalize Quartz.Net Job")
                 .UsingJobData("Cfg", _options.Arrangement)
                 .UsingJobData("Shorthand", _options.Shorthand)
-                .UsingJobData("Mode", _options.Mode)
-                .UsingJobData("Output", _options.Output)
+                .UsingJobData("CommandLine.Mode", _options.Mode)
+                .UsingJobData("CommandLine.Format", _options.Format)
                 .UsingJobData("Schedule", _options.Schedule)
                 .Build();
 

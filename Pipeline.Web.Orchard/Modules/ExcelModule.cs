@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -34,11 +35,13 @@ namespace Pipeline.Web.Orchard.Modules {
     public class ExcelModule : Module {
         private readonly Process _process;
         private readonly IAppDataFolder _appDataFolder;
+        private readonly ITemplateProcessor _templateProcessor;
         public ExcelModule() { }
 
-        public ExcelModule(Process process, IAppDataFolder appDataFolder) {
+        public ExcelModule(Process process, IAppDataFolder appDataFolder, ITemplateProcessor templateProcessor) {
             _process = process;
             _appDataFolder = appDataFolder;
+            _templateProcessor = templateProcessor;
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -67,7 +70,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         return new NullSchemaReader();
                     }
 
-                    return new SchemaReader(context, new RunTimeRunner(context, _appDataFolder), process);
+                    return new SchemaReader(context, new RunTimeRunner(context, _appDataFolder, _templateProcessor), process);
 
                 }).Named<ISchemaReader>(connection.Key);
             }

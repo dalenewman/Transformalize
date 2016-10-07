@@ -56,8 +56,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.0.3\lib\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.0.4\lib\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Parsers.YamlDotNet">
@@ -76,7 +76,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.2.4.5\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\..\..\packages\Elasticsearch.Net.2.4.6\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
@@ -150,14 +150,6 @@
     <Reference Include="Pipeline.Scripting.Jint, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Scripting.Jint\bin\Debug\Pipeline.Scripting.Jint.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Template.Razor, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Template.Razor\bin\Debug\Pipeline.Template.Razor.dll</HintPath>
-    </Reference>
-    <Reference Include="RazorEngine, Version=3.9.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\RazorEngine.3.9.0\lib\net45\RazorEngine.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SolrNet.0.5.0.1001\lib\SolrNet.dll</HintPath>
@@ -322,6 +314,10 @@
     <ProjectReference Include="..\Orchard.Tags\Orchard.Tags.csproj">
       <Project>{5d0f00f0-26c9-4785-ad61-b85710c60eb0}</Project>
       <Name>Orchard.Tags</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Orchard.Templates\Orchard.Templates.csproj">
+      <Project>{10ab3ce2-a720-467f-9ec8-ebb4bac9a1c9}</Project>
+      <Name>Orchard.Templates</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -30,6 +30,8 @@ using Orchard;
 using Orchard.Environment.Configuration;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
+using Orchard.Templates.Compilation.Razor;
+using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -49,6 +51,7 @@ namespace Pipeline.Web.Orchard.Modules {
         }
 
         protected override void Load(ContainerBuilder builder) {
+
 
             builder.Register(c => {
                 var manager = c.Resolve<IShellSettingsManager>();
@@ -206,10 +209,10 @@ namespace Pipeline.Web.Orchard.Modules {
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" }.WithDefaults());
 
-            builder.Register(c => new RunTimeDataReader(logger, c.Resolve<IAppDataFolder>())).As<IRunTimeRun>();
-            builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context, c.Resolve<IAppDataFolder>()))).As<IRunTimeSchemaReader>();
+            builder.Register(c => new RunTimeDataReader(logger, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>())).As<IRunTimeRun>();
+            builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>()))).As<IRunTimeSchemaReader>();
             builder.Register(c => new SchemaHelper(context, c.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
-            builder.Register(c => new RunTimeExecuter(context, c.Resolve<IAppDataFolder>())).As<IRunTimeExecute>();
+            builder.Register(c => new RunTimeExecuter(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>())).As<IRunTimeExecute>();
 
         }
 

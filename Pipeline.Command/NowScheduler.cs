@@ -41,7 +41,7 @@ namespace Pipeline.Command {
             builder.RegisterModule(new RootModule(_options.Shorthand));
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-            builder.Register(c=>new RunTimeExecutor()).As<IRunTimeExecute>();
+            builder.Register(c=>new RunTimeExecutor(_options.Mode, _options.Format)).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();
