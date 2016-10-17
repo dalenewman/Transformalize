@@ -44,7 +44,6 @@ namespace Pipeline.Configuration.Ext {
             ValidateTransforms(p, error);
             ValidateShouldRuns(p, error, warn);
             ValidateScripts(p, error);
-            ValidateEntityFields(p, warn);
             ValidateCalculatedFields(p, error);
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
@@ -104,12 +103,6 @@ namespace Pipeline.Configuration.Ext {
                         }
                     }
                 }
-            }
-        }
-
-        static void ValidateEntityFields(Process p, Action<string> warn) {
-            foreach (var entity in p.Entities.Where(entity => !entity.Fields.Any(f => f.Input))) {
-                warn($"The entity {entity.Alias} doesn't have any input fields defined.");
             }
         }
 
@@ -571,6 +564,7 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} transform requires a script.");
                     }
                     break;
+                case "velicity":
                 case "razor":
                     if (t.Template == string.Empty) {
                         error($"The {t.Method} transform requires a template.");

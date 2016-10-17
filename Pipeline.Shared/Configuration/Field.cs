@@ -513,5 +513,8 @@ namespace Pipeline.Configuration {
 
         [Cfg(value="chakra", domain="chakra,jint", toLower = true)]
         public string Engine { get; set; }
+
+        [Cfg(value="", toLower = true)]
+        public string ClassMap { get; set; }
     }
 }

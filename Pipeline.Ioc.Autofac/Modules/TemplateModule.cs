@@ -23,6 +23,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
 using Pipeline.Template.Razor;
+using Pipeline.Template.Velocity;
 
 namespace Pipeline.Ioc.Autofac.Modules {
     public class TemplateModule : Module {
@@ -45,6 +46,8 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
                     context.Debug(() => $"Registering {template.Engine} Engine for {t.Key}");
                     switch (template.Engine) {
+                        case "velocity":
+                            return new VelocityTemplateEngine(context, template, ctx.Resolve<IReader>());
                         case "razor":
                             return new RazorTemplateEngine(context, template, ctx.Resolve<IReader>());
                         default:

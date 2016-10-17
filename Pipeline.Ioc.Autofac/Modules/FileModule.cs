@@ -50,8 +50,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, connection.File));
                     var context = ctx.ResolveNamed<IConnectionContext>(connection.Key);
                     var cfg = new FileInspection(context, fileInfo, 100).Create();
-                    var process = ctx.Resolve<Process>();
-                    process.Load(cfg);
+                    var process = ctx.Resolve<Process>(new NamedParameter("cfg", cfg));
 
                     foreach (var warning in process.Warnings()) {
                         context.Warn(warning);

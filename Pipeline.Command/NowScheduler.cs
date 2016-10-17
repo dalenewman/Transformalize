@@ -38,10 +38,10 @@ namespace Pipeline.Command {
         public void Start() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(_options.Shorthand));
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
+            builder.RegisterModule(new RootModule(_options.Shorthand));
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-            builder.Register(c=>new RunTimeExecutor(_options.Mode, _options.Format)).As<IRunTimeExecute>();
+            builder.Register(c => new RunTimeExecutor(_options.Mode, _options.Format)).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();
@@ -61,7 +61,7 @@ namespace Pipeline.Command {
                 }
 
                 if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
-                    context.Info("Detecting schema...");
+                    context.Debug(() => "Detecting schema...");
                     if (_schemaHelper.Help(process)) {
                         if (process.Errors().Any()) {
                             foreach (var error in process.Errors()) {
@@ -74,7 +74,12 @@ namespace Pipeline.Command {
                 }
 
                 if (_options.Mode != null && _options.Mode.ToLower() == "check") {
+                    process.Star = string.Empty;
+                    foreach (var connection in process.Connections) {
+                        connection.Delimiters.Clear();
+                    }
                     foreach (var entity in process.Entities) {
+                        entity.CalculateHashCode = true;
                         if (entity.Name == entity.Alias) {
                             entity.Alias = null;
                         }
@@ -90,6 +95,8 @@ namespace Pipeline.Command {
                         if (field.Name == field.Label) {
                             field.Label = string.Empty;
                         }
+                        field.SortField = string.Empty;
+                        field.Sortable = Constants.DefaultSetting;
                     }
                     Console.WriteLine(process.Serialize());
                     return;

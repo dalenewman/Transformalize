@@ -50,10 +50,12 @@ namespace Pipeline.Command {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_host.Logger).SingleInstance();
+            container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(Process).Configure);
 
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
+            container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);
@@ -74,10 +76,12 @@ namespace Pipeline.Command {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_host.Logger).SingleInstance();
+            container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(Process).Configure);
 
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
+            container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);

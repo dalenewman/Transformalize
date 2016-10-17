@@ -105,7 +105,7 @@
         <add name='count' value='0' />
       </parameters>
     </add>
-    <add name='razor'>
+    <add name='template'>
       <parameters>
         <add name='template' />
         <add name='contenttype' value='raw' />
@@ -209,7 +209,7 @@
     <add name='now' signature='none' target='t' />
     <add name='padleft' signature='padding' target='t' />
     <add name='padright' signature='padding' target='t' />
-    <add name='razor' signature='razor' target='t' />
+    <add name='razor' signature='template' target='t' />
     <add name='regexreplace' signature='regexreplace' target='t' />
     <add name='remove' signature='remove' target='t' />
     <add name='replace' signature='replace' target='t' />
@@ -231,6 +231,7 @@
     <add name='trimstart' signature='trim' target='t' />
     <add name='upper' signature='none' target='t' />
     <add name='utcnow' signature='none' target='t' />
+    <add name='velocity' signature='template' target='t' />
     <add name='xmldecode' signature='none' target='t' />
     <add name='xpath' signature='xpath' target='t' />
     <add name='in' signature='domain' target='t' />

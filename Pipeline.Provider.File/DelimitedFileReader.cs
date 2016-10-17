@@ -18,10 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using FileHelpers;
 using FileHelpers.Dynamic;
-using FileHelpers.Options;
 using Pipeline.Context;
 using Pipeline.Contracts;
 

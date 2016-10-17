@@ -123,23 +123,25 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     var entity = process.Entities.First();
                     if (!entity.HasInput() && ctx.IsRegistered<ISchemaReader>()) {
                         var schemaReader = ctx.Resolve<ISchemaReader>(new TypedParameter(typeof(Process), process));
-                        var newEntity = schemaReader.Read(entity).Entities.First();
+                        var schema = schemaReader.Read(entity);
+                        var newEntity = schema.Entities.First();
                         foreach (var sf in newEntity.Fields.Where(f => f.Name == Constants.TflKey || f.Name == Constants.TflDeleted || f.Name == Constants.TflBatchId || f.Name == Constants.TflHashCode)) {
                             sf.Alias = newEntity.Name + sf.Name;
                         }
                         process.Entities.Clear();
                         process.Entities.Add(newEntity);
+                        process.Connections.First(c => c.Name == newEntity.Connection).Delimiter = schema.Connection.Delimiter;
                         process = new Process(process.Serialize(), ctx.Resolve<ISerializer>());
                     }
                 }
 
-                // set default output to console if in console window
                 if (process.Output().IsInternal()) {
                     try {
-                        var height = Console.WindowHeight;
-                        Console.Title = process.Name + " " + height;
+                        Console.WindowHeight = Console.WindowHeight + 1 - 1;
+                        Console.Title = process.Name;
                         process.Output().Provider = "console";
                     } catch (Exception) {
+                        // just a hack to determine if in console
                     }
                 }
 

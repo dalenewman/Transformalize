@@ -219,7 +219,10 @@ namespace Pipeline.Configuration {
 
             // if set, an entity's sortable setting will over-ride it's individual input field's sortable settings
             if (Sortable != Constants.DefaultSetting) {
-                foreach (var field in Fields.Where(f => f.Input)) {
+                foreach (var field in Fields.Where(f => f.Sortable == Constants.DefaultSetting)) {
+                    field.Sortable = Sortable;
+                }
+                foreach (var field in CalculatedFields.Where(f => f.Sortable == Constants.DefaultSetting)) {
                     field.Sortable = Sortable;
                 }
             }

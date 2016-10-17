@@ -89,8 +89,7 @@ namespace Pipeline.Extensions {
 
         public static void TrimEnd(this StringBuilder sb, string trimChars) {
             var length = sb.Length;
-            if (length != 0)
-            {
+            if (length != 0) {
                 var chars = trimChars.ToCharArray();
                 var i = length - 1;
 
@@ -115,6 +114,10 @@ namespace Pipeline.Extensions {
             sb.TrimEnd(trimChars);
         }
 
+        public static void Trim(this StringBuilder sb, params char[] chars) {
+            sb.Trim(string.Concat(chars));
+        }
+
         public static void Substring(this StringBuilder sb, int startIndex, int length) {
             var capacity = sb.Length;
             if (capacity != 0 && startIndex < capacity) {
@@ -131,7 +134,7 @@ namespace Pipeline.Extensions {
             var sbLen = sb.Length;
             if (sbLen < totalWidth) {
                 for (var i = 0; i < totalWidth - sbLen; i++) {
-                    sb.Insert(0, new []{ paddingChar});
+                    sb.Insert(0, new[] { paddingChar });
                 }
             }
         }

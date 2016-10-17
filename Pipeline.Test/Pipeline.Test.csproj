@@ -54,8 +54,8 @@
       <HintPath>..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.7.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.7.5\lib\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -126,6 +126,7 @@
     <Compile Include="FromLengthsTransform.cs" />
     <Compile Include="InventoryIntegrationSqlServer.cs" />
     <Compile Include="FormatXmlTransform.cs" />
+    <Compile Include="VelocityTransform.cs" />
     <Compile Include="WebReader.cs" />
     <Compile Include="TagTransform.cs" />
     <Compile Include="MatchTransform.cs" />

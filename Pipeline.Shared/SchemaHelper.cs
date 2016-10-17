@@ -60,15 +60,16 @@ namespace Pipeline {
                 foreach (var field in fields.Where(field => Constants.InvalidFieldNames.Contains(field.Name) && Constants.InvalidFieldNames.Contains(field.Alias))) {
                     field.Alias = e.Alias + field.Name;
                 }
-                var add = schema.Entities.First().Fields.Where(f => !f.System).ToList();
+                var add = e.Fields.Where(f => !f.System).ToList();
                 if (add.Any()) {
-                    _context.Info($"Detected {add.Count} field{add.Count.Plural()} in {entity.Alias}.");
+                    _context.Debug(()=>$"Detected {add.Count} field{add.Count.Plural()} in {entity.Alias}.");
                     var keys = new HashSet<string>(entity.Fields.Select(f=>f.Alias));
                     foreach (var field in add) {
                         if (!keys.Contains(field.Alias)) {
                             entity.Fields.Add(field);
                         }
                     }
+                    process.Connections.First(c => c.Name == e.Connection).Delimiter = schema.Connection.Delimiter;
                     helped = true;
                 } else {
                     _context.Warn($"Could not detect {entity.Alias} fields.");

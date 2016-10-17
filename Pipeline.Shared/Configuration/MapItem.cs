@@ -33,5 +33,8 @@ namespace Pipeline.Configuration {
         public Parameter AsParameter() {
             return new Parameter { Field = Parameter }.WithDefaults();
         }
+
+        [Cfg]
+        public string Value { get; set; }
     }
 }

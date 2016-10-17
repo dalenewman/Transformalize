@@ -28,6 +28,7 @@ using Pipeline.Nulls;
 using Pipeline.Scripting.CSharp;
 using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
+using Pipeline.Template.Velocity;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
@@ -125,6 +126,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "trim": return new TrimTransform(context);
                 case "trimend": return new TrimEndTransform(context);
                 case "trimstart": return new TrimStartTransform(context);
+                case "velocity": return new VelocityTransform(context);
                 case "upper": case "toupper": return new ToUpperTransform(context);
                 case "xmldecode": return new DecodeTransform(context);
                 case "xpath": return new XPathTransform(context);

@@ -113,7 +113,13 @@ namespace Pipeline.Configuration.Ext {
                 return;
 
             var connection = (p.Connections.FirstOrDefault(cn => cn.Provider == "file" && cn.Name == "input") ?? p.Connections.First(cn => cn.Provider == "file"));
-            p.Entities.Add(new Entity { Name = connection.Name, Alias = connection.Name, Connection = connection.Name }.WithDefaults());
+            p.Entities.Add(
+                new Entity {
+                    Name = connection.Name,
+                    Alias = connection.Name,
+                    Connection = connection.Name,
+                }.WithDefaults()
+            );
         }
 
         static void AddDefaultDelimiters(Process p) {
