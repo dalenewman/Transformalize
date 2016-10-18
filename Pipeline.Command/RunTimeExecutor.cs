@@ -24,6 +24,7 @@ using Humanizer;
 using Humanizer.Bytes;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop.Transforms;
 using Pipeline.Extensions;
 using Pipeline.Ioc.Autofac.Modules;
 using Pipeline.Logging.NLog;
@@ -36,13 +37,15 @@ namespace Pipeline.Command {
     public class RunTimeExecutor : IRunTimeExecute, IJob, IDisposable {
         private string _mode;
         private string _format;
+        private string _cfg;
 
         public RunTimeExecutor() {
             _mode = "default";
             _format = "csv";
         }
 
-        public RunTimeExecutor(string mode, string format) {
+        public RunTimeExecutor(string cfg, string mode, string format) {
+            _cfg = cfg;
             _mode = mode;
             _format = format;
         }
@@ -57,7 +60,7 @@ namespace Pipeline.Command {
                 process.Output().Format = _format;
             }
 
-            var logger = new NLogPipelineLogger(process.Name);
+            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(_cfg));
 
             if (!string.IsNullOrEmpty(process.MaxMemory)) {
                 var context = new PipelineContext(logger, process);
@@ -118,7 +121,7 @@ namespace Pipeline.Command {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(shorthand));
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(cfg)).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
@@ -135,6 +138,7 @@ namespace Pipeline.Command {
                     context.Error("The configuration errors must be fixed before this job will run.");
                     return;
                 }
+                _cfg = cfg;
 
                 Execute(process);
             }

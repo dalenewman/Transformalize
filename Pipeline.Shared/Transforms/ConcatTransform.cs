@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
+
     public class ConcatTransform : BaseTransform {
         readonly Field[] _input;
 

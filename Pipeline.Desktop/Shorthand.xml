@@ -245,6 +245,7 @@
     <add name='tag' signature='tag' target='t' />
     <add name='include' signature='any' target='t' />
     <add name='exclude' signature='any' target='t' />
+    <add name='slugify' signature='none' target='t' />
   </methods>
 
 </cfg>

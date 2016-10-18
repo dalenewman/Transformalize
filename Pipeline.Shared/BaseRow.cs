@@ -67,9 +67,9 @@ namespace Pipeline {
                 fields.Select(GetValue).SequenceEqual(fields.Select(f => other[f])) :
                 GetValue(fields[0]).Equals(other[fields[0]]);
         }
-        
+
         public override string ToString() {
-            return string.Join("|", Storage);
+            return string.Join("|", Storage.Select(i => i == null ? string.Empty : i.ToString()));
         }
 
         public object[] ToArray() {

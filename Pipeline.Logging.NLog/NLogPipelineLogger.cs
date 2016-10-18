@@ -33,7 +33,10 @@ namespace Pipeline.Logging.NLog {
         readonly Logger _log;
 
         public NLogPipelineLogger(string name) {
-            name = Utility.Identifier(name, "-");
+            var invalids = name.Intersect(Path.GetInvalidPathChars()).ToArray();
+            if (invalids.Any()) {
+                throw new ArgumentException("The log name contains invalid path characters: {0}.", string.Join(", ", invalids));
+            }
             ReConfiguredLogLevel(name);
             _log = LogManager.GetLogger("TFL");
         }

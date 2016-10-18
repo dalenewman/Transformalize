@@ -116,8 +116,19 @@ namespace Pipeline.Provider.SqlServer {
                             if (match == null) {
                                 inserts.Add(GetDataRow(dt, row));
                             } else {
-                                if (match[tflDeleted].Equals(true) || !match[tflHashCode].Equals(row[tflHashCode])) {
+                                if (match[tflDeleted].Equals(true)) {
                                     updates.Add(row);
+                                } else {
+                                    var destination = (int)match[tflHashCode];
+                                    var source = (int)row[tflHashCode];
+                                    
+                                    // temporary
+                                    if (source == destination) {
+                                        _output.Warn("Destination: " + match.ToString());
+                                        _output.Warn("Source     : " + row.ToString());
+                                    } else {
+                                        updates.Add(row);
+                                    }
                                 }
                             }
                             batchCount++;

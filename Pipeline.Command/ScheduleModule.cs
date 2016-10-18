@@ -21,6 +21,7 @@ using Autofac;
 using Common.Logging;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop.Transforms;
 using Pipeline.Extensions;
 using Pipeline.Logging.NLog;
 using Pipeline.Scheduler.Quartz;
@@ -39,7 +40,7 @@ namespace Pipeline.Command {
 
             _options.Arrangement = _options.ArrangementWithMode();
 
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(_options.Arrangement))).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             // for now scheduler

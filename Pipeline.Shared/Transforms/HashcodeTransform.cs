@@ -55,7 +55,7 @@ namespace Pipeline.Transforms {
         int GetStringHashCode(IEnumerable<object> values) {
             _builder.Clear();
             foreach(var value in values) {
-                _builder.Append(value);
+                _builder.Append(value ?? string.Empty);
             }
             return _builder.ToString().GetHashCode();
         }

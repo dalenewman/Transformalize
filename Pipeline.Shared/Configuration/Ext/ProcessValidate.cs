@@ -651,6 +651,7 @@ namespace Pipeline.Configuration.Ext {
                     case "fileext":
                     case "tag":
                     case "formatXml":
+                    case "slugify":
                     case "totime":
                         if (context.Field.Type != "string") {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");

@@ -21,6 +21,7 @@ using System.Linq;
 using Autofac;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop.Transforms;
 using Pipeline.Ioc.Autofac.Modules;
 using Pipeline.Logging.NLog;
 
@@ -38,10 +39,10 @@ namespace Pipeline.Command {
         public void Start() {
 
             var builder = new ContainerBuilder();
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(_options.Arrangement)).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(_options.Arrangement))).As<IPipelineLogger>().SingleInstance();
             builder.RegisterModule(new RootModule(_options.Shorthand));
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-            builder.Register(c => new RunTimeExecutor(_options.Mode, _options.Format)).As<IRunTimeExecute>();
+            builder.Register(c => new RunTimeExecutor(_options.Arrangement, _options.Mode, _options.Format)).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();

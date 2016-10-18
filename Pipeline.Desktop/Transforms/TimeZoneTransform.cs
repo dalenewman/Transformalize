@@ -21,7 +21,7 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class TimeZoneTransform : BaseTransform, ITransform {
+    public class TimeZoneTransform : BaseTransform {
         readonly Field _input;
         readonly Field _output;
         private readonly TimeZoneInfo _toTimeZoneInfo;

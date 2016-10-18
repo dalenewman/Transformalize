@@ -60,6 +60,7 @@
     <Compile Include="Transforms\FilePathTransform.cs" />
     <Compile Include="Transforms\FromXmlTransform.cs" />
     <Compile Include="Transforms\RelativeTimeTransform.cs" />
+    <Compile Include="Transforms\SlugifyTransform.cs" />
     <Compile Include="Transforms\XPathTransform.cs" />
     <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="ParallelPipeline.cs" />
