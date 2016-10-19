@@ -121,12 +121,7 @@ namespace Pipeline.Provider.SqlServer {
                                 } else {
                                     var destination = (int)match[tflHashCode];
                                     var source = (int)row[tflHashCode];
-                                    
-                                    // temporary
-                                    if (source == destination) {
-                                        _output.Warn("Destination: " + match.ToString());
-                                        _output.Warn("Source     : " + row.ToString());
-                                    } else {
+                                    if (source != destination) {
                                         updates.Add(row);
                                     }
                                 }

@@ -41,11 +41,20 @@ namespace Pipeline.Provider.Ado {
             var version = _context.Entity.GetVersionField();
 
             var schema = _context.Entity.Schema == string.Empty ? string.Empty : _cf.Enclose(_context.Entity.Schema) + ".";
-            var sql = $"SELECT MAX({_cf.Enclose(version.Name)}) FROM {schema}{_cf.Enclose(_context.Entity.Name)}";
+
+            var filter = string.Empty;
             if (_context.Entity.Filter.Any()) {
-                sql += " WHERE " + _context.ResolveFilter(_cf);
+                filter = _context.ResolveFilter(_cf);
             }
-            _context.Debug(() => $"Loading Input Version: {sql}");
+
+            string sql;
+            if (_context.Connection.Provider == "sqlserver" && version.Type == "byte[]" && version.Length == "8") {
+                sql = $"SELECT MAX({_cf.Enclose(version.Name)}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} WHERE {_cf.Enclose(version.Name)} < MIN_ACTIVE_ROWVERSION() {(filter == string.Empty ? string.Empty : " AND " + filter)}";
+            } else {
+                sql = $"SELECT MAX({_cf.Enclose(version.Name)}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+            }
+
+            _context.Debug(()=>$"Loading Input Version: {sql}");
 
             try {
                 using (var cn = _cf.GetConnection()) {
