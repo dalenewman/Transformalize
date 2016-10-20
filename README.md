@@ -121,7 +121,7 @@ Here is an arrangement:
 ```xml
 <add name="Process">
     <connections>
-        <add name="input" provider="file" file="c:\temp\Planets.csv" />
+        <add name="input" provider="file" file="c:\temp\Planets.csv" delimiter="," />
     </connections>
     <entities>
         <add name="input">
