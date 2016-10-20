@@ -24,6 +24,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
+using Pipeline.Transform.Humanizer;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
@@ -117,6 +118,24 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "fromlengths": return new FromLengthsTranform(context);
                 case "fromsplit": return new FromSplitTransform(context);
                 case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
+
+                // Humanizer
+                case "camelize": return new CamelizeTransform(context);
+                case "frommetric": return new FromMetricTransform(context);
+                case "fromroman": return new FromRomanTransform(context);
+                case "humanize": return new HumanizeTransform(context);
+                case "dasherize":
+                case "hyphenate": return new HyphenateTransform(context);
+                case "ordinalize": return new OrdinalizeTransform(context);
+                case "pascalize": return new PascalizeTransform(context);
+                case "pluralize": return new PluralizeTransform(context);
+                case "singularize": return new SingularizeTransform(context);
+                case "titleize": return new TitleizeTransform(context);
+                case "tometric": return new ToMetricTransform(context);
+                case "toordinalwords": return new ToOrdinalWordsTransform(context);
+                case "toroman": return new ToRomanTransform(context);
+                case "towords": return new ToWordsTransform(context);
+                case "underscore": return new UnderscoreTransform(context);
 
                 // return true or false, validators
                 case "any": return new AnyValidator(context);

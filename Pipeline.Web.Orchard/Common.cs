@@ -137,7 +137,7 @@ namespace Pipeline.Web.Orchard {
         <add name='count' value='0' />
       </parameters>
     </add>
-    <add name='razor'>
+    <add name='template'>
       <parameters>
         <add name='template' />
         <add name='contenttype' value='raw' />
@@ -241,7 +241,7 @@ namespace Pipeline.Web.Orchard {
     <add name='now' signature='none' target='t' />
     <add name='padleft' signature='padding' target='t' />
     <add name='padright' signature='padding' target='t' />
-    <add name='razor' signature='razor' target='t' />
+    <add name='razor' signature='template' target='t' />
     <add name='regexreplace' signature='regexreplace' target='t' />
     <add name='remove' signature='remove' target='t' />
     <add name='replace' signature='replace' target='t' />
@@ -263,6 +263,7 @@ namespace Pipeline.Web.Orchard {
     <add name='trimstart' signature='trim' target='t' />
     <add name='upper' signature='none' target='t' />
     <add name='utcnow' signature='none' target='t' />
+    <add name='velocity' signature='template' target='t' />
     <add name='xmldecode' signature='none' target='t' />
     <add name='xpath' signature='xpath' target='t' />
     <add name='in' signature='domain' target='t' />
@@ -276,6 +277,22 @@ namespace Pipeline.Web.Orchard {
     <add name='tag' signature='tag' target='t' />
     <add name='include' signature='any' target='t' />
     <add name='exclude' signature='any' target='t' />
+    <add name='slugify' signature='none' target='t' />
+    <add name='camelize' signature='none' target='t' />
+    <add name='dasherize' signature='none' target='t' />
+    <add name='frommetric' signature='none' target='t' />
+    <add name='fromroman' signature='none' target='t' />
+    <add name='humanize' signature='none' target='t' />
+    <add name='ordinalize' signature='none' target='t' />
+    <add name='pascalize' signature='none' target='t' />
+    <add name='pluralize' signature='none' target='t' />
+    <add name='singularize' signature='none' target='t' />
+    <add name='titleize' signature='none' target='t' />
+    <add name='tometric' signature='none' target='t' />
+    <add name='toordinalwords' signature='none' target='t' />
+    <add name='toroman' signature='none' target='t' />
+    <add name='towords' signature='none' target='t' />
+    <add name='underscore' signature='none' target='t' />
   </methods>
 
 </cfg>";

@@ -53,7 +53,7 @@ namespace Pipeline.Provider.Elastic {
                 size = 0
             };
 
-            ElasticsearchResponse<DynamicResponse> result = _client.Search<DynamicResponse>(_context.Connection.Index, _context.TypeName(), body);
+            var result = _client.Search<DynamicResponse>(_context.Connection.Index, _context.TypeName(), new PostData<object>(body));
             dynamic value = null;
             try {
                 value = result.Body["aggregations"]["version"]["value"].Value;

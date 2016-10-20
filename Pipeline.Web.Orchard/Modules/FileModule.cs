@@ -16,12 +16,14 @@
 // limitations under the License.
 #endregion
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Web;
 using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
+using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -33,18 +35,11 @@ using Pipeline.Web.Orchard.Impl;
 namespace Pipeline.Web.Orchard.Modules {
     public class FileModule : Module {
         private readonly Process _process;
-        private readonly IAppDataFolder _appDataFolder;
-        private readonly ITemplateProcessor _templateProcessor;
 
         public FileModule() { }
 
-        public FileModule(Process process, 
-            IAppDataFolder appDataFolder,
-            ITemplateProcessor templateProcessor
-            ) {
+        public FileModule(Process process) {
             _process = process;
-            _appDataFolder = appDataFolder;
-            _templateProcessor = templateProcessor;
         }
 
         protected override void Load(ContainerBuilder builder) {
@@ -58,7 +53,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 // Schema Reader
                 builder.Register<ISchemaReader>(ctx => {
                     /* file and excel are different, have to load the content and check it to determine schema */
-                    var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : _appDataFolder.Combine(Common.FileFolder, connection.File));
+                    var fileInfo = new FileInfo(Path.IsPathRooted(connection.File) ? connection.File : ctx.Resolve<IAppDataFolder>().Combine(Common.FileFolder, connection.File));
                     var context = ctx.ResolveNamed<IConnectionContext>(connection.Key);
                     var cfg = new FileInspection(context, fileInfo, 100).Create();
                     var process = ctx.Resolve<Process>();
@@ -75,7 +70,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         return new NullSchemaReader();
                     }
 
-                    return new SchemaReader(context, new RunTimeRunner(context, _appDataFolder, _templateProcessor), process);
+                    return new SchemaReader(context, new RunTimeRunner(context, ctx.Resolve<IAppDataFolder>(), ctx.Resolve<ITemplateProcessor>(), ctx.Resolve<INotifier>()), process);
 
                 }).Named<ISchemaReader>(connection.Key);
             }

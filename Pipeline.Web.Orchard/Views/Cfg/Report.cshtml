@@ -1,5 +1,10 @@
-﻿@using Orchard
+﻿@using FluentNHibernate.Utils
+@using Orchard
 @using Orchard.Core.Contents
+@using Pipeline.Configuration
+@using Pipeline.Context
+@using Pipeline.Logging
+@using Pipeline.Transforms
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
 @using Pipeline.Web.Orchard.Models
@@ -20,6 +25,7 @@
     var sortService = WorkContext.Resolve<ISortService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
     var optionsDisplayed = false;
+    var exportLink = Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv";
 
     AppendMeta("description", Model.Process.Name, ",");
     Layout.Title = Model.Process.Name;
@@ -71,6 +77,10 @@ th.sorter {
     <h3>@Model.Part.Title()</h3>
 }
 
+@foreach (var error in Model.Process.Errors()) {
+    <div class="alert alert-danger" role="alert">@error</div>
+}
+
 @foreach (var warning in Model.Process.Warnings()) {
     <div class="alert alert-warning" role="alert">@warning</div>
 }
@@ -87,7 +97,7 @@ th.sorter {
     @if (hasParameters) {
 
         <button type="button"
-                onclick="$('#id_report select').val($('#id_report select option:first').val()); $('#id_report').submit();"
+                onclick="$('#id_report select').val($('#id_report select option:first').val()); controls.submit(1);"
                 class="btn btn-info btn-sm">
             Clear
         </button>
@@ -103,14 +113,24 @@ th.sorter {
                         case "date":
                         case "datetime":
                             var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
-                            <input class="form-control date" type="datetime" name="@parameter.Name" placeholder="@parameter.Label" value="@requestedDate" />
+                            <input class="form-control date"
+                                   type="datetime"
+                                   name="@parameter.Name"
+                                   placeholder="@parameter.Label"
+                                   onchange="controls.submit(1);"
+                                   value="@requestedDate" />
                             break;
                         default:
                             var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
                             if (string.IsNullOrEmpty(parameter.Map)) {
-                                <input class="form-control" name="@parameter.Name" value="@requestedValue" placeholder="@parameter.Label" />
+                                <input class="form-control"
+                                       name="@parameter.Name"
+                                       value="@requestedValue" 
+                                       placeholder="@parameter.Label" />
                             } else {
-                                <select class="form-control" onchange="$('#id_report').submit()" name="@parameter.Name">
+                                <select class="form-control"
+                                        onchange="controls.submit(1);" 
+                                        name="@parameter.Name">
                                     @foreach (var item in Model.Process.Maps.First(m => m.Name == parameter.Map).Items) {
                                         <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
                                     }
@@ -130,7 +150,7 @@ th.sorter {
                     <span class="glyphicon glyphicon-edit"></span>
                 </button>
             }
-            <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
+            <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@exportLink', '_self');">
                 <span class="glyphicon glyphicon-floppy-save"></span>
             </button>
             <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
@@ -154,8 +174,8 @@ th.sorter {
                         <div class="col-md-4">
                             <ul class="pagination pagination-sm" style="display: inline;">
                                 @if (entity.Pagination.HasPrevious) {
-                                    <li><a href="javascript:submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                                    <li><a href="javascript:submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                                    <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                                    <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
                                 } else {
                                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
                                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
@@ -164,8 +184,8 @@ th.sorter {
                                 <li class="disabled"><a href="#">@entity.Hits found, Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
 
                                 @if (entity.Pagination.HasNext) {
-                                    <li><a href="javascript:submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                                    <li><a href="javascript:submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                                    <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                                    <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
                                 } else {
                                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
                                     <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
@@ -199,11 +219,11 @@ th.sorter {
                                             @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
                                                 if (entity.PageSize.Equals(pageSize)) {
                                                     <li class="active">
-                                                        <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
                                                     </li>
                                                 } else {
                                                     <li>
-                                                        <a href="javascript:setSize(@pageSize);submit(1);">@pageSize</a>
+                                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
                                                     </li>
                                                 }
                                             }
@@ -267,23 +287,55 @@ th.sorter {
                         }
                     </thead>
                     <tbody>
-                        @foreach (var row in entity.Rows) {
-                            <tr>
-                                @foreach (var field in fields) {
-                                    <td>
-                                        @if (field.Type.StartsWith("bool")) {
-                                            if ((bool)row[field.Alias]) {
-                                                <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
-                                            } else {
-                                                <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
-                                            }
-                                        } else {
-                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
-                                        }
-                                    </td>
-                                }
-                            </tr>
+                    @{
+                        Map classMap = null;
+                        var mapField = fields.LastOrDefault(f => f.ClassMap != string.Empty);
+                        if (mapField != null) {
+                            classMap = Model.Process.Maps.FirstOrDefault(m => m.Name == mapField.ClassMap);
                         }
+                    }
+
+                    @foreach (var row in entity.Rows) {
+
+                        var classValue = string.Empty;
+                        if (classMap != null) {
+                            var value = mapField.Convert(row[mapField.Alias]);
+                            var valueComparable = value as IComparable;
+                            if (valueComparable != null) {
+                                foreach (var item in classMap.Items) {
+                                    var from = mapField.Convert(item.From);
+                                    var to = mapField.Convert(item.To);
+                                    if (valueComparable.CompareTo(from) >= 0 && valueComparable.CompareTo(to) <= 0) {
+                                        classValue = item.Value;
+                                    }
+                                }
+                                if (classValue == string.Empty) {
+                                    var defaultItem = classMap.Items.FirstOrDefault(i => i.From.Equals("*"));
+                                    if (defaultItem != null) {
+                                        classValue = defaultItem.Value;
+                                    }
+                                }
+                            }
+                        }
+
+                        <tr class="@classValue">
+                            @foreach (var field in fields) {
+                                <td>
+                                    @if (field.Type.StartsWith("bool")) {
+                                        if ((bool) row[field.Alias]) {
+                                            <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
+                                        }
+                                        else {
+                                            <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
+                                        }
+                                    }
+                                    else {
+                                        @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -298,21 +350,20 @@ th.sorter {
 <script type="text/javascript">
     //<!--
 
-    function submit(page) {
-        setPage(page);
-        $("#id_report").submit();
-    }
-
-    function setPage(page) {
-        $('#id_page').val(page);
-    }
-
-    function setSize(size) {
-        $('#id_size').val(size);
-    }
-
-    function setSort(sort) {
-        $('#id_sort').val(sort);
+    var controls = {
+        setPage: function (page) {
+            $('#id_page').val(page);
+        },
+        submit : function(page) {
+            controls.setPage(page);
+            $("#id_report").submit();
+        },
+        setSize: function(size) {
+            $('#id_size').val(size);
+        },
+        setSort: function(sort) {
+            $('#id_sort').val(sort);
+        }
     }
 
     $(document).ready(function () {
@@ -357,8 +408,8 @@ th.sorter {
             });
             var expression = sort.replace(/^\.+|\.+$/gm, '');
             console.log(expression);
-            setSort(expression);
-            submit(1);
+            controls.setSort(expression);
+            controls.submit(1);
         });
 
         SyntaxHighlighter.all();

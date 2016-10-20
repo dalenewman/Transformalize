@@ -221,6 +221,10 @@
       <Project>{b805f159-aa3d-41a4-9c6d-9f2b784f51c6}</Project>
       <Name>Pipeline.Template.Velocity</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj">
+      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
+      <Name>Pipeline.Transform.Humanizer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

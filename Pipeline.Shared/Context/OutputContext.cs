@@ -32,7 +32,7 @@ namespace Pipeline.Context {
         public OutputContext(IContext context, IIncrement incrementer) : base(context.Logger, context.Process, context.Entity, context.Field, context.Transform) {
             _incrementer = incrementer;
             OutputFields = context.GetAllEntityOutputFields().ToArray();
-            Connection = context.Process.Connections.First(c => c.Name == "output");
+            Connection = context.Process.Output();
         }
 
         public void Increment(int by = 1) {

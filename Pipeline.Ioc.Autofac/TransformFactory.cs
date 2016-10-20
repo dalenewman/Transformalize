@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
+using Newtonsoft.Json.Linq;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -29,6 +30,7 @@ using Pipeline.Scripting.CSharp;
 using Pipeline.Scripting.JavaScript;
 using Pipeline.Scripting.Jint;
 using Pipeline.Template.Velocity;
+using Pipeline.Transform.Humanizer;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
@@ -133,6 +135,24 @@ namespace Pipeline.Ioc.Autofac {
 
                 case "include": return new FilterTransform(context, FilterType.Include);
                 case "exclude": return new FilterTransform(context, FilterType.Exclude);
+
+                // Humanizer
+                case "camelize": return new CamelizeTransform(context);
+                case "frommetric": return new FromMetricTransform(context);
+                case "fromroman": return new FromRomanTransform(context);
+                case "humanize": return new HumanizeTransform(context);
+                case "dasherize":
+                case "hyphenate": return  new HyphenateTransform(context);
+                case "ordinalize": return new OrdinalizeTransform(context);
+                case "pascalize": return new PascalizeTransform(context);
+                case "pluralize": return new PluralizeTransform(context);
+                case "singularize": return new SingularizeTransform(context);
+                case "titleize": return new TitleizeTransform(context);
+                case "tometric": return new ToMetricTransform(context);
+                case "toordinalwords": return new ToOrdinalWordsTransform(context);
+                case "toroman": return new ToRomanTransform(context);
+                case "towords": return new ToWordsTransform(context);
+                case "underscore": return new UnderscoreTransform(context);
 
                 case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);

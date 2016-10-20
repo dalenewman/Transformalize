@@ -180,11 +180,11 @@ namespace Pipeline.Web.Orchard.Controllers {
             parameters["page"] = "0";
             foreach (var entity in process.Entities) {
                 entity.Page = 0;
-                foreach (var field in entity.GetAllFields()) {
+                foreach (var field in entity.GetAllFields().Where(f=>!f.System)) {
                     field.T = "";
-                    if (field.Output && field.Raw && field.Transforms.Any()) {
+                    if (field.Output && field.Transforms.Any()) {
                         var lastTransform = field.Transforms.Last();
-                        if (lastTransform.Method.In("tag","razor")) {
+                        if (lastTransform.Method == "tag" || lastTransform.Method == "razor" && field.Raw) {
                             var firstParameter = lastTransform.Parameters.First();
                             field.Transforms.Remove(lastTransform);
                             field.T = "copy(" + firstParameter.Field + ")";

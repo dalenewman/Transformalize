@@ -410,6 +410,28 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} expects a string input. {input.Alias} is {input.Type}.");
                     }
                     break;
+
+                case "camelize":
+                case "humanize":
+                case "dasherize":
+                case "hyphenate":
+                case "ordinalize":
+                case "pascalize":
+                case "pluralize":
+                case "singularize":
+                case "titleize":
+                case "tometric":
+                case "toordinalwords":
+                case "toroman":
+                case "towords":
+                case "frommetric":
+                case "fromroman":
+                case "underscore":
+                    if (input.Type != "string") {
+                        error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
+                    }
+                    break;
+
                 case "tostring":
                     if (input.Type == "string") {
                         error($"The {t.Method} method is already a string.");
@@ -646,6 +668,31 @@ namespace Pipeline.Configuration.Ext {
                             error($"The {lastTransform.Method} returns a {returnType}, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
+                    case "camelize":
+                    case "humanize":
+                    case "dasherize":
+                    case "hyphenate":
+                    case "ordinalize":
+                    case "pascalize":
+                    case "pluralize":
+                    case "singularize":
+                    case "titleize":
+                    case "tometric":
+                    case "toordinalwords":
+                    case "toroman":
+                    case "towords":
+                    case "underscore":
+                        if (context.Field.Type != "string") {
+                            error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");
+                        }
+                        break;
+                    case "frommetric":
+                    case "fromroman":
+                        if (!context.Field.Type.IsNumeric()) {
+                            error($"The {lastTransform.Method} returns a numeric output, but {context.Field.Alias} is a {context.Field.Type}.");
+                        }
+                        break;
+
                     case "filename":
                     case "filepath":
                     case "fileext":

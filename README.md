@@ -69,6 +69,8 @@ Jobs are designed in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON).
 They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
 
+---
+
 #### Hello World:
 
 ```xml
@@ -77,6 +79,7 @@ They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-li
         <add name="Entity">
             <rows>
                 <add Noun="World" />
+                <add Noun="Earth" />
             </rows>
             <fields>
                 <add name="Noun" output="false" />
@@ -89,47 +92,31 @@ They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-li
 </add>
 ```
 
-Save the above in *HelloWorld.xml* and run like this:
+Save this as *HelloWorld.xml*.  This arrangment reads rows
+from itself and writes to the console.  
 
-```shell
-> tfl -a HelloWorld.xml
+Run...
+<pre>
+<strong>tfl -a HelloWorld.xml</strong>
 Greeting
 Hello World
-```
+Hello Earth
+</pre>
 
-The `csv` output includes the header column name; `Greeting`, and a single row; `Hello World`.
+---
+#### Hello File
 
-#### Hello Planets
+Hello Planets demonstrates reading from a file (partially listed below):
 
-Hello Planets demonstrates reading from a file called *HelloPlanets.csv*.  It contains:
-
-```shell
-Planet,Distance,Year,Mass,Day,Diameter,Gravity
+<pre>
+<strong>Planet,Distance,Year,Mass,Day,Diameter,Gravity</strong>
 Mercury,0.39,0.24,0.055,1407.6,3.04,0.37
 Venus,0.72,0.61,0.815,5832.2,7.52,0.88
 Earth,1,1,1,24.0,7.92,1
 ...
-```
+</pre>
 
-Here is the arrangement we start with:
-
-```xml
-<add name="Process">
-    <connections>
-        <add name="input" provider="file" file="c:\temp\Planets.csv" />
-    </connections>
-</add>
-```
-
-The (above) is only the connection.  It needs an entity with
-fields but I don't want to type that.  So, I use the
-CLI:
-
-```shell
-c:\> tfl -a c:\temp\HelloPlanets.xml -m check
-```
-
-`Check` mode detects and returns the schema so I can add it to my arrangement.
+Here is an arrangement:
 
 ```xml
 <add name="Process">
@@ -139,25 +126,47 @@ c:\> tfl -a c:\temp\HelloPlanets.xml -m check
     <entities>
         <add name="input">
             <fields>
-                <add name="Planet" length="8" />
-                <add name="Distance" length="6" />
-                <add name="Year" length="7" />
-                <add name="Mass" length="7" />
-                <add name="Day" length="7" />
-                <add name="Diameter" length="5" />
-                <add name="Gravity" length="5" />
+                <add name="Planet" />
+                <add name="Distance" />
+                <add name="Year" />
+                <add name="Mass" />
+                <add name="Day" />
+                <add name="Diameter" />
+                <add name="Gravity" />
             </fields>
+            <calculated-fields>
+                <add name="Greeting" t="copy(Planet).format(Hello {0})" />
+            </calculated-fields>
         </add>
     </entities>
 </add>
 ```
 
-*to be continued...*
+Save as *HelloPlanets.xml*.
+
+Run...
+
+<pre>
+<strong>tfl -a HelloPlanets.xml</strong>
+Planet,Distance,Year,Mass,Day,Diameter,Gravity,Greeting
+Mercury,0.39,0.24,0.055,1407.6,3.04,0.37,Hello Mercury
+Venus,0.72,0.61,0.815,5832.2,7.52,0.88,Hello Venus
+Earth,1,1,1,24.0,7.92,1,Hello Earth
+...
+</pre>
+
+---
+#### Hello Database
+
+*todo: write Hello Database example...*
+
+---
+### Build Notes
+
+1. Use Visual Studio 2015+.
+2. Add SolrNet package source: https://ci.appveyor.com/nuget/solrnet-022x5w7kmuba
+3. Copy the dlls from the *x86* or *x64* folder to where *tfl.exe* is.
 
 **NOTE**: This is the 2nd implementation.  To find out more Transformalize,
 read the [article](http://www.codeproject.com/Articles/658971/Transformalizing-NorthWind)
 I posted to Code Project (based on the 1st implementation).
-
-
-
-

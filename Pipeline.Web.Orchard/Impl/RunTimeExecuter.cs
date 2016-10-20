@@ -21,6 +21,7 @@ using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
+using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
@@ -31,13 +32,16 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly IContext _context;
         private readonly IAppDataFolder _appDataFolder;
         private readonly ITemplateProcessor _templateProcessor;
+        private readonly INotifier _notifier;
 
         public RunTimeExecuter(IContext context, 
             IAppDataFolder appDataFolder,
-            ITemplateProcessor templateProcessor
+            ITemplateProcessor templateProcessor,
+            INotifier notifier
             ) {
             _appDataFolder = appDataFolder;
             _templateProcessor = templateProcessor;
+            _notifier = notifier;
             _context = context;
         }
 
@@ -60,8 +64,14 @@ namespace Pipeline.Web.Orchard.Impl {
             }
 
             var container = new ContainerBuilder();
+
+            // Register Orchard CMS Stuff
+            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+            container.RegisterInstance(_notifier).As<INotifier>();
+
             container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule(_templateProcessor).Configure);
+            container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(process).Configure);
 
             // providers
@@ -69,8 +79,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new SolrModule(process).Configure);
             container.RegisterCallback(new ElasticModule(process).Configure);
             container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process, _appDataFolder, _templateProcessor).Configure);
-            container.RegisterCallback(new ExcelModule(process, _appDataFolder, _templateProcessor).Configure);
+            container.RegisterCallback(new FileModule(process).Configure);
+            container.RegisterCallback(new ExcelModule(process).Configure);
             container.RegisterCallback(new WebModule(process).Configure);
 
             container.RegisterCallback(new MapModule(process).Configure);
@@ -93,8 +103,14 @@ namespace Pipeline.Web.Orchard.Impl {
 
         public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
             var container = new ContainerBuilder();
+
+            // Orchard CMS Stuff
+            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+            container.RegisterInstance(_notifier).As<INotifier>();
+            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+
             container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule(_templateProcessor).Configure);
+            container.RegisterCallback(new RootModule().Configure);
 
             var format = parameters.ContainsKey("format") ? parameters["format"] : "xml";
             using (var scope = container.Build().BeginLifetimeScope()) {

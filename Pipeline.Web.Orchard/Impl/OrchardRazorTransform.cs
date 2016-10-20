@@ -16,7 +16,7 @@ namespace Pipeline.Web.Orchard.Impl {
         }
 
         public override IRow Transform(IRow row) {
-            row[Context.Field] = Context.Field.Convert(_processor.Process(Context.Transform.Template, Context.Key, null, row.ToFriendlyExpandoObject(_input)));
+            row[Context.Field] = Context.Field.Convert(_processor.Process(Context.Transform.Template, Context.Key, null, row.ToFriendlyExpandoObject(_input)).Trim(' ', '\n', '\r'));
             Increment();
             return row;
         }

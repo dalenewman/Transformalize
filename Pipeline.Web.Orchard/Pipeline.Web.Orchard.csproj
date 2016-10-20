@@ -151,6 +151,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Scripting.Jint\bin\Debug\Pipeline.Scripting.Jint.dll</HintPath>
     </Reference>
+    <Reference Include="Pipeline.Transform.Humanizer">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Pipeline.Transform.Humanizer.dll</HintPath>
+    </Reference>
     <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SolrNet.0.5.0.1001\lib\SolrNet.dll</HintPath>
       <Private>True</Private>

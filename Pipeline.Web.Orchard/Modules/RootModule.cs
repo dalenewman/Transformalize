@@ -23,7 +23,6 @@ using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
-using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -34,26 +33,21 @@ using Pipeline.Web.Orchard.Impl;
 //using Pipeline.Web.Orchard.Impl;
 using IParser = Pipeline.Contracts.IParser;
 using System;
+using Orchard.Localization;
+using Orchard.UI.Notify;
 
 // ReSharper disable PossibleMultipleEnumeration
 
 namespace Pipeline.Web.Orchard.Modules {
 
     public class RootModule : Module {
-        private readonly ITemplateProcessor _templateProcessor;
+        public Localizer T { get; set; }
 
         public RootModule() {
-        }
-
-        public RootModule(ITemplateProcessor templateProcessor) {
-            _templateProcessor = templateProcessor;
+            T = NullLocalizer.Instance;
         }
 
         protected override void Load(ContainerBuilder builder) {
-
-            if (_templateProcessor == null) {
-                return; // being called on Orchart start up
-            }
 
             builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
             builder.Register(ctx => new JintValidator("js")).Named<IValidator>("js");
@@ -71,23 +65,25 @@ namespace Pipeline.Web.Orchard.Modules {
                 new ReTryingReader(ctx.ResolveNamed<IReader>("web"), attempts: 3))
             );
 
-            // transform choices
+            // javascript implementation
             builder.Register<ITransform>((ctx, p) => new JintTransform(p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
-
-            if (_templateProcessor != null) {
-                builder.Register<ITransform>((ctx, p) => {
-                    var c = p.TypedAs<PipelineContext>();
+            // razor implementation
+            builder.Register<ITransform>((ctx, p) => {
+                var c = p.TypedAs<PipelineContext>();
+                if (ctx.IsRegistered<ITemplateProcessor>()) {
                     try {
-                        _templateProcessor.Verify(c.Transform.Template);
-                        return new OrchardRazorTransform(c, _templateProcessor);
-                    } catch (Exception ex) {
+                        var processor = ctx.Resolve<ITemplateProcessor>();
+                        processor.Verify(c.Transform.Template);
+                        return new OrchardRazorTransform(c, processor);
+                    }
+                    catch (Exception ex) {
+                        ctx.Resolve<INotifier>().Warning(T(ex.Message));
                         c.Warn(ex.Message);
                         return new NullTransform(c);
                     }
-                }).Named<ITransform>("razor");
-            } else {
-                builder.Register<ITransform>((ctx, p) => new NullTransform(p.TypedAs<PipelineContext>())).Named<ITransform>("razor");
-            }
+                }
+                return new NullTransform(c);
+            }).Named<ITransform>("razor");
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");

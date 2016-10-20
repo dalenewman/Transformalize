@@ -20,6 +20,7 @@ using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
+using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
@@ -38,11 +39,17 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly IContext _host;
         private readonly IAppDataFolder _appDataFolder;
         private readonly ITemplateProcessor _templateProcessor;
+        private readonly INotifier _notifier;
 
-        public RunTimeSchemaReader(IContext host, IAppDataFolder appDataFolder, ITemplateProcessor templateProcessor) {
+        public RunTimeSchemaReader(
+            IContext host, 
+            IAppDataFolder appDataFolder, 
+            ITemplateProcessor templateProcessor,
+            INotifier notifier) {
             _host = host;
             _appDataFolder = appDataFolder;
             _templateProcessor = templateProcessor;
+            _notifier = notifier;
         }
 
         public RunTimeSchemaReader(Process process, IContext host, IAppDataFolder appDataFolder) {
@@ -58,6 +65,12 @@ namespace Pipeline.Web.Orchard.Impl {
             }
 
             var container = new ContainerBuilder();
+
+            // Orchard CMS Stuff
+            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+            container.RegisterInstance(_notifier).As<INotifier>();
+            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+
             container.RegisterInstance(_host.Logger).SingleInstance();
             container.Register(c => new Process(
                 new NullValidator("sh"),
@@ -68,8 +81,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
-            container.RegisterCallback(new FileModule(Process, _appDataFolder, _templateProcessor).Configure);
-            container.RegisterCallback(new ExcelModule(Process, _appDataFolder, _templateProcessor).Configure);
+            container.RegisterCallback(new FileModule(Process).Configure);
+            container.RegisterCallback(new ExcelModule(Process).Configure);
             container.RegisterCallback(new WebModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
@@ -86,14 +99,20 @@ namespace Pipeline.Web.Orchard.Impl {
             }
 
             var container = new ContainerBuilder();
+
+            // Orchard CMS Stuff
+            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+            container.RegisterInstance(_notifier).As<INotifier>();
+            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+
             container.RegisterInstance(_host.Logger).SingleInstance();
             container.RegisterCallback(new ContextModule(Process).Configure);
 
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
-            container.RegisterCallback(new FileModule(Process, _appDataFolder, _templateProcessor).Configure);
-            container.RegisterCallback(new ExcelModule(Process, _appDataFolder, _templateProcessor).Configure);
+            container.RegisterCallback(new FileModule(Process).Configure);
+            container.RegisterCallback(new ExcelModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);

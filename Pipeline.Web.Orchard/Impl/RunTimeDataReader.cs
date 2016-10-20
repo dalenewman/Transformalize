@@ -20,6 +20,7 @@ using System.Linq;
 using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
+using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
@@ -31,16 +32,28 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly IPipelineLogger _logger;
         private readonly IAppDataFolder _appDataFolder;
         private readonly ITemplateProcessor _templateProcessor;
+        private readonly INotifier _notifier;
 
-        public RunTimeDataReader(IPipelineLogger logger, IAppDataFolder appDataFolder, ITemplateProcessor templateProcessor) {
+        public RunTimeDataReader(
+            IPipelineLogger logger, 
+            IAppDataFolder appDataFolder, 
+            ITemplateProcessor templateProcessor,
+            INotifier notifier) {
             _logger = logger;
             _appDataFolder = appDataFolder;
             _templateProcessor = templateProcessor;
+            _notifier = notifier;
         }
 
         public IEnumerable<IRow> Run(Process process) {
 
             var nested = new ContainerBuilder();
+
+            // Register Orchard CMS Stuff
+            nested.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+            nested.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+            nested.RegisterInstance(_notifier).As<INotifier>();
+
             var entity = process.Entities.First();
             nested.RegisterInstance(_logger).As<IPipelineLogger>();
 
@@ -51,8 +64,8 @@ namespace Pipeline.Web.Orchard.Impl {
             nested.RegisterCallback(new SolrModule(process).Configure);
             nested.RegisterCallback(new ElasticModule(process).Configure);
             nested.RegisterCallback(new InternalModule(process).Configure);
-            nested.RegisterCallback(new FileModule(process, _appDataFolder, _templateProcessor).Configure);
-            nested.RegisterCallback(new ExcelModule(process, _appDataFolder, _templateProcessor).Configure);
+            nested.RegisterCallback(new FileModule(process).Configure);
+            nested.RegisterCallback(new ExcelModule(process).Configure);
             nested.RegisterCallback(new WebModule(process).Configure);
 
             nested.RegisterCallback(new MapModule(process).Configure);

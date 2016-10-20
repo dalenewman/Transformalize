@@ -17,7 +17,9 @@
 
 using System.Linq;
 using Autofac;
+using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
+using Orchard.UI.Notify;
 using Pipeline.Actions;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -93,7 +95,12 @@ namespace Pipeline.Web.Orchard.Modules {
                      
                     var builder = new ContainerBuilder();
 
-                    builder.RegisterInstance(context.Logger);
+                    // Register Orchard CMS Stuff
+                    builder.RegisterInstance(ctx.Resolve<IAppDataFolder>()).As<IAppDataFolder>();
+                    builder.RegisterInstance(ctx.Resolve<ITemplateProcessor>()).As<ITemplateProcessor>();
+                    builder.RegisterInstance(ctx.Resolve<INotifier>()).As<INotifier>();
+
+                    builder.RegisterInstance(context.Logger).As<IPipelineLogger>();
                     builder.RegisterCallback(new RootModule().Configure);
                     builder.RegisterCallback(new ContextModule(root).Configure);
 
