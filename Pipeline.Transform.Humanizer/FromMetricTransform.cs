@@ -12,7 +12,7 @@ namespace Pipeline.Transform.Humanizer {
 
         public FromMetricTransform(IContext context) : base(context) {
             _input = SingleInput();
-            switch (_input.Type.Left(3)) {
+            switch (_input.Type) {
                 case "string":
                     _transform = (row) => {
                         var input = (string) row[_input];

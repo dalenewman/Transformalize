@@ -141,6 +141,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "frommetric": return new FromMetricTransform(context);
                 case "fromroman": return new FromRomanTransform(context);
                 case "humanize": return new HumanizeTransform(context);
+                case "dehumanize": return new DehumanizeTransform(context);
                 case "dasherize":
                 case "hyphenate": return  new HyphenateTransform(context);
                 case "ordinalize": return new OrdinalizeTransform(context);

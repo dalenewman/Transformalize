@@ -412,7 +412,7 @@ namespace Pipeline.Configuration.Ext {
                     break;
 
                 case "camelize":
-                case "humanize":
+                case "dehumanize":
                 case "dasherize":
                 case "hyphenate":
                 case "ordinalize":
@@ -420,15 +420,25 @@ namespace Pipeline.Configuration.Ext {
                 case "pluralize":
                 case "singularize":
                 case "titleize":
-                case "tometric":
-                case "toordinalwords":
-                case "toroman":
-                case "towords":
                 case "frommetric":
                 case "fromroman":
                 case "underscore":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
+                    }
+                    break;
+
+                case "tometric":
+                case "toordinalwords":
+                case "toroman":
+                case "towords":
+                    if (!input.Type.IsNumeric()) {
+                        error($"The {t.Method} expects a numeric input, but {input.Alias} is {input.Type}.");
+                    }
+                    break;
+                case "humanize":
+                    if (input.Type != "string" && !input.Type.StartsWith("date", StringComparison.OrdinalIgnoreCase)) {
+                        error($"The {t.Method} expects a string or date, but {input.Alias} is {input.Type}.");
                     }
                     break;
 
@@ -670,6 +680,7 @@ namespace Pipeline.Configuration.Ext {
                         break;
                     case "camelize":
                     case "humanize":
+                    case "dehumanize":
                     case "dasherize":
                     case "hyphenate":
                     case "ordinalize":
@@ -688,7 +699,7 @@ namespace Pipeline.Configuration.Ext {
                         break;
                     case "frommetric":
                     case "fromroman":
-                        if (!context.Field.Type.IsNumeric()) {
+                        if (!context.Field.IsNumeric()) {
                             error($"The {lastTransform.Method} returns a numeric output, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
@@ -697,7 +708,7 @@ namespace Pipeline.Configuration.Ext {
                     case "filepath":
                     case "fileext":
                     case "tag":
-                    case "formatXml":
+                    case "formatxml":
                     case "slugify":
                     case "totime":
                         if (context.Field.Type != "string") {

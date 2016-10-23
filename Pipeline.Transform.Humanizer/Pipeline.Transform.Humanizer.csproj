@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DehumanizeTransform.cs" />
     <Compile Include="FromMetricTransform.cs" />
     <Compile Include="HyphenateTransform.cs" />
     <Compile Include="FromRomanTransform.cs" />
