@@ -31,7 +31,7 @@ namespace Pipeline.Scripting.Jint {
         readonly Engine _jint = new Engine();
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
 
-        public JintTransform(IContext context, IReader reader) : base(context) {
+        public JintTransform(IContext context, IReader reader) : base(context, null) {
 
             // automatic parameter binding
             if (!context.Transform.Parameters.Any()) {

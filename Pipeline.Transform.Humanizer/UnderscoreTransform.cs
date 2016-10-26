@@ -9,7 +9,7 @@ namespace Pipeline.Transform.Humanizer {
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public UnderscoreTransform(IContext context) : base(context) {
+        public UnderscoreTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             switch (_input.Type) {
                 case "string":

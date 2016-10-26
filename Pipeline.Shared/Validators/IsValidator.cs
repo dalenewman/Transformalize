@@ -22,17 +22,19 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class IsValidator : BaseTransform, ITransform {
+    public class IsValidator : BaseTransform {
       readonly Field _input;
       readonly Func<string, object> _canConvert;
 
       public IsValidator(IContext context)
-            : base(context) {
+            : base(context, "bool") {
             _input = SingleInput();
             if (context.Field.Type.StartsWith("bool", StringComparison.Ordinal)) {
                 _canConvert = v => Constants.CanConvert()[context.Transform.Type](v);
             } else {
-                _canConvert = v => Constants.CanConvert()[context.Transform.Type](v) ? string.Empty : string.Format("The value {0} can not be converted to a {1}.", v, context.Transform.Type);
+                _canConvert = v => Constants.CanConvert()[context.Transform.Type](v) ? 
+                    string.Empty :
+                    $"The value {v} can not be converted to a {context.Transform.Type}.";
             }
         }
 

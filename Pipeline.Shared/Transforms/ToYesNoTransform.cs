@@ -16,14 +16,13 @@
 // limitations under the License.
 #endregion
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     public class ToYesNoTransform : BaseTransform {
         private readonly Field _input;
 
-        public ToYesNoTransform(IContext context) : base(context) {
+        public ToYesNoTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

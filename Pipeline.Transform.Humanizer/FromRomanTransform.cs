@@ -10,7 +10,7 @@ namespace Pipeline.Transform.Humanizer {
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public FromRomanTransform(IContext context) : base(context) {
+        public FromRomanTransform(IContext context) : base(context, context.Field.Type) {
             _input = SingleInput();
             switch (_input.Type) {
                 case "string":

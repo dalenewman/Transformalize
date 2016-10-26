@@ -20,11 +20,11 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class IsDefaultValidator : BaseTransform, ITransform {
+    public class IsDefaultValidator : BaseTransform {
         private readonly Field _input;
         private readonly object _default;
 
-        public IsDefaultValidator(IContext context) : base(context) {
+        public IsDefaultValidator(IContext context) : base(context, "bool") {
             _input = SingleInput();
             _default = _input.Convert(_input.Default);
         }

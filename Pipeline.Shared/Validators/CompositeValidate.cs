@@ -22,12 +22,12 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class CompositeValidator : BaseTransform, ITransform {
+    public class CompositeValidator : BaseTransform {
         readonly IEnumerable<ITransform> _transforms;
         readonly Func<IRow, object> _validate;
 
         public CompositeValidator(IContext context, IEnumerable<ITransform> transforms)
-            : base(context) {
+            : base(context, context.Field.Type.StartsWith("bool") ? "bool" : "string") {
             _transforms = transforms.ToArray();
 
             if (context.Field.Type.StartsWith("bool", StringComparison.Ordinal)) {

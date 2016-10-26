@@ -43,7 +43,7 @@ namespace Pipeline.Transforms.System {
             }
         }
 
-        public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context) {
+        public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
             fields = fields ?? context.Entity.GetAllFields();
             _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
         }

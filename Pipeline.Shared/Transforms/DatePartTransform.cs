@@ -19,11 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class DatePartTransform : BaseTransform, ITransform {
+    public class DatePartTransform : BaseTransform {
 
         public static readonly Dictionary<string, Func<DateTime, object>> Parts = new Dictionary<string, Func<DateTime, object>>() {
             {"day", x => x.Day},
@@ -56,19 +55,15 @@ namespace Pipeline.Transforms {
         };
 
         private readonly Field _input;
-        private readonly Action<IRow> _transform;
+        private readonly Func<IRow, object> _transform;
 
-        public DatePartTransform(IContext context) : base(context) {
+        public DatePartTransform(IContext context) : base(context, PartReturns[context.Transform.TimeComponent]) {
             _input = SingleInput();
-            if (_input.Type == PartReturns[context.Transform.TimeComponent]) {
-                _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[_input]);
-            } else {
-                _transform = row => row[context.Field] = context.Field.Convert(Parts[context.Transform.TimeComponent]((DateTime)row[_input]));
-            }
+            _transform = row => Parts[context.Transform.TimeComponent]((DateTime)row[_input]);
         }
 
         public override IRow Transform(IRow row) {
-            _transform(row);
+            row[Context.Field] = _transform(row);
             Increment();
             return row;
         }

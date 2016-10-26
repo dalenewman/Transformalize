@@ -20,19 +20,17 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class DecompressTransform : BaseTransform, ITransform {
+    public class DecompressTransform : BaseTransform {
         readonly Field _input;
-        readonly Field _output;
 
-        public DecompressTransform(IContext context) : base(context) {
+        public DecompressTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
-            _output = context.Field;
         }
+
         public override IRow Transform(IRow row) {
             row[Context.Field] = Decompress(row[_input] as string);
             Increment();

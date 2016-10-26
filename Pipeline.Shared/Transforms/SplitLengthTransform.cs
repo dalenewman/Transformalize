@@ -19,12 +19,12 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class SplitLengthTransform : BaseTransform, ITransform {
+    public class SplitLengthTransform : BaseTransform {
         readonly Field _input;
         readonly char[] _separator;
 
         public SplitLengthTransform(IContext context)
-            : base(context) {
+            : base(context, "int") {
             _input = SingleInput();
             _separator = context.Transform.Separator.ToCharArray();
         }

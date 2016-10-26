@@ -24,7 +24,10 @@ using Pipeline.Contracts;
 namespace Pipeline.Transforms {
 
     public abstract class BaseTransform : ITransform {
-        public IContext Context { get; private set; }
+        private Field _singleInput;
+        private string _received;
+
+        public IContext Context { get; }
 
         public abstract IRow Transform(IRow row);
 
@@ -32,8 +35,15 @@ namespace Pipeline.Transforms {
             return rows.Select(Transform);
         }
 
-        protected BaseTransform(IContext context) {
+        public string Returns
+        {
+            get { return Context.Transform.Returns; }
+            set { Context.Transform.Returns = value; }
+        }
+
+        protected BaseTransform(IContext context, string returns) {
             Context = context;
+            Returns = returns;
         }
 
         public long RowCount { get; set; }
@@ -54,7 +64,7 @@ namespace Pipeline.Transforms {
         }
 
         public Field SingleInput() {
-            return ParametersToFields().First();
+            return _singleInput ?? (_singleInput = ParametersToFields().First());
         }
 
         /// <summary>
@@ -76,6 +86,26 @@ namespace Pipeline.Transforms {
 
         public Field[] MultipleOutput() {
             return ParametersToFields().ToArray();
+        }
+
+        public string Received() {
+            if (_received != null)
+                return _received;
+
+            var index = Context.Field.Transforms.IndexOf(Context.Transform);
+            if (index <= 0)
+                return _singleInput.Type;
+            var previous = Context.Field.Transforms[index - 1];
+            _received = previous.Returns ?? _singleInput.Type;
+            return _received;
+        }
+
+        public bool IsLast() {
+            var count = Context.Field.Transforms.Count;
+            if (count == 1)
+                return true;
+            var index = Context.Field.Transforms.IndexOf(Context.Transform);
+            return index == count - 1;
         }
 
         public virtual void Dispose() {

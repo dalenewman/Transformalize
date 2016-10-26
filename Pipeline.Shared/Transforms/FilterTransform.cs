@@ -15,7 +15,7 @@ namespace Pipeline.Transforms {
         private readonly Func<IRow, bool> _filter;
         private readonly FilterType _filterType;
 
-        public FilterTransform(IContext context, FilterType filterType) : base(context) {
+        public FilterTransform(IContext context, FilterType filterType) : base(context, null) {
             _filterType = filterType;
             _filter = GetFunc(SingleInput(), context.Transform.Operator, SingleInput().Convert(context.Transform.Value));
         }

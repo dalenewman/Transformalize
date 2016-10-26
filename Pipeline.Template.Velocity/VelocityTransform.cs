@@ -31,7 +31,7 @@ namespace Pipeline.Template.Velocity {
         private readonly Field[] _input;
         private readonly string _templateName;
 
-        public VelocityTransform(IContext context) : base(context) {
+        public VelocityTransform(IContext context) : base(context, context.Field.Type) {
 
             VelocityInitializer.Init();
 

@@ -25,8 +25,7 @@ namespace Pipeline.Transforms {
     public class ConcatTransform : BaseTransform {
         readonly Field[] _input;
 
-        public ConcatTransform(IContext context)
-            : base(context) {
+        public ConcatTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();
         }
 

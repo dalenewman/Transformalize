@@ -21,11 +21,11 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class InValidator : BaseTransform, ITransform {
+    public class InValidator : BaseTransform {
         private readonly Field _input;
         private readonly HashSet<object> _set = new HashSet<object>();
 
-        public InValidator(IContext context) : base(context) {
+        public InValidator(IContext context) : base(context, "bool") {
             _input = SingleInput();
             var items = Utility.Split(Context.Transform.Domain, ',');
             foreach (var item in items) {

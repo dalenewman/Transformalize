@@ -22,12 +22,12 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class RegexReplaceTransform : BaseTransform, ITransform {
+    public class RegexReplaceTransform : BaseTransform {
         private readonly Field _input;
         private readonly Regex _regex;
         private readonly Action<IRow> _transform;
 
-        public RegexReplaceTransform(PipelineContext context) : base(context) {
+        public RegexReplaceTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             _regex = new Regex(context.Transform.Pattern);
             if (context.Transform.Count == 0) {

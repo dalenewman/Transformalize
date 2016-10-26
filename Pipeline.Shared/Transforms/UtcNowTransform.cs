@@ -20,7 +20,7 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
     public class UtcNowTransform : BaseTransform {
-        public UtcNowTransform(IContext context) : base(context) {}
+        public UtcNowTransform(IContext context) : base(context, "datetime") {}
 
         public override IRow Transform(IRow row) {
             row[Context.Field] = DateTime.UtcNow;

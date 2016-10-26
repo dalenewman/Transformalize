@@ -9,7 +9,7 @@ namespace Pipeline.Transform.Humanizer {
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public CamelizeTransform(IContext context) : base(context) {
+        public CamelizeTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             switch (_input.Type) {
                 case "string":

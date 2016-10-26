@@ -117,6 +117,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Humanize.cs" />
     <Compile Include="MathTransforms.cs" />
     <Compile Include="JoinTwoInMemoryTables.cs" />
     <Compile Include="DirectoryReader.cs" />

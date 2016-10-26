@@ -32,7 +32,7 @@ namespace Pipeline.Scripting.JavaScript {
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly IJsEngine _engine;
 
-        public JavascriptTransform(string engine, IContext context, IReader reader) : base(context) {
+        public JavascriptTransform(string engine, IContext context, IReader reader) : base(context, null) {
 
             var engineSwitcher = JsEngineSwitcher.Instance;
             engineSwitcher.EngineFactories.Add(new ChakraCoreJsEngineFactory());

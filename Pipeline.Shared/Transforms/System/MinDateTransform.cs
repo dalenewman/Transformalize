@@ -28,7 +28,7 @@ namespace Pipeline.Transforms.System {
         private readonly bool _toString;
 
         public MinDateTransform(IContext context, DateTime minDate)
-            : base(context) {
+            : base(context, "datetime") {
             _dates = context.Entity.GetAllFields().Where(f => f.Output && f.Type.StartsWith("date", StringComparison.Ordinal)).ToArray();
             _minDate = minDate;
             _toString = context.Process.Connections.First(c => c.Name == context.Entity.Connection).Provider == "mysql";

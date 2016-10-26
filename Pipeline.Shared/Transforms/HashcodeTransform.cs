@@ -28,7 +28,7 @@ namespace Pipeline.Transforms {
         readonly Field[] _input;
         readonly StringBuilder _builder;
         public HashcodeTransform(IContext context)
-              : base(context) {
+              : base(context, "int") {
             _input = MultipleInput();
             _builder = new StringBuilder();
         }
@@ -54,7 +54,7 @@ namespace Pipeline.Transforms {
 
         int GetStringHashCode(IEnumerable<object> values) {
             _builder.Clear();
-            foreach(var value in values) {
+            foreach (var value in values) {
                 _builder.Append(value ?? string.Empty);
             }
             return _builder.ToString().GetHashCode();

@@ -20,14 +20,14 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class FromSplitTransform : BaseTransform, ITransform {
+    public class FromSplitTransform : BaseTransform {
 
         readonly char[] _separator;
         readonly Field _input;
         readonly Field[] _output;
 
         public FromSplitTransform(IContext context)
-            : base(context) {
+            : base(context, null) {
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
             _separator = context.Transform.Separator.ToCharArray();

@@ -19,10 +19,10 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class RemoveTransform : BaseTransform, ITransform {
+    public class RemoveTransform : BaseTransform {
         private readonly Field _input;
 
-        public RemoveTransform(IContext context) : base(context) {
+        public RemoveTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

@@ -20,22 +20,22 @@ using Pipeline.Contracts;
 using Pipeline.Extensions;
 
 namespace Pipeline.Transforms {
-   public class LeftTransform : BaseTransform, ITransform {
+    public class LeftTransform : BaseTransform, ITransform {
 
-      readonly int _length;
-      readonly IField _input;
+        readonly int _length;
+        readonly IField _input;
 
-      public LeftTransform(IContext context)
-            : base(context) {
-         _length = context.Transform.Length;
-         _input = SingleInput();
-      }
+        public LeftTransform(IContext context)
+              : base(context, "string") {
+            _length = context.Transform.Length;
+            _input = SingleInput();
+        }
 
-      public override IRow Transform(IRow row) {
-         row[Context.Field] = row[_input].ToString().Left(_length);
-         Increment();
-         return row;
-      }
+        public override IRow Transform(IRow row) {
+            row[Context.Field] = row[_input].ToString().Left(_length);
+            Increment();
+            return row;
+        }
 
-   }
+    }
 }

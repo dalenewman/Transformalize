@@ -37,7 +37,7 @@ namespace Pipeline.Transforms {
         readonly int _total;
 
         public FromXmlTransform(IContext context)
-            : base(context) {
+            : base(context, null) {
             _input = SingleInputForMultipleOutput();
             var output = MultipleOutput();
 

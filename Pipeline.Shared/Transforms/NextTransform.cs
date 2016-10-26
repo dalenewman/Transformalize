@@ -19,10 +19,10 @@ using System;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class NextTransform : BaseTransform, ITransform {
+    public class NextTransform : BaseTransform {
         private readonly DateTime _next;
 
-        public NextTransform(IContext context) : base(context) {
+        public NextTransform(IContext context) : base(context,"datetime") {
             var from = DateTime.Today;
             var to = Enum.Parse(typeof(DayOfWeek), context.Transform.DayOfWeek, true);
             var start = (int)from.DayOfWeek;

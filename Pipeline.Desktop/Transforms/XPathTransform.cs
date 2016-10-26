@@ -21,14 +21,14 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class XPathTransform : BaseTransform, ITransform {
+    public class XPathTransform : BaseTransform {
 
         private readonly Field _input;
         private readonly bool _hasNamespace;
         private readonly bool _xPathIsField;
         private readonly Field _xPathField;
 
-        public XPathTransform(IContext context) : base(context) {
+        public XPathTransform(IContext context) : base(context, null) {
             _input = SingleInput();
             _xPathIsField = context.Process.TryGetField(context.Transform.XPath, out _xPathField);
             _hasNamespace = !string.IsNullOrEmpty(context.Transform.NameSpace);

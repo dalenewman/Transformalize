@@ -25,7 +25,7 @@ namespace Pipeline.Transforms {
         readonly Field[] _input;
 
         public FormatTransform(IContext context)
-            : base(context) {
+            : base(context, "string") {
             _input = MultipleInput();
         }
 

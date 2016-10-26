@@ -21,11 +21,11 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class ToStringTransform : BaseTransform, ITransform {
+    public class ToStringTransform : BaseTransform {
         readonly Field _input;
         readonly Func<object, string> _toString;
 
-        public ToStringTransform(IContext context) : base(context) {
+        public ToStringTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             if (context.Transform.Format == string.Empty) {
                 _toString = (o) => o.ToString();

@@ -21,10 +21,10 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class FileExtTransform : BaseTransform, ITransform {
+    public class FileExtTransform : BaseTransform {
         private readonly Field _input;
 
-        public FileExtTransform(IContext context) : base(context) {
+        public FileExtTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
+using Pipeline.Extensions;
 
 namespace Pipeline.Transforms.System {
     public class DefaultTransform : BaseTransform {
@@ -57,17 +58,32 @@ namespace Pipeline.Transforms.System {
         List<FieldDefault> CalculatedFieldDefaults { get; } = new List<FieldDefault>();
 
         public DefaultTransform(IContext context, IEnumerable<Field> fields)
-            : base(context) {
+            : base(context, null) {
             var expanded = fields.ToArray();
             var defaults = Constants.TypeDefaults();
 
             foreach (var field in expanded) {
                 var hasDefault = field.Default != Constants.DefaultSetting;
+
+                if (field.Type.StartsWith("date")) {
+                    switch (field.Default.ToLower()) {
+                        case "now()":
+                            field.Default = DateTime.UtcNow.ToString("O");
+                            break;
+                        case "today()":
+                            field.Default = DateTime.Today.ToUniversalTime().ToString("O");
+                            break;
+                    }
+                }
+
                 var fieldDefault = new FieldDefault(field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
-                    Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
+                    Value = hasDefault ?
+                        field.Convert(field.Default) :
+                        defaults[field.Type],
                     StringValue = hasDefault ? field.Default : string.Empty,
                     DefaultWhiteSpace = field.DefaultWhiteSpace
                 };
+
                 if (field.IsCalculated) {
                     CalculatedFieldDefaults.Add(fieldDefault);
                 } else {

@@ -22,7 +22,7 @@ namespace Pipeline.Transforms {
     public class ToUpperTransform : BaseTransform {
         readonly Field _input;
 
-        public ToUpperTransform(IContext context) : base(context) {
+        public ToUpperTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
         public override IRow Transform(IRow row) {

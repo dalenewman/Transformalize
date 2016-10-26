@@ -7,13 +7,12 @@ namespace Pipeline.Transforms {
 
         readonly Field _input;
 
-        public FloorTransform(IContext context) : base(context) {
+        public FloorTransform(IContext context) : base(context,"decimal") {
             _input = SingleInput();
         }
 
         public override IRow Transform(IRow row) {
-            var input = Convert.ToDecimal(row[_input]);
-            row[Context.Field] = Context.Field.Convert(Math.Floor(input));
+            row[Context.Field] = Math.Floor(Convert.ToDecimal(row[_input]));
             Increment();
             return row;
         }

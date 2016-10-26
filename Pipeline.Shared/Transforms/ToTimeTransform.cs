@@ -20,9 +20,9 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class ToTimeTransform : BaseTransform, ITransform {
+    public class ToTimeTransform : BaseTransform {
         private readonly Field _input;
-        public ToTimeTransform(IContext context) : base(context) {
+        public ToTimeTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
 
 

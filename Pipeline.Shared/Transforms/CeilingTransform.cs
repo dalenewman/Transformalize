@@ -7,7 +7,7 @@ namespace Pipeline.Transforms {
 
         readonly Field _input;
 
-        public CeilingTransform(IContext context) : base(context) {
+        public CeilingTransform(IContext context) : base(context, "decimal") {
             _input = SingleInput();
         }
 

@@ -6,7 +6,7 @@ namespace Pipeline.Transforms {
     public class FormatXmlTransfrom : BaseTransform {
         private readonly Field _input;
 
-        public FormatXmlTransfrom(IContext context) : base(context) {
+        public FormatXmlTransfrom(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

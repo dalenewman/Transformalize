@@ -6,7 +6,7 @@ namespace Pipeline.Transforms.System {
     public class SetKey : BaseTransform {
         private readonly Field _tflKey;
 
-        public SetKey(IContext context) : base(context) {
+        public SetKey(IContext context) : base(context, null) {
             _tflKey = context.Entity.TflKey();
         }
 

@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
-using Newtonsoft.Json.Linq;
+using Cfg.Net.Ext;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
@@ -49,6 +49,10 @@ namespace Pipeline.Ioc.Autofac {
                         ));
                 } else {
                     transforms.AddRange(field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t))));
+                }
+                // Add Conversion if necessary
+                if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" }.WithDefaults())));
                 }
             }
             return transforms;
@@ -143,7 +147,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "humanize": return new HumanizeTransform(context);
                 case "dehumanize": return new DehumanizeTransform(context);
                 case "dasherize":
-                case "hyphenate": return  new HyphenateTransform(context);
+                case "hyphenate": return new HyphenateTransform(context);
                 case "ordinalize": return new OrdinalizeTransform(context);
                 case "pascalize": return new PascalizeTransform(context);
                 case "pluralize": return new PluralizeTransform(context);
@@ -154,6 +158,13 @@ namespace Pipeline.Ioc.Autofac {
                 case "toroman": return new ToRomanTransform(context);
                 case "towords": return new ToWordsTransform(context);
                 case "underscore": return new UnderscoreTransform(context);
+
+                case "addticks": return new AddTimeTransform(context, "ticks");
+                case "addmilliseconds": return new AddTimeTransform(context, "milliseconds");
+                case "addseconds": return new AddTimeTransform(context, "seconds");
+                case "addminutes": return new AddTimeTransform(context, "minutes");
+                case "addhours": return new AddTimeTransform(context, "hours");
+                case "adddays": return new AddTimeTransform(context, "days");
 
                 case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);

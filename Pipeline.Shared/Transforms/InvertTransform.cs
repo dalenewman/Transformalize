@@ -22,7 +22,7 @@ namespace Pipeline.Transforms {
     public class InvertTransform : BaseTransform, ITransform {
         private readonly Field _input;
 
-        public InvertTransform(IContext context) : base(context) {
+        public InvertTransform(IContext context) : base(context, "bool") {
             _input = SingleInput();
         }
 

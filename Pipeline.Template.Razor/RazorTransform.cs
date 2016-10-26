@@ -37,7 +37,7 @@ namespace Pipeline.Template.Razor {
         private readonly Field[] _input;
         private static readonly ConcurrentDictionary<int, IRazorEngineService> Cache = new ConcurrentDictionary<int, IRazorEngineService>();
 
-        public RazorTransform(IContext context) : base(context) {
+        public RazorTransform(IContext context) : base(context, context.Field.Type) {
             _input = MultipleInput();
 
             var key = GetHashCode(context.Transform.Template, _input);

@@ -21,13 +21,13 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
 
-    public class SubStringTransform : BaseTransform, ITransform {
+    public class SubStringTransform : BaseTransform {
 
         private readonly Field _input;
         private readonly Action<IRow> _transform;
         private readonly Func<string, string> _substring;
 
-        public SubStringTransform(IContext context) : base(context) {
+        public SubStringTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
 
             if (context.Transform.Length == 0) {

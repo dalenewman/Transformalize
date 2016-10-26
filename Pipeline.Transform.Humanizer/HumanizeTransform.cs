@@ -10,14 +10,18 @@ namespace Pipeline.Transform.Humanizer {
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public HumanizeTransform(IContext context) : base(context) {
+        public HumanizeTransform(IContext context) : base(context, "string") {
+
             _input = SingleInput();
-            switch (_input.Type) {
+
+            var type = Received() ?? _input.Type;
+
+            switch (type) {
                 case "date":
                 case "datetime":
                     _transform = (row) => {
                         var input = (DateTime)row[_input];
-                        return input.Humanize();
+                        return input.Humanize(false);
                     };
                     break;
                 case "string":
@@ -38,5 +42,6 @@ namespace Pipeline.Transform.Humanizer {
             Increment();
             return row;
         }
+
     }
 }

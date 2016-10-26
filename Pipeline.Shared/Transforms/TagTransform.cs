@@ -42,7 +42,7 @@ namespace Pipeline.Transforms {
         private readonly Field _contentField;
         private readonly List<TagAttribute> _attributes = new List<TagAttribute>();
 
-        public TagTransform(IContext context) : base(context) {
+        public TagTransform(IContext context) : base(context, "string") {
 
             if (Context.Transform.Class == string.Empty && Context.Field.Class != string.Empty) {
                 Context.Transform.Class = Context.Field.Class;

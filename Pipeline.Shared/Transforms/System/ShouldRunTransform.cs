@@ -21,7 +21,7 @@ namespace Pipeline.Transforms.System {
     public class ShouldRunTransform : BaseTransform {
         private readonly ITransform _transform;
 
-        public ShouldRunTransform(IContext context, ITransform transform) : base(context) {
+        public ShouldRunTransform(IContext context, ITransform transform) : base(context, null) {
             _transform = transform;
         }
 

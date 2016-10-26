@@ -20,7 +20,7 @@ using Pipeline.Transforms;
 
 namespace Pipeline.Nulls {
     public class NullTransform : BaseTransform {
-        public NullTransform(IContext context) : base(context) { }
+        public NullTransform(IContext context) : base(context, null) { }
         public override IRow Transform(IRow row) {
             return row;
         }

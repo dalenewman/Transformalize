@@ -21,10 +21,10 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class MultiplyTransform : BaseTransform, ITransform {
+    public class MultiplyTransform : BaseTransform {
         readonly Field[] _input;
 
-        public MultiplyTransform(IContext context) : base(context) {
+        public MultiplyTransform(IContext context) : base(context, "decimal") {
             _input = MultipleInput();
         }
 

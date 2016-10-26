@@ -28,7 +28,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
-        public TimeZoneTransform(IContext context) : base(context) {
+        public TimeZoneTransform(IContext context) : base(context, "datetime") {
             _input = SingleInput();
             _output = context.Field;
 

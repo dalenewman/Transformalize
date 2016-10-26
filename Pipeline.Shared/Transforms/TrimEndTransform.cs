@@ -19,12 +19,12 @@ using Pipeline.Configuration;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
-    public class TrimEndTransform : BaseTransform, ITransform {
+    public class TrimEndTransform : BaseTransform {
         readonly Field _input;
         readonly char[] _trimChars;
 
         public TrimEndTransform(IContext context)
-            : base(context) {
+            : base(context, "string") {
             _input = SingleInput();
             _trimChars = Context.Transform.TrimChars.ToCharArray();
         }

@@ -20,10 +20,10 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class StartsWithValidator : BaseTransform, ITransform {
+    public class StartsWithValidator : BaseTransform {
         private readonly Field _input;
 
-        public StartsWithValidator(IContext context) : base(context) {
+        public StartsWithValidator(IContext context) : base(context, "bool") {
             _input = SingleInput();
         }
 

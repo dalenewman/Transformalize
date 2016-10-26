@@ -9,7 +9,7 @@ namespace Pipeline.Desktop.Transforms {
     public class SlugifyTransform : BaseTransform {
         private readonly Field _input;
 
-        public SlugifyTransform(IContext context) : base(context) {
+        public SlugifyTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

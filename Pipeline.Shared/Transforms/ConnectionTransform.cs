@@ -22,7 +22,7 @@ namespace Pipeline.Transforms {
     public class ConnectionTransform : BaseTransform, ITransform {
 
         private readonly object _value;
-        public ConnectionTransform(IContext context) : base(context) {
+        public ConnectionTransform(IContext context) : base(context, "string") {
             var connection = context.Process.Connections.First(c => c.Name == context.Transform.Name);
             _value = Utility.GetPropValue(connection, context.Transform.Property);
         }

@@ -36,7 +36,7 @@ namespace Pipeline.Transforms {
         private static Dictionary<string, char> _entities;
 
         public DecodeTransform(IContext context)
-             : base(context) {
+             : base(context, "string") {
             _input = SingleInput();
         }
 

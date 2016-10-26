@@ -23,13 +23,39 @@ using Pipeline.Contracts;
 namespace Pipeline.Transforms {
     public class AddTransform : BaseTransform {
         readonly Field[] _input;
+        private readonly Func<IRow, object> _transform;
 
-        public AddTransform(IContext context) : base(context) {
+        public AddTransform(IContext context) : base(context, "decimal") {
             _input = MultipleInput();
+            var same = _input.All(i => i.Type == _input.First().Type);
+            if (same) {
+                var type = _input.First().Type;
+                switch (type) {
+                    case "double":
+                        Returns = "double";
+                        _transform = row => _input.Sum(f => (double)row[f]);
+                        break;
+                    case "long":
+                    case "int64":
+                        Returns = "long";
+                        _transform = row => _input.Sum(f => (long)row[f]);
+                        break;
+                    case "int":
+                    case "int32":
+                        Returns = "int";
+                        _transform = row => _input.Sum(f => (int)row[f]);
+                        break;
+                    default:
+                        _transform = row => _input.Sum(f => Convert.ToDecimal(row[f]));
+                        break;
+                }
+            } else {
+                _transform = row => _input.Sum(field => field.Type == "decimal" ? (decimal)row[field] : Convert.ToDecimal(row[field]));
+            }
         }
 
         public override IRow Transform(IRow row) {
-            row[Context.Field] = Context.Field.Convert(_input.Sum(field => field.Type == "decimal" ? (decimal)row[field] : Convert.ToDecimal(row[field])));
+            row[Context.Field] = _transform(row);
             Increment();
             return row;
         }

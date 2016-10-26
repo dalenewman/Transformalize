@@ -22,7 +22,7 @@ namespace Pipeline.Transforms.System {
     public class SetBatchId : BaseTransform {
         private readonly Field _tflBatchId;
 
-        public SetBatchId(IContext context) : base(context) {
+        public SetBatchId(IContext context) : base(context, null) {
             _tflBatchId = context.Entity.TflBatchId();
         }
 

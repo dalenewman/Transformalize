@@ -18,29 +18,39 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Cfg.Net.Ext;
+using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
 using Pipeline.Provider.Excel;
 using Pipeline.Provider.File;
 
-namespace Pipeline.Ioc.Autofac
-{
+namespace Pipeline.Ioc.Autofac {
     public class FolderReader : IRead {
 
         private readonly IRead _reader;
-        public FolderReader(InputContext input, IRowFactory rowFactory) {
+        public FolderReader(IConnectionContext input, IRowFactory rowFactory) {
+
             var readers = new List<IRead>();
             var searchOption = (SearchOption)Enum.Parse(typeof(SearchOption), input.Connection.SearchOption, true);
-            input.Info($"Searching folder: {input.Connection.Folder}");
+
+            input.Debug(() => $"Searching folder: {input.Connection.Folder}");
             var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption);
-            input.Info($"Found {files.Length} files.");
+
+            input.Debug(() => $"Found {files.Length} files.");
             foreach (var file in files) {
-                input.Info($"Found file: {file.Name}");
+                input.Debug(() => $"Found file: {file.Name}");
+
+                var context = new PipelineContext(input.Logger, input.Process, input.Entity, input.Field, input.Transform);
+                var fileInput = new InputContext(context, new Incrementer(context)) {
+                    Connection = new Connection { Provider = "file", File = file.FullName, Delimiter = input.Connection.Delimiter, TextQualifier = input.Connection.TextQualifier }.WithDefaults()
+                };
+
                 if (file.Extension.ToLower().Contains("xls")) {
-                    readers.Add(new ExcelReader(input, rowFactory));
+                    readers.Add(new ExcelReader(fileInput, rowFactory));
                 } else {
-                    readers.Add(new DelimitedFileReader(input, rowFactory, new NullRowCondition()));
+                    readers.Add(new DelimitedFileReader(fileInput, rowFactory, new NullRowCondition()));
                 }
             }
             _reader = new CompositeReader(readers);

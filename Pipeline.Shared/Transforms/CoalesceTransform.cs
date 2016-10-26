@@ -28,7 +28,7 @@ namespace Pipeline.Transforms {
 
         private readonly FieldWithDefault[] _input;
 
-        public CoalesceTransform(IContext context) : base(context) {
+        public CoalesceTransform(IContext context) : base(context, null) {
             _input = MultipleInput().Select(f => new FieldWithDefault { Field = f, Default = f.Convert(f.Default) }).ToArray();
 
         }

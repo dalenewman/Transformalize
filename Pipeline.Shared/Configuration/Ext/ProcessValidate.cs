@@ -441,7 +441,16 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} expects a string or date, but {input.Alias} is {input.Type}.");
                     }
                     break;
-
+                case "addticks":
+                case "addmilliseconds":
+                case "addseconds":
+                case "addminutes":
+                case "addhours":
+                case "adddays":
+                    if (!input.Type.StartsWith("date")) {
+                        error($"The {t.Method} expects a date, but {input.Alias} is {input.Type}.");
+                    }
+                    break;
                 case "tostring":
                     if (input.Type == "string") {
                         error($"The {t.Method} method is already a string.");
@@ -642,6 +651,23 @@ namespace Pipeline.Configuration.Ext {
                         error("The in transform requires a domain (a list of allowed values).");
                     }
                     break;
+                case "addticks":
+                    long addTicksLong;
+                    if (!long.TryParse(t.Value, out addTicksLong)) {
+                        error(
+                            $"The addticks transform requires a long (int64) numeric parameter.  {t.Value} can not be parsed as a long.");
+                    }
+                    break;
+                case "addmilliseconds":
+                case "addseconds":
+                case "addminutes":
+                case "addhours":
+                case "adddays":
+                    double addXDouble;
+                    if (!double.TryParse(t.Value, out addXDouble)) {
+                        error($"The {t.Method} transform requires a double numeric parameter.  {t.Value} can not be parsed as a double.");
+                    }
+                    break;
                 default:
                     break;
             }
@@ -668,8 +694,8 @@ namespace Pipeline.Configuration.Ext {
                     case "next":
                     case "last":
                     case "timezone":
-                        if (context.Field.Type != "datetime") {
-                            error($"The {lastTransform.Method} returns a datetime, but {context.Field.Alias} is a {context.Field.Type}.");
+                        if (!context.Field.Type.StartsWith("date")) {
+                            error($"The {lastTransform.Method} returns a date, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
                     case "datepart":
@@ -730,6 +756,17 @@ namespace Pipeline.Configuration.Ext {
                             error($"The {lastTransform.Method} returns a bool, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
+                    case "addticks":
+                    case "addmilliseconds":
+                    case "addseconds":
+                    case "addminutes":
+                    case "addhours":
+                    case "adddays":
+                        if (!context.Field.Type.StartsWith("date")) {
+                            error($"The {lastTransform.Method} returns a date, but {context.Field.Alias} is {context.Field.Type}.");
+                        }
+                        break;
+
                 }
             }
         }

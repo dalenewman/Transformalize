@@ -28,7 +28,7 @@ namespace Pipeline.Transforms.System {
         private byte[] _cache;
 
 
-        public TypeTransform(IContext context, IEnumerable<Field> fields):base(context) {
+        public TypeTransform(IContext context, IEnumerable<Field> fields):base(context, null) {
             _fieldTypes = fields.Where(f => f.Type != "string").ToArray().Select(f => new Tuple<Field, Type>(f, Constants.TypeSystem()[f.Type])).ToArray();
         }
 

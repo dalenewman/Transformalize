@@ -8,7 +8,7 @@ namespace Pipeline.Scripting.CSharp {
     public class CsharpTransform : BaseTransform {
         private readonly CSharpHost.UserCodeInvoker _userCode;
 
-        public CsharpTransform(IContext context) : base(context) {
+        public CsharpTransform(IContext context) : base(context, null) {
             var name = Utility.GetMethodName(context);
 
             ConcurrentDictionary<string, CSharpHost.UserCodeInvoker> userCodes;

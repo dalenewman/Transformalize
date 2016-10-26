@@ -21,11 +21,11 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class FormatPhoneTransform : BaseTransform, ITransform {
+    public class FormatPhoneTransform : BaseTransform {
         private readonly Field _input;
         private readonly Regex _clean = new Regex("[^0-9]", RegexOptions.Compiled);
 
-        public FormatPhoneTransform(IContext context) : base(context) {
+        public FormatPhoneTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 

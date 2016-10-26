@@ -31,7 +31,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly Field[] _outerFields;
         private readonly Dictionary<string, object> _typeDefaults;
 
-        public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context) {
+        public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, null) {
 
             _rowFactory = rowFactory;
             _input = SingleInputForMultipleOutput();

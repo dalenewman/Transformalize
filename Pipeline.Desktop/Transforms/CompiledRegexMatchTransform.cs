@@ -21,11 +21,11 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Desktop.Transforms {
-    public class CompiledRegexMatchTransform : BaseTransform, ITransform {
+    public class CompiledRegexMatchTransform : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public CompiledRegexMatchTransform(IContext context) : base(context) {
+        public CompiledRegexMatchTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();
             _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
         }

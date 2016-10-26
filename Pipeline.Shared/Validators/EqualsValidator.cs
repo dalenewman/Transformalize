@@ -22,13 +22,13 @@ using Pipeline.Contracts;
 using Pipeline.Transforms;
 
 namespace Pipeline.Validators {
-    public class EqualsValidator : BaseTransform, ITransform {
+    public class EqualsValidator : BaseTransform {
         private readonly Field _first;
         private readonly Field[] _rest;
         private readonly object _value;
         private readonly Action<IRow> _validator;
 
-        public EqualsValidator(IContext context) : base(context) {
+        public EqualsValidator(IContext context) : base(context, "bool") {
             bool sameTypes;
             var input = MultipleInput();
             _first = input.First();

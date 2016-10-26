@@ -54,8 +54,8 @@ namespace Pipeline.Desktop.Transforms {
         private readonly Field _end;
         private readonly Action<IRow> _transform;
 
-        public DateDiffTransform(IContext context) : base(context) {
-            var input = MultipleInput().TakeWhile(f=>f.Type.StartsWith("date")).ToArray();
+        public DateDiffTransform(IContext context) : base(context, PartReturns[context.Transform.TimeComponent]) {
+            var input = MultipleInput().TakeWhile(f => f.Type.StartsWith("date")).ToArray();
 
             _start = input[0];
 
@@ -67,20 +67,12 @@ namespace Pipeline.Desktop.Transforms {
                 if (input.Count() > 1) {
                     // comparing between two dates in pipeline
                     _end = input[1];
-                    if (Context.Field.Type == PartReturns[context.Transform.TimeComponent]) {
-                        _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[_start], (DateTime)row[_end]);
-                    } else {
-                        _transform = row => row[context.Field] = context.Field.Convert(Parts[context.Transform.TimeComponent]((DateTime)row[_start], (DateTime)row[_end]));
-                    }
+                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[_start], (DateTime)row[_end]);
                 } else {
                     // comparing between one date in pipeline and now (depending on time zone)
                     var fromTimeZone = Context.Transform.FromTimeZone == Constants.DefaultSetting ? "UTC" : Context.Transform.FromTimeZone;
                     var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, fromTimeZone);
-                    if (Context.Field.Type == PartReturns[context.Transform.TimeComponent]) {
-                        _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent](now, (DateTime)row[_start]);
-                    } else {
-                        _transform = row => row[context.Field] = context.Field.Convert(Parts[context.Transform.TimeComponent](now, (DateTime)row[_start]));
-                    }
+                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent](now, (DateTime)row[_start]);
                 }
 
             } else {

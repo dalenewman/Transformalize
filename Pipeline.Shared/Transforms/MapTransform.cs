@@ -30,7 +30,7 @@ namespace Pipeline.Transforms {
         private object _catchAll;
         const string CatchAll = "*";
 
-        public MapTransform(IContext context) : base(context) {
+        public MapTransform(IContext context) : base(context, null) {
             _input = SingleInput();
         }
 

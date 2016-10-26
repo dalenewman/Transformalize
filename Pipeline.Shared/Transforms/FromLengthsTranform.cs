@@ -9,7 +9,7 @@ namespace Pipeline.Transforms {
         readonly Field[] _output;
         private readonly int[] _lengths;
 
-        public FromLengthsTranform(IContext context) : base(context) {
+        public FromLengthsTranform(IContext context) : base(context, null) {
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
             _lengths = _output.Select(f=>Convert.ToInt32(f.Length)).ToArray();

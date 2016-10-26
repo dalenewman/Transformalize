@@ -21,10 +21,10 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms
 {
-    public class LastTransform : BaseTransform, ITransform {
+    public class LastTransform : BaseTransform {
         private readonly DateTime _last;
 
-        public LastTransform(IContext context) : base(context) {
+        public LastTransform(IContext context) : base(context, "datetime") {
             var from = DateTime.Today;
             var to = Enum.Parse(typeof(DayOfWeek), context.Transform.DayOfWeek, true);
             int diff = (int)from.DayOfWeek - (int)to;

@@ -23,7 +23,7 @@ namespace Pipeline.Transforms {
     public class JoinTransform : BaseTransform {
         readonly Field[] _input;
 
-        public JoinTransform(IContext context) : base(context) {
+        public JoinTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();
         }
         public override IRow Transform(IRow row) {

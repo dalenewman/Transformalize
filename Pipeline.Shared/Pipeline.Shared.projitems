@@ -142,6 +142,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTimeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BaseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CeilingTransform.cs" />

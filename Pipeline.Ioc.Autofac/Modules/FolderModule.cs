@@ -40,6 +40,9 @@ namespace Pipeline.Ioc.Autofac.Modules {
             // enitity input
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "folder")) {
 
+                // input version detector
+                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));

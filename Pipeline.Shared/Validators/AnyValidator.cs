@@ -33,7 +33,7 @@ namespace Pipeline.Transforms {
         private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
         private readonly Func<IRow, bool> _func;
 
-        public AnyValidator(IContext context) : base(context) {
+        public AnyValidator(IContext context) : base(context, "bool") {
             foreach (var field in MultipleInput()) {
                 if (Constants.CanConvert()[field.Type](Context.Transform.Value)) {
                     _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Transform.Value) });

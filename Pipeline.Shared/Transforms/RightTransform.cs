@@ -20,11 +20,11 @@ using Pipeline.Contracts;
 using Pipeline.Extensions;
 
 namespace Pipeline.Transforms {
-    public class RightTransform : BaseTransform, ITransform {
+    public class RightTransform : BaseTransform {
         readonly Field _input;
 
         public RightTransform(IContext context)
-              : base(context) {
+              : base(context, "string") {
             _input = SingleInput();
         }
 

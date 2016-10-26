@@ -10,14 +10,14 @@ namespace Pipeline.Transform.Humanizer {
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public ToMetricTransform(IContext context) : base(context) {
+        public ToMetricTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             switch (_input.Type.Left(3)) {
                 case "int":
                 case "sho":
                     _transform = (row) => {
                         var input = _input.Type.In("int","int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
-                        return Context.Field.Convert(input.ToMetric());
+                        return input.ToMetric();
                     };
                     break;
                 case "double":

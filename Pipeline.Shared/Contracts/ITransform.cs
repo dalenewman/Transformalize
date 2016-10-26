@@ -35,6 +35,8 @@ namespace Pipeline.Contracts {
         IRow Transform(IRow row);
 
         IEnumerable<IRow> Transform(IEnumerable<IRow> rows);
+
+        string Returns { get; set; }
     }
 
 }
