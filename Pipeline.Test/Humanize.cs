@@ -39,7 +39,7 @@ namespace Pipeline.Test {
             <rows>
                 <add text='sample text' date='{date}' metric='1k' roman='XXXVIII' number='1' />
                 <add text='Sample_Texts' date='{date}' metric='16 twerps' roman='P' number='22' />
-                <add text='$ample-text' date='{now}' metric='1000 μ' roman='CC' number='333' />
+                <add text='$ample-text' date='{now}' metric='1000 μ' roman='CC' number='3000' />
             </rows>
             <fields>
                 <add name='text' />
@@ -60,6 +60,12 @@ namespace Pipeline.Test {
                 <add name='Pascalized' t='copy(text).pascalize()' />
                 <add name='Pluralized' t='copy(text).pluralize()' />
                 <add name='Singularized' t='copy(text).singularize()' />
+                <add name='Titleized' t='copy(text).titleize()' />
+                <add name='ToMetric' t='copy(number).tometric()' />
+                <add name='ToOrdinalWorded' t='copy(number).toOrdinalWords()' />
+                <add name='ToRoman' t='copy(number).toRoman()' />
+                <add name='ToWords' t='copy(number).toWords()' />
+                <add name='Underscored' t='copy(text).underscore()' />
             </calculated-fields>
         </add>
     </entities>
@@ -82,6 +88,12 @@ namespace Pipeline.Test {
             var pascalized = cf.First(f => f.Name == "Pascalized");
             var pluralized = cf.First(f => f.Name == "Pluralized");
             var singularized = cf.First(f => f.Name == "Singularized");
+            var titleized = cf.First(f => f.Name == "Titleized");
+            var toMetric = cf.First(f => f.Name == "ToMetric");
+            var toOrdinalWorded = cf.First(f => f.Name == "ToOrdinalWorded");
+            var toRoman = cf.First(f => f.Name == "ToRoman");
+            var toWords = cf.First(f => f.Name == "ToWords");
+            var underscored = cf.First(f => f.Name == "Underscored");
 
             var rows = controller.Read().ToArray();
 
@@ -113,10 +125,9 @@ namespace Pipeline.Test {
             Assert.AreEqual("Sample-Texts", rows[1][hyphenated]);
             Assert.AreEqual("$ample-text", rows[2][hyphenated]);
 
-
             Assert.AreEqual("1st", rows[0][ordinalized]);
             Assert.AreEqual("22nd", rows[1][ordinalized]);
-            Assert.AreEqual("333rd", rows[2][ordinalized]);
+            Assert.AreEqual("3000th", rows[2][ordinalized]);
 
             Assert.AreEqual("Sample text", rows[0][pascalized]);
             Assert.AreEqual("SampleTexts", rows[1][pascalized]);
@@ -130,11 +141,35 @@ namespace Pipeline.Test {
             Assert.AreEqual("Sample_Text", rows[1][singularized]);
             Assert.AreEqual("$ample-text", rows[2][singularized]);
 
+            Assert.AreEqual("Sample Text", rows[0][titleized]);
+            Assert.AreEqual("Sample Texts", rows[1][titleized]);
+            Assert.AreEqual("$ample Text", rows[2][titleized]);
+
+            Assert.AreEqual("1", rows[0][toMetric]);
+            Assert.AreEqual("22", rows[1][toMetric]);
+            Assert.AreEqual("3k", rows[2][toMetric]);
+
+            Assert.AreEqual("first", rows[0][toOrdinalWorded]);
+            Assert.AreEqual("twenty-second", rows[1][toOrdinalWorded]);
+            Assert.AreEqual("three thousandth", rows[2][toOrdinalWorded]);
+
+            Assert.AreEqual("I", rows[0][toRoman]);
+            Assert.AreEqual("XXII", rows[1][toRoman]);
+            Assert.AreEqual("MMM", rows[2][toRoman]);
+
+            Assert.AreEqual("one", rows[0][toWords]);
+            Assert.AreEqual("twenty-two", rows[1][toWords]);
+            Assert.AreEqual("three thousand", rows[2][toWords]);
+
+            Assert.AreEqual("sample_text", rows[0][underscored]);
+            Assert.AreEqual("sample_texts", rows[1][underscored]);
+            Assert.AreEqual("$ample_text", rows[2][underscored]);
+
             /*
-            'sample text'
-            'Sample_Texts'
-            '$ample-text'
+            sample text'
+            Sample_Texts
+            $ample-text'
             */
+            }
         }
     }
-}
