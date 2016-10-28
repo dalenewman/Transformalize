@@ -13,7 +13,12 @@ namespace Pipeline.Transform.Humanizer {
         public OrdinalizeTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
             switch (_input.Type.Left(3)) {
+                case "dou":
+                case "sin":
+                case "dec":
+                case "rea":
                 case "int":
+                case "byt":
                 case "sho":
                     _transform = (row) => {
                         var input = _input.Type.In("int","int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);

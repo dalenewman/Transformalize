@@ -415,7 +415,6 @@ namespace Pipeline.Configuration.Ext {
                 case "dehumanize":
                 case "dasherize":
                 case "hyphenate":
-                case "ordinalize":
                 case "pascalize":
                 case "pluralize":
                 case "singularize":
@@ -430,9 +429,10 @@ namespace Pipeline.Configuration.Ext {
 
                 case "tometric":
                 case "toordinalwords":
+                case "ordinalize":
                 case "toroman":
                 case "towords":
-                    if (!input.Type.IsNumeric()) {
+                    if (!input.IsNumeric()) {
                         error($"The {t.Method} expects a numeric input, but {input.Alias} is {input.Type}.");
                     }
                     break;

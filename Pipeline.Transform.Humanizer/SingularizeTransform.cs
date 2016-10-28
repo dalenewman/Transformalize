@@ -15,7 +15,7 @@ namespace Pipeline.Transform.Humanizer {
                 case "string":
                     _transform = (row) => {
                         var input = (string)row[_input];
-                        return input.Singularize();
+                        return input.Singularize(false);
                     };
                     break;
                 default:

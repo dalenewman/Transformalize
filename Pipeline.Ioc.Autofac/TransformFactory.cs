@@ -50,7 +50,7 @@ namespace Pipeline.Ioc.Autofac {
                 } else {
                     transforms.AddRange(field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t))));
                 }
-                // Add Conversion if necessary
+                // add conversion if necessary
                 if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
                     transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" }.WithDefaults())));
                 }
