@@ -18,14 +18,13 @@
 using System;
 using Dapper;
 using Pipeline.Contracts;
-using Action = Pipeline.Configuration.Action;
 
 namespace Pipeline.Provider.Ado.Actions {
     public class AdoRunAction : IAction {
-        private readonly Action _node;
+        private readonly Configuration.Action _node;
         private readonly IConnectionFactory _cf;
 
-        public AdoRunAction(Action node, IConnectionFactory cf) {
+        public AdoRunAction(Configuration.Action node, IConnectionFactory cf) {
             _node = node;
             _cf = cf;
         }

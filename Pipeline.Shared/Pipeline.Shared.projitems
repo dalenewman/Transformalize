@@ -97,6 +97,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)DefaultDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DefaultPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EntityStatus.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ContextExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\IntExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\LinqExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringBuilderExtensions.cs" />
@@ -142,7 +143,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTimeTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\DateAddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BaseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CeilingTransform.cs" />

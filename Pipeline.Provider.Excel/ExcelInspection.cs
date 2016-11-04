@@ -43,7 +43,7 @@ namespace Pipeline.Provider.Excel {
 
             var identifier = Utility.Identifier(_fileInfo.Name.Replace(_fileInfo.Extension, string.Empty));
             var lines = new ExcelLineReader(_context, _lines).Read();
-            var values = lines.First().Select(o => o?.ToString() ?? string.Empty).Select(v=>v.Trim()).ToArray();
+            var values = lines.First().Select(o => o?.ToString() ?? string.Empty).Select(v => v.Trim()).ToArray();
 
             // substitute blank headers with excel column names (useful when some of the column headers are blank)
             for (var i = 0; i < values.Length; i++) {

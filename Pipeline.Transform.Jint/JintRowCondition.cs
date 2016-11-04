@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Jint;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
-namespace Pipeline.Scripting.Jint {
+namespace Pipeline.Transform.Jint {
 
     public class JintRowCondition : IRowCondition {
         private readonly string _expression;

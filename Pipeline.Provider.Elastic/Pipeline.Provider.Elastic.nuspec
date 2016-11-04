@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Pipeline.Provider.Elastic</id>
+    <version>0.1.1-beta</version>
+    <title>Transformalize Provider Elastic</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Elastic(search) provider for Transformalize</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013-2016</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="Pipeline.Portable" version="0.1.1-beta" />
+        <dependency id="Elasticsearch.Net" version="2.4.6" />
+        <dependency id="Newtonsoft.Json" version="7.0.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Pipeline.Provider.Elastic.dll" target="lib\net452\Pipeline.Provider.Elastic.dll" />
+  </files>
+</package>

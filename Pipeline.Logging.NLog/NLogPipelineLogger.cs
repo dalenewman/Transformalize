@@ -22,9 +22,9 @@ using NLog;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
 using Pipeline.Context;
-using Pipeline.Contracts;
 using LogLevel = Pipeline.Contracts.LogLevel;
 using NLogLevel = global::NLog.LogLevel;
+using Pipeline.Contracts;
 
 namespace Pipeline.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {

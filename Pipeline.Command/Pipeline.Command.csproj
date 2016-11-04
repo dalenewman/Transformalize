@@ -100,20 +100,8 @@
       <HintPath>..\packages\Autofac.4.1.1\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Environment.0.0.4\lib\Cfg.Net.Environment.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Cfg.Net\Cfg.Net.Reader\bin\Debug\Cfg.Net.Reader.dll</HintPath>
-    </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CfgNet, Version=0.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.7.5\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.1\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
@@ -188,16 +176,12 @@
       <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
-      <Project>{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}</Project>
+      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
       <Name>Pipeline.Portable</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24f88aaf-2dc3-4aa1-b385-c6c7748cbe77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.Jint\Pipeline.Scripting.Jint.csproj">
-      <Project>{384C4B16-AE30-4B0A-970E-D1A7470E5235}</Project>
-      <Name>Pipeline.Scripting.Jint</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -257,6 +241,6 @@
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.103\build\net451\System.Data.SQLite.Core.targets')" />
   <PropertyGroup>
     <PostBuildEvent>
-</PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

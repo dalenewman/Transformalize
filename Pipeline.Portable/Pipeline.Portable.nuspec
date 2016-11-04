@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Pipeline.Portable</id>
+    <version>0.1.1-beta</version>
+    <title>Transformalize Pipeline</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is the main library for Transformalize.</description>
+    <releaseNotes>Target netstandard1.0 instead of PCL</releaseNotes>
+    <copyright>Copyright 2013-2016</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="portable-net45+win8+wpa81+wp8" />
+      <group targetFramework="netstandard1.0">
+        <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.1" />
+        <dependency id="NETStandard.Library" version="1.6.0" />
+        <dependency id="System.Runtime" version="4.1.0" />
+        <dependency id="Cfg-NET" version="0.8.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Pipeline.Portable.dll" target="lib\netstandard1.0\Pipeline.Portable.dll" />
+    <file src="bin\Release\Pipeline.Portable.dll" target="lib\portable-net45+win8+wpa81+wp8\Pipeline.Portable.dll" />
+  </files>
+</package>

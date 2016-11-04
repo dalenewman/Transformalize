@@ -22,6 +22,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 
 namespace Pipeline.Provider.Lucene {
+
     public static class LuceneConversion {
 
         private static readonly Dictionary<string, int> _typeSort = new Dictionary<string, int> {
@@ -51,7 +52,7 @@ namespace Pipeline.Provider.Lucene {
             {"uint64",SortField.INT}
         };
 
-        private static readonly Dictionary<string, Func<Configuration.Field,string, object, Query>> _typeSearch = new Dictionary<string, Func<Configuration.Field,string, object, Query>> {
+        private static readonly Dictionary<string, Func<Pipeline.Configuration.Field,string, object, Query>> _typeSearch = new Dictionary<string, Func<Configuration.Field,string, object, Query>> {
             {"bool", (f,n,v)=>new TermQuery(new Term(n,(bool)v?"1":"0"))},
             {"boolean",(f,n,v)=>new TermQuery(new Term(n,(bool)v?"1":"0"))},
             {"byte",(f,n,v)=>NumericRangeQuery.NewIntRange(n,Convert.ToInt32(v),Convert.ToInt32(v),true,true)},

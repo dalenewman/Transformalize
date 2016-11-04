@@ -31,17 +31,21 @@ namespace Pipeline.Test {
       <entities>
         <add name='TestData' pipeline='linq'>
           <rows>
-            <add Field1='10.6954' Field2='129.992' />
+            <add Field1='10.6954' Field2='129.992' Field3='7' Field4='3' />
           </rows>
           <fields>
             <add name='Field1' type='double' />
             <add name='Field2' type='decimal' />
+            <add name='Field3' type='int' />
+            <add name='Field4' type='int' />
           </fields>
           <calculated-fields>
             <add name='Ceiling' type='double' t='copy(Field1).ceiling()' />
             <add name='Floor' type='double' t='copy(Field1).floor()' />
             <add name='Round' type='decimal' t='copy(Field2).round(1)' />
             <add name='Abs' type='decimal' t='copy(Field2).abs()' />
+            <add name='Add' type='decimal' t='copy(Field1,Field2,Field3).add()' />
+            <add name='AddInts' type='int' t='copy(Field3,Field4).add()' />
           </calculated-fields>
         </add>
       </entities>
@@ -57,6 +61,12 @@ namespace Pipeline.Test {
             Assert.AreEqual(10, row[cf[1]]);
             Assert.AreEqual(130.00d, row[cf[2]]);
             Assert.AreEqual(129.992, row[cf[3]]);
+            Assert.AreEqual(147.6874m, row[cf[4]]);
+
+            Assert.IsInstanceOf<int>(row[cf[5]]);
+            Assert.AreEqual(10, row[cf[5]]);
+            
+
         }
     }
 }

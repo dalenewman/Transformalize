@@ -34,8 +34,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.7.5\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.1\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
-      <Project>{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}</Project>
+      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
       <Name>Pipeline.Portable</Name>
     </ProjectReference>
   </ItemGroup>

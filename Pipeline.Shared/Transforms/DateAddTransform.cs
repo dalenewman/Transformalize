@@ -4,12 +4,12 @@ using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {
 
-    public class AddTimeTransform : BaseTransform {
+    public class DateAddTransform : BaseTransform {
 
         private readonly Field _input;
         private readonly TimeSpan _amount;
 
-        public AddTimeTransform(IContext context, string unit) : base(context, "datetime") {
+        public DateAddTransform(IContext context, string unit) : base(context, "datetime") {
 
             _input = SingleInput();
             var value = Convert.ToDouble(context.Transform.Value);

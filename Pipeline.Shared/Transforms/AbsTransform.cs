@@ -26,6 +26,11 @@ namespace Pipeline.Transforms {
                     Returns = "int";
                     _transform = row => Math.Abs((int)row[_input]);
                     break;
+                case "int64":
+                case "long":
+                    Returns = "long";
+                    _transform = row => Math.Abs((long)row[_input]);
+                    break;
                 case "float":
                     Returns = "float";
                     _transform = row => Math.Abs((float)row[_input]);

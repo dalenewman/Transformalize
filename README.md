@@ -1,8 +1,7 @@
 ## Transformalize
 
-### Intro
 This tool expedites mundane data processing tasks
-like reporting and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
+like cleaning, reporting, and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
 
 It works with many data sources:
 
@@ -63,15 +62,11 @@ It works with many data sources:
     </tbody>
 </table>
 
-### Configuration
+### Hello World
 
-Jobs are designed in [XML](https://en.wikipedia.org/wiki/XML)
-or [JSON](https://en.wikipedia.org/wiki/JSON).
-They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
-
----
-
-#### Hello World:
+Design jobs in [XML](https://en.wikipedia.org/wiki/XML)
+or [JSON](https://en.wikipedia.org/wiki/JSON) 
+and execute with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
 
 ```xml
 <add name="Process">
@@ -92,10 +87,9 @@ They are executed with a provided [CLI](https://en.wikipedia.org/wiki/Command-li
 </add>
 ```
 
-Save this as *HelloWorld.xml*.  This arrangment reads rows
-from itself and writes to the console.  
+Save as *HelloWorld.xml*. Running this reads it's rows and 
+writes to the console.  
 
-Run...
 <pre>
 <strong>tfl -a HelloWorld.xml</strong>
 Greeting
@@ -106,7 +100,7 @@ Hello Earth
 ---
 #### Hello File
 
-Hello Planets demonstrates reading from a file (partially listed below):
+Take this file (partially listed below):
 
 <pre>
 <strong>Planet,Distance,Year,Mass,Day,Diameter,Gravity</strong>
@@ -116,7 +110,7 @@ Earth,1,1,1,24.0,7.92,1
 ...
 </pre>
 
-Here is an arrangement:
+Arrange *HelloFile.xml* like this:
 
 ```xml
 <add name="Process">
@@ -142,12 +136,10 @@ Here is an arrangement:
 </add>
 ```
 
-Save as *HelloPlanets.xml*.
-
 Run...
 
 <pre>
-<strong>tfl -a HelloPlanets.xml</strong>
+<strong>tfl -a HelloFile.xml</strong>
 Planet,Distance,Year,Mass,Day,Diameter,Gravity,Greeting
 Mercury,0.39,0.24,0.055,1407.6,3.04,0.37,Hello Mercury
 Venus,0.72,0.61,0.815,5832.2,7.52,0.88,Hello Venus

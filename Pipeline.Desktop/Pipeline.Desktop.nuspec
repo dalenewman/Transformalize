@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Pipeline.Desktop</id>
+    <version>0.1.1-beta</version>
+    <title>Transformalize Desktop</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize features that couldn't go portable</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013-2016</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="Pipeline.Portable" version="0.1.1-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Pipeline.Desktop.dll" target="lib\net452\Pipeline.Desktop.dll" />
+  </files>
+</package>

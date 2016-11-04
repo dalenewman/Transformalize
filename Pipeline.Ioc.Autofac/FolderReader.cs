@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Cfg.Net.Ext;
 using Pipeline.Configuration;
 using Pipeline.Context;
@@ -36,7 +37,7 @@ namespace Pipeline.Ioc.Autofac {
             var searchOption = (SearchOption)Enum.Parse(typeof(SearchOption), input.Connection.SearchOption, true);
 
             input.Debug(() => $"Searching folder: {input.Connection.Folder}");
-            var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption);
+            var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption).OrderBy(f=>f.CreationTime).ToArray();
 
             input.Debug(() => $"Found {files.Length} files.");
             foreach (var file in files) {

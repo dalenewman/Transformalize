@@ -28,7 +28,7 @@ using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
 using Pipeline.Scripting.CSharp;
 using Pipeline.Scripting.JavaScript;
-using Pipeline.Scripting.Jint;
+using Pipeline.Transform.Jint;
 using Pipeline.Template.Velocity;
 using Pipeline.Transform.Humanizer;
 using Pipeline.Transforms;
@@ -159,12 +159,12 @@ namespace Pipeline.Ioc.Autofac {
                 case "towords": return new ToWordsTransform(context);
                 case "underscore": return new UnderscoreTransform(context);
 
-                case "addticks": return new AddTimeTransform(context, "ticks");
-                case "addmilliseconds": return new AddTimeTransform(context, "milliseconds");
-                case "addseconds": return new AddTimeTransform(context, "seconds");
-                case "addminutes": return new AddTimeTransform(context, "minutes");
-                case "addhours": return new AddTimeTransform(context, "hours");
-                case "adddays": return new AddTimeTransform(context, "days");
+                case "addticks": return new DateAddTransform(context, "ticks");
+                case "addmilliseconds": return new DateAddTransform(context, "milliseconds");
+                case "addseconds": return new DateAddTransform(context, "seconds");
+                case "addminutes": return new DateAddTransform(context, "minutes");
+                case "addhours": return new DateAddTransform(context, "hours");
+                case "adddays": return new DateAddTransform(context, "days");
 
                 case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);

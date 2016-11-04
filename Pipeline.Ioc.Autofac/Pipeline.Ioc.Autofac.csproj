@@ -36,20 +36,20 @@
       <HintPath>..\packages\Autofac.4.1.1\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Environment.0.0.4\lib\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Environment.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
+    <Reference Include="Cfg.Net.Reader, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Reader.0.2.4\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Shorthand.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.7.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.7.5\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.1\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
@@ -150,7 +150,7 @@
       <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
-      <Project>{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}</Project>
+      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
       <Name>Pipeline.Portable</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
@@ -209,10 +209,6 @@
       <Project>{f0cdcecb-91d0-45af-8500-235f58976473}</Project>
       <Name>Pipeline.Scripting.JavaScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.Jint\Pipeline.Scripting.Jint.csproj">
-      <Project>{384c4b16-ae30-4b0a-970e-d1a7470e5235}</Project>
-      <Name>Pipeline.Scripting.Jint</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
       <Project>{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}</Project>
       <Name>Pipeline.Template.Razor</Name>
@@ -224,6 +220,10 @@
     <ProjectReference Include="..\Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj">
       <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
       <Name>Pipeline.Transform.Humanizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj">
+      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
+      <Name>Pipeline.Transform.Jint</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

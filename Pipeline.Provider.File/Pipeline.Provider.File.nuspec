@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Pipeline.Provider.File</id>
+    <version>0.1.1-beta</version>
+    <title>Transformalize Provider File</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>File Provider for Transformalize</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013-2016</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="Pipeline.Portable" version="0.1.1-beta" />
+        <dependency id="FileHelpers" version="3.1.5" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Pipeline.Provider.File.dll" target="lib\net452\Pipeline.Provider.File.dll" />
+  </files>
+</package>

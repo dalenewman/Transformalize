@@ -24,7 +24,7 @@ using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
 using Pipeline.Configuration;
 using Pipeline.Nulls;
-using Pipeline.Scripting.Jint;
+using Pipeline.Transform.Jint;
 
 namespace Pipeline.Ioc.Autofac.Modules {
 

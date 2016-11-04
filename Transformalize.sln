@@ -14,9 +14,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7963D10-5351-4044-BCBB-589B720CEF64}"
 	ProjectSection(SolutionItems) = preProject
+		nuget.bat = nuget.bat
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
+		Pipeline.Desktop\Pipeline.Desktop.nuspec = Pipeline.Desktop\Pipeline.Desktop.nuspec
+		Pipeline.Logging.NLog\Pipeline.Logging.NLog.nuspec = Pipeline.Logging.NLog\Pipeline.Logging.NLog.nuspec
+		Pipeline.Portable\Pipeline.Portable.nuspec = Pipeline.Portable\Pipeline.Portable.nuspec
+		Pipeline.Provider.Ado\Pipeline.Provider.Ado.nuspec = Pipeline.Provider.Ado\Pipeline.Provider.Ado.nuspec
+		Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.nuspec = Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.nuspec
+		Pipeline.Provider.Excel\Pipeline.Provider.Excel.nuspec = Pipeline.Provider.Excel\Pipeline.Provider.Excel.nuspec
+		Pipeline.Provider.File\Pipeline.Provider.File.nuspec = Pipeline.Provider.File\Pipeline.Provider.File.nuspec
+		Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.nuspec = Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.nuspec
+		Pipeline.Provider.MySql\Pipeline.Provider.MySql.nuspec = Pipeline.Provider.MySql\Pipeline.Provider.MySql.nuspec
+		Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.nuspec = Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.nuspec
+		Pipeline.Provider.Solr\Pipeline.Provider.Solr.nuspec = Pipeline.Provider.Solr\Pipeline.Provider.Solr.nuspec
+		Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.nuspec = Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.nuspec
+		Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.nuspec = Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.nuspec
+		Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec = Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec
+		Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec
+		Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec
+		Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec = Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037}"
@@ -29,8 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{20
 		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
 		Articles\TransformalizeNorthWind.md = Articles\TransformalizeNorthWind.md
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Portable", "Pipeline.Portable\Pipeline.Portable.csproj", "{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Docs.DocFx", "Pipeline.Docs.DocFx\Pipeline.Docs.DocFx.csproj", "{8A08EA3D-0CBF-49E7-9E89-29659ADC574D}"
 EndProject
@@ -59,8 +75,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.Solr", "Pipeline.Provider.Solr\Pipeline.Provider.Solr.csproj", "{0B7C9925-B90C-4E40-974A-EF1862D8728C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.Elastic", "Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.csproj", "{2B364BAE-3D5B-467D-AA19-20EC929D14EA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Scripting.Jint", "Pipeline.Scripting.Jint\Pipeline.Scripting.Jint.csproj", "{384C4B16-AE30-4B0A-970E-D1A7470E5235}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Template.Razor", "Pipeline.Template.Razor\Pipeline.Template.Razor.csproj", "{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}"
 EndProject
@@ -97,10 +111,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transforms", "Transforms", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.Humanizer", "Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj", "{73C145B3-6DC2-4424-958D-F5EC989B3EB7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Portable", "Pipeline.Portable\Pipeline.Portable.csproj", "{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.Jint", "Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj", "{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Pipeline.Shared\Pipeline.Shared.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
-		Pipeline.Shared\Pipeline.Shared.projitems*{47cd1a05-48d4-4e89-bc75-7a3c0c6bf78f}*SharedItemsImports = 4
+		Pipeline.Shared\Pipeline.Shared.projitems*{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,18 +130,6 @@ Global
 		Description = A Configurable ETL Solution Specializing in Incremental Denormalization
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|x64.Build.0 = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Debug|x86.Build.0 = Debug|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|x64.ActiveCfg = Release|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|x64.Build.0 = Release|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|x86.ActiveCfg = Release|Any CPU
-		{47CD1A05-48D4-4E89-BC75-7A3C0C6BF78F}.Release|x86.Build.0 = Release|Any CPU
 		{8A08EA3D-0CBF-49E7-9E89-29659ADC574D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A08EA3D-0CBF-49E7-9E89-29659ADC574D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A08EA3D-0CBF-49E7-9E89-29659ADC574D}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -280,18 +286,6 @@ Global
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Release|x64.Build.0 = Release|Any CPU
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Release|x86.ActiveCfg = Release|Any CPU
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Release|x86.Build.0 = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|x64.Build.0 = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Debug|x86.Build.0 = Debug|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|Any CPU.Build.0 = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|x64.ActiveCfg = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|x64.Build.0 = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|x86.ActiveCfg = Release|Any CPU
-		{384C4B16-AE30-4B0A-970E-D1A7470E5235}.Release|x86.Build.0 = Release|Any CPU
 		{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -412,6 +406,30 @@ Global
 		{73C145B3-6DC2-4424-958D-F5EC989B3EB7}.Release|x64.Build.0 = Release|Any CPU
 		{73C145B3-6DC2-4424-958D-F5EC989B3EB7}.Release|x86.ActiveCfg = Release|Any CPU
 		{73C145B3-6DC2-4424-958D-F5EC989B3EB7}.Release|x86.Build.0 = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|x64.Build.0 = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Debug|x86.Build.0 = Debug|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|x64.ActiveCfg = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|x64.Build.0 = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|x86.ActiveCfg = Release|Any CPU
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}.Release|x86.Build.0 = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|x64.Build.0 = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Debug|x86.Build.0 = Debug|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|x64.ActiveCfg = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|x64.Build.0 = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|x86.ActiveCfg = Release|Any CPU
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -431,5 +449,6 @@ Global
 		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 		{4D9D0159-F680-4E1B-B4E6-9ED1BDB03F40} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{73C145B3-6DC2-4424-958D-F5EC989B3EB7} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 	EndGlobalSection
 EndGlobal

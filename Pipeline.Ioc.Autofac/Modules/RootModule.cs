@@ -29,9 +29,8 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Loggers;
-using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
-using Pipeline.Scripting.Jint;
+using Pipeline.Transform.Jint;
 using Pipeline.Template.Razor;
 using IParser = Pipeline.Contracts.IParser;
 
@@ -116,6 +115,10 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     default:
                         process.Load(p.Named<string>("cfg"));
                         break;
+                }
+
+                if (process.Errors().Any()) {
+                    return process;
                 }
 
                 // this might be put into it's own type and injected (or not)

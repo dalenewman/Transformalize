@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Transforms {

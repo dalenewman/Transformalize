@@ -15,17 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
 using Jint;
 using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
-namespace Pipeline.Scripting.Jint {
+namespace Pipeline.Transform.Jint {
     public class JintTransform : BaseTransform {
         readonly Field[] _input;
         readonly Engine _jint = new Engine();

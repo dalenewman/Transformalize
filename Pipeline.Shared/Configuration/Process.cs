@@ -233,7 +233,7 @@ namespace Pipeline.Configuration {
         public List<Template> Templates { get; set; }
 
         [Cfg]
-        public List<Parameter> Parameters { get; set; } 
+        public List<Parameter> Parameters { get; set; }
 
         protected override void PreValidate() {
             this.PreValidate(e => Error(e), w => Warn(w));
@@ -287,6 +287,10 @@ namespace Pipeline.Configuration {
         }
 
         public List<Field> ParametersToFields(IEnumerable<Parameter> parameters, Field defaultField) {
+
+            if (defaultField == null) {
+                throw new ArgumentNullException(nameof(defaultField));
+            }
 
             var fields = parameters
                 .Where(p => p.IsField(this))
@@ -512,7 +516,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "")]
         public string Description { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string MaxMemory { get; set; }
 
         public IEnumerable<Parameter> GetActiveParameters() {

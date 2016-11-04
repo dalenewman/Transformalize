@@ -15,14 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Cfg.Net.Contracts;
 using Cfg.Net.Loggers;
-using Pipeline.Contracts;
 using IParser = Pipeline.Contracts.IParser;
 
-namespace Pipeline.Scripting.Jint {
+namespace Pipeline.Transform.Jint {
     public class JintParser : IParser {
         private readonly IValidator _jintValidator;
         private readonly MemoryLogger _logger;

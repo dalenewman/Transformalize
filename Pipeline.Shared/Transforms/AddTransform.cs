@@ -31,6 +31,10 @@ namespace Pipeline.Transforms {
             if (same) {
                 var type = _input.First().Type;
                 switch (type) {
+                    case "decimal":
+                        Returns = "decimal";
+                        _transform = row => _input.Sum(f => (decimal)row[f]);
+                        break;
                     case "double":
                         Returns = "double";
                         _transform = row => _input.Sum(f => (double)row[f]);
@@ -45,6 +49,10 @@ namespace Pipeline.Transforms {
                         Returns = "int";
                         _transform = row => _input.Sum(f => (int)row[f]);
                         break;
+                    //case "float":
+                    //    Returns = "float";
+                    //    _transform = row => _input.Sum(f => (float) row[f]);
+                    //    break;
                     default:
                         _transform = row => _input.Sum(f => Convert.ToDecimal(row[f]));
                         break;

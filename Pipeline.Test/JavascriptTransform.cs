@@ -39,7 +39,7 @@ namespace Pipeline.Test {
                 <add name='Field3' />
             </fields>
             <calculated-fields>
-                <add name='Format' t='copy(Field1,Field2,Field3).js(Field1+Field2+Field3)' />
+                <add name='Format' engine='jint' t='copy(Field1,Field2,Field3).js(Field1+Field2+Field3)' />
             </calculated-fields>
         </add>
     </entities>
@@ -52,33 +52,6 @@ namespace Pipeline.Test {
             var output = controller.Read().ToArray();
 
             Assert.AreEqual("123", output[0][composer.Process.Entities.First().CalculatedFields.First()]);
-
-        }
-
-        [Test]
-        public void Test1() {
-            var expression = @"var result = '#';
-                             if (CustomerAddress1.length > 3) {
-                             result = 'https://maps.google.com/maps?q=' + CustomerAddress1 + ' ' + CustomerCity + ', ' + CustomerState + ' ' + CustomerZip;
-                             } else {
-                             if (Latitude != 0) {
-                             result = 'https://maps.google.com/maps?q=' + Latitude + ',' + Longitude;
-                             }
-                             }
-                             result;";
-            var parser = new Jint.Parser.JavaScriptParser();
-            var result = parser.Parse(expression);
-
-            var expected = new[] { "result", "CustomerAddress1", "length", "CustomerCity", "CustomerState", "CustomerZip", "Latitude", "Longitude" };
-
-            var program = parser.Parse(expression, new Jint.Parser.ParserOptions { Tokens = true });
-            var actual = program.Tokens
-                .Where(o => o.Type == Jint.Parser.Tokens.Identifier)
-                .Select(o => o.Value.ToString())
-                .Distinct()
-                .ToArray();
-
-            Assert.AreEqual(expected, actual);
 
         }
 
