@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -484,7 +484,7 @@ namespace Pipeline.Configuration {
 
         }
 
-        [Cfg(value = "")]
+        [Cfg(value = "", trim=true)]
         public string SortField { get; set; }
 
         [Cfg(value = Constants.DefaultSetting, domain ="true,false," + Constants.DefaultSetting, ignoreCase =true, toLower =true)]
@@ -510,6 +510,9 @@ namespace Pipeline.Configuration {
         public string HRef { get; set; }
         [Cfg(value = "")]
         public string Target { get; set; }
+
+        [Cfg(value="")]
+        public string Body { get; set; }
 
         [Cfg(value="chakra", domain="chakra,jint", toLower = true)]
         public string Engine { get; set; }

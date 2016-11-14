@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -199,7 +199,7 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// A collection of [Entities](/entity)
         /// </summary>
-        [Cfg(required = true)]
+        [Cfg(required = false)]
         public List<Entity> Entities { get; set; }
 
         /// <summary>
@@ -307,7 +307,9 @@ namespace Pipeline.Configuration {
             if (Errors().Length != 0)
                 return;
 
-            Entities.First().IsMaster = true;
+            if (Entities.Any()) {
+                Entities.First().IsMaster = true;
+            }
             ModifyKeys();
             ModifyLogLimits();
             ModifyRelationshipToMaster();

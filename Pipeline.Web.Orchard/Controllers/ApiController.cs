@@ -279,6 +279,14 @@ namespace Pipeline.Web.Orchard.Controllers {
                 connection.User = string.Empty;
                 connection.Password = string.Empty;
             }
+            foreach (var parameter in process.Environments.SelectMany(environement => environement.Parameters)) {
+                if (parameter.Name.Equals("user", StringComparison.OrdinalIgnoreCase)) {
+                    parameter.Value = string.Empty;
+                }
+                if (parameter.Name.Equals("password")) {
+                    parameter.Value = string.Empty;
+                }
+            }
         }
 
         private static ContentResult Get404(string action, IProcessService service, string format, long time = 5) {

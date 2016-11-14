@@ -94,16 +94,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                 return new FileReader(input, rowFactory);
                             }
 
-                            IRowCondition condition = new NullRowCondition();
-                            if (input.Entity.Filter.Any()) {
-                                var expression = input.Entity.Filter.First().Expression;
-                                if (ctx.IsRegisteredWithName<IParser>("js") && ctx.ResolveNamed<IParser>("js").Parse(expression, input.Error)) {
-                                    condition = ctx.Resolve<IRowCondition>(new TypedParameter(typeof(InputContext), input), new TypedParameter(typeof(string), input.Entity.Filter.First().Expression));
-                                } else {
-                                    input.Error("Your {0} script is not parsing or registered. It is not filtering.", input.Entity.Alias);
-                                }
-                            }
-                            return new DelimitedFileReader(input, rowFactory, condition);
+                            return new DelimitedFileReader(input, rowFactory, new NullRowCondition());
                         default:
                             return new NullReader(input, false);
                     }

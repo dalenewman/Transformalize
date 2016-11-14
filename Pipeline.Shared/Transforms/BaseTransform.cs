@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ using Pipeline.Contracts;
 namespace Pipeline.Transforms {
 
     public abstract class BaseTransform : ITransform {
+        private readonly Field[] _fields;
         private Field _singleInput;
         private string _received;
 
@@ -44,6 +45,7 @@ namespace Pipeline.Transforms {
         protected BaseTransform(IContext context, string returns) {
             Context = context;
             Returns = returns;
+            _fields = context.GetAllEntityFields().ToArray();
         }
 
         public long RowCount { get; set; }
@@ -111,4 +113,5 @@ namespace Pipeline.Transforms {
         public virtual void Dispose() {
         }
     }
+
 }

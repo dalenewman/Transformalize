@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -97,6 +97,10 @@ namespace Pipeline.Configuration.Ext {
                         if (Transform.TransformProducerSet().Contains(transform.Method)) {
                             continue;
                         }
+
+                        // temporary, may have another class of transforms that don't require copy() parameters up front
+                        if (transform.Method.In("iif", "geohashencode"))
+                            continue;
 
                         if (Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
                             error($"The transform {transform.Method} in {entity.Alias}.{field.Alias} requires input.  If using short-hand, use copy().  Otherwise, set the parameter attribute, or define a parameters collection.");
@@ -318,6 +322,7 @@ namespace Pipeline.Configuration.Ext {
 
             var t = context.Transform;
             var fields = context.Process.ParametersToFields(context.Transform.Parameters, context.Field);
+            var allFields = context.GetAllEntityFields().ToArray();
             var input = fields.First();
 
             // check input types
@@ -421,6 +426,7 @@ namespace Pipeline.Configuration.Ext {
                 case "titleize":
                 case "frommetric":
                 case "fromroman":
+                case "geohashneighbor":
                 case "underscore":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
@@ -668,8 +674,29 @@ namespace Pipeline.Configuration.Ext {
                         error($"The {t.Method} transform requires a double numeric parameter.  {t.Value} can not be parsed as a double.");
                     }
                     break;
-                default:
+
+                case "iif":
+                    if (allFields.All(f => f.Alias != t.TrueField)) {
+                        error($"The iif method's true portion: {t.TrueField}, is not a valid field.");
+                    }
+                    if (allFields.All(f => f.Alias != t.FalseField)) {
+                        error($"The iif method's false portion: {t.FalseField}, is not a valid field.");
+                    }
                     break;
+                case "geohashencode":
+                    CheckDouble(allFields, t, t.Latitude, "latitude", error);
+                    CheckDouble(allFields, t, t.Longitude, "longitude", error);
+                    if (t.Length < 1 || t.Length > 13) {
+                        error("The GeohashEncode method's precision must be between 1 and 13.");
+                    }
+                    break;
+                case "distance":
+                    CheckDouble(allFields, t, t.FromLat, "from-lat", error);
+                    CheckDouble(allFields, t, t.FromLon, "from-lon", error);
+                    CheckDouble(allFields, t, t.ToLat, "to-lat", error);
+                    CheckDouble(allFields, t, t.ToLon, "to-lon", error);
+                    break;
+
             }
 
             // check output types
@@ -718,6 +745,7 @@ namespace Pipeline.Configuration.Ext {
                     case "toordinalwords":
                     case "toroman":
                     case "towords":
+                    case "commonprefix":
                     case "underscore":
                         if (context.Field.Type != "string") {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");
@@ -766,8 +794,20 @@ namespace Pipeline.Configuration.Ext {
                             error($"The {lastTransform.Method} returns a date, but {context.Field.Alias} is {context.Field.Type}.");
                         }
                         break;
+                    case "geohashencode":
+                        if (context.Field.Type != "string") {
+                            error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is {context.Field.Type}.");
+                        }
+                        break;
 
                 }
+            }
+        }
+
+        private static void CheckDouble(Field[] fields, Transform t, string valueOrField, string name, Action<string> error) {
+            double doubleValue;
+            if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
+                error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");
             }
         }
 

@@ -46,7 +46,7 @@ namespace Pipeline.Web.Orchard {
     </add>
     <add name='separator'>
       <parameters>
-        <add name='separator' />
+        <add name='separator' value=',' />
       </parameters>
     </add>
     <add name='padding'>
@@ -187,11 +187,32 @@ namespace Pipeline.Web.Orchard {
         <add name='href' value='' />
         <add name='role' value='' />
         <add name='target' value='' />
+        <add name='body' value='' />
+        <add name='encode' value='true' />
       </parameters>
     </add>
     <add name='decimals'>
       <parameters>
         <add name='decimals' value='0' />
+      </parameters>
+    </add>
+    <add name='iif'>
+      <parameters>
+        <add name='expression' />
+        <add name='truefield' />
+        <add name='falsefield' />
+      </parameters>
+    </add>
+    <add name='geohash'>
+      <parameters>
+        <add name='latitude' />
+        <add name='longitude' />
+        <add name='length' value='6'/>
+      </parameters>
+    </add>
+    <add name='direction'>
+      <parameters>
+        <add name='direction' />
       </parameters>
     </add>
   </signatures>
@@ -280,9 +301,11 @@ namespace Pipeline.Web.Orchard {
     <add name='slugify' signature='none' target='t' />
     <add name='camelize' signature='none' target='t' />
     <add name='dasherize' signature='none' target='t' />
+    <add name='hyphenate' signature='none' target='t' />
     <add name='frommetric' signature='none' target='t' />
     <add name='fromroman' signature='none' target='t' />
     <add name='humanize' signature='none' target='t' />
+    <add name='dehumanize' signature='none' target='t' />
     <add name='ordinalize' signature='none' target='t' />
     <add name='pascalize' signature='none' target='t' />
     <add name='pluralize' signature='none' target='t' />
@@ -293,6 +316,20 @@ namespace Pipeline.Web.Orchard {
     <add name='toroman' signature='none' target='t' />
     <add name='towords' signature='none' target='t' />
     <add name='underscore' signature='none' target='t' />
+    
+    <add name='addticks' signature='value' target='t' />
+    <add name='addmillisecnds' signature='value' target='t' />
+    <add name='addseconds' signature='value' target='t' />
+    <add name='addminutes' signature='value' target='t' />
+    <add name='addhours' signature='value' target='t' />
+    <add name='adddays' signature='value' target='t' />
+    
+    <add name='iif' signature='iif' target='t' />
+    <add name='geohashencode' signature='geohash' target='t' />
+    <add name='isnumeric' signature='none' target='t' />
+    <add name='geohashneighbor' signature='direction' target='t' />
+    <add name='commonprefix' signature='none' target='t' />
+    <add name='commonprefixes' signature='separator' target='t' />
   </methods>
 
 </cfg>";

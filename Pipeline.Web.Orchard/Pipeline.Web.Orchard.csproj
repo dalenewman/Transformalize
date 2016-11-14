@@ -56,23 +56,23 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.0.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.0.4\lib\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Parsers.YamlDotNet">
       <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Debug\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.1.1\lib\Cfg.Net.Reader.dll</HintPath>
+    <Reference Include="Cfg.Net.Reader, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.2.4\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.0.6\lib\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.7.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.7.4\lib\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
@@ -87,8 +87,8 @@
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Jint, Version=2.9.1.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Jint.2.9.1\lib\portable-net40+sl50+win+WindowsPhoneApp81+wp80\Jint.dll</HintPath>
+    <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\jint.2.10.2\lib\net45\jint.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -147,12 +147,21 @@
     <Reference Include="Pipeline.Provider.Web">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Pipeline.Provider.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Pipeline.Scripting.Jint, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Scripting.Jint\bin\Debug\Pipeline.Scripting.Jint.dll</HintPath>
+    <Reference Include="Pipeline.Transform.GeoCoordinate">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\Debug\Pipeline.Transform.GeoCoordinate.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Transform.Geohash">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\Debug\Pipeline.Transform.Geohash.dll</HintPath>
     </Reference>
     <Reference Include="Pipeline.Transform.Humanizer">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Pipeline.Transform.Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Transform.Jint">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\Debug\Pipeline.Transform.Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="RazorEngine, Version=3.9.1.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\RazorEngine.3.9.1\lib\net45\RazorEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SolrNet.0.5.0.1001\lib\SolrNet.dll</HintPath>
@@ -163,6 +172,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Diagnostics.Contracts">
+      <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Diagnostics.Contracts\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Diagnostics.Contracts.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />

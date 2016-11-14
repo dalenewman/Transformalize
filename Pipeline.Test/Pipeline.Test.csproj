@@ -38,12 +38,12 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.1.1.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.1.1\lib\net45\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.2.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.2.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.8.1\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -119,6 +119,7 @@
     <Compile Include="InventoryIntegrationSqlServer.cs" />
     <Compile Include="FormatXmlTransform.cs" />
     <Compile Include="TrimThenStartsWith.cs" />
+    <Compile Include="IIfTransform.cs" />
     <Compile Include="VelocityTransform.cs" />
     <Compile Include="WebReader.cs" />
     <Compile Include="TagTransform.cs" />
@@ -196,6 +197,10 @@
     <ProjectReference Include="..\Pipeline.Provider.MySql\Pipeline.Provider.MySql.csproj">
       <Project>{b0015b18-f29c-469a-a2af-18c21ac8e4d9}</Project>
       <Name>Pipeline.Provider.MySql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Provider.OpenXml\Pipeline.Provider.OpenXml.csproj">
+      <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
+      <Name>Pipeline.Provider.OpenXml</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.csproj">
       <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>

@@ -1,8 +1,8 @@
 ﻿{
   "supports": {},
   "dependencies": {
+    "Cfg-NET": "0.8.2",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "Cfg-NET": "0.8.1",
     "NETStandard.Library": "1.6.0",
     "System.Dynamic.Runtime": "4.0.11"
   },

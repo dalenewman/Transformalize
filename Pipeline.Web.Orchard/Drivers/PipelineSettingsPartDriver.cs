@@ -16,12 +16,10 @@ namespace Pipeline.Web.Orchard.Drivers {
 
         protected override void Importing(PipelineSettingsPart part, ImportContentContext context) {
             part.Record.EditorTheme = context.Attribute(part.PartDefinition.Name, "EditorTheme");
-            part.Record.Shorthand = context.Attribute(part.PartDefinition.Name, "Shorthand");
         }
 
         protected override void Exporting(PipelineSettingsPart part, ExportContentContext context) {
             context.Element(part.PartDefinition.Name).SetAttributeValue("EditorTheme", part.Record.EditorTheme);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Shorthand", part.Record.Shorthand);
         }
 
         protected override string Prefix { get { return Common.PipelineSettingsName; } }

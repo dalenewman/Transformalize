@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -128,10 +128,16 @@ namespace Pipeline.Provider.Elastic {
                                 };
                             }
                         } else {
-                            fields[alias] = new Dictionary<string, object> {
-                                { "type", type },
-                                { "analyzer", analyzer }
-                            };
+                            if (_context.Connection.Version.StartsWith("5") && analyzer == "keyword" && type == "string") {
+                                fields[alias] = new Dictionary<string, object> {
+                                    { "type", "keyword" }
+                                };
+                            } else {
+                                fields[alias] = new Dictionary<string, object> {
+                                    { "type", type },
+                                    { "analyzer", analyzer }
+                                };
+                            }
                         }
 
                     } else {
@@ -139,11 +145,10 @@ namespace Pipeline.Provider.Elastic {
                         _context.Warn("Analyzer '{0}' specified in search type '{1}' is not supported.  Please use a built-in analyzer for Elasticsearch.", analyzer, field.SearchType);
                         if (!fields.ContainsKey(alias)) {
                             fields[alias] = new Dictionary<string, object> {
-                                    { "type", type }
-                                };
+                                { "type", type }
+                            };
                         }
                     }
-
                 } else {
                     fields[alias] = new Dictionary<string, object> { { "type", type } };
                 }

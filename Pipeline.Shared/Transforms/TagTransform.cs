@@ -1,3 +1,20 @@
+#region license
+// Transformalize
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
+//  
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   
+//       http://www.apache.org/licenses/LICENSE-2.0
+//   
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#endregion
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +58,7 @@ namespace Pipeline.Transforms {
 
         private readonly Field _contentField;
         private readonly List<TagAttribute> _attributes = new List<TagAttribute>();
+        private readonly Func<IRow, object> _encode;
 
         public TagTransform(IContext context) : base(context, "string") {
 
@@ -64,6 +82,10 @@ namespace Pipeline.Transforms {
                 Context.Transform.Target = Context.Field.Target;
             }
 
+            if (Context.Transform.Body == string.Empty && Context.Field.Body != string.Empty) {
+                Context.Transform.Body = Context.Field.Body;
+            }
+
             var input = MultipleInput();
             _attributes.Add(new TagAttribute(input, "href", Context.Transform.HRef));
             _attributes.Add(new TagAttribute(input, "class", Context.Transform.Class));
@@ -72,7 +94,7 @@ namespace Pipeline.Transforms {
             _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
             _attributes.Add(new TagAttribute(input, "target", Context.Transform.Target));
 
-            _contentField = input.First();
+            _contentField = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
 
             if (!Context.Field.Raw) {
                 Context.Field.Raw = true;
@@ -85,6 +107,8 @@ namespace Pipeline.Transforms {
                     Context.Field.Length = (calculatedLength + 64).ToString();
                 }
             }
+
+            _encode = (row) => Context.Transform.Encode ? Encode(row[_contentField].ToString()) : row[_contentField];
         }
 
         public override IRow Transform(IRow row) {
@@ -102,7 +126,7 @@ namespace Pipeline.Transforms {
             sb.Append(">");
 
             // content
-            sb.Append(Encode(row[_contentField].ToString()));
+            sb.Append(_encode(row));
 
             // close
             sb.AppendFormat("</{0}>", Context.Transform.Tag);

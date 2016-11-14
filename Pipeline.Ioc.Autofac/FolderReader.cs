@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,16 +37,19 @@ namespace Pipeline.Ioc.Autofac {
             var searchOption = (SearchOption)Enum.Parse(typeof(SearchOption), input.Connection.SearchOption, true);
 
             input.Debug(() => $"Searching folder: {input.Connection.Folder}");
-            var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption).OrderBy(f=>f.CreationTime).ToArray();
+            var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption).OrderBy(f => f.CreationTime).ToArray();
 
             input.Debug(() => $"Found {files.Length} files.");
             foreach (var file in files) {
                 input.Debug(() => $"Found file: {file.Name}");
 
                 var context = new PipelineContext(input.Logger, input.Process, input.Entity, input.Field, input.Transform);
-                var fileInput = new InputContext(context, new Incrementer(context)) {
-                    Connection = new Connection { Provider = "file", File = file.FullName, Delimiter = input.Connection.Delimiter, TextQualifier = input.Connection.TextQualifier }.WithDefaults()
-                };
+
+                var fileConnection = input.Connection.Clone();
+                fileConnection.Provider = "file";
+                fileConnection.File = file.FullName;
+
+                var fileInput = new InputContext(context, new Incrementer(context)) { Connection = fileConnection };
 
                 if (file.Extension.ToLower().Contains("xls")) {
                     readers.Add(new ExcelReader(fileInput, rowFactory));

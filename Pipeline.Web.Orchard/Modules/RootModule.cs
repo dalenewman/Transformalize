@@ -28,7 +28,7 @@ using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Nulls;
-using Pipeline.Scripting.Jint;
+using Pipeline.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
 //using Pipeline.Web.Orchard.Impl;
 using IParser = Pipeline.Contracts.IParser;
@@ -87,9 +87,6 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");
-
-            // input row condition
-            builder.Register<IRowCondition>((ctx, p) => new JintRowCondition(p.TypedAs<InputContext>(), p.TypedAs<string>())).As<IRowCondition>();
 
             builder.Register((ctx, p) => {
 

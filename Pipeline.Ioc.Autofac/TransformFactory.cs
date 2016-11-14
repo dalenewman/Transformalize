@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -28,8 +27,11 @@ using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
 using Pipeline.Scripting.CSharp;
 using Pipeline.Scripting.JavaScript;
+using Pipeline.Shared.Transforms;
 using Pipeline.Transform.Jint;
 using Pipeline.Template.Velocity;
+using Pipeline.Transform.GeoCoordinate;
+using Pipeline.Transform.Geohash;
 using Pipeline.Transform.Humanizer;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
@@ -136,6 +138,12 @@ namespace Pipeline.Ioc.Autofac {
                 case "upper": case "toupper": return new ToUpperTransform(context);
                 case "xmldecode": return new DecodeTransform(context);
                 case "xpath": return new XPathTransform(context);
+                case "iif": return new IIfTransform(context);
+                case "geohashencode": return new GeohashEncodeTransform(context);
+                case "geohashneighbor": return new GeohashNeighborTransform(context);
+                case "commonprefix": return new CommonPrefixTransform(context);
+                case "commonprefixes": return new CommonPrefixesTransform(context);
+                case "distance": return new DistanceTransform(context);
 
                 case "include": return new FilterTransform(context, FilterType.Include);
                 case "exclude": return new FilterTransform(context, FilterType.Exclude);
@@ -181,6 +189,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "equals": return new EqualsValidator(context);
                 case "isempty": return new IsEmptyValidator(context);
                 case "isdefault": return new IsDefaultValidator(context);
+                case "isnumeric": return new IsNumericValidator(context);
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

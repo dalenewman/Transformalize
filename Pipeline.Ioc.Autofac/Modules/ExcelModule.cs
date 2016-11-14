@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using Pipeline.Contracts;
 using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Provider.Excel;
+using Pipeline.Provider.OpenXml;
 
 namespace Pipeline.Ioc.Autofac.Modules {
     public class ExcelModule : Module {
@@ -90,7 +91,19 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
-                    // todo
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+                    // ENTITY WRITER
+                    builder.Register<IWrite>(ctx => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+
+                        switch (output.Connection.Provider) {
+                            case "excel":
+                                return new ExcelWriter(output);
+                            default:
+                                return new NullWriter(output);
+                        }
+                    }).Named<IWrite>(entity.Key);
                 }
             }
 

@@ -36,7 +36,7 @@ using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
-using Pipeline.Scripting.Jint;
+using Pipeline.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
 using YamlDotNet.Serialization;
@@ -55,27 +55,27 @@ namespace Pipeline.Web.Orchard.Modules {
 
 
             builder.Register(c => {
-                var manager = c.Resolve<IShellSettingsManager>();
-                var settings = manager.LoadSettings().FirstOrDefault(s => !string.IsNullOrEmpty(s.DataProvider) && !string.IsNullOrEmpty(s.DataConnectionString));
-                if (settings == null) {
-                    Logger.Error("Transformalize (Pipeline.Web.Orchard) module could not read shell settings!  Default shorthand configuration used.");
-                    return Common.DefaultShortHand;
-                }
+                //var manager = c.Resolve<IShellSettingsManager>();
+                //var settings = manager.LoadSettings().FirstOrDefault(s => !string.IsNullOrEmpty(s.DataProvider) && !string.IsNullOrEmpty(s.DataConnectionString));
+                //if (settings == null) {
+                //    Logger.Error("Transformalize (Pipeline.Web.Orchard) module could not read shell settings!  Default shorthand configuration used.");
+                //    return Common.DefaultShortHand;
+                //}
 
-                try {
-                    using (var cn = GetConnection(settings.DataProvider, settings.DataConnectionString)) {
-                        cn.Open();
-                        var cmd = cn.CreateCommand();
-                        cmd.CommandText = "SELECT ShortHand FROM Pipeline_Web_Orchard_PipelineSettingsPartRecord;";
-                        cmd.CommandType = CommandType.Text;
-                        var value = cmd.ExecuteScalar();
-                        if (value != null) {
-                            return value as string;
-                        }
-                    }
-                } catch (Exception ex) {
-                    Logger.Error("Tried to read short-hand configuration for Transformalize (Pipeline.Web.Orchard) module. {0}", ex.Message);
-                }
+                //try {
+                //    using (var cn = GetConnection(settings.DataProvider, settings.DataConnectionString)) {
+                //        cn.Open();
+                //        var cmd = cn.CreateCommand();
+                //        cmd.CommandText = "SELECT ShortHand FROM Pipeline_Web_Orchard_PipelineSettingsPartRecord;";
+                //        cmd.CommandType = CommandType.Text;
+                //        var value = cmd.ExecuteScalar();
+                //        if (value != null) {
+                //            return value as string;
+                //        }
+                //    }
+                //} catch (Exception ex) {
+                //    Logger.Error("Tried to read short-hand configuration for Transformalize (Pipeline.Web.Orchard) module. {0}", ex.Message);
+                //}
                 return Common.DefaultShortHand;
             }).Named<string>("sh");
 

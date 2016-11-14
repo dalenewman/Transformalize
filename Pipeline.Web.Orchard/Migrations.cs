@@ -92,7 +92,6 @@ namespace Pipeline.Web.Orchard {
             SchemaBuilder.CreateTable(Common.PipelineSettingsName + "PartRecord", table => table
                 .ContentPartRecord()
                 .Column("EditorTheme", DbType.String)
-                .Column("Shorthand", DbType.String, column => column.Unlimited())
             );
 
             return 3;  // split files into it's own feature

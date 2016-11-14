@@ -10,7 +10,7 @@ namespace Pipeline.Web.Orchard.Impl {
 
         private readonly Field[] _input;
 
-        public OrchardRazorTransform(IContext context, ITemplateProcessor processor) : base(context) {
+        public OrchardRazorTransform(IContext context, ITemplateProcessor processor) : base(context, context.Field.Type) {
             _processor = processor;
             _input = MultipleInput();
         }

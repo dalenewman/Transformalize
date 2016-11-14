@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ namespace Pipeline.Command {
             container.RegisterCallback(new WebModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
-                var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First().Key);
+                var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First(c => c.Provider != "internal").Key);
                 return reader.Read(entity);
             }
         }

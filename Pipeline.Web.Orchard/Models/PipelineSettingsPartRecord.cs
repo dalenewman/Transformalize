@@ -8,8 +8,5 @@ namespace Pipeline.Web.Orchard.Models {
         [StringLength(128)]
         public virtual string EditorTheme { get; set; }
 
-        [StringLengthMax]
-        public virtual string Shorthand { get; set; }
-
     }
 }

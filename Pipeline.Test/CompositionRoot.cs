@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ namespace Pipeline.Test {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.None) {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info) {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));

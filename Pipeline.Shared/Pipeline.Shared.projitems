@@ -143,6 +143,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixesTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DateAddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BaseTransform.cs" />
@@ -162,6 +164,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromSplitTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromXmlTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\HashcodeTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\IifTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\InsertTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\InvertTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\JoinTransform.cs" />
@@ -206,6 +209,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\InValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsDefaultValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsEmptyValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\IsNumericValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StartsWithValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueComparer.cs" />

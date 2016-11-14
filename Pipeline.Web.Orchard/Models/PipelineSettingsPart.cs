@@ -24,13 +24,6 @@ namespace Pipeline.Web.Orchard.Models {
             set { Record.EditorTheme = value; }
         }
 
-        public string Shorthand {
-            get {
-                return string.IsNullOrEmpty(Record.Shorthand) ? Common.DefaultShortHand : Record.Shorthand;
-            }
-            set { Record.Shorthand = value; }
-        }
-
         public bool IsValid() {
             return true;
         }
