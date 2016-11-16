@@ -17,6 +17,7 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Cfg.Net;
 using Pipeline.Contracts;
 
@@ -163,5 +164,8 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = -1)]
         public int RowCount { get; set; }
+
+        [Cfg(value="")]
+        public string Description { get; set; }
     }
 }

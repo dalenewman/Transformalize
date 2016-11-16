@@ -18,13 +18,16 @@
 using System;
 using Dapper;
 using Pipeline.Contracts;
+using Pipeline.Extensions;
 
 namespace Pipeline.Provider.Ado.Actions {
     public class AdoRunAction : IAction {
+        private readonly IContext _context;
         private readonly Configuration.Action _node;
         private readonly IConnectionFactory _cf;
 
-        public AdoRunAction(Configuration.Action node, IConnectionFactory cf) {
+        public AdoRunAction(IContext context, Configuration.Action node, IConnectionFactory cf) {
+            _context = context;
             _node = node;
             _cf = cf;
         }
@@ -35,7 +38,9 @@ namespace Pipeline.Provider.Ado.Actions {
                 cn.Open();
                 try {
                     _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
-                    response.Content = $"{_node.RowCount} rows affected.";
+                    var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
+                    response.Content = message;
+                    _context.Info(message);
                 } catch (Exception ex) {
                     response.Code = 500;
                     response.Content = ex.Message + " " + ex.StackTrace + " " + _node.Command.Replace("{", "{{").Replace("}", "}}");

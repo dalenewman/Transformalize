@@ -41,6 +41,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Process.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Relationship.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\ResponseLog.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Schedule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Schema.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\SearchType.cs" />

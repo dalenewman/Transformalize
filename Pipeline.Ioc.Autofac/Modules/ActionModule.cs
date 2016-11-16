@@ -119,7 +119,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         case "postgresql":
                         case "sqlite":
                         case "sqlserver":
-                            return new AdoRunAction(action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
+                            return new AdoRunAction(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
                         default:
                             context.Error("{0} provider is not registered for run action.", connection.Provider);
                             return new NullAction();

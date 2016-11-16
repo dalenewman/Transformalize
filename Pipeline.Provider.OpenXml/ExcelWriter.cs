@@ -40,7 +40,8 @@ namespace Pipeline.Provider.OpenXml {
                 var rowDef = new RowDfn { Cells = cellDfns };
                 cellDfns.AddRange(_fields.Select(field => new CellDfn {
                     CellDataType = field.ToCellDataType(),
-                    Value = row[field]
+                    Value = row[field],
+                    FormatCode = field.Format.Replace("tt","AM/PM")
                 }));
                 _rowDfns.Add(rowDef);
             }

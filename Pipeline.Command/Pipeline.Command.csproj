@@ -154,6 +154,7 @@
   <ItemGroup>
     <Compile Include="NowScheduler.cs" />
     <Compile Include="Options.cs" />
+    <Compile Include="ProcessFactory.cs" />
     <Compile Include="QuartzJobFactory.cs" />
     <Compile Include="QuartzCronScheduler.cs" />
     <Compile Include="Program.cs" />

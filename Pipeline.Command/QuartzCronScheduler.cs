@@ -15,12 +15,79 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Common.Logging;
+using Common.Logging.Configuration;
+using Pipeline.Configuration;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 
 namespace Pipeline.Command {
+
+    public class InternalQuartzCronScheduler : Contracts.IScheduler {
+        readonly Quartz.IScheduler _scheduler;
+        private readonly Options _options;
+        private readonly ILog _logger;
+        private readonly List<Schedule> _schedule;
+
+        public InternalQuartzCronScheduler(Options options, List<Schedule> schedule, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
+            _options = options;
+            _schedule = schedule;
+            _scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            _scheduler.JobFactory = jobFactory;
+
+            LogManager.Adapter = loggerFactory;
+            _logger = LogManager.GetLogger("Quartz.Net");
+        }
+
+        public void Start() {
+            _logger.Info($"Starting Scheduler: {_options.Schedule}");
+            _scheduler.Start();
+
+            foreach (var schedule in _schedule) {
+
+                if (_options.Mode != "default" && schedule.Mode != _options.Mode) {
+                    Console.Error.WriteLine($"Note: The internal schedule's mode of {schedule.Mode} trumps your command line mode of {_options.Mode}.");
+                }
+
+                var job = JobBuilder.Create<RunTimeExecutor>()
+                    .WithIdentity(schedule.Name + " Job", "TFL")
+                    .StoreDurably(false)
+                    .RequestRecovery(false)
+                    .WithDescription("Transformalize Quartz.Net Job")
+                    .UsingJobData("Cfg", _options.Arrangement)
+                    .UsingJobData("Shorthand", _options.Shorthand)
+                    .UsingJobData("CommandLine.Mode", schedule.Mode)
+                    .UsingJobData("CommandLine.Format", _options.Format)
+                    .UsingJobData("Schedule", schedule.Cron)
+                    .Build();
+
+                var trigger = TriggerBuilder.Create()
+                    .WithIdentity(schedule.Name + " Trigger", "TFL")
+                    .StartNow()
+                    .WithCronSchedule(schedule.Cron, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
+                    .Build();
+
+                _scheduler.ScheduleJob(job, trigger);
+
+            }
+
+
+
+        }
+
+        public void Stop() {
+            if (!_scheduler.IsStarted)
+                return;
+
+            _logger.Info("Stopping Scheduler...");
+            _scheduler.Shutdown(true);
+        }
+    }
 
     public class QuartzCronScheduler : Contracts.IScheduler {
         readonly Quartz.IScheduler _scheduler;

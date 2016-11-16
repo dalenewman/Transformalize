@@ -55,10 +55,15 @@ namespace Pipeline.Provider.Elastic {
 
             var result = _client.Search<DynamicResponse>(_context.Connection.Index, _context.TypeName(), new PostData<object>(body));
             dynamic value = null;
-            try {
-                value = result.Body["aggregations"]["version"]["value"].Value;
-            } catch (Exception ex) {
-                _context.Error(ex, ex.Message);
+            if (result.Success) {
+                try {
+                    value = result.Body["aggregations"]["version"]["value"].Value;
+                } catch (Exception ex) {
+                    _context.Error(ex, ex.Message);
+                }
+            } else {
+                _context.Error(result.ServerError.ToString());
+                _context.Debug(() => result.DebugInformation);
             }
             var converted = value ?? null;
             _context.Debug(() => $"Found value: {converted ?? "null"}");

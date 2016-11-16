@@ -83,7 +83,32 @@ namespace Pipeline.Provider.File {
                                 engine[i] = row[field];
                                 break;
                             case "datetime":
-                                engine[i] = row[field] is string ? Convert.ToDateTime(row[field]).ToString("o") : ((DateTime)row[field]).ToString("o");
+                                var format = field.Format == string.Empty ? "o" : field.Format.Replace("AM/PM","tt");
+                                engine[i] = row[field] is DateTime ? ((DateTime)row[field]).ToString(format) : Convert.ToDateTime(row[field]).ToString(format);
+                                break;
+                            case "float":
+                            case "decimal":
+                            case "single":
+                            case "double":
+                                if (field.Format == string.Empty) {
+                                    engine[i] = row[field];
+                                } else {
+                                    switch (field.Type) {
+                                        case "single":
+                                        case "float":
+                                            engine[i] = row[field] is float ? ((float)row[field]).ToString(field.Format) : Convert.ToSingle(row[field]).ToString(field.Format);
+                                            break;
+                                        case "decimal":
+                                            engine[i] = row[field] is decimal ? ((decimal)row[field]).ToString(field.Format) : Convert.ToDecimal(row[field]).ToString(field.Format);
+                                            break;
+                                        case "double":
+                                            engine[i] = row[field] is double ? ((double)row[field]).ToString(field.Format) : Convert.ToDouble(row[field]).ToString(field.Format);
+                                            break;
+                                        default:
+                                            engine[i] = row[field];
+                                            break;
+                                    }
+                                }
                                 break;
                             default:
                                 engine[i] = row[field].ToString();

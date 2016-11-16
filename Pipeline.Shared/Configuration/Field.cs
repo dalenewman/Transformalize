@@ -519,5 +519,8 @@ namespace Pipeline.Configuration {
 
         [Cfg(value="", toLower = true)]
         public string ClassMap { get; set; }
+
+        [Cfg(value="")]
+        public string Format { get; set; }
     }
 }

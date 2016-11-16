@@ -49,7 +49,9 @@ namespace Pipeline.Provider.Elastic {
         }
 
         public override void Start() {
+
             base.Start();
+
             var body = new {
                 aggs = new {
                     b = new {
@@ -65,16 +67,24 @@ namespace Pipeline.Provider.Elastic {
                 },
                 size = 0
             };
-            var result = _client.Search<DynamicResponse>(Context.Connection.Index, Context.TypeName(), body);
-            var batchId = result.Body["aggregations"]["b"]["value"].Value;
-            var key = result.Body["aggregations"]["k"]["value"].Value;
-            Context.Entity.BatchId = (batchId == null ? 0 : (int)batchId) + 1;
-            Context.Entity.Identity = (key == null ? 0 : (int)key);
-            Context.Debug(() => $"Next TflBatchId: {Context.Entity.BatchId}.");
-            Context.Debug(() => $"Last TflKey: {Context.Entity.Identity}.");
+            var result = _client.Search<DynamicResponse>(Context.Connection.Index, Context.TypeName(), new PostData<object>(body));
 
-            var countBody = new { query = new { match_all = new { } } };
-            Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && _client.Count<DynamicResponse>(Context.Connection.Index, Context.TypeName(), countBody).Body["count"].Value == (long)0;
+            if (result.Success) {
+                var batchId = result.Body["aggregations"]["b"]["value"].Value;
+                var key = result.Body["aggregations"]["k"]["value"].Value;
+                Context.Entity.BatchId = (batchId == null ? 0 : (int)batchId) + 1;
+                Context.Entity.Identity = (key == null ? 0 : (int)key);
+                Context.Debug(() => $"Next TflBatchId: {Context.Entity.BatchId}.");
+                Context.Debug(() => $"Last TflKey: {Context.Entity.Identity}.");
+
+                var countBody = new { query = new { match_all = new { } } };
+                Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && _client.Count<DynamicResponse>(Context.Connection.Index, Context.TypeName(), new PostData<object>(countBody)).Body["count"].Value == (long)0;
+
+            } else {
+                Context.Error(result.ServerError.ToString());
+                Context.Debug(() => result.DebugInformation);
+            }
+
         }
 
     }

@@ -65,12 +65,8 @@ namespace Pipeline.Command {
             if (!string.IsNullOrEmpty(process.MaxMemory)) {
                 var context = new PipelineContext(logger, process);
 
-                var timer = new Stopwatch();
-                timer.Start();
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-                timer.Stop();
-                context.Info($"Collected free memory. Time taken: {timer.Elapsed}.");
 
                 var currentBytes = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64.Bytes();
                 var maxMemory = ByteSize.Parse(process.MaxMemory);

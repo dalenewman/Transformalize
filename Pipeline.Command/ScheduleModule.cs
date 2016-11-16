@@ -16,8 +16,11 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Common.Logging;
+using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
@@ -25,6 +28,7 @@ using Pipeline.Extensions;
 using Pipeline.Logging.NLog;
 using Pipeline.Scheduler.Quartz;
 using Quartz.Spi;
+using Environment = System.Environment;
 
 namespace Pipeline.Command {
 
@@ -47,13 +51,29 @@ namespace Pipeline.Command {
             builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(), ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
 
             // for quartz scheduler
-            builder.RegisterType<QuartzJobFactory>().As<IJobFactory>().SingleInstance();
             builder.Register<ILoggerFactoryAdapter>((ctx => new QuartzLogAdaptor(ctx.Resolve<IContext>(), Scheduler.Quartz.Utility.ConvertLevel(ctx.Resolve<IContext>().LogLevel), true, true, false, "o"))).As<ILoggerFactoryAdapter>();
+            builder.RegisterType<QuartzJobFactory>().As<IJobFactory>().SingleInstance();
 
             builder.Register<IScheduler>((ctx, p) => {
                 if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "check")) {
                     return new NowScheduler(_options, ctx.Resolve<ISchemaHelper>());
                 }
+
+                if (_options.Schedule == "internal") {
+                    var process = ProcessFactory.Create(_options.Arrangement, _options.Shorthand);
+                    if (process.Errors().Any())
+                    {
+                        Console.Error.WriteLine("In order for an internal schedule to work, the arrangement passed in must be valid!");
+                        foreach (var error in process.Errors())
+                        {
+                            Console.Error.WriteLine(error);
+                        }
+                        Environment.Exit(1);
+                    }
+                    return new InternalQuartzCronScheduler(_options, process.Schedule, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+                }
+
+
                 return new QuartzCronScheduler(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
             }).As<IScheduler>();
 
