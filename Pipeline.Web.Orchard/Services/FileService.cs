@@ -72,11 +72,7 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             }
 
-            var exportFile = string.Format("{0}-{1}-{2}",
-                _orchardServices.WorkContext.CurrentUser.UserName,
-                _clock.UtcNow.ToString(FileTimestamp),
-                Path.GetFileName(input.FileName)
-            );
+            var exportFile = $"{_orchardServices.WorkContext.CurrentUser.UserName}-{_clock.UtcNow.ToString(FileTimestamp)}-{Path.GetFileName(input.FileName)}";
 
             if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
                 _appDataFolder.CreateDirectory(Common.FileFolder);

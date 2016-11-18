@@ -29,6 +29,7 @@ using Pipeline.Contracts;
 using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Provider.Excel;
+using Pipeline.Provider.OpenXml;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
 
@@ -96,8 +97,21 @@ namespace Pipeline.Web.Orchard.Modules {
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
                 foreach (var entity in _process.Entities) {
-                    // todo
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+                    // ENTITY WRITER
+                    builder.Register<IWrite>(ctx => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+
+                        switch (output.Connection.Provider) {
+                            case "excel":
+                                return new ExcelWriter(output);
+                            default:
+                                return new NullWriter(output);
+                        }
+                    }).Named<IWrite>(entity.Key);
                 }
+
             }
 
         }

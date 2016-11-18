@@ -348,11 +348,15 @@ namespace Pipeline.Web.Orchard {
             if (request != null) {
                 if (request.QueryString != null) {
                     foreach (string key in request.QueryString) {
+                        if (key == null)
+                            continue;
                         parameters[key] = request.QueryString[key];
                     }
                 }
                 if (request.Form != null) {
                     foreach (string key in request.Form) {
+                        if (key == null)
+                            continue;
                         if (!key.Equals("__requestverificationtoken", StringComparison.OrdinalIgnoreCase)) {
                             parameters[key] = request.Form[key];
                         }

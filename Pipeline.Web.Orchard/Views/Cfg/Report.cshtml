@@ -1,10 +1,6 @@
-﻿@using FluentNHibernate.Utils
-@using Orchard
+﻿@using Orchard
 @using Orchard.Core.Contents
 @using Pipeline.Configuration
-@using Pipeline.Context
-@using Pipeline.Logging
-@using Pipeline.Transforms
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
 @using Pipeline.Web.Orchard.Models
@@ -14,21 +10,26 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
+    Script.Include("jquery.tablesorter.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
 
+    Style.Include("tablesorter.css");
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
     var orchard = WorkContext.Resolve<IOrchardServices>();
     var sortService = WorkContext.Resolve<ISortService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
-    var optionsDisplayed = false;
-    var exportLink = Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv";
+    var exportCsvLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv").Replace("?&","?");
+    var exportXlsxLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=xlsx" : Request.RawUrl + "?output=xlsx").Replace("?&","?");
+    var entity = Model.Process.Entities.First();
+    var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
+    var isSortable = fields.Any(f => f.Sortable == "true");
 
-    AppendMeta("description", Model.Process.Name, ",");
-    Layout.Title = Model.Process.Name;
+    AppendMeta("description", entity.Alias, ",");
+    Layout.Title = entity.Alias;
 }
 
 <style type="text/css">
@@ -44,11 +45,11 @@
     line-height: 1.5;
 }
 
-th.sorter .btn-xs {
+td.sorter .btn-xs {
     font-size: 7px !important;
 }
 
-th.sorter {
+td.sorter {
     padding: 0 3px 3px 4px !important;
 }
 
@@ -74,7 +75,7 @@ th.sorter {
 </style>
 
 @if (hasParameters) {
-    <h3>@Model.Part.Title()</h3>
+    <h4 style="margin-top: 3px; margin-bottom: 7px;">@Model.Part.Title()</h4>
 }
 
 @foreach (var error in Model.Process.Errors()) {
@@ -87,206 +88,185 @@ th.sorter {
 
 <form id="id_report" class="form-inline" role="form" method="GET">
 
-    <input id="id_sort" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
-    <input type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])"/>
-
+<input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
+    @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
+        <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
+    }
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+    <input id="id_size" class="bsh" type="hidden" name="size" value="@entity.PageSize" />
     @foreach (var parameter in Model.Process.GetActiveParameters().Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
-        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])"/>
+        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
     }
 
-    @if (hasParameters) {
+    <div class="row" style="margin-bottom: 4px;">
 
-        <button type="button"
-                onclick="$('#id_report select').val($('#id_report select option:first').val()); controls.submit(1);"
-                class="btn btn-info btn-sm">
-            Clear
-        </button>
+        <div class="col-md-@(entity.Page > 0 ? 5 : 9)">
+            
+            @if (hasParameters) {
 
-        var parameters = Model.Process.GetActiveParameters().Where(p => p.Prompt).ToArray();
+                <button type="button"
+                        onclick="$('#id_report select').val($('#id_report select option:first').val()); controls.submit(@(entity.Page == 0 ? 0 : 1));"
+                        class="btn btn-info btn-sm">Clear</button>
 
-        foreach (var parameter in parameters) {
-            <div class="form-group form-group-sm">
-                <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
-                <div class="input-group input-group-sm">
-                    <div class="input-group-addon">@parameter.Label</div>
-                    @switch (parameter.Type) {
-                        case "date":
-                        case "datetime":
-                            var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
-                            <input class="form-control date"
-                                   type="datetime"
-                                   name="@parameter.Name"
-                                   placeholder="@parameter.Label"
-                                   onchange="controls.submit(1);"
-                                   value="@requestedDate" />
-                            break;
-                        default:
-                            var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
-                            if (string.IsNullOrEmpty(parameter.Map)) {
-                                <input class="form-control"
-                                       name="@parameter.Name"
-                                       value="@requestedValue" 
-                                       placeholder="@parameter.Label" />
-                            } else {
-                                <select class="form-control"
-                                        onchange="controls.submit(1);" 
-                                        name="@parameter.Name">
-                                    @foreach (var item in Model.Process.Maps.First(m => m.Name == parameter.Map).Items) {
-                                        <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                var parameters = Model.Process.GetActiveParameters().Where(p => p.Prompt).ToArray();
+
+                foreach (var parameter in parameters) {
+                    <div class="form-group form-group-sm">
+                        <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-addon">@parameter.Label</div>
+                            @switch (parameter.Type) {
+                                case "date":
+                                case "datetime":
+                                    var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
+                                    <input class="form-control date"
+                                           size="10"
+                                           type="datetime"
+                                           name="@parameter.Name"
+                                           placeholder="@parameter.Label"
+                                           onchange="controls.submit(@(entity.Page == 0 ? 0 : 1));"
+                                           value="@requestedDate"/>
+                                    break;
+                                default:
+                                    var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
+                                    if (string.IsNullOrEmpty(parameter.Map)) {
+                                        <input class="form-control"
+                                               name="@parameter.Name"
+                                               value="@requestedValue"
+                                               placeholder="@parameter.Label"/>
                                     }
-                                </select>
+                                    else {
+                                        <select class="form-control"
+                                                onchange="controls.submit(@(entity.Page == 0 ? 0 : 1));"
+                                                name="@parameter.Name">
+                                            @foreach (var item in Model.Process.Maps.First(m => m.Name == parameter.Map).Items) {
+                                                <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                                            }
+                                        </select>
+                                    }
+                                    break;
                             }
-                            break;
-                    }
-                </div>
-            </div>
-        }
-        <button id="id_submit" type="submit" class="btn btn-warning btn-sm">Submit</button>
-
-        <div class="btn-group pull-right" role="group" aria-label="...">
-            @{ optionsDisplayed = true; }
-            @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-                <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-                    <span class="glyphicon glyphicon-edit"></span>
-                </button>
+                        </div>
+                    </div>
+                }
             }
-            <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@exportLink', '_self');">
-                <span class="glyphicon glyphicon-floppy-save"></span>
+
+            <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
+                <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
             </button>
-            <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
-                <span class="glyphicon glyphicon-th-list"></span>
-            </button>
+
+            @if (!hasParameters) {
+                <strong style="margin-left: 10px; font-size: larger;">@Model.Part.Title()</strong>
+            }
+
         </div>
 
-    }
+        @if (entity.Page > 0) {
+            <div class="col-md-4">
+                <ul class="pagination pagination-sm" style="display: inline;">
+                    @if (entity.Pagination.HasPrevious) {
+                        <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                        <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    } else {
+                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                    }
 
-    @foreach (var entity in Model.Process.Entities) {
-        var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
+                    <li class="disabled"><a href="#">@entity.Hits found, page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
 
-        if (entity.Page > 0) {
-            <input id="id_page" type="hidden" name="page" value="@entity.Page" />
-            <input id="id_size" type="hidden" name="size" value="@entity.PageSize" />
-
-                    <div class="row">
-
-                        <div class="col-md-4"><strong style="font-size: larger;">@(hasParameters ? " " : Model.Process.Name)</strong></div>
-
-                        <div class="col-md-4">
-                            <ul class="pagination pagination-sm" style="display: inline;">
-                                @if (entity.Pagination.HasPrevious) {
-                                    <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                                    <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                                } else {
-                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                                }
-
-                                <li class="disabled"><a href="#">@entity.Hits found, Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
-
-                                @if (entity.Pagination.HasNext) {
-                                    <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                                    <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                                } else {
-                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                                }
-                            </ul>
-                        </div>
-
-                        <div class="col-md-4">
-
-                            @if (entity.PageSizes.Any()) {
-                                <div class="btn-group pull-right">
-                                    @if (!optionsDisplayed) {
-                                        if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-                                            <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-                                                <span class="glyphicon glyphicon-edit"></span>
-                                            </button>
-                                        }
-                                        <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
-                                            <span class="glyphicon glyphicon-floppy-save"></span>
-                                        </button>
-                                        <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
-                                            <span class="glyphicon glyphicon-th-list"></span>
-                                        </button>
-                                    }
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm">Page Size</button>
-                                        <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
-                                                if (entity.PageSize.Equals(pageSize)) {
-                                                    <li class="active">
-                                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
-                                                    </li>
-                                                } else {
-                                                    <li>
-                                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
-                                                    </li>
-                                                }
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                            } else {
-                                if (!optionsDisplayed) {
-                                    <div class="btn-group pull-right">
-                                        if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-                                        <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-                                            <span class="glyphicon glyphicon-edit"></span>
-                                        </button>
-                                        }
-                                        <button title="export these results" type="button" class="btn btn-info btn-sm" onclick="window.open('@Request.RawUrl' + '&output=csv', '_self');">
-                                            <span class="glyphicon glyphicon-floppy-save"></span>
-                                        </button>
-                                        <button title="view other reports" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(@Url.Action("List", "Cfg", new {tagFilter = "REPORT"}))', '_self');">
-                                            <span class="glyphicon glyphicon-th-list"></span>
-                                        </button>
-                                    </div>
-                                }else {
-                                    <span> </span>   
-                                }
-                            }
-                    </div>
-                </div>
+                    @if (entity.Pagination.HasNext) {
+                        <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                        <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                    } else {
+                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                    }
+                </ul>
+            </div>
         }
 
-        <div class="row">
-            <div class="table-responsive col-sm-12">
-                <table class="table table-condensed table-hover table-striped">
-                    <thead>
+        <div class="col-md-3">
+
+            <div class="btn-group pull-right">
+
+                @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+                    <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </button>
+                }
+
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-info">
+                        <span class="glyphicon glyphicon-floppy-disk"></span>
+                    </button>
+                    <button class="btn dropdown-toggle btn-sm btn-info" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:window.open('@exportCsvLink', '_self');">CSV</a></li>
+                        <li><a href="javascript:window.open('@exportXlsxLink', '_self');">XLSX</a></li>
+                    </ul>
+                </div>
+
+                @if (entity.PageSizes.Any()) {
+                    <div class="btn-group">
+                        <button class="btn btn-sm">Page Size</button>
+                        <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
+                                if (entity.PageSize.Equals(pageSize)) {
+                                    <li class="active">
+                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
+                                    </li>
+                                } else {
+                                    <li>
+                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="table-responsive col-sm-12">
+            <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
+                <thead>
+                    <tr>
+                        @foreach (var field in fields) {
+                            <th>@field.Label</th>
+                        }
+                    </tr>
+                    @if (isSortable) {
+                        var expression = Request["sort"] ?? string.Empty;
                         <tr>
-                            @foreach (var field in fields) {
-                                <th>@field.Label</th>
+                            @for (var i = 0; i < fields.Length; i++) {
+                                var field = fields[i];
+                                var number = i + 1;
+                                if (field.Sortable == "true") {
+                                    <td class="sorter" data-order-by="@(number)">
+                                        <div aclass="btn-group btn-group-xs">
+                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                                <span class="glyphicon glyphicon-chevron-up"></span>
+                                            </a>
+                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                                <span class="glyphicon glyphicon-chevron-down"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                } else {
+                                    <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
+                                }
                             }
                         </tr>
-                        @if (fields.Any(f => f.Sortable == "true")) {
-                            var expression = Request["sort"] ?? string.Empty;
-                            <tr>
-                                @for (var i = 0; i < fields.Length; i++) {
-                                    var field = fields[i];
-                                    var number = i + 1;
-                                    if (field.Sortable == "true") {
-                                        <th class="sorter" data-order-by="@(number)">
-                                            <div aclass="btn-group btn-group-xs">
-                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-up"></span>
-                                                </a>
-                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                                </a>
-                                            </div>
-                                        </th>
-                                    } else {
-                                        <th style="padding: 0 3px 3px 1px;">&nbsp;</th>
-                                    }
-                                }
-                            </tr>
-                        }
-                    </thead>
-                    <tbody>
+                    }
+                </thead>
+                <tbody>
                     @{
                         Map classMap = null;
                         var mapField = fields.LastOrDefault(f => f.ClassMap != string.Empty);
@@ -321,27 +301,68 @@ th.sorter {
                         <tr class="@classValue">
                             @foreach (var field in fields) {
                                 <td>
-                                    @if (field.Type.StartsWith("bool")) {
-                                        if ((bool) row[field.Alias]) {
-                                            <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
-                                        }
-                                        else {
-                                            <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
-                                        }
-                                    }
-                                    else {
-                                        @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                    @switch (field.Type) {
+                                        case "bool":
+                                        case "boolean":
+                                            if ((bool)row[field.Alias]) {
+                                                <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
+                                            } else {
+                                                <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
+                                            }
+                                            break;
+                                        case "date":
+                                        case "datetime":
+                                            if (field.Format == string.Empty) {
+                                                @(row[field.Alias])
+                                            } else {
+                                                if (row[field.Alias] is DateTime) {
+                                                    @(((DateTime)row[field.Alias]).ToString(field.Format))
+                                                } else {
+                                                    @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
+                                                }
+                                            }
+                                            break;
+                                        case "single":
+                                        case "double":
+                                        case "decimal":
+                                        case "float":
+                                            if (field.Format == string.Empty) {
+                                                @(row[field.Alias])
+                                            } else {
+                                                switch (field.Type) {
+                                                    case "single":
+                                                    case "float":
+                                                        @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    case "decimal":
+                                                        @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    case "double":
+                                                        @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    default:
+                                                        @(row[field.Alias])
+                                                        break;
+                                                }
+
+                                            }
+                                            break;
+                                        default:
+                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                            break;
+
                                     }
                                 </td>
                             }
                         </tr>
                     }
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
         </div>
-    }
+    </div>
 </form>
+
+
 
 <div id="busy_holder">
     <div id="busy"></div>
@@ -354,24 +375,44 @@ th.sorter {
         setPage: function (page) {
             $('#id_page').val(page);
         },
-        submit : function(page) {
+        submit: function (page) {
             controls.setPage(page);
             $("#id_report").submit();
         },
-        setSize: function(size) {
+        setSize: function (size) {
             $('#id_size').val(size);
+            controls.submit(1);
         },
-        setSort: function(sort) {
+        setSort: function (sort) {
             $('#id_sort').val(sort);
         }
     }
 
     $(document).ready(function () {
 
-        $('.form-control.date').datepicker({ dateFormat: 'yy-mm-dd'});
+        var isSortable = @(isSortable.ToString().ToLower());
 
-        $('#id_report').bind('submit', function(e) {
+        if (!isSortable) { // enable client side sorting
+            $("#id_table").tablesorter();
+            $("#id_table")
+                .bind("sortStart", function() {
+                    $('#busy').show();
+                })
+                .bind("sortEnd", function() {
+                    $('#busy').hide();
+                });
+        }
+
+        $(".form-control.date").datepicker({ dateFormat: "yy-mm-dd" });
+
+
+        $('#id_report').bind('submit', function (e) {
             $('#id_submit').prop('disabled', true);
+            if ($('#id_page').val() === "0") {
+                $('#id_size').attr('disabled',true);
+            }
+            $('.bsh:input[value="0"]').attr('disabled', true);
+            $('.bsh:input[value=""]').attr('disabled', true);
             $('#busy').show();
         });
 
@@ -385,7 +426,7 @@ th.sorter {
             });
 
             var sort = '';
-            $('th.sorter').each(function (i) {
+            $('td.sorter').each(function (i) {
                 var field = $(this).attr('data-order-by');
                 if (field) {
                     var index = 0;
@@ -409,7 +450,7 @@ th.sorter {
             var expression = sort.replace(/^\.+|\.+$/gm, '');
             console.log(expression);
             controls.setSort(expression);
-            controls.submit(1);
+            controls.submit(@(entity.Page == 0 ? 0 : 1));
         });
 
         SyntaxHighlighter.all();
@@ -418,8 +459,6 @@ th.sorter {
 
     //-->
 </script>
-
-
 
 
 

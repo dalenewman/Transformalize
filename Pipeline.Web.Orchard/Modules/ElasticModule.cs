@@ -95,7 +95,10 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     switch (input.Connection.Provider) {
                         case "elasticsearch":
-                            return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
+                            if (input.Entity.Query == string.Empty) {
+                                return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
+                            }
+                            return new ElasticQueryReader(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory);
                         default:
                             return new NullReader(input, false);
                     }

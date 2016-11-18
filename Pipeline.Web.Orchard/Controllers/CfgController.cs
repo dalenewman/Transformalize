@@ -15,7 +15,6 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -32,9 +31,9 @@ using Pipeline.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using System.IO;
-using System.Xml.Linq;
 using Orchard.Autoroute.Services;
-using Orchard.Templates.Services;
+using Orchard.FileSystems.AppData;
+using Orchard.Services;
 using Pipeline.Extensions;
 using Process = Pipeline.Configuration.Process;
 
@@ -43,13 +42,17 @@ namespace Pipeline.Web.Orchard.Controllers {
     [ValidateInput(false), Themed(true)]
     public class CfgController : Controller {
 
+        const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
+        private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
         private readonly ICfgService _cfgService;
         private readonly ISlugService _slugService;
-        private ITemplateProcessor _templateProcessor;
+        private readonly IAppDataFolder _appDataFolder;
+        private readonly IClock _clock;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -60,15 +63,17 @@ namespace Pipeline.Web.Orchard.Controllers {
             ISecureFileService secureFileService,
             ICfgService cfgService,
             ISlugService slugService,
-            ITemplateProcessor templateProcessor
+            IAppDataFolder appDataFolder,
+            IClock clock
             ) {
+            _clock = clock;
+            _appDataFolder = appDataFolder;
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
             _cfgService = cfgService;
             _sortService = sortService;
             _slugService = slugService;
-            _templateProcessor = templateProcessor;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -123,10 +128,8 @@ namespace Pipeline.Web.Orchard.Controllers {
                         // change process for export purposes
                         var output = Request["output"] ?? "page";
                         if (part.Reportable && output != "page") {
-                            ConvertToExport(process, part, parameters);
+                            ConvertToExport(process, part, output, parameters);
                             process.Load(process.Serialize(), parameters);
-                            Response.AddHeader("content-disposition", "attachment; filename=" + process.Output().File);
-                            Response.ContentType = "application/csv";
                         }
 
                         if (Request["sort"] != null) {
@@ -151,9 +154,16 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     process.Message = "Ok";
                                     process.Request = "Run";
                                     process.Time = timer.ElapsedMilliseconds;
-                                    if (process.Output().Provider == "file") {
+                                    var o = process.Output();
+                                    if (o.Provider == "file") {
+                                        Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
+                                        Response.ContentType = output == "xlsx" ? ExcelContentType : "application/csv";
                                         Response.Flush();
                                         Response.End();
+                                    } else if (process.Output().Provider == "excel") {
+                                        return new FilePathResult(o.File, ExcelContentType) {
+                                            FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
+                                        };
                                     }
                                 } catch (Exception ex) {
                                     Logger.Error(ex, ex.Message);
@@ -171,17 +181,35 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         }
 
-        private void ConvertToExport(Process process, PipelineConfigurationPart part, IDictionary<string,string> parameters) {
-            var fileName = _slugService.Slugify(part.Title()) + ".csv";
+        private void ConvertToExport(Process process, PipelineConfigurationPart part, string output, IDictionary<string,string> parameters) {
             var o = process.Output();
-            o.Provider = "file";
-            o.Delimiter = ",";
-            o.File = fileName;
+            switch (output) {
+                case "xlsx":
+                    if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
+                        _appDataFolder.CreateDirectory(Common.FileFolder);
+                    }
+
+                    var user = _orchardServices.WorkContext.CurrentUser == null ? 
+                        "Anonymous" : 
+                        _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+
+                    var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
+                    
+                    o.Provider = "excel";
+                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder,fileName));
+                    break;
+                default: //csv
+                    o.Provider = "file";
+                    o.Delimiter = ",";
+                    o.File = _slugService.Slugify(part.Title()) + ".csv";
+                    break;
+            }
+
             parameters["page"] = "0";
             foreach (var entity in process.Entities) {
                 entity.Page = 0;
                 foreach (var field in entity.GetAllFields().Where(f=>!f.System)) {
-                    field.T = "";
+                    field.T = string.Empty;
                     if (field.Output && field.Transforms.Any()) {
                         var lastTransform = field.Transforms.Last();
                         if (lastTransform.Method == "tag" || lastTransform.Method == "razor" && field.Raw) {

@@ -75,6 +75,10 @@
       <HintPath>..\..\..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Elasticsearch.Net.2.4.6\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
@@ -98,6 +102,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.0\lib\OpenXmlPowerTools.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Pipeline.Desktop, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -127,6 +135,9 @@
     <Reference Include="Pipeline.Provider.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\Debug\Pipeline.Provider.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Pipeline.Provider.OpenXml">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\Debug\Pipeline.Provider.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Pipeline.Provider.PostgreSql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -174,6 +185,14 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Diagnostics.Contracts">
       <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Diagnostics.Contracts\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Diagnostics.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\System.IO.Packaging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Management.Automation.6.1.7601.17515\lib\net45\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
