@@ -20,6 +20,7 @@ using System.Linq;
 using System.Reflection;
 using Cfg.Net;
 using Pipeline.Contracts;
+using Pipeline.Transforms;
 
 namespace Pipeline.Configuration {
 
@@ -68,7 +69,7 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// Indicates what type of action to perform.
         /// </summary>
-        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open", ignoreCase = true)]
+        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print", ignoreCase = true)]
         public string Type { get; set; }
 
         /// <summary>
@@ -162,10 +163,16 @@ namespace Pipeline.Configuration {
 
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
+        [Cfg(value = "info", domain = "info,information,informational,error,warn,warning,debug", toLower = true, trim = true)]
+        public string Level { get; set; }
+
+        [Cfg(value="")]
+        public string Message { get; set; }
+
         [Cfg(value = -1)]
         public int RowCount { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Description { get; set; }
     }
 }

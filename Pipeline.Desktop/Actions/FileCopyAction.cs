@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.IO;
-using Pipeline.Configuration;
-using Pipeline.Context;
 using Pipeline.Contracts;
+using Action = Pipeline.Configuration.Action;
 
 namespace Pipeline.Desktop.Actions {
-    public class FileToFileAction : IAction {
-        private readonly PipelineContext _context;
+    public class FileCopyAction : IAction {
+
+        private readonly IContext _context;
         private readonly Action _action;
 
-        public FileToFileAction(PipelineContext context, Action action) {
+        public FileCopyAction(IContext context, Action action) {
             _context = context;
             _action = action;
         }

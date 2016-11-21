@@ -31,10 +31,13 @@ namespace Pipeline.Ioc.Autofac.Modules {
     /// The `ActionModule` is only for actions embedded in a host process:
     /// 
     /// * copy
+    /// * move
     /// * web
     /// * tfl
     /// * run
     /// * open
+    /// * print
+    /// * log
     /// 
     /// </summary>
     public class ActionModule : Module {
@@ -64,7 +67,13 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 case "copy":
                     return action.InTemplate ? (IAction)
                         new ContentToFileAction(context, action) :
-                        new FileToFileAction(context, action);
+                        new FileCopyAction(context, action);
+                case "move":
+                    return new FileMoveAction(context, action);
+                case "print":
+                    return new PrintAction(action);
+                case "log":
+                    return new LogAction(context, action);
                 case "web":
                     return new WebAction(context, action);
                 case "tfl":

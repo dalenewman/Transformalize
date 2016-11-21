@@ -231,7 +231,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\jquery.tablesorter.min.js" />
+    <Content Include="Styles\asc.gif" />
+    <Content Include="Styles\bg.gif" />
     <Content Include="Styles\busy.gif" />
+    <Content Include="Styles\desc.gif" />
+    <Content Include="Styles\tablesorter.css" />
     <Content Include="Web.config" />
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />

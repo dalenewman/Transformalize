@@ -63,7 +63,6 @@
   <ItemGroup>
     <Compile Include="ElasticEntityInitializer.cs" />
     <Compile Include="ElasticQueryReader.cs" />
-    <Compile Include="ElasticQueryResponse.cs" />
     <Compile Include="ElasticReader.cs" />
     <Compile Include="ElasticInitializer.cs" />
     <Compile Include="ElasticInputVersionDetector.cs" />
