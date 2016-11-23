@@ -23,7 +23,7 @@ using Pipeline.Context;
 using Pipeline.Contracts;
 
 namespace Pipeline.Provider.File {
-    public class DirectoryReader : IRead {
+    public class DirectoryReader : IReadInputKeysAndHashCodes {
 
         private readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
@@ -48,26 +48,48 @@ namespace Pipeline.Provider.File {
                 for (var i = 0; i < _input.InputFields.Length; i++) {
                     var field = _input.InputFields[i];
                     switch (names[i]) {
+                        case "creation":
+                        case "creationtime":
                         case "creationtimeutc":
                             row[field] = file.CreationTimeUtc;
                             break;
+                        case "folder":
+                        case "foldername":
+                        case "directory":
                         case "directoryname":
-                            row[field] = file.DirectoryName;
+                            row[field] = file.DirectoryName ?? string.Empty;
                             break;
+                        case "ext":
                         case "extension":
                             row[field] = file.Extension;
                             break;
                         case "fullname":
                             row[field] = file.FullName;
                             break;
+                        case "lastwrite":
+                        case "lastwritetime":
                         case "lastwritetimeutc":
                             row[field] = file.LastWriteTimeUtc;
                             break;
+                        case "lastaccess":
+                        case "lastaccesstime":
+                        case "lastaccesstimeutc":
+                            row[field] = file.LastAccessTimeUtc;
+                            break;
+                        case "size":
+                        case "bytes":
                         case "length":
+                            if (field.Type != "long" && field.Type != "int64") {
+                                _input.Warn($"The {names[i]} input is type long, but field is setup as {field.Type}.");
+                            }
                             row[field] = file.Length;
                             break;
                         case "name":
                             row[field] = file.Name;
+                            break;
+                        case "readonly":
+                        case "isreadonly":
+                            row[field] = file.IsReadOnly;
                             break;
                     }
                 }

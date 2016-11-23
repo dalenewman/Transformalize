@@ -191,6 +191,11 @@
         <add name='tolon' />
       </parameters>
     </add>
+    <add name='humanize'>
+      <parameters>
+        <add name='format' value='[default]' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -280,7 +285,7 @@
     <add name='hyphenate' signature='none' target='t' />
     <add name='frommetric' signature='none' target='t' />
     <add name='fromroman' signature='none' target='t' />
-    <add name='humanize' signature='none' target='t' />
+    <add name='humanize' signature='humanize' target='t' />
     <add name='dehumanize' signature='none' target='t' />
     <add name='ordinalize' signature='none' target='t' />
     <add name='pascalize' signature='none' target='t' />
@@ -292,6 +297,7 @@
     <add name='toroman' signature='none' target='t' />
     <add name='towords' signature='none' target='t' />
     <add name='underscore' signature='none' target='t' />
+    <add name='bytes' signature='none' target='t' />
     
     <add name='addticks' signature='value' target='t' />
     <add name='addmillisecnds' signature='value' target='t' />

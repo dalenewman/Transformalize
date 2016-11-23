@@ -276,34 +276,53 @@ namespace Pipeline.Ioc.Autofac.Modules {
                         }
                     }).Named<IWrite>(entity.Key);
 
-
                     // DELETE HANDLER
                     if (entity.Delete) {
-                        builder.Register<IEntityDeleteHandler>(ctx => {
-                            var context = ctx.ResolveNamed<IContext>(entity.Key);
+
+                        // register input keys and hashcode reader if necessary
+                        builder.Register(ctx => {
                             var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
                             var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
                             var rowFactory = new RowFactory(rowCapacity, false, true);
-                            IRead input = new NullReader(context);
-                            var primaryKey = entity.GetPrimaryKey();
 
                             switch (inputContext.Connection.Provider) {
                                 case "mysql":
                                 case "postgresql":
                                 case "sqlite":
                                 case "sqlserver":
-                                    input = new AdoReader(
+                                    return new AdoReader(
                                         inputContext,
-                                        primaryKey,
+                                        entity.GetPrimaryKey(),
                                         ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
                                         rowFactory,
                                         ReadFrom.Input
                                     );
-                                    break;
+                                default:
+                                    return ctx.IsRegisteredWithName<IReadInputKeysAndHashCodes>(entity.Key) ? ctx.ResolveNamed<IReadInputKeysAndHashCodes>(entity.Key) : new NullReader(inputContext);
+                            }
+                        }).Named<IReadInputKeysAndHashCodes>(entity.Key);
+
+                        // register output keys and hash code reader if necessary
+                        builder.Register((ctx => {
+                            var context = ctx.ResolveNamed<IContext>(entity.Key);
+                            var rowCapacity = context.Entity.GetPrimaryKey().Count();
+                            var rowFactory = new RowFactory(rowCapacity, false, true);
+
+                            var outputConnection = _process.Output();
+                            switch (outputConnection.Provider) {
+                                case "mysql":
+                                case "postgresql":
+                                case "sqlite":
+                                case "sqlserver":
+                                    var ocf = ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key);
+                                    return new AdoReader(context, entity.GetPrimaryKey(), ocf, rowFactory, ReadFrom.Output);
+                                default:
+                                    return ctx.IsRegisteredWithName<IReadOutputKeysAndHashCodes>(entity.Key) ? ctx.ResolveNamed<IReadOutputKeysAndHashCodes>(entity.Key) : new NullReader(context);
                             }
 
-                            IRead output = new NullReader(context);
-                            IDelete deleter = new NullDeleter(context);
+                        })).Named<IReadOutputKeysAndHashCodes>(entity.Key);
+
+                        builder.Register((ctx) => {
                             var outputConnection = _process.Output();
                             var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
 
@@ -313,12 +332,22 @@ namespace Pipeline.Ioc.Autofac.Modules {
                                 case "sqlite":
                                 case "sqlserver":
                                     var ocf = ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key);
-                                    output = new AdoReader(context, entity.GetPrimaryKey(), ocf, rowFactory, ReadFrom.Output);
-                                    deleter = new AdoDeleter(outputContext, ocf);
-                                    break;
+                                    return new AdoDeleter(outputContext, ocf);
+                                default:
+                                    return ctx.IsRegisteredWithName<IDelete>(entity.Key) ? ctx.ResolveNamed<IDelete>(entity.Key) : new NullDeleter(outputContext);
                             }
+                        }).Named<IDelete>(entity.Key);
 
-                            var handler = new DefaultDeleteHandler(context, input, output, deleter);
+                        builder.Register<IEntityDeleteHandler>(ctx => {
+                            var context = ctx.ResolveNamed<IContext>(entity.Key);
+                            var primaryKey = entity.GetPrimaryKey();
+
+                            var handler = new DefaultDeleteHandler(
+                                context,
+                                ctx.ResolveNamed<IReadInputKeysAndHashCodes>(entity.Key),
+                                ctx.ResolveNamed<IReadOutputKeysAndHashCodes>(entity.Key),
+                                ctx.ResolveNamed<IDelete>(entity.Key)
+                            );
 
                             // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
                             // feels a lot like entity pipeline on just the primary keys... may look at consolidating

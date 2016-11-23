@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BytesTransform.cs" />
     <Compile Include="DehumanizeTransform.cs" />
     <Compile Include="FromMetricTransform.cs" />
     <Compile Include="HyphenateTransform.cs" />

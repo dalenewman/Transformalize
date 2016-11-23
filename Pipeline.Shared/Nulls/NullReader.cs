@@ -20,7 +20,7 @@ using System.Linq;
 using Pipeline.Contracts;
 
 namespace Pipeline.Nulls {
-    public class NullReader : IRead {
+    public class NullReader : IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
         private readonly IContext _context;
         private readonly bool _log;
 

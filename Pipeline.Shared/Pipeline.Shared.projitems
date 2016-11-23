@@ -75,7 +75,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IPipelineLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IProcessController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRead.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IReadInputKeysAndHashCodes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IReadLines.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IReadOutputKeysAndHashCodes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRootMaker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRowCondition.cs" />

@@ -166,6 +166,7 @@ namespace Pipeline.Ioc.Autofac {
                 case "toroman": return new ToRomanTransform(context);
                 case "towords": return new ToWordsTransform(context);
                 case "underscore": return new UnderscoreTransform(context);
+                case "bytes": return new BytesTransform(context);
 
                 case "addticks": return new DateAddTransform(context, "ticks");
                 case "addmilliseconds": return new DateAddTransform(context, "milliseconds");

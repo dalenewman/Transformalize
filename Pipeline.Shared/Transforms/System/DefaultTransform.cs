@@ -27,6 +27,7 @@ namespace Pipeline.Transforms.System {
         class FieldDefault : IField {
 
             private readonly Action<IRow> _setter;
+            public string Name { get; }
             public string Alias { get; }
             public short Index { get; }
             public short MasterIndex { get; }
@@ -36,7 +37,9 @@ namespace Pipeline.Transforms.System {
             public string StringValue { private get; set; }
             public bool DefaultWhiteSpace { get; set; }
 
-            public FieldDefault(string alias, short index, short masterIndex, short keyIndex, string type) {
+            public FieldDefault(string name, string alias, short index, short masterIndex, short keyIndex, string type)
+            {
+                Name = name;
                 Alias = alias;
                 Index = index;
                 MasterIndex = masterIndex;
@@ -76,7 +79,7 @@ namespace Pipeline.Transforms.System {
                     }
                 }
 
-                var fieldDefault = new FieldDefault(field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
+                var fieldDefault = new FieldDefault(field.Name, field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
                     Value = hasDefault ?
                         field.Convert(field.Default) :
                         defaults[field.Type],

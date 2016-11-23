@@ -25,7 +25,7 @@ namespace Pipeline.Provider.Ado {
     /// <summary>
     /// A reader for an entity's input (source) or output (destination).
     /// </summary>
-    public class AdoReader : IRead {
+    public class AdoReader : IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
         int _rowCount;
         private readonly IContext _context;
         private readonly Connection _connection;

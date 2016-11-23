@@ -17,6 +17,7 @@
 #endregion
 using System;
 using Humanizer;
+using Humanizer.Bytes;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
@@ -34,6 +35,12 @@ namespace Pipeline.Transform.Humanizer {
             var type = Received() ?? _input.Type;
 
             switch (type) {
+                case "bytesize":
+                    _transform = (row) => {
+                        var input = (ByteSize)row[_input];
+                        return context.Transform.Format == Constants.DefaultSetting ? input.Humanize() : input.Humanize(context.Transform.Format);
+                    };
+                    break;
                 case "date":
                 case "datetime":
                     _transform = (row) => {
