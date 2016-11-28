@@ -232,13 +232,13 @@ LIMIT 10
 Which produces:
 
 <pre>
-<strong>Year    Name    Sex     Percent         IsOldSchool</strong>
+<strong>Year    Name    Sex     Percent IsOldSchool</strong>
 1880	John	boy	0.081541	No
 1880	William	boy	0.080511	No
 1880	James	boy	0.050057	No
 1880	Charles	boy	0.045167	No
 1880	George	boy	0.043292	No
-1880	Frank	boy	0.02738	        No
+1880	Frank	boy	0.02738	    No
 <strong>1880	Joseph	boy	0.022229	Yes</strong>
 1880	Thomas	boy	0.021401	No
 1880	Henry	boy	0.020641	No
