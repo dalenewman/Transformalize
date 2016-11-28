@@ -52,7 +52,7 @@ namespace Pipeline.Provider.Ado {
                             CommandType.Text
                         );
                         count += batchCount;
-                        _output.Increment(batchCount);
+                        // _output.Increment(batchCount);
                     }
                     trans.Commit();
                 } catch (Exception ex) {

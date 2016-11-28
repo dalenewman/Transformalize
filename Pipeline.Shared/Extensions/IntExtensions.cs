@@ -24,5 +24,9 @@ namespace Pipeline.Extensions {
         public static string Pluralize(this int i) {
             return i == 1 ? "y" : "ies";
         }
+
+        public static bool Between(this int i, int start, int end) {
+            return i >= start && i <= end;
+        }
     }
 }

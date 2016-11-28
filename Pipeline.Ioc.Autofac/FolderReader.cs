@@ -54,7 +54,7 @@ namespace Pipeline.Ioc.Autofac {
                 if (file.Extension.ToLower().Contains("xls")) {
                     readers.Add(new ExcelReader(fileInput, rowFactory));
                 } else {
-                    readers.Add(new DelimitedFileReader(fileInput, rowFactory, new NullRowCondition()));
+                    readers.Add(new DelimitedFileReader(fileInput, rowFactory));
                 }
             }
             _reader = new CompositeReader(readers);

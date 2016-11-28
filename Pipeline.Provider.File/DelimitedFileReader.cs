@@ -22,6 +22,7 @@ using FileHelpers;
 using FileHelpers.Dynamic;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Extensions;
 
 namespace Pipeline.Provider.File {
 
@@ -29,14 +30,12 @@ namespace Pipeline.Provider.File {
 
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
-        private readonly IRowCondition _rowCondition;
         private readonly DelimitedClassBuilder _builder;
         private readonly FileInfo _fileInfo;
 
-        public DelimitedFileReader(InputContext context, IRowFactory rowFactory, IRowCondition rowCondition) {
+        public DelimitedFileReader(InputContext context, IRowFactory rowFactory) {
             _context = context;
             _rowFactory = rowFactory;
-            _rowCondition = rowCondition;
 
             var identifier = Utility.Identifier(context.Entity.OutputTableName(context.Process.Name));
             _builder = new DelimitedClassBuilder(identifier) {
@@ -67,32 +66,47 @@ namespace Pipeline.Provider.File {
 
             _context.Debug(() => $"Reading {_fileInfo.Name}.");
 
+            var start = _context.Connection.Start;
+            var end = 0;
+            if (_context.Entity.IsPageRequest()) {
+                start += (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
+                end = start + _context.Entity.PageSize;
+            }
+
+            var current = _context.Connection.Start;
+
             using (engine.BeginReadFile(_fileInfo.FullName)) {
                 foreach (var record in engine) {
-                    var values = engine.LastRecordValues;
-                    var row = _rowFactory.Create();
-                    for (var i = 0; i < _context.InputFields.Length; i++) {
-                        var field = _context.InputFields[i];
-                        if (field.Type == "string") {
-                            row[field] = values[i] as string;
-                        } else {
-                            row[field] = field.Convert(values[i]);
+                    if (end == 0 || current.Between(start, end)) {
+                        var values = engine.LastRecordValues;
+                        var row = _rowFactory.Create();
+                        for (var i = 0; i < _context.InputFields.Length; i++) {
+                            var field = _context.InputFields[i];
+                            if (field.Type == "string") {
+                                row[field] = values[i] as string;
+                            } else {
+                                row[field] = field.Convert(values[i]);
+                            }
                         }
-                    }
-                    if (_rowCondition.Eval(row)) {
                         yield return row;
                     }
-                }
-
-                if (engine.ErrorManager.HasErrors) {
-                    foreach (var error in engine.ErrorManager.Errors) {
-                        _context.Error(error.ExceptionInfo.Message);
+                    ++current;
+                    if (current == end) {
+                        break;
                     }
                 }
             }
 
-
+            if (engine.ErrorManager.HasErrors) {
+                foreach (var error in engine.ErrorManager.Errors) {
+                    _context.Error(error.ExceptionInfo.Message);
+                }
+            }
 
         }
+
+
+
     }
 }
+

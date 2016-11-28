@@ -151,6 +151,10 @@ namespace Pipeline.Configuration {
                 Provider = "excel";
             }
 
+            if (Delimiter == "" && file.EndsWith(".csv")) {
+                Delimiter = ",";
+            }
+
         }
 
         void ModifyProvider() {
@@ -265,7 +269,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "csv", domain = "csv,json")]
         public string Format { get; set; }
 
-        [Cfg(value=5)]
+        [Cfg(value = 5)]
         public int ErrorLimit { get; set; }
     }
 }

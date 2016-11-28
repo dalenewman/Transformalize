@@ -85,17 +85,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                                 input.Entity.Fields.Count(f => f.Input) == 1) {
                                 return new FileReader(input, rowFactory);
                             }
-
-                            IRowCondition condition = new NullRowCondition();
-                            if (input.Entity.Filter.Any()) {
-                                var expression = input.Entity.Filter.First().Expression;
-                                if (ctx.IsRegisteredWithName<IParser>("js") && ctx.ResolveNamed<IParser>("js").Parse(expression, input.Error)) {
-                                    condition = ctx.Resolve<IRowCondition>(new TypedParameter(typeof(InputContext), input), new TypedParameter(typeof(string), input.Entity.Filter.First().Expression));
-                                } else {
-                                    input.Error($"Your {input.Entity.Alias} script is not parsing or registered. It is not filtering.");
-                                }
-                            }
-                            return new DelimitedFileReader(input, rowFactory, condition);
+                            return new DelimitedFileReader(input, rowFactory);
                         default:
                             return new NullReader(input, false);
                     }

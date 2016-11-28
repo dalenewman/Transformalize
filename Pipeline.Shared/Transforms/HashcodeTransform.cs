@@ -35,7 +35,6 @@ namespace Pipeline.Transforms {
 
         public override IRow Transform(IRow row) {
             row[Context.Field] = GetStringHashCode(_input.Select(f => row[f]));
-            Increment();
             return row;
         }
 
