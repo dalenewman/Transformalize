@@ -226,17 +226,20 @@ namespace Pipeline.Configuration {
                 case "mysql":
                 case "sqlserver":
                 case "postgresql":
-                    return $"{Provider}:{Server}.{Database}";
+                    return $"{Name} {Provider}:{Server}.{Database}";
                 case "lucene":
-                    return $"{Provider}:{Folder}";
+                case "folder":
+                case "directory":
+                    return $"{Name} {Provider}:{Folder}";
                 case "elasticsearch":
                 case "solr":
-                    return $"{Provider}:{Url}";
+                    return $"{Name} {Provider}:{Url}";
                 case "file":
                 case "excel":
-                    return $"{Provider}:{File}";
+                case "sqlite":
+                    return $"{Name} {Provider}:{File}";
                 default:
-                    return Provider;
+                    return Name + " " + Provider;
             }
         }
 

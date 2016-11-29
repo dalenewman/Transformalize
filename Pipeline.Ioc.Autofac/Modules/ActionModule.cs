@@ -76,6 +76,9 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     return new LogAction(context, action);
                 case "web":
                     return new WebAction(context, action);
+                case "wait":
+                case "sleep":
+                    return new WaitAction(action);
                 case "tfl":
                     var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
                     if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Content)) {

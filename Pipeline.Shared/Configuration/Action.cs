@@ -69,7 +69,7 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// Indicates what type of action to perform.
         /// </summary>
-        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print", ignoreCase = true)]
+        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print,wait,sleep", ignoreCase = true)]
         public string Type { get; set; }
 
         /// <summary>

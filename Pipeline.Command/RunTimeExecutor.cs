@@ -36,7 +36,7 @@ namespace Pipeline.Command {
     [DisallowConcurrentExecution]
     public class RunTimeExecutor : IRunTimeExecute, IJob, IDisposable {
         private string _mode;
-        private string _format;
+        private readonly string _format;
         private string _cfg;
 
         public RunTimeExecutor() {
@@ -54,7 +54,7 @@ namespace Pipeline.Command {
 
             process.Mode = _mode;
 
-            // Since we're in a Console app, and honor output format
+            // Since we're in a Console app, honor output format
             if (process.Output().Provider.In("internal", "console")) {
                 process.Output().Provider = "console";
                 process.Output().Format = _format;
@@ -114,37 +114,22 @@ namespace Pipeline.Command {
         }
 
         public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
-
-            var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(shorthand));
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
-            builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-
-            using (var scope = builder.Build().BeginLifetimeScope()) {
-                var context = scope.Resolve<IContext>();
-                var process = scope.Resolve<Process>(new NamedParameter("cfg", cfg));
-                foreach (var warning in process.Warnings()) {
-                    context.Warn(warning);
-                }
-
-                if (process.Errors().Any()) {
-                    foreach (var error in process.Errors()) {
-                        context.Error(error);
-                    }
-                    context.Error("The configuration errors must be fixed before this job will run.");
-                    return;
-                }
-                _cfg = cfg;
-
+            _cfg = cfg;
+            Process process;
+            if (ProcessFactory.TryCreate(cfg, shorthand, out process)) {
                 Execute(process);
             }
         }
 
+        /// <summary>
+        /// This is the method Quartz.NET will use
+        /// </summary>
+        /// <param name="context"></param>
         public void Execute(IJobExecutionContext context) {
             var cfg = context.MergedJobDataMap.Get("Cfg") as string;
             var shorthand = context.MergedJobDataMap.Get("Shorthand") as string;
-            _mode = context.MergedJobDataMap.Get("CommandLine.Mode") as string;
-            _format = context.MergedJobDataMap.Get("CommandLine.Format") as string;
+            _mode = context.MergedJobDataMap.Get("Mode") as string;
+
             Execute(cfg, shorthand, new Dictionary<string, string>());
         }
 

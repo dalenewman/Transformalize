@@ -61,6 +61,7 @@
     <Compile Include="Actions\LogAction.cs" />
     <Compile Include="Actions\OpenAction.cs" />
     <Compile Include="Actions\PrintAction.cs" />
+    <Compile Include="Actions\WaitAction.cs" />
     <Compile Include="SchemaReader.cs" />
     <Compile Include="Loggers\ConsoleLogger.cs" />
     <Compile Include="Loggers\TraceLogger.cs" />

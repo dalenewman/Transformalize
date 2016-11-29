@@ -61,20 +61,18 @@ namespace Pipeline.Command {
 
                 if (_options.Schedule == "internal") {
                     var process = ProcessFactory.Create(_options.Arrangement, _options.Shorthand);
-                    if (process.Errors().Any())
-                    {
+                    if (process.Errors().Any()) {
                         Console.Error.WriteLine("In order for an internal schedule to work, the arrangement passed in must be valid!");
-                        foreach (var error in process.Errors())
-                        {
+                        foreach (var error in process.Errors()) {
                             Console.Error.WriteLine(error);
                         }
                         Environment.Exit(1);
                     }
-                    return new InternalQuartzCronScheduler(_options, process.Schedule, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+                    return new QuartzCronSchedulerViaInternalSchedule(_options, process.Schedule, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
                 }
 
 
-                return new QuartzCronScheduler(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+                return new QuartzCronSchedulerViaCommandLine(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
             }).As<IScheduler>();
 
         }

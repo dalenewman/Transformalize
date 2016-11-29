@@ -521,7 +521,10 @@ namespace Pipeline.Configuration {
         [Cfg(value = "")]
         public string MaxMemory { get; set; }
 
+        [Cfg]
         public List<Schedule> Schedule { get; set; }
+
+        public bool Preserve { get; set; }
 
         public IEnumerable<Parameter> GetActiveParameters() {
             if (!Environments.Any())
@@ -531,6 +534,9 @@ namespace Pipeline.Configuration {
         }
 
         public void Dispose() {
+            if (Preserve)
+                return;
+
             Log?.Clear();
             Entities?.Clear();
             Actions?.Clear();

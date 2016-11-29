@@ -152,11 +152,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="QuartzCronSchedulerViaInternalSchedule.cs" />
     <Compile Include="NowScheduler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="ProcessFactory.cs" />
     <Compile Include="QuartzJobFactory.cs" />
-    <Compile Include="QuartzCronScheduler.cs" />
+    <Compile Include="QuartzCronSchedulerViaCommandLine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunTimeExecutor.cs" />
@@ -207,12 +208,14 @@
     <Content Include="x64\msvcp120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="x64\msvcp140.dll" />
     <Content Include="x64\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\msvcp120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="x86\msvcp140.dll" />
     <Content Include="x86\msvcr120.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
