@@ -94,7 +94,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                 return new FileReader(input, rowFactory);
                             }
 
-                            return new DelimitedFileReader(input, rowFactory, new NullRowCondition());
+                            return new DelimitedFileReader(input, rowFactory);
                         default:
                             return new NullReader(input, false);
                     }
