@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\build\JavaScriptEngineSwitcher.ChakraCore.props" Condition="Exists('..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\build\JavaScriptEngineSwitcher.ChakraCore.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -12,6 +13,8 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -66,6 +69,14 @@
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="JavaScriptEngineSwitcher.ChakraCore, Version=2.0.3.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
+      <HintPath>..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\lib\net451\JavaScriptEngineSwitcher.ChakraCore.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.1.2.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
+      <HintPath>..\packages\JavaScriptEngineSwitcher.Core.2.1.2\lib\net451\JavaScriptEngineSwitcher.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
@@ -205,14 +216,6 @@
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.CSharp\Pipeline.Scripting.CSharp.csproj">
-      <Project>{2bbef5b4-f778-461c-9ecf-30500ad8578f}</Project>
-      <Name>Pipeline.Scripting.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.JavaScript\Pipeline.Scripting.JavaScript.csproj">
-      <Project>{f0cdcecb-91d0-45af-8500-235f58976473}</Project>
-      <Name>Pipeline.Scripting.JavaScript</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
       <Project>{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}</Project>
       <Name>Pipeline.Template.Razor</Name>
@@ -220,6 +223,10 @@
     <ProjectReference Include="..\Pipeline.Template.Velocity\Pipeline.Template.Velocity.csproj">
       <Project>{b805f159-aa3d-41a4-9c6d-9f2b784f51c6}</Project>
       <Name>Pipeline.Template.Velocity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Transform.CSharp\Pipeline.Transform.CSharp.csproj">
+      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
+      <Name>Pipeline.Transform.CSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Transform.GeoCoordinate\Pipeline.Transform.GeoCoordinate.csproj">
       <Project>{1f39c887-4dc6-4474-961b-619dff1760b3}</Project>
@@ -233,6 +240,10 @@
       <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
       <Name>Pipeline.Transform.Humanizer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.csproj">
+      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
+      <Name>Pipeline.Transform.JavaScriptEngineSwitcher</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj">
       <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
       <Name>Pipeline.Transform.Jint</Name>
@@ -243,6 +254,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\build\JavaScriptEngineSwitcher.ChakraCore.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\build\JavaScriptEngineSwitcher.ChakraCore.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

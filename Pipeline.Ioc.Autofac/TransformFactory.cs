@@ -20,24 +20,26 @@ using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
+using JavaScriptEngineSwitcher.ChakraCore;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Pipeline.Desktop.Transforms;
 using Pipeline.Nulls;
-using Pipeline.Scripting.CSharp;
-using Pipeline.Scripting.JavaScript;
 using Pipeline.Shared.Transforms;
 using Pipeline.Transform.Jint;
 using Pipeline.Template.Velocity;
+using Pipeline.Transform.CSharp;
 using Pipeline.Transform.GeoCoordinate;
 using Pipeline.Transform.Geohash;
 using Pipeline.Transform.Humanizer;
+using Pipeline.Transform.JavaScriptEngineSwitcher;
 using Pipeline.Transforms;
 using Pipeline.Transforms.System;
 using Pipeline.Validators;
 
 namespace Pipeline.Ioc.Autofac {
+
     public static class TransformFactory {
 
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
@@ -104,7 +106,7 @@ namespace Pipeline.Ioc.Autofac {
                         case "jint":
                             return new JintTransform(context, ctx.Resolve<IReader>());
                         default:
-                            return new JavascriptTransform("ChakraCoreJsEngine", context, ctx.Resolve<IReader>());
+                            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, ctx.Resolve<IReader>());
                     }
                 case "last": return new LastTransform(context);
                 case "left": return new LeftTransform(context);

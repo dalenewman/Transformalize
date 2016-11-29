@@ -15,28 +15,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
-using JavaScriptEngineSwitcher.ChakraCore;
 using JavaScriptEngineSwitcher.Core;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 using Pipeline.Transforms;
 
-namespace Pipeline.Scripting.JavaScript {
+namespace Pipeline.Transform.JavaScriptEngineSwitcher {
     public class JavascriptTransform : BaseTransform {
 
         readonly Field[] _input;
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly IJsEngine _engine;
 
-        public JavascriptTransform(string engine, IContext context, IReader reader) : base(context, null) {
+        public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, null) {
 
-            var engineSwitcher = JsEngineSwitcher.Instance;
-            engineSwitcher.EngineFactories.Add(new ChakraCoreJsEngineFactory());
-
-            _engine = engineSwitcher.CreateEngine(engine);
+            _engine = factory.CreateEngine();
 
             // for js, always add the input parameter
             _input = MultipleInput().Union(new[] { context.Field }).Distinct().ToArray();

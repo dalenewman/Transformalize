@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Text;
 
-namespace Pipeline.Scripting.CSharp.ILReader {
+namespace Pipeline.Transform.CSharp.ILReader {
     public interface IFormatProvider {
         string Int32ToHex(int int32);
         string Int16ToHex(int int16);

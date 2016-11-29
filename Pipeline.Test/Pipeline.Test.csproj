@@ -58,8 +58,8 @@
       <HintPath>..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\lib\net451\JavaScriptEngineSwitcher.ChakraCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.0.3.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
-      <HintPath>..\packages\JavaScriptEngineSwitcher.Core.2.0.3\lib\net451\JavaScriptEngineSwitcher.Core.dll</HintPath>
+    <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.1.2.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
+      <HintPath>..\packages\JavaScriptEngineSwitcher.Core.2.1.2\lib\net451\JavaScriptEngineSwitcher.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
@@ -217,10 +217,6 @@
     <ProjectReference Include="..\Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.csproj">
       <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
       <Name>Pipeline.Provider.SqlServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Scripting.JavaScript\Pipeline.Scripting.JavaScript.csproj">
-      <Project>{f0cdcecb-91d0-45af-8500-235f58976473}</Project>
-      <Name>Pipeline.Scripting.JavaScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
       <Project>{71372f65-12f1-4a72-ab2d-2c5eadbf75e0}</Project>

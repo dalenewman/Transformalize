@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Pipeline.Scripting.CSharp.ILReader;
+using Pipeline.Transform.CSharp.ILReader;
 
-namespace Pipeline.Scripting.CSharp {
+namespace Pipeline.Transform.CSharp {
     public class DynamicMethodHelper {
         class IlInfoGetTokenVisitor : ILInstructionVisitor {
             private readonly DynamicILInfo _ilInfo;

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
@@ -22,7 +23,7 @@ using System.Diagnostics;
 using System.Reflection;
 using Pipeline.Contracts;
 
-namespace Pipeline.Scripting.CSharp {
+namespace Pipeline.Transform.CSharp {
 
     public class CSharpHost : IHost {
 

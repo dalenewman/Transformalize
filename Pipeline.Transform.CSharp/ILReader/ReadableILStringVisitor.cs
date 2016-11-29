@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 
-namespace Pipeline.Scripting.CSharp.ILReader {
+namespace Pipeline.Transform.CSharp.ILReader {
     public interface IILStringCollector {
         void Process(ILInstruction ilInstruction, string operandString);
     }
