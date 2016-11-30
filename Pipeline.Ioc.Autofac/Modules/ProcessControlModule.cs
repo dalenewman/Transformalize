@@ -78,7 +78,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                             controller.PreActions.Add(ctx.Resolve<IInitializer>());
                             break;
                         default:
-                            output.Warn($"The {outputConnection.Provider} provider does not support initialization.");
+                            output.Debug(()=>$"The {outputConnection.Provider} provider does not support initialization.");
                             break;
                     }
 

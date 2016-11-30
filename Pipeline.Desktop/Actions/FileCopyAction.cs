@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.IO;
 using Pipeline.Contracts;
 using Action = Pipeline.Configuration.Action;
@@ -32,11 +33,24 @@ namespace Pipeline.Desktop.Actions {
         }
 
         public ActionResponse Execute() {
+            string message;
+            int status;
             var from = new FileInfo(_action.From);
             var to = new FileInfo(_action.To);
+
             _context.Info("Copying {0} to {1}", from.Name, to.Name);
-            File.Copy(from.FullName, to.FullName, true);
-            return new ActionResponse();
+
+            try {
+                File.Copy(from.FullName, to.FullName, true);
+                status = 200;
+                message = $"Copied file from {from.Name} to {to.Name}.";
+            } catch (Exception ex) {
+                _context.Error(ex.Message);
+                status = 500;
+                message = ex.Message;
+            }
+
+            return new ActionResponse(status, message);
         }
     }
 }

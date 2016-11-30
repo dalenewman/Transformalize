@@ -122,7 +122,7 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     // UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        output.Warn($"{output.Connection.Provider} does not denormalize.");
+                        output.Debug(()=>$"{output.Connection.Provider} does not denormalize.");
                         return new NullMasterUpdater();
                     }).Named<IUpdate>(entity.Key);
 

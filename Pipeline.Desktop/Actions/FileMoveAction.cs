@@ -21,10 +21,10 @@ namespace Pipeline.Desktop.Actions {
                 to = new FileInfo(Path.Combine(to.FullName, from.Name));
             }
 
-            _context.Info("Moving {0} to {1}", from.Name, to.Name);
+            _context.Info("Moving {0} from {1} to {2}", from.Name, from.DirectoryName, to.DirectoryName);
             try {
                 File.Move(from.FullName, to.FullName);
-                return new ActionResponse(200, "Ok");
+                return new ActionResponse(200, $"Moved {from.Name} from {from.DirectoryName} to {to.DirectoryName}");
             } catch (Exception ex) {
                 return new ActionResponse(500, ex.Message);
             }
