@@ -36,7 +36,7 @@ namespace Pipeline.Command {
 
                 _logger.Info($"Schedule {schedule.Name} set for {schedule.Cron} in {schedule.Mode} mode.");
 
-                var job = JobBuilder.Create<RunTimeExecutor>()
+                var job = JobBuilder.Create<ScheduleExecutor>()
                     .WithIdentity(schedule.Name, "TFL")
                     .WithDescription($"Scheduled TFL Job: {schedule.Name}")
                     .StoreDurably(false)
@@ -44,7 +44,7 @@ namespace Pipeline.Command {
                     .UsingJobData("Cfg", _options.Arrangement)
                     .UsingJobData("Shorthand", _options.Shorthand)
                     .UsingJobData("Mode", schedule.Mode)
-                    .UsingJobData("Schedule", schedule.Cron)
+                    .UsingJobData("Schedule", schedule.Name)
                     .Build();
 
                 var trigger = TriggerBuilder.Create()
@@ -56,9 +56,6 @@ namespace Pipeline.Command {
                 _scheduler.ScheduleJob(job, trigger);
 
             }
-
-
-
         }
 
         public void Stop() {

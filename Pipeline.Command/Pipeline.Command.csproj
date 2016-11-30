@@ -116,6 +116,10 @@
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Flurl, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Flurl.2.2.1\lib\portable40-net40+sl5+win8+wp8+wpa81\Flurl.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=2.1.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.1.0\lib\netstandard1.0\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -152,6 +156,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseExecutor.cs" />
+    <Compile Include="NowExecutor.cs" />
     <Compile Include="QuartzCronSchedulerViaInternalSchedule.cs" />
     <Compile Include="NowScheduler.cs" />
     <Compile Include="Options.cs" />
@@ -160,7 +166,7 @@
     <Compile Include="QuartzCronSchedulerViaCommandLine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RunTimeExecutor.cs" />
+    <Compile Include="ScheduleExecutor.cs" />
     <Compile Include="RunTimeSchemaReader.cs" />
     <Compile Include="ScheduleModule.cs" />
   </ItemGroup>

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Pipeline.Configuration;
@@ -28,7 +29,7 @@ using Pipeline.Logging.NLog;
 namespace Pipeline.Command {
     public static class ProcessFactory {
 
-        public static bool TryCreate(string cfg, string shorthand, out Process process) {
+        public static bool TryCreate(string cfg, string shorthand, Dictionary<string,string> parameters, out Process process) {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(shorthand));
@@ -36,7 +37,7 @@ namespace Pipeline.Command {
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
-                process = scope.Resolve<Process>(new NamedParameter("cfg", cfg));
+                process = scope.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
                 var context = scope.Resolve<IContext>();
                 foreach (var warning in process.Warnings()) {
@@ -56,9 +57,9 @@ namespace Pipeline.Command {
             return process.Errors().Length == 0;
         }
 
-        public static Process Create(string cfg, string shorthand) {
+        public static Process Create(string cfg, string shorthand, Dictionary<string,string> parameters) {
             Process process;
-            TryCreate(cfg, shorthand, out process);
+            TryCreate(cfg, shorthand, parameters, out process);
             return process;
         }
     }

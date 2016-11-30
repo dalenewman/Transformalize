@@ -25,7 +25,7 @@ namespace Pipeline.Command {
     public class QuartzJobFactory : IJobFactory {
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) {
-            return new RunTimeExecutor();
+            return new ScheduleExecutor();
         }
 
         public void ReturnJob(IJob job) {

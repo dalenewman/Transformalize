@@ -16,9 +16,7 @@
 // limitations under the License.
 #endregion
 
-using System.Runtime.InteropServices;
 using Common.Logging;
-using Common.Logging.Configuration;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
@@ -43,15 +41,15 @@ namespace Pipeline.Command {
             _logger.Info($"Starting Scheduler: {_options.Schedule}");
             _scheduler.Start();
 
-            var job = JobBuilder.Create<RunTimeExecutor>()
+            var job = JobBuilder.Create<ScheduleExecutor>()
                 .WithIdentity("Job", "TFL")
+                .WithDescription("Scheduled TFL Job")
                 .StoreDurably(false)
                 .RequestRecovery(false)
-                .WithDescription("Transformalize Quartz.Net Job")
                 .UsingJobData("Cfg", _options.Arrangement)
                 .UsingJobData("Shorthand", _options.Shorthand)
                 .UsingJobData("Mode", _options.Mode)
-                .UsingJobData("Schedule", _options.Schedule)
+                .UsingJobData("Schedule", string.Empty)
                 .Build();
 
             var trigger = TriggerBuilder.Create()

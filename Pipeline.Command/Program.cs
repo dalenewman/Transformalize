@@ -42,9 +42,6 @@ namespace Pipeline.Command {
                     var scheduler = scope.Resolve<IScheduler>();
                     scheduler.Start();
 
-                    //Console.WriteLine("Press any key to continue...");
-                    //Console.ReadKey();
-
                     if (scheduler is NowScheduler)
                         return;
 
