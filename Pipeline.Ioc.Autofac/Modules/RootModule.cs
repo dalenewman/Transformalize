@@ -27,6 +27,7 @@ using Cfg.Net.Shorthand;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop;
 using Pipeline.Desktop.Loggers;
 using Pipeline.Nulls;
 using Pipeline.Transform.Jint;
@@ -76,10 +77,10 @@ namespace Pipeline.Ioc.Autofac.Modules {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
-                    new PlaceHolderModifier(),
                     ctx.Resolve<IRootModifier>(),
                     ctx.ResolveNamed<IValidator>("js"),
-                    new IllegalCharacterValidator("ipc"),
+                    new DateMathModifier(),
+                    new PlaceHolderModifier(),
                     new PlaceHolderValidator()
                 };
 

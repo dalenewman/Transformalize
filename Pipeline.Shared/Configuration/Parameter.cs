@@ -53,7 +53,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "")]
         public string Name { get; set; }
 
-        [Cfg(value = null, validators = "ipc")] // illegal parameter characters
+        [Cfg(value = null, validators = "illegal")]
         public string Value { get; set; }
 
         [Cfg(value = true)]
@@ -131,6 +131,9 @@ namespace Pipeline.Configuration {
 
         [Cfg(value = "")]
         public string Label { get; set; }
+
+        [Cfg(value="")]
+        public string Format { get; set; }
 
 
     }

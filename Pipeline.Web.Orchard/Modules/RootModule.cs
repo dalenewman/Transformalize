@@ -35,6 +35,7 @@ using IParser = Pipeline.Contracts.IParser;
 using System;
 using Orchard.Localization;
 using Orchard.UI.Notify;
+using Pipeline.Desktop;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -51,11 +52,6 @@ namespace Pipeline.Web.Orchard.Modules {
 
             builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
             builder.Register(ctx => new JintValidator("js")).Named<IValidator>("js");
-
-            builder.Register(ctx => new EnvironmentModifier(
-                new PlaceHolderModifier(),
-                new ParameterModifier())
-            ).As<IRootModifier>();
 
             // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
             builder.RegisterType<FileReader>().Named<IReader>("file");
@@ -93,10 +89,12 @@ namespace Pipeline.Web.Orchard.Modules {
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     ctx.Resolve<ISerializer>(),
+                    new DateMathModifier(),
                     new PlaceHolderModifier(),
-                    ctx.Resolve<IRootModifier>(),
+                    new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
                     ctx.ResolveNamed<IValidator>("js"),
-                    new PlaceHolderValidator()
+                    new PlaceHolderValidator(),
+                    new IllegalCharacterValidator("illegal")
                 };
 
                 if (!string.IsNullOrEmpty(ctx.ResolveNamed<string>("sh"))) {

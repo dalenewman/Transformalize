@@ -23,6 +23,7 @@ using Cfg.Net.Reader;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
 using Pipeline.Configuration;
+using Pipeline.Desktop;
 using Pipeline.Nulls;
 using Pipeline.Transform.Jint;
 
@@ -65,11 +66,11 @@ namespace Pipeline.Ioc.Autofac.Modules {
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     ctx.Resolve<ISerializer>(),
+                    new DateMathModifier(),
                     new PlaceHolderModifier(),
                     ctx.Resolve<IRootModifier>(),
                     ctx.ResolveNamed<IValidator>("js"),
-                    new PlaceHolderValidator(),
-                    new IllegalCharacterValidator("ipc")
+                    new PlaceHolderValidator()
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {

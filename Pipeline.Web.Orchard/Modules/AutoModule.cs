@@ -15,10 +15,6 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
 using Autofac;
 using Cfg.Net.Environment;
 using Cfg.Net.Ext;
@@ -26,16 +22,14 @@ using Cfg.Net.Parsers;
 using Cfg.Net.Parsers.YamlDotNet;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
-using Orchard;
-using Orchard.Environment.Configuration;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
-using Orchard.Templates.Compilation.Razor;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
 using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
+using Pipeline.Desktop;
 using Pipeline.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
@@ -88,36 +82,39 @@ namespace Pipeline.Web.Orchard.Modules {
                 new NanoXmlParser(),
                 new XmlSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<XmlProcess>();
 
             builder.Register(c => new XmlToJsonProcess(
                 new NanoXmlParser(),
                 new JsonSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()), 
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<XmlToJsonProcess>();
 
             builder.Register(c => new XmlToYamlProcess(
                 new NanoXmlParser(),
                 new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
                 )).As<XmlToYamlProcess>();
 
             builder.Register(c => new XmlProcessPass(new NanoXmlParser(), new XmlSerializer())).As<XmlProcessPass>();
@@ -129,37 +126,40 @@ namespace Pipeline.Web.Orchard.Modules {
                 new FastJsonParser(),
                 new JsonSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 //new OrchardNodeModifier("host", c.Resolve<IOrchardServices>()),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<JsonProcess>();
 
             builder.Register(c => new JsonToXmlProcess(
                 new FastJsonParser(),
                 new XmlSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<JsonToXmlProcess>();
 
             builder.Register(c => new JsonToYamlProcess(
                 new FastJsonParser(),
                 new YamlDotNetSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<JsonToYamlProcess>();
 
             builder.Register(c => new JsonProcessPass(new FastJsonParser(), new JsonSerializer())).As<JsonProcessPass>();
@@ -171,36 +171,39 @@ namespace Pipeline.Web.Orchard.Modules {
                 new YamlDotNetParser(),
                 new YamlDotNetSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<YamlProcess>();
 
             builder.Register(c => new YamlToXmlProcess(
                 new YamlDotNetParser(),
                 new XmlSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<YamlToXmlProcess>();
 
             builder.Register(c => new YamlToJsonProcess(
                 new YamlDotNetParser(),
                 new JsonSerializer(),
                 new JintValidator("js"),
-                new IllegalCharacterValidator("ipc"),
                 c.Resolve<ShorthandValidator>(),
                 c.Resolve<ShorthandModifier>(),
+                new DateMathModifier(),
                 new PlaceHolderModifier(),
                 new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator()
+                new PlaceHolderValidator(),
+                new IllegalCharacterValidator("illegal")
             )).As<YamlToJsonProcess>();
 
             builder.Register(c => new YamlProcessPass(new YamlDotNetParser(), new YamlDotNetSerializer())).As<YamlProcessPass>();
@@ -217,24 +220,24 @@ namespace Pipeline.Web.Orchard.Modules {
 
         }
 
-        private IDbConnection GetConnection(string provider, string connectionString) {
-            var providerTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                {"SqlServer", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"}, 
-                {"SqlCe", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe"}, 
-                {"MySql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data"},
-                {"PostgreSql","Npgsql.NpgsqlConnection, Npgsql"}
-            };
+        //private IDbConnection GetConnection(string provider, string connectionString) {
+        //    var providerTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        //        {"SqlServer", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"}, 
+        //        {"SqlCe", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe"}, 
+        //        {"MySql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data"},
+        //        {"PostgreSql","Npgsql.NpgsqlConnection, Npgsql"}
+        //    };
 
-            if (!providerTypes.ContainsKey(provider)) {
-                Logger.Warning("Transformalize for Orchard CMS may not use the {0} provider to retrieve shorthand configuration.  It can only handle SqlServer, SqlCe, PostgreSql, or MySql. The default short-hand configuration is used when this happens.");
-                return null;
-            }
+        //    if (!providerTypes.ContainsKey(provider)) {
+        //        Logger.Warning("Transformalize for Orchard CMS may not use the {0} provider to retrieve shorthand configuration.  It can only handle SqlServer, SqlCe, PostgreSql, or MySql. The default short-hand configuration is used when this happens.");
+        //        return null;
+        //    }
 
-            var type = Type.GetType(providerTypes[provider.ToLower()], false, true);
-            var connection = (IDbConnection)Activator.CreateInstance(type);
-            connection.ConnectionString = connectionString;
-            return connection;
-        }
+        //    var type = Type.GetType(providerTypes[provider.ToLower()], false, true);
+        //    var connection = (IDbConnection)Activator.CreateInstance(type);
+        //    connection.ConnectionString = connectionString;
+        //    return connection;
+        //}
 
     }
 }
