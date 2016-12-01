@@ -41,7 +41,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="DateMath, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DateMath.0.0.1-beta\lib\portable-net45+win8+wpa81+wp8\DateMath.dll</HintPath>
+      <HintPath>..\packages\DateMath.0.0.3-beta\lib\net45\DateMath.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

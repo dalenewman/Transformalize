@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cfg.Net.Contracts;
 using dalenewman;
@@ -5,14 +6,18 @@ using dalenewman;
 namespace Pipeline.Desktop {
     public class DateMathModifier : IRootModifier {
 
+        private const string DefaultFormat = "yyyy-MM-dd";
+
         public void Modify(INode root, IDictionary<string, string> parameters) {
             TraverseNodes(root.SubNodes);
         }
 
         private static void TraverseNodes(IEnumerable<INode> nodes) {
             foreach (var node in nodes) {
-                ApplyDateMath(node, "value");
-                ApplyDateMath(node, "default");
+                if (node.Attributes.Count > 0) {
+                    ApplyDateMath(node, "value");
+                    ApplyDateMath(node, "default");
+                }
                 TraverseNodes(node.SubNodes);
             }
         }
@@ -24,15 +29,12 @@ namespace Pipeline.Desktop {
 
             var value = valueAttribute.Value.ToString();
 
-            if (!value.StartsWith("now") && !value.Contains("||"))
-                return;
-
             IAttribute formatAttribute;
             if (node.TryAttribute("format", out formatAttribute) && formatAttribute.Value != null) {
                 var format = formatAttribute.Value.ToString();
-                valueAttribute.Value = string.IsNullOrEmpty(format) ? DateMath.Parse(value) : DateMath.Parse(value, format);
+                valueAttribute.Value = string.IsNullOrEmpty(format) ? DateMath.Parse(value, DefaultFormat) : DateMath.Parse(value, format);
             } else {
-                valueAttribute.Value = DateMath.Parse(value);
+                valueAttribute.Value = DateMath.Parse(value, DefaultFormat);
             }
         }
 
