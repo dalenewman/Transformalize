@@ -36,7 +36,7 @@ namespace Pipeline.Test {
             var response = new ActionResponse();
             if (!_process.Enabled) {
                 response.Code = 503;
-                response.Content = "Process is disabled.";
+                response.Message = "Process is disabled.";
                 return response;
 
             }

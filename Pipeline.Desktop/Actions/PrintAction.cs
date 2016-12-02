@@ -20,7 +20,7 @@ namespace Pipeline.Desktop.Actions {
             } else {
                 Console.WriteLine(_action.Message);
             }
-            return new ActionResponse(200, _action.Message);
+            return new ActionResponse(200, _action.Message) { Action = _action };
         }
     }
 }

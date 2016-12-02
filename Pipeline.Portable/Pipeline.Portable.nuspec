@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Pipeline.Portable</id>
-    <version>0.1.1-beta</version>
+    <version>0.1.2-beta</version>
     <title>Transformalize Pipeline</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>

@@ -24,9 +24,9 @@ namespace Pipeline.Desktop.Actions {
             _context.Info("Moving {0} from {1} to {2}", from.Name, from.DirectoryName, to.DirectoryName);
             try {
                 File.Move(from.FullName, to.FullName);
-                return new ActionResponse(200, $"Moved {from.Name} from {from.DirectoryName} to {to.DirectoryName}");
+                return new ActionResponse(200, $"Moved {from.Name} from {from.DirectoryName} to {to.DirectoryName}") { Action = _action };
             } catch (Exception ex) {
-                return new ActionResponse(500, ex.Message);
+                return new ActionResponse(500, ex.Message) { Action = _action };
             }
         }
     }

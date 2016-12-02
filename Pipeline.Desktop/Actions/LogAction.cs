@@ -29,7 +29,7 @@ namespace Pipeline.Desktop.Actions {
                     _context.Info(_action.Message);
                     break;
             }
-            return new ActionResponse(200, _action.Message);
+            return new ActionResponse(200, _action.Message) { Action = _action };
         }
     }
 }

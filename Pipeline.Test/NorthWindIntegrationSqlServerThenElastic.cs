@@ -99,7 +99,7 @@ namespace Pipeline.Test {
             root = ResolveRoot(container, ElasticTestFile, false);
             responseElastic = new PipelineAction(root).Execute();
             Assert.AreEqual(200, responseElastic.Code);
-            Assert.AreEqual(string.Empty, responseElastic.Content);
+            Assert.AreEqual(string.Empty, responseElastic.Message);
 
             Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", "star", "{\"query\" : { \"match_all\" : { }}}").Body["count"].Value);
 
@@ -114,7 +114,7 @@ namespace Pipeline.Test {
             root = ResolveRoot(container, SqlTestFile, false);
             responseSql = new PipelineAction(root).Execute();
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -128,7 +128,7 @@ namespace Pipeline.Test {
             root = ResolveRoot(container, ElasticTestFile, false);
             responseElastic = new PipelineAction(root).Execute();
             Assert.AreEqual(200, responseElastic.Code);
-            Assert.AreEqual(string.Empty, responseElastic.Content);
+            Assert.AreEqual(string.Empty, responseElastic.Message);
 
             var response = client.Search<DynamicResponse>(
                 "northwind",
@@ -166,7 +166,7 @@ namespace Pipeline.Test {
             responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -179,7 +179,7 @@ namespace Pipeline.Test {
             root = ResolveRoot(container, ElasticTestFile, false);
             responseElastic = new PipelineAction(root).Execute();
             Assert.AreEqual(200, responseElastic.Code);
-            Assert.AreEqual(string.Empty, responseElastic.Content);
+            Assert.AreEqual(string.Empty, responseElastic.Message);
 
             response = client.Search<DynamicResponse>(
                 "northwind",

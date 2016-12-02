@@ -20,7 +20,6 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using Pipeline.Configuration;
 using Pipeline.Context;
 using Pipeline.Contracts;
 using Action = Pipeline.Configuration.Action;
@@ -37,40 +36,38 @@ namespace Pipeline.Desktop.Actions {
 
         public ActionResponse Execute() {
             _context.Info("Web request to {0}", _action.Url);
-            return _action.Method == "get"
-                ? Get(_action.Url, _action.TimeOut)
-                : Post(_action.Url, _action.TimeOut, _action.Content);
+            return _action.Method == "get" ? Get(_action) : Post(_action);
         }
 
-        public static ActionResponse Get(string url, int timeOut) {
-            var request = (HttpWebRequest)WebRequest.Create(url);
+        public static ActionResponse Get(Action action) {
+            var request = (HttpWebRequest)WebRequest.Create(action.Url);
             request.Method = "GET";
-            request.Timeout = timeOut == 0 ? Timeout.Infinite : timeOut;
-            request.KeepAlive = timeOut == 0;
+            request.Timeout = action.TimeOut == 0 ? Timeout.Infinite : action.TimeOut;
+            request.KeepAlive = action.TimeOut == 0;
 
             try {
                 using (var response = (HttpWebResponse)request.GetResponse()) {
                     using (var responseStream = response.GetResponseStream()) {
                         if (responseStream == null)
-                            return new ActionResponse { Code = (int)response.StatusCode };
+                            return new ActionResponse { Code = (int)response.StatusCode, Action = action };
                         var reader = new StreamReader(responseStream);
-                        return new ActionResponse((int)response.StatusCode, reader.ReadToEnd());
+                        return new ActionResponse((int)response.StatusCode, reader.ReadToEnd()) { Action = action };
                     }
                 }
             } catch (Exception e) {
-                return new ActionResponse(500, e.Message);
+                return new ActionResponse(500, e.Message) { Action = action };
             }
         }
 
-        public static ActionResponse Post(string url, int timeOut, string postData) {
+        public static ActionResponse Post(Action action) {
 
-            var request = (HttpWebRequest)WebRequest.Create(url);
+            var request = (HttpWebRequest)WebRequest.Create(action.Url);
             request.Method = "POST";
-            request.Timeout = timeOut == 0 ? Timeout.Infinite : timeOut;
-            request.KeepAlive = timeOut == 0;
+            request.Timeout = action.TimeOut == 0 ? Timeout.Infinite : action.TimeOut;
+            request.KeepAlive = action.TimeOut == 0;
             request.ContentType = "application/x-www-form-urlencoded";
 
-            var byteArray = Encoding.UTF8.GetBytes(postData);
+            var byteArray = Encoding.UTF8.GetBytes(action.Body);
             request.ContentLength = byteArray.Length;
 
             using (var dataStream = request.GetRequestStream()) {
@@ -81,13 +78,13 @@ namespace Pipeline.Desktop.Actions {
                 using (var response = (HttpWebResponse)request.GetResponse()) {
                     using (var responseStream = response.GetResponseStream()) {
                         if (responseStream == null)
-                            return new ActionResponse((int)response.StatusCode);
+                            return new ActionResponse((int)response.StatusCode) { Action = action };
                         var reader = new StreamReader(responseStream);
-                        return new ActionResponse((int)response.StatusCode, reader.ReadToEnd());
+                        return new ActionResponse((int)response.StatusCode, reader.ReadToEnd()) { Action = action };
                     }
                 }
             } catch (Exception e) {
-                return new ActionResponse(500, e.Message);
+                return new ActionResponse(500, e.Message) { Action = action };
             }
         }
 

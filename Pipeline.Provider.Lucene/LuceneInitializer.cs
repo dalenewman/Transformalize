@@ -38,7 +38,7 @@ namespace Pipeline.Provider.Lucene {
                 }
             } catch (Exception ex) {
                 response.Code = 500;
-                response.Content = $"Could not delete {_output.Connection.Folder}. {ex.Message}";
+                response.Message = $"Could not delete {_output.Connection.Folder}. {ex.Message}";
             }
             return response;
         }

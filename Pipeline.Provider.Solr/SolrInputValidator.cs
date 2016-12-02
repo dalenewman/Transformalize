@@ -42,10 +42,10 @@ namespace Pipeline.Provider.Solr {
                 var solrField = schema.FindSolrFieldByName(field.Name);
                 if (!solrField.IsStored) {
                     response.Code = 500;
-                    response.Content += $"The solr field {solrField.Name} is not stored, so it can not be retrieved.  You must remove the field or add input='false' to it." + Environment.NewLine;
+                    response.Message += $"The solr field {solrField.Name} is not stored, so it can not be retrieved.  You must remove the field or add input='false' to it." + Environment.NewLine;
                 }
             }
-            response.Content = response.Content.TrimEnd(Environment.NewLine.ToCharArray());
+            response.Message = response.Message.TrimEnd(Environment.NewLine.ToCharArray());
             return response;
         }
     }

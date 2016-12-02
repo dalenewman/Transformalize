@@ -64,7 +64,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Elasticsearch.Net.2.4.7\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\packages\Elasticsearch.Net.2.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -142,7 +142,6 @@
     <Compile Include="Modules\ProcessControlModule.cs" />
     <Compile Include="Modules\ProcessPipelineModule.cs" />
     <Compile Include="Modules\TemplateModule.cs" />
-    <Compile Include="Modules\UnloadedRootModule.cs" />
     <Compile Include="PipelineAction.cs" />
     <Compile Include="RunTimeDataReader.cs" />
     <Compile Include="RunTimeExecutor.cs" />

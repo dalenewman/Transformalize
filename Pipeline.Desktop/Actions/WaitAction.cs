@@ -12,7 +12,7 @@ namespace Pipeline.Desktop.Actions {
         public ActionResponse Execute() {
             var message = _action.Type == "wait" ? $"Waited for {_action.TimeOut} ms" : $"Slept for {_action.TimeOut} ms";
             Thread.Sleep(_action.TimeOut);
-            return new ActionResponse(200, message);
+            return new ActionResponse(200, message) { Action = _action };
         }
     }
 }

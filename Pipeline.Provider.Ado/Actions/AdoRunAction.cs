@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using Cfg.Net.Ext;
 using Dapper;
 using Pipeline.Contracts;
 using Pipeline.Extensions;
@@ -39,11 +40,11 @@ namespace Pipeline.Provider.Ado.Actions {
                 try {
                     _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
                     var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
-                    response.Content = message;
+                    response.Message = message;
                     _context.Info(message);
                 } catch (Exception ex) {
                     response.Code = 500;
-                    response.Content = ex.Message + " " + ex.StackTrace + " " + _node.Command.Replace("{", "{{").Replace("}", "}}");
+                    response.Message = ex.Message + " " + ex.StackTrace + " " + _node.Command.Replace("{", "{{").Replace("}", "}}");
                 }
             }
             return response;

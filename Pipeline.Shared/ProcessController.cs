@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Pipeline.Contracts;
@@ -40,10 +42,33 @@ namespace Pipeline {
             foreach (var action in PreActions) {
                 _context.Debug(() => $"Pre-Executing {action.GetType().Name}");
                 var response = action.Execute();
-                if (response.Code == 200)
+
+                if (response.Code == 200) {
+                    if (response.Action.Type != "internal") {
+                        _context.Info($"Successfully ran pre-action {response.Action.Type}.");
+                    }
+                    if (response.Message != string.Empty) {
+                        _context.Debug(() => response.Message);
+                    }
                     continue;
-                _context.Error(response.Content);
-                return false;
+                }
+
+                var errorMode = response.Action.ToErrorMode();
+
+                if (errorMode == ErrorMode.Default || errorMode == ErrorMode.Abort) {
+                    _context.Error("Abort: " + response.Message);
+                    return false;
+                }
+
+                if (errorMode == ErrorMode.Continue) {
+                    _context.Error("Continue: " + response.Message);
+                    continue;
+                }
+
+                if (errorMode == ErrorMode.Exception) {
+                    _context.Error("Exception: " + response.Message);
+                    throw new Exception(response.Message);
+                }
             }
             return true;
         }
@@ -68,9 +93,34 @@ namespace Pipeline {
             foreach (var action in PostActions) {
                 _context.Debug(() => $"Post-Executing {action.GetType().Name}");
                 var response = action.Execute();
-                if (response.Code != 200) {
-                    _context.Error(response.Content);
+
+                if (response.Code == 200) {
+                    if (response.Action.Type != "internal") {
+                        _context.Info($"Successfully ran post-action {response.Action.Type}.");
+                    }
+                    if (response.Message != string.Empty) {
+                        _context.Debug(() => response.Message);
+                    }
+                    continue;
                 }
+
+                var errorMode = response.Action.ToErrorMode();
+
+                if (errorMode == ErrorMode.Default || errorMode == ErrorMode.Continue) {
+                    _context.Error("Continue: " + response.Message);
+                    continue;
+                }
+
+                if (errorMode == ErrorMode.Abort) {
+                    _context.Error("Abort: " + response.Message);
+                    break;
+                }
+
+                if (errorMode == ErrorMode.Exception) {
+                    _context.Error("Exception: " + response.Message);
+                    throw new Exception(response.Message);
+                }
+
             }
         }
 

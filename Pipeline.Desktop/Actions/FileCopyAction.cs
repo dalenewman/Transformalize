@@ -50,7 +50,7 @@ namespace Pipeline.Desktop.Actions {
                 message = ex.Message;
             }
 
-            return new ActionResponse(status, message);
+            return new ActionResponse(status, message) { Action = _action };
         }
     }
 }

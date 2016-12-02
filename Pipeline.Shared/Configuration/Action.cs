@@ -17,10 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Cfg.Net;
 using Pipeline.Contracts;
-using Pipeline.Transforms;
 
 namespace Pipeline.Configuration {
 
@@ -39,14 +37,14 @@ namespace Pipeline.Configuration {
     /// 
     /// __Web__: Executes a GET or POST (as determined by <see cref="Method"/>) to a specified <see cref="Url"/>.  
     /// 
-    /// * If *get*, the web request result is stored in <see cref="Content"/>, and is forwarded to the next action's <see cref="Content"/>. 
-    /// * If *post*, <see cref="Content"/> is posted to the <see cref="Url"/>.
+    /// * If *get*, the web request result is stored in <see cref="Body"/>, and is forwarded to the next action's <see cref="Body"/>. 
+    /// * If *post*, <see cref="Body"/> is posted to the <see cref="Url"/>.
     /// 
     /// [!code-html[web](../../api/actions.xml?range=4-5 "web")]
     /// 
     /// ---
     ///
-    /// __Tfl__: Executes another pipeline as determined by either <see cref="Url"/>, <see cref="File"/>, or <see cref="Content"/>. 
+    /// __Tfl__: Executes another pipeline as determined by either <see cref="Url"/>, <see cref="File"/>, or <see cref="Body"/>. 
     /// 
     /// [!code-html[tfl](../../api/actions.xml?range=6-7 "tfl")]
     /// 
@@ -69,7 +67,7 @@ namespace Pipeline.Configuration {
         /// <summary>
         /// Indicates what type of action to perform.
         /// </summary>
-        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print,wait,sleep", ignoreCase = true)]
+        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print,wait,sleep,internal", ignoreCase = true)]
         public string Type { get; set; }
 
         /// <summary>
@@ -77,6 +75,22 @@ namespace Pipeline.Configuration {
         /// </summary>
         [Cfg(value = true)]
         public bool After { get; set; }
+
+        [Cfg(value = Constants.DefaultSetting, domain = "exception,abort,continue," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
+        public string ErrorMode { get; set; }
+
+        public ErrorMode ToErrorMode() {
+            switch (ErrorMode) {
+                case "abort":
+                    return Pipeline.ErrorMode.Abort;
+                case "continue":
+                    return Pipeline.ErrorMode.Continue;
+                case "exception":
+                    return Pipeline.ErrorMode.Exception;
+                default:
+                    return Pipeline.ErrorMode.Default;
+            }
+        }
 
         [Cfg(value = "")]
         public string Arguments { get; set; }
@@ -90,8 +104,6 @@ namespace Pipeline.Configuration {
         [Cfg(value = false)]
         public bool Before { get; set; }
 
-        [Cfg(value = "")]
-        public string Body { get; set; }
         [Cfg(value = "")]
         public string Cc { get; set; }
         [Cfg(value = "")]
@@ -129,7 +141,7 @@ namespace Pipeline.Configuration {
         public bool InTemplate { get; set; }
 
         [Cfg(value = "")]
-        public string Content { get; set; }
+        public string Body { get; set; }
 
         [Cfg]
         public List<NameReference> Modes { get; set; }
@@ -166,7 +178,7 @@ namespace Pipeline.Configuration {
         [Cfg(value = "info", domain = "info,information,informational,error,warn,warning,debug", toLower = true, trim = true)]
         public string Level { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Message { get; set; }
 
         [Cfg(value = -1)]

@@ -55,7 +55,7 @@ namespace Pipeline.Provider.File {
 
         public void Write(IEnumerable<IRow> rows) {
 
-            ErrorMode errorMode;
+            FileHelpers.ErrorMode errorMode;
             Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
 
             FileHelperAsyncEngine engine;
@@ -83,7 +83,7 @@ namespace Pipeline.Provider.File {
                                 engine[i] = row[field];
                                 break;
                             case "datetime":
-                                var format = field.Format == string.Empty ? "o" : field.Format.Replace("AM/PM","tt");
+                                var format = field.Format == string.Empty ? "o" : field.Format.Replace("AM/PM", "tt");
                                 engine[i] = row[field] is DateTime ? ((DateTime)row[field]).ToString(format) : Convert.ToDateTime(row[field]).ToString(format);
                                 break;
                             case "float":

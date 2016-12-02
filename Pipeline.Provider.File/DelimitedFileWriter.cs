@@ -51,7 +51,7 @@ namespace Pipeline.Provider.File {
 
         public void Write(IEnumerable<IRow> rows) {
 
-            ErrorMode errorMode;
+            FileHelpers.ErrorMode errorMode;
             Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
 
             FileHelperAsyncEngine engine;

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System.Data;
+using Cfg.Net.Ext;
 using Dapper;
 using Pipeline.Context;
 using Pipeline.Contracts;

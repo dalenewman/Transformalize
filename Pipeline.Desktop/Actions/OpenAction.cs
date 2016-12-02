@@ -28,13 +28,13 @@ namespace Pipeline.Desktop.Actions {
         }
 
         public ActionResponse Execute() {
-            var response = new ActionResponse();
+            var response = new ActionResponse { Action = _action };
             try {
                 var urlOrFile = string.IsNullOrEmpty(_action.File) ? _action.Url : _action.File;
                 System.Diagnostics.Process.Start(urlOrFile);
             } catch (Exception ex) {
                 response.Code = 500;
-                response.Content = $"Error opening {_action.File}. {ex.Message}";
+                response.Message = $"Error opening {_action.File}. {ex.Message}";
             }
             return response;
         }

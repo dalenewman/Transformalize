@@ -81,8 +81,8 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     return new WaitAction(action);
                 case "tfl":
                     var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
-                    if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Content)) {
-                        cfg = action.Content;
+                    if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Body)) {
+                        cfg = action.Body;
                     }
 
                     var root = ctx.Resolve<Process>(new NamedParameter("cfg", cfg));

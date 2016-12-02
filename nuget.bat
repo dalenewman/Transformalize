@@ -48,3 +48,6 @@ nuget pack Pipeline.Transform.Humanizer.nuspec -OutputDirectory "c:\temp\modules
 cd ..
 cd Pipeline.Transform.Jint
 nuget pack Pipeline.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
+cd ..
+cd Pipeline.Transform.JavaScriptEngineSwitcher
+nuget pack Pipeline.Transform.JavaScriptEngineSwitcher.nuspec -OutputDirectory "c:\temp\modules"

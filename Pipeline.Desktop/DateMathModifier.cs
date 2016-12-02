@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Cfg.Net.Contracts;
-using dalenewman;
+using DaleNewman;
 
 namespace Pipeline.Desktop {
     public class DateMathModifier : IRootModifier {

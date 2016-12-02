@@ -67,7 +67,7 @@ namespace Pipeline.Test {
             var response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -80,7 +80,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -100,7 +100,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -120,7 +120,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();

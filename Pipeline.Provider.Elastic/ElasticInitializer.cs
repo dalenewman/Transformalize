@@ -36,7 +36,7 @@ namespace Pipeline.Provider.Elastic {
             var elasticResponse = _client.IndicesCreate<DynamicResponse>(_context.Connection.Index, "{ \"settings\":{}}");
             return new ActionResponse {
                 Code = elasticResponse.HttpStatusCode ?? 500,
-                Content = elasticResponse.ServerError == null ? string.Empty : elasticResponse.ServerError.Error.Reason ?? string.Empty
+                Message = elasticResponse.ServerError == null ? string.Empty : elasticResponse.ServerError.Error.Reason ?? string.Empty
             };
         }
     }

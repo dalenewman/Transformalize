@@ -34,6 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7963D
 		Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec = Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec
 		Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec
 		Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec
+		Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.nuspec = Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.nuspec
 		Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec = Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec
 	EndProjectSection
 EndProject

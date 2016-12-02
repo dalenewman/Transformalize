@@ -57,7 +57,7 @@ namespace Pipeline.Provider.File {
         }
 
         public IEnumerable<IRow> Read() {
-            ErrorMode errorMode;
+            FileHelpers.ErrorMode errorMode;
             Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
 
             var engine = new FileHelperAsyncEngine(_builder.CreateRecordClass());

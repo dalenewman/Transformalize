@@ -81,7 +81,8 @@ namespace Pipeline.Ioc.Autofac.Modules {
                     ctx.ResolveNamed<IValidator>("js"),
                     new DateMathModifier(),
                     new PlaceHolderModifier(),
-                    new PlaceHolderValidator()
+                    new PlaceHolderValidator(),
+                    new NullValidator("illegal")
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {

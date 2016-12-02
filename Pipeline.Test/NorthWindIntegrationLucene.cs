@@ -73,7 +73,7 @@ namespace Pipeline.Test {
             var response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder,"Order Details"))), true)) {
                 Assert.AreEqual(2155, reader.NumDocs());
@@ -84,7 +84,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "Order Details"))), true)) {
                 Assert.AreEqual(2155, reader.NumDocs());
@@ -101,7 +101,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder,"Order Details"))), true)) {
                 var hits = searcher.Search(new TermQuery(new Term("TflId", "1025339")),null, 1);
@@ -122,7 +122,7 @@ namespace Pipeline.Test {
             response = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, response.Code);
-            Assert.AreEqual(string.Empty, response.Content);
+            Assert.AreEqual(string.Empty, response.Message);
 
             using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "Orders"))), true)) {
                 var hits = searcher.Search(new TermQuery(new Term("OrdersOrderID", NumericUtils.IntToPrefixCoded(10254))), 1);

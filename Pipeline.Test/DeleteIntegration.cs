@@ -96,7 +96,7 @@ namespace Pipeline.Test {
             var responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -108,7 +108,7 @@ namespace Pipeline.Test {
             responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -127,7 +127,7 @@ namespace Pipeline.Test {
             responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -140,7 +140,7 @@ namespace Pipeline.Test {
             responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
@@ -160,7 +160,7 @@ namespace Pipeline.Test {
             responseSql = new PipelineAction(root).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
-            Assert.AreEqual(string.Empty, responseSql.Content);
+            Assert.AreEqual(string.Empty, responseSql.Message);
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using Cfg.Net.Ext;
 using Pipeline.Configuration;
 using Pipeline.Contracts;
 
@@ -31,7 +33,7 @@ namespace Pipeline.Actions {
         public ActionResponse Execute() {
             var response = new ActionResponse(_engine.Render());
             foreach (var action in _template.Actions) {
-                action.Content = response.Content;
+                action.Body = response.Message;
             }
             return response;
         }

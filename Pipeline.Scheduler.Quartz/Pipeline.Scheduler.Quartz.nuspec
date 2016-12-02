@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Pipeline.Scheduler.Quartz</id>
-    <version>0.1.1-beta</version>
+    <version>0.1.2-beta</version>
     <title>Transformalize Scheduler Quartz.NET</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.1-beta" />
+        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
         <dependency id="Quartz" version="2.4.1" />
       </group>
     </dependencies>

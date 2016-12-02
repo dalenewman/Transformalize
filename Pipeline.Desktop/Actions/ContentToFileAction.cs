@@ -15,10 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using Pipeline.Contracts;
 using System.IO;
-using Pipeline.Configuration;
+using System.Runtime.CompilerServices;
 using Pipeline.Context;
+using Action = Pipeline.Configuration.Action;
 
 namespace Pipeline.Desktop.Actions {
     public class ContentToFileAction : IAction {
@@ -31,14 +34,21 @@ namespace Pipeline.Desktop.Actions {
         }
 
         public ActionResponse Execute() {
+            var response = new ActionResponse { Action = _action };
             var to = new FileInfo(_action.To);
-            if (string.IsNullOrEmpty(_action.Content)) {
+            if (string.IsNullOrEmpty(_action.Body)) {
                 _context.Warn("Nothing to write to {0}", to.Name);
             } else {
                 _context.Info("Writing content to {0}", to.Name);
-                File.WriteAllText(to.FullName, _action.Content);
+                try {
+                    File.WriteAllText(to.FullName, _action.Body);
+                } catch (Exception ex) {
+                    _context.Error($"Failed to run {_action.Type} action.");
+                    _context.Error(ex.Message);
+                    response.Code = 500;
+                }
             }
-            return new ActionResponse();
+            return response;
         }
     }
 }
