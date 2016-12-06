@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using Cfg.Net.Ext;
+using Transformalize.Configuration;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Impl {
 
     public class TransformFieldsToParametersAdapter {
         readonly Entity _entity;
@@ -47,7 +49,8 @@ namespace Pipeline.Configuration {
                             Entity = entity,
                             Field = tField.Alias,
                             Name = tField.Name,
-                            Input = false
+                            Input = false,
+                            Type = tField.Type
                         }.WithDefaults());
                         count++;
                     }

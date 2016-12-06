@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Pipeline.Contracts;
+
 using System;
 using System.Threading;
+using Autofac;
+using Transformalize.Contracts;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     class Program {
         static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
 

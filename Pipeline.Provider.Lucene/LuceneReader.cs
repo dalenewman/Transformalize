@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
-using Pipeline.Contracts;
-using Field = Pipeline.Configuration.Field;
+using Transformalize.Contracts;
+using Field = Transformalize.Configuration.Field;
 using Version = Lucene.Net.Util.Version;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
     public class LuceneReader : IRead {
 
         private const Version V = Version.LUCENE_30;

@@ -15,19 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Field = Pipeline.Configuration.Field;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Field = Transformalize.Configuration.Field;
 using LuceneField = Lucene.Net.Documents.Field;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
     public class LuceneWriter : IWrite {
 
         private readonly IndexWriterFactory _writerFactory;

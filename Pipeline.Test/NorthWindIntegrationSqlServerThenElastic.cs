@@ -15,23 +15,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Provider.SqlServer;
-using Dapper;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Ext;
+using Dapper;
 using Elasticsearch.Net;
-using Pipeline.Context;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Provider.Elastic;
-using Pipeline.Provider.Elastic.Ext;
+using NUnit.Framework;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.Elastic;
+using Transformalize.Provider.Elastic.Ext;
+using Transformalize.Provider.SqlServer;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture]
     public class NorthWindIntegrationSqlServerThenElastic {

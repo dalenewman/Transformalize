@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Autofac;
 using Cfg.Net.Ext;
-using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Provider.SQLite;
-using Pipeline.Provider.SqlServer;
 using Dapper;
-using Pipeline.Ioc.Autofac.Modules;
+using NUnit.Framework;
+using Transformalize.Configuration;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.SqlServer;
+using Transformalize.Provider.SQLite;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture]
     public class NorthWindIntegrationSqlite

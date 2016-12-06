@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Parsers.nanoXML;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Transforms {
+namespace Transformalize.Transforms {
     /// <summary>
     /// The default (portable) fromxml transform, based on Cfg-Net's modified copy of NanoXml.
     /// </summary>

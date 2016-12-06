@@ -196,6 +196,13 @@
         <add name='format' value='[default]' />
       </parameters>
     </add>
+    <add name='web'>
+      <parameters>
+        <add name='url' value='' />
+        <add name='webmethod' value='GET' />
+        <add name='body' value='' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -313,6 +320,11 @@
     <add name='commonprefix' signature='none' target='t' />
     <add name='commonprefixes' signature='separator' target='t' />
     <add name='distance' signature='distance' target='t' />
+    
+    <add name='web' signature='web' target='t' />
+    <add name='urlencode' signature='none' target='t' />
+    <add name='fromjson' signature='none' target='t' />
+    
   </methods>
 
 </cfg>

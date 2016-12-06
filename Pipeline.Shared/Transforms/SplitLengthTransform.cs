@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms {
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms {
     public class SplitLengthTransform : BaseTransform {
         readonly Field _input;
         readonly char[] _separator;

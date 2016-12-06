@@ -15,21 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Text.RegularExpressions;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Transforms {
+namespace Transformalize.Transforms {
     public class RegexReplaceTransform : BaseTransform {
+
         private readonly Field _input;
         private readonly Regex _regex;
         private readonly Action<IRow> _transform;
 
         public RegexReplaceTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
+#if NETS10
             _regex = new Regex(context.Transform.Pattern);
+#else
+            _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
+#endif
             if (context.Transform.Count == 0) {
                 _transform = r => r[Context.Field] = _regex.Replace(r[_input].ToString(), context.Transform.NewValue);
             } else {

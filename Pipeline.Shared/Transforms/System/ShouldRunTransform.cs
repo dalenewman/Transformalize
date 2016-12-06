@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms.System {
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms.System {
     public class ShouldRunTransform : BaseTransform {
         private readonly ITransform _transform;
 

@@ -15,19 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
-using Pipeline.Contracts;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using Cfg.Net.Ext;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
 
     public class ElasticReader : IRead {
 

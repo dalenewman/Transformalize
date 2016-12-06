@@ -15,17 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Core;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Pipeline.Nulls;
-using Pipeline.Provider.Solr;
-using Pipeline.Provider.Solr.Ext;
 using SolrNet;
 using SolrNet.Impl;
 using SolrNet.Impl.DocumentPropertyVisitors;
@@ -38,8 +32,15 @@ using SolrNet.Mapping;
 using SolrNet.Mapping.Validation;
 using SolrNet.Mapping.Validation.Rules;
 using SolrNet.Schema;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Nulls;
+using Transformalize.Provider.Solr;
+using Transformalize.Provider.Solr.Ext;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     public class SolrModule : Module {
 
         private readonly Process _process;

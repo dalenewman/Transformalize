@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Pipeline.Extensions {
+namespace Transformalize.Extensions {
 
     public static class LinqExtensions {
 

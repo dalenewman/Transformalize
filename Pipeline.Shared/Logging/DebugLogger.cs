@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Context;
-using Pipeline.Contracts;
 
-namespace Pipeline.Logging {
+using System;
+using Transformalize.Context;
+using Transformalize.Contracts;
+
+namespace Transformalize.Logging {
 
     public class DebugLogger : BaseLogger, IPipelineLogger {
 

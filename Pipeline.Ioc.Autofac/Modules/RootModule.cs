@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,19 +25,19 @@ using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Nulls;
-using Pipeline.Transform.Jint;
-using Pipeline.Template.Razor;
-using IParser = Pipeline.Contracts.IParser;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Nulls;
+using Transformalize.Template.Razor;
+using Transformalize.Transform.Jint;
+using IParser = Transformalize.Contracts.IParser;
 
 // ReSharper disable PossibleMultipleEnumeration
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
 
     public class RootModule : Module {
         private readonly string _shorthand;

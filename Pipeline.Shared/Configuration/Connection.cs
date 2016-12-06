@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using Cfg.Net;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
     public class Connection : CfgNode {
 
         [Cfg(required = true, unique = true, toLower = true)]

@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Xml.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms {
+using System.Xml.Linq;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms {
     public class FormatXmlTransfrom : BaseTransform {
         private readonly Field _input;
 

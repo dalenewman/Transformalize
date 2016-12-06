@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.IO;
 using Lucene.Net.Store;
 using Directory = Lucene.Net.Store.Directory;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
     public class DirectoryFactory {
         private readonly string _path;
 

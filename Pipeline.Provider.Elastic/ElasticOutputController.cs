@@ -15,14 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.CodeDom.Compiler;
+
 using System.Diagnostics;
 using Elasticsearch.Net;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Elastic.Ext;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Elastic.Ext;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
     public class ElasticOutputController : BaseOutputController {
         private readonly IElasticLowLevelClient _client;
         private readonly Stopwatch _stopWatch;

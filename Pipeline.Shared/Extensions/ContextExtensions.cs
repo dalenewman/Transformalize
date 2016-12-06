@@ -15,9 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
 
-namespace Pipeline.Contracts {
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Extensions {
     public static class ContextExtensions {
         public static Transform PreviousTransform(this IContext context) {
             if (context.Transform.Method == string.Empty)

@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Diagnostics;
-using Pipeline.Context;
-using Pipeline.Contracts;
 
-namespace Pipeline.Provider.Ado {
+using System.Diagnostics;
+using Transformalize.Context;
+using Transformalize.Contracts;
+
+namespace Transformalize.Provider.Ado {
 
     public class AdoStarController : IOutputController {
 

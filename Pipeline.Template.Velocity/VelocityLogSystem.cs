@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using NVelocity.Runtime;
 using NVelocity.Runtime.Log;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 using LogLevel = NVelocity.Runtime.Log.LogLevel;
 
-namespace Pipeline.Template.Velocity {
+namespace Transformalize.Template.Velocity {
     public class VelocityLogSystem : ILogSystem {
         private readonly IContext _context;
 

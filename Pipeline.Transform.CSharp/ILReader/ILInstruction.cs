@@ -20,7 +20,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Pipeline.Transform.CSharp.ILReader {
+namespace Transformalize.Transform.CSharp.ILReader {
     public abstract class ILInstruction {
         protected Int32 m_offset;
         protected OpCode m_opCode;

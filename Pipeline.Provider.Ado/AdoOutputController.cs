@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Data;
 using System.Diagnostics;
 using Dapper;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado.Ext;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Ado.Ext;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
     public class AdoOutputController : BaseOutputController {
         private readonly IConnectionFactory _cf;
 

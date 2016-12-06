@@ -8,8 +8,8 @@
     <ProjectGuid>{BCA826D4-686E-4030-863A-27DB352C551C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipeline.Test</RootNamespace>
-    <AssemblyName>Pipeline.Test</AssemblyName>
+    <RootNamespace>Transformalize.Test</RootNamespace>
+    <AssemblyName>Transformalize.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -42,8 +42,8 @@
       <HintPath>..\packages\Autofac.4.2.1\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -170,9 +170,9 @@
       <Project>{58ff362e-4a8d-459e-a174-5aaae7ea8953}</Project>
       <Name>Pipeline.Ioc.Autofac</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
+    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
       <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline.Portable</Name>
+      <Name>Pipeline</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
       <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>

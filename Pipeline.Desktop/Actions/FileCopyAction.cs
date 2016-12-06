@@ -18,10 +18,11 @@
 
 using System;
 using System.IO;
-using Pipeline.Contracts;
-using Action = Pipeline.Configuration.Action;
+using Transformalize.Actions;
+using Transformalize.Contracts;
+using Action = Transformalize.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class FileCopyAction : IAction {
 
         private readonly IContext _context;

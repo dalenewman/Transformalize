@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
 
-namespace Pipeline.Provider.Ado {
+using System.Collections.Generic;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+
+namespace Transformalize.Provider.Ado {
 
     /// <summary>
     /// Writes one query to read all the keys, 

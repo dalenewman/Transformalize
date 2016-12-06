@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
 using Cfg.Net.Contracts;
 using DaleNewman;
 
-namespace Pipeline.Desktop {
+namespace Transformalize.Desktop {
     public class DateMathModifier : IRootModifier {
 
         private const string DefaultFormat = "yyyy-MM-dd";

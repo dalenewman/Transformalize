@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Data;
-using Pipeline.Configuration;
 
-namespace Pipeline.Provider.Ado {
+using System.Data;
+using Transformalize.Configuration;
+
+namespace Transformalize.Provider.Ado {
     public interface IConnectionFactory {
         IDbConnection GetConnection();
         string GetConnectionString();

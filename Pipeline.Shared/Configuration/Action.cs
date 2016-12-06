@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
 
     /// <summary>
     /// An action is performed <see cref="Before"/> or <see cref="After"/> a pipeline is run.
@@ -82,13 +83,13 @@ namespace Pipeline.Configuration {
         public ErrorMode ToErrorMode() {
             switch (ErrorMode) {
                 case "abort":
-                    return Pipeline.ErrorMode.Abort;
+                    return Transformalize.ErrorMode.Abort;
                 case "continue":
-                    return Pipeline.ErrorMode.Continue;
+                    return Transformalize.ErrorMode.Continue;
                 case "exception":
-                    return Pipeline.ErrorMode.Exception;
+                    return Transformalize.ErrorMode.Exception;
                 default:
-                    return Pipeline.ErrorMode.Default;
+                    return Transformalize.ErrorMode.Default;
             }
         }
 

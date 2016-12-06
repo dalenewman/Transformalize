@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Pipeline.Transform.CSharp.ILReader {
+namespace Transformalize.Transform.CSharp.ILReader {
     public sealed class ILReader : IEnumerable<ILInstruction>, IEnumerable {
         #region Static members
         static Type s_runtimeMethodInfoType = Type.GetType("System.Reflection.RuntimeMethodInfo");

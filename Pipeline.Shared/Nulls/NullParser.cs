@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Contracts;
 
-namespace Pipeline.Nulls {
+using System;
+using Transformalize.Contracts;
+
+namespace Transformalize.Nulls {
     public class NullParser : IParser {
         public bool Parse(string script, Action<string, object[]> error) {
             return true;

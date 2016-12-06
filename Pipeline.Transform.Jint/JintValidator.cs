@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
 using Jint.Parser;
-using Pipeline.Extensions;
+using Transformalize.Extensions;
 
-namespace Pipeline.Transform.Jint {
+namespace Transformalize.Transform.Jint {
 
     public class JintValidator : IValidator {
 

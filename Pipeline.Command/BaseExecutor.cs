@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using Autofac;
 using Humanizer;
 using Humanizer.Bytes;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Extensions;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Logging.NLog;
 using Quartz;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Extensions;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging.NLog;
 using Environment = System.Environment;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class BaseExecutor : IRunTimeExecute {
 

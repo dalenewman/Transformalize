@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net.Contracts;
-using Pipeline.Contracts;
 
-namespace Pipeline {
+using Cfg.Net.Contracts;
+using Transformalize.Contracts;
+
+namespace Transformalize {
     public class ConfigurationLogger : ILogger {
         private readonly IContext _context;
 

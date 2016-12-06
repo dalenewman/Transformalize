@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Nulls;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Nulls;
 
-namespace Pipeline.Ioc.Autofac {
+namespace Transformalize.Ioc.Autofac {
 
     public class RunTimeDataReader : IRunTimeRun {
         private readonly IPipelineLogger _logger;

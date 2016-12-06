@@ -15,15 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
     public class AdoMapReader : IMapReader {
         private readonly IConnectionFactory _connectionFactory;
         private readonly string _mapName;

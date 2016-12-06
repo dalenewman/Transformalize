@@ -19,10 +19,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Transform.CSharp {
+namespace Transformalize.Transform.CSharp {
     public class CsharpTransform : BaseTransform {
         private readonly CSharpHost.UserCodeInvoker _userCode;
 

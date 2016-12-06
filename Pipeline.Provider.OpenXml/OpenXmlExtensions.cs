@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using OpenXmlPowerTools;
-using Pipeline.Configuration;
 
-namespace Pipeline.Provider.OpenXml {
+using OpenXmlPowerTools;
+using Transformalize.Configuration;
+
+namespace Transformalize.Provider.OpenXml {
     public static class OpenXmlExtensions {
         public static CellDataType ToCellDataType(this Field f) {
             if (f.Type.StartsWith("bool"))

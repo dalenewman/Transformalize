@@ -15,21 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using Autofac;
 using Cfg.Net.Ext;
-using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Provider.SqlServer;
 using Dapper;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
-using Pipeline.Ioc.Autofac.Modules;
+using NUnit.Framework;
+using Transformalize.Configuration;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.SqlServer;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture]
     public class NorthWindIntegrationLucene {

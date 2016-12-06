@@ -7,8 +7,8 @@
     <ProjectGuid>{C54A7C66-2F1D-4035-A798-4598B07CE3CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipeline.Transform.JavaScriptEngineSwitcher</RootNamespace>
-    <AssemblyName>Pipeline.Transform.JavaScriptEngineSwitcher</AssemblyName>
+    <RootNamespace>Transformalize.Transform.JavaScriptEngineSwitcher</RootNamespace>
+    <AssemblyName>Transformalize.Transform.JavaScriptEngineSwitcher</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,8 +31,8 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.1.2.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
@@ -53,9 +53,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
+    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
       <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline.Portable</Name>
+      <Name>Pipeline</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

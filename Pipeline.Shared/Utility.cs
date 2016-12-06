@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline {
+namespace Transformalize {
 
     public static class Utility {
 
@@ -85,7 +86,7 @@ namespace Pipeline {
 
         public static string Identifier(string name, string substitute = "_") {
             var first = Regex.Replace(name, @"^[0-9]{1}|\W", substitute).TrimEnd(substitute.ToCharArray()).Left(128);
-            return Regex.Replace(first, substitute+"{2,}", substitute);
+            return Regex.Replace(first, substitute + "{2,}", substitute);
         }
 
         public static string GetExcelName(int index) {
@@ -158,7 +159,11 @@ namespace Pipeline {
             return winner?.Character ?? default(char);
         }
         public static object GetPropValue(object src, string propName) {
+#if NETS10
             return src.GetType().GetRuntimeProperty(propName).GetValue(src);
+#else
+            return src.GetType().GetProperty(propName).GetValue(src, null);
+#endif
         }
 
         public static string GetMethodName(IContext context) {

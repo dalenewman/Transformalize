@@ -15,12 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
     public class LuceneInitializer : IInitializer {
         private readonly OutputContext _output;
 

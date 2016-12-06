@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Pipeline.Contracts {
+namespace Transformalize.Contracts {
     public interface ISerialize {
         string Serialize(IRow row);
         string Header { get; }

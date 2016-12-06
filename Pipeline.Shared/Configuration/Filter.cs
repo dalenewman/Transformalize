@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net;
-using Pipeline.Contracts;
 
-namespace Pipeline.Configuration {
+using Cfg.Net;
+using Transformalize.Contracts;
+
+namespace Transformalize.Configuration {
     public class Filter : CfgNode, IHasField {
         string _continuation;
 

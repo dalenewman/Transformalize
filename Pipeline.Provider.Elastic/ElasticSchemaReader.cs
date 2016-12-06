@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Ext;
 using Elasticsearch.Net;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
     public class ElasticSchemaReader : ISchemaReader {
         private readonly IConnectionContext _input;
         private readonly string _index;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Quartz;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class NowExecutor : BaseExecutor, IJob, IDisposable {
 

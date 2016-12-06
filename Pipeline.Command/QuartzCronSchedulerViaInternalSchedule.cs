@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.Logging;
-using Pipeline.Configuration;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
+using Transformalize.Configuration;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
 
     public class QuartzCronSchedulerViaInternalSchedule : Contracts.IScheduler {
         readonly Quartz.IScheduler _scheduler;

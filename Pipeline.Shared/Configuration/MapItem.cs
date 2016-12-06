@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Cfg.Net;
 using Cfg.Net.Ext;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
     public class MapItem : CfgNode {
 
         [Cfg(required = true, unique = true)]

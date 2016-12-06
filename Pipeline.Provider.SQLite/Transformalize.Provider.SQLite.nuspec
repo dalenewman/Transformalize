@@ -1,27 +1,27 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Pipeline.Provider.MySql</id>
-    <version>0.1.2-beta</version>
-    <title>Transformalize Provider MySql</title>
+    <id>Transformalize.Provider.SQLite</id>
+    <version>0.2.0-beta</version>
+    <title>Transformalize Provider SQLite</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>MySql Provider for Transformalize</description>
+    <description>SQLite Provider for Transformalize</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2013-2016</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
-        <dependency id="MySql.Data" version="6.9.9" />
-        <dependency id="Pipeline.Provider.Ado" version="0.1.2-beta" />
+        <dependency id="Transformalize" version="0.2.0-beta" />
+        <dependency id="System.Data.SQLite.Core" version="1.0.103" />
+        <dependency id="Transformalize.Provider.Ado" version="0.2.0-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Pipeline.Provider.MySql.dll" target="lib\net452\Pipeline.Provider.MySql.dll" />
+    <file src="bin\Release\Transformalize.Provider.SQLite.dll" target="lib\net452\Transformalize.Provider.SQLite.dll" />
   </files>
 </package>

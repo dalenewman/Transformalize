@@ -16,11 +16,11 @@
 // limitations under the License.
 #endregion
 
-using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Actions {
+namespace Transformalize.Actions {
     public class RenderTemplateAction : IAction {
         private readonly Template _template;
         private readonly ITemplateEngine _engine;

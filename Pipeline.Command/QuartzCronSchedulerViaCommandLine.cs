@@ -21,7 +21,7 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     public class QuartzCronSchedulerViaCommandLine : Contracts.IScheduler {
         readonly Quartz.IScheduler _scheduler;
         private readonly Options _options;

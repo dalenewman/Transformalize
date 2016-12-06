@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Provider.SqlServer;
-using Dapper;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Provider.PostgreSql;
 
-namespace Pipeline.Test {
+using Autofac;
+using Dapper;
+using NUnit.Framework;
+using Transformalize.Configuration;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.PostgreSql;
+using Transformalize.Provider.SqlServer;
+
+namespace Transformalize.Test {
 
     [TestFixture]
     public class NorthWindIntegrationPostgreSql

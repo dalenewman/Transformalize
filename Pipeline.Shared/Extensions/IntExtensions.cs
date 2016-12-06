@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Pipeline.Extensions {
+namespace Transformalize.Extensions {
     public static class IntExtensions {
         public static string Plural(this int i) {
             return i == 1 ? string.Empty : "s";

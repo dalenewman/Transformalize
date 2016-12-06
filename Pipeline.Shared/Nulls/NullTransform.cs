@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Nulls {
+using Transformalize.Contracts;
+using Transformalize.Transforms;
+
+namespace Transformalize.Nulls {
     public class NullTransform : BaseTransform {
         public NullTransform(IContext context) : base(context, null) { }
         public override IRow Transform(IRow row) {

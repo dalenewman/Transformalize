@@ -15,21 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Template.Razor {
+namespace Transformalize.Template.Razor {
 
     public class RazorTransform : BaseTransform {
 

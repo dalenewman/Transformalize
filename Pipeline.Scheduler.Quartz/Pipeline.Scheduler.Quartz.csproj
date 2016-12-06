@@ -7,8 +7,8 @@
     <ProjectGuid>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipeline.Scheduler.Quartz</RootNamespace>
-    <AssemblyName>Pipeline.Scheduler.Quartz</AssemblyName>
+    <RootNamespace>Transformalize.Scheduler.Quartz</RootNamespace>
+    <AssemblyName>Transformalize.Scheduler.Quartz</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -34,8 +34,8 @@
     <CodeAnalysisRuleSet />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
@@ -84,9 +84,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
+    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
       <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline.Portable</Name>
+      <Name>Pipeline</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

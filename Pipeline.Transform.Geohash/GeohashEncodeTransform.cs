@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Transform.Geohash {
+namespace Transformalize.Transform.Geohash {
     public class GeohashEncodeTransform : BaseTransform {
 
         private readonly Field _latField;

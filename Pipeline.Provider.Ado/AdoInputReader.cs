@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado.Ext;
-using Pipeline.Transforms.System;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Ado.Ext;
+using Transformalize.Transforms.System;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
     /// <summary>
     /// A reader for an entity's input (source).
     /// </summary>

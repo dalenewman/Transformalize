@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Transforms.System {
+namespace Transformalize.Transforms.System {
     public class StringTruncateTransfom : BaseTransform {
         readonly StringLength[] _strings;
 

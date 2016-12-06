@@ -19,9 +19,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 
-namespace Pipeline {
+namespace Transformalize {
 
     public class ProcessController : IProcessController {
 

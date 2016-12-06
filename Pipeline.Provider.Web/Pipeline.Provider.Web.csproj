@@ -7,8 +7,8 @@
     <ProjectGuid>{4D9D0159-F680-4E1B-B4E6-9ED1BDB03F40}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Pipeline.Provider.Web</RootNamespace>
-    <AssemblyName>Pipeline.Provider.Web</AssemblyName>
+    <RootNamespace>Transformalize.Provider.Web</RootNamespace>
+    <AssemblyName>Transformalize.Provider.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -60,9 +60,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.Portable.csproj">
+    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
       <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline.Portable</Name>
+      <Name>Pipeline</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

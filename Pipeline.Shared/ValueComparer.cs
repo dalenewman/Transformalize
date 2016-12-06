@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Pipeline {
+namespace Transformalize {
     public class ValueComparer : IEqualityComparer<IEnumerable<object>> {
 
         public bool Equals(IEnumerable<object> x, IEnumerable<object> y) {

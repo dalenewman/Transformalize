@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,10 +24,10 @@ using System.Text;
 using Cfg.Net.Contracts;
 using NVelocity;
 using NVelocity.Runtime;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Template.Velocity {
+namespace Transformalize.Template.Velocity {
 
     public static class VelocityInitializer {
         private static readonly object Locker = new object();

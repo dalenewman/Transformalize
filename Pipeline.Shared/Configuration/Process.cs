@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +23,12 @@ using Cfg.Net;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
 using Cfg.Net.Serializers;
-using Pipeline.Configuration.Ext;
-using Pipeline.Context;
-using Pipeline.Extensions;
-using Pipeline.Logging;
+using Transformalize.Configuration.Ext;
+using Transformalize.Context;
+using Transformalize.Extensions;
+using Transformalize.Logging;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
 
     [Cfg(name = "cfg")]
     public class Process : CfgNode, IDisposable {

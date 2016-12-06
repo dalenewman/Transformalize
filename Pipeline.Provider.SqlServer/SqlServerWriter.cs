@@ -15,19 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Pipeline.Extensions;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado;
-using Pipeline.Provider.Ado.Ext;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Provider.Ado;
+using Transformalize.Provider.Ado.Ext;
 
-namespace Pipeline.Provider.SqlServer {
+namespace Transformalize.Provider.SqlServer {
 
     public class SqlServerWriter : IWrite {
 

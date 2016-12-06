@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using NLog;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Logging.NLog {
+namespace Transformalize.Logging.NLog {
     public class NLogWriter : IWrite {
 
         private readonly Logger _logger;

@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Provider.Ado;
+using Transformalize.Configuration;
+using Transformalize.Provider.Ado;
 
-namespace Pipeline.Provider.SQLite {
+namespace Transformalize.Provider.SQLite {
     public class SqLiteConnectionFactory : IConnectionFactory {
         static Dictionary<string, string> _types;
         readonly Connection _c;

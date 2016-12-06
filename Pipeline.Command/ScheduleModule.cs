@@ -15,22 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Common.Logging;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Extensions;
-using Pipeline.Logging.NLog;
-using Pipeline.Scheduler.Quartz;
 using Quartz.Spi;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Extensions;
+using Transformalize.Logging.NLog;
+using Transformalize.Scheduler.Quartz;
 using Environment = System.Environment;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
 
     public class ScheduleModule : Module {
         private readonly Options _options;

@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
-using Pipeline.Configuration;
 
-namespace Pipeline.Contracts {
+using System.Collections.Generic;
+using Transformalize.Configuration;
+
+namespace Transformalize.Contracts {
     public interface IRunTimeRun {
         IEnumerable<IRow> Run(Process process);
     }

@@ -16,10 +16,10 @@
 // limitations under the License.
 #endregion
 
-using Cfg.Net.Ext;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Contracts;
 
-namespace Pipeline.Nulls {
+namespace Transformalize.Nulls {
     public class NullInitializer : IInitializer {
         public ActionResponse Execute() {
             return new ActionResponse();

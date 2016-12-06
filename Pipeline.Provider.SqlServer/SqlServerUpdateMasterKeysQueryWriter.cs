@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using System.Text;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Ado;
 
-namespace Pipeline.Provider.SqlServer {
+namespace Transformalize.Provider.SqlServer {
     public class SqlServerUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
         private readonly PipelineContext _c;
         private readonly IConnectionFactory _cf;

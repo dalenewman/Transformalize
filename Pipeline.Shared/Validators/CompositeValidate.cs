@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Validators {
+namespace Transformalize.Validators {
     public class CompositeValidator : BaseTransform {
         readonly IEnumerable<ITransform> _transforms;
         readonly Func<IRow, object> _validate;

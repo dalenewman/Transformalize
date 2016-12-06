@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Lucene.Net.Analysis;
 using Lucene.Net.Index;
-using Directory = Lucene.Net.Store.Directory;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
 
     /// <summary>
     /// A factory is needed here because we don't want to instantiate the index reader at composition root.

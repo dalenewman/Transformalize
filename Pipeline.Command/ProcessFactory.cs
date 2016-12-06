@@ -19,14 +19,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Logging.NLog;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging.NLog;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     public static class ProcessFactory {
 
         public static bool TryCreate(string cfg, string shorthand, Dictionary<string,string> parameters, out Process process) {

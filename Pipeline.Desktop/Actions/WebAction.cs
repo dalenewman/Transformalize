@@ -15,16 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Action = Pipeline.Configuration.Action;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Action = Transformalize.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class WebAction : IAction {
         private readonly PipelineContext _context;
         private readonly Action _action;

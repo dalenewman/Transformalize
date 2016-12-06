@@ -1,9 +1,10 @@
 using System;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Action = Pipeline.Configuration.Action;
+using Transformalize.Actions;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Action = Transformalize.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class PrintAction : IAction {
         private readonly Action _action;
         private readonly string _level;

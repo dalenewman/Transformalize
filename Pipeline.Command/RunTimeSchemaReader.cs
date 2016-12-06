@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Ioc.Autofac.Modules;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Ioc.Autofac.Modules;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
 
     public class RunTimeSchemaReader : IRunTimeSchemaReader {
 

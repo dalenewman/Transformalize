@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Pipeline.Actions;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Process = Pipeline.Configuration.Process;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Process = Transformalize.Configuration.Process;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     public class ProcessControlModule : Module {
         private readonly Process _process;
 

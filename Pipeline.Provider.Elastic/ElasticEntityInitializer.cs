@@ -15,14 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
     public class ElasticEntityInitializer : IAction {
 
         readonly OutputContext _context;

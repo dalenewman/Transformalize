@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.File {
+namespace Transformalize.Provider.File {
     public class FileReader : IRead {
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;

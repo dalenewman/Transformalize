@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
 
-namespace Pipeline.Nulls {
+using Transformalize.Contracts;
+
+namespace Transformalize.Nulls {
     public class NullUpdater : IUpdate {
         private readonly IContext _context;
         private readonly bool _log;

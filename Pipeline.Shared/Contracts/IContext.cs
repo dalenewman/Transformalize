@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
-namespace Pipeline.Contracts {
+namespace Transformalize.Contracts {
     public interface IContext {
         Process Process { get; }
         Entity Entity { get; }

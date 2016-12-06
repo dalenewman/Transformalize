@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
 
-namespace Pipeline.Transforms {
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+
+namespace Transformalize.Transforms {
+
     public class RightTransform : BaseTransform {
         readonly Field _input;
 

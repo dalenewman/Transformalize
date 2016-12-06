@@ -15,18 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Autofac;
-using Pipeline.Actions;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Actions;
-using Pipeline.Extensions;
-using Pipeline.Provider.Ado;
-using Pipeline.Provider.Ado.Actions;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Actions;
+using Transformalize.Extensions;
+using Transformalize.Provider.Ado;
+using Transformalize.Provider.Ado.Actions;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     /// <summary>
     /// The `ActionModule` is only for actions embedded in a host process:
     /// 

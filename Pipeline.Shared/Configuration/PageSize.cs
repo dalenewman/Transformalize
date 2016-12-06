@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Cfg.Net;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
     public class PageSize : CfgNode {
         [Cfg]
         public int Size { get; set; }

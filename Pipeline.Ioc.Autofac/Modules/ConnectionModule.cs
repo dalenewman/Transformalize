@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Autofac;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     public abstract class ConnectionModule : Module {
         readonly IEnumerable<Connection> _connections;
 

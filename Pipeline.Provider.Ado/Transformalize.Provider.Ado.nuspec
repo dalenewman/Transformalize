@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Pipeline.Provider.Solr</id>
-    <version>0.1.2-beta</version>
-    <title>Transformalize Provider SOLR</title>
+    <id>Transformalize.Provider.Ado</id>
+    <version>0.2.0-beta</version>
+    <title>Transformalize Provider ADO</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>SOLR Provider for Transformalize</description>
+    <description>Common ADO Provider for Transformalize</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2013-2016</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
-        <dependency id="SolrNet" version="0.5.0.1001" />
+        <dependency id="Transformalize" version="0.2.0-beta" />
+        <dependency id="Dapper" version="1.50.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Pipeline.Provider.Solr.dll" target="lib\net452\Pipeline.Provider.Solr.dll" />
+    <file src="bin\Release\Transformalize.Provider.Ado.dll" target="lib\net452\Transformalize.Provider.Ado.dll" />
   </files>
 </package>

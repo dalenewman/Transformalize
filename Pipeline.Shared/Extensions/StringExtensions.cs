@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Pipeline.Extensions {
+namespace Transformalize.Extensions {
 
     public static class StringExtensions {
         public static string Left(this string s, int length) {

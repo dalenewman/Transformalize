@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.File {
+namespace Transformalize.Provider.File {
     public class FileInspection : ICreateConfiguration {
 
         private readonly IConnectionContext _context;

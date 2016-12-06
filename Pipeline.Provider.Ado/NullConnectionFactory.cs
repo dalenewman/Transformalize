@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Data;
-using Pipeline.Configuration;
 
-namespace Pipeline.Provider.Ado {
+using System.Data;
+using Transformalize.Configuration;
+
+namespace Transformalize.Provider.Ado {
     public class NullConnectionFactory : IConnectionFactory {
         public AdoProvider AdoProvider { get; } = AdoProvider.None;
 

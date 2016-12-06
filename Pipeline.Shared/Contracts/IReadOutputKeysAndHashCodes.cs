@@ -1,3 +1,3 @@
-namespace Pipeline.Contracts {
+namespace Transformalize.Contracts {
     public interface IReadOutputKeysAndHashCodes : IRead { }
 }

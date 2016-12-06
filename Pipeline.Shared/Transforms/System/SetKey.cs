@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Threading;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms.System {
+using System.Threading;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms.System {
     public class SetKey : BaseTransform {
         private readonly Field _tflKey;
 

@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Data;
-using Dapper;
-using Pipeline.Context;
-using Pipeline.Contracts;
 
-namespace Pipeline.Provider.Ado {
+using System;
+using Dapper;
+using Transformalize.Context;
+using Transformalize.Contracts;
+
+namespace Transformalize.Provider.Ado {
     public class AdoOutputVersionDetector : IVersionDetector {
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;

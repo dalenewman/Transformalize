@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Data;
 using System.Linq;
 using System.Text;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.Ado.Ext {
+namespace Transformalize.Provider.Ado.Ext {
     public static class AdoExtensions {
 
         public static string SqlControlTableName(this OutputContext c) {

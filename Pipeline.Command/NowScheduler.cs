@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Autofac;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Logging.NLog;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging.NLog;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     public class NowScheduler : IScheduler {
 
         private readonly Options _options;

@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Common.Logging.Simple;
-using Common.Logging;
 
-namespace Pipeline.Scheduler.Quartz {
+using Common.Logging;
+using Common.Logging.Simple;
+
+namespace Transformalize.Scheduler.Quartz {
 
     public class QuartzLogAdaptor : AbstractSimpleLoggerFactoryAdapter {
 

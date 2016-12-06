@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.IO;
 using System.Text;
 using NVelocity;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Transforms;
 
-namespace Pipeline.Template.Velocity {
+namespace Transformalize.Template.Velocity {
 
     public class VelocityTransform : BaseTransform {
 

@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Solr.Ext;
 using SolrNet;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Solr.Ext;
 
-namespace Pipeline.Provider.Solr {
+namespace Transformalize.Provider.Solr {
     public class SolrOutputController : BaseOutputController {
         private readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;
 

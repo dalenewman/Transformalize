@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Context {
+namespace Transformalize.Context {
     public class PipelineContext : IContext {
 
         public Process Process { get; set; }

@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
     public class AdoStarParametersReader : IRead {
         private readonly OutputContext _output;
         private readonly Process _parent;

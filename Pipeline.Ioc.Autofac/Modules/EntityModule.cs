@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Pipeline.Configuration;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+using Autofac;
+using Transformalize.Configuration;
+
+namespace Transformalize.Ioc.Autofac.Modules {
 
     /// <summary>
     /// Inherit from EntityModule and override LoadEntity when want to perform something on every entity.

@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using FileHelpers;
 using FileHelpers.Dynamic;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.File {
+namespace Transformalize.Provider.File {
 
     public class DelimitedFileReader : IRead {
 

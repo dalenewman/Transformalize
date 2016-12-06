@@ -15,19 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Lucene.Net.Analysis;
-using Pipeline.Configuration;
-using Pipeline.Provider.Lucene;
+
 using System.IO;
 using System.Linq;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Nulls;
-using Pipeline.Transforms.System;
+using Autofac;
+using Lucene.Net.Analysis;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Nulls;
+using Transformalize.Provider.Lucene;
+using Transformalize.Transforms.System;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
 
     public class LuceneModule : Module {
 

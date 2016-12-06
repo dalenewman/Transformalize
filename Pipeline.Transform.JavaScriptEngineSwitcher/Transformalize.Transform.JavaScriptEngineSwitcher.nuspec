@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Pipeline.Provider.Ado</id>
-    <version>0.1.2-beta</version>
-    <title>Transformalize Provider ADO</title>
+    <id>Transformalize.Transform.JavaScriptEngineSwitcher</id>
+    <version>0.2.0-beta</version>
+    <title>Transformalize Transform JavaScriptEngineSwitcher</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Common ADO Provider for Transformalize</description>
+    <description>JavaScript Engine Switcher Transform for Transformalize</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2013-2016</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
-        <dependency id="Dapper" version="1.50.2" />
+        <dependency id="Transformalize" version="0.2.0-beta" />
+        <dependency id="JavaScriptEngineSwitcher.Core" version="2.1.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Pipeline.Provider.Ado.dll" target="lib\net452\Pipeline.Provider.Ado.dll" />
+    <file src="bin\Release\Transformalize.Transform.JavaScriptEngineSwitcher.dll" target="lib\net452\Transformalize.Transform.JavaScriptEngineSwitcher.dll" />
   </files>
 </package>

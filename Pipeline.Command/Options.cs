@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using CommandLine;
 using CommandLine.Text;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
 
     public class Options {
         [Option('a', "arrangement", Required = true, HelpText = "an arrangement (aka configuration) file, or url.")]

@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline {
+namespace Transformalize {
 
     /// <summary>
     /// This class tries to help discover input fields when none are specified

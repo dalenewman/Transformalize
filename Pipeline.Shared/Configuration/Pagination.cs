@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
 
     public class Pagination {
         public int Pages { get; }

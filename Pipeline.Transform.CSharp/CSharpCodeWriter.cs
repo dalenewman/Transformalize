@@ -19,12 +19,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Transform.CSharp {
+namespace Transformalize.Transform.CSharp {
 
     public interface IWriteSomething {
         /// <summary>
@@ -75,10 +75,11 @@ namespace Pipeline.Transform.CSharp {
         /// <summary>
         /// Hides the work of creating the context and input for each method
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="process"></param>
         /// <param name="entity"></param>
         /// <param name="field"></param>
         /// <param name="sb"></param>
+        /// <param name="logger"></param>
         private static void WriteMethods(Process process, Entity entity, Field field, StringBuilder sb, IPipelineLogger logger) {
             foreach (var transform in field.Transforms.Where(t => t.Method == "cs" || t.Method == "csharp")) {
                 var tc = new PipelineContext(logger, process, entity, field, transform);
@@ -94,7 +95,7 @@ namespace Pipeline.Transform.CSharp {
         /// <param name="input"></param>
         /// <param name="sb"></param>
         private static void WriteMethod(IContext tc, IEnumerable<Field> input, StringBuilder sb) {
-            var methodName = Pipeline.Utility.GetMethodName(tc);
+            var methodName = Utility.GetMethodName(tc);
             sb.AppendLine($"    public static object {methodName}(object[] data) {{");
 
             foreach (var field in input) {

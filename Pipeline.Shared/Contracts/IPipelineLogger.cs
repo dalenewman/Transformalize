@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Context;
 
-namespace Pipeline.Contracts {
+using System;
+using Transformalize.Context;
+
+namespace Transformalize.Contracts {
 
     public interface IPipelineLogger {
         LogLevel LogLevel { get; }

@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
-using Pipeline.Contracts;
 
-namespace Pipeline.Nulls {
+using System.Collections.Generic;
+using Transformalize.Contracts;
+
+namespace Transformalize.Nulls {
 
     public class NullWriter : IWrite {
         readonly IContext _context;

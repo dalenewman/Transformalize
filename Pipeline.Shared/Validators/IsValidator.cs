@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Validators {
+using System;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
+
+namespace Transformalize.Validators {
     public class IsValidator : BaseTransform {
       readonly Field _input;
       readonly Func<string, object> _canConvert;

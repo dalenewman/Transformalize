@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Dapper;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Pipeline.Provider.Ado.Ext;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Provider.Ado.Ext;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
     public class AdoEntityInserter : IWrite {
         readonly OutputContext _output;
         private readonly IConnectionFactory _cf;

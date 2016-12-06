@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Cfg.Net.Ext;
-using Dapper;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
 
-namespace Pipeline.Provider.Ado.Actions {
+using System;
+using Dapper;
+using Transformalize.Actions;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+
+namespace Transformalize.Provider.Ado.Actions {
     public class AdoRunAction : IAction {
         private readonly IContext _context;
         private readonly Configuration.Action _node;

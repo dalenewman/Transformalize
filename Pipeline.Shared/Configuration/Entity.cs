@@ -15,13 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 using Cfg.Net.Ext;
+using Transformalize.Impl;
 
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
     public class Entity : CfgNode {
 
         private Pagination _pagination;

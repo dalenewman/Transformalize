@@ -15,21 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Autofac;
 using Elasticsearch.Net;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Extensions;
-using Pipeline.Nulls;
-using Pipeline.Provider.Elastic;
-using Pipeline.Provider.Elastic.Ext;
-using Pipeline.Transforms.System;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Extensions;
+using Transformalize.Nulls;
+using Transformalize.Provider.Elastic;
+using Transformalize.Provider.Elastic.Ext;
+using Transformalize.Transforms.System;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     public class ElasticModule : Module {
         private readonly Process _process;
 

@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
 
-namespace Pipeline.Transforms {
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+
+namespace Transformalize.Transforms {
     public class LeftTransform : BaseTransform, ITransform {
 
         readonly int _length;

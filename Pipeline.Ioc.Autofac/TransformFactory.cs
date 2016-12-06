@@ -15,30 +15,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
 using JavaScriptEngineSwitcher.ChakraCore;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Nulls;
-using Pipeline.Shared.Transforms;
-using Pipeline.Transform.Jint;
-using Pipeline.Template.Velocity;
-using Pipeline.Transform.CSharp;
-using Pipeline.Transform.GeoCoordinate;
-using Pipeline.Transform.Geohash;
-using Pipeline.Transform.Humanizer;
-using Pipeline.Transform.JavaScriptEngineSwitcher;
-using Pipeline.Transforms;
-using Pipeline.Transforms.System;
-using Pipeline.Validators;
+using Newtonsoft.Json;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Nulls;
+using Transformalize.Template.Velocity;
+using Transformalize.Transform.CSharp;
+using Transformalize.Transform.Geocode;
+using Transformalize.Transform.GeoCoordinate;
+using Transformalize.Transform.Geohash;
+using Transformalize.Transform.Humanizer;
+using Transformalize.Transform.JavaScriptEngineSwitcher;
+using Transformalize.Transform.Jint;
+using Transformalize.Transforms;
+using Transformalize.Transforms.System;
+using Transformalize.Validators;
 
-namespace Pipeline.Ioc.Autofac {
+namespace Transformalize.Ioc.Autofac {
 
     public static class TransformFactory {
 
@@ -193,6 +195,13 @@ namespace Pipeline.Ioc.Autofac {
                 case "isempty": return new IsEmptyValidator(context);
                 case "isdefault": return new IsDefaultValidator(context);
                 case "isnumeric": return new IsNumericValidator(context);
+
+                case "geocode": return new GeocodeTransform(context);
+
+                // need validation
+                case "web": return new WebTransform(context);
+                case "urlencode": return new UrlEncodeTransform(context);
+                case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

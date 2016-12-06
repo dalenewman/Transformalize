@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Newtonsoft.Json;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Ioc.Autofac {
+namespace Transformalize.Ioc.Autofac {
     public class JsonNetSerializer : ISerialize {
         private readonly Field[] _fields;
 

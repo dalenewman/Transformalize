@@ -15,18 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Pipeline.Logging;
-using Pipeline.Transforms;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Logging;
+using Transformalize.Transforms;
 
-namespace Pipeline.Configuration.Ext {
+namespace Transformalize.Configuration.Ext {
     public static class ProcessValidate {
 
         public static void Validate(this Process p, Action<string> error, Action<string> warn) {
@@ -411,11 +412,6 @@ namespace Pipeline.Configuration.Ext {
                 case "formatxml":
                 case "isempty":
                 case "xpath":
-                    if (input.Type != "string") {
-                        error($"The {t.Method} expects a string input. {input.Alias} is {input.Type}.");
-                    }
-                    break;
-
                 case "camelize":
                 case "dehumanize":
                 case "dasherize":
@@ -427,6 +423,7 @@ namespace Pipeline.Configuration.Ext {
                 case "frommetric":
                 case "fromroman":
                 case "geohashneighbor":
+                case "geocode":
                 case "underscore":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
@@ -504,6 +501,7 @@ namespace Pipeline.Configuration.Ext {
                     break;
                 case "fromlengths":
                 case "fromsplit":
+                case "fromjson":
                 case "fromxml":
                     if (!t.Parameters.Any()) {
                         error($"The {t.Method} transform requires a collection of output fields.");
@@ -513,6 +511,28 @@ namespace Pipeline.Configuration.Ext {
                     }
                     if (t.Method == "fromlengths" && fields.Any(f => f.Length == "max")) {
                         error("The can not max length fields in a fromlengths transform. Set it to a numeric length.");
+                    }
+                    break;
+                case "geocode":
+                    if (t.Parameters.Any()) {
+                        var lat = t.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
+                        if (lat == null) {
+                            error("The geocode transform requires an output field named lat, or latitude.");
+                        } else {
+                            if (lat.Type != "double") {
+                                error($"The goecode {lat.Name} field must be of type double.");
+                            }
+                        }
+                        var lon = t.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
+                        if (lon == null) {
+                            error("The geocode transform requires an output field named lon, long, or longitude.");
+                        } else {
+                            if (lon.Type != "double") {
+                                error($"The goecode {lon.Name} field must be of type double.");
+                            }
+                        }
+                    } else {
+                        error($"The {t.Method} transform requires a collection of output fields; namely: latitude, longitude, and formattedaddress (optional).");
                     }
                     break;
                 case "padleft":
@@ -639,7 +659,11 @@ namespace Pipeline.Configuration.Ext {
                     if (string.IsNullOrEmpty(t.Property)) {
                         error("The connection transform requires a property.");
                     }
+#if NETS10
                     var props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
+#else
+                    var props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
+#endif
                     if (!t.Property.In(props)) {
                         error($"The connection property {t.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
                     }

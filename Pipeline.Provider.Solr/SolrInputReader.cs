@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
 using SolrNet;
 using SolrNet.Commands.Parameters;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Solr {
+namespace Transformalize.Provider.Solr {
 
     public class SolrInputReader : IRead {
 

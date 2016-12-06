@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Ioc.Autofac {
+using Autofac;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Ioc.Autofac {
     public class PipelineAction : IAction {
         private readonly IContainer _container;
 

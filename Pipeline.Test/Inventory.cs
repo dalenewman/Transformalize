@@ -15,19 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Autofac;
 using Cfg.Net.Ext;
 using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Provider.Ado.Ext;
-using Pipeline.Provider.SqlServer;
 using PoorMansTSqlFormatterLib;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.Ado.Ext;
+using Transformalize.Provider.SqlServer;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture]
     public class Inventory {

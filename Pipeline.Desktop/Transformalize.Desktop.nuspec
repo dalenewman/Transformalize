@@ -1,26 +1,26 @@
 <?xml version="1.0"?>
-<package>
+<package >
   <metadata>
-    <id>Pipeline.Transform.Jint</id>
-    <version>0.1.2-beta</version>
-    <title>Transformalize Transform Jint</title>
+    <id>Transformalize.Desktop</id>
+    <version>0.2.0-beta</version>
+    <title>Transformalize Desktop</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Jint (Javascript) Transform for Transformalize</description>
+    <description>Transformalize features that couldn't go portable</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2013-2016</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
-        <dependency id="jint" version="2.10.2" />
+        <dependency id="Transformalize" version="0.2.0-beta" />
+        <dependency id="DateMath" version="0.1.0-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Pipeline.Transform.Jint.dll" target="lib\net452\Pipeline.Transform.Jint.dll" />
+    <file src="bin\Release\Transformalize.Desktop.dll" target="lib\net452\Transformalize.Desktop.dll" />
   </files>
 </package>

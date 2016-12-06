@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Autofac;
-using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Provider.SqlServer;
 using Dapper;
-using Pipeline.Ioc.Autofac.Modules;
+using NUnit.Framework;
+using Transformalize.Configuration;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.SqlServer;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture]
     public class DeleteIntegration {

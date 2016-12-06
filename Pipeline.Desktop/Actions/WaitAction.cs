@@ -1,8 +1,9 @@
 using System.Threading;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class WaitAction : IAction {
         private readonly Action _action;
         public WaitAction(Action action) {

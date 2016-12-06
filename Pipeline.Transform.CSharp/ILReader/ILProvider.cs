@@ -19,7 +19,7 @@
 using System;
 using System.Reflection;
 
-namespace Pipeline.Transform.CSharp.ILReader {
+namespace Transformalize.Transform.CSharp.ILReader {
     public interface IILProvider {
         Byte[] GetByteArray();
     }

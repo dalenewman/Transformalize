@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Transforms.System {
+namespace Transformalize.Transforms.System {
 
     public class MinDateTransform : BaseTransform {
         readonly Field[] _dates;

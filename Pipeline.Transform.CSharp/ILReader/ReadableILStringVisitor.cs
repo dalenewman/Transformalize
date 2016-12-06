@@ -19,7 +19,7 @@
 using System;
 using System.IO;
 
-namespace Pipeline.Transform.CSharp.ILReader {
+namespace Transformalize.Transform.CSharp.ILReader {
     public interface IILStringCollector {
         void Process(ILInstruction ilInstruction, string operandString);
     }

@@ -15,17 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Cfg.Net.Ext;
 using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Desktop;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Provider.Ado.Ext;
-using Pipeline.Provider.SqlServer;
 using PoorMansTSqlFormatterLib;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Provider.Ado.Ext;
+using Transformalize.Provider.SqlServer;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
 
     [TestFixture(Description = "Star View Creator")]
     public class StarView {

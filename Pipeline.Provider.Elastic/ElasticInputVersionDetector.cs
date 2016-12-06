@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Elasticsearch.Net;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Elastic.Ext;
 
-namespace Pipeline.Provider.Elastic {
+using Elasticsearch.Net;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Elastic.Ext;
+
+namespace Transformalize.Provider.Elastic {
     public class ElasticInputVersionDetector : IInputVersionDetector {
         readonly InputContext _context;
         readonly IElasticLowLevelClient _client;

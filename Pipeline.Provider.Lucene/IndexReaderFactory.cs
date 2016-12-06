@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Lucene.Net.Index;
 
-namespace Pipeline.Provider.Lucene {
+namespace Transformalize.Provider.Lucene {
     public class IndexReaderFactory {
         private readonly DirectoryFactory _directoryFactory;
         private readonly IndexWriterFactory _writerFactory;

@@ -1,7 +1,8 @@
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class LogAction : IAction {
 
         private readonly IContext _context;

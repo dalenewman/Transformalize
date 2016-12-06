@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
 
-namespace Pipeline {
+using Transformalize.Contracts;
+
+namespace Transformalize {
     public class Incrementer : IIncrement {
         readonly IContext _context;
         long _rowCount;

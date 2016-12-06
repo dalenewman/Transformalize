@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Pipeline.Provider.Web</id>
-    <version>0.1.2-beta</version>
+    <id>Transformalize.Provider.Web</id>
+    <version>0.2.0-beta</version>
     <title>Transformalize Provider Web</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,11 +15,11 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Pipeline.Portable" version="0.1.2-beta" />
+        <dependency id="Transformalize" version="0.2.0-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Pipeline.Provider.Web.dll" target="lib\net452\Pipeline.Provider.Web.dll" />
+    <file src="bin\Release\Transformalize.Provider.Web.dll" target="lib\net452\Transformalize.Provider.Web.dll" />
   </files>
 </package>

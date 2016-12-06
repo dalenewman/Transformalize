@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Pipeline.Configuration {
+namespace Transformalize.Configuration {
     public class FieldSearchType {
         public string Alias { get; set; }
         public Field Field { get; set; }

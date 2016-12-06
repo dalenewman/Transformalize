@@ -15,16 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Npgsql;
-using Pipeline.Configuration;
-using Pipeline.Provider.Ado;
+using Transformalize.Configuration;
+using Transformalize.Provider.Ado;
 
-
-namespace Pipeline.Provider.PostgreSql {
+namespace Transformalize.Provider.PostgreSql {
     public class PostgreSqlConnectionFactory : IConnectionFactory {
         static Dictionary<string, string> _types;
         private static HashSet<string> _reserved;

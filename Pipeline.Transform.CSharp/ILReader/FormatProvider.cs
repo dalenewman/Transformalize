@@ -18,7 +18,7 @@
 
 using System.Text;
 
-namespace Pipeline.Transform.CSharp.ILReader {
+namespace Transformalize.Transform.CSharp.ILReader {
     public interface IFormatProvider {
         string Int32ToHex(int int32);
         string Int16ToHex(int int16);

@@ -15,22 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Extensions;
-using Pipeline.Nulls;
-using Pipeline.Provider.Ado;
-using Pipeline.Provider.MySql;
-using Pipeline.Provider.PostgreSql;
-using Pipeline.Provider.SQLite;
-using Pipeline.Provider.SqlServer;
-using Pipeline.Transforms.System;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Extensions;
+using Transformalize.Nulls;
+using Transformalize.Provider.Ado;
+using Transformalize.Provider.MySql;
+using Transformalize.Provider.PostgreSql;
+using Transformalize.Provider.SqlServer;
+using Transformalize.Provider.SQLite;
+using Transformalize.Transforms.System;
 
-namespace Pipeline.Ioc.Autofac.Modules {
+namespace Transformalize.Ioc.Autofac.Modules {
     public class AdoModule : Module {
         private readonly Process _process;
         private readonly string[] _ado = { "sqlserver", "mysql", "postgresql", "sqlite" };

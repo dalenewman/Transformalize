@@ -15,18 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Autofac;
 using NUnit.Framework;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Ioc.Autofac;
-using Pipeline.Ioc.Autofac.Modules;
-using Pipeline.Logging;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Ioc.Autofac;
+using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
     public class TestQuery {
 
         [Test]

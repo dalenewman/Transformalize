@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 
-namespace Pipeline {
+namespace Transformalize {
     public static class Constants {
 
         static HashSet<string> _types;

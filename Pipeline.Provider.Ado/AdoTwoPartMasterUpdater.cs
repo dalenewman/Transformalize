@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,12 +23,12 @@ using System.Dynamic;
 using System.Linq;
 using System.Text;
 using Dapper;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
 
     /// <summary>
     /// For when you don't want to (or can't) combine an UPDATE statement with a FROM clause.

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Transformalize</id>
+    <version>0.2.0-beta</version>
+    <title>Transformalize</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>This is the main library for Transformalize.</description>
+    <releaseNotes>Target NetStandard1.0, PCL Profile 259, .NET 4, and .NET 45.</releaseNotes>
+    <copyright>Copyright 2013-2016</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="portable-net45+win8+wpa81+wp8" />
+      <group targetFramework="netstandard1.0">
+        <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.1" />
+        <dependency id="NETStandard.Library" version="1.6.0" />
+        <dependency id="System.Runtime" version="4.1.0" />
+        <dependency id="Cfg-NET" version="0.8.4" />
+      </group>
+      <group targetFramework="net40">
+        <dependency id="Cfg-NET" version="0.8.4" />
+      </group>
+      <group targetFramework="net45">
+        <dependency id="Cfg-NET" version="0.8.4" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Transformalize.dll" target="lib\netstandard1.0\Transformalize.dll" />
+    <file src="bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
+    <file src="C:\Code\Transformalize\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
+    <file src="C:\Code\Transformalize\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
+  </files>
+</package>

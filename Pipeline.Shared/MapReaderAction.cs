@@ -1,9 +1,9 @@
 ﻿using System;
-using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline {
+namespace Transformalize {
     public class MapReaderAction : IAction {
 
         private readonly IContext _context;

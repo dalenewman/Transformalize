@@ -17,13 +17,13 @@
 #endregion
 
 using System;
-using Pipeline.Contracts;
 using System.IO;
-using System.Runtime.CompilerServices;
-using Pipeline.Context;
-using Action = Pipeline.Configuration.Action;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Action = Transformalize.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+namespace Transformalize.Desktop.Actions {
     public class ContentToFileAction : IAction {
         private readonly PipelineContext _context;
         private readonly Action _action;

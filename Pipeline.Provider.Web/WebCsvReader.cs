@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Web {
+namespace Transformalize.Provider.Web {
 
     public class WebCsvReader : IRead {
 

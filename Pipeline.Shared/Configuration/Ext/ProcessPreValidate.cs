@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Cfg.Net.Ext;
 
-namespace Pipeline.Configuration.Ext {
+namespace Transformalize.Configuration.Ext {
     public static class ProcessPreValidate {
 
         const string All = "*";

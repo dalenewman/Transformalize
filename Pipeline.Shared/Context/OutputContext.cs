@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Context {
+using System.Linq;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Context {
 
     public class OutputContext : PipelineContext, IConnectionContext {
         readonly IIncrement _incrementer;

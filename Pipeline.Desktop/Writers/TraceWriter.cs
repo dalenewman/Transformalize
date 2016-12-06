@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
-using Pipeline.Contracts;
 
-namespace Pipeline.Desktop.Writers {
+using System.Collections.Generic;
+using Transformalize.Contracts;
+
+namespace Transformalize.Desktop.Writers {
     public class TraceWriter : IWrite {
         private readonly ISerialize _serializer;
 

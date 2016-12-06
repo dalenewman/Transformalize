@@ -16,9 +16,10 @@
 // limitations under the License.
 #endregion
 
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Contracts;
 
-namespace Pipeline.Actions {
+namespace Transformalize.Actions {
     public class NullAction : IAction {
         public ActionResponse Execute() {
             return new ActionResponse();

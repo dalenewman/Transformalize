@@ -15,13 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Ioc.Autofac.Modules;
 
-namespace Pipeline.Test {
+using Autofac;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac.Modules;
+
+namespace Transformalize.Test {
     public class PipelineAction : IAction {
 
         private readonly Process _process;

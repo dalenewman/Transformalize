@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
 
     public class ElasticWriter : IWrite {
 
@@ -74,7 +75,7 @@ namespace Pipeline.Provider.Elastic {
                 var response = _client.Bulk<DynamicResponse>(builder.ToString(), nv => nv
                     .AddQueryString("refresh", @"true")
                 );
-                _context.Increment(by: count);
+                _context.Increment(@by: count);
                 if (!response.Success) {
                     _context.Error(response.OriginalException.Message);
                 }

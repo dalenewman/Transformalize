@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 
-namespace Pipeline {
+namespace Transformalize {
 
     public class ContentLineReader : IReadLines {
         private readonly string _content;

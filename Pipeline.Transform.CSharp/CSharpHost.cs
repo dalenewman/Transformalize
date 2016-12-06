@@ -21,9 +21,9 @@ using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 
-namespace Pipeline.Transform.CSharp {
+namespace Transformalize.Transform.CSharp {
 
     public class CSharpHost : IHost {
 

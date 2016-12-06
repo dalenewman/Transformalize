@@ -15,16 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
+
 using System.Collections.Generic;
-using System.Data;
 using System.IO;
 using System.Text;
 using Excel;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.Excel {
+namespace Transformalize.Provider.Excel {
     public class ExcelLineReader {
         private readonly IConnectionContext _context;
         private readonly int _lines;

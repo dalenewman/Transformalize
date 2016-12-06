@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms.System {
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms.System {
     public class SetBatchId : BaseTransform {
         private readonly Field _tflBatchId;
 

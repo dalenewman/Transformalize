@@ -20,11 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
 using JavaScriptEngineSwitcher.Core;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Transform.JavaScriptEngineSwitcher {
+namespace Transformalize.Transform.JavaScriptEngineSwitcher {
     public class JavascriptTransform : BaseTransform {
 
         readonly Field[] _input;

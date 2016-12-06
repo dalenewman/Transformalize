@@ -18,24 +18,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A7963D
 		.nuget\NuGet.Config = .nuget\NuGet.Config
 		.nuget\NuGet.exe = .nuget\NuGet.exe
 		.nuget\NuGet.targets = .nuget\NuGet.targets
-		Pipeline.Desktop\Pipeline.Desktop.nuspec = Pipeline.Desktop\Pipeline.Desktop.nuspec
-		Pipeline.Logging.NLog\Pipeline.Logging.NLog.nuspec = Pipeline.Logging.NLog\Pipeline.Logging.NLog.nuspec
-		Pipeline.Portable\Pipeline.Portable.nuspec = Pipeline.Portable\Pipeline.Portable.nuspec
-		Pipeline.Provider.Ado\Pipeline.Provider.Ado.nuspec = Pipeline.Provider.Ado\Pipeline.Provider.Ado.nuspec
-		Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.nuspec = Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.nuspec
-		Pipeline.Provider.Excel\Pipeline.Provider.Excel.nuspec = Pipeline.Provider.Excel\Pipeline.Provider.Excel.nuspec
-		Pipeline.Provider.File\Pipeline.Provider.File.nuspec = Pipeline.Provider.File\Pipeline.Provider.File.nuspec
-		Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.nuspec = Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.nuspec
-		Pipeline.Provider.MySql\Pipeline.Provider.MySql.nuspec = Pipeline.Provider.MySql\Pipeline.Provider.MySql.nuspec
-		Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.nuspec = Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.nuspec
-		Pipeline.Provider.Solr\Pipeline.Provider.Solr.nuspec = Pipeline.Provider.Solr\Pipeline.Provider.Solr.nuspec
-		Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.nuspec = Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.nuspec
-		Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.nuspec = Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.nuspec
-		Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec = Pipeline.Provider.Web\Pipeline.Provider.Web.nuspec
-		Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.nuspec
-		Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.nuspec
-		Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.nuspec = Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.nuspec
-		Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec = Pipeline.Transform.Jint\Pipeline.Transform.Jint.nuspec
+		Pipeline.Desktop\Transformalize.Desktop.nuspec = Pipeline.Desktop\Transformalize.Desktop.nuspec
+		Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec = Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec
+		Pipeline.Portable\Transformalize.nuspec = Pipeline.Portable\Transformalize.nuspec
+		Pipeline.Provider.Ado\Transformalize.Provider.Ado.nuspec = Pipeline.Provider.Ado\Transformalize.Provider.Ado.nuspec
+		Pipeline.Provider.Elastic\Transformalize.Provider.Elastic.nuspec = Pipeline.Provider.Elastic\Transformalize.Provider.Elastic.nuspec
+		Pipeline.Provider.Excel\Transformalize.Provider.Excel.nuspec = Pipeline.Provider.Excel\Transformalize.Provider.Excel.nuspec
+		Pipeline.Provider.File\Transformalize.Provider.File.nuspec = Pipeline.Provider.File\Transformalize.Provider.File.nuspec
+		Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec = Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec
+		Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec = Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec
+		Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec = Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec
+		Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec = Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec
+		Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec = Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec
+		Pipeline.Provider.SqlServer\Transformalize.Provider.SqlServer.nuspec = Pipeline.Provider.SqlServer\Transformalize.Provider.SqlServer.nuspec
+		Pipeline.Provider.Web\Transformalize.Provider.Web.nuspec = Pipeline.Provider.Web\Transformalize.Provider.Web.nuspec
+		Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec
+		Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec
+		Pipeline.Transform.JavaScriptEngineSwitcher\Transformalize.Transform.JavaScriptEngineSwitcher.nuspec = Pipeline.Transform.JavaScriptEngineSwitcher\Transformalize.Transform.JavaScriptEngineSwitcher.nuspec
+		Pipeline.Transform.Jint\Transformalize.Transform.Jint.nuspec = Pipeline.Transform.Jint\Transformalize.Transform.Jint.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037}"
@@ -108,7 +108,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transforms", "Transforms", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.Humanizer", "Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj", "{73C145B3-6DC2-4424-958D-F5EC989B3EB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Portable", "Pipeline.Portable\Pipeline.Portable.csproj", "{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline", "Pipeline.Portable\Pipeline.csproj", "{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.Jint", "Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj", "{22A96C5B-E0A3-449B-9F90-71C3DB2504E7}"
 EndProject
@@ -122,10 +122,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.CSharp",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Transform.JavaScriptEngineSwitcher", "Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.csproj", "{C54A7C66-2F1D-4035-A798-4598B07CE3CA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compatability", "Compatability", "{0A44435F-A0BC-418F-BA9C-B5FFC27D5589}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Transform.Geocode", "Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj", "{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.40", "Transformalize.40\Transformalize.40.csproj", "{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.45", "Transformalize.45\Transformalize.45.csproj", "{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Pipeline.Shared\Pipeline.Shared.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
 		Pipeline.Shared\Pipeline.Shared.projitems*{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}*SharedItemsImports = 4
+		Pipeline.Shared\Pipeline.Shared.projitems*{9e2c7fd8-890c-4ccf-927f-ae40ecd49013}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -473,6 +482,42 @@ Global
 		{C54A7C66-2F1D-4035-A798-4598B07CE3CA}.Release|x64.Build.0 = Release|Any CPU
 		{C54A7C66-2F1D-4035-A798-4598B07CE3CA}.Release|x86.ActiveCfg = Release|Any CPU
 		{C54A7C66-2F1D-4035-A798-4598B07CE3CA}.Release|x86.Build.0 = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|x64.Build.0 = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Debug|x86.Build.0 = Debug|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|x64.ActiveCfg = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|x64.Build.0 = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|x86.ActiveCfg = Release|Any CPU
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1}.Release|x86.Build.0 = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x64.Build.0 = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x86.Build.0 = Debug|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x64.ActiveCfg = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x64.Build.0 = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x86.ActiveCfg = Release|Any CPU
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x86.Build.0 = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x64.Build.0 = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x86.Build.0 = Debug|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x64.ActiveCfg = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x64.Build.0 = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -492,11 +537,15 @@ Global
 		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 		{4D9D0159-F680-4E1B-B4E6-9ED1BDB03F40} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{73C145B3-6DC2-4424-958D-F5EC989B3EB7} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{22A96C5B-E0A3-449B-9F90-71C3DB2504E7} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{1F39C887-4DC6-4474-961B-619DFF1760B3} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{C2800256-5DE1-4BC9-9D5E-8BDE3CC8353D} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{91E95639-0EA2-42F6-9109-FAF3DAEC08CA} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{C54A7C66-2F1D-4035-A798-4598B07CE3CA} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{1FDAF70A-94A8-4A54-BDF7-F776AEA9C5A1} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
+		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 	EndGlobalSection
 EndGlobal

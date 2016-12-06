@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Cfg.Net.Contracts;
 
-namespace Pipeline.Nulls {
+namespace Transformalize.Nulls {
     public class NullNodeModifier : INodeModifier {
 
         public NullNodeModifier(string name) {

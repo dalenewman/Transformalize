@@ -20,9 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
-using Pipeline.Transform.CSharp.ILReader;
+using Transformalize.Transform.CSharp.ILReader;
 
-namespace Pipeline.Transform.CSharp {
+namespace Transformalize.Transform.CSharp {
     public class DynamicMethodHelper {
         class IlInfoGetTokenVisitor : ILInstructionVisitor {
             private readonly DynamicILInfo _ilInfo;

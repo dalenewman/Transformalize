@@ -15,11 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Contracts;
-using Action = Pipeline.Configuration.Action;
 
-namespace Pipeline.Desktop.Actions {
+using System;
+using Transformalize.Actions;
+using Transformalize.Contracts;
+using Action = Transformalize.Configuration.Action;
+
+namespace Transformalize.Desktop.Actions {
     public class OpenAction : IAction {
         private readonly Action _action;
 

@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Lucene.Net.Search;
-using Pipeline.Context;
-using Pipeline.Contracts;
 
-namespace Pipeline.Provider.Lucene {
+using Lucene.Net.Search;
+using Transformalize.Context;
+using Transformalize.Contracts;
+
+namespace Transformalize.Provider.Lucene {
     public class LuceneInputVersionDetector : IInputVersionDetector {
         private readonly InputContext _context;
         private readonly SearcherFactory _searcherFactory;

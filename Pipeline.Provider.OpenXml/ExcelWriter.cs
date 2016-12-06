@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Pipeline.Contracts;
 using OpenXmlPowerTools;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.OpenXml {
+namespace Transformalize.Provider.OpenXml {
     public class ExcelWriter : IWrite {
 
         private readonly WorkbookDfn _workbook;

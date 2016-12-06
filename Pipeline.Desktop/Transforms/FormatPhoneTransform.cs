@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Text.RegularExpressions;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Desktop.Transforms {
+using System.Text.RegularExpressions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
+
+namespace Transformalize.Desktop.Transforms {
     public class FormatPhoneTransform : BaseTransform {
         private readonly Field _input;
         private readonly Regex _clean = new Regex("[^0-9]", RegexOptions.Compiled);

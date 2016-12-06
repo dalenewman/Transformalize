@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Validators {
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
+
+namespace Transformalize.Validators {
     public class IsEmptyValidator : BaseTransform {
         private readonly Field _input;
 

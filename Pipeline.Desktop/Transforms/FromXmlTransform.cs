@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Transformalize.Desktop.Transforms {
 
     /// <summary>
     /// Converted from Transformalize v1alpha
@@ -48,7 +49,7 @@ namespace Pipeline.Desktop.Transforms {
         private readonly Field[] _outerFields;
         private readonly Dictionary<string, object> _typeDefaults;
 
-        public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, null) {
+        public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, "object") {
 
             _rowFactory = rowFactory;
             _input = SingleInputForMultipleOutput();

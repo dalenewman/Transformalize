@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Autofac;
-using Pipeline.Configuration;
+
 using System;
 using System.Linq;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Loggers;
-using Pipeline.Ioc.Autofac.Modules;
+using Autofac;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac.Modules;
 
-namespace Pipeline.Test {
+namespace Transformalize.Test {
     public class CompositionRoot {
 
         public Process Process { get; set; }

@@ -1,4 +1,4 @@
-namespace Pipeline {
+namespace Transformalize {
     public enum ErrorMode {
         Abort,
         Continue,

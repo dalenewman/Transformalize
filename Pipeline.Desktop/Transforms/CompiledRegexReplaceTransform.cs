@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Text.RegularExpressions;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Transformalize.Desktop.Transforms {
     public class CompiledRegexReplaceTransform : BaseTransform {
         private readonly Field _input;
         private readonly Regex _regex;

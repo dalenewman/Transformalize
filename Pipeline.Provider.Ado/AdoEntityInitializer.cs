@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Data;
-using Cfg.Net.Ext;
-using Dapper;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado.Ext;
 
-namespace Pipeline.Provider.Ado {
+using System.Data;
+using Dapper;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Ado.Ext;
+
+namespace Transformalize.Provider.Ado {
 
     public class AdoEntityInitializer : IAction {
 

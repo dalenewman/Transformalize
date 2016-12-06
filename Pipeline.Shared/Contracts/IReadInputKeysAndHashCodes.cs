@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
-namespace Pipeline.Contracts {
+namespace Transformalize.Contracts {
     public interface IReadInputKeysAndHashCodes : IRead { }
 }

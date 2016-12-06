@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Flurl;
 using Quartz;
-using Process = Pipeline.Configuration.Process;
+using Process = Transformalize.Configuration.Process;
 
-namespace Pipeline.Command {
+namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class ScheduleExecutor : BaseExecutor, IJob, IDisposable {
         public string Schedule { get; private set; } = string.Empty;

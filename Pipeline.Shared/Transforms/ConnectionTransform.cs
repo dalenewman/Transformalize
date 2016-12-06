@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Linq;
-using Pipeline.Contracts;
 
-namespace Pipeline.Transforms {
+using System.Linq;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms {
     public class ConnectionTransform : BaseTransform, ITransform {
 
         private readonly object _value;

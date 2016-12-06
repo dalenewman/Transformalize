@@ -15,18 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
 using Cfg.Net.Ext;
 using Dapper;
-using Pipeline.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 
-namespace Pipeline.Provider.Ado {
+namespace Transformalize.Provider.Ado {
 
     public class AdoSchemaReader : ISchemaReader {
         readonly IConnectionContext _c;

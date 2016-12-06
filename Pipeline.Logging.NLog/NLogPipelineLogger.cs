@@ -15,18 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using System.Linq;
 using NLog;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using Pipeline.Context;
-using LogLevel = Pipeline.Contracts.LogLevel;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using LogLevel = Transformalize.Contracts.LogLevel;
 using NLogLevel = global::NLog.LogLevel;
-using Pipeline.Contracts;
 
-namespace Pipeline.Logging.NLog {
+namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
 
         const string Context = "{0} | {1} | {2} | {3}";

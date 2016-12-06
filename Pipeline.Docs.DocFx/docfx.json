@@ -61,9 +61,6 @@
       }
     ],
     "dest": "_site",
-    "template": [
-      "default",
-      "./templates/partials/footer.tmpl.partial"
-    ]
+    "template": [ "default" ]
   }
 }

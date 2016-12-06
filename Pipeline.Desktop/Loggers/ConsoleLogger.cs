@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Logging;
 
-namespace Pipeline.Desktop.Loggers {
+using System;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Logging;
+
+namespace Transformalize.Desktop.Loggers {
     public class ConsoleLogger : BaseLogger, IPipelineLogger {
 
         const string Format = "{0:u} | {1} | {2} | {3}";

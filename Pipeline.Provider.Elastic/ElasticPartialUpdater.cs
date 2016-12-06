@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Pipeline.Contracts;
+
 using System.Collections.Generic;
 using System.Linq;
 using Elasticsearch.Net;
-using Pipeline.Context;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Pipeline.Provider.Elastic {
+namespace Transformalize.Provider.Elastic {
 
     public class ElasticPartialUpdater : IDelete, IWrite {
 

@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Common.Logging;
 
-namespace Pipeline.Scheduler.Quartz {
+namespace Transformalize.Scheduler.Quartz {
     public static class Utility {
         public static LogLevel ConvertLevel(Contracts.LogLevel level) {
             switch (level) {

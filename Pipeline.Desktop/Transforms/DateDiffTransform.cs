@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+using Transformalize.Transforms;
 
-namespace Pipeline.Desktop.Transforms {
+namespace Transformalize.Desktop.Transforms {
     public class DateDiffTransform : BaseTransform {
 
         public static readonly Dictionary<string, Func<DateTime, DateTime, object>> Parts = new Dictionary<string, Func<DateTime, DateTime, object>>() {

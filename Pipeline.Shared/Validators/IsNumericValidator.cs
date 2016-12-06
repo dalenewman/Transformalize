@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
 
-namespace Pipeline.Validators {
+using System;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
+
+namespace Transformalize.Validators {
     public class IsNumericValidator : BaseTransform {
         private readonly Func<IRow, bool> _transform;
 

@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using Humanizer;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Transform.Humanizer {
+namespace Transformalize.Transform.Humanizer {
     public class DehumanizeTransform : BaseTransform {
 
         private readonly Func<IRow, object> _transform;

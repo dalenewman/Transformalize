@@ -17,9 +17,9 @@
 #endregion
 
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
-namespace Pipeline {
+namespace Transformalize.Actions {
 
     public class ActionResponse {
 

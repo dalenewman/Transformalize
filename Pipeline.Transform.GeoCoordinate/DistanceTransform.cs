@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Pipeline.Transform.GeoCoordinate {
+namespace Transformalize.Transform.GeoCoordinate {
     public class DistanceTransform : BaseTransform {
         private readonly Field[] _fields;
         private readonly Func<IRow, double> _getLatitudeFrom;

@@ -15,19 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Nulls;
-using Pipeline.Provider.Excel;
-using Pipeline.Provider.File;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Excel;
+using Transformalize.Provider.File;
 
-namespace Pipeline.Ioc.Autofac {
+namespace Transformalize.Ioc.Autofac {
     public class FolderReader : IRead {
 
         private readonly IRead _reader;
