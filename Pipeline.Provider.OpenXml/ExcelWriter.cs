@@ -22,6 +22,7 @@ using System.Linq;
 using OpenXmlPowerTools;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Provider.OpenXml {
     public class ExcelWriter : IWrite {
@@ -38,7 +39,7 @@ namespace Transformalize.Provider.OpenXml {
 
             _workbook = new WorkbookDfn {
                 Worksheets = new[] {new WorksheetDfn {
-                Name = context.Entity.Alias,
+                Name = context.Entity.Alias.Left(32),
                 ColumnHeadings = _fields.Select(field =>
                     new CellDfn {
                         Value = field.Label,

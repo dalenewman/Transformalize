@@ -22,13 +22,17 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Desktop.Transforms {
-    public class CompiledRegexMatchTransform : BaseTransform {
+    public class RegexMatchTransform : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public CompiledRegexMatchTransform(IContext context) : base(context, "string") {
+        public RegexMatchTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();
+#if NETS10
+            _regex = new Regex(context.Transform.Pattern);
+#else
             _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
+#endif
         }
 
         public override IRow Transform(IRow row) {

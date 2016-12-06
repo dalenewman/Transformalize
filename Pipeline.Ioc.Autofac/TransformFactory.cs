@@ -114,14 +114,14 @@ namespace Transformalize.Ioc.Autofac {
                 case "left": return new LeftTransform(context);
                 case "lower": case "tolower": return new ToLowerTransform(context);
                 case "map": return new MapTransform(context);
-                case "match": return new CompiledRegexMatchTransform(context);
+                case "match": return new RegexMatchTransform(context);
                 case "multiply": return new MultiplyTransform(context);
                 case "next": return new NextTransform(context);
                 case "now": return new UtcNowTransform(context);
                 case "padleft": return new PadLeftTransform(context);
                 case "padright": return new PadRightTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "regexreplace": return new CompiledRegexReplaceTransform(context);
+                case "regexreplace": return new RegexReplaceTransform(context);
                 case "remove": return new RemoveTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "right": return new RightTransform(context);

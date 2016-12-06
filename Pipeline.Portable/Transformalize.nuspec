@@ -27,6 +27,9 @@
       <group targetFramework="net45">
         <dependency id="Cfg-NET" version="0.8.4" />
       </group>
+      <group targetFramework="net452">
+        <dependency id="Cfg-NET" version="0.8.4" />
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -34,5 +37,6 @@
     <file src="bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
     <file src="C:\Code\Transformalize\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
     <file src="C:\Code\Transformalize\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
+    <file src="C:\Code\Transformalize\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
   </files>
 </package>
