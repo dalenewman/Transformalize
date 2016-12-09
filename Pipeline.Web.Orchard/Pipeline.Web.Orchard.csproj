@@ -202,6 +202,9 @@
     <Reference Include="Transformalize.Provider.Web">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Transform.Geocode">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Geocode\bin\Debug\Transformalize.Transform.Geocode.dll</HintPath>
+    </Reference>
     <Reference Include="Transformalize.Transform.GeoCoordinate">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\Debug\Transformalize.Transform.GeoCoordinate.dll</HintPath>
     </Reference>

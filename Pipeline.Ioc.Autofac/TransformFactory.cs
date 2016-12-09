@@ -198,7 +198,7 @@ namespace Transformalize.Ioc.Autofac {
 
                 case "geocode": return new GeocodeTransform(context);
 
-                // need validation
+                // wip
                 case "web": return new WebTransform(context);
                 case "urlencode": return new UrlEncodeTransform(context);
                 case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));

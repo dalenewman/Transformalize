@@ -215,6 +215,26 @@ namespace Pipeline.Web.Orchard {
         <add name='direction' />
       </parameters>
     </add>
+    <add name='distance'>
+      <parameters>
+        <add name='fromlat' />
+        <add name='fromlon' />
+        <add name='tolat' />
+        <add name='tolon' />
+      </parameters>
+    </add>
+    <add name='humanize'>
+      <parameters>
+        <add name='format' value='[default]' />
+      </parameters>
+    </add>
+    <add name='web'>
+      <parameters>
+        <add name='url' value='' />
+        <add name='webmethod' value='GET' />
+        <add name='body' value='' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -304,7 +324,7 @@ namespace Pipeline.Web.Orchard {
     <add name='hyphenate' signature='none' target='t' />
     <add name='frommetric' signature='none' target='t' />
     <add name='fromroman' signature='none' target='t' />
-    <add name='humanize' signature='none' target='t' />
+    <add name='humanize' signature='humanize' target='t' />
     <add name='dehumanize' signature='none' target='t' />
     <add name='ordinalize' signature='none' target='t' />
     <add name='pascalize' signature='none' target='t' />
@@ -316,6 +336,7 @@ namespace Pipeline.Web.Orchard {
     <add name='toroman' signature='none' target='t' />
     <add name='towords' signature='none' target='t' />
     <add name='underscore' signature='none' target='t' />
+    <add name='bytes' signature='none' target='t' />
     
     <add name='addticks' signature='value' target='t' />
     <add name='addmillisecnds' signature='value' target='t' />
@@ -330,6 +351,12 @@ namespace Pipeline.Web.Orchard {
     <add name='geohashneighbor' signature='direction' target='t' />
     <add name='commonprefix' signature='none' target='t' />
     <add name='commonprefixes' signature='separator' target='t' />
+    <add name='distance' signature='distance' target='t' />
+    
+    <add name='web' signature='web' target='t' />
+    <add name='urlencode' signature='none' target='t' />
+    <add name='fromjson' signature='none' target='t' />
+    
   </methods>
 
 </cfg>";

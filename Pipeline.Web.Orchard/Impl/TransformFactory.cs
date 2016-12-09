@@ -33,6 +33,8 @@ using Transformalize.Transform.Humanizer;
 using Transformalize.Transform.Jint;
 using Transformalize.Transforms.System;
 using Transformalize.Validators;
+using Newtonsoft.Json;
+using Transformalize.Transform.Geocode;
 
 namespace Pipeline.Web.Orchard.Impl {
     public static class TransformFactory {
@@ -153,6 +155,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "toroman": return new ToRomanTransform(context);
                 case "towords": return new ToWordsTransform(context);
                 case "underscore": return new UnderscoreTransform(context);
+                case "bytes": return new BytesTransform(context);
 
                 case "addticks": return new DateAddTransform(context, "ticks");
                 case "addmilliseconds": return new DateAddTransform(context, "milliseconds");
@@ -177,6 +180,13 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "isempty": return new IsEmptyValidator(context);
                 case "isdefault": return new IsDefaultValidator(context);
                 case "isnumeric": return new IsNumericValidator(context);
+
+                case "geocode": return new GeocodeTransform(context);
+
+                // wip
+                case "web": return new WebTransform(context);
+                case "urlencode": return new UrlEncodeTransform(context);
+                case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

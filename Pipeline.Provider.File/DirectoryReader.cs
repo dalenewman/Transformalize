@@ -50,6 +50,7 @@ namespace Transformalize.Provider.File {
                     var field = _input.InputFields[i];
                     switch (names[i]) {
                         case "creation":
+                        case "created":
                         case "creationtime":
                         case "creationtimeutc":
                             row[field] = file.CreationTimeUtc;
@@ -68,11 +69,13 @@ namespace Transformalize.Provider.File {
                             row[field] = file.FullName;
                             break;
                         case "lastwrite":
+                        case "updated":
                         case "lastwritetime":
                         case "lastwritetimeutc":
                             row[field] = file.LastWriteTimeUtc;
                             break;
                         case "lastaccess":
+                        case "accessed":
                         case "lastaccesstime":
                         case "lastaccesstimeutc":
                             row[field] = file.LastAccessTimeUtc;
