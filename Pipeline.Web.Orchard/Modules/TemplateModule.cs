@@ -20,10 +20,10 @@ using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Orchard.Templates.Services;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Nulls;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Nulls;
 using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {

@@ -34,13 +34,16 @@ namespace Transformalize.Provider.Ado {
         }
 
         public ActionResponse Execute() {
+            var drop = _output.SqlDropStarView(_cf);
+            var create = _output.SqlCreateStarView(_cf);
+
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 try {
-                    cn.Execute(_output.SqlDropStarView(_cf));
+                    cn.Execute(drop);
                 } catch (DbException) {
                 }
-                cn.Execute(_output.SqlCreateStarView(_cf));
+                cn.Execute(create);
             }
             return new ActionResponse();
         }

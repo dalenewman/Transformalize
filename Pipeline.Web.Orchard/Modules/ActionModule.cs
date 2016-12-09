@@ -20,14 +20,14 @@ using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
-using Pipeline.Actions;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Actions;
-using Pipeline.Extensions;
-using Pipeline.Provider.Ado;
-using Pipeline.Provider.Ado.Actions;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Actions;
+using Transformalize.Extensions;
+using Transformalize.Provider.Ado;
+using Transformalize.Provider.Ado.Actions;
 using Pipeline.Web.Orchard.Impl;
 using OpenAction = Pipeline.Web.Orchard.Impl.OpenAction;
 
@@ -82,8 +82,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     return new WebAction(context, action);
                 case "tfl":
                     var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
-                    if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Content)) {
-                        cfg = action.Content;
+                    if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Body)) {
+                        cfg = action.Body;
                     }
 
                     var root = ctx.Resolve<Process>(new NamedParameter("cfg", cfg));

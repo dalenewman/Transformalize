@@ -11,7 +11,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Pipeline.Web.Orchard</RootNamespace>
-    <AssemblyName>Transformalize.Web.Orchard</AssemblyName>
+    <AssemblyName>Pipeline.Web.Orchard</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <FileUpgradeFlags>
@@ -56,23 +56,23 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.1.3\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Parsers.YamlDotNet">
       <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Debug\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.2.4\lib\net45\Cfg.Net.Reader.dll</HintPath>
+    <Reference Include="Cfg.Net.Reader, Version=0.2.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.2.6\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.1.1\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.1.3\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.8.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.8.2\lib\portable-net45+win8+wpa81+wp8\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -80,7 +80,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.2.4.7\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\..\..\packages\Elasticsearch.Net.2.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
@@ -107,68 +107,6 @@
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.0\lib\OpenXmlPowerTools.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Pipeline.Desktop, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\Debug\Pipeline.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Portable, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Portable\bin\Debug\Pipeline.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.Ado, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Ado\bin\Debug\Pipeline.Provider.Ado.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.Elastic, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Elastic\bin\Debug\Pipeline.Provider.Elastic.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.Excel, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Excel\bin\Debug\Pipeline.Provider.Excel.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.File, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.File\bin\Debug\Pipeline.Provider.File.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\Debug\Pipeline.Provider.MySql.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.OpenXml">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\Debug\Pipeline.Provider.OpenXml.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.PostgreSql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.PostgreSql\bin\Debug\Pipeline.Provider.PostgreSql.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.Solr, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Solr\bin\Debug\Pipeline.Provider.Solr.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.SQLite, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SQLite\bin\Debug\Pipeline.Provider.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.SqlServer, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\Debug\Pipeline.Provider.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Provider.Web">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Pipeline.Provider.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Transform.GeoCoordinate">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\Debug\Pipeline.Transform.GeoCoordinate.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Transform.Geohash">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\Debug\Pipeline.Transform.Geohash.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Transform.Humanizer">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Pipeline.Transform.Humanizer.dll</HintPath>
-    </Reference>
-    <Reference Include="Pipeline.Transform.Jint">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\Debug\Pipeline.Transform.Jint.dll</HintPath>
     </Reference>
     <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
@@ -225,8 +163,59 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="YamlDotNet, Version=3.9.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\YamlDotNet.3.9.0\lib\net35\YamlDotNet.dll</HintPath>
+    <Reference Include="Transformalize">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.452\bin\Debug\Transformalize.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Desktop">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\Debug\Transformalize.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Ado">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Ado\bin\Debug\Transformalize.Provider.Ado.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Elastic">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Elastic\bin\Debug\Transformalize.Provider.Elastic.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Excel">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Excel\bin\Debug\Transformalize.Provider.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.File">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.File\bin\Debug\Transformalize.Provider.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.MySql">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\Debug\Transformalize.Provider.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.OpenXml">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\Debug\Transformalize.Provider.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.PostgreSql">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.PostgreSql\bin\Debug\Transformalize.Provider.PostgreSql.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Solr">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Solr\bin\Debug\Transformalize.Provider.Solr.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.SQLite">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SQLite\bin\Debug\Transformalize.Provider.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.SqlServer">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\Debug\Transformalize.Provider.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Web">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Transformalize.Provider.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.GeoCoordinate">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\Debug\Transformalize.Transform.GeoCoordinate.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Geohash">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\Debug\Transformalize.Transform.Geohash.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Humanizer">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Transformalize.Transform.Humanizer.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Jint">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\Debug\Transformalize.Transform.Jint.dll</HintPath>
+    </Reference>
+    <Reference Include="YamlDotNet, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\YamlDotNet.4.0.0\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

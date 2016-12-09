@@ -1,6 +1,7 @@
-﻿@using Orchard
+﻿@using Cfg.Net.Ext
+@using Orchard
 @using Orchard.Core.Contents
-@using Pipeline.Configuration
+@using Transformalize.Configuration
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
 @using Pipeline.Web.Orchard.Models
@@ -24,7 +25,7 @@
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
     var exportCsvLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv").Replace("?&","?");
     var exportXlsxLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=xlsx" : Request.RawUrl + "?output=xlsx").Replace("?&","?");
-    var entity = Model.Process.Entities.First();
+    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
     var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
     var isSortable = fields.Any(f => f.Sortable == "true");
 

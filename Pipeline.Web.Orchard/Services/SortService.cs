@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Ext;
 using Orchard;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Services {
 

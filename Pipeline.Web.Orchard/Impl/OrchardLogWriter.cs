@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Orchard.Localization;
 using Orchard.Logging;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class OrchardLogWriter : IWrite {

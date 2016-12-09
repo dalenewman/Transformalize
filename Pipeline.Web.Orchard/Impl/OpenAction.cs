@@ -18,8 +18,10 @@
 
 using System;
 using System.Web;
-using Pipeline.Contracts;
-using Action = Pipeline.Configuration.Action;
+using Transformalize;
+using Transformalize.Actions;
+using Transformalize.Contracts;
+using Action = Transformalize.Configuration.Action;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class OpenAction : IAction {
@@ -36,7 +38,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 HttpContext.Current.Response.Redirect(urlOrFile, true);
             } catch (Exception ex) {
                 response.Code = 500;
-                response.Content = $"Error opening {_action.File}. {ex.Message}";
+                response.Message = $"Error opening {_action.File}. {ex.Message}";
             }
             return response;
         }

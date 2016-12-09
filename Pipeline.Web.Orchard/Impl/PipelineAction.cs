@@ -16,8 +16,9 @@
 #endregion
 
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
+using Transformalize.Actions;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class PipelineAction : IAction {

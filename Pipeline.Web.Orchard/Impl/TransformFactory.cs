@@ -21,19 +21,18 @@ using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop.Transforms;
-using Pipeline.Nulls;
-using Pipeline.Shared.Transforms;
-using Pipeline.Transform.GeoCoordinate;
-using Pipeline.Transform.Geohash;
-using Pipeline.Transform.Humanizer;
-using Pipeline.Transform.Jint;
-using Pipeline.Transforms;
-using Pipeline.Transforms.System;
-using Pipeline.Validators;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop.Transforms;
+using Transformalize.Nulls;
+using Transformalize.Transforms;
+using Transformalize.Transform.GeoCoordinate;
+using Transformalize.Transform.Geohash;
+using Transformalize.Transform.Humanizer;
+using Transformalize.Transform.Jint;
+using Transformalize.Transforms.System;
+using Transformalize.Validators;
 
 namespace Pipeline.Web.Orchard.Impl {
     public static class TransformFactory {
@@ -52,7 +51,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 }
                 // add conversion if necessary
                 if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" }.WithDefaults())));
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Transform { Method = "convert" }.WithDefaults())));
                 }
             }
             return transforms;
@@ -99,14 +98,14 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "left": return new LeftTransform(context);
                 case "lower": case "tolower": return new ToLowerTransform(context);
                 case "map": return new MapTransform(context);
-                case "match": return new CompiledRegexMatchTransform(context);
+                case "match": return new RegexMatchTransform(context);
                 case "multiply": return new MultiplyTransform(context);
                 case "next": return new NextTransform(context);
                 case "now": return new UtcNowTransform(context);
                 case "padleft": return new PadLeftTransform(context);
                 case "padright": return new PadRightTransform(context);
                 case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "regexreplace": return new CompiledRegexReplaceTransform(context);
+                case "regexreplace": return new RegexReplaceTransform(context);
                 case "remove": return new RemoveTransform(context);
                 case "replace": return new ReplaceTransform(context);
                 case "right": return new RightTransform(context);
@@ -162,7 +161,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "addhours": return new DateAddTransform(context, "hours");
                 case "adddays": return new DateAddTransform(context, "days");
 
-                case "fromxml": return context.Transform.XmlMode == "all" ? new Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transforms.FromXmlTransform(context) as ITransform;
+                case "fromxml": return context.Transform.XmlMode == "all" ? new Transformalize.Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transformalize.Transforms.FromXmlTransform(context) as ITransform;
                 case "fromsplit": return new FromSplitTransform(context);
                 case "fromlengths": return new FromLengthsTranform(context);
 

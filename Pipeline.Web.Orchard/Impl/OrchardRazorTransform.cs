@@ -1,8 +1,8 @@
 
 using Orchard.Templates.Services;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Transforms;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class OrchardRazorTransform : BaseTransform {

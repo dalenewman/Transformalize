@@ -24,18 +24,19 @@ using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
 using Orchard.Templates.Services;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Nulls;
-using Pipeline.Transform.Jint;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Nulls;
+using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
-//using Pipeline.Web.Orchard.Impl;
-using IParser = Pipeline.Contracts.IParser;
+using IParser = Transformalize.Contracts.IParser;
 using System;
 using Orchard.Localization;
 using Orchard.UI.Notify;
-using Pipeline.Desktop;
+using Transformalize;
+using Transformalize.Desktop;
+using Transformalize.Impl;
 
 // ReSharper disable PossibleMultipleEnumeration
 

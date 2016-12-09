@@ -1,4 +1,4 @@
-﻿using Pipeline.Configuration;
+﻿using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Models {
     public class ReportViewModel {

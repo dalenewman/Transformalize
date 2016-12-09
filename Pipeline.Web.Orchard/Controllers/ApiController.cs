@@ -27,13 +27,13 @@ using Orchard.ContentManagement;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
-using Pipeline.Contracts;
-using Pipeline.Extensions;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
-using LogLevel = Pipeline.Contracts.LogLevel;
-using Process = Pipeline.Configuration.Process;
-using Permissions = global::Orchard.Core.Contents.Permissions;
+using LogLevel = Transformalize.Contracts.LogLevel;
+using Process = Transformalize.Configuration.Process;
+using Permissions = Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 

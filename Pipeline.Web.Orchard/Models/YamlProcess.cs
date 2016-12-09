@@ -1,5 +1,5 @@
 ﻿using Cfg.Net.Contracts;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Models {
     /// <summary>

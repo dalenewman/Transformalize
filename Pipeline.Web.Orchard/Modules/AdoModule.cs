@@ -18,19 +18,20 @@
 
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Extensions;
-using Pipeline.Nulls;
-using Pipeline.Provider.Ado;
-using Pipeline.Provider.MySql;
-using Pipeline.Provider.PostgreSql;
-using Pipeline.Provider.SqlServer;
-using Pipeline.Provider.SQLite;
-using Pipeline.Transforms.System;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Extensions;
+using Transformalize.Nulls;
+using Transformalize.Provider.Ado;
+using Transformalize.Provider.MySql;
+using Transformalize.Provider.PostgreSql;
+using Transformalize.Provider.SqlServer;
+using Transformalize.Provider.SQLite;
+using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
+using Transformalize;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AdoModule : Module {

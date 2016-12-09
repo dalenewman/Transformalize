@@ -21,15 +21,15 @@ using System.Dynamic;
 using System.Linq;
 using Cfg.Net.Contracts;
 using Orchard.Templates.Services;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class OrchardRazorTemplateEngine : ITemplateEngine {
 
         private readonly PipelineContext _context;
         private readonly ITemplateProcessor _templateProcessor;
-        private readonly Configuration.Template _template;
+        private readonly Transformalize.Configuration.Template _template;
 
         // Using Cfg-NET's "Reader" to read content, files, or web addresses with possible parameters.
         private readonly IReader _templateReader;
@@ -37,7 +37,7 @@ namespace Pipeline.Web.Orchard.Impl {
         public OrchardRazorTemplateEngine(
             PipelineContext context,
             ITemplateProcessor templateProcessor,
-            Configuration.Template template,
+            Transformalize.Configuration.Template template,
             IReader templateReader) {
             _context = context;
             _templateProcessor = templateProcessor;

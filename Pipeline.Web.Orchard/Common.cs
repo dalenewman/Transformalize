@@ -7,7 +7,7 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
 using Orchard.Tags.Models;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Services;
 
 namespace Pipeline.Web.Orchard {

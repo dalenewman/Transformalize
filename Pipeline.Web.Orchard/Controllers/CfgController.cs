@@ -27,15 +27,15 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Pipeline.Contracts;
+using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using System.IO;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
-using Pipeline.Extensions;
-using Process = Pipeline.Configuration.Process;
+using Transformalize.Extensions;
+using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -110,6 +110,11 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (part == null) {
                 process.Name = "Not Found";
             } else {
+
+                var user = _orchardServices.WorkContext.CurrentUser == null ?
+                    "Anonymous" :
+                    _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     process = _processService.Resolve(part.EditorMode, part.EditorMode);
@@ -128,7 +133,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         // change process for export purposes
                         var output = Request["output"] ?? "page";
                         if (part.Reportable && output != "page") {
-                            ConvertToExport(process, part, output, parameters);
+                            ConvertToExport(user, process, part, output, parameters);
                             process.Load(process.Serialize(), parameters);
                         }
 
@@ -173,7 +178,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         }
                     }
                 } else {
-                    _orchardServices.Notifier.Warning(T("Output must be set to internal for reporting."));
+                    _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
                 }
             }
 
@@ -181,17 +186,13 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         }
 
-        private void ConvertToExport(Process process, PipelineConfigurationPart part, string output, IDictionary<string,string> parameters) {
+        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string output, IDictionary<string,string> parameters) {
             var o = process.Output();
             switch (output) {
                 case "xlsx":
                     if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
                         _appDataFolder.CreateDirectory(Common.FileFolder);
                     }
-
-                    var user = _orchardServices.WorkContext.CurrentUser == null ? 
-                        "Anonymous" : 
-                        _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
 
                     var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
                     
@@ -228,7 +229,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
-            var process = new Configuration.Process { Name = "Export" }.WithDefaults();
+            var process = new Process { Name = "Export" }.WithDefaults();
 
             if (part == null) {
                 process.Name = "Not Found";

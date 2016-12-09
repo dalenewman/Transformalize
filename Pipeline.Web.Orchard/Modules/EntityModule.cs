@@ -17,7 +17,7 @@
 #endregion
 
 using Autofac;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Modules {
 

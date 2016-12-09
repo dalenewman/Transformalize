@@ -59,7 +59,7 @@ namespace Transformalize.Provider.OpenXml {
                 var rowDef = new RowDfn { Cells = cellDfns };
                 cellDfns.AddRange(_fields.Select(field => new CellDfn {
                     CellDataType = field.ToCellDataType(),
-                    Value = row[field],
+                    Value = field.Type == "guid" ? row[field].ToString() : row[field],
                     FormatCode = field.Format.Replace("tt","AM/PM")
                 }));
                 _rowDfns.Add(rowDef);

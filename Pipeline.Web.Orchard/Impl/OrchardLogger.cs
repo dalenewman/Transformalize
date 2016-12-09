@@ -1,11 +1,10 @@
 using System;
-using Jint.Parser.Ast;
 using Orchard.Logging;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Logging;
-using LogLevel = Pipeline.Contracts.LogLevel;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Logging;
+using LogLevel = Transformalize.Contracts.LogLevel;
 using NullLogger = Orchard.Logging.NullLogger;
 
 namespace Pipeline.Web.Orchard.Impl

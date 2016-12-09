@@ -24,12 +24,12 @@ using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Desktop;
-using Pipeline.Nulls;
-using Pipeline.Provider.File;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Desktop;
+using Transformalize.Nulls;
+using Transformalize.Provider.File;
 using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {

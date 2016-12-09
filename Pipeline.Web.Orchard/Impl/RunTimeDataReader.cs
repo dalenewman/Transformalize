@@ -21,9 +21,9 @@ using Autofac;
 using Orchard.FileSystems.AppData;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
-using Pipeline.Configuration;
-using Pipeline.Contracts;
-using Pipeline.Nulls;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Nulls;
 using Pipeline.Web.Orchard.Modules;
 
 namespace Pipeline.Web.Orchard.Impl {

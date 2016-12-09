@@ -19,10 +19,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Pipeline.Actions;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Process = Pipeline.Configuration.Process;
+using Transformalize;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ProcessControlModule : Module {

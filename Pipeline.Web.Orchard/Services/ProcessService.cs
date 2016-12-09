@@ -1,5 +1,5 @@
 using Orchard;
-using Pipeline.Configuration;
+using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Services {

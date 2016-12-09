@@ -18,9 +18,10 @@
 
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ContextModule : Module {

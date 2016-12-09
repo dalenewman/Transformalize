@@ -18,10 +18,10 @@
 
 using System.Linq;
 using Autofac;
-using Pipeline.Configuration;
-using Pipeline.Context;
-using Pipeline.Contracts;
-using Pipeline.Provider.Ado;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Provider.Ado;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class MapModule : Module {
