@@ -40,10 +40,6 @@
       <HintPath>..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DateMath, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DateMath.0.1.0-beta\lib\net45\DateMath.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -66,7 +62,6 @@
     <Compile Include="Actions\OpenAction.cs" />
     <Compile Include="Actions\PrintAction.cs" />
     <Compile Include="Actions\WaitAction.cs" />
-    <Compile Include="DateMathModifier.cs" />
     <Compile Include="SchemaReader.cs" />
     <Compile Include="Loggers\ConsoleLogger.cs" />
     <Compile Include="Loggers\TraceLogger.cs" />
@@ -108,9 +103,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
-      <Project>{5B3A2B6A-E86B-4D27-9196-0D8E3715D2C0}</Project>
-      <Name>Pipeline</Name>
+    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

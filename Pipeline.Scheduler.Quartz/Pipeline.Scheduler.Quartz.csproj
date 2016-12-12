@@ -84,9 +84,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
-      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline</Name>
+    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -30,6 +30,7 @@ using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;
 using Transformalize.Template.Velocity;
 using Transformalize.Transform.CSharp;
+using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Geocode;
 using Transformalize.Transform.GeoCoordinate;
 using Transformalize.Transform.Geohash;
@@ -197,6 +198,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "isnumeric": return new IsNumericValidator(context);
 
                 case "geocode": return new GeocodeTransform(context);
+                case "datemath": return new DateMathTransform(context);
 
                 // wip
                 case "web": return new WebTransform(context);

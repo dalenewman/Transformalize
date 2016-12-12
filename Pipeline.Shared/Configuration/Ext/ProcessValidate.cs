@@ -354,6 +354,7 @@ namespace Transformalize.Configuration.Ext {
                 case "datepart":
                 case "next":
                 case "timeago":
+                case "datemath":
                 case "timeahead":
                 case "last":
                     if (input.Type != "datetime") {
@@ -720,6 +721,12 @@ namespace Transformalize.Configuration.Ext {
                     CheckDouble(allFields, t, t.ToLat, "to-lat", error);
                     CheckDouble(allFields, t, t.ToLon, "to-lon", error);
                     break;
+                case "datemath":
+                    if (t.Expression == string.Empty)
+                    {
+                        error($"The {t.Method} method requires operators and/or rounding expression (e.g. +1d+2h/m).");
+                    }
+                    break;
 
             }
 
@@ -744,6 +751,7 @@ namespace Transformalize.Configuration.Ext {
                         break;
                     case "next":
                     case "last":
+                    case "datemath":
                     case "timezone":
                         if (!context.Field.Type.StartsWith("date")) {
                             error($"The {lastTransform.Method} returns a date, but {context.Field.Alias} is a {context.Field.Type}.");

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.SQLite</id>
-    <version>0.2.0-beta</version>
+    <version>0.2.1-beta</version>
     <title>Transformalize Provider SQLite</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,9 +15,9 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.0-beta" />
+        <dependency id="Transformalize" version="0.2.1-beta" />
         <dependency id="System.Data.SQLite.Core" version="1.0.103" />
-        <dependency id="Transformalize.Provider.Ado" version="0.2.0-beta" />
+        <dependency id="Transformalize.Provider.Ado" version="0.2.1-beta" />
       </group>
     </dependencies>
   </metadata>

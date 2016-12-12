@@ -118,6 +118,7 @@
     <Compile Include="FromLengthsTransform.cs" />
     <Compile Include="InventoryIntegrationSqlServer.cs" />
     <Compile Include="FormatXmlTransform.cs" />
+    <Compile Include="DateMath.cs" />
     <Compile Include="TrimThenStartsWith.cs" />
     <Compile Include="IIfTransform.cs" />
     <Compile Include="VelocityTransform.cs" />
@@ -170,10 +171,6 @@
       <Project>{58ff362e-4a8d-459e-a174-5aaae7ea8953}</Project>
       <Name>Pipeline.Ioc.Autofac</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
-      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
       <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
       <Name>Pipeline.Provider.Ado</Name>
@@ -221,6 +218,14 @@
     <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
       <Project>{71372f65-12f1-4a72-ab2d-2c5eadbf75e0}</Project>
       <Name>Pipeline.Template.Razor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
+      <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
+      <Name>Transformalize.Transform.DateMath</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

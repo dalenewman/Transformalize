@@ -101,6 +101,10 @@ namespace Transformalize.Provider.Ado {
 
                 using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
 
+                    if (_fields.Length < reader.FieldCount) {
+                        _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
+                    }
+
                     // transform types if sqlite
                     if (_factory.AdoProvider == AdoProvider.SqLite) {
                         while (reader.Read()) {

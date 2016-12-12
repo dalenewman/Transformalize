@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Cfg.Net.Contracts;
-using DaleNewman;
 
-namespace Transformalize.Desktop {
+namespace Transformalize.Transform.DateMath {
     public class DateMathModifier : IRootModifier {
 
         private const string DefaultFormat = "yyyy-MM-dd";
@@ -31,9 +30,9 @@ namespace Transformalize.Desktop {
             IAttribute formatAttribute;
             if (node.TryAttribute("format", out formatAttribute) && formatAttribute.Value != null) {
                 var format = formatAttribute.Value.ToString();
-                valueAttribute.Value = string.IsNullOrEmpty(format) ? DateMath.Parse(value, DefaultFormat) : DateMath.Parse(value, format);
+                valueAttribute.Value = string.IsNullOrEmpty(format) ? DaleNewman.DateMath.Parse(value, DefaultFormat) : DaleNewman.DateMath.Parse(value, format);
             } else {
-                valueAttribute.Value = DateMath.Parse(value, DefaultFormat);
+                valueAttribute.Value = DaleNewman.DateMath.Parse(value, DefaultFormat);
             }
         }
 

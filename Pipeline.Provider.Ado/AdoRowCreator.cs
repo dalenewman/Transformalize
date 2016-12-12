@@ -35,8 +35,10 @@ namespace Transformalize.Provider.Ado {
         }
 
         public IRow Create(IDataReader reader, Field[] fields) {
+
+            var fieldCount = Math.Min(reader.FieldCount, fields.Length);
             var row = _rowFactory.Create();
-            for (var i = 0; i < reader.FieldCount; i++) {
+            for (var i = 0; i < fieldCount; i++) {
                 var field = fields[i];
                 if (field.Type == "string") {
                     if (reader.GetFieldType(i) == typeof(string)) {

@@ -203,6 +203,11 @@
         <add name='body' value='' />
       </parameters>
     </add>
+    <add name='expression'>
+      <parameters>
+        <add name='expression' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -324,6 +329,7 @@
     <add name='web' signature='web' target='t' />
     <add name='urlencode' signature='none' target='t' />
     <add name='fromjson' signature='none' target='t' />
+    <add name='datemath' signature='expression' target='t' />
     
   </methods>
 

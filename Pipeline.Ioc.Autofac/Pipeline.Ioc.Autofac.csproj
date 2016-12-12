@@ -159,10 +159,6 @@
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Portable\Pipeline.csproj">
-      <Project>{5b3a2b6a-e86b-4d27-9196-0d8e3715d2c0}</Project>
-      <Name>Pipeline</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
       <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
       <Name>Pipeline.Provider.Ado</Name>
@@ -246,6 +242,14 @@
     <ProjectReference Include="..\Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj">
       <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
       <Name>Pipeline.Transform.Jint</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
+      <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
+      <Name>Transformalize.Transform.DateMath</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
       <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>

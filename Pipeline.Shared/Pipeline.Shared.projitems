@@ -80,7 +80,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IReadOutputKeysAndHashCodes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRootMaker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRow.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRowCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRowFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRunTimeExecute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IRunTimeRun.cs" />
@@ -133,7 +132,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullRowCondition.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullSchemaReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTakeAndReturnRows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTemplateEngine.cs" />

@@ -32,6 +32,7 @@ using Transformalize.Desktop;
 using Transformalize.Desktop.Loggers;
 using Transformalize.Nulls;
 using Transformalize.Template.Razor;
+using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Jint;
 using IParser = Transformalize.Contracts.IParser;
 
@@ -70,9 +71,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             // parser choices
             builder.RegisterType<JintParser>().Named<IParser>("js");
-
-            // input row condition
-            builder.Register<IRowCondition>((ctx, p) => new JintRowCondition(p.TypedAs<InputContext>(), p.TypedAs<string>())).As<IRowCondition>();
 
             builder.Register((ctx, p) => {
 
