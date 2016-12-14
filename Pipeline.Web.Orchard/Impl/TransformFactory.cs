@@ -29,12 +29,13 @@ using Transformalize.Nulls;
 using Transformalize.Transforms;
 using Transformalize.Transform.GeoCoordinate;
 using Transformalize.Transform.Geohash;
-using Transformalize.Transform.Humanizer;
 using Transformalize.Transform.Jint;
 using Transformalize.Transforms.System;
 using Transformalize.Validators;
 using Newtonsoft.Json;
+using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Geocode;
+using Transformalize.Transform.Humanizer;
 
 namespace Pipeline.Web.Orchard.Impl {
     public static class TransformFactory {
@@ -182,6 +183,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "isnumeric": return new IsNumericValidator(context);
 
                 case "geocode": return new GeocodeTransform(context);
+                case "datemath": return new DateMathTransform(context);
 
                 // wip
                 case "web": return new WebTransform(context);

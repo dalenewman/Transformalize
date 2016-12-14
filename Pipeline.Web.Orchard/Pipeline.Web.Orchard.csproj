@@ -75,6 +75,10 @@
       <HintPath>..\..\..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DateMath, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\DateMath.0.2.0-beta\lib\net45\DateMath.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
@@ -201,6 +205,9 @@
     </Reference>
     <Reference Include="Transformalize.Provider.Web">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Transformalize.Provider.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.DateMath">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.DateMath\bin\Debug\Transformalize.Transform.DateMath.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Geocode">
       <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Geocode\bin\Debug\Transformalize.Transform.Geocode.dll</HintPath>

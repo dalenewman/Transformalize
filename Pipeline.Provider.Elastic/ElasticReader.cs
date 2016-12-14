@@ -87,7 +87,7 @@ namespace Transformalize.Provider.Elastic {
                 writer.WriteEndObject();
 
                 if (readFrom == ReadFrom.Input) {
-                    if (context.Entity.Filter.Any(f=>f.Value != "*")) {
+                    if (context.Entity.Filter.Any(f => f.Value != "*")) {
                         writer.WritePropertyName("query");
                         writer.WriteStartObject();
                         writer.WritePropertyName("constant_score");
@@ -99,13 +99,27 @@ namespace Transformalize.Provider.Elastic {
                         writer.WritePropertyName("must");
                         writer.WriteStartArray();
 
-                        foreach (var filter in context.Entity.Filter.Where(f=>f.Value != "*")) {
+                        foreach (var filter in context.Entity.Filter.Where(f => f.Value != "*" && f.Value != string.Empty)) {
                             writer.WriteStartObject();
-                            writer.WritePropertyName("term");
-                            writer.WriteStartObject();
-                            writer.WritePropertyName(filter.LeftField.Name);
-                            writer.WriteValue(filter.Value);
-                            writer.WriteEndObject();
+
+                            switch (filter.Type) {
+                                case "facet":
+                                    writer.WritePropertyName("term");
+                                    writer.WriteStartObject();
+                                    writer.WritePropertyName(filter.LeftField.Name);
+                                    writer.WriteValue(filter.Value);
+                                    writer.WriteEndObject();
+                                    break;
+                                case "range":
+                                    break;
+                                default: //search
+                                    writer.WritePropertyName(filter.Value.EndsWith("*") ? "prefix" : "match");
+                                    writer.WriteStartObject();
+                                    writer.WritePropertyName(filter.LeftField.Name);
+                                    writer.WriteValue(filter.Value);
+                                    writer.WriteEndObject();
+                                    break;
+                            }
                             writer.WriteEndObject();
                         }
 
@@ -227,7 +241,7 @@ namespace Transformalize.Provider.Elastic {
                 if (hits != null && hits.HasValue) {
                     var docs = hits.Value as IEnumerable<object>;
                     if (docs != null) {
-                        foreach (var doc in docs.OfType<IDictionary<string,object>>()) {
+                        foreach (var doc in docs.OfType<IDictionary<string, object>>()) {
                             var row = _rowFactory.Create();
                             if (doc != null && doc.ContainsKey("_source")) {
                                 var source = doc["_source"] as IDictionary<string, object>;
@@ -256,7 +270,7 @@ namespace Transformalize.Provider.Elastic {
                         continue;
 
                     foreach (var item in items.OfType<IDictionary<string, object>>()) {
-                        map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"]}.WithDefaults());
+                        map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"] }.WithDefaults());
                     }
                 }
             } else {

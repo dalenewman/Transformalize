@@ -197,7 +197,12 @@ namespace Transformalize.Configuration.Ext {
         static void ValidateRelationships(Process p, Action<string> error, Action<string> warn) {
             // count check
             if (p.Entities.Count > 1 && p.Relationships.Count + 1 < p.Entities.Count) {
-                error($"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.");
+                var message = $"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.";
+                if (p.Mode == "check") {
+                    warn(message);
+                } else {
+                    error(message);
+                }
             }
 
             //entity alias, name check, and if that passes, do field alias, name check
@@ -213,12 +218,22 @@ namespace Transformalize.Configuration.Ext {
                         if (leftEntity.TryGetField(leftField, out field)) {
                             relationship.Summary.LeftFields.Add(field);
                         } else {
-                            error($"A relationship references a left-field that doesn't exist: {leftField}");
+                            var message = $"A relationship references a left-field that doesn't exist: {leftField}";
+                            if (p.Mode == "check") {
+                                warn(message);
+                            } else {
+                                error(message);
+                            }
                             problem = true;
                         }
                     }
                 } else {
-                    error($"A relationship references a left-entity that doesn't exist: {relationship.LeftEntity}");
+                    var message = $"A relationship references a left-entity that doesn't exist: {relationship.LeftEntity}";
+                    if (p.Mode == "check") {
+                        error(message);
+                    } else {
+                        warn(message);
+                    }
                     problem = true;
                 }
 
@@ -231,12 +246,22 @@ namespace Transformalize.Configuration.Ext {
                         if (rightEntity.TryGetField(rightField, out field)) {
                             relationship.Summary.RightFields.Add(field);
                         } else {
-                            error($"A relationship references a right-field that doesn't exist: {rightField}");
+                            var message = $"A relationship references a right-field that doesn't exist: {rightField}";
+                            if (p.Mode == "check") {
+                                warn(message);
+                            } else {
+                                error(message);
+                            }
+                            error(message);
                             problem = true;
                         }
                     }
                 } else {
-                    error($"A relationship references a right-entity that doesn't exist: {relationship.RightEntity}");
+                    if (p.Mode == "check") {
+                        warn($"A relationship references a right-entity that doesn't exist: {relationship.RightEntity}");
+                    } else {
+                        error($"A relationship references a right-entity that doesn't exist: {relationship.RightEntity}");
+                    }
                     problem = true;
                 }
 
@@ -722,8 +747,7 @@ namespace Transformalize.Configuration.Ext {
                     CheckDouble(allFields, t, t.ToLon, "to-lon", error);
                     break;
                 case "datemath":
-                    if (t.Expression == string.Empty)
-                    {
+                    if (t.Expression == string.Empty) {
                         error($"The {t.Method} method requires operators and/or rounding expression (e.g. +1d+2h/m).");
                     }
                     break;

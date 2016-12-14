@@ -2,153 +2,200 @@
 
 ### Introduction
 
-Transformalize aims to transform and denormalize relational data in near real-time. The resulting data may be used in several ways:
+Transformalize is an [open source](https://github.com/dalenewman/Transformalize) extract, transform, and load tool that is 
+controlled by an arrangement (or configuration). 
+
+This article explains how to "Transformalize" the Northwind database.  In other 
+words, it shows how you can use Tranformalize to transform and denormalize 
+Northwind's relational tables into a star-schema.  The resulting data 
+may be used in several ways:
 
 * As an OLAP cube data source
-* To feed a SOLR, Elasticsearch, or Lucene index.
+* To feed an Elasticsearch, SOLR, or Lucene index.
 * To provide faster, simpler, non-blocking access for SQL queries
-* Or, use your imagination... (e.g. to feed a Redis cache server, to load a NoSql database, etc.)
 
-Transformalize is an open source .NET 4.5 class library. It may be
-referenced and run directly in code, or run within
-[Orchard CMS](http://www.orchardproject.net), or with
-an included console application (`tfl.exe`).
-It's source code is hosted on [GitHub](https://github.com/dalenewman/Transformalize).
+### Getting Started
 
-### Demo
+Start with an arrangment (aka configuration) that specifies an *input* and *output*:
 
-Start with a process configuration:
+**Arrangement**
 
-<pre class="prettyprint">
-&lt;transformalize&gt;
-	&lt;processes&gt;
-		&lt;add name=&quot;NorthWind&quot;&gt;
-		    &lt;connections&gt;
-		        &lt;add name=&quot;input&quot; /&gt;
-		        &lt;add name=&quot;output&quot; /&gt;
-		    &lt;/connections&gt;
-		&lt;/add&gt;
-	&lt;/processes&gt;
-&lt;/transformalize&gt;
-</pre>
+```xml
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" 
+         provider="sqlserver"
+         server="localhost" 
+         database="NorthWind" />
+    <add name="output" 
+         provider="sqlserver" 
+         server="localhost"
+         database="NorthWindOutput"/>
+  </connections>
+</cfg>
+```
+**Explanation**
 
-First, setup connections:
+As indicated by the provider attribute, the *input* and *output* 
+connections are pointing to SQL Server databases.  I installed 
+*Northwind* database with [this](http://www.microsoft.com/en-us/download/details.aspx?id=23654), 
+and I created *NorthWindOutput* as an empty database.
 
-<pre class="prettyprint">
-&lt;connections&gt;
-    &lt;add name=&quot;input&quot; database=&quot;NorthWind&quot;/&gt;
-    &lt;add name=&quot;output&quot; database=&quot;NorthWindOutput&quot;/&gt;
-&lt;/connections&gt;
-</pre>
 
-I set the input to `NorthWind` and the output to `NorthWindOutput`. These are both 
-SQL Server databases.  Connections are trusted *sqlserver* by default. 
-If you're following along at home, create these databases first.  Then, populate the 
-Northwind database with this [sql script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
 
-#### The NorthWind Schema...
+### The NorthWind Schema
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The schema pictured above shows 8 tables in the `NorthWind` database.  The most important *fact* table is `Order Details`. 
-So, I add it as the first entity and save the configuration as *NorthWind.xml*.
+The schema (above) shows eight tables in the *NorthWind* database. 
+The most important [fact table](https://en.wikipedia.org/wiki/Fact_table) is 
+*Order Details*.  So, add it as the first entity and save 
+the arrangment as *NorthWind.xml*.
 
-<pre class="prettyprint">
-&lt;entities&gt;
-    &lt;add name=&quot;Order Details&quot;/&gt;
-&lt;/entities&gt;&nbsp;
+```xml
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlserver" database="NorthWind"/>
+    <add name="output" provider="sqlserver" database="NorthWindOutput"/>
+  </connections>
+  <entities>
+    <add name="Order Details" />
+  </entities>
+</cfg>
+```
+
+Now we need to add the fields to *Order Details*.  You could type them in, 
+or run `tfl` in *check* mode, like this:
+
+<pre>
+<strong>tfl -a NorthWind.xml -m check</strong>
 </pre>
 
-Using the console application (`tfl.exe`), run Transformalize in &quot;metadata&quot; mode:
+![check mode](../Files/check-mode.gif)
 
-<pre class"prettyprint">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;metadata&#39;}
+Check mode detects an entity's fields and outputs the 
+arrangement (to the console).  We want to redirect the output 
+so we have to do this:
+
+<pre>
+<strong>tfl -a NorthWind.xml -m check > output.xml && start output.xml</strong>
 </pre>
 
-Metadata mode reads the information schema of the database. 
-&nbsp;Then, it writes and opens an XML file with Order Detail&#39;s 
-primary key and field definitions. Copy them into _NorthWind.xml_:
+Once you have the fields in *NorthWind.xml*, your *Order Details* entity 
+should look like this:
 
-<pre class="prettyprint">
-&lt;entities&gt;
-    &lt;add name=&quot;Order Details&quot;&gt;
-        <strong>&lt;fields&gt;
-            &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-            &lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-            &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
-            &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
-            &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
-        &lt;/fields&gt;</strong>
-    &lt;/add&gt;
-&lt;/entities&gt;&nbsp;&nbsp;
+**Arrangement** (partial)
+
+```xml
+<entities>
+  <add name="Order Details">
+    <fields>
+      <add name="OrderID" type="int" primary-key="true" />
+      <add name="ProductID" type="int" primary-key="true" />
+      <add name="Discount" type="single" />
+      <add name="Quantity" type="short" />
+      <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
+    </fields>
+  </add>
+</entities>  
+```
+
+**Explanation**
+
+The *Order Details* entity now has five fields. Check mode also 
+detected the primary key, and type information.
+
+---
+
+With the *Order Details* fields in place, run Transformalize in Init mode:
+
+<pre>
+<strong>tfl -a NorthWind.xml -m init</strong>
+2016-12-12 15:59:46 | warn  | NorthWind | Order Details | Initializing
+2016-12-12 15:59:46 | info  | NorthWind | Order Details | Starting
+2016-12-12 15:59:47 | info  | NorthWind | Order Details | 2155 from input
+2016-12-12 15:59:47 | info  | NorthWind | Order Details | 2155 inserts into output Order Details
+2016-12-12 15:59:47 | info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Now, run Transformalize in Initialize mode:
+Init mode prepares the output, and bulk inserts the data into it.  Now, 
+run Tfl without specifying a mode:
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
-23:38:57 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
-23:38:57 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
-23:38:57 | Info | NorthWind | All | Process completed in 00:00:00.5585967.
+<pre>
+<strong>tfl -a NorthWind.xml</strong>
+2016-12-12 16:04:03 | info  | NorthWind | Order Details | Starting
+2016-12-12 16:04:03 | info  | NorthWind | Order Details | 2155 from input
+2016-12-12 16:04:03 | info  | NorthWind | Order Details | Ending 00:00:00.5467704
 </pre>
 
-Initialize mode initializes the output, preparing a place to store the data. Now run Tfl without specifying a mode:
+![check mode](../Files/init-mode.gif)
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml
-23:43:01 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
-23:43:01 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7455880.
+The default mode (not specifying a mode) reads the input and updates the 
+output **if necessary**.  This works, but is not efficient, because it reads 
+*all* the records from the input, generates a hash code, and compares it with 
+the hash code stored in the output.  
+
+Databases provide the ability to limit (aka query) the records returned.  So, 
+we can take advantage of this by using an existing, or adding a *version* 
+column to the *Order Details* table.  A version column is a value that 
+increments anytime a record is inserted or updated. 
+
+Conveniently enough, SQL Server offers a `ROWVERSION` type that gives us 
+a version column without having to modify the application or add a trigger. 
+Add a `RowVersion` column like this:
+
+```sql
+ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
+```
+
+Update the *Order Details* entity to use RowVersion:
+
+![add row version](../Files/add-row-version.gif)
+
+```xml
+<entities>
+  <!-- set version in the entity -->
+  <add name="Order Details" version="RowVersion">
+    <fields>
+      <add name="OrderID" type="int" primary-key="true" />
+      <add name="ProductID" type="int" primary-key="true" />
+      <add name="Discount" type="single" />
+      <add name="Quantity" type="short" />
+      <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
+      <!-- add version here -->
+      <add name="RowVersion" type="byte[]" length="8" />
+    </fields>
+  </add>
+</entities> 
+```
+
+When you change the structure of your output (e.g. adding a row version), you 
+have to re-initialize it.  To do that, run in `init` mode first, and then 
+run again in default mode:
+
+<pre>
+<strong>tfl -a NorthWind.xml -m init</strong>
+2016-12-12 16:59:27 | warn  | NorthWind | Order Details | Initializing
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | Starting
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | <strong>Change Detected: Input:0x6032C != Output:0xnull</strong>
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 from input
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 inserts into output Order Details
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | Ending 00:00:00.1553228
+
+<strong>tfl -a NorthWind.xml</strong>
+2016-12-12 16:59:40 | info  | NorthWind | Order Details | Starting
+2016-12-12 16:59:40 | info  | NorthWind | Order Details | <strong>Change Detected: No.</strong>
+2016-12-12 16:59:40 | info  | NorthWind | Order Details | Ending 00:00:00.1248674
 </pre>
 
-Transformalize copied the data that is configured in Northwind.xml. If we run it again, this happens:&nbsp;
+![add row version](../Files/re-init.gif)
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml
-23:44:18 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 2155 updates in Order Details.
-23:44:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:01.0926105.&nbsp;
-</pre>
+Now TFL doesn't even have to load the records. Using the row version, 
+it was able to determine the data hasn't been updated.
 
-It updates the data. It copies new and updates existing data, but it is inefficient. The 2155 records have not been modified in the source, but they have been updated unnecessarily in the destination. So, we need to add a _version_ column to `Order Details` entity.  A version column should be a value that will increment anytime a record is inserted or updated.  Conveniently, SQL Server offers a ROWVERSION type that gives us a version column without having to modify the application or add a trigger.
+Just to make sure, let's check the output for the data:
 
-<pre class="prettyprint linenums">
-ALTER TABLE [Order Details] ADD RowVersion ROWVERSION;&nbsp;
-</pre>
-
-Update the `Order Details` entity to use RowVersion:&nbsp;
-
-<pre class="prettyprint linenums:8">
-&lt;entities&gt;
-    &lt;add name=&quot;Order Details&quot; version=&quot;RowVersion&quot;&gt;
-        &lt;fields&gt;
-            &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-            &lt;add name=&quot;ProductID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; /&gt;
-            &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; /&gt;
-            &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; /&gt;
-            &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; /&gt;
-            &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;/&gt;
-        &lt;/fields&gt;
-    &lt;/add&gt;
-&lt;/entities&gt;&nbsp;
-</pre>
-
-Re-initialize and run twice:&nbsp;
-
-<pre class="prettyprint linenums">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
-23:58:52 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
-23:58:52 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
-23:58:52 | Info | NorthWind | All | Process completed in 00:00:00.5504415.
-tfl NorthWind.xml
-00:00:18 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
-00:00:18 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.7417452.
-tfl NorthWind.xml
-00:00:23 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 0 updates in Order Details.
-00:00:23 | Info | NorthWind | Order Details....... | Process completed in 00:00:00.6042720.
-</pre>
-
-Now it doesn&#39;t update data unnecessarily. &nbsp;It&#39;s using the version field to sense that the data hasn&#39;t been updated. &nbsp;Let&#39;s view the output.
-
-<pre class="prettyprint linenums lang-sql">
+```sql
 SELECT TOP 10
 	Discount,
 	OrderID,
@@ -156,10 +203,10 @@ SELECT TOP 10
 	Quantity,
 	UnitPrice
 FROM NorthWindStar;
-</pre>
+```
 
-<pre class="prettyprint linenums">
-Discount   OrderID     ProductID   Quantity UnitPrice
+<pre>
+<strong>Discount   OrderID     ProductID   Quantity UnitPrice</strong>
 ---------- ----------- ----------- -------- ---------
 0.2        10248       11          12       14.0000
 0          10248       42          10       9.8000
@@ -173,33 +220,37 @@ Discount   OrderID     ProductID   Quantity UnitPrice
 0.05       10251       57          15       15.6000
 </pre>
 
-Review the NorthWind diagram. The next closest tables to `Order Details` are `Orders` and `Products`. Add the `Orders` entity. Hint: Add entity &lt;add name=&quot;Orders&quot;/&gt; and run Tfl in metadata mode.
 
-<pre class="prettyprint linenums:19">
-&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
-    &lt;fields&gt;
-        &lt;add name=&quot;OrderID&quot; type=&quot;System.Int32&quot; primary-key=&quot;true&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;Discount&quot; type=&quot;System.Single&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;Quantity&quot; type=&quot;System.Int16&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;UnitPrice&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
-        &lt;add name=&quot;CustomerID&quot; type=&quot;System.Char&quot; length=&quot;5&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;EmployeeID&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;Freight&quot; type=&quot;System.Decimal&quot; precision=&quot;19&quot; scale=&quot;4&quot;&gt;&lt;/add&gt;
-        &lt;add name=&quot;OrderDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;RequiredDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;RowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipAddress&quot; length=&quot;60&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipCity&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipCountry&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipName&quot; length=&quot;40&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShippedDate&quot; type=&quot;System.DateTime&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipPostalCode&quot; length=&quot;10&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipRegion&quot; length=&quot;15&quot; &gt;&lt;/add&gt;
-        &lt;add name=&quot;ShipVia&quot; type=&quot;System.Int32&quot; &gt;&lt;/add&gt;
-    &lt;/fields&gt;
-&lt;/add&gt;&nbsp;
-</pre>
+![first sql](../Files/first-sql.gif)
+
+Review the NorthWind diagram. The next closest tables to 
+*Order Details* are *Orders* and *Products*. 
+Add the *Orders* entity. 
+
+**Hint**: Comment out *Order Details*, add entity &lt;add name=&quot;Orders&quot;/&gt; 
+and run Tfl in check mode.
+
+```xml
+<add name="Orders" version="RowVersion">
+  <fields>
+    <add name="OrderID" type="int" primary-key="true" />
+    <add name="CustomerID" length="5" />
+    <add name="EmployeeID" type="int" />
+    <add name="OrderDate" type="datetime" />
+    <add name="RequiredDate" type="datetime" />
+    <add name="ShippedDate" type="datetime" />
+    <add name="ShipVia" type="int" />
+    <add name="Freight" type="decimal" precision="19" scale="4" />
+    <add name="ShipName" length="40" />
+    <add name="ShipAddress" length="60" />
+    <add name="ShipCity" length="15" />
+    <add name="ShipRegion" length="15" />
+    <add name="ShipPostalCode" length="10" />
+    <add name="ShipCountry" length="15" />
+    <add name="RowVersion" type="byte[]" length="8" />
+  </fields>
+</add> 
+```
 
 Re-initialize.
 

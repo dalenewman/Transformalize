@@ -19,6 +19,7 @@
 using System;
 using System.Linq;
 using Autofac;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Transforms;
@@ -61,7 +62,7 @@ namespace Transformalize.Command {
                     return;
                 }
 
-                if (process.Entities.Any(e => process.Connections.First(c=>c.Name == e.Connection).Provider != "internal" && !e.Fields.Any(f => f.Input))) {
+                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != "internal" && !e.Fields.Any(f => f.Input))) {
                     context.Debug(() => "Detecting schema...");
                     if (_schemaHelper.Help(process)) {
                         if (process.Errors().Any()) {
@@ -75,37 +76,42 @@ namespace Transformalize.Command {
                 }
 
                 if (_options.Mode != null && _options.Mode.ToLower() == "check") {
-                    process.Star = string.Empty;
-                    foreach (var connection in process.Connections) {
-                        connection.Delimiters.Clear();
-                    }
-                    foreach (var entity in process.Entities) {
-                        entity.CalculateHashCode = true;
-                        if (entity.Name == entity.Alias) {
-                            entity.Alias = null;
-                        }
-                        entity.Fields.RemoveAll(f => f.System);
-                    }
-                    foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
-                        field.T = string.Empty;
-                    }
-                    foreach (var field in process.GetAllFields()) {
-                        if (field.Name == field.Alias) {
-                            field.Alias = null;
-                        }
-                        if (field.Name == field.Label) {
-                            field.Label = string.Empty;
-                        }
-                        field.SortField = string.Empty;
-                        field.Sortable = Constants.DefaultSetting;
-                    }
+                    SimplifyForOutput(process);
                     Console.WriteLine(process.Serialize());
                     return;
                 }
 
+                process.Mode = _options.Mode;
                 scope.Resolve<IRunTimeExecute>().Execute(process);
             }
 
+        }
+
+        private static void SimplifyForOutput(Process process) {
+            process.Star = string.Empty;
+            foreach (var connection in process.Connections) {
+                connection.Delimiters.Clear();
+            }
+            foreach (var entity in process.Entities) {
+                entity.CalculateHashCode = true;
+                if (entity.Name == entity.Alias) {
+                    entity.Alias = null;
+                }
+                entity.Fields.RemoveAll(f => f.System);
+            }
+            foreach (var field in process.GetAllFields().Where(f => !string.IsNullOrEmpty(f.T))) {
+                field.T = string.Empty;
+            }
+            foreach (var field in process.GetAllFields()) {
+                if (field.Name == field.Alias) {
+                    field.Alias = null;
+                }
+                if (field.Name == field.Label) {
+                    field.Label = string.Empty;
+                }
+                field.SortField = string.Empty;
+                field.Sortable = Constants.DefaultSetting;
+            }
         }
 
         public void Stop() {

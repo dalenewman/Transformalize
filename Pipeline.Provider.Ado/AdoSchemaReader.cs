@@ -90,7 +90,7 @@ namespace Transformalize.Provider.Ado {
             return fields;
         }
 
-        private static void AddLengthAndPrecision(Field field, DataRow row) {
+        private void AddLengthAndPrecision(Field field, DataRow row) {
             if (field.Type.In("string", "byte[]")) {
 
                 if (row["ColumnSize"] != DBNull.Value) {
@@ -99,12 +99,16 @@ namespace Transformalize.Provider.Ado {
                 }
 
             } else if (field.Type == "decimal") {
+                if (_cf.AdoProvider == AdoProvider.SqlServer && row["DataTypeName"] != null && row["DataTypeName"].ToString() == "money") {
+                    field.Precision = 19;
+                    field.Scale = 4;
+                } else {
+                    if (row["NumericPrecision"] != DBNull.Value)
+                        field.Precision = Convert.ToInt32(row["NumericPrecision"]);
 
-                if (row["NumericPrecision"] != DBNull.Value)
-                    field.Precision = Convert.ToInt32(row["NumericPrecision"]);
-
-                if (row["NumericScale"] != DBNull.Value)
-                    field.Scale = Convert.ToInt32(row["NumericScale"]);
+                    if (row["NumericScale"] != DBNull.Value)
+                        field.Scale = Convert.ToInt32(row["NumericScale"]);
+                }
             }
         }
 
