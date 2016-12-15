@@ -28,7 +28,7 @@ namespace Transformalize.Impl {
         private HashSet<char> _illegal;
         private HashSet<char> Illegal => _illegal ?? (_illegal = new HashSet<char>(_illegalCharacters.ToCharArray()));
 
-        public IllegalCharacterValidator(string name, string illegalCharacters = ";'`\"") {
+        public IllegalCharacterValidator(string name, string illegalCharacters = ";'`") {
             Name = name;
             _illegalCharacters = illegalCharacters;
         }

@@ -35,10 +35,10 @@ namespace Transformalize.Configuration {
         [Cfg(required = false)]
         public List<MapItem> Items { get; set; }
 
-        protected override void Validate() {
-            if (Items.Count == 0 && Query == string.Empty) {
-                Error($"Map '{Name}' needs items or a query.");
-            }
-        }
+        //protected override void Validate() {
+        //    if (Items.Count == 0 && Query == string.Empty) {
+        //        Error($"Map '{Name}' needs items or a query.");
+        //    }
+        //}
     }
 }

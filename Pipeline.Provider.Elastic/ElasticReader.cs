@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Cfg.Net.Ext;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
@@ -30,6 +31,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Provider.Elastic {
 
     public class ElasticReader : IRead {
+        readonly Regex _isQueryString = new Regex(@" OR | AND |\*|\?", RegexOptions.Compiled);
 
         readonly IElasticLowLevelClient _client;
         readonly IConnectionContext _context;
@@ -104,30 +106,78 @@ namespace Transformalize.Provider.Elastic {
 
                             switch (filter.Type) {
                                 case "facet":
-                                    writer.WritePropertyName("term");
-                                    writer.WriteStartObject();
-                                    writer.WritePropertyName(filter.LeftField.Name);
-                                    writer.WriteValue(filter.Value);
-                                    writer.WriteEndObject();
+                                    if (filter.Value.Contains(",")) {
+                                        writer.WritePropertyName("terms");
+                                        writer.WriteStartObject();
+                                        writer.WritePropertyName(filter.LeftField.Name);
+
+                                        writer.WriteStartArray(); // values
+                                        foreach (var value in filter.Value.Split(',')) {
+                                            writer.WriteValue(value);
+                                        }
+                                        writer.WriteEndArray(); //values
+
+                                        writer.WriteEndObject();
+
+                                    } else {
+                                        writer.WritePropertyName("term");
+                                        writer.WriteStartObject();
+                                        writer.WritePropertyName(filter.LeftField.Name);
+                                        writer.WriteValue(filter.Value);
+                                        writer.WriteEndObject();
+                                    }
                                     break;
                                 case "range":
                                     break;
                                 default: //search
-                                    writer.WritePropertyName(filter.Value.EndsWith("*") ? "prefix" : "match");
-                                    writer.WriteStartObject();
-                                    writer.WritePropertyName(filter.LeftField.Name);
-                                    writer.WriteValue(filter.Value);
-                                    writer.WriteEndObject();
+                                    if (_isQueryString.IsMatch(filter.Value)) {
+                                        // query_string query
+                                        writer.WritePropertyName("query_string");
+                                        writer.WriteStartObject(); // query_string
+
+                                        writer.WritePropertyName("fields");
+                                        writer.WriteStartArray(); // fields
+                                        writer.WriteValue(filter.LeftField.Name);
+                                        writer.WriteEndArray(); // fields
+
+                                        writer.WritePropertyName("query");
+                                        writer.WriteValue(filter.Value);
+
+                                        writer.WritePropertyName("default_field");
+                                        writer.WriteValue(filter.LeftField.Name);
+
+                                        writer.WritePropertyName("analyze_wildcard");
+                                        writer.WriteValue(true);
+
+                                        writer.WriteEnd(); // query_string
+                                    } else {
+                                        // match query
+                                        writer.WritePropertyName("match");
+                                        writer.WriteStartObject(); // match
+
+                                        writer.WritePropertyName(filter.LeftField.Name);
+                                        writer.WriteStartObject(); // field name
+
+                                        writer.WritePropertyName("query");
+                                        writer.WriteValue(filter.Value);
+
+                                        writer.WritePropertyName("operator");
+                                        writer.WriteValue(filter.Continuation.ToLower());
+
+                                        writer.WriteEndObject(); // field name
+                                        writer.WriteEndObject(); // match
+                                    }
+
                                     break;
                             }
-                            writer.WriteEndObject();
+                            writer.WriteEndObject(); //must
                         }
 
                         writer.WriteEndArray();
-                        writer.WriteEndObject();
-                        writer.WriteEndObject();
-                        writer.WriteEndObject();
-                        writer.WriteEndObject();  //query
+                        writer.WriteEndObject(); //bool
+                        writer.WriteEndObject(); //filter
+                        writer.WriteEndObject(); //constant_score
+                        writer.WriteEndObject(); //query
                     }
                 } else {
                     writer.WritePropertyName("query");
@@ -154,7 +204,7 @@ namespace Transformalize.Provider.Elastic {
                     foreach (var orderBy in context.Entity.Order) {
                         Field field;
                         if (context.Entity.TryGetField(orderBy.Field, out field)) {
-                            var name = _readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower();
+                            var name = _readFrom == ReadFrom.Input ? field.SortField.ToLower() : field.Alias.ToLower();
                             writer.WriteStartObject();
                             writer.WritePropertyName(name);
                             writer.WriteStartObject();

@@ -12,11 +12,13 @@
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
     Script.Include("jquery.tablesorter.min.js");
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
 
     Style.Include("tablesorter.css");
+    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css");
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
@@ -28,6 +30,7 @@
     var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
     var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
     var isSortable = fields.Any(f => f.Sortable == "true");
+    var focus = Request.QueryString["focus"] ?? string.Empty;
 
     AppendMeta("description", entity.Alias, ",");
     Layout.Title = entity.Alias;
@@ -73,11 +76,15 @@ td.sorter {
     height: 100%;
 }
 
+.form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
+    padding: 0px 20px 0px 40px;
+}
 </style>
 
-@if (hasParameters) {
-    <h4 style="margin-top: 3px; margin-bottom: 7px;">@Model.Part.Title()</h4>
-}
+<div class="row">
+    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@Model.Part.Title()</div>
+    <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
+</div>
 
 @foreach (var error in Model.Process.Errors()) {
     <div class="alert alert-danger" role="alert">@error</div>
@@ -93,7 +100,8 @@ td.sorter {
     @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
         <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
     }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page"/>
+    <input id="id_focus" class="bsh" type="hidden" name="focus" value="@focus"/>
     <input id="id_size" class="bsh" type="hidden" name="size" value="@entity.PageSize" />
     @foreach (var parameter in Model.Process.GetActiveParameters().Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
         <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
@@ -101,12 +109,12 @@ td.sorter {
 
     <div class="row" style="margin-bottom: 4px;">
 
-        <div class="col-md-@(entity.Page > 0 ? 5 : 9)">
-            
+        <div class="col-md-@(entity.Page > 0 ? 8 : 10)">
+
             @if (hasParameters) {
 
-                <button type="button"
-                        onclick="$('#id_report select').val($('#id_report select option:first').val()); controls.submit(@(entity.Page == 0 ? 0 : 1));"
+                <button id="id_clear"
+                        type="button"
                         class="btn btn-info btn-sm">Clear</button>
 
                 var parameters = Model.Process.GetActiveParameters().Where(p => p.Prompt).ToArray();
@@ -125,8 +133,8 @@ td.sorter {
                                            type="datetime"
                                            name="@parameter.Name"
                                            placeholder="@parameter.Label"
-                                           onchange="controls.submit(@(entity.Page == 0 ? 0 : 1));"
-                                           value="@requestedDate"/>
+                                           value="@requestedDate"
+                                            @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"": string.Empty)) />
                                     break;
                                 default:
                                     var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
@@ -134,14 +142,28 @@ td.sorter {
                                         <input class="form-control"
                                                name="@parameter.Name"
                                                value="@requestedValue"
-                                               placeholder="@parameter.Label"/>
+                                               placeholder="@parameter.Label"
+                                               @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"": string.Empty)) />
                                     }
                                     else {
                                         <select class="form-control"
-                                                onchange="controls.submit(@(entity.Page == 0 ? 0 : 1));"
-                                                name="@parameter.Name">
-                                            @foreach (var item in Model.Process.Maps.First(m => m.Name == parameter.Map).Items) {
-                                                <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                                                size="1"
+                                                multiple="@(parameter.Multiple)"
+                                                name="@parameter.Name"
+                                                @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty))>
+                                            @{
+                                                var items = Model.Process.Maps.First(m => m.Name == parameter.Map).Items;
+                                                if (parameter.Multiple) {
+                                                    var values = Request.QueryString[parameter.Name] == null ? new HashSet<string>() : new HashSet<string>(Request.QueryString.GetValues(parameter.Name));
+                                                    foreach (var item in items) {
+                                                        <option value="@item.To" selected="@(values.Contains(item.To.ToString()))">@item.From</option>
+                                                    }
+                                                } else {
+                                                    <option value="*" selected="@(requestedValue == "*")">ALL</option>
+                                                    foreach (var item in items) {
+                                                        <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                                                    }
+                                                }
                                             }
                                         </select>
                                     }
@@ -156,14 +178,11 @@ td.sorter {
                 <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
             </button>
 
-            @if (!hasParameters) {
-                <strong style="margin-left: 10px; font-size: larger;">@Model.Part.Title()</strong>
-            }
-
         </div>
 
-        @if (entity.Page > 0) {
-            <div class="col-md-4">
+        <div class="col-md-@(entity.Page > 0 ? 4 : 2)">
+
+            @if (entity.Page > 0) {
                 <ul class="pagination pagination-sm" style="display: inline;">
                     @if (entity.Pagination.HasPrevious) {
                         <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
@@ -172,8 +191,8 @@ td.sorter {
                         <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
                         <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
                     }
-
-                    <li class="disabled"><a href="#">@entity.Hits found, page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
+                    <!-- (@entity.Hits) -->
+                    <li class="disabled"><a href="#">Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
 
                     @if (entity.Pagination.HasNext) {
                         <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
@@ -183,10 +202,7 @@ td.sorter {
                         <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
                     }
                 </ul>
-            </div>
-        }
-
-        <div class="col-md-3">
+            }
 
             <div class="btn-group pull-right">
 
@@ -210,8 +226,8 @@ td.sorter {
                 </div>
 
                 @if (entity.PageSizes.Any()) {
-                    <div class="btn-group">
-                        <button class="btn btn-sm">Page Size</button>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-sm">Size</button>
                         <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
                             <span class="caret"></span>
                         </button>
@@ -392,6 +408,21 @@ td.sorter {
     $(document).ready(function () {
 
         var isSortable = @(isSortable.ToString().ToLower());
+        var focus = '@(focus)';
+
+
+        $('#id_report select').multiselect({
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            maxHeight: 400,
+            nonSelectedText: 'All',
+            nSelectedText: 'Selected',
+            allSelectedText: 'Selected',
+            buttonContainer: '<div class="btn-group btn-group-sm" />',
+            templates : {
+                filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+            }
+        });
 
         if (!isSortable) { // enable client side sorting
             $("#id_table").tablesorter();
@@ -415,6 +446,23 @@ td.sorter {
             $('.bsh:input[value="0"]').attr('disabled', true);
             $('.bsh:input[value=""]').attr('disabled', true);
             $('#busy').show();
+        });
+
+        $('#id_clear').click(function() {
+            $('#id_report select:not([multiple])').val($('#id_report select option:first').val());
+            $('#id_report select[multiple]').multiselect('deselectAll', false);
+            $('#id_report select[multiple]').multiselect('updateButtonText');
+            $('#id_report input:visible').val("");
+            controls.submit(@(entity.Page == 0 ? 0 : 1));
+        });
+
+        @*$("#id_report select:not([multiple])" ).change(function() {
+            $('#id_focus').val($(this).attr('name'));
+            controls.submit(@(entity.Page == 0 ? 0 : 1));
+        });*@
+
+        $("#id_report input:visible" ).change(function() {
+            $('#id_focus').val($(this).attr('name'));
         });
 
         $('.sortable').click(function () {
@@ -453,6 +501,10 @@ td.sorter {
             controls.setSort(expression);
             controls.submit(@(entity.Page == 0 ? 0 : 1));
         });
+
+        if (focus !== '') {
+            $('#id_report input[name="'+focus+'"],#id_report select[name="'+focus+'"]').focus();
+        }
 
         SyntaxHighlighter.all();
 
