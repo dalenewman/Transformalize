@@ -59,9 +59,9 @@ namespace Transformalize.Provider.File {
 
             if (_context.Connection.Header == Constants.DefaultSetting) {
                 var headerText = string.Join(_context.Connection.Delimiter, _context.OutputFields.Select(f => f.Label.Replace(_context.Connection.Delimiter, " ")));
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = headerText };
+                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = headerText, FooterText = _context.Connection.Footer };
             } else {
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode };
+                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = _context.Connection.Header, FooterText = _context.Connection.Footer };
             }
 
             var file = Path.Combine(_context.Connection.Folder, _fileName ?? _context.Entity.OutputTableName(_context.Process.Name));

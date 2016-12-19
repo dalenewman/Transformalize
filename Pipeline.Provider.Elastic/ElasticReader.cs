@@ -40,6 +40,7 @@ namespace Transformalize.Provider.Elastic {
         readonly IRowFactory _rowFactory;
         readonly ReadFrom _readFrom;
         readonly string _typeName;
+        private readonly HashSet<string> _errors = new HashSet<string>();
 
         public ElasticReader(
             IConnectionContext context,
@@ -298,7 +299,16 @@ namespace Transformalize.Provider.Elastic {
                                 if (source != null) {
                                     for (var i = 0; i < _fields.Length; i++) {
                                         var field = _fields[i];
-                                        row[field] = field.Convert(source[_fieldNames[i]]);
+                                        // TODO: ONLY DO THIS CHECK ONCE
+                                        if (source.ContainsKey(_fieldNames[i])) {
+                                            row[field] = field.Convert(source[_fieldNames[i]]);
+                                        } else {
+                                            var message = $"The {_fieldNames[i]} field does not exist!";
+                                            if (_errors.Add(message)) {
+                                                _context.Error(message);
+                                            }
+                                            row[field] = field.Convert(field.Default);
+                                        }
                                     }
                                 }
                             }
@@ -324,7 +334,7 @@ namespace Transformalize.Provider.Elastic {
                     }
                 }
             } else {
-                _context.Error(response.DebugInformation);
+                _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
 
         }

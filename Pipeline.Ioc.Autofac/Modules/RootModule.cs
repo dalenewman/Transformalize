@@ -28,7 +28,6 @@ using Cfg.Net.Shorthand;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Desktop.Loggers;
 using Transformalize.Nulls;
 using Transformalize.Template.Razor;

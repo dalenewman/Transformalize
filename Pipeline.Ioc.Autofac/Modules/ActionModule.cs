@@ -18,6 +18,7 @@
 
 using System.Linq;
 using Autofac;
+using Cfg.Net.Reader;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -132,7 +133,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         case "postgresql":
                         case "sqlite":
                         case "sqlserver":
-                            return new AdoRunAction(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
+                            return new AdoRunAction(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key), new DefaultReader(new FileReader(), new WebReader()));
                         default:
                             context.Error("{0} provider is not registered for run action.", connection.Provider);
                             return new NullAction();

@@ -17,6 +17,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using Cfg.Net.Contracts;
 using Dapper;
 using Transformalize.Actions;
 using Transformalize.Contracts;
@@ -27,11 +29,13 @@ namespace Transformalize.Provider.Ado.Actions {
         private readonly IContext _context;
         private readonly Configuration.Action _node;
         private readonly IConnectionFactory _cf;
+        private readonly IReader _commandReader;
 
-        public AdoRunAction(IContext context, Configuration.Action node, IConnectionFactory cf) {
+        public AdoRunAction(IContext context, Configuration.Action node, IConnectionFactory cf, IReader commandReader) {
             _context = context;
             _node = node;
             _cf = cf;
+            _commandReader = commandReader;
         }
 
         public ActionResponse Execute() {
@@ -39,6 +43,16 @@ namespace Transformalize.Provider.Ado.Actions {
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 try {
+                    if (_node.Command == string.Empty) {
+                        var logger = new Cfg.Net.Loggers.MemoryLogger();
+                        _node.Command = _commandReader.Read(_node.Url == string.Empty ? _node.File : _node.Url, new Dictionary<string, string>(), logger);
+                        foreach (var warning in logger.Warnings()) {
+                            _context.Warn(warning);
+                        }
+                        foreach (var error in logger.Errors()) {
+                            _context.Error(error);
+                        }
+                    }
                     _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
                     var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
                     response.Message = message;

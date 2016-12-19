@@ -523,5 +523,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value="")]
         public string Format { get; set; }
+
+        [Cfg(value=false)]
+        public bool Facet { get; set; }
     }
 }

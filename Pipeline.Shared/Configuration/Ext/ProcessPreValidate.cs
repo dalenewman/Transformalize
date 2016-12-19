@@ -98,7 +98,6 @@ namespace Transformalize.Configuration.Ext {
                     }
                 }
             }
-
         }
 
         /// <summary>

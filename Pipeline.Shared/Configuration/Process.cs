@@ -527,9 +527,9 @@ namespace Transformalize.Configuration {
 
         public bool Preserve { get; set; }
 
-        public IEnumerable<Parameter> GetActiveParameters() {
+        public List<Parameter> GetActiveParameters() {
             if (!Environments.Any())
-                return Enumerable.Empty<Parameter>();
+                return new List<Parameter>();
 
             return string.IsNullOrEmpty(Environment) ? Environments.First().Parameters : Environments.First(e => e.Name == Environment).Parameters;
         }
