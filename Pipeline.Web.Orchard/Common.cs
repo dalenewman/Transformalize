@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Web;
+using Cfg.Net.Ext;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
@@ -1045,6 +1046,42 @@ namespace Pipeline.Web.Orchard {
                 .Distinct()
                 .Union(new[] { Common.AllTag })
                 .OrderBy(s => s);
+        }
+
+
+        public static void ApplyFacet(Process process, HttpRequestBase request) {
+            // auto facet
+            foreach (var entity in process.Entities) {
+                foreach (var field in entity.Fields.Where(f => f.Facet)) {
+                    if (process.Maps.All(m => m.Name != field.Alias)) {
+                        process.Maps.Add(new Map { Name = field.Alias }.WithDefaults());
+                    }
+                    var parameters = process.GetActiveParameters();
+                    if (parameters.All(pr => pr.Name != field.Alias)) {
+                        parameters.Add(
+                            new Parameter {
+                                Name = field.Alias,
+                                Type = field.Type,
+                                Label = field.Label,
+                                Prompt = true,
+                                Value = "*",
+                                Map = field.Alias
+                            }.WithDefaults()
+                        );
+                    }
+                    if (entity.Filter.All(f => f.Field != field.Name)) {
+                        entity.Filter.Add(new Filter {
+                            Field = field.Name,
+                            LeftField = field,
+                            IsField = true,
+                            Type = "facet",
+                            Map = field.Alias,
+                            Value = request.QueryString[field.Alias] ?? "*"
+                        }.WithDefaults());
+                    }
+                }
+            }
+
         }
     }
 }

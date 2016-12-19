@@ -34,7 +34,9 @@ using System.IO;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
+using Transformalize.Configuration;
 using Transformalize.Extensions;
+using Filter = System.Web.Mvc.Filter;
 using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
@@ -154,6 +156,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                 Common.PageHelper(process, parameters);
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
+                                    Common.ApplyFacet(process, Request);
                                     runner.Execute(process);
                                     process.Status = 200;
                                     process.Message = "Ok";
