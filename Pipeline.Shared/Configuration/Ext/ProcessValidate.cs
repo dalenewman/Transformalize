@@ -451,6 +451,7 @@ namespace Transformalize.Configuration.Ext {
                 case "geohashneighbor":
                 case "geocode":
                 case "underscore":
+                case "isvin":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
                     }
@@ -836,6 +837,7 @@ namespace Transformalize.Configuration.Ext {
                     case "isdefault":
                     case "in":
                     case "any":
+                    case "isvin":
                         if (!context.Field.Type.StartsWith("bool")) {
                             error($"The {lastTransform.Method} returns a bool, but {context.Field.Alias} is a {context.Field.Type}.");
                         }

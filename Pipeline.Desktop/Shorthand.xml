@@ -331,6 +331,8 @@
     <add name='fromjson' signature='none' target='t' />
     <add name='datemath' signature='expression' target='t' />
     
+    <add name='isvin' signature='none' target='t' />
+    
   </methods>
 
 </cfg>

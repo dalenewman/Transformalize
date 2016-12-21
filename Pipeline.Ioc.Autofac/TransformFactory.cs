@@ -37,6 +37,7 @@ using Transformalize.Transform.Geohash;
 using Transformalize.Transform.Humanizer;
 using Transformalize.Transform.JavaScriptEngineSwitcher;
 using Transformalize.Transform.Jint;
+using Transformalize.Transform.Vin;
 using Transformalize.Transforms;
 using Transformalize.Transforms.System;
 using Transformalize.Validators;
@@ -204,6 +205,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "web": return new WebTransform(context);
                 case "urlencode": return new UrlEncodeTransform(context);
                 case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
+                case "isvin": return new VinValidateTransform(context);
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

@@ -118,6 +118,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vin, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vin.0.0.1-beta\lib\portable-net45+win8+wpa81+wp8\Vin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FolderReader.cs" />
@@ -254,6 +258,10 @@
     <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
       <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>
       <Name>Transformalize.Transform.Geocode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.Vin\Transformalize.Transform.Vin.csproj">
+      <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
+      <Name>Transformalize.Transform.Vin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

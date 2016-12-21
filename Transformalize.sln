@@ -134,6 +134,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.452", "Trans
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Transform.DateMath", "Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj", "{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Transform.Vin", "Transformalize.Transform.Vin\Transformalize.Transform.Vin.csproj", "{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Pipeline.Shared\Pipeline.Shared.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
@@ -547,6 +549,18 @@ Global
 		{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}.Release|x64.Build.0 = Release|Any CPU
 		{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}.Release|x86.ActiveCfg = Release|Any CPU
 		{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}.Release|x86.Build.0 = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|x64.Build.0 = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Debug|x86.Build.0 = Debug|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|x64.Build.0 = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -578,5 +592,6 @@ Global
 		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{3E9B5D05-5D7C-4B08-9310-1E3C0A196239} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 	EndGlobalSection
 EndGlobal
