@@ -118,8 +118,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vin, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Vin.0.0.1-beta\lib\portable-net45+win8+wpa81+wp8\Vin.dll</HintPath>
+    <Reference Include="Vin, Version=0.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vin.0.0.5-beta\lib\portable-net45+win8+wpa81+wp8\Vin.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

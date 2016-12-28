@@ -48,7 +48,7 @@ namespace Transformalize.Test {
 
 
         [Test]
-        //[Ignore("Needs local sql server databases.")]
+        [Ignore("Needs local sql server databases.")]
         public void SqlServer_Integration() {
 
             var builder = new ContainerBuilder();

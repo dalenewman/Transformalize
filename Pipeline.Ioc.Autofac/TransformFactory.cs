@@ -205,7 +205,13 @@ namespace Transformalize.Ioc.Autofac {
                 case "web": return new WebTransform(context);
                 case "urlencode": return new UrlEncodeTransform(context);
                 case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
-                case "isvin": return new VinValidateTransform(context);
+
+                /* VIN, Vehicle Identification Number */
+                case "isvin": 
+                case "vinisvalid": return new VinValidateTransform(context);
+                case "vingetworldmanufacturer": return new VinGetWorldManufacturerTransform(context);
+                case "vingetmodelyear": return new VinGetModelYearTransform(context);
+
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

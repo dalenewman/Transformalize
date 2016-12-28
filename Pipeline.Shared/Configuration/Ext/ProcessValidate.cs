@@ -451,7 +451,9 @@ namespace Transformalize.Configuration.Ext {
                 case "geohashneighbor":
                 case "geocode":
                 case "underscore":
-                case "isvin":
+                case "vinisvalid":
+                case "vingetworldmanufacturer":
+                case "vingetmodelyear":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
                     }
@@ -808,6 +810,11 @@ namespace Transformalize.Configuration.Ext {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;
+                    case "vingetmodelyear":
+                        if (!context.Field.Type.In("int","int32")) {
+                            error($"The {lastTransform.Method} returns an int, but {context.Field.Alias} is a {context.Field.Type}.");
+                        }
+                        break;
                     case "frommetric":
                     case "fromroman":
                         if (!context.Field.IsNumeric()) {
@@ -821,6 +828,8 @@ namespace Transformalize.Configuration.Ext {
                     case "tag":
                     case "formatxml":
                     case "slugify":
+                    case "geohashencode":
+                    case "vingetworldmanufacturer":
                     case "totime":
                         if (context.Field.Type != "string") {
                             error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is a {context.Field.Type}.");
@@ -837,6 +846,7 @@ namespace Transformalize.Configuration.Ext {
                     case "isdefault":
                     case "in":
                     case "any":
+                    case "vin.isvalid":
                     case "isvin":
                         if (!context.Field.Type.StartsWith("bool")) {
                             error($"The {lastTransform.Method} returns a bool, but {context.Field.Alias} is a {context.Field.Type}.");
@@ -850,11 +860,6 @@ namespace Transformalize.Configuration.Ext {
                     case "adddays":
                         if (!context.Field.Type.StartsWith("date")) {
                             error($"The {lastTransform.Method} returns a date, but {context.Field.Alias} is {context.Field.Type}.");
-                        }
-                        break;
-                    case "geohashencode":
-                        if (context.Field.Type != "string") {
-                            error($"The {lastTransform.Method} returns a string, but {context.Field.Alias} is {context.Field.Type}.");
                         }
                         break;
 

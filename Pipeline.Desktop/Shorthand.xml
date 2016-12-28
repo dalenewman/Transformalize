@@ -331,7 +331,11 @@
     <add name='fromjson' signature='none' target='t' />
     <add name='datemath' signature='expression' target='t' />
     
+    <!-- VIN, Vehicle Identification Number -->
     <add name='isvin' signature='none' target='t' />
+    <add name='vinisvalid' signature='none' target='t' />
+    <add name='vingetworldmanufacturer' signature='none' target='t' />
+    <add name='vingetmodelyear' signature='none' target='t' />
     
   </methods>
 

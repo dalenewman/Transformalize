@@ -39,6 +39,8 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="VinGetModelYearTransform.cs" />
+    <Compile Include="VinGetWorldManufacturerTransform.cs" />
     <Compile Include="VinValidateTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
