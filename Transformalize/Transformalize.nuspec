@@ -18,7 +18,7 @@
       <group targetFramework="netstandard1.0">
         <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.1" />
         <dependency id="NETStandard.Library" version="1.6.0" />
-        <dependency id="System.Runtime" version="4.1.0" />
+        <dependency id="System.Dynamic.Runtime" version="4.0.11" />
         <dependency id="Cfg-NET" version="0.8.4" />
       </group>
       <group targetFramework="net40">

@@ -25,6 +25,7 @@ using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
+using SolrNet.Utils;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -141,7 +142,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     try {
                         Console.WindowHeight = Console.WindowHeight + 1 - 1;
                         Console.Title = process.Name;
-                        process.Output().Provider = "console";
+                        if (!System.Environment.CommandLine.Contains("TESTWINDOW")) {
+                            process.Output().Provider = "console";
+                        }
                     } catch (Exception) {
                         // just a hack to determine if in console
                     }

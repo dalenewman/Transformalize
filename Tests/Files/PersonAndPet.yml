@@ -1,0 +1,64 @@
+﻿%YAML 1.1
+---
+name: PersonAndPet
+entities:
+- name: Pet
+  rows:
+  - Id:1
+    Type:Dog
+    Name:Hammond
+    LicenseData:'<data><Id>123</Id><Phone>1112223333</Phone></data>'
+    Owner:1
+  - Id:2
+    Type:Cat
+    Name:Pywackit
+    LicenseData:'<data><Id>123</Id><Phone>1112223333</Phone></data>'
+    Owner:3
+  fields:
+  - name:Id
+    alias:PetId
+    type:int
+    primary-key:true
+  - name:Type
+  - name:Name
+  - name:LicenseData
+    transforms:
+    - method:htmldecode
+    - method:fromxml
+      root:data
+      fields:
+      - name:Id
+        alias:LicenseId
+      - name:Phone
+  - name: Owner
+    type:int
+- name: Person
+  rows:
+  - Id:1
+    FirstName:Dale
+    MiddleName:Edward
+    LastName:Jones
+  - Id:2
+    FirstName:Micheal
+    MiddleName:Edwards
+    LastName:Smith
+  - Id:3
+    FirstName:Shelly
+    MiddleName:Eddie
+    LastName:Doe
+  fields:
+  - name:Id
+    alias:PersonId
+    type:int
+    primary-key:true
+  - name:FirstName
+  - name:MiddleName
+  - name:LastName
+  calculated-fields:
+  - name:FullName
+    t:'copy(FirstName,MiddleName,LastName).format({0} {1} {2}).bad()'
+relationships:
+- left-entity:Pet
+  left-field:Owner
+  right-entity:Person
+  right-field:PersonId

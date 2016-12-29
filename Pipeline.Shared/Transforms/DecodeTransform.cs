@@ -25,7 +25,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
-    public class DecodeTransform : BaseTransform, ITransform {
+    public class DecodeTransform : BaseTransform {
         private const char EntityEnd = ';';
         private const char EntityStart = '&';
         private const char HighSurrogate = '\uD800';

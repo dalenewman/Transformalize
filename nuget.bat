@@ -1,4 +1,4 @@
-cd c:\code\Transformalize\Pipeline.Portable
+cd c:\code\Transformalize\Transformalize
 nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 cd ..
 cd Pipeline.Desktop

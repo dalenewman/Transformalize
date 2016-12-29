@@ -1,0 +1,5 @@
+﻿<add name="FileInspection" mode="meta">
+  <connections>
+    <add name="input" provider="file" file="C:\Code\Pipeline.Net\Pipeline.Test\Files\Headers.csv" />
+  </connections>
+</add>
