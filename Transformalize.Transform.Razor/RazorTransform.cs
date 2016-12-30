@@ -28,7 +28,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Template.Razor {
+namespace Transformalize.Transform.Razor {
 
     public class RazorTransform : BaseTransform {
 

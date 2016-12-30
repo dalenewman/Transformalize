@@ -215,14 +215,6 @@
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
-      <Project>{71372F65-12F1-4A72-AB2D-2C5EADBF75E0}</Project>
-      <Name>Pipeline.Template.Razor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Template.Velocity\Pipeline.Template.Velocity.csproj">
-      <Project>{b805f159-aa3d-41a4-9c6d-9f2b784f51c6}</Project>
-      <Name>Pipeline.Template.Velocity</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Transform.CSharp\Pipeline.Transform.CSharp.csproj">
       <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
       <Name>Pipeline.Transform.CSharp</Name>
@@ -251,6 +243,10 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.GeoJson\Transformalize.Provider.GeoJson.csproj">
+      <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
+      <Name>Transformalize.Provider.GeoJson</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
       <Name>Transformalize.Transform.DateMath</Name>
@@ -258,6 +254,14 @@
     <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
       <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>
       <Name>Transformalize.Transform.Geocode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.Razor\Transformalize.Transform.Razor.csproj">
+      <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>
+      <Name>Transformalize.Transform.Razor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.Velocity\Transformalize.Transform.Velocity.csproj">
+      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
+      <Name>Transformalize.Transform.Velocity</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.Vin\Transformalize.Transform.Vin.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>

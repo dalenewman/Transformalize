@@ -18,50 +18,39 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Dynamic;
 using System.Linq;
-using System.Text;
 using Cfg.Net.Contracts;
-using NVelocity;
-using NVelocity.Runtime;
+using RazorEngine;
+using RazorEngine.Configuration;
+using RazorEngine.Templating;
+using RazorEngine.Text;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Template.Velocity {
-
-    public static class VelocityInitializer {
-        private static readonly object Locker = new object();
-        private static bool Initialized { get; set; }
-
-        public static void Init() {
-            lock (Locker) {
-                if (Initialized)
-                    return;
-
-                NVelocity.App.Velocity.SetProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM, typeof(VelocityLogSystem).FullName);
-                NVelocity.App.Velocity.Init();
-                Initialized = true;
-            }
-
-        }
-    }
-
-    public class VelocityTemplateEngine : ITemplateEngine {
+namespace Transformalize.Transform.Razor {
+    public class RazorTemplateEngine : ITemplateEngine {
 
         private readonly PipelineContext _context;
         private readonly Configuration.Template _template;
 
         // Using Cfg-NET's "Reader" to read content, files, or web addresses with possible parameters.
         private readonly IReader _templateReader;
+        private readonly IRazorEngineService _service;
 
-        public VelocityTemplateEngine(PipelineContext context, Configuration.Template template, IReader templateReader) {
-
-            VelocityInitializer.Init();
+        public RazorTemplateEngine(PipelineContext context, Configuration.Template template, IReader templateReader) {
 
             _context = context;
             _template = template;
             _templateReader = templateReader;
 
+            var config = new TemplateServiceConfiguration {
+                EncodedStringFactory = _template.ContentType == "html" ? (IEncodedStringFactory)new HtmlEncodedStringFactory() : new RawStringFactory(),
+                Language = Language.CSharp,
+                CachingProvider = new DefaultCachingProvider(t => { })
+            };
+
+            _service = RazorEngineService.Create(config);
         }
 
         public string Render() {
@@ -80,28 +69,23 @@ namespace Transformalize.Template.Velocity {
                 return string.Empty;
             }
 
+            // get parameters (other than process)
+            var parameters = new ExpandoObject();
+            foreach (var parameter in _template.Parameters) {
+                ((IDictionary<string, object>)parameters).Add(parameter.Name, parameter.Value);
+            }
+            if (p.Any()) {
+                foreach (var parameter in p) {
+                    ((IDictionary<string, object>)parameters)[parameter.Key] = parameter.Value;
+                }
+            }
 
             try {
                 _context.Debug(() => $"Compiling {_template.Name}.");
-
-                var context = new VelocityContext();
-                context.Put("Process", _context.Process);
-                foreach (var parameter in _template.Parameters) {
-                    context.Put(parameter.Name, Constants.ConversionMap[parameter.Type](parameter.Value));
-                }
-                if (p.Any()) {
-                    foreach (var parameter in p) {
-                        context.Put(parameter.Key, parameter.Value);
-                    }
-                }
-
-                var sb = new StringBuilder();
-                using (var sw = new StringWriter(sb)) {
-                    NVelocity.App.Velocity.Evaluate(context, sw, string.Empty, templateContent);
-                    sw.Flush();
-                }
-                return sb.ToString();
-
+                return _service.RunCompile(templateContent, _template.Name, null, new {
+                    _context.Process,
+                    Parameters = parameters
+                });
             } catch (Exception ex) {
                 _context.Error($"Error parsing template {_template.Name}.");
                 _context.Error(ex, ex.Message.Replace("{", "{{").Replace("}", "}}"));

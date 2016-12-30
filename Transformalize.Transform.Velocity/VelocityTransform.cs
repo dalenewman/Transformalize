@@ -24,7 +24,7 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
 
-namespace Transformalize.Template.Velocity {
+namespace Transformalize.Transform.Velocity {
 
     public class VelocityTransform : BaseTransform {
 

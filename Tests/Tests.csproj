@@ -190,14 +190,6 @@
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Pipeline.Provider.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Template.Razor\Pipeline.Template.Razor.csproj">
-      <Project>{71372f65-12f1-4a72-ab2d-2c5eadbf75e0}</Project>
-      <Name>Pipeline.Template.Razor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Template.Velocity\Pipeline.Template.Velocity.csproj">
-      <Project>{b805f159-aa3d-41a4-9c6d-9f2b784f51c6}</Project>
-      <Name>Pipeline.Template.Velocity</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Transform.CSharp\Pipeline.Transform.CSharp.csproj">
       <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
       <Name>Pipeline.Transform.CSharp</Name>

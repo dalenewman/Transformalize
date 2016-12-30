@@ -21,7 +21,7 @@ using NVelocity.Runtime.Log;
 using Transformalize.Contracts;
 using LogLevel = NVelocity.Runtime.Log.LogLevel;
 
-namespace Transformalize.Template.Velocity {
+namespace Transformalize.Transform.Velocity {
     public class VelocityLogSystem : ILogSystem {
         private readonly IContext _context;
 
