@@ -56,6 +56,7 @@ namespace Tests {
             builder.RegisterModule(new ElasticModule(_process));
             builder.RegisterModule(new InternalModule(_process));
             builder.RegisterModule(new FileModule(_process));
+            builder.RegisterModule(new GeoJsonModule(_process));
             builder.RegisterModule(new FolderModule(_process));
             builder.RegisterModule(new DirectoryModule(_process));
             builder.RegisterModule(new ExcelModule(_process));

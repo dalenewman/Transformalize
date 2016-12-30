@@ -35,6 +35,7 @@ namespace Transformalize.Configuration.Ext {
             ValidateDuplicateFields(p, error);
             ValidateRelationships(p, error, warn);
             ValidateEntityConnections(p, error);
+            ValidateEntityMeetsProviderExpectations(p, error);
             ValidateEntityFilterMaps(p, error);
             ValidateActionConnections(p, error);
             ValidateTemplateActionConnections(p, error);
@@ -183,6 +184,30 @@ namespace Transformalize.Configuration.Ext {
         static void ValidateEntityConnections(Process p, Action<string> error) {
             foreach (var entity in p.Entities.Where(entity => p.Connections.All(c => c.Name != entity.Connection))) {
                 error($"The {entity.Name} entity references an invalid connection: {entity.Connection}.");
+            }
+        }
+
+        static void ValidateEntityMeetsProviderExpectations(Process p, Action<string> error) {
+            foreach (var entity in p.Entities) {
+                var connection = p.Output();
+                if (connection != null) {
+                    switch (connection.Provider) {
+                        case "geojson":
+                            var outputFields = entity.GetAllOutputFields().ToArray();
+                            var lat = outputFields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? outputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
+                            if (lat == null) {
+                                error($"The {entity.Alias} entity needs a latitude (or lat) output field in order to output geoJson.");
+                            } else {
+                                var lon = outputFields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? outputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
+                                if (lon == null) {
+                                    error($"The {entity.Alias} entity needs a longitude (or lon) output field in order to output geoJson.");
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
         }
 
@@ -811,7 +836,7 @@ namespace Transformalize.Configuration.Ext {
                         }
                         break;
                     case "vingetmodelyear":
-                        if (!context.Field.Type.In("int","int32")) {
+                        if (!context.Field.Type.In("int", "int32")) {
                             error($"The {lastTransform.Method} returns an int, but {context.Field.Alias} is a {context.Field.Type}.");
                         }
                         break;

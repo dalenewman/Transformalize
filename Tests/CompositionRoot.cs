@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
@@ -29,13 +30,13 @@ namespace Tests {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info) {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null) {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
             var container = builder.Build();
 
-            Process = container.Resolve<Process>(new NamedParameter("cfg", cfg));
+            Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
             if (Process.Errors().Any()) {
                 foreach (var error in Process.Errors()) {
@@ -62,6 +63,7 @@ namespace Tests {
             builder.RegisterModule(new ElasticModule(Process));
             builder.RegisterModule(new InternalModule(Process));
             builder.RegisterModule(new FileModule(Process));
+            builder.RegisterModule(new GeoJsonModule(Process));
             builder.RegisterModule(new FolderModule(Process));
             builder.RegisterCallback(new DirectoryModule(Process).Configure);
             builder.RegisterModule(new ExcelModule(Process));

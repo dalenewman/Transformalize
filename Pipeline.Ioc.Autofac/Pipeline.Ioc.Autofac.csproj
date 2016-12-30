@@ -130,6 +130,7 @@
     <Compile Include="Modules\ConnectionModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
+    <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\FolderModule.cs" />

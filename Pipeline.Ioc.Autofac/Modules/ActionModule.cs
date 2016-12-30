@@ -113,6 +113,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     builder.RegisterCallback(new ElasticModule(root).Configure);
                     builder.RegisterCallback(new InternalModule(root).Configure);
                     builder.RegisterCallback(new FileModule(root).Configure);
+                    builder.RegisterCallback(new GeoJsonModule(root).Configure);
                     builder.RegisterCallback(new FolderModule(root).Configure);
                     builder.RegisterCallback(new DirectoryModule(process).Configure);
                     builder.RegisterCallback(new ExcelModule(root).Configure);

@@ -441,7 +441,7 @@ namespace Transformalize.Configuration {
         }
 
         public Connection Output() {
-            return Connections.First(c => c.Name == "output");
+            return Connections.FirstOrDefault(c => c.Name == "output");
         }
 
         /// <summary>

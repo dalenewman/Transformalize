@@ -23,12 +23,12 @@ namespace Transformalize.Provider.GeoJson {
         public GeoJsonStreamWriter(OutputContext context, Stream stream) {
             _context = context;
             _stream = stream;
-            _latitudeField = context.OutputFields.FirstOrDefault(f => f.Alias == "latitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.StartsWith("lat"));
-            _longitudeField = context.OutputFields.FirstOrDefault(f => f.Alias == "longitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.StartsWith("lon"));
-            _titleField = context.OutputFields.FirstOrDefault(f => f.Alias == "title") ?? context.OutputFields.FirstOrDefault(f => f.Alias == "name");
-            _markerColorField = context.OutputFields.FirstOrDefault(f => f.Alias == "markercolor") ?? context.OutputFields.FirstOrDefault(f => f.Alias == "color");
-            _markerSizeField = context.OutputFields.FirstOrDefault(f => f.Alias == "markersize") ?? context.OutputFields.FirstOrDefault(f => f.Alias == "size");
-            _markerSymbolField = context.OutputFields.FirstOrDefault(f => f.Alias == "markersymbol") ?? context.OutputFields.FirstOrDefault(f => f.Alias == "symbol");
+            _latitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
+            _longitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
+            _titleField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "title") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "name");
+            _markerColorField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markercolor") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "color");
+            _markerSizeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersize") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "size");
+            _markerSymbolField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersymbol") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
         }
 
         public void Write(IEnumerable<IRow> rows) {
