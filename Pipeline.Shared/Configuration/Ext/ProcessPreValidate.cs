@@ -190,7 +190,7 @@ namespace Transformalize.Configuration.Ext {
                     if (!string.IsNullOrEmpty(transform.Parameter)) {
                         if (transform.Parameter == All) {
                             foreach (var entity in p.Entities) {
-                                foreach (var entityField in entity.GetAllFields().Where(f => f.Output)) {
+                                foreach (var entityField in entity.GetAllFields().Where(f => f.Output && !f.System)) {
                                     transform.Parameters.Add(GetParameter(entity.Alias, entityField.Alias, entityField.Type));
                                 }
                             }

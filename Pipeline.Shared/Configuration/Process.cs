@@ -469,6 +469,7 @@ namespace Transformalize.Configuration {
                 Name = Constants.TflKey,
                 Alias = Constants.TflKey,
                 PrimaryKey = true,
+                System = true,
                 Input = true,
                 Type = "int"
             }.WithDefaults());
@@ -494,6 +495,7 @@ namespace Transformalize.Configuration {
                 .Distinct()
                 .Except(entity.Fields)
                 .Select(f => f.Clone());
+
             entity.Fields.AddRange(mapFields);
 
             entity.CalculatedFields.AddRange(CalculatedFields.Select(cf => cf.Clone()));

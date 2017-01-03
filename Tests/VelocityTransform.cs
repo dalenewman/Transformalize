@@ -26,7 +26,7 @@ namespace Tests {
 
         [TestMethod]
         public void VelocityTransformAdd() {
-
+            
             const string xml = @"
 <add name='TestProcess'>
     <entities>

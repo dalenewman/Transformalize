@@ -19,7 +19,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -45,20 +47,14 @@ namespace Transformalize.Provider.Ado {
             temp.AddRange(_context.Entity.CalculatedFields.Where(f => f.Output));
             var fields = temp.ToArray();
 
-            var count = 0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 var trans = cn.BeginTransaction();
                 try {
+
                     foreach (var batch in rows.Partition(_context.Entity.UpdateSize)) {
-                        var batchCount = cn.Execute(
-                            sql,
-                            batch.Select(r => r.ToExpandoObject(fields)),
-                            trans,
-                            0,
-                            CommandType.Text
-                        );
-                        count += batchCount;
+                        var data = batch.Select(r => r.ToExpandoObject(fields));
+                        var batchCount = cn.Execute(sql, data, trans, 0, CommandType.Text);
                         _context.Increment(batchCount);
                     }
                     trans.Commit();
@@ -68,7 +64,6 @@ namespace Transformalize.Provider.Ado {
                     trans.Rollback();
                 }
             }
-            //_context.Entity.Updates += count;
         }
     }
 }
