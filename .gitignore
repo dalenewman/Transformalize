@@ -15,11 +15,11 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
+x64/*
 !x64/msvcp120.dll
 !x64/msvcr120.dll
 !x64/msvcp140.dll
-x86/
+x86/*
 !x86/msvcp120.dll
 !x86/msvcr120.dll
 !x86/msvcp140.dll
