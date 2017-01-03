@@ -81,7 +81,10 @@ namespace Transformalize.Command {
                     return;
                 }
 
-                process.Mode = _options.Mode;
+                if(_options.Mode != "default") {
+                    process.Mode = _options.Mode;
+                } 
+                
                 scope.Resolve<IRunTimeExecute>().Execute(process);
             }
 

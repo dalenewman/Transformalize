@@ -406,6 +406,7 @@ namespace Transformalize.Configuration.Ext {
                 case "timeago":
                 case "datemath":
                 case "timeahead":
+                case "isdaylightsavings":
                 case "last":
                     if (input.Type != "datetime") {
                         error($"The {t.Method} method expects a datetime input, but {input.Alias} is {input.Type}.");
@@ -433,6 +434,7 @@ namespace Transformalize.Configuration.Ext {
                 case "contains":
                 case "decompress":
                 case "htmldecode":
+                case "htmlencode":
                 case "insert":
                 case "left":
                 case "padleft":
@@ -528,9 +530,6 @@ namespace Transformalize.Configuration.Ext {
                     }
                     break;
                 case "format":
-                    if (!context.Transform.Parameters.Any()) {
-                        error($"The {t.Method} transform requires parameters.  In long-hand, add <parameters/> collection, in short-hand, proceed format method with copy(field1,field2,etc).");
-                    }
 
                     if (t.Format == string.Empty) {
                         error("The format transform requires a format parameter.");
@@ -873,6 +872,7 @@ namespace Transformalize.Configuration.Ext {
                     case "any":
                     case "vin.isvalid":
                     case "isvin":
+                    case "isdaylightsavings":
                         if (!context.Field.Type.StartsWith("bool")) {
                             error($"The {lastTransform.Method} returns a bool, but {context.Field.Alias} is a {context.Field.Type}.");
                         }

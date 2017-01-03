@@ -21,7 +21,8 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Desktop.Transforms {
+namespace Transformalize.Transform.Dates {
+
     public class TimeZoneTransform : BaseTransform {
         readonly Field _input;
         readonly Field _output;

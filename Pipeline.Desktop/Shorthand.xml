@@ -336,6 +336,9 @@
     <add name='vinisvalid' signature='none' target='t' />
     <add name='vingetworldmanufacturer' signature='none' target='t' />
     <add name='vingetmodelyear' signature='none' target='t' />
+
+    <add name='isdaylightsavings' signature='none' target='t' />
+    <add name='htmlencode' signature='none' target='t' />
     
   </methods>
 

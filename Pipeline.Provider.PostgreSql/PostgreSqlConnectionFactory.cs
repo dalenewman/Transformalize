@@ -79,6 +79,7 @@ namespace Transformalize.Provider.PostgreSql {
                 "foreign",
                 "freeze",
                 "from",
+                "full",
                 "grant",
                 "group",
                 "ilike",

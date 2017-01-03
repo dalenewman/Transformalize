@@ -24,7 +24,8 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
 
-namespace Transformalize.Desktop.Transforms {
+namespace Transformalize.Transform.Dates {
+
     public class DateDiffTransform : BaseTransform {
 
         public static readonly Dictionary<string, Func<DateTime, DateTime, object>> Parts = new Dictionary<string, Func<DateTime, DateTime, object>>() {

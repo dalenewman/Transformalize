@@ -252,9 +252,17 @@
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
       <Name>Transformalize.Transform.DateMath</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.Dates\Transformalize.Transform.Dates.csproj">
+      <Project>{56fc16af-42fd-41bf-84b3-94d4033134de}</Project>
+      <Name>Transformalize.Transform.Dates</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
       <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>
       <Name>Transformalize.Transform.Geocode</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.Html\Transformalize.Transform.Html.csproj">
+      <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
+      <Name>Transformalize.Transform.Html</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.Razor\Transformalize.Transform.Razor.csproj">
       <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>

@@ -23,6 +23,9 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
+using System.Linq;
+using Cfg.Net.Contracts;
+using Cfg.Net.Loggers;
 
 namespace Transformalize.Transform.Velocity {
 
@@ -31,9 +34,21 @@ namespace Transformalize.Transform.Velocity {
         private readonly Field[] _input;
         private readonly string _templateName;
 
-        public VelocityTransform(IContext context) : base(context, context.Field.Type) {
+        public VelocityTransform(IContext context, IReader reader) : base(context, context.Field.Type) {
 
             VelocityInitializer.Init();
+
+            var fileBasedTemplate = context.Process.Templates.FirstOrDefault(t => t.Name == context.Transform.Template);
+
+            if (fileBasedTemplate != null) {
+                var memoryLogger = new MemoryLogger();
+                context.Transform.Template = reader.Read(fileBasedTemplate.File, null, memoryLogger);
+                if (memoryLogger.Errors().Any()) {
+                    foreach (var error in memoryLogger.Errors()) {
+                        context.Error(error);
+                    }
+                }
+            }
 
             _input = MultipleInput();
             _templateName = Context.Field.Alias + " Template";

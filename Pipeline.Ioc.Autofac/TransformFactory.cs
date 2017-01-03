@@ -41,6 +41,9 @@ using Transformalize.Transform.Vin;
 using Transformalize.Transforms;
 using Transformalize.Transforms.System;
 using Transformalize.Validators;
+using Transformalize.Transform.Dates;
+using Cfg.Net.Reader;
+using Transformalize.Transform.Html;
 
 namespace Transformalize.Ioc.Autofac {
 
@@ -54,7 +57,8 @@ namespace Transformalize.Ioc.Autofac {
                     transforms.Add(new CompositeValidator(
                         new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field),
                         field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t)))
-                        ));
+                        )
+                    );
                 } else {
                     transforms.AddRange(field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t))));
                 }
@@ -101,6 +105,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "formatphone": return new FormatPhoneTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
+                case "htmlencode": return new HtmlEncodeTransform(context);
                 case "insert": return new InsertTransform(context);
                 case "invert": return new InvertTransform(context);
                 case "join": return new JoinTransform(context);
@@ -140,7 +145,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "trim": return new TrimTransform(context);
                 case "trimend": return new TrimEndTransform(context);
                 case "trimstart": return new TrimStartTransform(context);
-                case "velocity": return new VelocityTransform(context);
+                case "velocity": return new VelocityTransform(context, new DefaultReader(new FileReader(), new WebReader()));
                 case "upper": case "toupper": return new ToUpperTransform(context);
                 case "xmldecode": return new DecodeTransform(context);
                 case "xpath": return new XPathTransform(context);
@@ -212,6 +217,8 @@ namespace Transformalize.Ioc.Autofac {
                 case "vingetworldmanufacturer": return new VinGetWorldManufacturerTransform(context);
                 case "vingetmodelyear": return new VinGetModelYearTransform(context);
 
+                case "isdaylightsavings": return new IsDaylightSavings(context);
+                case "slugify": return new SlugifyTransform(context);
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

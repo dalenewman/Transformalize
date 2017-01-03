@@ -57,7 +57,7 @@ namespace Transformalize.Transforms {
             }
         }
 
-        private readonly Field _contentField;
+        private readonly Field _body;
         private readonly List<TagAttribute> _attributes = new List<TagAttribute>();
         private readonly Func<IRow, object> _encode;
 
@@ -95,7 +95,7 @@ namespace Transformalize.Transforms {
             _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
             _attributes.Add(new TagAttribute(input, "target", Context.Transform.Target));
 
-            _contentField = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
+            _body = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
 
             if (!Context.Field.Raw) {
                 Context.Field.Raw = true;
@@ -109,7 +109,7 @@ namespace Transformalize.Transforms {
                 }
             }
 
-            _encode = (row) => Context.Transform.Encode ? Encode(row[_contentField].ToString()) : row[_contentField];
+            _encode = (row) => Context.Transform.Encode ? Encode(row[_body].ToString()) : row[_body];
         }
 
         public override IRow Transform(IRow row) {
