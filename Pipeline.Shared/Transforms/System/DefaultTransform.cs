@@ -67,22 +67,8 @@ namespace Transformalize.Transforms.System {
 
             foreach (var field in expanded) {
                 var hasDefault = field.Default != Constants.DefaultSetting;
-
-                if (field.Type.StartsWith("date")) {
-                    switch (field.Default.ToLower()) {
-                        case "now()":
-                            field.Default = DateTime.UtcNow.ToString("O");
-                            break;
-                        case "today()":
-                            field.Default = DateTime.Today.ToUniversalTime().ToString("O");
-                            break;
-                    }
-                }
-
                 var fieldDefault = new FieldDefault(field.Name, field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
-                    Value = hasDefault ?
-                        field.Convert(field.Default) :
-                        defaults[field.Type],
+                    Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
                     StringValue = hasDefault ? field.Default : string.Empty,
                     DefaultWhiteSpace = field.DefaultWhiteSpace
                 };

@@ -24,6 +24,7 @@ using FileHelpers;
 using FileHelpers.Dynamic;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Provider.File {
     public class DelimitedFileWriter : IWrite {
@@ -43,6 +44,7 @@ namespace Transformalize.Provider.File {
             foreach (var field in context.OutputFields) {
                 var fieldBuilder = _builder.AddField(field.FieldName(), typeof(string));
                 fieldBuilder.FieldQuoted = true;
+                fieldBuilder.QuoteMultiline = MultilineMode.AllowForBoth;
                 fieldBuilder.QuoteChar = context.Connection.TextQualifier;
                 fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
                 fieldBuilder.FieldOptional = field.Optional;
@@ -59,7 +61,11 @@ namespace Transformalize.Provider.File {
 
             if (_context.Connection.Header == Constants.DefaultSetting) {
                 var headerText = string.Join(_context.Connection.Delimiter, _context.OutputFields.Select(f => f.Label.Replace(_context.Connection.Delimiter, " ")));
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = headerText, FooterText = _context.Connection.Footer };
+                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) {
+                    ErrorMode = errorMode,
+                    HeaderText = headerText,
+                    FooterText = _context.Connection.Footer
+                };
             } else {
                 engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = _context.Connection.Header, FooterText = _context.Connection.Footer };
             }
@@ -89,6 +95,11 @@ namespace Transformalize.Provider.File {
                         }
                     }
                     engine.WriteNextValues();
+                }
+                if (engine.ErrorManager.HasErrors) {
+                    var errorFile = Path.Combine(Path.GetDirectoryName(_fileName) ?? string.Empty, Path.GetFileNameWithoutExtension(_fileName) + ".errors.txt");
+                    _context.Error($"File writer had {engine.ErrorManager.ErrorCount} error{engine.ErrorManager.ErrorCount.Plural()}. See {errorFile}.");
+                    engine.ErrorManager.SaveErrors(errorFile);
                 }
             }
 

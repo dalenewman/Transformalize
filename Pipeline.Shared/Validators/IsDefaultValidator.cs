@@ -27,7 +27,8 @@ namespace Transformalize.Validators {
 
         public IsDefaultValidator(IContext context) : base(context, "bool") {
             _input = SingleInput();
-            _default = _input.Convert(_input.Default);
+            var types = Constants.TypeDefaults();
+            _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
         }
 
         public override IRow Transform(IRow row) {
