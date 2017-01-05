@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 using Common.Logging;
 using Quartz;
 using Quartz.Impl;
@@ -50,8 +51,10 @@ namespace Transformalize.Command {
                 var trigger = TriggerBuilder.Create()
                     .WithIdentity(schedule.Name + " Trigger", "TFL")
                     .StartNow()
-                    .WithCronSchedule(schedule.Cron, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
-                    .Build();
+                    .WithCronSchedule(schedule.Cron, x => x
+                        .WithMisfireHandlingInstructionIgnoreMisfires()
+                        .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
+                    ).Build();
 
                 _scheduler.ScheduleJob(job, trigger);
 

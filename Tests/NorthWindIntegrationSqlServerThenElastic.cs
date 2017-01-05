@@ -121,7 +121,7 @@ namespace Tests {
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT TOP 1 Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9;"));
-                Assert.AreEqual(15.0, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
+                Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
                 Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
                 Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
             }
@@ -154,7 +154,7 @@ namespace Tests {
             var source = hit["_source"] as IDictionary<string, object>;
 
             Assert.AreEqual(source["orderdetailsunitprice"], 15.0);
-            Assert.AreEqual(source["orderdetailsquantity"], 40);
+            Assert.AreEqual(source["orderdetailsquantity"], (long)40);
             Assert.AreEqual(source["orderdetailsextendedprice"], 40 * 15.0);
 
             // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
@@ -174,7 +174,7 @@ namespace Tests {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Orders' AND BatchId = 18;"));
                 Assert.AreEqual("VICTE", cn.ExecuteScalar<string>("SELECT OrdersCustomerId FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
-                Assert.AreEqual(20.11, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
+                Assert.AreEqual(20.11M, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
             }
 
             // RUN AND CHECK ELASTIC

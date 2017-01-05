@@ -83,8 +83,8 @@
       <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Elasticsearch.Net, Version=2.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.2.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
+    <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Elasticsearch.Net.5.0.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
@@ -209,6 +209,9 @@
     <Reference Include="Transformalize.Transform.DateMath">
       <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.DateMath\bin\Debug\Transformalize.Transform.DateMath.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Transform.Dates">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Dates\bin\Debug\Transformalize.Transform.Dates.dll</HintPath>
+    </Reference>
     <Reference Include="Transformalize.Transform.Geocode">
       <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Geocode\bin\Debug\Transformalize.Transform.Geocode.dll</HintPath>
     </Reference>
@@ -217,6 +220,9 @@
     </Reference>
     <Reference Include="Transformalize.Transform.Geohash">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\Debug\Transformalize.Transform.Geohash.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Html">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Html\bin\Debug\Transformalize.Transform.Html.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Humanizer">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Transformalize.Transform.Humanizer.dll</HintPath>

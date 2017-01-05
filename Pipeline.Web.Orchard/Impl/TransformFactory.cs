@@ -34,7 +34,9 @@ using Transformalize.Transforms.System;
 using Transformalize.Validators;
 using Newtonsoft.Json;
 using Transformalize.Transform.DateMath;
+using Transformalize.Transform.Dates;
 using Transformalize.Transform.Geocode;
+using Transformalize.Transform.Html;
 using Transformalize.Transform.Humanizer;
 
 namespace Pipeline.Web.Orchard.Impl {
@@ -92,6 +94,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "formatphone": return new FormatPhoneTransform(context);
                 case "hashcode": return new HashcodeTransform(context);
                 case "htmldecode": return new DecodeTransform(context);
+                case "htmlencode": return new HtmlEncodeTransform(context);
                 case "insert": return new InsertTransform(context);
                 case "invert": return new InvertTransform(context);
                 case "join": return new JoinTransform(context);
@@ -189,6 +192,9 @@ namespace Pipeline.Web.Orchard.Impl {
                 case "web": return new WebTransform(context);
                 case "urlencode": return new UrlEncodeTransform(context);
                 case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
+
+                case "isdaylightsavings": return new IsDaylightSavings(context);
+                case "slugify": return new SlugifyTransform(context);
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

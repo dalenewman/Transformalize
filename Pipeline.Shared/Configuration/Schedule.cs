@@ -19,7 +19,8 @@
 using Cfg.Net;
 
 namespace Transformalize.Configuration {
-    public class Schedule : CfgNode {
+    public class Schedule : CfgNode
+    {
 
         [Cfg(required = true)]
         public string Name { get; set; }
@@ -29,5 +30,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "default")]
         public string Mode { get; set; }
+
+        [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Transform.TimeZoneIdDomain)]
+        public string TimeZone { get; set; }
     }
 }
