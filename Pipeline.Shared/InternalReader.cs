@@ -51,6 +51,7 @@ namespace Transformalize {
                 }
                 rows.Add(typed);
             }
+            _input.Entity.Hits = rows.Count;
             return rows;
         }
 

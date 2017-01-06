@@ -14,28 +14,26 @@ namespace Transformalize.Provider.GeoJson {
         private readonly Stream _stream;
         private readonly Field _latitudeField;
         private readonly Field _longitudeField;
-        private readonly Field _titleField;
         private readonly Field _markerColorField;
         private readonly Field _markerSizeField;
         private readonly Field _markerSymbolField;
-        private readonly OutputContext _context;
+        private readonly Field[] _propertyFields;
 
         public GeoJsonStreamWriter(OutputContext context, Stream stream) {
-            _context = context;
             _stream = stream;
             _latitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
             _longitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
-            _titleField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "title") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "name");
             _markerColorField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markercolor") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "color");
             _markerSizeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersize") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "size");
             _markerSymbolField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersymbol") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
+            _propertyFields = context.OutputFields.Where(f => !f.System).Except(new[] { _latitudeField, _longitudeField, _markerColorField, _markerSizeField, _markerSymbolField }).ToArray();
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
             var textWriter = new StreamWriter(_stream);
             var jsonWriter = new JsonTextWriter(textWriter);
-            var tableBuilder = new StringBuilder();
+            // var tableBuilder = new StringBuilder();
 
             jsonWriter.WriteStartObject(); //root
 
@@ -66,33 +64,30 @@ namespace Transformalize.Provider.GeoJson {
                 jsonWriter.WritePropertyName("properties");
                 jsonWriter.WriteStartObject(); //properties
 
-                jsonWriter.WritePropertyName("title");
-                if (_titleField == null) {
-                    jsonWriter.WriteValue($"{row[_latitudeField]},{row[_longitudeField]}");
-                } else {
-                    jsonWriter.WriteValue(row[_titleField]);
+                foreach (var field in _propertyFields) {
+                    jsonWriter.WritePropertyName(field.Label);
+                    jsonWriter.WriteValue(field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
                 }
 
-                jsonWriter.WritePropertyName("description");
+                //jsonWriter.WritePropertyName("description");
 
-                tableBuilder.Clear();
-                tableBuilder.AppendLine("<table class=\"table\">");
-                foreach (var field in _context.OutputFields) {
-                    tableBuilder.AppendLine("<tr>");
+                //tableBuilder.Clear();
+                //tableBuilder.AppendLine("<table class=\"table\">");
+                //foreach (var field in _context.OutputFields) {
+                //    tableBuilder.AppendLine("<tr>");
 
-                    tableBuilder.AppendLine("<td><strong>");
-                    tableBuilder.AppendLine(field.Label);
-                    tableBuilder.AppendLine(":</strong></td>");
+                //    tableBuilder.AppendLine("<td><strong>");
+                //    tableBuilder.AppendLine(field.Label);
+                //    tableBuilder.AppendLine(":</strong></td>");
 
-                    tableBuilder.AppendLine("<td>");
-                    var value = field.Format == string.Empty ? row[field].ToString() : string.Format(string.Concat("{0:", field.Format, "}"), row[field]);
-                    tableBuilder.AppendLine(field.Raw ? value : System.Security.SecurityElement.Escape(value));
-                    tableBuilder.AppendLine("</td>");
+                //    tableBuilder.AppendLine("<td>");
+                //    tableBuilder.AppendLine(field.Raw ? (string)row[field] : System.Security.SecurityElement.Escape((string)row[field]));
+                //    tableBuilder.AppendLine("</td>");
 
-                    tableBuilder.AppendLine("</tr>");
-                }
-                tableBuilder.AppendLine("</table>");
-                jsonWriter.WriteValue(tableBuilder.ToString());
+                //    tableBuilder.AppendLine("</tr>");
+                //}
+                //tableBuilder.AppendLine("</table>");
+                //jsonWriter.WriteValue(tableBuilder.ToString());
 
                 if (_markerColorField != null) {
                     jsonWriter.WritePropertyName("marker-color");

@@ -92,7 +92,7 @@ namespace Transformalize.Provider.File {
                             case "single":
                             case "double":
                                 if (field.Format == string.Empty) {
-                                    engine[i] = row[field];
+                                    engine[i] = row[field].ToString();
                                 } else {
                                     switch (field.Type) {
                                         case "single":
@@ -106,7 +106,7 @@ namespace Transformalize.Provider.File {
                                             engine[i] = row[field] is double ? ((double)row[field]).ToString(field.Format) : Convert.ToDouble(row[field]).ToString(field.Format);
                                             break;
                                         default:
-                                            engine[i] = row[field];
+                                            engine[i] = row[field].ToString();
                                             break;
                                     }
                                 }

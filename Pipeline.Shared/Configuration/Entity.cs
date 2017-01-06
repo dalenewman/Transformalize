@@ -253,6 +253,8 @@ namespace Transformalize.Configuration {
         }
 
         public void AddSystemFields() {
+            if (Fields.Any(f => f.Name == TflKey().Name)) return;
+
             var fields = new List<Field> {
                 TflKey(),
                 TflBatchId(),
@@ -463,7 +465,7 @@ namespace Transformalize.Configuration {
                     } : new List<Transform>()
             }.WithDefaults();
         }
-        
+
         public Field TflKey() {
             return Fields.FirstOrDefault(f => f.System && f.Name == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
         }

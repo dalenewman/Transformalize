@@ -49,6 +49,10 @@ namespace Transformalize.Desktop.Transforms {
                     continue;
                 }
 
+                if (t == '\'') {
+                    continue;
+                }
+
                 var uc = CharUnicodeInfo.GetUnicodeCategory(t);
                 switch (uc) {
                     case UnicodeCategory.LowercaseLetter:
