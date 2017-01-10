@@ -253,7 +253,6 @@ namespace Transformalize.Configuration {
         }
 
         public void AddSystemFields() {
-            if (Fields.Any(f => f.Name == TflKey().Name)) return;
 
             var fields = new List<Field> {
                 TflKey(),
@@ -514,13 +513,13 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int ReadSize { get; set; }
 
-        [Cfg(value = 250)]
+        [Cfg(value = 512)]
         public int InsertSize { get; set; }
 
-        [Cfg(value = 99)]
+        [Cfg(value = 256)]
         public int UpdateSize { get; set; }
 
-        [Cfg(value = 99)]
+        [Cfg(value = 256)]
         public int DeleteSize { get; set; }
 
 

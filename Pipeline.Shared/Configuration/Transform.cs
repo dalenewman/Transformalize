@@ -25,7 +25,7 @@ namespace Transformalize.Configuration {
 
     public class Transform : CfgNode {
         
-        public const string ProducerDomain = "fromxml,fromsplit,fromlengths,fromjson,geocode";
+        public const string ProducerDomain = "fromxml,fromsplit,fromlengths,fromjson,fromaddress";
         public const string TransformerDomain = "now,concat,copy,format,formatxml,hashcode,htmldecode,left,right,xmldecode,padleft,padright,splitlength,trim,trimstart,trimend,javascript,js,tostring,toupper,upper,tolower,lower,join,map,decompress,timezone,next,last,substring,datepart,toyesno,regexreplace,formatphone,replace,remove,insert,cs,csharp,timeago,timeahead,convert,totime,razor,any,connection,filename,fileext,filepath,xpath,datediff,add,sum,multiply,in,match,coalesce,startswith,endswith,invert,isempty,isdefault,tag,include,exclude,round,abs,ceiling,floor,velocity,slugify,camelize,dasherize,frommetric,fromroman,humanize,dehumanize,hyphenate,ordinalize,pascalize,pluralize,singularize,titleize,tometric,toordinalwords,toroman,towords,underscore,addticks,addmilliseconds,addseconds,addminutes,addhours,adddays,iif,geohashencode,geohashneighbor,commonprefix,commonprefixes,bytes,web,urlencode,datemath,vingetworldmanufacturer,vingetmodelyear,htmlencode";
         public const string TransformProducerDomain = "now,next,last,connection";
         public const string ValidatorDomain = "contains,is,equal,equals,in,startswith,endswith,isempty,isdefault,isnumeric,vinisvalid,isdaylightsavings";
@@ -293,6 +293,27 @@ namespace Transformalize.Configuration {
 
         [Cfg(value="")]
         public string Key { get; set; }
+
+        [Cfg(value=50)]
+        public int Limit { get; set; }
+
+        [Cfg(value="")]
+        public string AdministrativeArea { get; set; }
+
+        [Cfg(value="")]
+        public string Route { get; set; }
+
+        [Cfg(value="")]
+        public string Country { get; set; }
+
+        [Cfg(value="")]
+        public string Locality { get; set; }
+
+        [Cfg(value="")]
+        public string PostalCode { get; set; }
+
+        [Cfg(value=1000)]
+        public int Time { get; set; }
 
         public static HashSet<string> TransformSet() {
             return _transformSet ?? (_transformSet = new HashSet<string>(TransformerDomain.Split(',')));

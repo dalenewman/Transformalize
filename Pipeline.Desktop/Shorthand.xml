@@ -208,6 +208,11 @@
         <add name='expression' />
       </parameters>
     </add>
+    <add name='key'>
+      <parameters>
+        <add name='key' />
+      </parameters>
+    </add>
   </signatures>
 
   <targets>
@@ -339,6 +344,7 @@
 
     <add name='isdaylightsavings' signature='none' target='t' />
     <add name='htmlencode' signature='none' target='t' />
+    <add name='fromaddress' signature='key' target='t' />
     
   </methods>
 

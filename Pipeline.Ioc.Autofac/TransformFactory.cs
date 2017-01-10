@@ -203,7 +203,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "isdefault": return new IsDefaultValidator(context);
                 case "isnumeric": return new IsNumericValidator(context);
 
-                case "geocode": return new GeocodeTransform(context);
+                case "fromaddress": return new GeocodeTransform(context);
                 case "datemath": return new DateMathTransform(context);
 
                 // wip

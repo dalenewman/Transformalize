@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="GeocodeTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RateGate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

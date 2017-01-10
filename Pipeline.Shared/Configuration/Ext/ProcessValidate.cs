@@ -476,7 +476,7 @@ namespace Transformalize.Configuration.Ext {
                 case "frommetric":
                 case "fromroman":
                 case "geohashneighbor":
-                case "geocode":
+                case "fromaddress":
                 case "underscore":
                 case "vinisvalid":
                 case "vingetworldmanufacturer":
@@ -566,11 +566,11 @@ namespace Transformalize.Configuration.Ext {
                         error("The can not max length fields in a fromlengths transform. Set it to a numeric length.");
                     }
                     break;
-                case "geocode":
+                case "fromaddress":
                     if (t.Parameters.Any()) {
                         var lat = t.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
                         if (lat == null) {
-                            error("The geocode transform requires an output field named lat, or latitude.");
+                            error("The fromaddress (geocode) transform requires an output field named lat, or latitude.");
                         } else {
                             if (lat.Type != "double") {
                                 error($"The goecode {lat.Name} field must be of type double.");
@@ -578,14 +578,14 @@ namespace Transformalize.Configuration.Ext {
                         }
                         var lon = t.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
                         if (lon == null) {
-                            error("The geocode transform requires an output field named lon, long, or longitude.");
+                            error("The fromaddress (geocode) transform requires an output field named lon, long, or longitude.");
                         } else {
                             if (lon.Type != "double") {
                                 error($"The goecode {lon.Name} field must be of type double.");
                             }
                         }
                     } else {
-                        error($"The {t.Method} transform requires a collection of output fields; namely: latitude, longitude, and formattedaddress (optional).");
+                        error($"The {t.Method} (geocode) transform requires a collection of output fields; namely: latitude, longitude, and formattedaddress (optional).");
                     }
                     break;
                 case "padleft":
