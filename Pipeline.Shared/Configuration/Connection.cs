@@ -78,7 +78,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web,log,directory,geojson", toLower = true)]
+        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlite,lucene,excel,web,log,directory,geojson,kml,numl", toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
@@ -275,5 +275,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = 5)]
         public int ErrorLimit { get; set; }
+
+        [Cfg(value=Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
+        public string ModelType { get; set; }
     }
 }

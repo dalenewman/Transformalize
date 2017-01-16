@@ -21,21 +21,21 @@ using System.Collections.Generic;
 using Cfg.Net.Contracts;
 
 namespace Transformalize.Scheduler.Quartz {
-    public class CronExpressionValidator : IValidator {
+    public class CronExpressionValidator : ICustomizer {
 
-        public CronExpressionValidator() : this("cron") { }
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {
 
-        public CronExpressionValidator(string name) {
-            Name = name;
-        }
+            if (parent != "schedule")
+                return;
 
-        public void Validate(string name, string value, IDictionary<string, string> parameters, ILogger logger) {
-            if (value == null) {
-                logger.Error("A null value was passed into the CronExpressionValidator");
-            }
+            IAttribute cronAttr;
+            if (!node.TryAttribute("cron", out cronAttr))
+                return;
+
+            var value = cronAttr.Value.ToString();
 
             if (value == string.Empty) {
-                return;
+                logger.Error("A cron attribute can't be empty.");
             }
 
             try {
@@ -49,6 +49,6 @@ namespace Transformalize.Scheduler.Quartz {
             }
         }
 
-        public string Name { get; set; }
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger){}
     }
 }

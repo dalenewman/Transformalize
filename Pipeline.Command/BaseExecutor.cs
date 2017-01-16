@@ -52,6 +52,7 @@ namespace Transformalize.Command {
             builder.RegisterCallback(new InternalModule(process).Configure);
             builder.RegisterCallback(new FileModule(process).Configure);
             builder.RegisterCallback(new GeoJsonModule(process).Configure);
+            // builder.RegisterCallback(new NumlModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);
             builder.RegisterCallback(new DirectoryModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);

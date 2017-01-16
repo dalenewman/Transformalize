@@ -54,7 +54,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Name { get; set; }
 
-        [Cfg(value = null, validators = "illegal")]
+        [Cfg(value = null)]
         public string Value { get; set; }
 
         [Cfg(value = true)]

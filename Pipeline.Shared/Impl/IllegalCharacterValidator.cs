@@ -22,22 +22,33 @@ using Cfg.Net.Contracts;
 
 namespace Transformalize.Impl {
 
-    public class IllegalCharacterValidator : IValidator {
+    public class IllegalCharacterValidator : ICustomizer {
 
         private readonly string _illegalCharacters;
         private HashSet<char> _illegal;
         private HashSet<char> Illegal => _illegal ?? (_illegal = new HashSet<char>(_illegalCharacters.ToCharArray()));
 
-        public IllegalCharacterValidator(string name, string illegalCharacters = ";'`") {
-            Name = name;
+        public IllegalCharacterValidator(string illegalCharacters = ";'`") {
             _illegalCharacters = illegalCharacters;
         }
 
-        public string Name { get; set; }
-        public void Validate(string name, string value, IDictionary<string, string> parameters, ILogger logger) {
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {
+
+            if (parent != "parameters")
+                return;
+
+            IAttribute attr;
+            if (!node.TryAttribute("value", out attr))
+                return;
+
+            var value = attr.Value.ToString();
             if (!string.IsNullOrEmpty(value) && value.ToCharArray().Any(c => Illegal.Contains(c))) {
-                logger.Error($"The parameter {Name} contains an illegal character (e.g. {string.Join(",", Illegal)}).");
+                IAttribute nameAttr;
+                node.TryAttribute("name", out nameAttr);
+                logger.Error($"The parameter {(nameAttr == null ? "?" : nameAttr.Value)} contains an illegal character (e.g. {string.Join(",", Illegal)}).");
             }
         }
+
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) { }
     }
 }

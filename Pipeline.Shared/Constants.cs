@@ -41,6 +41,7 @@ namespace Transformalize {
 
         public const string ComparisonDomain = "equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=";
         public const string ValidatorDomain = "contains";
+        public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;
 
         public const string TflHashCode = "TflHashCode";
         public const string TflKey = "TflKey";
@@ -184,7 +185,6 @@ namespace Transformalize {
         };
 
         public static HashSet<string> InvalidFieldNames { get; internal set; } = new HashSet<string>(new[] { TflKey, TflBatchId, TflDeleted, TflHashCode }, StringComparer.OrdinalIgnoreCase);
-
         public static Dictionary<string, Func<string, bool>> CanConvert() {
             bool boolOut;
             byte byteOut;

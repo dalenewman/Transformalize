@@ -192,15 +192,16 @@ namespace Transformalize.Configuration.Ext {
                 var connection = p.Output();
                 if (connection != null) {
                     switch (connection.Provider) {
+                        case "kml":
                         case "geojson":
-                            var outputFields = entity.GetAllOutputFields().ToArray();
-                            var lat = outputFields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? outputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
+                            var fields = entity.GetAllFields().ToArray();
+                            var lat = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
                             if (lat == null) {
-                                error($"The {entity.Alias} entity needs a latitude (or lat) output field in order to output geoJson.");
+                                error($"The {entity.Alias} entity needs a latitude (or lat) output field in order to output {connection.Provider}.");
                             } else {
-                                var lon = outputFields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? outputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
+                                var lon = fields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
                                 if (lon == null) {
-                                    error($"The {entity.Alias} entity needs a longitude (or lon) output field in order to output geoJson.");
+                                    error($"The {entity.Alias} entity needs a longitude (or lon) output field in order to output {connection.Provider}.");
                                 }
                             }
                             break;

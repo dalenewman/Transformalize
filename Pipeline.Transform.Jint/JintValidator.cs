@@ -24,12 +24,22 @@ using Transformalize.Extensions;
 
 namespace Transformalize.Transform.Jint {
 
-    public class JintValidator : IValidator {
+    public class JintValidator : ICustomizer {
 
         readonly JavaScriptParser _jint = new JavaScriptParser();
         readonly ParserOptions _options;
         public string Name { get; set; }
-        public void Validate(string name, string value, IDictionary<string, string> parameters, ILogger logger) {
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger)
+        {
+
+            if (parent != "transform")
+                return;
+
+            IAttribute scriptAttr;
+            if (!node.TryAttribute("script", out scriptAttr))
+                return;
+
+            var value = scriptAttr.Value.ToString();
 
             if (string.IsNullOrEmpty(value)) {
                 logger.Error("Script is null or empty");
@@ -49,10 +59,9 @@ namespace Transformalize.Transform.Jint {
             }
         }
 
-        public JintValidator() : this("js") { }
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger){}
 
-        public JintValidator(string name) {
-            Name = name;
+        public JintValidator() {
             _options = new ParserOptions { Tolerant = true };
         }
 

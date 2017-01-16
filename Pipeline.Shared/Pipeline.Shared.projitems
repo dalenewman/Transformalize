@@ -128,7 +128,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullEntityInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullMasterUpdater.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullNodeModifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullReader.cs" />
@@ -137,7 +136,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTemplateEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullUpdater.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullCustomizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullVersionDetector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProcessController.cs" />

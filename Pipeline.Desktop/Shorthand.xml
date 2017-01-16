@@ -213,138 +213,140 @@
         <add name='key' />
       </parameters>
     </add>
+    <add name='model'>
+      <parameters>
+        <add name='model' />
+        <add name='modeltype' value='decisiontree' />
+      </parameters>
+    </add>
   </signatures>
 
-  <targets>
-    <add name='t' collection='transforms' property='method' />
-    <add name='ignore' collection='' property='' />
-  </targets>
-
   <methods>
-    <add name='add' signature='none' target='t' />
-    <add name='abs' signature='none' target='t' />
-    <add name='any' signature='any' target='t' />
-    <add name='ceiling' signature='none' target='t' />
-    <add name='concat' signature='none' target='t' />
-    <add name='connection' signature='property' target='t' />
-    <add name='contains' signature='value' target='t' />
-    <add name='convert' signature='type' target='t' />
-    <add name='copy' signature='none' target='ignore' />
-    <add name='cs' signature='script' target='t' />
-    <add name='csharp' signature='script' target='t' />
-    <add name='datediff' signature='datediff' target='t' />
-    <add name='datepart' signature='timecomponent' target='t' />
-    <add name='decompress' signature='none' target='t' />
-    <add name='equal' signature='value' target='t' />
-    <add name='equals' signature='value' target='t' />
-    <add name='fileext' signature='none' target='t' />
-    <add name='filename' signature='file' target='t' />
-    <add name='filepath' signature='file' target='t' />
-    <add name='floor' signature='none' target='t' />
-    <add name='format' signature='format' target='t' />
-    <add name='formatphone' signature='none' target='t' />
-    <add name='formatxml' signature='none' target='t' />
-    <add name='hashcode' signature='none' target='t' />
-    <add name='htmldecode' signature='none' target='t' />
-    <add name='insert' signature='insert' target='t' />
-    <add name='is' signature='type' target='t' />
-    <add name='javascript' signature='script' target='t' />
-    <add name='join' signature='separator' target='t' />
-    <add name='js' signature='script' target='t' />
-    <add name='last' signature='dayofweek' target='t' />
-    <add name='left' signature='length' target='t' />
-    <add name='lower' signature='none' target='t' />
-    <add name='map' signature='map' target='t' />
-    <add name='multiply' signature='none' target='t' />
-    <add name='next' signature='dayofweek' target='t' />
-    <add name='now' signature='none' target='t' />
-    <add name='padleft' signature='padding' target='t' />
-    <add name='padright' signature='padding' target='t' />
-    <add name='razor' signature='template' target='t' />
-    <add name='regexreplace' signature='regexreplace' target='t' />
-    <add name='remove' signature='remove' target='t' />
-    <add name='replace' signature='replace' target='t' />
-    <add name='right' signature='length' target='t' />
-    <add name='round' signature='decimals' target='t' />
-    <add name='splitlength' signature='separator' target='t' />
-    <add name='substring' signature='substring' target='t' />
-    <add name='sum' signature='none' target='t' />
-    <add name='timeago' signature='fromtimezone' target='t' />
-    <add name='timeahead' signature='fromtimezone' target='t' />
-    <add name='timezone' signature='timezone' target='t' />
-    <add name='tolower' signature='none' target='t' />
-    <add name='tostring' signature='format' target='t' />
-    <add name='totime' signature='timecomponent' target='t' />
-    <add name='toupper' signature='none' target='t' />
-    <add name='toyesno' signature='none' target='t' />
-    <add name='trim' signature='trim' target='t' />
-    <add name='trimend' signature='trim' target='t' />
-    <add name='trimstart' signature='trim' target='t' />
-    <add name='upper' signature='none' target='t' />
-    <add name='utcnow' signature='none' target='t' />
-    <add name='velocity' signature='template' target='t' />
-    <add name='xmldecode' signature='none' target='t' />
-    <add name='xpath' signature='xpath' target='t' />
-    <add name='in' signature='domain' target='t' />
-    <add name='match' signature='pattern' target='t' />
-    <add name='coalesce' signature='none' target='t' />
-    <add name='startswith' signature='value' target='t' />
-    <add name='endswith' signature='value' target='t' />
-    <add name='invert' signature='none' target='t' />
-    <add name='isdefault' signature='none' target='t' />
-    <add name='isempty' signature='none' target='t' />
-    <add name='tag' signature='tag' target='t' />
-    <add name='include' signature='any' target='t' />
-    <add name='exclude' signature='any' target='t' />
-    <add name='slugify' signature='none' target='t' />
-    <add name='camelize' signature='none' target='t' />
-    <add name='dasherize' signature='none' target='t' />
-    <add name='hyphenate' signature='none' target='t' />
-    <add name='frommetric' signature='none' target='t' />
-    <add name='fromroman' signature='none' target='t' />
-    <add name='humanize' signature='humanize' target='t' />
-    <add name='dehumanize' signature='none' target='t' />
-    <add name='ordinalize' signature='none' target='t' />
-    <add name='pascalize' signature='none' target='t' />
-    <add name='pluralize' signature='none' target='t' />
-    <add name='singularize' signature='none' target='t' />
-    <add name='titleize' signature='none' target='t' />
-    <add name='tometric' signature='none' target='t' />
-    <add name='toordinalwords' signature='none' target='t' />
-    <add name='toroman' signature='none' target='t' />
-    <add name='towords' signature='none' target='t' />
-    <add name='underscore' signature='none' target='t' />
-    <add name='bytes' signature='none' target='t' />
+    <add name='add' signature='none' />
+    <add name='abs' signature='none' />
+    <add name='any' signature='any' />
+    <add name='ceiling' signature='none' />
+    <add name='concat' signature='none' />
+    <add name='connection' signature='property' />
+    <add name='contains' signature='value' />
+    <add name='convert' signature='type' />
+    <add name='copy' signature='none' ignore='true' />
+    <add name='cs' signature='script' />
+    <add name='csharp' signature='script' />
+    <add name='datediff' signature='datediff' />
+    <add name='datepart' signature='timecomponent' />
+    <add name='decompress' signature='none' />
+    <add name='equal' signature='value' />
+    <add name='equals' signature='value' />
+    <add name='fileext' signature='none' />
+    <add name='filename' signature='file' />
+    <add name='filepath' signature='file' />
+    <add name='floor' signature='none' />
+    <add name='format' signature='format' />
+    <add name='formatphone' signature='none' />
+    <add name='formatxml' signature='none' />
+    <add name='hashcode' signature='none' />
+    <add name='htmldecode' signature='none' />
+    <add name='insert' signature='insert' />
+    <add name='is' signature='type' />
+    <add name='javascript' signature='script' />
+    <add name='join' signature='separator' />
+    <add name='js' signature='script' />
+    <add name='last' signature='dayofweek' />
+    <add name='left' signature='length' />
+    <add name='lower' signature='none' />
+    <add name='map' signature='map' />
+    <add name='multiply' signature='none' />
+    <add name='next' signature='dayofweek' />
+    <add name='now' signature='none' />
+    <add name='padleft' signature='padding' />
+    <add name='padright' signature='padding' />
+    <add name='razor' signature='template' />
+    <add name='regexreplace' signature='regexreplace' />
+    <add name='remove' signature='remove' />
+    <add name='replace' signature='replace' />
+    <add name='right' signature='length' />
+    <add name='round' signature='decimals' />
+    <add name='splitlength' signature='separator' />
+    <add name='substring' signature='substring' />
+    <add name='sum' signature='none' />
+    <add name='timeago' signature='fromtimezone' />
+    <add name='timeahead' signature='fromtimezone' />
+    <add name='timezone' signature='timezone' />
+    <add name='tolower' signature='none' />
+    <add name='tostring' signature='format' />
+    <add name='totime' signature='timecomponent' />
+    <add name='toupper' signature='none' />
+    <add name='toyesno' signature='none' />
+    <add name='trim' signature='trim' />
+    <add name='trimend' signature='trim' />
+    <add name='trimstart' signature='trim' />
+    <add name='upper' signature='none' />
+    <add name='utcnow' signature='none' />
+    <add name='velocity' signature='template' />
+    <add name='xmldecode' signature='none' />
+    <add name='xpath' signature='xpath' />
+    <add name='in' signature='domain' />
+    <add name='match' signature='pattern' />
+    <add name='coalesce' signature='none' />
+    <add name='startswith' signature='value' />
+    <add name='endswith' signature='value' />
+    <add name='invert' signature='none' />
+    <add name='isdefault' signature='none' />
+    <add name='isempty' signature='none' />
+    <add name='tag' signature='tag' />
+    <add name='include' signature='any' />
+    <add name='exclude' signature='any' />
+    <add name='slugify' signature='none' />
+    <add name='camelize' signature='none' />
+    <add name='dasherize' signature='none' />
+    <add name='hyphenate' signature='none' />
+    <add name='frommetric' signature='none' />
+    <add name='fromroman' signature='none' />
+    <add name='humanize' signature='humanize' />
+    <add name='dehumanize' signature='none' />
+    <add name='ordinalize' signature='none' />
+    <add name='pascalize' signature='none' />
+    <add name='pluralize' signature='none' />
+    <add name='singularize' signature='none' />
+    <add name='titleize' signature='none' />
+    <add name='tometric' signature='none' />
+    <add name='toordinalwords' signature='none' />
+    <add name='toroman' signature='none' />
+    <add name='towords' signature='none' />
+    <add name='underscore' signature='none' />
+    <add name='bytes' signature='none' />
     
-    <add name='addticks' signature='value' target='t' />
-    <add name='addmillisecnds' signature='value' target='t' />
-    <add name='addseconds' signature='value' target='t' />
-    <add name='addminutes' signature='value' target='t' />
-    <add name='addhours' signature='value' target='t' />
-    <add name='adddays' signature='value' target='t' />
+    <add name='addticks' signature='value' />
+    <add name='addmillisecnds' signature='value' />
+    <add name='addseconds' signature='value' />
+    <add name='addminutes' signature='value' />
+    <add name='addhours' signature='value' />
+    <add name='adddays' signature='value' />
     
-    <add name='iif' signature='iif' target='t' />
-    <add name='geohashencode' signature='geohash' target='t' />
-    <add name='isnumeric' signature='none' target='t' />
-    <add name='geohashneighbor' signature='direction' target='t' />
-    <add name='commonprefix' signature='none' target='t' />
-    <add name='commonprefixes' signature='separator' target='t' />
-    <add name='distance' signature='distance' target='t' />
+    <add name='iif' signature='iif' />
+    <add name='geohashencode' signature='geohash' />
+    <add name='isnumeric' signature='none' />
+    <add name='geohashneighbor' signature='direction' />
+    <add name='commonprefix' signature='none' />
+    <add name='commonprefixes' signature='separator' />
+    <add name='distance' signature='distance' />
     
-    <add name='web' signature='web' target='t' />
-    <add name='urlencode' signature='none' target='t' />
-    <add name='fromjson' signature='none' target='t' />
-    <add name='datemath' signature='expression' target='t' />
+    <add name='web' signature='web' />
+    <add name='urlencode' signature='none' />
+    <add name='fromjson' signature='none' />
+    <add name='datemath' signature='expression' />
     
     <!-- VIN, Vehicle Identification Number -->
-    <add name='isvin' signature='none' target='t' />
-    <add name='vinisvalid' signature='none' target='t' />
-    <add name='vingetworldmanufacturer' signature='none' target='t' />
-    <add name='vingetmodelyear' signature='none' target='t' />
+    <add name='isvin' signature='none' />
+    <add name='vinisvalid' signature='none' />
+    <add name='vingetworldmanufacturer' signature='none' />
+    <add name='vingetmodelyear' signature='none' />
 
-    <add name='isdaylightsavings' signature='none' target='t' />
-    <add name='htmlencode' signature='none' target='t' />
-    <add name='fromaddress' signature='key' target='t' />
+    <add name='isdaylightsavings' signature='none' />
+    <add name='htmlencode' signature='none' />
+    <add name='fromaddress' signature='key' />
+    <add name='frommodel' signature='model' />
     
   </methods>
 

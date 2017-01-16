@@ -350,7 +350,7 @@ namespace Transformalize.Configuration {
         /// 
         ///     <add name="Name" t="trim()" />
         /// </summary>
-        [Cfg(value = "", validators = "sh", modifiers = "sh")]
+        [Cfg(value = "")]
         public string T { get; set; }
 
         [Cfg(value = true)]
@@ -526,5 +526,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value=false)]
         public bool Facet { get; set; }
+
+        [Cfg(value=false)]
+        public bool Learn { get; set; }
     }
 }

@@ -59,6 +59,10 @@ namespace Transformalize {
             return parameters;
         }
 
+        public IDictionary<string,object> ToFriendlyDictionary(Field[] fields) {
+            return fields.ToDictionary(field => field.Alias, GetValue);
+        }
+
         public IEnumerable<object> ToEnumerable(IEnumerable<Field> fields) {
             return fields.Select(GetValue);
         }

@@ -28,7 +28,7 @@ namespace Transformalize.Provider.Web {
 
     public class WebCsvReader : IRead {
 
-        private InputContext _context;
+        private readonly InputContext _context;
         private readonly Regex _regex = new Regex(@"""?\s*,\s*""?", RegexOptions.Compiled);
         private readonly IRowFactory _rowFactory;
         private readonly WebClient _client;

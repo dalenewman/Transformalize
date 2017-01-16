@@ -27,7 +27,7 @@ namespace Tests {
         [TestMethod]
         public void AnyEqual() {
 
-            var xml = @"
+            const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' pipeline='linq'>
@@ -47,8 +47,7 @@ namespace Tests {
           </calculated-fields>
         </add>
       </entities>
-    </add>
-            ".Replace('\'', '"');
+    </add>";
 
             var composer = new CompositionRoot();
             var controller = composer.Compose(xml);

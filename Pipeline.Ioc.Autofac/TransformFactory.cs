@@ -43,6 +43,7 @@ using Transformalize.Transforms.System;
 using Transformalize.Validators;
 using Transformalize.Transform.Dates;
 using Cfg.Net.Reader;
+using Transformalize.Provider.Numl.Transforms;
 using Transformalize.Transform.Html;
 
 namespace Transformalize.Ioc.Autofac {
@@ -219,6 +220,8 @@ namespace Transformalize.Ioc.Autofac {
 
                 case "isdaylightsavings": return new IsDaylightSavings(context);
                 case "slugify": return new SlugifyTransform(context);
+
+                case "frommodel": return new NumlTransform(context);
 
                 default:
                     context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);

@@ -30,5 +30,7 @@ namespace Transformalize.Contracts {
         IEnumerable<object> ToEnumerable(IEnumerable<Field> fields);
         bool Match(Field[] fields, IRow other);
         object[] ToArray();
+
+        IDictionary<string, object> ToFriendlyDictionary(Field[] fields);
     }
 }

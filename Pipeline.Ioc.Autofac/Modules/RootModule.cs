@@ -51,12 +51,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            builder.Register(ctx => new JintValidator("js")).Named<IValidator>("js");
-
-            builder.Register(ctx => new EnvironmentModifier(
-                new PlaceHolderModifier(),
-                new ParameterModifier())
-            ).As<IRootModifier>();
+            builder.Register(ctx => new JintValidator()).Named<ICustomizer>("js");
+            builder.Register(ctx => new EnvironmentModifier()).Named<ICustomizer>("environment");
 
             // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
             builder.RegisterType<FileReader>().Named<IReader>("file");
@@ -69,19 +65,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // transform choices
             builder.Register<ITransform>((ctx, p) => new RazorTransform(p.TypedAs<PipelineContext>())).Named<ITransform>("razor");
 
-            // parser choices
-            builder.RegisterType<JintParser>().Named<IParser>("js");
-
             builder.Register((ctx, p) => {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
-                    ctx.Resolve<IRootModifier>(),
-                    ctx.ResolveNamed<IValidator>("js"),
-                    new DateMathModifier(),
-                    new PlaceHolderModifier(),
-                    new PlaceHolderValidator(),
-                    new NullValidator("illegal")
+                    ctx.ResolveNamed<ICustomizer>("environment"),
+                    ctx.ResolveNamed<ICustomizer>("js"),
+                    new DateMathModifier()
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {
@@ -92,15 +82,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             context.Error(error);
                         }
                         context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
-                        dependencies.Add(new NullValidator("sh"));
-                        dependencies.Add(new NullNodeModifier("sh"));
                     } else {
-                        dependencies.Add(new ShorthandValidator(shr, "sh"));
-                        dependencies.Add(new ShorthandModifier(shr, "sh"));
+                        dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
                     }
-                } else {
-                    dependencies.Add(new NullValidator("sh"));
-                    dependencies.Add(new NullNodeModifier("sh"));
                 }
 
                 var process = new Process(dependencies.ToArray());

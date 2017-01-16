@@ -2,23 +2,9 @@ using System.Collections.Generic;
 using Cfg.Net.Contracts;
 
 namespace Transformalize.Transform.DateMath {
-    public class DateMathModifier : IRootModifier {
+    public class DateMathModifier : ICustomizer {
 
         private const string DefaultFormat = "yyyy-MM-dd";
-
-        public void Modify(INode root, IDictionary<string, string> parameters) {
-            TraverseNodes(root.SubNodes);
-        }
-
-        private static void TraverseNodes(IEnumerable<INode> nodes) {
-            foreach (var node in nodes) {
-                if (node.Attributes.Count > 0) {
-                    ApplyDateMath(node, "value");
-                    ApplyDateMath(node, "default");
-                }
-                TraverseNodes(node.SubNodes);
-            }
-        }
 
         private static void ApplyDateMath(INode node, string name) {
             IAttribute valueAttribute;
@@ -36,5 +22,16 @@ namespace Transformalize.Transform.DateMath {
             }
         }
 
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {
+            if (parent == "parameters") {
+                ApplyDateMath(node, "value");
+            }
+
+            if (parent == "fields" || parent == "calculated-fields") {
+                ApplyDateMath(node, "default");
+            }
+        }
+
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) { }
     }
 }

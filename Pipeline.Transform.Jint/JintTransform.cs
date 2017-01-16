@@ -21,21 +21,27 @@ using System.Linq;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
 using Jint;
+using Jint.Parser;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 using Transformalize.Transforms;
 
 namespace Transformalize.Transform.Jint {
+
     public class JintTransform : BaseTransform {
+
         readonly Field[] _input;
         readonly Engine _jint = new Engine();
+        readonly JavaScriptParser _parser = new JavaScriptParser();
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
+        private readonly ParserOptions _parserOptions = new ParserOptions { Tolerant = true };
 
         public JintTransform(IContext context, IReader reader) : base(context, null) {
 
             // automatic parameter binding
             if (!context.Transform.Parameters.Any()) {
-                var parameters = new global::Jint.Parser.JavaScriptParser().Parse(context.Transform.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
+                var parameters = _parser.Parse(context.Transform.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
                     .Where(o => o.Type == global::Jint.Parser.Tokens.Identifier)
                     .Select(o => o.Value.ToString())
                     .Intersect(context.GetAllEntityFields().Select(f => f.Alias))
@@ -70,11 +76,21 @@ namespace Transformalize.Transform.Jint {
 
         void ProcessScript(IContext context, IReader reader, Script script) {
             script.Content = ReadScript(context, reader, script);
-            var parser = new JintParser();
 
-            if (parser.Parse(script.Content, context.Error)) {
-                _jint.Execute(script.Content);
+            try {
+                var program = _parser.Parse(script.Content, _parserOptions);
+                if (program?.Errors == null || !program.Errors.Any()) {
+                    _jint.Execute(script.Content);
+                    return;
+                }
+
+                foreach (var e in program.Errors) {
+                    Context.Error("{0}, script: {1}...", e.Message, script.Content.Left(30).Replace("{", "{{").Replace("}", "}}"));
+                }
+            } catch (ParserException ex) {
+                Context.Error("{0}, script: {1}...", ex.Message, script.Content.Left(30).Replace("{", "{{").Replace("}", "}}"));
             }
+
         }
 
         /// <summary>
@@ -91,22 +107,18 @@ namespace Transformalize.Transform.Jint {
             if (script.Content != string.Empty)
                 content += script.Content + "\r\n";
 
-            
-
             if (script.File != string.Empty) {
-                var p = new Dictionary<string,string>();
+                var p = new Dictionary<string, string>();
                 var l = new Cfg.Net.Loggers.MemoryLogger();
                 var response = reader.Read(script.File, p, l);
                 if (l.Errors().Any()) {
-                    foreach (var error in l.Errors())
-                    {
+                    foreach (var error in l.Errors()) {
                         context.Error(error);
                     }
                     context.Error($"Could not load {script.File}.");
                 } else {
                     content += response + "\r\n";
                 }
-
             }
 
             return content;

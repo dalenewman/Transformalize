@@ -20,12 +20,12 @@ using System.Collections.Generic;
 using Cfg.Net.Contracts;
 
 namespace Transformalize.Nulls {
-    public class NullNodeModifier : INodeModifier {
-
-        public NullNodeModifier(string name) {
-            Name = name;
-        }
-        public string Name { get; set; }
-        public void Modify(INode node, object value, IDictionary<string, string> parameters) { }
+    /// <summary>
+    /// The validator that doesn't do anything.
+    /// </summary>
+    public class NullCustomizer : ICustomizer {
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger){}
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) { }
+       
     }
 }

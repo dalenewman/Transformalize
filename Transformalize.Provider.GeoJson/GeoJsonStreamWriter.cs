@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Provider.GeoJson {
 
@@ -14,19 +15,30 @@ namespace Transformalize.Provider.GeoJson {
         private readonly Stream _stream;
         private readonly Field _latitudeField;
         private readonly Field _longitudeField;
-        private readonly Field _markerColorField;
-        private readonly Field _markerSizeField;
-        private readonly Field _markerSymbolField;
+        private readonly Field _colorField;
+        private readonly Field _sizeField;
+        private readonly Field _symbolField;
         private readonly Field[] _propertyFields;
+        private readonly bool _hasStyle;
+        private readonly Dictionary<string, string> _scales = new Dictionary<string, string> {
+            {"0.75","small"},
+            {"1.0","medium"},
+            {"1.25","large"}
+        };
+        private readonly HashSet<string> _sizes = new HashSet<string> { "small", "medium", "large" };
 
-        public GeoJsonStreamWriter(OutputContext context, Stream stream) {
+        public GeoJsonStreamWriter(IContext context, Stream stream) {
             _stream = stream;
-            _latitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
-            _longitudeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
-            _markerColorField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markercolor") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "color");
-            _markerSizeField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersize") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "size");
-            _markerSymbolField = context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "markersymbol") ?? context.OutputFields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
-            _propertyFields = context.OutputFields.Where(f => !f.System).Except(new[] { _latitudeField, _longitudeField, _markerColorField, _markerSizeField, _markerSymbolField }).ToArray();
+            var fields = context.GetAllEntityFields().ToArray();
+
+            _latitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
+            _longitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
+            _colorField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-color") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "color");
+            _sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "size");
+            _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
+            _hasStyle = _colorField != null || _sizeField != null || _symbolField != null;
+            _propertyFields = fields.Where(f => f.Output && !f.System).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
+
         }
 
         public void Write(IEnumerable<IRow> rows) {
@@ -89,19 +101,32 @@ namespace Transformalize.Provider.GeoJson {
                 //tableBuilder.AppendLine("</table>");
                 //jsonWriter.WriteValue(tableBuilder.ToString());
 
-                if (_markerColorField != null) {
-                    jsonWriter.WritePropertyName("marker-color");
-                    jsonWriter.WriteValue("#" + row[_markerColorField].ToString().TrimStart('#'));
-                }
+                if (_hasStyle) {
+                    if (_colorField != null) {
+                        jsonWriter.WritePropertyName("marker-color");
+                        var color = row[_colorField].ToString().TrimStart('#').Right(6);
+                        jsonWriter.WriteValue("#" + (color.Length == 6 ? color : "0080ff"));
+                    }
 
-                if (_markerSizeField != null) {
-                    jsonWriter.WritePropertyName("marker-size");
-                    jsonWriter.WriteValue(row[_markerSizeField]);
-                }
+                    if (_sizeField != null) {
+                        jsonWriter.WritePropertyName("marker-size");
+                        var size = row[_sizeField].ToString().ToLower();
+                        if (_sizes.Contains(size)) {
+                            jsonWriter.WriteValue(size);
+                        } else {
+                            jsonWriter.WriteValue(_scales.ContainsKey(size) ? _scales[size] : "medium");
+                        }
+                    }
 
-                if (_markerSymbolField != null) {
-                    jsonWriter.WritePropertyName("marker-symbol");
-                    jsonWriter.WriteValue(row[_markerSymbolField]);
+                    if (_symbolField != null) {
+                        var symbol = row[_symbolField].ToString();
+                        if (symbol.StartsWith("http")) {
+                            symbol = "marker";
+                        }
+                        jsonWriter.WritePropertyName("marker-symbol");
+                        jsonWriter.WriteValue(symbol);
+                    }
+
                 }
 
                 jsonWriter.WriteEndObject(); //properties
