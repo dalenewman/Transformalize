@@ -56,35 +56,35 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.1.3\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.2.2\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Parsers.YamlDotNet">
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Debug\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Release\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.2.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.2.6\lib\net45\Cfg.Net.Reader.dll</HintPath>
+    <Reference Include="Cfg.Net.Reader, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.3.2\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.1.3\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.2.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.6\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.8.4\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.9.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.9.2\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="DateMath, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\DateMath.0.2.0-beta\lib\net45\DateMath.dll</HintPath>
+    <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\DateMath.1.0.0\lib\net45\DateMath.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\DocumentFormat.OpenXml.dll</HintPath>
+      <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.1.0\lib\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.5.0.0\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\..\..\packages\Elasticsearch.Net.5.0.1\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
@@ -95,8 +95,8 @@
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="jint, Version=2.10.2.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\jint.2.10.2\lib\net45\jint.dll</HintPath>
+    <Reference Include="jint, Version=2.10.3.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\jint.2.10.3\lib\net45\jint.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -127,10 +127,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Diagnostics.Contracts">
       <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Diagnostics.Contracts\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Diagnostics.Contracts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Packaging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\OpenXMLSDK-MOT.2.6.0.0\lib\System.IO.Packaging.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Management.Automation.6.1.7601.17515\lib\net45\System.Management.Automation.dll</HintPath>
@@ -168,70 +164,76 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Transformalize">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.452\bin\Debug\Transformalize.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.452\bin\$(Configuration)\Transformalize.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Desktop">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\Debug\Transformalize.Desktop.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\$(Configuration)\Transformalize.Desktop.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Ado">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Ado\bin\Debug\Transformalize.Provider.Ado.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Ado\bin\$(Configuration)\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Elastic">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Elastic\bin\Debug\Transformalize.Provider.Elastic.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Elastic\bin\$(Configuration)\Transformalize.Provider.Elastic.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Excel">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Excel\bin\Debug\Transformalize.Provider.Excel.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Excel\bin\$(Configuration)\Transformalize.Provider.Excel.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.File">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.File\bin\Debug\Transformalize.Provider.File.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.File\bin\$(Configuration)\Transformalize.Provider.File.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.GeoJson">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Provider.GeoJson\bin\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Kml">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Provider.Kml\bin\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.MySql">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\Debug\Transformalize.Provider.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.OpenXml">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\Debug\Transformalize.Provider.OpenXml.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.PostgreSql">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.PostgreSql\bin\Debug\Transformalize.Provider.PostgreSql.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.PostgreSql\bin\$(Configuration)\Transformalize.Provider.PostgreSql.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Solr">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Solr\bin\Debug\Transformalize.Provider.Solr.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Solr\bin\$(Configuration)\Transformalize.Provider.Solr.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.SQLite">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SQLite\bin\Debug\Transformalize.Provider.SQLite.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SQLite\bin\$(Configuration)\Transformalize.Provider.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.SqlServer">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\Debug\Transformalize.Provider.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.SqlServer\bin\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Web">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\Debug\Transformalize.Provider.Web.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.Web\bin\$(Configuration)\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.DateMath">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.DateMath\bin\Debug\Transformalize.Transform.DateMath.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.DateMath\bin\$(Configuration)\Transformalize.Transform.DateMath.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Dates">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Dates\bin\Debug\Transformalize.Transform.Dates.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Dates\bin\$(Configuration)\Transformalize.Transform.Dates.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Geocode">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Geocode\bin\Debug\Transformalize.Transform.Geocode.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Geocode\bin\$(Configuration)\Transformalize.Transform.Geocode.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.GeoCoordinate">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\Debug\Transformalize.Transform.GeoCoordinate.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.GeoCoordinate\bin\$(Configuration)\Transformalize.Transform.GeoCoordinate.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Geohash">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\Debug\Transformalize.Transform.Geohash.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Geohash\bin\$(Configuration)\Transformalize.Transform.Geohash.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Html">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Html\bin\Debug\Transformalize.Transform.Html.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.Html\bin\$(Configuration)\Transformalize.Transform.Html.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Humanizer">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\Debug\Transformalize.Transform.Humanizer.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Humanizer\bin\$(Configuration)\Transformalize.Transform.Humanizer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Jint">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\Debug\Transformalize.Transform.Jint.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="YamlDotNet, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\YamlDotNet.4.0.0\lib\net35\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\YamlDotNet.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -258,6 +260,8 @@
     <Compile Include="Models\FileListViewModel.cs" />
     <Compile Include="Models\ReportViewModel.cs" />
     <Compile Include="Modules\ElasticModule.cs" />
+    <Compile Include="Modules\KmlModule.cs" />
+    <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\CfgService.cs" />
     <Compile Include="Services\FileResponse.cs" />

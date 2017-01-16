@@ -117,6 +117,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.RegisterCallback(new InternalModule(root).Configure);
                     builder.RegisterCallback(new FileModule().Configure);
                     builder.RegisterCallback(new ExcelModule().Configure);
+                    builder.RegisterCallback(new GeoJsonModule().Configure);
+                    builder.RegisterCallback(new KmlModule().Configure);
 
                     builder.RegisterCallback(new MapModule(root).Configure);
                     builder.RegisterCallback(new ActionModule(root).Configure);

@@ -163,15 +163,31 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     process.Request = "Run";
                                     process.Time = timer.ElapsedMilliseconds;
                                     var o = process.Output();
-                                    if (o.Provider == "file") {
-                                        Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
-                                        Response.ContentType = output == "xlsx" ? ExcelContentType : "application/csv";
-                                        Response.Flush();
-                                        Response.End();
-                                    } else if (process.Output().Provider == "excel") {
-                                        return new FilePathResult(o.File, ExcelContentType) {
-                                            FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
-                                        };
+                                    switch (o.Provider) {
+                                        case "kml":
+                                        case "geojson":
+                                        case "file":
+                                            Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
+                                            switch (o.Provider) {
+                                                case "kml":
+                                                    Response.ContentType = "application/vnd.google-earth.kml+xml";
+                                                    break;
+                                                case "geojson":
+                                                    Response.ContentType = "application/vnd.geo+json";
+                                                    break;
+                                                default:
+                                                    Response.ContentType = "application/csv";
+                                                    break;
+                                            }
+                                            Response.Flush();
+                                            Response.End();
+                                            break;
+                                        case "excel":
+                                            return new FilePathResult(o.File, ExcelContentType) {
+                                                FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
+                                            };
+                                        default:
+                                            break;
                                     }
                                 } catch (Exception ex) {
                                     Logger.Error(ex, ex.Message);
@@ -189,7 +205,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         }
 
-        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string output, IDictionary<string,string> parameters) {
+        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string output, IDictionary<string, string> parameters) {
             var o = process.Output();
             switch (output) {
                 case "xlsx":
@@ -198,9 +214,17 @@ namespace Pipeline.Web.Orchard.Controllers {
                     }
 
                     var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
-                    
+
                     o.Provider = "excel";
-                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder,fileName));
+                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, fileName));
+                    break;
+                case "geojson":
+                    o.Provider = "geojson";
+                    o.File = _slugService.Slugify(part.Title()) + ".geojson";
+                    break;
+                case "kml":
+                    o.Provider = "kml";
+                    o.File = _slugService.Slugify(part.Title()) + ".kml";
                     break;
                 default: //csv
                     o.Provider = "file";
@@ -212,7 +236,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             parameters["page"] = "0";
             foreach (var entity in process.Entities) {
                 entity.Page = 0;
-                foreach (var field in entity.GetAllFields().Where(f=>!f.System)) {
+                foreach (var field in entity.GetAllFields().Where(f => !f.System)) {
                     field.T = string.Empty;
                     if (field.Output && field.Transforms.Any()) {
                         var lastTransform = field.Transforms.Last();
@@ -223,6 +247,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         }
                     }
                 }
+                entity.Fields.RemoveAll(f => f.System);
             }
         }
 

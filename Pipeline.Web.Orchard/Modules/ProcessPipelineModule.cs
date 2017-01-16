@@ -55,12 +55,13 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 IPipeline pipeline;
                 context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
+                var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
                 switch (_process.Pipeline) {
                     case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(ctx.Resolve<IOutputController>(), context));
+                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
                         break;
                     default:
-                        pipeline = new DefaultPipeline(ctx.Resolve<IOutputController>(), context);
+                        pipeline = new DefaultPipeline(outputController, context);
                         break;
                 }
 

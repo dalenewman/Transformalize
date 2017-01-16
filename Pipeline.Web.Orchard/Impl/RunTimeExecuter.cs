@@ -82,6 +82,8 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new FileModule(process).Configure);
             container.RegisterCallback(new ExcelModule(process).Configure);
             container.RegisterCallback(new WebModule(process).Configure);
+            container.RegisterCallback(new GeoJsonModule(process).Configure);
+            container.RegisterCallback(new KmlModule(process).Configure);
 
             container.RegisterCallback(new MapModule(process).Configure);
             container.RegisterCallback(new ActionModule(process).Configure);

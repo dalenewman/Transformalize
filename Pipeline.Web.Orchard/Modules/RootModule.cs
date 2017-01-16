@@ -53,7 +53,7 @@ namespace Pipeline.Web.Orchard.Modules {
         protected override void Load(ContainerBuilder builder) {
 
             builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
-            builder.Register(ctx => new JintValidator("js")).Named<IValidator>("js");
+            builder.Register(ctx => new JintValidator()).Named<ICustomizer>("js");
 
             // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
             builder.RegisterType<FileReader>().Named<IReader>("file");
@@ -73,8 +73,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         var processor = ctx.Resolve<ITemplateProcessor>();
                         processor.Verify(c.Transform.Template);
                         return new OrchardRazorTransform(c, processor);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         ctx.Resolve<INotifier>().Warning(T(ex.Message));
                         c.Warn(ex.Message);
                         return new NullTransform(c);
@@ -83,20 +82,15 @@ namespace Pipeline.Web.Orchard.Modules {
                 return new NullTransform(c);
             }).Named<ITransform>("razor");
 
-            // parser choices
-            builder.RegisterType<JintParser>().Named<IParser>("js");
-
             builder.Register((ctx, p) => {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     ctx.Resolve<ISerializer>(),
                     new DateMathModifier(),
-                    new PlaceHolderModifier(),
-                    new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                    ctx.ResolveNamed<IValidator>("js"),
-                    new PlaceHolderValidator(),
-                    new IllegalCharacterValidator("illegal")
+                    new EnvironmentModifier(),
+                    ctx.ResolveNamed<ICustomizer>("js"),
+                    new IllegalCharacterValidator()
                 };
 
                 if (!string.IsNullOrEmpty(ctx.ResolveNamed<string>("sh"))) {
@@ -107,15 +101,9 @@ namespace Pipeline.Web.Orchard.Modules {
                             context.Error(error);
                         }
                         context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
-                        dependencies.Add(new NullValidator("sh"));
-                        dependencies.Add(new NullNodeModifier("sh"));
                     } else {
-                        dependencies.Add(new ShorthandValidator(shr, "sh"));
-                        dependencies.Add(new ShorthandModifier(shr, "sh"));
+                        dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
                     }
-                } else {
-                    dependencies.Add(new NullValidator("sh"));
-                    dependencies.Add(new NullNodeModifier("sh"));
                 }
 
                 var process = new Process(dependencies.ToArray());

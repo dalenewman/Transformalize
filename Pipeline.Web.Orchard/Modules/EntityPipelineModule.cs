@@ -45,12 +45,13 @@ namespace Pipeline.Web.Orchard.Modules {
                 var context = ctx.ResolveNamed<IContext>(entity.Key);
                 IPipeline pipeline;
                 context.Debug(() => string.Format("Registering {0} for entity {1}.", type, entity.Alias));
+                var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(ctx.ResolveNamed<IOutputController>(entity.Key), context));
+                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
                         break;
                     default:
-                        pipeline = new DefaultPipeline(ctx.ResolveNamed<IOutputController>(entity.Key), context);
+                        pipeline = new DefaultPipeline(outputController, context);
                         break;
                 }
 

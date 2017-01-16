@@ -29,7 +29,6 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
@@ -77,48 +76,38 @@ namespace Pipeline.Web.Orchard.Modules {
             }).Named<string>("sh");
 
             builder.Register(c => new ShorthandRoot(c.ResolveNamed<string>("sh"))).As<ShorthandRoot>().SingleInstance();
-            builder.Register(c => new ShorthandValidator(c.Resolve<ShorthandRoot>(), "sh")).As<ShorthandValidator>();
-            builder.Register(c => new ShorthandModifier(c.Resolve<ShorthandRoot>(), "sh")).As<ShorthandModifier>();
+            builder.Register(c => new ShorthandCustomizer(c.Resolve<ShorthandRoot>(), new [] {"fields","calculated-fields"},"t","transforms","method")).As<ShorthandCustomizer>();
 
             // xml
             builder.Register(c => new XmlProcess(
                 new NanoXmlParser(),
                 new XmlSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<XmlProcess>();
 
             builder.Register(c => new XmlToJsonProcess(
                 new NanoXmlParser(),
                 new JsonSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()), 
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(), 
+                new IllegalCharacterValidator()
             )).As<XmlToJsonProcess>();
 
             builder.Register(c => new XmlToYamlProcess(
                 new NanoXmlParser(),
                 new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
-                )).As<XmlToYamlProcess>();
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
+            )).As<XmlToYamlProcess>();
 
             builder.Register(c => new XmlProcessPass(new NanoXmlParser(), new XmlSerializer())).As<XmlProcessPass>();
             builder.Register(c => new XmlToJsonProcessPass(new NanoXmlParser(), new JsonSerializer())).As<XmlToJsonProcessPass>();
@@ -128,41 +117,32 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(c => new JsonProcess(
                 new FastJsonParser(),
                 new JsonSerializer(),
-                new JintValidator("js"),
+                new JintValidator(),
                 //new OrchardNodeModifier("host", c.Resolve<IOrchardServices>()),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<JsonProcess>();
 
             builder.Register(c => new JsonToXmlProcess(
                 new FastJsonParser(),
                 new XmlSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<JsonToXmlProcess>();
 
             builder.Register(c => new JsonToYamlProcess(
                 new FastJsonParser(),
                 new YamlDotNetSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<JsonToYamlProcess>();
 
             builder.Register(c => new JsonProcessPass(new FastJsonParser(), new JsonSerializer())).As<JsonProcessPass>();
@@ -173,40 +153,31 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(c => new YamlProcess(
                 new YamlDotNetParser(),
                 new YamlDotNetSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<YamlProcess>();
 
             builder.Register(c => new YamlToXmlProcess(
                 new YamlDotNetParser(),
                 new XmlSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<YamlToXmlProcess>();
 
             builder.Register(c => new YamlToJsonProcess(
                 new YamlDotNetParser(),
                 new JsonSerializer(),
-                new JintValidator("js"),
-                c.Resolve<ShorthandValidator>(),
-                c.Resolve<ShorthandModifier>(),
+                new JintValidator(),
+                c.Resolve<ShorthandCustomizer>(),
                 new DateMathModifier(),
-                new PlaceHolderModifier(),
-                new EnvironmentModifier(new PlaceHolderModifier(), new ParameterModifier()),
-                new PlaceHolderValidator(),
-                new IllegalCharacterValidator("illegal")
+                new EnvironmentModifier(),
+                new IllegalCharacterValidator()
             )).As<YamlToJsonProcess>();
 
             builder.Register(c => new YamlProcessPass(new YamlDotNetParser(), new YamlDotNetSerializer())).As<YamlProcessPass>();

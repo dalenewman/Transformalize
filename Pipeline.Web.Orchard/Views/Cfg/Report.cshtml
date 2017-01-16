@@ -25,10 +25,17 @@
     var orchard = WorkContext.Resolve<IOrchardServices>();
     var sortService = WorkContext.Resolve<ISortService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
+
+    // code smell, dup
     var exportCsvLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv").Replace("?&","?");
     var exportXlsxLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=xlsx" : Request.RawUrl + "?output=xlsx").Replace("?&","?");
+    var exportGeoJsonLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=geojson" : Request.RawUrl + "?output=geojson").Replace("?&", "?");
+    var exportKmlLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=kml" : Request.RawUrl + "?output=kml").Replace("?&", "?");
+
     var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
     var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
+    var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
+    var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
     var isSortable = fields.Any(f => f.Sortable == "true");
     var focus = Request.QueryString["focus"] ?? string.Empty;
 
@@ -220,8 +227,14 @@ td.sorter {
                         <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a href="javascript:window.open('@exportCsvLink', '_self');">CSV</a></li>
-                        <li><a href="javascript:window.open('@exportXlsxLink', '_self');">XLSX</a></li>
+                        <li><a href="javascript:window.open('@exportCsvLink', '_self');" title="Excel, Notepad, etc.">CSV</a></li>
+                        <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
+                        @{
+                            if (hasCoordinates) {
+                                <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
+                                <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
+                            }
+                        }
                     </ul>
                 </div>
 

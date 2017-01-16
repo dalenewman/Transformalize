@@ -72,10 +72,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
 
             container.RegisterInstance(_host.Logger).SingleInstance();
-            container.Register(c => new Process(
-                new NullValidator("sh"),
-                new NullNodeModifier("sh")
-            )).As<Process>();
+            container.Register(c => new Process()).As<Process>();
             container.RegisterCallback(new ContextModule(Process).Configure);
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
