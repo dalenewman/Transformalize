@@ -3,8 +3,8 @@
   "dependencies": {
     "Cfg-NET": "0.9.2",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
-    "NETStandard.Library": "1.6.0",
-    "System.Dynamic.Runtime": "4.0.11"
+    "NETStandard.Library": "1.6.1",
+    "System.Dynamic.Runtime": "4.3.0"
   },
   "frameworks": {
     "netstandard1.0": {}
