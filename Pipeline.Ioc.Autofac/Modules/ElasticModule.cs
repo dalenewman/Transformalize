@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Elasticsearch.Net;
@@ -46,11 +47,20 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 return;
 
             //CONNECTIONS
-            foreach (var connection in _process.Connections.Where(c => c.Provider.In("elasticsearch"))) {
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "elasticsearch")) {
 
-                connection.Url = connection.BuildElasticUrl();
-
-                builder.Register<IConnectionPool>(ctx => new SingleNodeConnectionPool(new Uri(connection.Url))).Named<IConnectionPool>(connection.Key);
+                if (connection.Servers.Any()) {
+                    var uris = new List<Uri>();
+                    foreach (var server in connection.Servers) {
+                        server.Url = server.GetElasticUrl();
+                        uris.Add(new Uri(server.Url));
+                    }
+                    // for now, just use static connection pool, there are 2 other types...
+                    builder.Register<IConnectionPool>(ctx => new StaticConnectionPool(uris)).Named<IConnectionPool>(connection.Key);
+                } else {
+                    connection.Url = connection.GetElasticUrl();
+                    builder.Register<IConnectionPool>(ctx => new SingleNodeConnectionPool(new Uri(connection.Url))).Named<IConnectionPool>(connection.Key);
+                }
 
                 // Elasticsearch.Net
                 builder.Register(ctx => {
@@ -123,7 +133,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     // UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        output.Debug(()=>$"{output.Connection.Provider} does not denormalize.");
+                        output.Debug(() => $"{output.Connection.Provider} does not denormalize.");
                         return new NullMasterUpdater();
                     }).Named<IUpdate>(entity.Key);
 

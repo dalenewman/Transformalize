@@ -425,26 +425,58 @@ namespace Pipeline.Web.Orchard {
             return parameters;
         }
 
-        public static void PageHelper(Process process, IDictionary<string, string> parameters) {
+        public static void TranslatePageParametersToEntities(Process process, IDictionary<string, string> parameters, string defaultOutput) {
 
-            if (!parameters.ContainsKey("page"))
-                return;
+            var output = parameters.ContainsKey("output") ? parameters["output"] : defaultOutput;
 
-            var page = 0;
-            if (!int.TryParse(parameters["page"], out page) || page <= 0) {
-                return;
-            }
-
-            var size = 0;
-            if (parameters.ContainsKey("size")) {
-                int.TryParse(parameters["size"], out size);
-            }
+            var isOutput = Outputs.Contains(output);
+            var isMode = Modes.Contains(output);
 
             foreach (var entity in process.Entities) {
-                entity.Page = page;
-                entity.PageSize = size > 0 ? size : entity.PageSize;
+                if (isMode) {
+                    if (output == "map") {
+                        entity.Page = 1;
+                        entity.PageSize = 0;
+                    } else {
+                        if (entity.Page > 0) {
+                            int page;
+                            if (parameters.ContainsKey("page")) {
+                                if (!int.TryParse(parameters["page"], out page)) {
+                                    page = 1;
+                                }
+                            } else {
+                                page = 1;
+                            }
+
+                            entity.Page = page;
+
+                            var size = 0;
+                            if (parameters.ContainsKey("size")) {
+                                int.TryParse(parameters["size"], out size);
+                            }
+
+                            if (size > 0 || output == "page") {
+                                entity.PageSize = size > 0 && entity.PageSizes.Any(s => s.Size == size) ? size : entity.PageSizes.First().Size;
+                            } else {
+                                entity.PageSize = size;
+                            }
+                        }
+
+                    }
+                } else {
+                    if (isOutput) {
+                        entity.Page = 0;
+                        entity.PageSize = 0;
+                    } else {  // unknown output request
+                        entity.Page = 1;
+                        entity.PageSize = 0;
+                    }
+                }
             }
         }
+
+        public static readonly HashSet<string> Outputs = new HashSet<string>(new[] { "csv", "xlsx", "geojson", "kml" });
+        public static readonly HashSet<string> Modes = new HashSet<string>(new[] { "map", "page", "api" });
 
         /// <summary>
         /// http://stackoverflow.com/questions/1029740/get-mime-type-from-filename-extension

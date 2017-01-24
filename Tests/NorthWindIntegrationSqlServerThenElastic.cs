@@ -221,7 +221,7 @@ namespace Tests {
                 Port = 9200
             }.WithValidation();
 
-            connection.Url = connection.BuildElasticUrl();
+            connection.Url = connection.GetElasticUrl();
 
             var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
             var settings = new ConnectionConfiguration(pool);
@@ -245,7 +245,7 @@ namespace Tests {
                 Port = 9200
             }.WithValidation();
 
-            connection.Url = connection.BuildElasticUrl();
+            connection.Url = connection.GetElasticUrl();
 
             var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
             var settings = new ConnectionConfiguration(pool);
@@ -270,7 +270,7 @@ namespace Tests {
                 Port = 9200
             }.WithValidation();
 
-            connection.Url = connection.BuildElasticUrl();
+            connection.Url = connection.GetElasticUrl();
 
             var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
             var settings = new ConnectionConfiguration(pool);
@@ -299,7 +299,7 @@ namespace Tests {
                 Port = 9200
             }.WithValidation();
 
-            connection.Url = connection.BuildElasticUrl();
+            connection.Url = connection.GetElasticUrl();
 
             var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
             var settings = new ConnectionConfiguration(pool);

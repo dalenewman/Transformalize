@@ -1,5 +1,6 @@
 ﻿@using Cfg.Net.Ext
 @using Orchard
+@using Orchard.ContentManagement
 @using Orchard.Core.Contents
 @using Transformalize.Configuration
 @using Pipeline.Web.Orchard
@@ -8,36 +9,49 @@
 
 @model ReportViewModel
 @{
+    var output = Request["output"] ?? "page";
+    var settings = WorkContext.CurrentSite.As<PipelineSettingsPart>();
+    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
+    var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
+    var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
+    var orchard = WorkContext.Resolve<IOrchardServices>();
+    var sortService = WorkContext.Resolve<ISortService>();
+    var linkService = WorkContext.Resolve<IExportLinkService>();
+    var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
+    var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
+
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
     Script.Include("jquery.tablesorter.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
 
-    Style.Include("tablesorter.css");
+    if (output == "page") {
+        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
+        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
+        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
+    }
+
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css");
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
-    var orchard = WorkContext.Resolve<IOrchardServices>();
-    var sortService = WorkContext.Resolve<ISortService>();
-    var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
+    if (output == "page") {
+        Style.Include("tablesorter.css");
+        Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
+        Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
+    }
 
-    // code smell, dup
-    var exportCsvLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=csv" : Request.RawUrl + "?output=csv").Replace("?&","?");
-    var exportXlsxLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=xlsx" : Request.RawUrl + "?output=xlsx").Replace("?&","?");
-    var exportGeoJsonLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=geojson" : Request.RawUrl + "?output=geojson").Replace("?&", "?");
-    var exportKmlLink = (Request.RawUrl.Contains("?") ? Request.RawUrl + "&output=kml" : Request.RawUrl + "?output=kml").Replace("?&", "?");
+    if (hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && output == "map") {
+        Script.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js");
+        Style.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css");
+    }
 
-    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
+    var exportCsvLink = linkService.Create(Request, "csv");
+    var exportXlsxLink = linkService.Create(Request, "xlsx");
+
     var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
-    var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
-    var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
     var isSortable = fields.Any(f => f.Sortable == "true");
     var focus = Request.QueryString["focus"] ?? string.Empty;
+    var activeParameters = Model.Process.GetActiveParameters();
 
     AppendMeta("description", entity.Alias, ",");
     Layout.Title = entity.Alias;
@@ -90,7 +104,11 @@ td.sorter {
 
 <div class="row">
     <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@Model.Part.Title()</div>
-    <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
+    @if (entity.Hits > 0) {
+        <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
+    } else {
+        <div class="col-sm-4 hint" style="text-align: right;">@Model.Process.Time ms</div>
+    }
 </div>
 
 @foreach (var error in Model.Process.Errors()) {
@@ -103,28 +121,27 @@ td.sorter {
 
 <form id="id_report" class="form-inline" role="form" method="GET">
 
-<input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)"/>
+    <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
     @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
         <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
     }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page"/>
-    <input id="id_focus" class="bsh" type="hidden" name="focus" value="@focus"/>
-    <input id="id_size" class="bsh" type="hidden" name="size" value="@entity.PageSize" />
-    @foreach (var parameter in Model.Process.GetActiveParameters().Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+    <input id="id_focus" class="bsh" type="hidden" name="focus" value="@focus" />
+    <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.PageSize)" />
+    <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
+    @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
         <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
     }
 
     <div class="row" style="margin-bottom: 4px;">
 
-        <div class="col-md-@(entity.Page > 0 ? 8 : 10)">
+        <div class="col-md-@(entity.Pagination.Pages > 0 ? 8 : 10)">
 
             @if (hasParameters) {
 
-                <button id="id_clear"
-                        type="button"
-                        class="btn btn-info btn-sm">Clear</button>
+                <button id="id_clear" type="button" class="btn btn-info btn-sm">Clear</button>
 
-                var parameters = Model.Process.GetActiveParameters().Where(p => p.Prompt).ToArray();
+                var parameters = activeParameters.Where(p => p.Prompt).ToArray();
 
                 foreach (var parameter in parameters) {
                     <div class="form-group form-group-sm">
@@ -141,7 +158,7 @@ td.sorter {
                                            name="@parameter.Name"
                                            placeholder="@parameter.Label"
                                            value="@requestedDate"
-                                            @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"": string.Empty)) />
+                                           @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty)) />
                                     break;
                                 default:
                                     var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
@@ -150,9 +167,8 @@ td.sorter {
                                                name="@parameter.Name"
                                                value="@requestedValue"
                                                placeholder="@parameter.Label"
-                                               @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"": string.Empty)) />
-                                    }
-                                    else {
+                                               @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty)) />
+                                    } else {
                                         <select class="form-control"
                                                 size="1"
                                                 multiple="@(parameter.Multiple)"
@@ -175,9 +191,9 @@ td.sorter {
                                         </select>
                                     }
                                     break;
-                            }
-                        </div>
+                                }
                     </div>
+                </div>
                 }
             }
 
@@ -187,9 +203,9 @@ td.sorter {
 
         </div>
 
-        <div class="col-md-@(entity.Page > 0 ? 4 : 2)">
+        <div class="col-md-@(entity.Pagination.Pages > 0 ? 4 : 2)">
 
-            @if (entity.Page > 0) {
+            @if (entity.Page > 0 && output != "map") {
                 <ul class="pagination pagination-sm" style="display: inline;">
                     @if (entity.Pagination.HasPrevious) {
                         <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
@@ -214,8 +230,20 @@ td.sorter {
             <div class="btn-group pull-right">
 
                 @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-                    <button title="edit this report" type="button" class="btn btn-success btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                    <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
                         <span class="glyphicon glyphicon-edit"></span>
+                    </button>
+                }
+
+                @if (output == "page" && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
+                    <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request,"map"))', '_self');">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                    </button>
+                }
+
+                @if (output == "map") {
+                    <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request,"page"))', '_self');">
+                        <span class="glyphicon glyphicon-align-justify"></span>
                     </button>
                 }
 
@@ -231,6 +259,8 @@ td.sorter {
                         <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
                         @{
                             if (hasCoordinates) {
+                                var exportGeoJsonLink = linkService.Create(Request, "geojson");
+                                var exportKmlLink = linkService.Create(Request, "kml");
                                 <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
                                 <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
                             }
@@ -238,23 +268,17 @@ td.sorter {
                     </ul>
                 </div>
 
-                @if (entity.PageSizes.Any()) {
+                @if (output == "page" && entity.Page > 0 && pageSizes.Any()) {
                     <div class="btn-group btn-group-sm">
                         <button class="btn btn-sm">Size</button>
                         <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
                             <span class="caret"></span>
                         </button>
                         <ul class="dropdown-menu">
-                            @foreach (var pageSize in entity.PageSizes.Select(s => s.Size)) {
-                                if (entity.PageSize.Equals(pageSize)) {
-                                    <li class="active">
-                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
-                                    </li>
-                                } else {
-                                    <li>
-                                        <a href="javascript:controls.setSize(@pageSize);submit(1);">@pageSize</a>
-                                    </li>
-                                }
+                            @foreach (var pageSize in pageSizes) {
+                                <li class="@(entity.PageSize.Equals(pageSize) ? "active" : string.Empty)">
+                                    <a href="javascript:controls.setSize(@pageSize);">@pageSize</a>
+                                </li>
                             }
                         </ul>
                     </div>
@@ -263,136 +287,189 @@ td.sorter {
         </div>
     </div>
 
-    <div class="row">
-        <div class="table-responsive col-sm-12">
-            <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
-                <thead>
-                    <tr>
-                        @foreach (var field in fields) {
-                            <th>@field.Label</th>
-                        }
-                    </tr>
-                    @if (isSortable) {
-                        var expression = Request["sort"] ?? string.Empty;
+    @if (output == "page") {
+        <div class="row">
+            <div class="table-responsive col-sm-12">
+                <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
+                    <thead>
                         <tr>
-                            @for (var i = 0; i < fields.Length; i++) {
-                                var field = fields[i];
-                                var number = i + 1;
-                                if (field.Sortable == "true") {
-                                    <td class="sorter" data-order-by="@(number)">
-                                        <div aclass="btn-group btn-group-xs">
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
-                                                <span class="glyphicon glyphicon-chevron-up"></span>
-                                            </a>
-                                            <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
-                                                <span class="glyphicon glyphicon-chevron-down"></span>
-                                            </a>
-                                        </div>
-                                    </td>
-                                } else {
-                                    <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
-                                }
-                            }
-                        </tr>
-                    }
-                </thead>
-                <tbody>
-                    @{
-                        Map classMap = null;
-                        var mapField = fields.LastOrDefault(f => f.ClassMap != string.Empty);
-                        if (mapField != null) {
-                            classMap = Model.Process.Maps.FirstOrDefault(m => m.Name == mapField.ClassMap);
-                        }
-                    }
-
-                    @foreach (var row in entity.Rows) {
-
-                        var classValue = string.Empty;
-                        if (classMap != null) {
-                            var value = mapField.Convert(row[mapField.Alias]);
-                            var valueComparable = value as IComparable;
-                            if (valueComparable != null) {
-                                foreach (var item in classMap.Items) {
-                                    var from = mapField.Convert(item.From);
-                                    var to = mapField.Convert(item.To);
-                                    if (valueComparable.CompareTo(from) >= 0 && valueComparable.CompareTo(to) <= 0) {
-                                        classValue = item.Value;
-                                    }
-                                }
-                                if (classValue == string.Empty) {
-                                    var defaultItem = classMap.Items.FirstOrDefault(i => i.From.Equals("*"));
-                                    if (defaultItem != null) {
-                                        classValue = defaultItem.Value;
-                                    }
-                                }
-                            }
-                        }
-
-                        <tr class="@classValue">
                             @foreach (var field in fields) {
-                                <td>
-                                    @switch (field.Type) {
-                                        case "bool":
-                                        case "boolean":
-                                            if ((bool)row[field.Alias]) {
-                                                <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
-                                            } else {
-                                                <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
-                                            }
-                                            break;
-                                        case "date":
-                                        case "datetime":
-                                            if (field.Format == string.Empty) {
-                                                @(row[field.Alias])
-                                            } else {
-                                                if (row[field.Alias] is DateTime) {
-                                                    @(((DateTime)row[field.Alias]).ToString(field.Format))
-                                                } else {
-                                                    @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
-                                                }
-                                            }
-                                            break;
-                                        case "single":
-                                        case "double":
-                                        case "decimal":
-                                        case "float":
-                                            if (field.Format == string.Empty) {
-                                                @(row[field.Alias])
-                                            } else {
-                                                switch (field.Type) {
-                                                    case "single":
-                                                    case "float":
-                                                        @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
-                                                        break;
-                                                    case "decimal":
-                                                        @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
-                                                        break;
-                                                    case "double":
-                                                        @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
-                                                        break;
-                                                    default:
-                                                        @(row[field.Alias])
-                                                        break;
-                                                }
-
-                                            }
-                                            break;
-                                        default:
-                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
-                                            break;
-
-                                    }
-                                </td>
+                                <th>@field.Label</th>
                             }
                         </tr>
-                    }
-                </tbody>
-            </table>
+                        @if (isSortable) {
+                            var expression = Request["sort"] ?? string.Empty;
+                            <tr>
+                                @for (var i = 0; i < fields.Length; i++) {
+                                    var field = fields[i];
+                                    var number = i + 1;
+                                    if (field.Sortable == "true") {
+                                        <td class="sorter" data-order-by="@(number)">
+                                            <div aclass="btn-group btn-group-xs">
+                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                                    <span class="glyphicon glyphicon-chevron-up"></span>
+                                                </a>
+                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                                    <span class="glyphicon glyphicon-chevron-down"></span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    } else {
+                                        <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </thead>
+                    <tbody>
+                        @{
+                            Map classMap = null;
+                            var mapField = fields.LastOrDefault(f => f.ClassMap != string.Empty);
+                            if (mapField != null) {
+                                classMap = Model.Process.Maps.FirstOrDefault(m => m.Name == mapField.ClassMap);
+                            }
+                        }
+
+                        @foreach (var row in entity.Rows) {
+
+                            var classValue = string.Empty;
+                            if (classMap != null) {
+                                var value = mapField.Convert(row[mapField.Alias]);
+                                var valueComparable = value as IComparable;
+                                if (valueComparable != null) {
+                                    foreach (var item in classMap.Items) {
+                                        var from = mapField.Convert(item.From);
+                                        var to = mapField.Convert(item.To);
+                                        if (valueComparable.CompareTo(from) >= 0 && valueComparable.CompareTo(to) <= 0) {
+                                            classValue = item.Value;
+                                        }
+                                    }
+                                    if (classValue == string.Empty) {
+                                        var defaultItem = classMap.Items.FirstOrDefault(i => i.From.Equals("*"));
+                                        if (defaultItem != null) {
+                                            classValue = defaultItem.Value;
+                                        }
+                                    }
+                                }
+                            }
+
+                            <tr class="@classValue">
+                                @foreach (var field in fields) {
+                                    <td>
+                                        @switch (field.Type) {
+                                            case "bool":
+                                            case "boolean":
+                                                if ((bool)row[field.Alias]) {
+                                                    <span style="color: #73a839;" class="glyphicon glyphicon-ok"></span>
+                                                } else {
+                                                    <span style="color: #c71c22;" class="glyphicon glyphicon-remove"></span>
+                                                }
+                                                break;
+                                            case "date":
+                                            case "datetime":
+                                                if (field.Format == string.Empty) {
+                                                    @(row[field.Alias])
+                                                } else {
+                                                    if (row[field.Alias] is DateTime) {
+                                                        @(((DateTime)row[field.Alias]).ToString(field.Format))
+                                                    } else {
+                                                        @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
+                                                    }
+                                                }
+                                                break;
+                                            case "single":
+                                            case "double":
+                                            case "decimal":
+                                            case "float":
+                                                if (field.Format == string.Empty) {
+                                                    @(row[field.Alias])
+                                                } else {
+                                                    switch (field.Type) {
+                                                        case "single":
+                                                        case "float":
+                                                            @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
+                                                            break;
+                                                        case "decimal":
+                                                            @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
+                                                            break;
+                                                        case "double":
+                                                            @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
+                                                            break;
+                                                        default:
+                                                            @(row[field.Alias])
+                                                            break;
+                                                    }
+
+                                                }
+                                                break;
+                                            default:
+                                                @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                                break;
+
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+                            }
+
+    @if (output == "map") {
+        if (!string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
+            <div id="id_map" style="height: 650px; width: 100%"></div>
+            <script>
+                //<!--
+                $(document).ready(function() {
+
+                    $('#id_map').height(Math.round($(window).height() * .7));
+
+                    L.mapbox.accessToken = '@(settings.MapBoxToken)';
+
+                    var map = L.mapbox.map('id_map', null);
+                    var layers = {};
+                    layers["Streets"] = L.mapbox.tileLayer("mapbox.streets-basic");
+                    layers["Streets"].addTo(map);
+                    layers["Satellite"] = L.mapbox.tileLayer("mapbox.streets-satellite");
+
+                    L.control.layers(layers).addTo(map);
+
+                    var url = '@(linkService.Create(Request, "geojson"))';
+
+                    var layer = L.mapbox.featureLayer().loadURL(url).addTo(map);
+
+                    $('#busy').show();
+
+                    layer.on('error', function(err) {
+                        $('#busy').hide();
+                        console.log(err);
+                        alert("See console for error(s).");
+                    });
+
+                    layer.on('ready', function() {
+                        // featureLayer.getBounds() returns the corners of the furthest-out markers,
+                        // and map.fitBounds() makes sure that the map contains these.
+                        map.fitBounds(layer.getBounds());
+                        $('#busy').hide();
+                    });
+
+
+                });
+                //-->
+            </script>
+        } else {
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="alert alert-danger" role="alert">You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.</div>
+                </div>
+            </div>
+        }
+
+    }
+
 </form>
-
-
 
 <div id="busy_holder">
     <div id="busy"></div>
@@ -402,42 +479,46 @@ td.sorter {
     //<!--
 
     var controls = {
-        setPage: function (page) {
+        setPage: function(page) {
             $('#id_page').val(page);
         },
-        submit: function (page) {
+        submit: function(page) {
             controls.setPage(page);
             $("#id_report").submit();
         },
-        setSize: function (size) {
+        setSize: function(size) {
             $('#id_size').val(size);
             controls.submit(1);
         },
-        setSort: function (sort) {
+        setSort: function(sort) {
             $('#id_sort').val(sort);
         }
     }
 
-    $(document).ready(function () {
+    $(document).ready(function() {
 
         var isSortable = @(isSortable.ToString().ToLower());
         var focus = '@(focus)';
-
+        var defaultSize = @(pageSizes.FirstOrDefault());
 
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
+            onChange: function(option, checked, select) {
+                controls.setPage(1);
+            },
             maxHeight: 400,
             nonSelectedText: 'All',
             nSelectedText: 'Selected',
             allSelectedText: 'Selected',
             buttonContainer: '<div class="btn-group btn-group-sm" />',
-            templates : {
+            templates: {
                 filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
             }
         });
 
-        if (!isSortable) { // enable client side sorting
+        // enable client side sorting if server side support is off
+        if (!isSortable) { 
             $("#id_table").tablesorter();
             $("#id_table")
                 .bind("sortStart", function() {
@@ -450,49 +531,82 @@ td.sorter {
 
         $(".form-control.date").datepicker({ dateFormat: "yy-mm-dd" });
 
+        $('#id_report').bind('submit', function(e) {
 
-        $('#id_report').bind('submit', function (e) {
+            // stop double submit
             $('#id_submit').prop('disabled', true);
-            if ($('#id_page').val() === "0") {
-                $('#id_size').attr('disabled',true);
+
+            // the rest of this just cleans up the URL (bookmark)
+            var page = parseInt($('#id_page').val());
+            var size = parseInt($('#id_size').val());
+
+            if (page <= 1) {
+                $('#id_page').attr('disabled', true);
             }
-            $('.bsh:input[value="0"]').attr('disabled', true);
-            $('.bsh:input[value=""]').attr('disabled', true);
+
+            if (size === 0 || size === defaultSize) {
+                $('#id_size').attr('disabled', true);
+            }
+
+            $('#id_report input').filter(function() {
+                var value = $(this).val();
+                 return value === "*" || value === "";
+            }).attr('disabled',true);
+
+            $("#id_report select").each(function() {
+                var selected = $('option:selected', this); 
+                var count = selected.length;
+                if (count === 0) {
+                    $(this).attr('disabled', true);
+                } else if (count === 1) {
+                    var value = $(selected[0]).val();
+                    if (value === "" || value === "*") {
+                        $(this).attr('disabled', true);
+                    }
+                }
+            });
+
             $('#busy').show();
+
+            // normal submit handler fires
+            return true;
         });
 
         $('#id_clear').click(function() {
+            
+            // set single select back to first
             $('#id_report select:not([multiple])').val($('#id_report select option:first').val());
+            
+            // set multi-select to none
             $('#id_report select[multiple]').multiselect('deselectAll', false);
             $('#id_report select[multiple]').multiselect('updateButtonText');
+            
+            // set other inputs to blank
             $('#id_report input:visible').val("");
+
             controls.submit(@(entity.Page == 0 ? 0 : 1));
         });
 
-        @*$("#id_report select:not([multiple])" ).change(function() {
-            $('#id_focus').val($(this).attr('name'));
-            controls.submit(@(entity.Page == 0 ? 0 : 1));
-        });*@
-
-        $("#id_report input:visible" ).change(function() {
+        $("#id_report input:visible").change(function() {
+            // remember focus
             $('#id_focus').val($(this).attr('name'));
         });
 
-        $('.sortable').click(function () {
+        $('.sortable').click(function() {
             $(this).toggleClass('btn-sort').toggleClass('btn-primary');
 
-            $(this).siblings().each(function (i) {
+            $(this).siblings().each(function(i) {
                 if ($(this).hasClass('btn-primary')) {
                     $(this).removeClass('btn-primary').addClass('btn-sort');
                 }
             });
 
             var sort = '';
-            $('td.sorter').each(function (i) {
+            $('td.sorter').each(function(i) {
                 var field = $(this).attr('data-order-by');
                 if (field) {
                     var index = 0;
-                    $('a', $(this)).each(function (j) {
+                    $('a', $(this)).each(function(j) {
                         if ($(this).hasClass('btn-primary')) {
                             switch (index) {
                                 case 0:
@@ -516,15 +630,23 @@ td.sorter {
         });
 
         if (focus !== '') {
-            $('#id_report input[name="'+focus+'"],#id_report select[name="'+focus+'"]').focus();
+            $('#id_report input[name="' + focus + '"],#id_report select[name="' + focus + '"]').focus();
         }
-
-        SyntaxHighlighter.all();
 
     });
 
     //-->
 </script>
+
+@if (output == "page") {
+    <script type="text/javascript">
+        //<!--
+        $(document).ready(function() {
+            SyntaxHighlighter.all();
+        });
+        //-->
+    </script>
+}
 
 
 

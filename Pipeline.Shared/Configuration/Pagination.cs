@@ -30,7 +30,7 @@ namespace Transformalize.Configuration {
         public int Last { get; private set; }
 
         public Pagination(int hits, int page, int pageSize) {
-            var pages = (int)Math.Ceiling((decimal)hits / pageSize);
+            var pages = pageSize == 0 ? 0 : (int)Math.Ceiling((decimal)hits / pageSize);
             Pages = pages;
             HasPrevious = page > 1;
             Previous = page == 1 ? 1 : page - 1;

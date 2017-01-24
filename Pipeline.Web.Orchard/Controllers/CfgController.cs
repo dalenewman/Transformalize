@@ -34,9 +34,7 @@ using System.IO;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
-using Transformalize.Configuration;
 using Transformalize.Extensions;
-using Filter = System.Web.Mvc.Filter;
 using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
@@ -67,7 +65,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             ISlugService slugService,
             IAppDataFolder appDataFolder,
             IClock clock
-            ) {
+        ) {
             _clock = clock;
             _appDataFolder = appDataFolder;
             _orchardServices = services;
@@ -132,9 +130,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                     var provider = process.Output().Provider;
                     if (provider.In("internal", "file")) {
 
+                        Common.TranslatePageParametersToEntities(process, parameters, "page");
+
                         // change process for export purposes
                         var output = Request["output"] ?? "page";
-                        if (part.Reportable && output != "page") {
+                        if (part.Reportable && output != "page"  && output != "map") {
                             ConvertToExport(user, process, part, output, parameters);
                             process.Load(process.Serialize(), parameters);
                         }
@@ -153,7 +153,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                             }
 
                             if (!process.Errors().Any()) {
-                                Common.PageHelper(process, parameters);
+                                
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
                                     Common.ApplyFacet(process, Request);
@@ -186,7 +186,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             return new FilePathResult(o.File, ExcelContentType) {
                                                 FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
                                             };
-                                        default:
+                                        default:  // page and map
                                             break;
                                     }
                                 } catch (Exception ex) {

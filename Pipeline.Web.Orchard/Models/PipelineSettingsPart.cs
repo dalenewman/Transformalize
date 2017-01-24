@@ -17,11 +17,25 @@ namespace Pipeline.Web.Orchard.Models {
 
         public List<SelectListItem> EditorThemes { get; set; }
 
-        public string EditorTheme {
-            get {
+        public string EditorTheme
+        {
+            get
+            {
                 return string.IsNullOrEmpty(Record.EditorTheme) ? "cobalt" : Record.EditorTheme;
             }
             set { Record.EditorTheme = value; }
+        }
+
+        public string MapBoxToken
+        {
+            get { return Record.MapBoxToken; }
+            set { Record.MapBoxToken = value; }
+        }
+
+        public int MapBoxLimit
+        {
+            get { return Record.MapBoxLimit == 0 ? 2500 : Record.MapBoxLimit; }
+            set { Record.MapBoxLimit = value; }
         }
 
         public bool IsValid() {

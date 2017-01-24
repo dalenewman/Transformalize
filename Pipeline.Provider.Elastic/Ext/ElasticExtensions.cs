@@ -31,13 +31,30 @@ namespace Transformalize.Provider.Elastic.Ext {
             return context.Entity.Alias.ToLower();
         }
 
-        public static string BuildElasticUrl(this Connection cn) {
+        public static string GetElasticUrl(this Connection cn) {
+            if (!string.IsNullOrEmpty(cn.Url)) {
+                return cn.Url;
+            }
             var builder = new UriBuilder(cn.Server.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? cn.Server : "http://" + cn.Server);
             if (cn.Port > 0) {
                 builder.Port = cn.Port;
             }
             if (cn.Path != string.Empty) {
                 builder.Path = cn.Path;
+            }
+            return builder.ToString();
+        }
+
+        public static string GetElasticUrl(this Server s) {
+            if (!string.IsNullOrEmpty(s.Url)) {
+                return s.Url;
+            }
+            var builder = new UriBuilder(s.Name.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? s.Name : "http://" + s.Name);
+            if (s.Port > 0) {
+                builder.Port = s.Port;
+            }
+            if (s.Path != string.Empty) {
+                builder.Path = s.Path;
             }
             return builder.ToString();
         }

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using Cfg.Net.Contracts;
 
 namespace Transformalize.Transform.DateMath {
@@ -23,15 +25,29 @@ namespace Transformalize.Transform.DateMath {
         }
 
         public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {
-            if (parent == "parameters") {
-                ApplyDateMath(node, "value");
-            }
-
             if (parent == "fields" || parent == "calculated-fields") {
                 ApplyDateMath(node, "default");
             }
         }
 
-        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) { }
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) {
+            var environments = root.SubNodes.FirstOrDefault(n => n.Name == "environments");
+            if (environments == null) {
+                UpdateParameters(root.SubNodes);
+            } else {
+                foreach (var environment in environments.SubNodes) {
+                    UpdateParameters(environment.SubNodes);
+                }
+            }
+        }
+
+        public void UpdateParameters(List<INode> nodes) {
+            var p = nodes.FirstOrDefault(n => n.Name == "parameters");
+            if (p == null)
+                return;
+            foreach (var parameter in p.SubNodes) {
+                ApplyDateMath(parameter, "value");
+            }
+        }
     }
 }

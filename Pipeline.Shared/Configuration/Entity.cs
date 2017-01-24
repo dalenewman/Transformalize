@@ -274,7 +274,7 @@ namespace Transformalize.Configuration {
         }
 
         public bool IsPageRequest() {
-            return Page > 0 && PageSize > 0;
+            return Page > 0 && PageSize >= 0;
         }
 
         /// <summary>
@@ -295,6 +295,7 @@ namespace Transformalize.Configuration {
         }
 
         protected override void Validate() {
+
             var fields = GetAllFields().ToArray();
             var names = new HashSet<string>(fields.Select(f => f.Name).Distinct());
             var aliases = new HashSet<string>(fields.Select(f => f.Alias));
@@ -315,10 +316,30 @@ namespace Transformalize.Configuration {
                 }
             }
 
-            if (Page > 0 && !PageSizes.Any()) {
-                PageSizes.Add(new PageSize { Size = 10 });
-                PageSizes.Add(new PageSize { Size = 15 });
-                PageSizes.Add(new PageSize { Size = 20 });
+            // Paging Madness
+            if (Page > 0) {
+                if (PageSizes.Any()) {
+                    if (PageSizes.All(ps => ps.Size != PageSize)) {
+                        var first = PageSizes.First().Size;
+                        Warn($"The entity {Name} has an invalid PageSize of {PageSize}. Set to {first}.");
+                        PageSize = first;
+                    }
+                } else {
+                    if (PageSize > 0) {
+                        PageSizes.Add(new PageSize { Size = PageSize }.WithDefaults());
+                    } else {
+                        PageSizes.Add(new PageSize { Size = 25 }.WithDefaults());
+                        PageSizes.Add(new PageSize { Size = 50 }.WithDefaults());
+                        PageSizes.Add(new PageSize { Size = 100 }.WithDefaults());
+                        if (PageSize != 25 && PageSize != 50 && PageSize != 100) {
+                            PageSize = 25;
+                        }
+                    }
+                }
+            } else {
+                if (PageSize > 0) {
+                    PageSize = 0;
+                }
             }
 
         }
@@ -526,7 +547,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int Page { get; set; }
 
-        [Cfg(value = 10)]
+        [Cfg(value = 0)]
         public int PageSize { get; set; }
 
         [Cfg(value = "all", domain = "all,none,some", toLower = true, ignoreCase = true)]

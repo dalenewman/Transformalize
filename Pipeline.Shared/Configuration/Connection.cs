@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cfg.Net;
 
 namespace Transformalize.Configuration {
@@ -136,6 +137,9 @@ namespace Transformalize.Configuration {
         [Cfg(required = false)]
         public List<Delimiter> Delimiters { get; set; }
 
+        [Cfg]
+        public List<Server> Servers { get; set; }
+
         /* End File Inspection Properties */
 
         protected override void PreValidate() {
@@ -201,12 +205,23 @@ namespace Transformalize.Configuration {
             }
 
             if (Provider == "elasticsearch") {
-                if (Url == string.Empty) {
-                    if (Server == string.Empty || Index == string.Empty) {
-                        Error("The server and index are required for the elastic provider. (e.g. <add provider='elastic' server='localhost' port='9200' index='twitter' />)");
+                if (Servers.Any()) {
+                    if (Index == string.Empty) {
+                        Error("An index is required for elasticsearch connections.");
+                    }
+                    foreach (var server in Servers) {
+                        if (server.Port == 0) {
+                            server.Port = 9200;
+                        }
                     }
                 } else {
-                    ValidateUrl();
+                    if (Url == string.Empty) {
+                        if (Server == string.Empty || Index == string.Empty) {
+                            Error("The server and index are required for the elastic provider. (e.g. <add provider='elastic' server='localhost' port='9200' index='twitter' />)");
+                        }
+                    } else {
+                        ValidateUrl();
+                    }
                 }
             }
 
@@ -276,7 +291,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 5)]
         public int ErrorLimit { get; set; }
 
-        [Cfg(value=Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
+        [Cfg(value = Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
         public string ModelType { get; set; }
     }
 }

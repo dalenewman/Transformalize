@@ -94,7 +94,7 @@ namespace Pipeline.Web.Orchard {
                 .Column("EditorTheme", DbType.String)
             );
 
-            return 3;  // split files into it's own feature
+            return 3;
         }
 
         public int UpdateFrom3() {
@@ -117,6 +117,17 @@ namespace Pipeline.Web.Orchard {
             ContentDefinitionManager.AlterTypeDefinition(Common.PipelineConfigurationName, cfg => cfg.WithSetting("Listable", "True"));
             return 7;
         }
+
+        public int UpdateFrom7() {
+            SchemaBuilder.AlterTable(Common.PipelineSettingsName + "PartRecord", table => table.AddColumn("MapBoxToken", DbType.String));
+            return 8;
+        }
+
+        public int UpdateFrom8() {
+            SchemaBuilder.AlterTable(Common.PipelineSettingsName + "PartRecord", table => table.AddColumn("MapBoxLimit", DbType.Int32));
+            return 9;
+        }
+
     }
 
     public class FileMigrations : DataMigrationImpl {

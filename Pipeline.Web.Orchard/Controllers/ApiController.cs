@@ -111,7 +111,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
-                Common.PageHelper(process, parameters);
+                Common.TranslatePageParametersToEntities(process, parameters, "api");
 
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {

@@ -80,31 +80,31 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // xml
             builder.Register(c => new XmlProcess(
+                new DateMathModifier(),
                 new NanoXmlParser(),
                 new XmlSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<XmlProcess>();
 
             builder.Register(c => new XmlToJsonProcess(
+                new DateMathModifier(),
                 new NanoXmlParser(),
                 new JsonSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(), 
                 new IllegalCharacterValidator()
             )).As<XmlToJsonProcess>();
 
             builder.Register(c => new XmlToYamlProcess(
+                new DateMathModifier(),
                 new NanoXmlParser(),
                 new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<XmlToYamlProcess>();
@@ -115,32 +115,32 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // json
             builder.Register(c => new JsonProcess(
+                new DateMathModifier(),
                 new FastJsonParser(),
                 new JsonSerializer(),
                 new JintValidator(),
                 //new OrchardNodeModifier("host", c.Resolve<IOrchardServices>()),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<JsonProcess>();
 
             builder.Register(c => new JsonToXmlProcess(
+                new DateMathModifier(),
                 new FastJsonParser(),
                 new XmlSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<JsonToXmlProcess>();
 
             builder.Register(c => new JsonToYamlProcess(
+                new DateMathModifier(),
                 new FastJsonParser(),
                 new YamlDotNetSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<JsonToYamlProcess>();
@@ -151,31 +151,31 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // yaml
             builder.Register(c => new YamlProcess(
+                new DateMathModifier(),
                 new YamlDotNetParser(),
                 new YamlDotNetSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<YamlProcess>();
 
             builder.Register(c => new YamlToXmlProcess(
+                new DateMathModifier(),
                 new YamlDotNetParser(),
                 new XmlSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<YamlToXmlProcess>();
 
             builder.Register(c => new YamlToJsonProcess(
+                new DateMathModifier(),
                 new YamlDotNetParser(),
                 new JsonSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new DateMathModifier(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
             )).As<YamlToJsonProcess>();

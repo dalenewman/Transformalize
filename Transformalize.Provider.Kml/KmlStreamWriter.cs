@@ -37,7 +37,7 @@ namespace Transformalize.Provider.Kml {
             _sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "kml-size") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "size");
             _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "kml-symbol") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
             _hasStyle = _colorField != null || _sizeField != null || _symbolField != null;
-            _propertyFields = fields.Where(f => f.Output && !f.System).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
+            _propertyFields = fields.Where(f => f.Output && !f.System && !f.Alias.ToLower().StartsWith("geojson-")).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
             _nameField = _propertyFields.FirstOrDefault(f => f.Alias.ToLower() == "name");
             _xmlWriter = XmlWriter.Create(stream);
         }
@@ -70,7 +70,7 @@ namespace Transformalize.Provider.Kml {
                     tableBuilder.AppendLine(":</strong></td>");
 
                     tableBuilder.AppendLine("<td>");
-                    tableBuilder.AppendLine(row[field].ToString());
+                    tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
                     tableBuilder.AppendLine("</td>");
 
                     tableBuilder.AppendLine("</tr>");

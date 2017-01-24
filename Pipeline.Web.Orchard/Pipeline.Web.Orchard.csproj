@@ -71,8 +71,8 @@
       <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.6\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.9.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.9.2\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.9.3\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -89,6 +89,10 @@
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\ExcelDataReader.2.1.2.3\lib\net45\Excel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Flurl, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Flurl.2.2.1\lib\portable40-net40+sl5+win8+wp8+wpa81\Flurl.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
@@ -110,10 +114,6 @@
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.0\lib\OpenXmlPowerTools.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="RazorEngine, Version=3.9.3.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\RazorEngine.3.9.3\lib\net45\RazorEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
@@ -244,7 +244,9 @@
     <Content Include="Styles\busy.gif" />
     <Content Include="Styles\desc.gif" />
     <Content Include="Styles\tablesorter.css" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Scripts\Web.config" />
     <Content Include="Styles\Web.config" />
     <Content Include="Module.txt" />
@@ -264,9 +266,11 @@
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\CfgService.cs" />
+    <Compile Include="Services\ExportLinkService.cs" />
     <Compile Include="Services\FileResponse.cs" />
     <Compile Include="Services\FileService.cs" />
     <Compile Include="Services\ICfgService.cs" />
+    <Compile Include="Services\IExportLinkService.cs" />
     <Compile Include="Services\IFileService.cs" />
     <Compile Include="Drivers\PipelineSettingsPartDriver.cs" />
     <Compile Include="Handlers\PipelineSettingsPartHandler.cs" />

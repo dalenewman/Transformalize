@@ -53,6 +53,7 @@ namespace Transformalize.Provider.Ado {
 
                 cn.Open();
                 var cmd = cn.CreateCommand();
+                var doQuery = true;
 
                 if (string.IsNullOrEmpty(_input.Entity.Query)) {
                     if (_input.Entity.MinVersion == null) {
@@ -61,6 +62,9 @@ namespace Transformalize.Provider.Ado {
                         if (_input.Entity.IsPageRequest()) {
                             var start = (_input.Entity.Page * _input.Entity.PageSize) - _input.Entity.PageSize;
                             var end = start + _input.Entity.PageSize;
+                            if (start == 0 && end == 0) {
+                                doQuery = false;
+                            }
                             switch (_factory.AdoProvider) {
                                 case AdoProvider.SqlServer:
                                     cmd.CommandText = $"WITH p AS ({cmd.CommandText}) SELECT {string.Join(",", _fields.Select(f => _factory.Enclose(f.Name)))} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
@@ -99,10 +103,14 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 0;
 
+                if (!doQuery)
+                    yield break;
+
                 using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
 
                     if (_fields.Length < reader.FieldCount) {
-                        _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
+                        _input.Warn(
+                            $"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
                     }
 
                     // transform types if sqlite
@@ -122,7 +130,8 @@ namespace Transformalize.Provider.Ado {
                                 var expected = Constants.TypeSystem()[field.Type];
                                 var actual = row[field] == null ? expected : row[field].GetType();
                                 if (expected != actual) {
-                                    _input.Warn($"The {field.Alias} field in {_input.Entity.Alias} expects a {expected}, but is reading a {actual}.");
+                                    _input.Warn(
+                                        $"The {field.Alias} field in {_input.Entity.Alias} expects a {expected}, but is reading a {actual}.");
                                 }
                             }
                             _rowCount++;

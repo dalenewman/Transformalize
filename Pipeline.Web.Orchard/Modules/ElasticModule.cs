@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Elasticsearch.Net;
@@ -50,9 +51,19 @@ namespace Pipeline.Web.Orchard.Modules {
             //CONNECTIONS
             foreach (var connection in _process.Connections.Where(c => c.Provider.In("elasticsearch"))) {
 
-                connection.Url = connection.BuildElasticUrl();
 
-                builder.Register<IConnectionPool>(ctx => new SingleNodeConnectionPool(new Uri(connection.Url))).Named<IConnectionPool>(connection.Key);
+                if (connection.Servers.Any()) {
+                    var uris = new List<Uri>();
+                    foreach (var server in connection.Servers) {
+                        server.Url = server.GetElasticUrl();
+                        uris.Add(new Uri(server.Url));
+                    }
+                    // for now, just use static connection pool, there are 2 other types...
+                    builder.Register<IConnectionPool>(ctx => new StaticConnectionPool(uris)).Named<IConnectionPool>(connection.Key);
+                } else {
+                    connection.Url = connection.GetElasticUrl();
+                    builder.Register<IConnectionPool>(ctx => new SingleNodeConnectionPool(new Uri(connection.Url))).Named<IConnectionPool>(connection.Key);
+                }
 
                 // Elasticsearch.Net
                 builder.Register(ctx => {

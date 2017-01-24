@@ -37,7 +37,7 @@ namespace Transformalize.Provider.GeoJson {
             _sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "size");
             _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
             _hasStyle = _colorField != null || _sizeField != null || _symbolField != null;
-            _propertyFields = fields.Where(f => f.Output && !f.System).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
+            _propertyFields = fields.Where(f => f.Output && !f.System && !f.Alias.ToLower().StartsWith("kml-")).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
 
         }
 
@@ -54,6 +54,8 @@ namespace Transformalize.Provider.GeoJson {
 
             jsonWriter.WritePropertyName("features");
             jsonWriter.WriteStartArray();  //features
+
+            var tableBuilder = new StringBuilder();
 
             foreach (var row in rows) {
 
@@ -81,25 +83,24 @@ namespace Transformalize.Provider.GeoJson {
                     jsonWriter.WriteValue(field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
                 }
 
-                //jsonWriter.WritePropertyName("description");
+                jsonWriter.WritePropertyName("description");
+                tableBuilder.Clear();
+                tableBuilder.AppendLine("<table class=\"table\">");
+                foreach (var field in _propertyFields) {
+                    tableBuilder.AppendLine("<tr>");
 
-                //tableBuilder.Clear();
-                //tableBuilder.AppendLine("<table class=\"table\">");
-                //foreach (var field in _context.OutputFields) {
-                //    tableBuilder.AppendLine("<tr>");
+                    tableBuilder.AppendLine("<td><strong>");
+                    tableBuilder.AppendLine(field.Label);
+                    tableBuilder.AppendLine(":</strong></td>");
 
-                //    tableBuilder.AppendLine("<td><strong>");
-                //    tableBuilder.AppendLine(field.Label);
-                //    tableBuilder.AppendLine(":</strong></td>");
+                    tableBuilder.AppendLine("<td>");
+                    tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
+                    tableBuilder.AppendLine("</td>");
 
-                //    tableBuilder.AppendLine("<td>");
-                //    tableBuilder.AppendLine(field.Raw ? (string)row[field] : System.Security.SecurityElement.Escape((string)row[field]));
-                //    tableBuilder.AppendLine("</td>");
-
-                //    tableBuilder.AppendLine("</tr>");
-                //}
-                //tableBuilder.AppendLine("</table>");
-                //jsonWriter.WriteValue(tableBuilder.ToString());
+                    tableBuilder.AppendLine("</tr>");
+                }
+                tableBuilder.AppendLine("</table>");
+                jsonWriter.WriteValue(tableBuilder.ToString());
 
                 if (_hasStyle) {
                     if (_colorField != null) {

@@ -45,6 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Schema.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Script.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\SearchType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Template.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\TflType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Transform.cs" />
