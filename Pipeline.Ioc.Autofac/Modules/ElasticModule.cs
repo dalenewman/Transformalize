@@ -49,6 +49,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
             //CONNECTIONS
             foreach (var connection in _process.Connections.Where(c => c.Provider == "elasticsearch")) {
 
+
+
                 if (connection.Servers.Any()) {
                     var uris = new List<Uri>();
                     foreach (var server in connection.Servers) {
@@ -65,6 +67,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // Elasticsearch.Net
                 builder.Register(ctx => {
                     var settings = new ConnectionConfiguration(ctx.ResolveNamed<IConnectionPool>(connection.Key));
+                    if (!string.IsNullOrEmpty(connection.User)) {
+                        settings.BasicAuthentication(connection.User, connection.Password);
+                    }
                     if (_process.Mode != "init" && connection.RequestTimeout >= 0) {
                         settings.RequestTimeout(new TimeSpan(0, 0, 0, connection.RequestTimeout * 1000));
                     }

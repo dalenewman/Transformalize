@@ -60,6 +60,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new InternalModule(process).Configure);
             builder.RegisterCallback(new FileModule(process).Configure);
             builder.RegisterCallback(new GeoJsonModule(process).Configure);
+            builder.RegisterCallback(new KmlModule(process).Configure);
             // builder.RegisterCallback(new NumlModule(process).Configure);
             builder.RegisterCallback(new WebModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);

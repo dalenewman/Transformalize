@@ -263,6 +263,7 @@ namespace Transformalize.Provider.Elastic {
         public IEnumerable<IRow> Read() {
             ElasticsearchResponse<DynamicResponse> response;
 
+            int size = 10;
             string body;
             if (_context.Entity.IsPageRequest()) {
                 var from = (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
@@ -275,8 +276,8 @@ namespace Transformalize.Provider.Elastic {
                     if (hits != null && hits.HasValue) {
                         var properties = hits.Value as IDictionary<string, object>;
                         if (properties != null && properties.ContainsKey("total")) {
-                            var size = Convert.ToInt32(properties["total"]) + 1;
-                            body = WriteQuery(_fields, _readFrom, _context, 0, size);
+                            size = Convert.ToInt32(properties["total"]) + 1;
+                            body = WriteQuery(_fields, _readFrom, _context, 0, size > 10000 ? 10000 : size);
                         }
                     }
                 }
@@ -284,11 +285,20 @@ namespace Transformalize.Provider.Elastic {
             _context.Debug(() => body);
             _context.Entity.Query = body;
 
-            response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
+
+            // move 10000 to configurable limit
+            if (size > 10000) {
+                response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body, p => p.Scroll(TimeSpan.FromMinutes(1.0)));
+            } else {
+                response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
+            }
 
             if (response.Success) {
                 _context.Entity.Hits = Convert.ToInt32((response.Body["hits"]["total"] as ElasticsearchDynamicValue).Value);
                 var hits = response.Body["hits"]["hits"] as ElasticsearchDynamicValue;
+
+                // check for _scroll_id
+                // extract this method, as it will need to be called for repeated scrolls _client.Scroll...
                 if (hits != null && hits.HasValue) {
                     var docs = hits.Value as IEnumerable<object>;
                     if (docs != null) {
@@ -317,7 +327,7 @@ namespace Transformalize.Provider.Elastic {
                         }
                     }
                 }
-
+                // get this from first search response (maybe), unless you have to aggregate it from all...
                 foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
                     var map = _context.Process.Maps.First(m => m.Name == filter.Map);
                     var buckets = response.Body["aggregations"][filter.Key]["buckets"] as ElasticsearchDynamicValue;

@@ -68,6 +68,10 @@ namespace Pipeline.Web.Orchard.Modules {
                 // Elasticsearch.Net
                 builder.Register(ctx => {
                     var settings = new ConnectionConfiguration(ctx.ResolveNamed<IConnectionPool>(connection.Key));
+                    if (!string.IsNullOrEmpty(connection.User)) {
+                        settings.BasicAuthentication(connection.User, connection.Password);
+                    }
+
                     if (_process.Mode != "init" && connection.RequestTimeout >= 0) {
                         settings.RequestTimeout(new TimeSpan(0, 0, 0, connection.RequestTimeout * 1000));
                     }

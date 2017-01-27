@@ -131,6 +131,7 @@
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
+    <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\FolderModule.cs" />
@@ -247,6 +248,10 @@
     <ProjectReference Include="..\Transformalize.Provider.GeoJson\Transformalize.Provider.GeoJson.csproj">
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
       <Name>Transformalize.Provider.GeoJson</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.Kml\Transformalize.Provider.Kml.csproj">
+      <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
+      <Name>Transformalize.Provider.Kml</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Provider.Numl\Transformalize.Provider.Numl.csproj">
       <Project>{f12732e1-875a-4c4d-9d6e-5f255a4367be}</Project>

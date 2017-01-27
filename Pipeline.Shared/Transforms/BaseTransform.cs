@@ -25,7 +25,8 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms {
 
     public abstract class BaseTransform : ITransform {
-        private readonly Field[] _fields;
+
+        private const StringComparison Sc = StringComparison.OrdinalIgnoreCase;
         private Field _singleInput;
         private string _received;
 
@@ -37,8 +38,7 @@ namespace Transformalize.Transforms {
             return rows.Select(Transform);
         }
 
-        public string Returns
-        {
+        public string Returns {
             get { return Context.Transform.Returns; }
             set { Context.Transform.Returns = value; }
         }
@@ -46,7 +46,6 @@ namespace Transformalize.Transforms {
         protected BaseTransform(IContext context, string returns) {
             Context = context;
             Returns = returns;
-            _fields = context.GetAllEntityFields().ToArray();
         }
 
         public long RowCount { get; set; }
@@ -77,8 +76,8 @@ namespace Transformalize.Transforms {
         public Field SingleInputForMultipleOutput() {
             if (Context.Transform.Parameter != string.Empty) {
                 return Context.Entity == null
-                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase))
-                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase) || f.Name.Equals(Context.Transform.Parameter, StringComparison.OrdinalIgnoreCase));
+                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, Sc) || f.Name.Equals(Context.Transform.Parameter, Sc))
+                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, Sc) || f.Name.Equals(Context.Transform.Parameter, Sc));
             }
             return Context.Field;
         }

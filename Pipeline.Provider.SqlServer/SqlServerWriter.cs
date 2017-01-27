@@ -17,10 +17,13 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -93,29 +96,25 @@ namespace Transformalize.Provider.SqlServer {
                     bulkCopy.ColumnMappings.Add(i, i);
                 }
 
-                var tflHashCode = _output.Entity.TflHashCode();
-                var tflDeleted = _output.Entity.TflDeleted();
-
                 foreach (var part in rows.Partition(_output.Entity.InsertSize)) {
 
-                    var inserts = new List<DataRow>(_output.Entity.InsertSize);
-                    var updates = new List<IRow>();
-                    var batchCount = 0;
+                    var batch = part.ToArray();
 
                     if (_output.Entity.IsFirstRun) {
-                        foreach (var row in part) {
-                            inserts.Add(GetDataRow(dt, row));
-                            batchCount++;
-                        }
+                        var inserts = new List<IRow>();
+                        inserts.AddRange(batch);
+                        Insert(bulkCopy, dt, inserts);
                     } else {
-                        var batch = part.ToArray();
-                        var matching = _outputKeysReader.Read(batch).ToArray();
+                        var inserts = new ConcurrentBag<IRow>();
+                        var updates = new ConcurrentBag<IRow>();
+                        var tflHashCode = _output.Entity.TflHashCode();
+                        var tflDeleted = _output.Entity.TflDeleted();
+                        var matching = _outputKeysReader.Read(batch).AsParallel().ToArray();
 
-                        for (int i = 0, batchLength = batch.Length; i < batchLength; i++) {
-                            var row = batch[i];
+                        Parallel.ForEach(batch, (row) => {
                             var match = matching.FirstOrDefault(f => f.Match(_keys, row));
                             if (match == null) {
-                                inserts.Add(GetDataRow(dt, row));
+                                inserts.Add(row);
                             } else {
                                 if (match[tflDeleted].Equals(true)) {
                                     updates.Add(row);
@@ -127,24 +126,17 @@ namespace Transformalize.Provider.SqlServer {
                                     }
                                 }
                             }
-                            batchCount++;
+                        });
+
+                        Insert(bulkCopy, dt, inserts);
+
+                        if (updates.Any()) {
+                            _sqlUpdater.Write(updates);
                         }
+
                     }
 
-                    if (inserts.Any()) {
-                        try {
-                            bulkCopy.WriteToServer(inserts.ToArray());
-                            _output.Entity.Inserts += inserts.Count;
-                        } catch (Exception ex) {
-                            _output.Error(ex.Message);
-                        }
-                    }
-
-                    if (updates.Any()) {
-                        _sqlUpdater.Write(updates);
-                    }
-
-                    _output.Increment(batchCount);
+                    _output.Increment(batch.Length);
                 }
 
                 if (_output.Entity.Inserts > 0) {
@@ -158,11 +150,30 @@ namespace Transformalize.Provider.SqlServer {
 
         }
 
-        DataRow GetDataRow(DataTable dataTable, IRow row) {
-            var dr = dataTable.NewRow();
-            dr.ItemArray = row.ToEnumerable(_output.OutputFields).ToArray();
-            return dr;
+        private void Insert(SqlBulkCopy bulkCopy, DataTable dt, IEnumerable<IRow> inserts) {
+
+            var enumerated = inserts.ToArray();
+
+            if (enumerated.Length == 0)
+                return;
+
+            // convert to data rows for bulk copy
+            var rows = new List<DataRow>();
+            foreach (var insert in enumerated) {
+                var row = dt.NewRow();
+                row.ItemArray = insert.ToEnumerable(_output.OutputFields).ToArray();
+                rows.Add(row);
+            }
+
+            try {
+                bulkCopy.WriteToServer(rows.ToArray());
+                _output.Entity.Inserts += enumerated.Length;
+            } catch (Exception ex) {
+                _output.Error(ex.Message);
+            }
         }
 
     }
+
+
 }
