@@ -51,7 +51,7 @@ namespace Transformalize.Provider.File {
                 var fieldBuilder = _builder.AddField(field.FieldName(), typeof(string));
                 fieldBuilder.FieldQuoted = true;
                 fieldBuilder.QuoteChar = _context.Connection.TextQualifier;
-                fieldBuilder.QuoteMode = QuoteMode.OptionalForRead;
+                fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
                 fieldBuilder.FieldOptional = field.Optional;
             }
 

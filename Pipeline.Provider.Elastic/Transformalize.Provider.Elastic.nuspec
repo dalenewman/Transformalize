@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Elastic</id>
-    <version>0.2.1-beta</version>
+    <version>0.2.2-beta</version>
     <title>Transformalize Provider Elastic</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,8 +15,8 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.1-beta" />
-        <dependency id="Elasticsearch.Net" version="2.4.6" />
+        <dependency id="Transformalize" version="0.2.2-beta" />
+        <dependency id="Elasticsearch.Net" version="5.0.1" />
         <dependency id="Newtonsoft.Json" version="7.0.1" />
       </group>
     </dependencies>

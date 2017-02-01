@@ -49,6 +49,19 @@ namespace Transformalize.Configuration.Ext {
             ValidateCalculatedFields(p, error);
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
+            ValidateFlatten(p, error, warn);
+        }
+
+        private static void ValidateFlatten(Process p, Action<string> error, Action<string> warn) {
+            if (!p.Flatten)
+                return;
+
+            if (p.Entities.Count < 2) {
+                warn("To flatten, you must have at least 2 entities.");
+            }
+            if (p.Output() == null || !Constants.AdoProviderSet().Contains(p.Output().Provider)) {
+                error($"To flatten, you must use an ADO based output provider, e.g. ({Constants.AdoProviderDomain})");
+            }
         }
 
         private static void ValidateDirectoryReaderHasAtLeastOneValidField(Process process, Action<string> error) {

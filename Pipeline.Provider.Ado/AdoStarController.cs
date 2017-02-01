@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Collections.Generic;
 using System.Diagnostics;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -26,17 +27,19 @@ namespace Transformalize.Provider.Ado {
 
         readonly Stopwatch _stopWatch;
         readonly OutputContext _context;
-        readonly IAction _initializer;
+        readonly IEnumerable<IAction> _actions;
 
-        public AdoStarController(OutputContext context, IAction initializer) {
+        public AdoStarController(OutputContext context, IEnumerable<IAction> actions) {
             _context = context;
-            _initializer = initializer;
+            _actions = actions;
             _stopWatch = new Stopwatch();
         }
 
         public void Initialize() {
-            _context.Debug(()=> $"Initializing with {_initializer.GetType().Name}");
-            _initializer.Execute();
+            foreach (var action in _actions) {
+                _context.Debug(() => $"Initializing with {action.GetType().Name}");
+                action.Execute();
+            }
         }
 
         public void Start() {

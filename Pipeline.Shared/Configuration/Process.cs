@@ -143,16 +143,30 @@ namespace Transformalize.Configuration {
         public string Pipeline { get; set; }
 
         /// <summary>
-        /// Optional.
+        /// Optional (Name + "Star").
         /// 
-        /// If your output is a relational database that supports views and `StarEnabled` is `True`,
+        /// If your output is a relational database that supports views,
         /// this is the name of a view that projects fields from all the entities in the
-        /// star-schema as a single flat projection.
+        /// star-schema to a a single flat projection.
         /// 
         /// If not set, it is the combination of the process name, and "Star." 
         /// </summary>
         [Cfg(value = "")]
         public string Star { get; set; }
+
+        /// <summary>
+        /// Optional (false)
+        /// 
+        /// If set to true, a <see cref="Flat"/> table is created with the same structure as the <see cref="Star"/> view, and all the data is copied into it.
+        /// </summary>
+        [Cfg(value = false)]
+        public bool Flatten { get; set; }
+
+        /// <summary>
+        /// Optional (Name + "Flat")
+        /// </summary>
+        [Cfg(value = "")]
+        public string Flat { get; set; }
 
         /// <summary>
         /// Optional.
@@ -551,6 +565,10 @@ namespace Transformalize.Configuration {
             Scripts?.Clear();
             SearchTypes?.Clear();
             Templates?.Clear();
+        }
+
+        public bool IsFirstRun() {
+            return !Entities.Any() || Entities.First().IsFirstRun;
         }
     }
 }

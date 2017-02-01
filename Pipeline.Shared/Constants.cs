@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 
 namespace Transformalize {
     public static class Constants {
@@ -26,6 +27,7 @@ namespace Transformalize {
         static HashSet<string> _types;
         static HashSet<string> _numericTypes;
         static HashSet<string> _providers;
+        static HashSet<string> _adoProviders;
         static Dictionary<string, object> _typeDefaults;
         static Dictionary<string, string> _stringDefaults;
         static Dictionary<string, Type> _typeSystem;
@@ -35,6 +37,7 @@ namespace Transformalize {
         public const string DefaultSetting = "[default]";
 
         public const string ProviderDomain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel";
+        public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
         public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
@@ -58,6 +61,10 @@ namespace Transformalize {
         }
         public static HashSet<string> ProviderSet() {
             return _providers ?? (_providers = new HashSet<string>(ProviderDomain.Split(',')));
+        }
+
+        public static HashSet<string> AdoProviderSet() {
+            return _adoProviders ?? (_adoProviders = new HashSet<string>(AdoProviderDomain.Split(',')));
         }
 
         public static Dictionary<string, object> TypeDefaults() {

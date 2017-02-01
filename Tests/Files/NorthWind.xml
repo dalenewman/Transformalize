@@ -1,5 +1,6 @@
 ﻿<add name="NorthWind" 
-     mode="@(Mode)" 
+     mode="@(Mode)"
+     flatten="true"
      environment="test"
      max-memory="52 mb">
 

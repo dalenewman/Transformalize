@@ -30,6 +30,10 @@ namespace Transformalize.Configuration.Ext {
                 p.Star = p.Name + "Star";
             }
 
+            if (string.IsNullOrEmpty(p.Flat)) {
+                p.Flat = p.Name + "Flat";
+            }
+
             // process-level calculated fields are not input
             foreach (var calculatedField in p.CalculatedFields) {
                 calculatedField.Input = false;

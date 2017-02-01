@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -251,6 +252,12 @@ namespace Transformalize.Provider.Ado.Ext {
             return sql;
         }
 
+        public static string SqlDropFlatTable(this OutputContext c, IConnectionFactory cf) {
+            var sql = $"DROP TABLE {cf.Enclose(c.Process.Flat)};";
+            c.Debug(() => sql);
+            return sql;
+        }
+
         public static string SqlCreateStarView(this IContext c, IConnectionFactory cf) {
             var starFields = c.Process.GetStarFields().ToArray();
             var master = c.Process.Entities.First(e => e.IsMaster);
@@ -287,6 +294,25 @@ namespace Transformalize.Provider.Ado.Ext {
             }
 
             var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS SELECT {masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)} FROM {cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias} {builder};";
+            c.Debug(() => sql);
+            return sql;
+        }
+
+
+        public static string SqlCreateFlatTable(this IContext c, IConnectionFactory cf) {
+            var definitions = new List<string>();
+            foreach (var entity in c.Process.GetStarFields()) {
+                foreach (var field in entity) {
+                    definitions.Add(cf.Enclose(field.Alias) + cf.SqlDataType(field) + " NOT NULL");
+                }
+            }
+
+            var sql = $"CREATE TABLE {cf.Enclose(c.Process.Flat)}({string.Join(",", definitions)}, ";
+            if (cf.AdoProvider == AdoProvider.SqLite) {
+                sql += $"PRIMARY KEY ({cf.Enclose(Constants.TflKey)} ASC));";
+            } else {
+                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Process.Flat + "_tflkey")} PRIMARY KEY ({cf.Enclose(Constants.TflKey)}));";
+            }
             c.Debug(() => sql);
             return sql;
         }

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.Jint</id>
-    <version>0.2.1-beta</version>
+    <version>0.2.2-beta</version>
     <title>Transformalize Transform Jint</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -11,12 +11,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Jint (Javascript) Transform for Transformalize</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright 2013-2016</copyright>
+    <copyright>Copyright 2013-2017</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.1-beta" />
-        <dependency id="jint" version="2.10.2" />
+        <dependency id="Transformalize" version="0.2.2-beta" />
+        <dependency id="jint" version="2.10.3" />
       </group>
     </dependencies>
   </metadata>

@@ -24,6 +24,8 @@ using Transformalize.Contracts;
 using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
+
+
     public class AdoStarViewCreator : IAction {
         private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;

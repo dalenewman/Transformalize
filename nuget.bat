@@ -16,6 +16,9 @@ cd ..
 cd Pipeline.Provider.Excel
 nuget pack Transformalize.Provider.Excel.nuspec -OutputDirectory "c:\temp\modules"
 cd ..
+cd Pipeline.Provider.OpenXml
+nuget pack Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
+cd ..
 cd Pipeline.Provider.File
 nuget pack Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
 cd ..

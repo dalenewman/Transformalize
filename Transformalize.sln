@@ -119,6 +119,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Pipeline.Provider.File\Transformalize.Provider.File.nuspec = Pipeline.Provider.File\Transformalize.Provider.File.nuspec
 		Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec = Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec
 		Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec = Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec
+		Pipeline.Provider.OpenXml\Transformalize.Provider.OpenXml.nuspec = Pipeline.Provider.OpenXml\Transformalize.Provider.OpenXml.nuspec
 		Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec = Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec
 		Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec = Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec
 		Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec = Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec

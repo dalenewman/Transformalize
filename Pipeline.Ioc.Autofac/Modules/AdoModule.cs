@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
@@ -147,7 +148,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         case "postgresql":
                         case "sqlite":
                         case "sqlserver":
-                            return new AdoStarController(output, new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
+                            var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key))};
+                            if (_process.Flatten) {
+                                actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
+                            }
+                            return new AdoStarController(output, actions);
                         default:
                             return new NullOutputController();
                     }
@@ -253,19 +258,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     // WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
 
                         switch (output.Connection.Provider) {
                             case "sqlserver":
                                 return new SqlServerWriter(
                                     output,
-                                    ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key),
+                                    cf,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key))
+                                    new AdoEntityUpdater(output, cf)
                                 );
                             case "mysql":
                             case "postgresql":
                             case "sqlite":
-                                var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
                                 return new AdoEntityWriter(
                                     output,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),

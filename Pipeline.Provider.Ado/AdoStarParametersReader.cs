@@ -25,12 +25,12 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Provider.Ado {
     public class AdoStarParametersReader : IRead {
-        private readonly OutputContext _output;
+        private readonly IConnectionContext _output;
         private readonly Process _parent;
         private readonly IConnectionFactory _cf;
         private readonly AdoRowCreator _rowCreator;
 
-        public AdoStarParametersReader(OutputContext output, Process parent, IConnectionFactory cf, IRowFactory rowFactory) {
+        public AdoStarParametersReader(IConnectionContext output, Process parent, IConnectionFactory cf, IRowFactory rowFactory) {
             _output = output;
             _parent = parent;
             _cf = cf;
@@ -39,12 +39,18 @@ namespace Transformalize.Provider.Ado {
 
         public IEnumerable<IRow> Read() {
 
+            if (_parent.Entities.Sum(e => e.Inserts + e.Updates + e.Deletes) == 0) {
+                yield break;
+            };
+
             var batches = _parent.Entities.Select(e => e.BatchId).ToArray();
             var minBatchId = batches.Min();
             var maxBatchId = batches.Max();
             _output.Info("Batch Range: {0} to {1}.", minBatchId, maxBatchId);
 
-            var sql = $"SELECT {string.Join(",", _output.Entity.Fields.Where(f=>f.Output).Select(f => _cf.Enclose(f.Alias)))} FROM {_cf.Enclose(_output.Process.Star)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} WHERE {_cf.Enclose(Constants.TflBatchId)} BETWEEN @MinBatchId AND @MaxBatchId;";
+            var threshold = minBatchId - 1;
+
+            var sql = $"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))} FROM {_cf.Enclose(_output.Process.Star)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} WHERE {_cf.Enclose(Constants.TflBatchId)} > @threshold;";
             _output.Debug(() => sql);
 
             using (var cn = _cf.GetConnection()) {
@@ -57,19 +63,12 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandText = sql;
 
                 var min = cmd.CreateParameter();
-                min.ParameterName = "@MinBatchId";
-                min.Value = minBatchId;
+                min.ParameterName = "@threshold";
+                min.Value = threshold;
                 min.Direction = ParameterDirection.Input;
                 min.DbType = DbType.Int32;
 
-                var max = cmd.CreateParameter();
-                max.ParameterName = "@MaxBatchId";
-                max.Value = maxBatchId;
-                max.Direction = ParameterDirection.Input;
-                max.DbType = DbType.Int32;
-
                 cmd.Parameters.Add(min);
-                cmd.Parameters.Add(max);
 
                 var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
                 var rowCount = 0;

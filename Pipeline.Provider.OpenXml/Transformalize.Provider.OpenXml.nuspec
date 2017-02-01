@@ -1,27 +1,25 @@
 <?xml version="1.0"?>
-<package>
+<package >
   <metadata>
-    <id>Transformalize.Provider.SQLite</id>
+    <id>Transformalize.Provider.OpenXml</id>
     <version>0.2.2-beta</version>
-    <title>Transformalize Provider SQLite</title>
+    <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>SQLite Provider for Transformalize</description>
+    <description>used to write excel</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright 2013-2016</copyright>
+    <copyright>Copyright 2013-2017</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
         <dependency id="Transformalize" version="0.2.2-beta" />
-        <dependency id="System.Data.SQLite.Core" version="1.0.104" />
-        <dependency id="Transformalize.Provider.Ado" version="0.2.2-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Provider.SQLite.dll" target="lib\net452\Transformalize.Provider.SQLite.dll" />
+    <file src="bin\Release\Transformalize.Provider.OpenXml.dll" target="lib\net452\Transformalize.Provider.OpenXml.dll" />
   </files>
 </package>

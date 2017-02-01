@@ -69,6 +69,8 @@
     <Compile Include="AdoEntityMatchingFieldsReader.cs" />
     <Compile Include="AdoEntityMatchingKeysReader.cs" />
     <Compile Include="AdoEntityUpdater.cs" />
+    <Compile Include="AdoFlatTableCreator.cs" />
+    <Compile Include="AdoFlattenAction.cs" />
     <Compile Include="AdoInitializer.cs" />
     <Compile Include="AdoInputBatchReader.cs" />
     <Compile Include="AdoMasterUpdater.cs" />

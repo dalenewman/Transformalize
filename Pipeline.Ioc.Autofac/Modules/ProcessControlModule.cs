@@ -22,6 +22,7 @@ using Autofac;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Provider.Ado;
 using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -79,7 +80,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             controller.PreActions.Add(ctx.Resolve<IInitializer>());
                             break;
                         default:
-                            output.Debug(()=>$"The {outputConnection.Provider} provider does not support initialization.");
+                            output.Debug(() => $"The {outputConnection.Provider} provider does not support initialization.");
                             break;
                     }
 
@@ -100,6 +101,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 break;
                         }
                     }
+                }
+
+                // flatten
+                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
+                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(o.Connection.Provider)) {
+                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
                 }
 
                 // templates
