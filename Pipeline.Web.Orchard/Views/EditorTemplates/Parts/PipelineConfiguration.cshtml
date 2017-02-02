@@ -21,7 +21,7 @@
 
 <div class="editor-field">
     @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
-    @Html.DropDownListFor(x => x.EditorMode, Model.EditorModes)
+    @Html.DropDownListFor(x => x.EditorMode, PipelineConfigurationPart.EditorModes)
     @Html.ValidationMessageFor(x => x.EditorMode)
 
     <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
@@ -106,17 +106,17 @@
                 <p>
                     <strong style="color: red; font-weight: bold;">CAUTION</strong>: You should only white-list internal IP addresses on configurations using trusted authentication. Trusted
                     authentication does not store the <code>user</code> and <code>password</code> in your connections. Instead, it relies on the credentials
-                    of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br/><br />
+                    of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br/><br/>
                 </p>
 
                 <p>
                     White-listing allows access to <code>~/Pipeline/Api/Cfg</code> so that
-                    other computers on your network can read the configuration (and run them, or not).<br /><br />
+                    other computers on your network can read the configuration (and run them, or not).<br/><br/>
                 </p>
 
                 <p>
                     You can enable <code>~/Pipeline/Api/Run</code> by tagging this configuration as <strong>SERVICE</strong> below. Note: Run removes
-                    the credentials (user, password) from the connections.<br /><br />
+                    the credentials (user, password) from the connections.<br/><br/>
                 </p>
                 <p>
                     @T("Your IP is {0}", Request.UserHostAddress).
@@ -125,3 +125,5 @@
         </tr>
     </table>
 </fieldset>
+
+<input id="PipelineConfiguration_Migrated" name="PipelineConfiguration.Migrated" type="hidden" value="true">

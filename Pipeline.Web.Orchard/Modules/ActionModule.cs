@@ -1,6 +1,7 @@
 #region license
 // Transformalize
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,6 +82,9 @@ namespace Pipeline.Web.Orchard.Modules {
                     return new LogAction(context, action);
                 case "web":
                     return new WebAction(context, action);
+                case "wait":
+                case "sleep":
+                    return new WaitAction(action);
                 case "tfl":
                     var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
                     if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Body)) {
@@ -93,7 +97,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         context.Warn(warning);
                     }
                     if (root.Errors().Any()) {
-                        context.Error($"TFL Pipeline Action '{cfg.Left(20)}' + ... has errors!");
+                        context.Error($"TFL Pipeline Action '{cfg.Left(15) + "..." + cfg.Right(15)}' has errors!");
                         foreach (var error in root.Errors()) {
                             context.Error(error);
                         }
@@ -114,6 +118,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     // providers
                     builder.RegisterCallback(new AdoModule(root).Configure);
                     builder.RegisterCallback(new SolrModule(root).Configure);
+                    builder.RegisterCallback(new ElasticModule(root).Configure);
                     builder.RegisterCallback(new InternalModule(root).Configure);
                     builder.RegisterCallback(new FileModule().Configure);
                     builder.RegisterCallback(new ExcelModule().Configure);

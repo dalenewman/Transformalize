@@ -16,6 +16,8 @@
 #endregion
 using System;
 using System.Data;
+using Orchard;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.MetaData;
 using Orchard.ContentManagement.MetaData.Models;
 using Orchard.Core.Contents.Extensions;
@@ -23,30 +25,26 @@ using Orchard.Data.Migration;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
+using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard {
 
     public class CoreMigrations : DataMigrationImpl {
         public ILogger Logger { get; set; }
         public Localizer T { get; set; }
+        private readonly IOrchardServices _orchardServices;
         private readonly INotifier _notifier;
 
-        public CoreMigrations(INotifier notifier) {
+        public CoreMigrations(IOrchardServices orchardServices, INotifier notifier) {
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
+            _orchardServices = orchardServices;
             _notifier = notifier;
         }
 
         public int Create() {
 
             try {
-
-                SchemaBuilder.CreateTable(Common.PipelineConfigurationName + "PartRecord", table => table
-                    .ContentPartRecord()
-                    .Column("Configuration", DbType.String, column => column.Unlimited())
-                    .Column("StartAddress", DbType.String)
-                    .Column("EndAddress", DbType.String)
-                );
 
                 ContentDefinitionManager.StoreTypeDefinition(
                     new ContentTypeDefinition(Common.PipelineConfigurationName, "Pipeline")
@@ -82,9 +80,6 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom1() {
-            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord",
-                table => table
-                    .AddColumn("EditorMode", DbType.String));
             return 2;
         }
 
@@ -98,13 +93,10 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom3() {
-            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Runnable", DbType.Boolean));
-            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Reportable", DbType.Boolean));
             return 4;
         }
 
         public int UpdateFrom4() {
-            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("NeedsInputFile", DbType.Boolean));
             return 5;
         }
 
@@ -126,6 +118,23 @@ namespace Pipeline.Web.Orchard {
         public int UpdateFrom8() {
             SchemaBuilder.AlterTable(Common.PipelineSettingsName + "PartRecord", table => table.AddColumn("MapBoxLimit", DbType.Int32));
             return 9;
+        }
+
+        public int UpdateFrom9() {
+            var cfgs = _orchardServices.ContentManager.Query<PipelineConfigurationPart, PipelineConfigurationPartRecord>(VersionOptions.Published);
+            foreach (var cfg in cfgs.List()) {
+                if (!cfg.Migrated) {
+                    cfg.Configuration = cfg.Record.Configuration;
+                    cfg.Reportable = cfg.Record.Runnable;
+                    cfg.Runnable = cfg.Record.Runnable;
+                    cfg.NeedsInputFile = cfg.Record.NeedsInputFile;
+                    cfg.StartAddress = cfg.Record.StartAddress;
+                    cfg.EndAddress = cfg.Record.EndAddress;
+                    cfg.EditorMode = cfg.Record.EditorMode;
+                    cfg.Migrated = true;
+                }
+            }
+            return 10;
         }
 
     }

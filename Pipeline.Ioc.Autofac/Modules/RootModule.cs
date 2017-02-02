@@ -69,9 +69,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
+					new DateMathModifier(),
                     ctx.ResolveNamed<ICustomizer>("environment"),
-                    ctx.ResolveNamed<ICustomizer>("js"),
-                    new DateMathModifier()
+                    ctx.ResolveNamed<ICustomizer>("js")
+                    
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {

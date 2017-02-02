@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ using Transformalize;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Provider.Ado;
 using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -101,6 +102,12 @@ namespace Pipeline.Web.Orchard.Modules {
                                 break;
                         }
                     }
+                }
+
+                // flatten
+                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
+                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(o.Connection.Provider)) {
+                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
                 }
 
                 // templates

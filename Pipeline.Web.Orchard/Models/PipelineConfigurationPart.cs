@@ -24,19 +24,18 @@ using Orchard.Tags.Models;
 namespace Pipeline.Web.Orchard.Models {
     public class PipelineConfigurationPart : ContentPart<PipelineConfigurationPartRecord> {
 
-        public List<SelectListItem> EditorModes { get; set; }
-
-        public PipelineConfigurationPart() {
-            EditorModes = new List<SelectListItem> {
-                new SelectListItem {Selected = false, Text = "JSON", Value = "json"}, 
-                new SelectListItem {Selected = false, Text = "XML", Value = "xml"}, 
+        public static List<SelectListItem> EditorModes = new List<SelectListItem> {
+                new SelectListItem {Selected = false, Text = "JSON", Value = "json"},
+                new SelectListItem {Selected = false, Text = "XML", Value = "xml"},
                 new SelectListItem {Selected = false, Text = "YAML", Value = "yaml"}
-            };
-        }
+        };
 
-        public string Configuration {
-            get {
-                if (string.IsNullOrEmpty(Record.Configuration)) {
+        public string Configuration
+        {
+            get
+            {
+                var cfg = this.Retrieve(x => x.Configuration, versioned: true);
+                if (string.IsNullOrEmpty(cfg)) {
                     return @"<cfg name=""name"">
     <connections>
     </connections>
@@ -44,11 +43,9 @@ namespace Pipeline.Web.Orchard.Models {
     </entities>
 </cfg>";
                 }
-                return Record.Configuration;
+                return cfg;
             }
-            set {
-                Record.Configuration = value;
-            }
+            set { this.Store(x => x.Configuration, value, true); }
         }
 
         public string Title() {
@@ -57,36 +54,48 @@ namespace Pipeline.Web.Orchard.Models {
 
         public IEnumerable<string> Tags() {
             return this.As<TagsPart>().CurrentTags;
-        } 
-
-        public string StartAddress {
-            get { return Record.StartAddress ?? string.Empty; }
-            set { Record.StartAddress = value; }
         }
 
-        public string EndAddress {
-            get { return Record.EndAddress ?? string.Empty; }
-            set { Record.EndAddress = value; }
+        public string StartAddress
+        {
+            get { return this.Retrieve(x => x.StartAddress, versioned: true) ?? string.Empty; }
+            set { this.Store(x => x.StartAddress, value, true); }
         }
 
-        public bool Runnable {
-            get { return Record.Runnable; }
-            set { Record.Runnable = value; }
+        public string EndAddress
+        {
+            get { return this.Retrieve(x => x.EndAddress, versioned: true) ?? string.Empty; }
+            set { this.Store(x => x.EndAddress, value, true); }
         }
 
-        public bool Reportable {
-            get { return Record.Reportable; }
-            set { Record.Reportable = value; }
+        public bool Runnable
+        {
+            get { return this.Retrieve(x => x.Runnable, versioned: true); }
+            set { this.Store(x => x.Runnable, value, true); }
         }
 
-        public bool NeedsInputFile {
-            get { return Record.NeedsInputFile; }
-            set { Record.NeedsInputFile = value; }
+        public bool Reportable
+        {
+            get { return this.Retrieve(x => x.Reportable, versioned: true); }
+            set { this.Store(x => x.Reportable, value, true); }
         }
 
-        public string EditorMode {
-            get { return Record.EditorMode ?? "xml"; }
-            set { Record.EditorMode = value; }
+        public bool NeedsInputFile
+        {
+            get { return this.Retrieve(x => x.NeedsInputFile, versioned: true); }
+            set { this.Store(x => x.NeedsInputFile, value, true); }
+        }
+
+        public string EditorMode
+        {
+            get { return this.Retrieve(x => x.EditorMode, versioned: true) ?? "xml"; }
+            set { this.Store(x => x.EditorMode, value, true); }
+        }
+
+        public bool Migrated
+        {
+            get { return this.Retrieve(x => x.Migrated, versioned: false, defaultValue: () => false); }
+            set { this.Store(x => x.Migrated, value, versioned: false); }
         }
 
         public bool IsValid() {

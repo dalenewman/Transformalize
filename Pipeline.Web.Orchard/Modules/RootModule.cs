@@ -1,6 +1,7 @@
 ﻿#region license
 // Transformalize
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -123,20 +124,22 @@ namespace Pipeline.Web.Orchard.Modules {
                 // this might be put into it's own type and injected (or not)
                 if (process.Entities.Count == 1) {
                     var entity = process.Entities.First();
-                    if (!entity.Fields.Any(f => f.Input) && ctx.IsRegistered<ISchemaReader>()) {
+                    if (!entity.HasInput() && ctx.IsRegistered<ISchemaReader>()) {
                         var schemaReader = ctx.Resolve<ISchemaReader>(new TypedParameter(typeof(Process), process));
-                        var newEntity = schemaReader.Read(entity).Entities.First();
+                        var schema = schemaReader.Read(entity);
+                        var newEntity = schema.Entities.First();
                         foreach (var sf in newEntity.Fields.Where(f => f.Name == Constants.TflKey || f.Name == Constants.TflDeleted || f.Name == Constants.TflBatchId || f.Name == Constants.TflHashCode)) {
                             sf.Alias = newEntity.Name + sf.Name;
                         }
                         process.Entities.Clear();
                         process.Entities.Add(newEntity);
+                        process.Connections.First(c => c.Name == newEntity.Connection).Delimiter = schema.Connection.Delimiter;
                         process = new Process(process.Serialize(), ctx.Resolve<ISerializer>());
                     }
                 }
 
                 return process;
-            }).As<Process>();
+            }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
 
         }
     }

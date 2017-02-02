@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2016 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
@@ -152,7 +153,11 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "postgresql":
                         case "sqlite":
                         case "sqlserver":
-                            return new AdoStarController(output, new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
+                            var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
+                            if (_process.Flatten) {
+                                actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
+                            }
+                            return new AdoStarController(output, actions);
                         default:
                             return new NullOutputController();
                     }
@@ -259,19 +264,19 @@ namespace Pipeline.Web.Orchard.Modules {
                     // WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
 
                         switch (output.Connection.Provider) {
                             case "sqlserver":
                                 return new SqlServerWriter(
                                     output,
-                                    ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key),
+                                    cf,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key))
+                                    new AdoEntityUpdater(output, cf)
                                 );
                             case "mysql":
                             case "postgresql":
                             case "sqlite":
-                                var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
                                 return new AdoEntityWriter(
                                     output,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),

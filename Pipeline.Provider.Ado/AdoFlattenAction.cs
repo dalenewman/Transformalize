@@ -61,7 +61,7 @@ WHERE m.{batch} > @threshold;
                 cn.Open();
                 try {
                     _output.Debug(() => sql);
-                    var count = threshold > 0 ? cn.Execute(sql, new { threshold }) : cn.Execute(sql);
+                    var count = threshold > 0 ? cn.Execute(sql, new { threshold }, commandTimeout: 0) : cn.Execute(sql, commandTimeout:0);
                     message = $"{count} record(s) flattened";
                     _output.Info(message);
                 } catch (DbException ex) {

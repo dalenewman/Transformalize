@@ -71,7 +71,7 @@
     </thead>
     <tbody>
     @foreach (var part in Model.Configurations) {
-        var title = part.As<TitlePart>().Title;
+        var title = part.Title();
 
         <tr class="@(inputFileId > 0 && part.NeedsInputFile && arrangementId == part.Id ? "success" : string.Empty)">
             <td>
