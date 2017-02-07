@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,16 +24,13 @@ using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
-using SolrNet.Utils;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Loggers;
-using Transformalize.Nulls;
 using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Jint;
 using Transformalize.Transform.Razor;
-using IParser = Transformalize.Contracts.IParser;
 
 // ReSharper disable PossibleMultipleEnumeration
 

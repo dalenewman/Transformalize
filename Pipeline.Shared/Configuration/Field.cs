@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -198,7 +197,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = true)]
         public bool ReadInnerXml { get; set; }
 
+        [Cfg(serialize=false)]
         public short Index { get; set; }
+
         public short KeyIndex { get; set; }
 
         /// <summary>
@@ -369,7 +370,10 @@ namespace Transformalize.Configuration {
         /// Set by Process.ModifyKeyTypes
         /// </summary>
         public KeyType KeyType { get; set; }
+
+        [Cfg(serialize = false)]
         public short EntityIndex { get; internal set; }
+
         public short MasterIndex { get; set; }
 
         [Cfg(value = false)]
@@ -529,5 +533,7 @@ namespace Transformalize.Configuration {
 
         [Cfg(value=false)]
         public bool Learn { get; set; }
+
+        public string Source { get; set; }
     }
 }

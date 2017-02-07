@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -58,24 +57,10 @@ namespace Transformalize.Provider.Ado {
                 var update = UpdateStatement(status);
                 var trans = cn.BeginTransaction();
                 try {
-                    var rows = new List<ExpandoObject>();
-                    using (var reader = cn.ExecuteReader(select, new { TflBatchId = _c.Entity.BatchId, MasterTflBatchId = _master.BatchId }, trans, 0, CommandType.Text)) {
-                        while (reader.Read()) {
-                            var obj = new ExpandoObject();
-                            var dict = (IDictionary<string, object>)obj;
-                            for (var i = 0; i < reader.FieldCount; i++) {
-                                dict[reader.GetName(i)] = reader.GetValue(i);
-                            }
-                            dict[_master.TflBatchId().FieldName()] = _c.Entity.BatchId;
-                            rows.Add(obj);
-                        }
-                    }
-                    if (rows.Any()) {
-                        foreach (var batch in rows.Partition(_master.UpdateSize)) {
-                            var expanded = batch.ToArray();
-                            cn.Execute(update, expanded, trans);
-                            _c.Increment(expanded.Length);
-                        }
+                    foreach (var batch in Read(cn, select).Partition(_master.UpdateSize)) {
+                        var expanded = batch.ToArray();
+                        cn.Execute(update, expanded, trans);
+                        _c.Increment(expanded.Length);
                     }
                     trans.Commit();
                 } catch (Exception ex) {
@@ -160,6 +145,20 @@ namespace Transformalize.Provider.Ado {
             _c.Debug(() => sql);
             return sql;
 
+        }
+
+        private IEnumerable<ExpandoObject> Read(IDbConnection cn, string select) {
+            using (var reader = cn.ExecuteReader(select, new { TflBatchId = _c.Entity.BatchId, MasterTflBatchId = _master.BatchId }, null, 0, CommandType.Text)) {
+                while (reader.Read()) {
+                    var obj = new ExpandoObject();
+                    var dict = (IDictionary<string, object>)obj;
+                    for (var i = 0; i < reader.FieldCount; i++) {
+                        dict[reader.GetName(i)] = reader.GetValue(i);
+                    }
+                    dict[_master.TflBatchId().FieldName()] = _c.Entity.BatchId;
+                    yield return obj;
+                }
+            }
         }
     }
 }

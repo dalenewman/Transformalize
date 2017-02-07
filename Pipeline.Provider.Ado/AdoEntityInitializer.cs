@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System.Data;
 using Dapper;
 using Transformalize.Actions;
@@ -67,10 +66,17 @@ namespace Transformalize.Provider.Ado {
         }
 
         void Create(IDbConnection cn) {
-            var sql = _context.SqlCreateOutput(_cf);
-            cn.Execute(sql);
-            cn.Execute(_context.SqlCreateOutputUniqueIndex(_cf));
-            cn.Execute(_context.SqlCreateOutputView(_cf));
+            var createSql = _context.SqlCreateOutput(_cf);
+            cn.Execute(createSql);
+
+            var createIndex = _context.SqlCreateOutputUniqueIndex(_cf);
+            cn.Execute(createIndex);
+
+            if (_cf.AdoProvider == AdoProvider.SqlCe)
+                return;
+
+            var createView = _context.SqlCreateOutputView(_cf);
+            cn.Execute(createView);
         }
 
         public ActionResponse Execute() {

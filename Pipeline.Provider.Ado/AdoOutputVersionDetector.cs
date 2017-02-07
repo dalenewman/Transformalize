@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using Dapper;
 using Transformalize.Context;
@@ -42,6 +41,9 @@ namespace Transformalize.Provider.Ado {
             switch (_cf.AdoProvider) {
                 case AdoProvider.PostgreSql:
                     sql = $"SELECT {_cf.Enclose(version.Alias)} FROM {_cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name))} WHERE {_cf.Enclose(Constants.TflDeleted)} = false ORDER BY {_cf.Enclose(version.Alias)} DESC LIMIT 1;";
+                    break;
+                case AdoProvider.SqlCe:
+                    sql = $"SELECT MAX({_cf.Enclose(version.FieldName())}) FROM {_cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name))} WHERE {_cf.Enclose(_context.Entity.TflDeleted().FieldName())} = 0;";
                     break;
                 default:
                     sql = $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {_cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name))} WHERE {_cf.Enclose(Constants.TflDeleted)} = 0;";

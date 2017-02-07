@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -516,6 +515,15 @@ namespace Transformalize.Configuration {
             foreach (var parameter in entity.GetAllFields().SelectMany(f => f.Transforms).SelectMany(t => t.Parameters)) {
                 parameter.Entity = string.Empty;
             }
+
+            foreach (var field in entity.Fields) {
+                field.Source = Utility.GetExcelName(field.EntityIndex) + "." + field.FieldName();
+            }
+
+            foreach (var field in entity.CalculatedFields) {
+                field.Source = Utility.GetExcelName(field.EntityIndex) + "." + field.FieldName();
+            }
+
             entity.ModifyIndexes();
             calc.Entities.Add(entity);
             calc.ModifyKeys();
@@ -543,6 +551,12 @@ namespace Transformalize.Configuration {
 
         public bool Preserve { get; set; }
 
+        [Cfg]
+        public List<CfgRow> Rows { get; set; }
+
+        [Cfg(value = false)]
+        public bool IsReverse { get; set; }
+
         public List<Parameter> GetActiveParameters() {
             if (!Environments.Any())
                 return new List<Parameter>();
@@ -569,6 +583,10 @@ namespace Transformalize.Configuration {
 
         public bool IsFirstRun() {
             return !Entities.Any() || Entities.First().IsFirstRun;
+        }
+
+        public bool OutputIsRelational() {
+            return Output() != null && Constants.AdoProviderSet().Contains(Output().Provider);
         }
     }
 }

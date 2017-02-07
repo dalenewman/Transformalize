@@ -16,30 +16,33 @@
 // limitations under the License.
 #endregion
 using Autofac;
+using Cfg.Net.Ext;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Provider.SqlCe;
 using Transformalize.Provider.SqlServer;
 
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationSqlServer {
+    public class NorthWindIntegrationSqlCe {
 
-        public string TestFile { get; set; } = @"Files\NorthWind.xml";
+        public string TestFile { get; set; } = @"Files\NorthWindSqlServerToSqlCe.xml";
 
         public Connection InputConnection { get; set; } = new Connection {
             Name = "input",
             Provider = "sqlserver",
-            ConnectionString = "server=localhost;database=NorthWind;trusted_connection=true;"
-        };
+            Server = "localhost",
+            Database = "Northwind"
+        }.WithDefaults();
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
-            Provider = "sqlserver",
-            ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
-        };
+            Provider = "sqlce",
+            File = @"c:\temp\northwind.sdf"
+        }.WithDefaults();
 
         public Process ResolveRoot(IContainer container, string file, bool init) {
             return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
@@ -47,7 +50,7 @@ namespace Tests {
 
         [TestMethod]
         [Ignore]
-        public void SqlServer_Integration() {
+        public void SqlCe_Integration() {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
@@ -70,12 +73,10 @@ namespace Tests {
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
-            using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+            using (var cn = new SqlCeConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
                 Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT TOP 1 Inserts FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 1;"));
-                Assert.AreEqual(5, cn.ExecuteScalar<int>("SELECT TOP 1 TflBatchId FROM NorthWindStar;"), 0.0, "Should be 5, for Projects (last one with fk)");
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindFlat;"));
+                // Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindFlat;"));
             }
 
             // FIRST DELTA, NO CHANGES
@@ -85,9 +86,9 @@ namespace Tests {
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
-            using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+            using (var cn = new SqlCeConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
+                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM [NorthWindOrder DetailsTable];"));
                 Assert.AreEqual(0, cn.ExecuteScalar<int>("SELECT TOP 1 Inserts+Updates+Deletes FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9;"));
                 Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindFlat;"));
             }
@@ -106,12 +107,9 @@ namespace Tests {
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
-            using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+            using (var cn = new SqlCeConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT TOP 1 Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 17;"));
-                Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
 
                 Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindFlat WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
                 Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindFlat WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
@@ -131,13 +129,9 @@ namespace Tests {
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
-            using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+            using (var cn = new SqlCeConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Orders' AND BatchId = 26;"));
-
-                Assert.AreEqual("VICTE", cn.ExecuteScalar<string>("SELECT OrdersCustomerId FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
-                Assert.AreEqual(20.11M, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
-                Assert.AreEqual(26, cn.ExecuteScalar<int>("SELECT TflBatchId FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
 
                 Assert.AreEqual("VICTE", cn.ExecuteScalar<string>("SELECT OrdersCustomerId FROM NorthWindFlat WHERE OrderDetailsOrderId= 10254;"));
                 Assert.AreEqual(20.11M, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindFlat WHERE OrderDetailsOrderId= 10254;"));
@@ -156,12 +150,9 @@ namespace Tests {
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
-            using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+            using (var cn = new SqlCeConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Customers' AND BatchId = 35;"));
-
-                Assert.AreEqual("Paul Ibsen", cn.ExecuteScalar<string>("SELECT DISTINCT CustomersContactName FROM NorthWindStar WHERE OrdersCustomerID = 'VAFFE';"));
-                Assert.AreEqual(35, cn.ExecuteScalar<int>("SELECT DISTINCT TflBatchId FROM NorthWindStar WHERE OrdersCustomerID = 'VAFFE';"), "The TflBatchId should be updated on the master to indicate a change has occured.");
 
                 Assert.AreEqual("Paul Ibsen", cn.ExecuteScalar<string>("SELECT DISTINCT CustomersContactName FROM NorthWindFlat WHERE OrdersCustomerID = 'VAFFE';"));
                 Assert.AreEqual(35, cn.ExecuteScalar<int>("SELECT DISTINCT TflBatchId FROM NorthWindFlat WHERE OrdersCustomerID = 'VAFFE';"), "The TflBatchId should be updated on the master to indicate a change has occured.");

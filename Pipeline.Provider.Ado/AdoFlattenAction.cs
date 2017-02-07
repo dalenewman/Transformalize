@@ -1,12 +1,31 @@
-using System.Data.Common;
+#region license
+// Transformalize
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2017 Dale Newman
+//  
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   
+//       http://www.apache.org/licenses/LICENSE-2.0
+//   
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#endregion
 using System.Linq;
-using Dapper;
+using System.Text;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
+
     public class AdoFlattenAction : IAction {
+
         private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
 
@@ -14,61 +33,69 @@ namespace Transformalize.Provider.Ado {
             _output = output;
             _cf = cf;
         }
+
         public ActionResponse Execute() {
-
             if (_output.Process.Entities.Sum(e => e.Inserts + e.Updates + e.Deletes) == 0) {
-                return new ActionResponse(200, "nothing flattened");
-            };
-
-            var message = "0 records flattened";
-            var sql = "";
-            var threshold = 0;
-
-            var fields = _output.Process.GetStarFields().SelectMany(e => e.Select(f => _cf.Enclose(f.Alias))).ToArray();
-            var flat = _cf.Enclose(_output.Process.Flat);
-            var star = _cf.Enclose(_output.Process.Star);
-
-            if (_output.Process.IsFirstRun()) {
-                sql = $"INSERT INTO {flat}({string.Join(",", fields)}) SELECT {string.Join(",", fields)} FROM {star};";
-            } else {
-                threshold = _output.Process.Entities.Select(e => e.BatchId).ToArray().Min() - 1;
-                var masterEntity = _output.Process.Entities.First();
-                var master = _cf.Enclose(masterEntity.OutputTableName(_output.Process.Name));
-                var tflKey = _cf.Enclose(Constants.TflKey);
-                var key = _cf.Enclose(masterEntity.Fields.First(f => f.Name == Constants.TflKey).FieldName());
-                var batch = _cf.Enclose(masterEntity.Fields.First(f => f.Name == Constants.TflBatchId).FieldName());
-                var updates = string.Join(", ", fields.Where(f => f != tflKey).Select(f => $"f.{f} = s.{f}"));
-
-                sql = $@"
-INSERT INTO {flat}({string.Join(",", fields)})
-SELECT s.{string.Join(",s.", fields)}
-FROM {master} m
-LEFT OUTER JOIN {flat} f ON (f.{tflKey} = m.{key})
-INNER JOIN {star} s ON (s.{tflKey} = m.{key})
-WHERE f.{tflKey} IS NULL
-AND m.{batch} > @threshold;
-
-UPDATE f
-SET {updates}
-FROM {flat} f
-INNER JOIN {master} m ON (m.{key} = f.{tflKey})
-INNER JOIN {star} s ON (f.{tflKey} = s.{tflKey})
-WHERE m.{batch} > @threshold;
-";
+                return new ActionResponse(200, "nothing to flatten");
             }
 
-            using (var cn = _cf.GetConnection()) {
-                cn.Open();
-                try {
-                    _output.Debug(() => sql);
-                    var count = threshold > 0 ? cn.Execute(sql, new { threshold }, commandTimeout: 0) : cn.Execute(sql, commandTimeout:0);
-                    message = $"{count} record(s) flattened";
-                    _output.Info(message);
-                } catch (DbException ex) {
-                    return new ActionResponse(500, ex.Message);
+            var model = new AdoSqlModel(_output, _cf);
+
+            if (model.MasterEntity.Inserts > 0) {
+
+                if (_output.Process.IsFirstRun()) {
+                    return new AdoFlattenFirstRunAction(_output, _cf, model).Execute();
                 }
+
+                if (_cf.AdoProvider == AdoProvider.SqlCe) {
+                    var insertAction = new AdoFlattenInsertBySelectAction(_output, _cf, model);
+                    var insertResponse = insertAction.Execute();
+                    if (insertResponse.Code != 200) {
+                        return insertResponse;
+                    }
+                } else {
+                    var insertAction = new AdoFlattenInsertByViewAction(_output, _cf, model);
+                    var insertResponse = insertAction.Execute();
+                    if (insertResponse.Code != 200) {
+                        return insertResponse;
+                    }
+                }
+
             }
-            return new ActionResponse(200, message);
+
+            switch (_cf.AdoProvider) {
+                case AdoProvider.SqlCe:
+                    // this provider does NOT support views, and does NOT support UPDATE ... SET ... FROM ... syntax
+
+                    var masterAlias = Utility.GetExcelName(model.MasterEntity.Index);
+                    var builder = new StringBuilder();
+                    builder.AppendLine($"SELECT {_output.SqlStarFields(_cf)}");
+
+                    foreach (var from in _output.SqlStarFroms(_cf)) {
+                        builder.AppendLine(@from);
+                    }
+
+                    builder.AppendFormat("INNER JOIN {0} flat ON (flat.{1} = {2}.{3})", _cf.Enclose(_output.Process.Flat), model.EnclosedKeyLongName, masterAlias, model.EnclosedKeyShortName);
+
+                    builder.AppendLine($" WHERE {masterAlias}.{model.Batch} > @Threshold; ");
+
+                    return new AdoFlattenTwoPartUpdateAction(_output, _cf, model, builder.ToString()).Execute();
+                case AdoProvider.SqLite:
+
+                    // this provider supports views, but does NOT support UPDATE ... SET ... FROM ... syntax
+
+                    var sql = $@"
+                        SELECT s.{string.Join(",s.", model.Aliases)}
+                        FROM {model.Master} m
+                        INNER JOIN {model.Flat} f ON (f.{model.EnclosedKeyLongName} = m.{model.EnclosedKeyShortName})
+                        INNER JOIN {model.Star} s ON (s.{model.EnclosedKeyLongName} = m.{model.EnclosedKeyShortName})
+                        WHERE m.{model.Batch} > @Threshold;";
+                    return new AdoFlattenTwoPartUpdateAction(_output, _cf, model, sql).Execute();
+                default:
+                    // these providers support views and UPDATE ... SET ... FROM ... syntax (server based)
+                    return new AdoFlattenUpdateByViewAction(_output, _cf, model).Execute();
+            }
         }
+
     }
 }

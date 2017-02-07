@@ -15,24 +15,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
+using Transformalize.Desktop.Loggers;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging.NLog;
 
-namespace Transformalize.Command {
+namespace Tests {
     public static class ProcessFactory {
 
-        public static bool TryCreate(string cfg, string shorthand, Dictionary<string,string> parameters, out Process process) {
+        public static bool TryCreate(string cfg, string shorthand, Dictionary<string, string> parameters, out Process process, IPipelineLogger logger) {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(shorthand));
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
+            builder.Register(c => logger ?? new TraceLogger()).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
@@ -56,10 +56,14 @@ namespace Transformalize.Command {
             return process.Errors().Length == 0;
         }
 
-        public static Process Create(string cfg, string shorthand, Dictionary<string,string> parameters) {
+        public static Process Create(string cfg, string shorthand, Dictionary<string, string> parameters, IPipelineLogger logger = null) {
             Process process;
-            TryCreate(cfg, shorthand, parameters, out process);
+            TryCreate(cfg, shorthand, parameters, out process, logger);
             return process;
+        }
+
+        public static Process Create(string cfg, string shorthand, IPipelineLogger logger = null) {
+            return Create(cfg, shorthand, new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase), logger);
         }
     }
 }

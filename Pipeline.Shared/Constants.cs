@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -37,7 +36,7 @@ namespace Transformalize {
         public const string DefaultSetting = "[default]";
 
         public const string ProviderDomain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel";
-        public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite";
+        public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite,sqlce";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
         public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";

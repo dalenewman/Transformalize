@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Linq;
 using Cfg.Net.Ext;
@@ -59,16 +58,16 @@ namespace Transformalize.Configuration.Ext {
             DefaultFileInspection(p);
 
             foreach (var entity in p.Entities) {
-                if (p.Output().IsInternal()) {
-                    entity.CalculateHashCode = false;
-                }
                 try {
                     entity.AdaptFieldsCreatedFromTransforms();
                 } catch (Exception ex) {
                     error($"Trouble adapting fields created from transforms. {ex.Message}");
                 }
 
-                entity.AddSystemFields();
+                if (!p.IsReverse) {
+                    entity.AddSystemFields();
+                }
+
                 entity.ModifyMissingPrimaryKey();
                 entity.ModifyIndexes();
             }

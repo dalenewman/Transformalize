@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System.Data.Common;
 using Dapper;
 using Transformalize.Actions;
@@ -36,6 +35,9 @@ namespace Transformalize.Provider.Ado {
         }
 
         public ActionResponse Execute() {
+            if (_cf.AdoProvider == AdoProvider.SqlCe)
+                return new ActionResponse();
+
             var drop = _output.SqlDropStarView(_cf);
             var create = _output.SqlCreateStarView(_cf);
 

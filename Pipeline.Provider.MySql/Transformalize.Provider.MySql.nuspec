@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.MySql</id>
-    <version>0.2.2-beta</version>
+    <version>0.2.3-beta</version>
     <title>Transformalize Provider MySql</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,9 +15,8 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.2-beta" />
+        <dependency id="Transformalize.Provider.Ado" version="0.2.3-beta" />
         <dependency id="MySql.Data" version="6.7.9" />
-        <dependency id="Transformalize.Provider.Ado" version="0.2.2-beta" />
       </group>
     </dependencies>
   </metadata>

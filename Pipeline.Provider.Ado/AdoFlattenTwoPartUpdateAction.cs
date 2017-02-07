@@ -1,0 +1,100 @@
+#region license
+// Transformalize
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2017 Dale Newman
+//  
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//   
+//       http://www.apache.org/licenses/LICENSE-2.0
+//   
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+#endregion
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using System.Linq;
+using System.Text;
+using Dapper;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Extensions;
+
+namespace Transformalize.Provider.Ado {
+    public class AdoFlattenTwoPartUpdateAction : IAction {
+
+        private readonly OutputContext _output;
+        private readonly IConnectionFactory _cf;
+        private readonly AdoSqlModel _model;
+        private readonly string _sql;
+
+        public AdoFlattenTwoPartUpdateAction(
+            OutputContext output,
+            IConnectionFactory cf,
+            AdoSqlModel model,
+            string sql
+        ) {
+            _output = output;
+            _cf = cf;
+            _model = model;
+            _sql = sql;
+        }
+
+        public ActionResponse Execute() {
+
+            var updateVariables = string.Join(", ", _model.Fields.Where(f => f.Name != _model.KeyLongName).Select(f => $"{_cf.Enclose(f.Alias)} = @{f.FieldName()}"));
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"UPDATE {_output.Process.Flat}");
+            builder.AppendLine($"SET {updateVariables}");
+            builder.AppendLine($"WHERE {_model.EnclosedKeyLongName} = @{_model.KeyShortName};");
+
+            var command = builder.ToString();
+
+            using (var cn = _cf.GetConnection()) {
+                cn.Open();
+                var count = 0;
+                var trans = cn.BeginTransaction();
+                try {
+                    foreach (var batch in Read(cn, _sql, _model).Partition(_model.MasterEntity.UpdateSize)) {
+                        var expanded = batch.ToArray();
+                        cn.Execute(command, expanded, trans);
+                        count += expanded.Length;
+                        _output.Increment(expanded.Length);
+                    }
+                    trans.Commit();
+                    _output.Info($"{count} record{count.Plural()} updated in flat");
+                } catch (Exception ex) {
+                    _output.Error(ex.Message);
+                    _output.Error(_sql);
+                    _output.Warn("rolling back");
+                    trans.Rollback();
+                    return new ActionResponse(500, ex.Message);
+                }
+            }
+
+            return new ActionResponse(200, "Ok");
+        }
+
+        private static IEnumerable<ExpandoObject> Read(IDbConnection cn, string sql, AdoSqlModel model) {
+
+            using (var reader = cn.ExecuteReader(sql, new { model.Threshold }, null, 0, CommandType.Text)) {
+                while (reader.Read()) {
+                    var obj = new ExpandoObject();
+                    var dict = (IDictionary<string, object>)obj;
+                    for (var i = 0; i < model.FieldNames.Length; i++) {
+                        dict[model.FieldNames[i]] = reader.GetValue(i);
+                    }
+                    yield return obj;
+                }
+            }
+        }
+    }
+}

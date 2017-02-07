@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -63,7 +62,7 @@ namespace Transformalize.Provider.Ado.Ext {
 
         public static string SqlSelectOutputSchema(this OutputContext c, IConnectionFactory cf) {
             var table = $"{cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}";
-            var sql = cf.AdoProvider == AdoProvider.SqlServer ?
+            var sql = cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ?
                 $"SELECT TOP 0 * FROM {table};" :
                 $"SELECT * FROM {table} LIMIT 0;";
             c.Debug(() => sql);
@@ -227,7 +226,7 @@ namespace Transformalize.Provider.Ado.Ext {
             var sql = $@"
                 CREATE TABLE {cf.Enclose(SqlControlTableName(c))}(
                     {cf.Enclose("BatchId")} INTEGER NOT NULL,
-                    {cf.Enclose("Entity")} {(cf.AdoProvider == AdoProvider.SqlServer ? "N" : string.Empty)}VARCHAR(128) NOT NULL,
+                    {cf.Enclose("Entity")} {(cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ? "N" : string.Empty)}VARCHAR(128) NOT NULL,
                     {cf.Enclose("Inserts")} BIGINT NOT NULL,
                     {cf.Enclose("Updates")} BIGINT NOT NULL,
                     {cf.Enclose("Deletes")} BIGINT NOT NULL,
@@ -258,16 +257,18 @@ namespace Transformalize.Provider.Ado.Ext {
             return sql;
         }
 
-        public static string SqlCreateStarView(this IContext c, IConnectionFactory cf) {
-            var starFields = c.Process.GetStarFields().ToArray();
+        public static List<string> SqlStarFroms(this IContext c, IConnectionFactory cf) {
+
             var master = c.Process.Entities.First(e => e.IsMaster);
             var masterAlias = Utility.GetExcelName(master.Index);
-            var masterNames = string.Join(",", starFields[0].Select(f => masterAlias + "." + cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
-            var slaveNames = string.Join(",", starFields[1].Select(f => "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") AS " + cf.Enclose(f.Alias)));
-
             var builder = new StringBuilder();
 
+            var froms = new List<string>(c.Process.Entities.Count){
+                $"FROM {cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias}"
+            };
+
             foreach (var entity in c.Process.Entities.Where(e => !e.IsMaster)) {
+                builder.Clear();
                 builder.AppendFormat("LEFT OUTER JOIN {0} {1} ON (", cf.Enclose(entity.OutputTableName(c.Process.Name)), Utility.GetExcelName(entity.Index));
 
                 var relationship = entity.RelationshipToMaster.First();
@@ -290,14 +291,49 @@ namespace Transformalize.Provider.Ado.Ext {
                     builder.Remove(builder.Length - 5, 5);
                 }
 
-                builder.AppendLine(") ");
+                builder.Append(") ");
+                froms.Add(builder.ToString());
             }
 
-            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS SELECT {masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)} FROM {cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias} {builder};";
+            return froms;
+        }
+
+        public static string SqlStarFields(this IContext c, IConnectionFactory cf) {
+            var starFields = c.Process.GetStarFields().ToArray();
+            var master = c.Process.Entities.First(e => e.IsMaster);
+            var masterAlias = Utility.GetExcelName(master.Index);
+            var masterNames = string.Join(",", starFields[0].Select(f => masterAlias + "." + cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
+            var slaveNames = string.Join(",", starFields[1].Select(f => "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") AS " + cf.Enclose(f.Alias)));
+            return $"{masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)}";
+        }
+
+        public static string SqlStarSets(this IContext c, IConnectionFactory cf, string alias) {
+            var starFields = c.Process.GetStarFields().ToArray();
+            var master = c.Process.Entities.First(e => e.IsMaster);
+            var masterAlias = Utility.GetExcelName(master.Index);
+            var masterNames = string.Join(",", starFields[0].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " + masterAlias + "." + cf.Enclose(f.FieldName())));
+            var slaveNames = string.Join(",", starFields[1].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " +  "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") "));
+            return $"{masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)}";
+        }
+
+
+        public static string SqlSelectStar(this IContext c, IConnectionFactory cf) {
+
+            var builder = new StringBuilder();
+
+            foreach (var from in SqlStarFroms(c, cf)) {
+                builder.AppendLine(from);
+            }
+
+            return $"SELECT {SqlStarFields(c, cf)} {builder}";
+        }
+
+        public static string SqlCreateStarView(this IContext c, IConnectionFactory cf) {
+            var select = SqlSelectStar(c, cf);
+            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS {select};";
             c.Debug(() => sql);
             return sql;
         }
-
 
         public static string SqlCreateFlatTable(this IContext c, IConnectionFactory cf) {
             var definitions = new List<string>();

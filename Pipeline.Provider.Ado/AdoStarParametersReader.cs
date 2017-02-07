@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Text;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
     public class AdoStarParametersReader : IRead {
@@ -50,7 +51,31 @@ namespace Transformalize.Provider.Ado {
 
             var threshold = minBatchId - 1;
 
-            var sql = $"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))} FROM {_cf.Enclose(_output.Process.Star)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} WHERE {_cf.Enclose(Constants.TflBatchId)} > @threshold;";
+            var sql = string.Empty;
+
+            if (_cf.AdoProvider == AdoProvider.SqlCe) {
+
+                // because SqlCe doesn't support views, re-construct the parent view's definition
+
+                var ctx = new PipelineContext(_output.Logger, _parent);
+                var master = _parent.Entities.First(e => e.IsMaster);
+                var builder = new StringBuilder();
+
+                builder.AppendLine($"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1])))}");
+                foreach (var from in ctx.SqlStarFroms(_cf)) {
+                    builder.AppendLine(@from);
+                }
+                builder.AppendLine($"WHERE {_cf.Enclose(Utility.GetExcelName(master.Index))}.{_cf.Enclose(master.TflBatchId().FieldName())} > @Threshold;");
+
+                sql = builder.ToString();
+
+            } else {
+                sql = $@"
+                SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))} 
+                FROM {_cf.Enclose(_output.Process.Star)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} 
+                WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
+            }
+
             _output.Debug(() => sql);
 
             using (var cn = _cf.GetConnection()) {
@@ -63,7 +88,7 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandText = sql;
 
                 var min = cmd.CreateParameter();
-                min.ParameterName = "@threshold";
+                min.ParameterName = "@Threshold";
                 min.Value = threshold;
                 min.Direction = ParameterDirection.Input;
                 min.DbType = DbType.Int32;

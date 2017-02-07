@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -125,34 +124,7 @@ namespace Transformalize {
         }
 
         public IEnumerable<IRow> Read() {
-            if (!_context.Process.Relationships.Any()) {
                 return _pipelines.First().Read();
-            }
-
-            var joinSummary = _context.Process.Relationships.First().Summary;
-
-            var left = joinSummary.LeftEntity;
-            var leftPipeline = _pipelines.First(p => p.Context.Entity.Alias == left.Alias);
-            var leftResults = leftPipeline.Read();
-
-            var right = joinSummary.RightEntity;
-            var rightPipeline = _pipelines.First(p => p.Context.Entity.Alias == right.Alias);
-            var rightResults = rightPipeline.Read();
-
-            var fields = left.GetAllOutputFields().Concat(right.GetAllOutputFields()).Distinct().ToArray();
-            var aliases = fields.Select(f => f.Alias).ToArray();
-            var map = fields.ToDictionary(k => k.Alias, v => v.MasterIndex);
-
-            var joined = leftResults.Join(
-                rightResults,
-                l => l.ToEnumerable(joinSummary.LeftFields),
-                r => r.ToEnumerable(joinSummary.RightFields),
-                (l, r) => new CfgRow(aliases) { Map = map, Storage = l.ToEnumerable(left.GetAllOutputFields()).Concat(r.ToEnumerable(right.GetAllOutputFields())).ToArray() },
-                new ValueComparer()
-            );
-
-            return joined;
-
         }
 
         public void Dispose() {
