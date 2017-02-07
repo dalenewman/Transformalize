@@ -15,7 +15,7 @@ It works with many data sources:
     </thead>
     <tbody>
         <tr>
-            <td>Microsoft SQL Server</td>
+            <td>SQL Server</td>
             <td>&#10004;</td>
             <td>&#10004;</td>
         </tr>
@@ -35,19 +35,24 @@ It works with many data sources:
             <td>&#10004;</td>
         </tr>
         <tr>
+            <td>SqlCe</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+        </tr>
+        <tr>
+            <td>Elasticsearch</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+        </tr>
+        <tr>
             <td>Files</td>
-            <td>&#10004;</td>
+            <td>&#10003;</td>
             <td>&#10003;</td>
         </tr>
         <tr>
             <td>Web</td>
             <td>&#10003;</td>
             <td> </td>
-        </tr>
-        <tr>
-            <td>Elasticsearch</td>
-            <td>&#10003;</td>
-            <td>&#10003;</td>
         </tr>
         <tr>
             <td>SOLR</td>
