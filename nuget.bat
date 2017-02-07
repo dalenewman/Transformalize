@@ -40,6 +40,9 @@ cd ..
 cd Pipeline.Provider.SqlServer
 nuget pack Transformalize.Provider.SqlServer.nuspec -OutputDirectory "c:\temp\modules"
 cd ..
+cd Transformalize.Provider.SqlCe
+nuget pack Transformalize.Provider.SqlCe.nuspec -OutputDirectory "c:\temp\modules"
+cd ..
 cd Pipeline.Provider.Web
 nuget pack Transformalize.Provider.Web.nuspec -OutputDirectory "c:\temp\modules"
 cd ..

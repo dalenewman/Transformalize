@@ -98,6 +98,10 @@
     <Compile Include="CopyTransform.cs" />
     <Compile Include="CSharpTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
+    <Compile Include="NorthWindIntegrationSqlCe.cs" />
+    <Compile Include="ProcessControllerFactory.cs" />
+    <Compile Include="ProcessFactory.cs" />
+    <Compile Include="TwoEntitiesFileOutput.cs" />
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="DeleteHandler.cs" />
@@ -113,7 +117,6 @@
     <Compile Include="Inventory.cs" />
     <Compile Include="InventoryIntegrationSqlServer.cs" />
     <Compile Include="JavascriptTransform.cs" />
-    <Compile Include="JoinTwoInMemoryTables.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="MathTransforms.cs" />
@@ -235,6 +238,10 @@
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
       <Name>Transformalize.Provider.GeoJson</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.csproj">
+      <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
+      <Name>Transformalize.Provider.SqlCe</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
       <Name>Transformalize.Transform.DateMath</Name>
@@ -273,6 +280,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\MetadataForFile.xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Files\NorthWindSqlServerToSqlCe.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

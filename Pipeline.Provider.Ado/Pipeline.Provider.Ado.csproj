@@ -71,6 +71,11 @@
     <Compile Include="AdoEntityUpdater.cs" />
     <Compile Include="AdoFlatTableCreator.cs" />
     <Compile Include="AdoFlattenAction.cs" />
+    <Compile Include="AdoFlattenFirstRunAction.cs" />
+    <Compile Include="AdoFlattenInsertBySelectAction.cs" />
+    <Compile Include="AdoFlattenInsertByViewAction.cs" />
+    <Compile Include="AdoFlattenTwoPartUpdateAction.cs" />
+    <Compile Include="AdoFlattenUpdateByViewAction.cs" />
     <Compile Include="AdoInitializer.cs" />
     <Compile Include="AdoInputBatchReader.cs" />
     <Compile Include="AdoMasterUpdater.cs" />
@@ -80,6 +85,7 @@
     <Compile Include="AdoReader.cs" />
     <Compile Include="AdoRowCreator.cs" />
     <Compile Include="AdoSchemaReader.cs" />
+    <Compile Include="AdoSqlModel.cs" />
     <Compile Include="AdoStarController.cs" />
     <Compile Include="AdoStarParametersReader.cs" />
     <Compile Include="AdoStarViewCreator.cs" />

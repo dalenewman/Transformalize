@@ -253,9 +253,9 @@
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
       <Name>Transformalize.Provider.Kml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.Numl\Transformalize.Provider.Numl.csproj">
-      <Project>{f12732e1-875a-4c4d-9d6e-5f255a4367be}</Project>
-      <Name>Transformalize.Provider.Numl</Name>
+    <ProjectReference Include="..\Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.csproj">
+      <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
+      <Name>Transformalize.Provider.SqlCe</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
