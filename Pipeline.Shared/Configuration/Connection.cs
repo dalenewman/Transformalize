@@ -78,7 +78,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,directory,geojson,kml", toLower = true)]
+        [Cfg(value = "internal", domain = Constants.ProviderDomain, toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]

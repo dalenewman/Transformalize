@@ -327,11 +327,11 @@ namespace Transformalize.Configuration {
                     }
                 } else {
                     if (PageSize > 0) {
-                        PageSizes.Add(new PageSize { Size = PageSize }.WithDefaults());
+                        PageSizes.Add(new PageSize { Size = PageSize });
                     } else {
-                        PageSizes.Add(new PageSize { Size = 25 }.WithDefaults());
-                        PageSizes.Add(new PageSize { Size = 50 }.WithDefaults());
-                        PageSizes.Add(new PageSize { Size = 100 }.WithDefaults());
+                        PageSizes.Add(new PageSize { Size = 25 });
+                        PageSizes.Add(new PageSize { Size = 50 });
+                        PageSizes.Add(new PageSize { Size = 100 });
                         if (PageSize != 25 && PageSize != 50 && PageSize != 100) {
                             PageSize = 25;
                         }

@@ -15,9 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.CodeDom;
 using System.Data.Common;
-using System.Linq;
 using Dapper;
 using Transformalize.Actions;
 using Transformalize.Context;

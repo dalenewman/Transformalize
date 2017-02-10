@@ -18,9 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using FileHelpers;
-using FileHelpers.Dynamic;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -29,46 +26,17 @@ namespace Transformalize.Provider.File {
 
         private readonly OutputContext _context;
         private readonly Stream _stream;
-        private readonly DelimitedClassBuilder _builder;
-        private readonly string _delimiter;
 
         public DelimitedFileStreamWriter(OutputContext context, Stream stream) {
             _context = context;
             _stream = stream;
-            _delimiter = string.IsNullOrEmpty(context.Connection.Delimiter) ? "," : context.Connection.Delimiter;
-
-            _builder = new DelimitedClassBuilder(Utility.Identifier(context.Entity.OutputTableName(context.Process.Name))) {
-                IgnoreEmptyLines = true,
-                Delimiter = _delimiter,
-                IgnoreFirstLines = 0
-            };
-
-            foreach (var field in context.OutputFields) {
-                var fieldBuilder = _builder.AddField(field.FieldName(), typeof(string));
-                fieldBuilder.FieldQuoted = true;
-                fieldBuilder.QuoteChar = context.Connection.TextQualifier;
-                fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
-                fieldBuilder.FieldOptional = field.Optional;
-            }
-
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
-            FileHelpers.ErrorMode errorMode;
-            Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
-
-            FileHelperAsyncEngine engine;
-
-            if (_context.Connection.Header == Constants.DefaultSetting) {
-                var headerText = string.Join(_delimiter, _context.OutputFields.Select(f => f.Label.Replace(_delimiter, " ")));
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = headerText };
-            } else {
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode };
-            }
-
             _context.Debug(() => "Writing to stream.");
 
+            var engine = FileHelpersEngineFactory.Create(_context);
             var writer = new StreamWriter(_stream);
 
             using (engine.BeginWriteStream(writer)) {

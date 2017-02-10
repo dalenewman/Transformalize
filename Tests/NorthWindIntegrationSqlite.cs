@@ -27,8 +27,7 @@ using Transformalize.Provider.SQLite;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationSqlite
-    {
+    public class NorthWindIntegrationSqlite {
 
         public string TestFile { get; set; } = @"Files\NorthWindSqlServerToSqlite.xml";
         public Connection InputConnection { get; set; } = new Connection {
@@ -36,13 +35,13 @@ namespace Tests {
             Provider = "sqlserver",
             Server = "localhost",
             Database = "NorthWind"
-        }.WithDefaults();
+        };
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "sqlite",
             File = @"c:\temp\NorthWind.sqlite3"
-        }.WithDefaults();
+        };
 
         public Process ResolveRoot(IContainer container, string file, bool init) {
             return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));

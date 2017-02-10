@@ -18,9 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using FileHelpers;
-using FileHelpers.Dynamic;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -29,46 +26,15 @@ namespace Transformalize.Provider.File {
     public class DelimitedFileWriter : IWrite {
         private readonly OutputContext _context;
         private readonly string _fileName;
-        private readonly DelimitedClassBuilder _builder;
 
         public DelimitedFileWriter(OutputContext context, string fileName = null) {
             _context = context;
             _fileName = fileName;
-            _builder = new DelimitedClassBuilder(Utility.Identifier(context.Entity.OutputTableName(context.Process.Name))) {
-                IgnoreEmptyLines = true,
-                Delimiter = context.Connection.Delimiter,
-                IgnoreFirstLines = 0
-            };
-
-            foreach (var field in context.OutputFields) {
-                var fieldBuilder = _builder.AddField(field.FieldName(), typeof(string));
-                fieldBuilder.FieldQuoted = true;
-                fieldBuilder.QuoteMultiline = MultilineMode.AllowForBoth;
-                fieldBuilder.QuoteChar = context.Connection.TextQualifier;
-                fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
-                fieldBuilder.FieldOptional = field.Optional;
-            }
-
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
-            FileHelpers.ErrorMode errorMode;
-            Enum.TryParse(_context.Connection.ErrorMode, true, out errorMode);
-
-            FileHelperAsyncEngine engine;
-
-            if (_context.Connection.Header == Constants.DefaultSetting) {
-                var headerText = string.Join(_context.Connection.Delimiter, _context.OutputFields.Select(f => f.Label.Replace(_context.Connection.Delimiter, " ")));
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) {
-                    ErrorMode = errorMode,
-                    HeaderText = headerText,
-                    FooterText = _context.Connection.Footer
-                };
-            } else {
-                engine = new FileHelperAsyncEngine(_builder.CreateRecordClass()) { ErrorMode = errorMode, HeaderText = _context.Connection.Header, FooterText = _context.Connection.Footer };
-            }
-
+            var engine = FileHelpersEngineFactory.Create(_context);
             var file = Path.Combine(_context.Connection.Folder, _fileName ?? _context.Entity.OutputTableName(_context.Process.Name));
             _context.Debug(() => $"Writing {file}.");
 

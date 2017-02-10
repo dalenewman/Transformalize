@@ -69,10 +69,10 @@ ORDER BY [InventoryStatusId] ASC
             var process = container.Resolve<Process>(new NamedParameter("cfg", @"C:\temp\Inventory.xml"));
             var context = new PipelineContext(new TraceLogger(), process, process.Entities[0]);
             var input = new InputContext(context, new Incrementer(context));
-            process.Entities[0].Filter.Add(new Filter { Field = "InventoryStatusId", Value = "80" }.WithDefaults());
-            process.Entities[0].Order.Add(new Order {Field = "InventoryStatusId"}.WithDefaults());
+            process.Entities[0].Filter.Add(new Filter { Field = "InventoryStatusId", Value = "80" });
+            process.Entities[0].Order.Add(new Order {Field = "InventoryStatusId"});
             var cf = new SqlServerConnectionFactory(input.Connection);
-            var sql = new SqlFormattingManager().Format(input.SqlSelectInput(process.Entities[0].GetAllFields().Where(f => f.Input).ToArray(), cf, input.ResolveOrder));
+            var sql = new SqlFormattingManager().Format(input.SqlSelectInput(process.Entities[0].GetAllFields().Where(f => f.Input).ToArray(), cf));
 
             Assert.AreEqual(expected, sql);
         }

@@ -19,12 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Provider.File {
+
     public class FileInspection : ICreateConfiguration {
 
         private readonly IConnectionContext _context;
@@ -46,7 +46,14 @@ namespace Transformalize.Provider.File {
             var quoted = _fileInfo.Extension.ToLower() == ".csv";
 
             var lines = new FileLineReader(_fileInfo, _lines).Read().ToArray();
-            var delimiters = _context.Connection.Delimiters.Any() ? _context.Connection.Delimiters : new List<Delimiter> {  new Delimiter { Character = (_context.Connection.Delimiter.Length == 0 ? ',' : _context.Connection.Delimiter[0]), Name = "Delimiter"}.WithDefaults()};
+            var delimiters = _context.Connection.Delimiters.Any() ?
+                _context.Connection.Delimiters :
+                new List<Delimiter> {
+                    new Delimiter {
+                        Character = (_context.Connection.Delimiter.Length == 0 ? ',' : _context.Connection.Delimiter[0]),
+                        Name = "Delimiter"
+                    }
+                };
             var delimiter = Utility.FindDelimiter(lines, delimiters, quoted);
 
             var values = lines.First()
@@ -64,33 +71,43 @@ namespace Transformalize.Provider.File {
 
             var hasColumnNames = ColumnNames.AreValid(_context, values);
             var fieldNames = hasColumnNames ? values : ColumnNames.Generate(values.Length).ToArray();
+
             var connection = new Connection {
                 Name = "input",
                 Provider = "file",
                 File = _fileInfo.FullName,
                 Delimiter = delimiter == default(char) ? "," : delimiter.ToString(),
-            }.WithDefaults();
-
-            connection.Start = hasColumnNames ? 1 : 0;  // set after WithDefaults()
+                Start = hasColumnNames ? 1 : 0
+            };
 
             var process = new Process {
                 Name = "FileInspector",
                 Pipeline = "parallel.linq",
                 Connections = new List<Connection> { connection }
-            }.WithDefaults();
+            };
 
             process.Entities.Add(new Entity {
                 Name = identifier,
                 PrependProcessNameToOutputName = false,
                 Sample = Convert.ToInt32(_context.Connection.Sample)
-            }.WithDefaults());
+            });
 
             foreach (var name in fieldNames) {
                 process.Entities[0].Fields.Add(new Field {
                     Name = name,
                     Alias = Constants.InvalidFieldNames.Contains(name) ? identifier + name : name,
                     Length = "max"
-                }.WithDefaults());
+                });
+            }
+
+            process.Check();
+
+            foreach (var warning in process.Warnings()) {
+                _context.Warn(warning);
+            }
+
+            foreach (var error in process.Errors()) {
+                _context.Error(error);
             }
 
             return process.Serialize();

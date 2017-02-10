@@ -73,49 +73,51 @@ namespace Transformalize.Provider.Ado.Ext {
             return c.Entity.Schema == string.Empty ? string.Empty : f.Enclose(c.Entity.Schema) + ".";
         }
 
-        public static string SqlSelectInput(this InputContext c, Field[] fields, IConnectionFactory cf, Func<IConnectionFactory, string> orderBy) {
+        public static string SqlSelectInput(this InputContext c, Field[] fields, IConnectionFactory cf) {
             var fieldList = string.Join(",", fields.Select(f => cf.Enclose(f.Name)));
-            var rowNumber = string.Empty;
+            var table = SqlInputName(c, cf);
+            var filter = c.Entity.Filter.Any() ? " WHERE " + c.ResolveFilter(cf) : string.Empty;
+            var orderBy = c.ResolveOrder(cf);
 
-            if (c.Entity.IsPageRequest()) {
-                if (cf.AdoProvider == AdoProvider.SqlServer) {
-                    if (c.Entity.Order.Any()) {
-                        rowNumber = $", ROW_NUMBER() OVER ({orderBy(cf)}) AS TflRow";
-                    } else {
-                        var keys = string.Join(", ", fields.Where(f => f.PrimaryKey).Select(f => cf.Enclose(f.Name)));
-                        if (string.IsNullOrEmpty(keys)) {
-                            keys = fields.First(f => f.Input).Name;
-                        }
-                        rowNumber = $", ROW_NUMBER() OVER (ORDER BY {keys}) AS TflRow";
+            if (!c.Entity.IsPageRequest())
+                return $"SELECT {fieldList} FROM {SqlInputName(c, cf)} {filter} {orderBy}";
+
+            var start = (c.Entity.Page * c.Entity.PageSize) - c.Entity.PageSize;
+            var end = start + c.Entity.PageSize;
+
+            switch (cf.AdoProvider) {
+                case AdoProvider.SqlServer:
+                case AdoProvider.SqlCe:
+                    if (string.IsNullOrWhiteSpace(orderBy)) {
+                        orderBy = GetRequiredOrderBy(fields, cf);
                     }
-
-                }
+                    if (cf.AdoProvider == AdoProvider.SqlServer) {
+                        var subQuery = $@"SELECT {fieldList},ROW_NUMBER() OVER ({orderBy}) AS TflRow FROM {table} WITH (NOLOCK) {filter}";
+                        return $"WITH p AS ({subQuery}) SELECT {fieldList} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
+                    }
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.PageSize} ROWS ONLY";
+                case AdoProvider.PostgreSql:
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.PageSize} OFFSET {start}";
+                case AdoProvider.MySql:
+                case AdoProvider.SqLite:
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {start},{c.Entity.PageSize}";
+                case AdoProvider.None:
+                    return string.Empty;
+                default:
+                    return string.Empty;
             }
-
-            var sql = $@"
-                SELECT {fieldList}{rowNumber}
-                FROM {SqlInputName(c, cf)} {(cf.AdoProvider == AdoProvider.SqlServer && c.Entity.NoLock ? " WITH (NOLOCK) " : string.Empty)}
-                {(c.Entity.Filter.Any() ? " WHERE " + c.ResolveFilter(cf) : string.Empty)}
-            ";
-
-            if (!c.Entity.IsPageRequest() && orderBy != null) {
-                sql += orderBy(cf);
-            }
-
-            return sql;
         }
 
         public static string SqlInputName(this InputContext c, IConnectionFactory cf) {
             return SchemaPrefix(c, cf) + cf.Enclose(c.Entity.Name);
         }
 
-        public static string SqlSelectInputWithMinVersion(this InputContext c, Field[] fields, IConnectionFactory cf, Func<IConnectionFactory, string> orderBy) {
-            var coreSql = SqlSelectInput(c, fields, cf, null);
-            var hasWhere = coreSql.Contains(" WHERE ");
-            var version = c.Entity.GetVersionField();
-            var sql = $@"{coreSql} {(hasWhere ? " AND " : " WHERE ")} {cf.Enclose(version.Name)} {(c.Entity.Overlap ? ">=" : ">")} @MinVersion";
-            sql += orderBy(cf);
-            return sql;
+        public static string SqlSelectInputWithMinVersion(this InputContext c, Field[] fields, IConnectionFactory cf) {
+            var versionFilter = $"{cf.Enclose(c.Entity.GetVersionField().Name)} {(c.Entity.Overlap ? ">=" : ">")} @MinVersion";
+            var fieldList = string.Join(",", fields.Select(f => cf.Enclose(f.Name)));
+            var table = SqlInputName(c, cf);
+            var filter = c.Entity.Filter.Any() ? $" WHERE {c.ResolveFilter(cf)} AND {versionFilter}" : $" WHERE {versionFilter}";
+            return $"SELECT {fieldList} FROM {table} {filter} {c.ResolveOrder(cf)}";
         }
 
         public static string SqlCreateOutput(this OutputContext c, IConnectionFactory cf) {
@@ -258,12 +260,12 @@ namespace Transformalize.Provider.Ado.Ext {
         }
 
         public static List<string> SqlStarFroms(this IContext c, IConnectionFactory cf) {
-
             var master = c.Process.Entities.First(e => e.IsMaster);
             var masterAlias = Utility.GetExcelName(master.Index);
             var builder = new StringBuilder();
 
-            var froms = new List<string>(c.Process.Entities.Count){
+            var froms = new List<string>(c.Process.Entities.Count)
+            {
                 $"FROM {cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias}"
             };
 
@@ -276,13 +278,7 @@ namespace Transformalize.Provider.Ado.Ext {
                 foreach (var join in relationship.Join.ToArray()) {
                     var leftField = c.Process.GetEntity(relationship.LeftEntity).GetField(join.LeftField);
                     var rightField = entity.GetField(join.RightField);
-                    builder.AppendFormat(
-                        "{0}.{1} = {2}.{3} AND ",
-                        masterAlias,
-                        cf.Enclose(leftField.FieldName()),
-                        Utility.GetExcelName(entity.Index),
-                        cf.Enclose(rightField.FieldName())
-                    );
+                    builder.AppendFormat("{0}.{1} = {2}.{3} AND ", masterAlias, cf.Enclose(leftField.FieldName()), Utility.GetExcelName(entity.Index), cf.Enclose(rightField.FieldName()));
                 }
 
                 if (entity.Delete) {
@@ -312,13 +308,12 @@ namespace Transformalize.Provider.Ado.Ext {
             var master = c.Process.Entities.First(e => e.IsMaster);
             var masterAlias = Utility.GetExcelName(master.Index);
             var masterNames = string.Join(",", starFields[0].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " + masterAlias + "." + cf.Enclose(f.FieldName())));
-            var slaveNames = string.Join(",", starFields[1].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " +  "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") "));
+            var slaveNames = string.Join(",", starFields[1].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " + "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") "));
             return $"{masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)}";
         }
 
 
         public static string SqlSelectStar(this IContext c, IConnectionFactory cf) {
-
             var builder = new StringBuilder();
 
             foreach (var from in SqlStarFroms(c, cf)) {
@@ -353,10 +348,8 @@ namespace Transformalize.Provider.Ado.Ext {
             return sql;
         }
 
-        static string SqlKeyName(string[] pk) {
-            return Utility.Identifier(
-                string.Join("_", pk)
-            );
+        private static string SqlKeyName(string[] pk) {
+            return Utility.Identifier(string.Join("_", pk));
         }
 
         public static IDbDataParameter AddParameter(this IDbCommand cmd, string name, object value) {
@@ -367,6 +360,12 @@ namespace Transformalize.Provider.Ado.Ext {
             return p;
         }
 
-
+        private static string GetRequiredOrderBy(Field[] fields, IConnectionFactory cf) {
+            var keys = string.Join(", ", fields.Where(f => f.PrimaryKey).Select(f => cf.Enclose(f.Name)));
+            if (string.IsNullOrEmpty(keys)) {
+                keys = fields.First(f => f.Input).Name;
+            }
+            return $" ORDER BY {keys}";
+        }
     }
 }

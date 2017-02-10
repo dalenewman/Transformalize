@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Autofac;
-using Cfg.Net.Ext;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
@@ -36,13 +35,13 @@ namespace Tests {
             Provider = "sqlserver",
             Server = "localhost",
             Database = "Northwind"
-        }.WithDefaults();
+        };
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "sqlce",
             File = @"c:\temp\northwind.sdf"
-        }.WithDefaults();
+        };
 
         public Process ResolveRoot(IContainer container, string file, bool init) {
             return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));

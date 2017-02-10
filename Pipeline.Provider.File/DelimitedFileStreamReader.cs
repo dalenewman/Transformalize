@@ -23,20 +23,21 @@ using Transformalize.Extensions;
 
 namespace Transformalize.Provider.File {
 
-    public class DelimitedFileReader : IRead {
+    public class DelimitedFileStreamReader : IRead {
 
         private readonly InputContext _context;
+        private readonly Stream _stream;
         private readonly IRowFactory _rowFactory;
-        private readonly FileInfo _fileInfo;
 
-        public DelimitedFileReader(InputContext context, IRowFactory rowFactory) {
+        public DelimitedFileStreamReader(InputContext context, Stream stream, IRowFactory rowFactory) {
             _context = context;
+            _stream = stream;
             _rowFactory = rowFactory;
-            _fileInfo = new FileInfo(_context.Connection.File);
         }
 
         public IEnumerable<IRow> Read() {
-            _context.Debug(() => $"Reading {_fileInfo.Name}.");
+
+            _context.Debug(() => "Reading file stream.");
 
             var start = _context.Connection.Start;
             var end = 0;
@@ -46,9 +47,10 @@ namespace Transformalize.Provider.File {
             }
 
             var current = _context.Connection.Start;
+
             var engine = FileHelpersEngineFactory.Create(_context);
 
-            using (engine.BeginReadFile(_fileInfo.FullName)) {
+            using (engine.BeginReadStream(new StreamReader(_stream))) {
                 foreach (var record in engine) {
                     if (end == 0 || current.Between(start, end)) {
                         var values = engine.LastRecordValues;
@@ -77,9 +79,6 @@ namespace Transformalize.Provider.File {
             }
 
         }
-
-
-
     }
 }
 

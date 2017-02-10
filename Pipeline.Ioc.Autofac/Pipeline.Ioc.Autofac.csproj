@@ -51,8 +51,8 @@
       <HintPath>..\packages\Cfg-NET.Shorthand.0.2.6\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.9.3\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.9.4\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">

@@ -52,34 +52,13 @@ namespace Transformalize.Provider.Ado {
 
                 cn.Open();
                 var cmd = cn.CreateCommand();
-                var doQuery = true;
 
                 if (string.IsNullOrEmpty(_input.Entity.Query)) {
                     if (_input.Entity.MinVersion == null) {
-                        cmd.CommandText = _input.SqlSelectInput(_fields, _factory, _input.ResolveOrder);
-
-                        if (_input.Entity.IsPageRequest()) {
-                            var start = (_input.Entity.Page * _input.Entity.PageSize) - _input.Entity.PageSize;
-                            var end = start + _input.Entity.PageSize;
-                            if (start == 0 && end == 0) {
-                                doQuery = false;
-                            }
-                            switch (_factory.AdoProvider) {
-                                case AdoProvider.SqlServer:
-                                    cmd.CommandText = $"WITH p AS ({cmd.CommandText}) SELECT {string.Join(",", _fields.Select(f => _factory.Enclose(f.Name)))} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
-                                    break;
-                                case AdoProvider.PostgreSql:
-                                    cmd.CommandText += $" LIMIT {_input.Entity.PageSize} OFFSET {start}";
-                                    break;
-                                default:
-                                    cmd.CommandText += $" LIMIT {start},{_input.Entity.PageSize}";
-                                    break;
-                            }
-                        }
-
+                        cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
                         _input.Debug(() => cmd.CommandText);
                     } else {
-                        cmd.CommandText = _input.SqlSelectInputWithMinVersion(_fields, _factory, _input.ResolveOrder);
+                        cmd.CommandText = _input.SqlSelectInputWithMinVersion(_fields, _factory);
                         _input.Debug(() => cmd.CommandText);
 
                         var parameter = cmd.CreateParameter();
@@ -102,14 +81,10 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 0;
 
-                if (!doQuery)
-                    yield break;
-
                 using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
 
                     if (_fields.Length < reader.FieldCount) {
-                        _input.Warn(
-                            $"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
+                        _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
                     }
 
                     // transform types if sqlite

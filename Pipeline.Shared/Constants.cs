@@ -35,7 +35,7 @@ namespace Transformalize {
         public const string ApplicationName = "Pipeline.Net";
         public const string DefaultSetting = "[default]";
 
-        public const string ProviderDomain = "sqlserver,internal,file,folder,elastic,solr,mysql,postgresql,console,trace,sqlite,lucene,excel";
+        public const string ProviderDomain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,directory,geojson,kml";
         public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite,sqlce";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
