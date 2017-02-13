@@ -44,6 +44,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
         private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page"  };
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -134,7 +135,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                         // change process for export purposes
                         var output = Request["output"] ?? "page";
-                        if (part.Reportable && output != "page"  && output != "map") {
+                        if (!_renderedOutputs.Contains(output)) {
                             ConvertToExport(user, process, part, output, parameters);
                             process.Load(process.Serialize(), parameters);
                         }
@@ -153,10 +154,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                             }
 
                             if (!process.Errors().Any()) {
-                                
+
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
-                                    Common.ApplyFacet(process, Request);
+                                    // Common.ApplyFacet(process, Request);
                                     runner.Execute(process);
                                     process.Status = 200;
                                     process.Message = "Ok";
@@ -213,7 +214,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         _appDataFolder.CreateDirectory(Common.FileFolder);
                     }
 
-                    var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
+                    var fileName = string.Format("{0}-{1}-{2}.xlsx", user, _clock.UtcNow.ToString(FileTimestamp), _slugService.Slugify(part.Title()));
 
                     o.Provider = "excel";
                     o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, fileName));

@@ -38,7 +38,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 HttpContext.Current.Response.Redirect(urlOrFile, true);
             } catch (Exception ex) {
                 response.Code = 500;
-                response.Message = $"Error opening {_action.File}. {ex.Message}";
+                response.Message = string.Format("Error opening {0}. {1}", _action.File, ex.Message);
             }
             return response;
         }

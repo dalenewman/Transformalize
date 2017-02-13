@@ -44,7 +44,7 @@ namespace Tests {
             Name = "input",
             Provider = "sqlserver",
             ConnectionString = "server=localhost;database=NorthWind;trusted_connection=true;"
-        }.WithValidation();
+        };
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
@@ -57,7 +57,7 @@ namespace Tests {
             Provider = "elasticsearch",
             Index = "northwind",
             Url = "http://localhost:9200"
-        }.WithValidation();
+        };
 
         public Process ResolveRoot(IContainer container, string file, bool init) {
             return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
@@ -65,7 +65,7 @@ namespace Tests {
 
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         public void Integration() {
 
             var builder = new ContainerBuilder();
@@ -218,7 +218,7 @@ namespace Tests {
                 Index = "colors",
                 Server = "localhost",
                 Port = 9200
-            }.WithValidation();
+            };
 
             connection.Url = connection.GetElasticUrl();
 
@@ -242,7 +242,7 @@ namespace Tests {
                 Index = "colors",
                 Server = "localhost",
                 Port = 9200
-            }.WithValidation();
+            };
 
             connection.Url = connection.GetElasticUrl();
 
@@ -267,16 +267,16 @@ namespace Tests {
                 Index = "colors",
                 Server = "localhost",
                 Port = 9200
-            }.WithValidation();
+            };
 
             connection.Url = connection.GetElasticUrl();
 
             var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
             var settings = new ConnectionConfiguration(pool);
             var client = new ElasticLowLevelClient(settings);
-            var context = new ConnectionContext(new PipelineContext(new TraceLogger(), null, new Entity { Name = "rows", Alias = "rows" }.WithDefaults()), connection);
-            var code = new Field { Name = "code", Index = 0 }.WithDefaults();
-            var total = new Field { Name = "total", Type = "int", Index = 1 }.WithDefaults();
+            var context = new ConnectionContext(new PipelineContext(new TraceLogger(), null, new Entity { Name = "rows", Alias = "rows" }), connection);
+            var code = new Field { Name = "code", Index = 0 };
+            var total = new Field { Name = "total", Type = "int", Index = 1 };
 
             var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
@@ -296,7 +296,7 @@ namespace Tests {
                 Index = "colors",
                 Server = "localhost",
                 Port = 9200
-            }.WithValidation();
+            };
 
             connection.Url = connection.GetElasticUrl();
 
@@ -308,9 +308,9 @@ namespace Tests {
                 Alias = "rows",
                 Page = 2,
                 PageSize = 20
-            }.WithDefaults()), connection);
-            var code = new Field { Name = "code", Index = 0 }.WithDefaults();
-            var total = new Field { Name = "total", Type = "int", Index = 1 }.WithDefaults();
+            }), connection);
+            var code = new Field { Name = "code", Index = 0 };
+            var total = new Field { Name = "total", Type = "int", Index = 1 };
 
             var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 

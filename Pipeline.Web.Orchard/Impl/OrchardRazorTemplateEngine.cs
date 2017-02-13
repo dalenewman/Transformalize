@@ -51,7 +51,7 @@ namespace Pipeline.Web.Orchard.Impl {
             var l = new Cfg.Net.Loggers.MemoryLogger();
 
             // get template
-            _context.Debug(() => $"Reading {_template.File}");
+            _context.Debug(() => string.Format("Reading {0}", _template.File));
             var template = _templateReader.Read(_template.File, p, l);
             if (l.Errors().Any()) {
                 foreach (var error in l.Errors()) {
@@ -72,7 +72,7 @@ namespace Pipeline.Web.Orchard.Impl {
             }
 
             try {
-                _context.Debug(() => $"Compiling {_template.Name}.");
+                _context.Debug(() => string.Format("Compiling {0}.", _template.Name));
                 return _templateProcessor.Process(template, _template.Name, null, new {
                     _context.Process,
                     Parameters = parameters

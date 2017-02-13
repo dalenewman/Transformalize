@@ -11,7 +11,7 @@
 @{
     var output = Request["output"] ?? "page";
     var settings = WorkContext.CurrentSite.As<PipelineSettingsPart>();
-    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity().WithDefaults();
+    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name="Missing Entity" };
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
     var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
     var orchard = WorkContext.Resolve<IOrchardServices>();
@@ -103,7 +103,7 @@ td.sorter {
 </style>
 
 <div class="row">
-    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@Model.Part.Title()</div>
+    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@entity.Alias</div>
     @if (entity.Hits > 0) {
         <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
     } else {

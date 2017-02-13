@@ -127,7 +127,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                 try {
-                    Common.ApplyFacet(process, Request);
+                    // Common.ApplyFacet(process, Request);
                     runner.Execute(process);
                     if (process.Log.Any()) {
                         process.Status = process.Log.Any(le => le.LogLevel == LogLevel.Error) ? (short)500 : (short)200;

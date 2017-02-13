@@ -419,8 +419,8 @@ namespace Pipeline.Web.Orchard {
                 parameters[Common.InputFileIdName] = "0";
             }
 
-            parameters["Orchard.User"] = orchard.WorkContext.CurrentUser?.UserName;
-            parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser?.Email;
+            parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
+            parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
 
             return parameters;
         }

@@ -97,7 +97,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         context.Warn(warning);
                     }
                     if (root.Errors().Any()) {
-                        context.Error($"TFL Pipeline Action '{cfg.Left(15) + "..." + cfg.Right(15)}' has errors!");
+                        context.Error(string.Format("TFL Pipeline Action '{0}' has errors!", cfg.Left(15) + "..." + cfg.Right(15)));
                         foreach (var error in root.Errors()) {
                             context.Error(error);
                         }

@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,16 +31,16 @@ using Transformalize.Contracts;
 namespace Transformalize.Provider.Elastic {
 
     public class ElasticReader : IRead {
-        readonly Regex _isQueryString = new Regex(@" OR | AND |\*|\?", RegexOptions.Compiled);
 
-        readonly IElasticLowLevelClient _client;
-        readonly IConnectionContext _context;
-        readonly Field[] _fields;
-        readonly string[] _fieldNames;
-        readonly IRowFactory _rowFactory;
-        readonly ReadFrom _readFrom;
-        readonly string _typeName;
-        private readonly HashSet<string> _errors = new HashSet<string>();
+        private readonly Regex _isQueryString = new Regex(@" OR | AND |\*|\?", RegexOptions.Compiled);
+
+        private readonly IElasticLowLevelClient _client;
+        private readonly IConnectionContext _context;
+        private readonly Field[] _fields;
+        private readonly string[] _fieldNames;
+        private readonly IRowFactory _rowFactory;
+        private readonly ReadFrom _readFrom;
+        private readonly string _typeName;
 
         public ElasticReader(
             IConnectionContext context,
@@ -47,7 +48,7 @@ namespace Transformalize.Provider.Elastic {
             IElasticLowLevelClient client,
             IRowFactory rowFactory,
             ReadFrom readFrom
-        ) {
+            ) {
 
             _context = context;
             _fields = fields;
@@ -65,7 +66,7 @@ namespace Transformalize.Provider.Elastic {
             IContext context,
             int from = 0,
             int size = 10
-        ) {
+            ) {
 
             var sb = new StringBuilder();
             var sw = new StringWriter(sb);
@@ -101,7 +102,8 @@ namespace Transformalize.Provider.Elastic {
                         writer.WritePropertyName("must");
                         writer.WriteStartArray();
 
-                        foreach (var filter in context.Entity.Filter.Where(f => f.Value != "*" && f.Value != string.Empty)) {
+                        foreach (
+                            var filter in context.Entity.Filter.Where(f => f.Value != "*" && f.Value != string.Empty)) {
                             writer.WriteStartObject();
 
                             switch (filter.Type) {
@@ -260,92 +262,150 @@ namespace Transformalize.Provider.Elastic {
         }
 
         public IEnumerable<IRow> Read() {
-            ElasticsearchResponse<DynamicResponse> response;
 
-            int size = 10;
+            ElasticsearchResponse<DynamicResponse> response;
+            ElasticsearchDynamicValue hits;
+            var from = 1;
+            var size = 10;
             string body;
             if (_context.Entity.IsPageRequest()) {
-                var from = (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
+                from = (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
                 body = WriteQuery(_fields, _readFrom, _context, from, _context.Entity.PageSize);
             } else {
                 body = WriteQuery(_fields, _readFrom, _context, 0, 0);
                 response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
                 if (response.Success) {
-                    var hits = response.Body["hits"] as ElasticsearchDynamicValue;
+                    hits = response.Body["hits"] as ElasticsearchDynamicValue;
                     if (hits != null && hits.HasValue) {
                         var properties = hits.Value as IDictionary<string, object>;
                         if (properties != null && properties.ContainsKey("total")) {
-                            size = Convert.ToInt32(properties["total"]) + 1;
+                            size = Convert.ToInt32(properties["total"]);
                             body = WriteQuery(_fields, _readFrom, _context, 0, size > 10000 ? 10000 : size);
                         }
                     }
                 }
             }
+
             _context.Debug(() => body);
             _context.Entity.Query = body;
 
-
             // move 10000 to configurable limit
-            if (size > 10000) {
-                response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body, p => p.Scroll(TimeSpan.FromMinutes(1.0)));
-            } else {
-                response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
+            response = from + size > 10000
+                ? _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body, p => p.Scroll(TimeSpan.FromMinutes(1.0)))
+                : _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);
+
+            if (!response.Success) {
+                LogError(response);
+                yield break;
             }
 
-            if (response.Success) {
-                _context.Entity.Hits = Convert.ToInt32((response.Body["hits"]["total"] as ElasticsearchDynamicValue).Value);
-                var hits = response.Body["hits"]["hits"] as ElasticsearchDynamicValue;
+            _context.Entity.Hits = Convert.ToInt32((response.Body["hits"]["total"] as ElasticsearchDynamicValue).Value);
+            hits = response.Body["hits"]["hits"] as ElasticsearchDynamicValue;
 
-                // check for _scroll_id
-                // extract this method, as it will need to be called for repeated scrolls _client.Scroll...
-                if (hits != null && hits.HasValue) {
-                    var docs = hits.Value as IEnumerable<object>;
-                    if (docs != null) {
-                        foreach (var doc in docs.OfType<IDictionary<string, object>>()) {
-                            var row = _rowFactory.Create();
-                            if (doc != null && doc.ContainsKey("_source")) {
-                                var source = doc["_source"] as IDictionary<string, object>;
-                                if (source != null) {
-                                    for (var i = 0; i < _fields.Length; i++) {
-                                        var field = _fields[i];
-                                        // TODO: ONLY DO THIS CHECK ONCE
-                                        if (source.ContainsKey(_fieldNames[i])) {
-                                            row[field] = field.Convert(source[_fieldNames[i]]);
-                                        } else {
-                                            var message = $"The {_fieldNames[i]} field does not exist!";
-                                            if (_errors.Add(message)) {
-                                                _context.Error(message);
-                                            }
-                                            row[field] = field.Convert(field.Default);
-                                        }
-                                    }
-                                }
-                            }
-                            _context.Increment();
-                            yield return row;
-                        }
-                    }
+
+            if (hits == null || !hits.HasValue) {
+                _context.Warn("No hits from elasticsearch");
+                yield break;
+            }
+
+            var docs = hits.Value as IList<object>;
+            if (docs == null) {
+                _context.Error("No documents returned from elasticsearch!");
+                yield break;
+            }
+
+            // if any of the fields do not exist, yield break
+            if (docs.Count > 0) {
+                var doc = docs.First() as IDictionary<string, object>;
+                var source = doc?["_source"] as IDictionary<string, object>;
+                if (source == null) {
+                    _context.Error("Missing _source from elasticsearch response!");
+                    yield break;
                 }
-                // get this from first search response (maybe), unless you have to aggregate it from all...
-                foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
-                    var map = _context.Process.Maps.First(m => m.Name == filter.Map);
-                    var buckets = response.Body["aggregations"][filter.Key]["buckets"] as ElasticsearchDynamicValue;
-                    if (buckets == null || !buckets.HasValue)
+
+                for (var i = 0; i < _fields.Length; i++) {
+                    if (source.ContainsKey(_fieldNames[i]))
                         continue;
 
-                    var items = buckets.Value as IEnumerable<object>;
+                    _context.Error($"Field {_fieldNames[i]} does not exist!");
+                    yield break;
+                }
+            }
 
-                    if (items == null)
-                        continue;
+            var count = 0;
+            foreach (var d in docs) {
+                var doc = (IDictionary<string, object>)d;
+                var row = _rowFactory.Create();
+                var source = (IDictionary<string, object>)doc["_source"];
+                for (var i = 0; i < _fields.Length; i++) {
+                    row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
+                }
+                _context.Increment();
+                yield return row;
+            }
+            count += docs.Count;
 
-                    foreach (var item in items.OfType<IDictionary<string, object>>()) {
-                        map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"] }.WithDefaults());
+            // get this from first search response (maybe), unless you have to aggregate it from all...
+            foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
+                var map = _context.Process.Maps.First(m => m.Name == filter.Map);
+                var buckets = response.Body["aggregations"][filter.Key]["buckets"] as ElasticsearchDynamicValue;
+                if (buckets == null || !buckets.HasValue)
+                    continue;
+
+                var items = buckets.Value as IEnumerable<object>;
+
+                if (items == null)
+                    continue;
+
+                foreach (var item in items.OfType<IDictionary<string, object>>()) {
+                    map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"] });
+                }
+
+            }
+
+            if (!response.Body.ContainsKey("_scroll_id"))
+                yield break;
+
+            if (size == count) {
+                _client.ClearScroll<DynamicResponse>(new PostData<object>(new { scroll_id = response.Body["_scroll_id"].Value }));
+                yield break;
+            }
+
+            var scrolls = new HashSet<string>();
+
+            do {
+                var scrollId = response.Body["_scroll_id"].Value;
+                scrolls.Add(scrollId);
+                response = _client.Scroll<DynamicResponse>(new PostData<object>(new { scroll = "1m", scroll_id = scrollId }));
+                if (response.Success) {
+                    docs = (IList<object>)response.Body["hits"]["hits"].Value;
+                    foreach (var d in docs) {
+                        var doc = (IDictionary<string, object>)d;
+                        var row = _rowFactory.Create();
+                        var source = (IDictionary<string, object>)doc["_source"];
+                        for (var i = 0; i < _fields.Length; i++) {
+                            row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
+                        }
+                        _context.Increment();
+                        yield return row;
                     }
+                    count += docs.Count;
+                } else {
+                    LogError(response);
+                }
+            } while (response.Success && count < size);
+
+            _client.ClearScroll<DynamicResponse>(new PostData<object>(new { scroll_id = scrolls.ToArray() }));
+        }
+
+        private void LogError(IApiCallDetails response) {
+            if (response.ServerError?.Error?.RootCause != null) {
+                foreach (var error in response.ServerError.Error.RootCause) {
+                    _context.Error(error.Reason.Replace("{", "{{").Replace("}", "}}"));
                 }
             } else {
                 _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
-
         }
     }
 }

@@ -47,7 +47,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 var template = t;
                 builder.Register<ITemplateEngine>(ctx => {
                     var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
-                    context.Debug(() => $"Registering {template.Engine} Engine for {t.Key}");
+                    context.Debug(() => string.Format("Registering {0} Engine for {1}", template.Engine, t.Key));
                     switch (template.Engine) {
                         case "razor":
                             return new OrchardRazorTemplateEngine(context, _templateProcessor, template, ctx.Resolve<IReader>());

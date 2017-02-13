@@ -140,7 +140,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     // UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        output.Debug(() => $"{output.Connection.Provider} does not denormalize.");
+                        output.Debug(() => string.Format("{0} does not denormalize.", output.Connection.Provider));
                         return new NullMasterUpdater();
                     }).Named<IUpdate>(entity.Key);
 

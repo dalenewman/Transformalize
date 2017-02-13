@@ -21,11 +21,11 @@ using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Drivers {
 
-   public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
+    public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
 
-        protected override string Prefix => Common.PipelineFileName;
+        protected new string Prefix = Common.PipelineFileName;
 
-       //IMPORT, EXPORT
+        //IMPORT, EXPORT
         protected override void Importing(PipelineFilePart part, ImportContentContext context) {
             part.Record.FullPath = context.Attribute(part.PartDefinition.Name, "FullPath");
             part.Record.Direction = context.Attribute(part.PartDefinition.Name, "Direction");
@@ -47,12 +47,12 @@ namespace Pipeline.Web.Orchard.Drivers {
             updater.TryUpdateModel(part, Prefix, null, null);
             return Editor(part, shapeHelper);
         }
-        
+
         // FOR ADMIN LIST RESULTS
         protected override DriverResult Display(PipelineFilePart part, string displayType, dynamic shapeHelper) {
             if (displayType.StartsWith("Summary")) {
                 return Combined(
-                    ContentShape("Parts_"+Prefix+"_SummaryAdmin", () => shapeHelper.Parts_PipelineFile_SummaryAdmin(Part: part))
+                    ContentShape("Parts_" + Prefix + "_SummaryAdmin", () => shapeHelper.Parts_PipelineFile_SummaryAdmin(Part: part))
                 );
             }
             return null;
