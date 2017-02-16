@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -71,7 +73,11 @@ namespace Transformalize.Provider.Ado {
                     if (_input.Entity.IsPageRequest()) {
                         var sql = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(_input.Entity.Filter.Any() ? " WHERE " + _input.ResolveFilter(_factory) : string.Empty)}";
                         _input.Debug(() => sql);
-                        _input.Entity.Hits = cn.ExecuteScalar<int>(sql);
+                        try {
+                            _input.Entity.Hits = cn.ExecuteScalar<int>(sql);
+                        } catch (Exception ex) {
+                            _input.Error(ex.Message);
+                        }
                     }
                     _input.Entity.Query = cmd.CommandText;
                 } else {
@@ -81,7 +87,15 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 0;
 
-                using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
+                IDataReader reader = null;
+                try {
+                    reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+                } catch (Exception ex) {
+                    _input.Error(ex.Message);
+                    yield break;
+                }
+
+                using (reader) {
 
                     if (_fields.Length < reader.FieldCount) {
                         _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");

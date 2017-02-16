@@ -65,7 +65,7 @@ namespace Tests {
 
 
         [TestMethod]
-        //[Ignore]
+        [Ignore]
         public void Integration() {
 
             var builder = new ContainerBuilder();
