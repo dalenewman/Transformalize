@@ -47,7 +47,7 @@ namespace Transformalize.Provider.Ado {
 
         public void End() {
             _stopWatch.Stop();
-            _context.Info("Process Time: {0}", _stopWatch.Elapsed);
+            _context.Debug(()=>$"Star process ending: {_stopWatch.Elapsed}");
         }
     }
 }

@@ -554,8 +554,11 @@ namespace Transformalize.Configuration {
         [Cfg]
         public List<CfgRow> Rows { get; set; }
 
-        [Cfg(value = false)]
-        public bool IsReverse { get; set; }
+        [Cfg(value = true)]
+        public bool System { get; set; }
+
+        [Cfg(value = "sqlite", domain = "sqlite,sqlce", toLower = true)]
+        public string InternalProvider { get; set; }
 
         public List<Parameter> GetActiveParameters() {
             if (!Environments.Any())

@@ -32,7 +32,7 @@ namespace Transformalize.Desktop {
                 }
             }
 
-            var folder = local + Constants.ApplicationFolder + processName;
+            var folder = Path.Combine(local,Constants.ApplicationFolder,processName);
 
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);

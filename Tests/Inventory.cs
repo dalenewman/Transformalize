@@ -63,7 +63,7 @@ ORDER BY [InventoryStatusId] ASC
 ";
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
             var container = builder.Build();
 
             var process = container.Resolve<Process>(new NamedParameter("cfg", @"C:\temp\Inventory.xml"));

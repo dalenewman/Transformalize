@@ -42,7 +42,7 @@ namespace Transformalize.Command {
 
             _options.Arrangement = _options.ArrangementWithMode();
 
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(_options.Arrangement))).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(_options.Arrangement), false)).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             // for now scheduler

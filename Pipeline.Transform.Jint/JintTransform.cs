@@ -48,7 +48,7 @@ namespace Transformalize.Transform.Jint {
                     .ToArray();
                 if (parameters.Any()) {
                     foreach (var parameter in parameters) {
-                        context.Transform.Parameters.Add(new Parameter { Field = parameter }.WithDefaults());
+                        context.Transform.Parameters.Add(new Parameter { Field = parameter });
                     }
                 }
             }

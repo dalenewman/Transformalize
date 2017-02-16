@@ -18,27 +18,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize {
 
     public class InternalWriter : IWrite {
+        private readonly OutputContext _context;
 
-        private readonly Entity _entity;
-
-        public InternalWriter(Entity entity) {
-            _entity = entity;
+        public InternalWriter(OutputContext context) {
+            _context = context;
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
-            var fields = _entity.GetAllOutputFields().Cast<IField>().ToArray();
+            var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
             var keys = fields.Select(f => f.Alias).ToArray();
-            _entity.Rows.Clear();
+            _context.Entity.Rows.Clear();
 
             foreach (var row in rows) {
-                _entity.Rows.Add(row.ToCfgRow(fields, keys));
+                _context.Entity.Rows.Add(row.ToCfgRow(fields, keys));
+                _context.Increment();
             }
+
+            if (_context.Entity.Inserts > 0) {
+                _context.Info("{0} inserts into {1} {2}", _context.Entity.Inserts, _context.Connection.Name, _context.Entity.Alias);
+            }
+
         }
     }
 }

@@ -20,10 +20,8 @@ using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Ioc.Autofac.Modules;
 
 namespace Transformalize.Ioc.Autofac {
-
 
     public class RunTimeRunner : IRunTimeRun {
         private readonly IContext _context;
@@ -51,28 +49,7 @@ namespace Transformalize.Ioc.Autofac {
                 return Enumerable.Empty<IRow>();
             }
 
-            var container = new ContainerBuilder();
-            container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule("Shorthand.xml").Configure);
-            container.RegisterCallback(new ContextModule(process).Configure);
-
-            // providers
-            container.RegisterCallback(new AdoModule(process).Configure);
-            container.RegisterCallback(new LuceneModule(process).Configure);
-            container.RegisterCallback(new SolrModule(process).Configure);
-            container.RegisterCallback(new ElasticModule(process).Configure);
-            container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process).Configure);
-            container.RegisterCallback(new WebModule(process).Configure);
-            container.RegisterCallback(new FolderModule(process).Configure);
-            container.RegisterCallback(new DirectoryModule(process).Configure);
-            container.RegisterCallback(new ExcelModule(process).Configure);
-
-            container.RegisterCallback(new EntityPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessControlModule(process).Configure);
-
-            using (var scope = container.Build().BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(process, _context.Logger)) {
                 var controller = scope.Resolve<IProcessController>();
                 controller.Execute();
                 return process.Entities.First().Rows;

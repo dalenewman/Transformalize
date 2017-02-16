@@ -37,7 +37,7 @@ namespace Transformalize.Ioc.Autofac {
             foreach (var warning in process.Warnings()) {
                 _context.Warn(warning);
             }
-            
+
             if (process.Errors().Any()) {
                 foreach (var error in process.Errors()) {
                     _context.Error(error);
@@ -46,35 +46,7 @@ namespace Transformalize.Ioc.Autofac {
                 return;
             }
 
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            builder.RegisterCallback(new RootModule("Shorthand.xml").Configure);
-            builder.RegisterCallback(new ContextModule(process).Configure);
-
-            // providers
-            builder.RegisterCallback(new AdoModule(process).Configure);
-            builder.RegisterCallback(new LuceneModule(process).Configure);
-            builder.RegisterCallback(new SolrModule(process).Configure);
-            builder.RegisterCallback(new ElasticModule(process).Configure);
-            builder.RegisterCallback(new InternalModule(process).Configure);
-            builder.RegisterCallback(new FileModule(process).Configure);
-            builder.RegisterCallback(new GeoJsonModule(process).Configure);
-            builder.RegisterCallback(new KmlModule(process).Configure);
-            // builder.RegisterCallback(new NumlModule(process).Configure);
-            builder.RegisterCallback(new WebModule(process).Configure);
-            builder.RegisterCallback(new FolderModule(process).Configure);
-            builder.RegisterCallback(new DirectoryModule(process).Configure);
-            builder.RegisterCallback(new ExcelModule(process).Configure);
-
-            builder.RegisterCallback(new MapModule(process).Configure);
-            builder.RegisterCallback(new TemplateModule(process).Configure);
-            builder.RegisterCallback(new ActionModule(process).Configure);
-
-            builder.RegisterCallback(new EntityPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessControlModule(process).Configure);
-
-            using (var scope = builder.Build().BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(process, _context.Logger)) {
                 try {
                     scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {

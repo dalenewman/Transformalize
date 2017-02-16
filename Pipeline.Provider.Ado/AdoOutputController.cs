@@ -83,7 +83,7 @@ namespace Transformalize.Provider.Ado {
 
             }
             _stopWatch.Stop();
-            Context.Info("Ending {0}", _stopWatch.Elapsed);
+            Context.Debug(()=>$"Entity {Context.Entity} ending {_stopWatch.Elapsed}");
         }
 
     }

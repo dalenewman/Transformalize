@@ -63,10 +63,11 @@ namespace Tests {
                     throw new Exception(string.Join(System.Environment.NewLine, process.Errors()));
                 }
 
-                var reader = new RunTimeDataReader(new DebugLogger(LogLevel.Debug));
-                var rows = reader.Run(process).ToArray();
+                using (var s = DefaultContainer.Create(process, new DebugLogger(LogLevel.Debug))) {
+                    var rows = s.Resolve<IProcessController>().Read().ToArray();
+                    Assert.AreEqual(2155, rows.Length);
+                }
 
-                Assert.AreEqual(2155, rows.Length);
             }
         }
 

@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Transformalize.Contracts;
 
@@ -28,16 +29,19 @@ namespace Transformalize {
         private readonly IContext _context;
         public List<IAction> PreActions { get; } = new List<IAction>();
         public List<IAction> PostActions { get; } = new List<IAction>();
+        private Stopwatch _stopwatch = new Stopwatch();
 
         public ProcessController(
             IEnumerable<IPipeline> pipelines,
             IContext context
         ) {
+            _stopwatch.Start();
             _pipelines = pipelines;
             _context = context;
         }
 
         private bool PreExecute() {
+
             foreach (var action in PreActions) {
                 _context.Debug(() => $"Pre-Executing {action.GetType().Name}");
                 var response = action.Execute();
@@ -124,7 +128,7 @@ namespace Transformalize {
         }
 
         public IEnumerable<IRow> Read() {
-                return _pipelines.First().Read();
+            return _pipelines.First().Read();
         }
 
         public void Dispose() {
@@ -133,6 +137,9 @@ namespace Transformalize {
             foreach (var pipeline in _pipelines) {
                 pipeline.Dispose();
             }
+            _stopwatch.Stop();
+            _context.Info($"Time elapsed: {_stopwatch.Elapsed}");
+            _stopwatch = null;
         }
     }
 }

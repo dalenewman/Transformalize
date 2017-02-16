@@ -149,7 +149,8 @@
     <Compile Include="Modules\ProcessPipelineModule.cs" />
     <Compile Include="Modules\TemplateModule.cs" />
     <Compile Include="PipelineAction.cs" />
-    <Compile Include="RunTimeDataReader.cs" />
+    <Compile Include="DefaultContainer.cs" />
+    <Compile Include="RecoverOutputAction.cs" />
     <Compile Include="RunTimeExecutor.cs" />
     <Compile Include="RunTimeRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

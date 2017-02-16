@@ -90,7 +90,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             case "trace":
                                 return new TraceWriter(new JsonNetSerializer(output));
                             case "internal":
-                                return new InternalWriter(entity);
+                                return new InternalWriter(output);
                             case "log":
                                 return new NLogWriter(output);
                             default:

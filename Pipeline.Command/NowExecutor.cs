@@ -26,7 +26,7 @@ namespace Transformalize.Command {
         public string Shorthand { get; set; }
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public NowExecutor(string cfg, string shorthand, string mode, string format) : base(cfg, mode, format) {
+        public NowExecutor(string cfg, string shorthand, string mode) : base(cfg, mode, false) {
             Shorthand = shorthand;
         }
 

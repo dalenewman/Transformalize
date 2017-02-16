@@ -28,11 +28,13 @@ using NLogLevel = global::NLog.LogLevel;
 
 namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
+        private readonly bool _suppressConsole;
 
         const string Context = "{0} | {1} | {2} | {3}";
         readonly Logger _log;
 
-        public NLogPipelineLogger(string name) {
+        public NLogPipelineLogger(string name, bool suppressConsole) {
+            _suppressConsole = suppressConsole;
             var invalids = name.Intersect(Path.GetInvalidPathChars()).ToArray();
             if (invalids.Any()) {
                 throw new ArgumentException("The log name contains invalid path characters: {0}.", string.Join(", ", invalids));
@@ -41,7 +43,7 @@ namespace Transformalize.Logging.NLog {
             _log = LogManager.GetLogger("TFL");
         }
 
-        static void ReConfiguredLogLevel(string name) {
+        private void ReConfiguredLogLevel(string name) {
 
             var target = LogManager.Configuration.FindTargetByName("file");
             if (target != null) {
@@ -73,6 +75,16 @@ namespace Transformalize.Logging.NLog {
                 var subject = mail.Subject.Render(new LogEventInfo { TimeStamp = DateTime.Now });
                 if (!subject.Contains(name)) {
                     mail.Subject = subject + ": " + name;
+                }
+            }
+
+            if (_suppressConsole) {
+                if (LogManager.Configuration.LoggingRules.Any(r => r.Targets.Any(t => t.Name == "console"))) {
+                    foreach (
+                        var rule in LogManager.Configuration.LoggingRules.Where(r => r.Targets.Any(t => t.Name == "console"))) {
+                        rule.DisableLoggingForLevel(NLogLevel.Info);
+                        rule.DisableLoggingForLevel(NLogLevel.Warn);
+                    }
                 }
             }
 

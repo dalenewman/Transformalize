@@ -16,10 +16,12 @@
 // limitations under the License.
 #endregion
 using Autofac;
+using Autofac.Core.Activators.Reflection;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 
 namespace Tests {
@@ -41,34 +43,8 @@ namespace Tests {
                 return response;
 
             }
-            var builder = new ContainerBuilder();
 
-            // register
-            builder.RegisterInstance(_context == null ? new TraceLogger() : _context.Logger);
-            builder.RegisterModule(new RootModule("Shorthand.xml"));
-            builder.RegisterModule(new ContextModule(_process));
-
-            // providers
-            builder.RegisterModule(new AdoModule(_process));
-            builder.RegisterModule(new LuceneModule(_process));
-            builder.RegisterModule(new SolrModule(_process));
-            builder.RegisterModule(new ElasticModule(_process));
-            builder.RegisterModule(new InternalModule(_process));
-            builder.RegisterModule(new FileModule(_process));
-            builder.RegisterModule(new GeoJsonModule(_process));
-            builder.RegisterModule(new FolderModule(_process));
-            builder.RegisterModule(new DirectoryModule(_process));
-            builder.RegisterModule(new ExcelModule(_process));
-
-            builder.RegisterModule(new MapModule(_process));
-            builder.RegisterModule(new TemplateModule(_process));
-            builder.RegisterModule(new ActionModule(_process));
-
-            builder.RegisterModule(new EntityPipelineModule(_process));
-            builder.RegisterModule(new ProcessPipelineModule(_process));
-            builder.RegisterModule(new ProcessControlModule(_process));
-
-            using (var scope = builder.Build().BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(_process, _context?.Logger)) {
                 scope.Resolve<IProcessController>().Execute();
             }
 

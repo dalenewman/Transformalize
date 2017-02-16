@@ -15,12 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Autofac;
 using Cfg.Net.Ext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
+using Transformalize.Contracts;
+using Transformalize.Ioc.Autofac;
 using Environment = System.Environment;
 
 namespace Tests {
@@ -28,23 +33,12 @@ namespace Tests {
     [TestClass]
     public class TwoEntitiesFileOutput {
 
-        /*
-         var appDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData);
-            var appDataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData);
-            _path = Path.Combine(appDataPath, Folder);
-         */
-
         [TestMethod]
         public void Execute() {
             #region cfg
 
             var xml = @"
     <add name='CombineInput' mode='default'>
-
-        <!--<connections>
-            <add name='input' provider='internal' />
-            <add name='output' provider='console' />
-        </connections>-->
 
       <entities>
 
@@ -83,40 +77,47 @@ namespace Tests {
 
             #endregion
 
-            var process = ProcessFactory.Create(xml, @"Files\Shorthand.xml");
+            var provider = "sqlite";
+            var ext = "sqlite3";
+
+            var process = ProcessFactory.Create(xml, @"Shorthand.xml");
 
             if (!process.Errors().Any()) {
 
                 var originalOutput = process.Output().Clone();
 
                 if (process.Entities.Count > 1 && !process.OutputIsRelational()) {
-                    process.Output().Provider = "sqlite";
-                    var file = new FileInfo(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Transformalize"), process.Name + ".SQLite3"));
 
+                    process.Output().Provider = provider;
+                    var file = new FileInfo(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Transformalize"), process.Name + "." + ext));
                     process.Output().File = file.FullName;
+                    Console.WriteLine(file.FullName);
+                    process.Flatten = provider == "sqlce";
+                    process.Mode = "init";
 
                     if (!file.Exists) {
                         if (!Directory.Exists(file.DirectoryName)) {
                             Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Transformalize"));
                         }
-                        process.Mode = "init";
                     }
 
-                    ProcessControllerFactory.Create(process).Execute();
+                    using (var scope = DefaultContainer.Create(process)) {
+                        scope.Resolve<IProcessController>().Execute();
+                    }
 
                     var threshold = process.Entities.Min(e => e.BatchId) - 1;
 
-                    xml = new Process {
+                    var reversed = new Process {
                         Name = process.Name,
-                        IsReverse = true,
+                        System = false,
                         Connections = new List<Connection>(2){
-                            new Connection { Name = "input", Provider = "sqlite", File = file.FullName}.WithValidation(),
+                            new Connection { Name = "input", Provider = provider, File = file.FullName},
                             originalOutput
                         },
                         Entities = new List<Entity>(1) {
                             new Entity {
-                                Name = process.Star,
-                                IsReverse = true,
+                                Name = provider == "sqlce" ? process.Flat : process.Star,
+                                System = false,
                                 CalculateHashCode = false,
                                 Connection = "input",
                                 Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {
@@ -125,7 +126,7 @@ namespace Tests {
                                     Type = field.Type,
                                     Input = true,
                                     PrimaryKey = field.Name == Transformalize.Constants.TflKey
-                                }.WithValidation()).ToList(),
+                                }).ToList(),
                                 Filter = new List<Filter> {
                                     new Filter {
                                         Field = Transformalize.Constants.TflBatchId,
@@ -133,27 +134,29 @@ namespace Tests {
                                         Value = threshold.ToString()
                                     }
                                 }
-                            }.WithValidation()
+                            }
                         }
-                    }.WithValidation().Serialize();
+                    };
 
-                    var reversed = ProcessFactory.Create(xml, @"Files\Shorthand.xml");
+                    reversed.Check();
+                    if (reversed.Errors().Any()) {
+                        foreach (var error in reversed.Errors()) {
+                            Console.WriteLine(error);
+                        }
+                    }
 
-                    ProcessControllerFactory.Create(reversed).Execute();
-
-                    if (originalOutput.Provider == "internal") {
-                        process.Rows = reversed.Entities.First().Rows;
+                    using (var scope = DefaultContainer.Create(reversed)) {
+                        scope.Resolve<IProcessController>().Execute();
+                        if (originalOutput.Provider == "internal") {
+                            process.Rows = reversed.Entities.First().Rows;
+                        }
+                        Assert.AreEqual(5, process.Rows.Count);
                     }
 
                 }
-
-
-
             }
 
-
+            
         }
-
     }
-
 }

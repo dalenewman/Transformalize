@@ -99,7 +99,6 @@
     <Compile Include="CSharpTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
     <Compile Include="NorthWindIntegrationSqlCe.cs" />
-    <Compile Include="ProcessControllerFactory.cs" />
     <Compile Include="ProcessFactory.cs" />
     <Compile Include="TwoEntitiesFileOutput.cs" />
     <Compile Include="DateMath.cs" />
@@ -270,7 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\pipeline.desktop\Shorthand.xml">
-      <Link>Files\Shorthand.xml</Link>
+      <Link>Shorthand.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\HelloPlanets.xml">

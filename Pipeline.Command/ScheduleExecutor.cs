@@ -30,9 +30,10 @@ namespace Transformalize.Command {
         /// <summary>
         /// Called by Scheduled Run
         /// </summary>
-        public ScheduleExecutor() : base(string.Empty, "default", "csv") { }
+        public ScheduleExecutor() : base(string.Empty, "default", true) { }
 
         public new void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
+
             Process process;
             if (ProcessFactory.TryCreate(cfg, shorthand, parameters, out process)) {
                 process.Mode = Mode;

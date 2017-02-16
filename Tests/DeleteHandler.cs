@@ -37,7 +37,7 @@ namespace Tests {
             var input = GetTestReader(entity);
             var output = GetTestReader(entity);
             var deleter = new TestDeleter(entity, output.Data);
-            var context = new PipelineContext(new TraceLogger(), new Process().WithValidation(), entity);
+            var context = new PipelineContext(new TraceLogger(), new Process(), entity);
             var deleteHandler = new DefaultDeleteHandler(context, input, output, deleter);
 
             deleteHandler.Delete();
@@ -56,7 +56,7 @@ namespace Tests {
             input.Data.Remove(last);
 
             var deleter = new TestDeleter(entity, output.Data);
-            var context = new PipelineContext(new TraceLogger(), new Process().WithValidation(), entity);
+            var context = new PipelineContext(new TraceLogger(), new Process(), entity);
             var deleteHandler = new DefaultDeleteHandler(context, input, output, deleter);
 
             deleteHandler.Delete();
@@ -78,7 +78,7 @@ namespace Tests {
             input.Data.Clear();
 
             var deleter = new TestDeleter(entity, output.Data);
-            var context = new PipelineContext(new TraceLogger(), new Process().WithValidation(), entity);
+            var context = new PipelineContext(new TraceLogger(), new Process(), entity);
             var deleteHandler = new DefaultDeleteHandler(context, input, output, deleter);
 
             deleteHandler.Delete();
@@ -110,11 +110,11 @@ namespace Tests {
                 Alias = "e1",
                 Delete = true,
                 Fields = new List<Field> {
-                    new Field { Index = 0, Name="f1", Type="int", PrimaryKey = true}.WithValidation(),
-                    new Field { Index = 1, Name="f2", Type="string", Length = "64"}.WithValidation()
+                    new Field { Index = 0, Name="f1", Type="int", PrimaryKey = true},
+                    new Field { Index = 1, Name="f2", Type="string", Length = "64"}
                 }
-            }.WithValidation();
-            entity.ModifyIndexes();
+            };
+            entity.Check();
             return entity;
         }
     }

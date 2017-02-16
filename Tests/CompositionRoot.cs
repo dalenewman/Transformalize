@@ -17,12 +17,14 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Loggers;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
+using Process = Transformalize.Configuration.Process;
 
 namespace Tests {
     public class CompositionRoot {
@@ -32,53 +34,25 @@ namespace Tests {
         public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null) {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
             var container = builder.Build();
 
             Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
             if (Process.Errors().Any()) {
                 foreach (var error in Process.Errors()) {
-                    System.Diagnostics.Trace.WriteLine(error);
+                    Trace.WriteLine(error);
                 }
                 throw new Exception("Configuration Error(s)");
             }
 
             if (Process.Warnings().Any()) {
                 foreach (var warning in Process.Warnings()) {
-                    System.Diagnostics.Trace.WriteLine(warning);
+                    Trace.WriteLine(warning);
                 }
             }
 
-            builder = new ContainerBuilder();
-            builder.Register<IPipelineLogger>(ctx => new TraceLogger(logLevel)).SingleInstance();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
-            builder.RegisterModule(new ContextModule(Process));
-
-            // providers
-            builder.RegisterModule(new AdoModule(Process));
-            builder.RegisterModule(new LuceneModule(Process));
-            builder.RegisterModule(new SolrModule(Process));
-            builder.RegisterModule(new ElasticModule(Process));
-            builder.RegisterModule(new InternalModule(Process));
-            builder.RegisterModule(new FileModule(Process));
-            builder.RegisterModule(new GeoJsonModule(Process));
-            builder.RegisterModule(new FolderModule(Process));
-            builder.RegisterCallback(new DirectoryModule(Process).Configure);
-            builder.RegisterModule(new ExcelModule(Process));
-            builder.RegisterModule(new WebModule(Process));
-
-            builder.RegisterModule(new MapModule(Process));
-            builder.RegisterModule(new TemplateModule(Process));
-            builder.RegisterModule(new ActionModule(Process));
-
-            builder.RegisterModule(new EntityPipelineModule(Process));
-            builder.RegisterModule(new ProcessPipelineModule(Process));
-            builder.RegisterModule(new ProcessControlModule(Process));
-
-            container = builder.Build();
-
-            return container.Resolve<IProcessController>(new NamedParameter("cfg", cfg));
+            return DefaultContainer.Create(Process, new TraceLogger(logLevel)).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
         }
 
     }

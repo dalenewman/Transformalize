@@ -49,7 +49,7 @@ namespace Transformalize {
         public const string TflKey = "TflKey";
         public const string TflDeleted = "TflDeleted";
         public const string TflBatchId = "TflBatchId";
-        public static string ApplicationFolder = @"\Tfl\";
+        public static string ApplicationFolder = @"Transformalize";
 
         public static HashSet<string> TypeSet() {
             return _types ?? (_types = new HashSet<string>(TypeDomain.Split(',')));

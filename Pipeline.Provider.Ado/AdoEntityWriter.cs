@@ -81,9 +81,14 @@ namespace Transformalize.Provider.Ado {
                 _output.Increment(batchCount);
             }
 
-            _output.Info("{0} inserts into {1}", _output.Entity.Inserts, _output.Connection.Name);
+            if (_output.Entity.Inserts > 0) {
+                _output.Info("{0} inserts into {1}", _output.Entity.Inserts, _output.Connection.Name);
+            }
 
-            _output.Info("{0} updates to {1}", _output.Entity.Updates, _output.Connection.Name);
+            if (_output.Entity.Updates > 0) {
+                _output.Info("{0} updates to {1}", _output.Entity.Updates, _output.Connection.Name);
+            }
+
         }
     }
 }

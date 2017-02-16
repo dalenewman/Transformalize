@@ -37,7 +37,7 @@ namespace Tests {
             Assert.AreEqual(0, composer.Process.Errors().Length);
 
             var pipe = new PipelineContext(new TraceLogger(), composer.Process);
-            var actual = new SqlFormattingManager().Format(pipe.SqlCreateFlatTable(new SqlServerConnectionFactory(new Connection().WithDefaults())));
+            var actual = new SqlFormattingManager().Format(pipe.SqlCreateFlatTable(new SqlServerConnectionFactory(new Connection())));
 
             Assert.IsNotNull(controller);
             const string expected = @"CREATE TABLE [NorthWindFlat] (

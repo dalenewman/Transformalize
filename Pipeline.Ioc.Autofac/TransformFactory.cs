@@ -63,7 +63,7 @@ namespace Transformalize.Ioc.Autofac {
                 }
                 // add conversion if necessary
                 if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" }.WithDefaults())));
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" })));
                 }
             }
             return transforms;

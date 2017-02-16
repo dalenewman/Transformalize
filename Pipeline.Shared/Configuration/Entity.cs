@@ -253,15 +253,23 @@ namespace Transformalize.Configuration {
 
         public void AddSystemFields() {
 
-            var fields = new List<Field> {
-                TflKey(),
-                TflBatchId(),
-                TflHashCode(),
-                TflDeleted()
-            };
+            if (Fields.All(f => f.Name != Constants.TflDeleted)) {
+                Fields.Insert(0, TflDeleted());
+            }
 
-            foreach (var field in fields) {
-                field.System = true;
+            if (Fields.All(f => f.Name != Constants.TflHashCode)) {
+                Fields.Insert(0, TflHashCode());
+            }
+
+            if (Fields.All(f => f.Name != Constants.TflBatchId)) {
+                Fields.Insert(0, TflBatchId());
+            }
+
+            if (Fields.All(f => f.Name != Constants.TflKey)) {
+                Fields.Insert(0, TflKey());
+            }
+
+            foreach (var field in Fields.Where(f => f.System)) {
                 field.Input = false;
                 field.Output = true;
                 if (SearchType != Constants.DefaultSetting) {
@@ -269,7 +277,6 @@ namespace Transformalize.Configuration {
                 }
             }
 
-            Fields.InsertRange(0, fields);
         }
 
         public bool IsPageRequest() {
@@ -303,7 +310,7 @@ namespace Transformalize.Configuration {
             ValidateFilter(names, aliases);
             ValidateOrder(names, aliases);
 
-            if (!IsReverse) {
+            if (System) {
                 foreach (var field in GetAllFields().Where(f => !f.System)) {
                     if (Constants.InvalidFieldNames.Contains(field.Alias)) {
                         Error($"{field.Alias} is a reserved word in {Alias}.  Please alias it (<a name='{field.Alias}' alias='{Alias}{field.Alias.Remove(0, 3)}' />).");
@@ -345,8 +352,8 @@ namespace Transformalize.Configuration {
 
         }
 
-        [Cfg(value=false)]
-        public bool IsReverse { get; set; }
+        [Cfg(value = true)]
+        public bool System { get; set; }
 
         void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
             if (Version == string.Empty)
@@ -484,22 +491,22 @@ namespace Transformalize.Configuration {
                 Transforms = CalculateHashCode ? new List<Transform> {
                         new Transform {
                             Method = "hashcode",
-                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}.WithDefaults()).ToList()
-                        }.WithDefaults()
+                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
+                        }
                     } : new List<Transform>()
-            }.WithDefaults();
+            };
         }
 
         public Field TflKey() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
+            return Fields.FirstOrDefault(f => f.Alias == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" };
         }
 
         public Field TflDeleted() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflDeleted) ?? new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }.WithDefaults();
+            return Fields.FirstOrDefault(f => f.Alias == Constants.TflDeleted) ?? new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" };
         }
 
         public Field TflBatchId() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflBatchId) ?? new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" }.WithDefaults();
+            return Fields.FirstOrDefault(f => f.Alias == Constants.TflBatchId) ?? new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" };
         }
 
         public Field GetVersionField() {

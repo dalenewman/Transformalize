@@ -40,13 +40,13 @@ namespace Tests {
             Provider = "sqlserver",
             Server = "localhost",
             Database = "NorthWind"
-        }.WithDefaults();
+        };
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "lucene",
             Folder = @"c:\temp\lucene_northwind"
-        }.WithDefaults();
+        };
         public Process ResolveRoot(IContainer container, string file, bool init) {
             return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
         }
@@ -56,7 +56,7 @@ namespace Tests {
         public void Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
             var container = builder.Build();
 
 

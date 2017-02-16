@@ -32,7 +32,7 @@ namespace Transformalize.Command {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule(shorthand));
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
+            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg), false)).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {

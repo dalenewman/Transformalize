@@ -31,12 +31,14 @@ using Transformalize.Desktop.Loggers;
 using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Jint;
 using Transformalize.Transform.Razor;
+using System.IO;
 
 // ReSharper disable PossibleMultipleEnumeration
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
     public class RootModule : Module {
+
         private readonly string _shorthand;
 
         public RootModule() { }
@@ -46,9 +48,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
         }
 
         protected override void Load(ContainerBuilder builder) {
-
-            builder.Register(ctx => new JintValidator()).Named<ICustomizer>("js");
-            builder.Register(ctx => new EnvironmentModifier()).Named<ICustomizer>("environment");
 
             // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
             builder.RegisterType<FileReader>().Named<IReader>("file");
@@ -65,16 +64,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
-					new DateMathModifier(),
-                    ctx.ResolveNamed<ICustomizer>("environment"),
-                    ctx.ResolveNamed<ICustomizer>("js")
-                    
+                    new DateMathModifier(),
+                    new EnvironmentModifier(),
+                    new JintValidator()
                 };
 
                 if (!string.IsNullOrEmpty(_shorthand)) {
                     var shr = new ShorthandRoot(_shorthand, ctx.ResolveNamed<IReader>("file"));
                     if (shr.Errors().Any()) {
-                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new TraceLogger(), new Process { Name = "Error" }.WithDefaults());
+                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new TraceLogger(), new Process { Name = "Error" });
                         foreach (var error in shr.Errors()) {
                             context.Error(error);
                         }
@@ -115,7 +113,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         process.Entities.Clear();
                         process.Entities.Add(newEntity);
                         process.Connections.First(c => c.Name == newEntity.Connection).Delimiter = schema.Connection.Delimiter;
-                        process = new Process(process.Serialize(), ctx.Resolve<ISerializer>());
                     }
                 }
 
@@ -131,6 +128,27 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
+                // handling multiple entities with non-relational output
+                var originalOutput = process.Output().Clone();
+                originalOutput.Name = "original-output";
+                originalOutput.Key = process.Name + originalOutput.Name;
+
+                if (process.Entities.Count > 1 && !process.OutputIsRelational()) {
+
+                    process.Output().Provider = process.InternalProvider;
+                    var folder = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), Constants.ApplicationFolder);
+                    var file = new FileInfo(Path.Combine(folder, process.Name + "." + (process.InternalProvider == "sqlce" ? "sdf" : "sqlite3")));
+                    process.Output().File = file.FullName;
+                    process.Flatten = process.InternalProvider == "sqlce";
+                    process.Mode = "init";
+                    process.Connections.Add(originalOutput);
+
+                    if (!file.Exists) {
+                        if (!Directory.Exists(file.DirectoryName)) {
+                            Directory.CreateDirectory(folder);
+                        }
+                    }
+                }
 
                 return process;
             }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good

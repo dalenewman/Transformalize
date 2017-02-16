@@ -64,7 +64,7 @@ namespace Transformalize.Configuration.Ext {
                     error($"Trouble adapting fields created from transforms. {ex.Message}");
                 }
 
-                if (!p.IsReverse) {
+                if (p.System) {
                     entity.AddSystemFields();
                 }
 

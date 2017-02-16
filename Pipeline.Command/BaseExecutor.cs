@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Humanizer;
 using Humanizer.Bytes;
@@ -25,66 +26,35 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Transforms;
-using Transformalize.Extensions;
-using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Logging.NLog;
 using Environment = System.Environment;
 
 namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class BaseExecutor : IRunTimeExecute {
+        private readonly bool _checkMemory;
 
         public string Cfg { get; set; }
         public string Format { get; set; }
         public string Mode { get; set; }
 
-        public BaseExecutor(string cfg, string mode, string format) {
+        public BaseExecutor(string cfg, string mode, bool checkMemory) {
+            _checkMemory = checkMemory;
             Cfg = cfg;
             Mode = mode;
-            Format = format;
         }
 
         public void Execute(Process process) {
 
-            // Since we're in a Console app, honor output format
-            if (process.Output().Provider.In("internal", "console")) {
-                process.Output().Provider = "console";
-                process.Output().Format = Format;
+            var suppressConsole = process.Connections.Any(c => c.Name == "original-output" && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
+            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg), suppressConsole);
+
+            if (_checkMemory) {
+                CheckMemory(process, logger);
             }
 
-            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg));
-
-            CheckMemory(process, logger);
-
-            var builder = new ContainerBuilder();
-            builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
-            builder.RegisterCallback(new RootModule(process.Shorthand).Configure);
-            builder.RegisterCallback(new ContextModule(process).Configure);
-
-            // providers
-            builder.RegisterCallback(new AdoModule(process).Configure);
-            builder.RegisterCallback(new LuceneModule(process).Configure);
-            builder.RegisterCallback(new SolrModule(process).Configure);
-            builder.RegisterCallback(new ElasticModule(process).Configure);
-            builder.RegisterCallback(new InternalModule(process).Configure);
-            builder.RegisterCallback(new FileModule(process).Configure);
-            builder.RegisterCallback(new GeoJsonModule(process).Configure);
-            builder.RegisterCallback(new KmlModule(process).Configure);
-            // builder.RegisterCallback(new NumlModule(process).Configure);
-            builder.RegisterCallback(new FolderModule(process).Configure);
-            builder.RegisterCallback(new DirectoryModule(process).Configure);
-            builder.RegisterCallback(new ExcelModule(process).Configure);
-            builder.RegisterCallback(new WebModule(process).Configure);
-
-            builder.RegisterCallback(new MapModule(process).Configure);
-            builder.RegisterCallback(new TemplateModule(process).Configure);
-            builder.RegisterCallback(new ActionModule(process).Configure);
-
-            builder.RegisterCallback(new EntityPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessControlModule(process).Configure);
-
-            using (var scope = builder.Build().BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(process, logger)) {
                 try {
                     scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {
@@ -94,23 +64,24 @@ namespace Transformalize.Command {
         }
 
         private static void CheckMemory(Process process, IPipelineLogger logger) {
-            if (!string.IsNullOrEmpty(process.MaxMemory)) {
-                var context = new PipelineContext(logger, process);
+            if (string.IsNullOrEmpty(process.MaxMemory))
+                return;
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
+            var context = new PipelineContext(logger, process);
 
-                var currentBytes = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64.Bytes();
-                var maxMemory = ByteSize.Parse(process.MaxMemory);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
 
-                if (maxMemory.CompareTo(currentBytes) < 0) {
-                    context.Error(
-                        $"Process exceeded {maxMemory.Megabytes.ToString("#.0")} Mb. Current memory is {currentBytes.Megabytes.ToString("#.0")} Mb!");
-                    Environment.Exit(1);
-                } else {
-                    context.Info(
-                        $"The process is using {currentBytes.Megabytes.ToString("#.0")} Mb of it's max {maxMemory.Megabytes.ToString("#.0")} Mb allowed.");
-                }
+            var currentBytes = System.Diagnostics.Process.GetCurrentProcess().WorkingSet64.Bytes();
+            var maxMemory = ByteSize.Parse(process.MaxMemory);
+
+            if (maxMemory.CompareTo(currentBytes) < 0) {
+                context.Error(
+                    $"Process exceeded {maxMemory.Megabytes.ToString("#.0")} Mb. Current memory is {currentBytes.Megabytes.ToString("#.0")} Mb!");
+                Environment.Exit(1);
+            } else {
+                context.Info(
+                    $"The process is using {currentBytes.Megabytes.ToString("#.0")} Mb of it's max {maxMemory.Megabytes.ToString("#.0")} Mb allowed.");
             }
         }
 

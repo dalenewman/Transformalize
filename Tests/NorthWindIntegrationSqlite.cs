@@ -52,7 +52,7 @@ namespace Tests {
         public void SqlLite_Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
             var container = builder.Build();
 
             // CORRECT DATA AND INITIAL LOAD

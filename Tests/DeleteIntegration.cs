@@ -50,7 +50,7 @@ namespace Tests {
         public void Delete_Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Files\Shorthand.xml"));
+            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
             var container = builder.Build();
 
             // INITIALIZE INPUT
