@@ -17,7 +17,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 
 namespace Transformalize.Impl {
@@ -50,7 +49,7 @@ namespace Transformalize.Impl {
                             Name = tField.Name,
                             Input = false,
                             Type = tField.Type
-                        }.WithDefaults());
+                        });
                         count++;
                     }
                 }

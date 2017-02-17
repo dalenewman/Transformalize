@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
-using Cfg.Net.Ext;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
@@ -412,14 +411,14 @@ namespace Transformalize.Configuration {
 
             if (RequiresCopyParameters()) {
                 if (!Transforms.Any()) {
-                    Transforms.Add(new Transform { Method = "copy" }.WithDefaults());
+                    Transforms.Add(new Transform { Method = "copy" });
                 }
                 var first = Transforms.First();
                 var expression = Utility.Split(T, ExpressionSplitter)[0];
                 var parameters = Utility.Split(expression.Substring(expression.IndexOf('(') + 1), ',');
 
                 foreach (var p in parameters) {
-                    var parameter = new Parameter().WithDefaults();
+                    var parameter = new Parameter();
                     var modified = p.TrimEnd(')');
                     if (modified.Contains(":")) {
                         //named values

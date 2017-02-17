@@ -17,7 +17,6 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net.Ext;
 using SolrNet;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -39,15 +38,15 @@ namespace Transformalize.Provider.Solr {
             var typeSet = Constants.TypeSet();
             foreach (var field in s.SolrFields.Where(f => f.IsStored)) {
                 type = field.Type.Name.ToLower();
-                yield return new Field { Name = field.Name, Type = typeSet.Contains(type) ? type : "string" }.WithDefaults();
+                yield return new Field { Name = field.Name, Type = typeSet.Contains(type) ? type : "string" };
             }
             foreach (var field in s.SolrCopyFields) {
                 var d = s.FindSolrFieldByName(field.Destination);
                 type = d.Type.Name.ToLower();
-                yield return new Field { Name = field.Destination, Type = typeSet.Contains(type) ? type : "string" }.WithDefaults();
+                yield return new Field { Name = field.Destination, Type = typeSet.Contains(type) ? type : "string" };
             }
             foreach (var field in s.SolrDynamicFields) {
-                yield return new Field { Name = field.Name, Type = "string" }.WithDefaults();
+                yield return new Field { Name = field.Name, Type = "string" };
             }
         }
 
@@ -55,7 +54,7 @@ namespace Transformalize.Provider.Solr {
             yield return new Entity {
                 Name = "Fields",
                 Fields = GetFields().ToList()
-            }.WithDefaults();
+            };
         }
 
         public Schema Read() {

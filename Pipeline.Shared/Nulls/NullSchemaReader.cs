@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,11 +22,11 @@ namespace Transformalize.Nulls {
     public class NullSchemaReader : ISchemaReader {
 
         public Schema Read() {
-            return new Schema { Connection = new Connection { Name = "input" }.WithDefaults() };
+            return new Schema { Connection = new Connection { Name = "input" } };
         }
 
         public Schema Read(Entity entity) {
-            return new Schema { Connection = new Connection { Name = "input" }.WithDefaults() };
+            return new Schema { Connection = new Connection { Name = "input" } };
         }
     }
 }

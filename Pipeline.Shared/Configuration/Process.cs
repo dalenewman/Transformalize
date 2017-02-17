@@ -473,7 +473,7 @@ namespace Transformalize.Configuration {
             calc.CalculatedFields.Clear();
             calc.Relationships.Clear();
 
-            var entity = new Entity().WithDefaults();
+            var entity = new Entity();
             entity.Name = "Calculated";
             entity.Alias = entity.Name;
             entity.Key = calc.Name + entity.Alias;
@@ -485,7 +485,7 @@ namespace Transformalize.Configuration {
                 System = true,
                 Input = true,
                 Type = "int"
-            }.WithDefaults());
+            });
 
             // Add fields that calculated fields depend on
             entity.Fields.AddRange(CalculatedFields

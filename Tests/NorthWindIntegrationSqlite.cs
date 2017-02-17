@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Autofac;
-using Cfg.Net.Ext;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;

@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net.Ext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PoorMansTSqlFormatterLib;
 using Transformalize.Configuration;

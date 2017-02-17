@@ -44,7 +44,7 @@ namespace Transformalize.Configuration.Ext {
                 error("You can not have parameters and environments.  Choose one.");
             } else {
                 if (p.Parameters.Any() && !p.Environments.Any()) {
-                    p.Environments.Add(new Environment { Name = "One", Parameters = p.Parameters.Select(x => x.Clone()).ToList() }.WithDefaults());
+                    p.Environments.Add(new Environment { Name = "One", Parameters = p.Parameters.Select(x => x.Clone()).ToList() });
                     p.Parameters.Clear();
                 }
             }
@@ -121,7 +121,7 @@ namespace Transformalize.Configuration.Ext {
                     Name = connection.Name,
                     Alias = connection.Name,
                     Connection = connection.Name,
-                }.WithDefaults()
+                }
             );
         }
 
@@ -138,7 +138,7 @@ namespace Transformalize.Configuration.Ext {
 
         static void DefaultConnection(Process p, string name) {
             if (p.Connections.All(c => c.Name != name)) {
-                p.Connections.Add(new Connection { Name = name }.WithDefaults());
+                p.Connections.Add(new Connection { Name = name });
             }
         }
 
@@ -167,7 +167,7 @@ namespace Transformalize.Configuration.Ext {
                         MultiValued = false,
                         Store = false,
                         Index = false
-                    }.WithDefaults());
+                    });
                 }
 
                 if (p.SearchTypes.All(st => st.Name != "default")) {
@@ -176,7 +176,7 @@ namespace Transformalize.Configuration.Ext {
                         MultiValued = false,
                         Store = true,
                         Index = true
-                    }.WithDefaults());
+                    });
                 }
 
             }
@@ -241,15 +241,15 @@ namespace Transformalize.Configuration.Ext {
         }
 
         static Parameter GetParameter(string field) {
-            return new Parameter { Field = field }.WithDefaults();
+            return new Parameter { Field = field };
         }
 
         static Parameter GetParameter(string entity, string field) {
-            return new Parameter { Entity = entity, Field = field }.WithDefaults();
+            return new Parameter { Entity = entity, Field = field };
         }
 
         static Parameter GetParameter(string entity, string field, string type) {
-            return new Parameter { Entity = entity, Field = field, Type = type }.WithDefaults();
+            return new Parameter { Entity = entity, Field = field, Type = type };
         }
     }
 }

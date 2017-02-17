@@ -18,7 +18,6 @@
 using System;
 using System.IO;
 using Autofac;
-using Cfg.Net.Ext;
 using Dapper;
 using Lucene.Net.Index;
 using Lucene.Net.Search;

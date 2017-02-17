@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 
 namespace Transformalize.Actions {
@@ -27,21 +26,21 @@ namespace Transformalize.Actions {
         public Action Action { get; set; }
 
         public ActionResponse() {
-            Action = new Action { Type = "internal" }.WithDefaults();
+            Action = new Action { Type = "internal" };
         }
 
         public ActionResponse(string message) {
-            Action = new Action { Type = "internal" }.WithDefaults();
+            Action = new Action { Type = "internal" };
             Message = message;
         }
 
         public ActionResponse(int code) {
-            Action = new Action { Type = "internal" }.WithDefaults();
+            Action = new Action { Type = "internal" };
             Code = code;
         }
 
         public ActionResponse(int code, string message) {
-            Action = new Action { Type = "internal" }.WithDefaults();
+            Action = new Action { Type = "internal" };
             Code = code;
             Message = message;
         }

@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -44,9 +43,10 @@ namespace Transformalize.Provider.Ado {
                 cmd.CommandText = map.Query;
                 using (var reader = cmd.ExecuteReader()) {
                     while (reader.Read()) {
-                        var mapItem = new MapItem().WithDefaults();
-                        mapItem.From = reader.IsDBNull(0) ? null : reader[0];
-                        mapItem.To = reader.IsDBNull(1) ? null : reader[1];
+                        var mapItem = new MapItem {
+                            From = reader.IsDBNull(0) ? null : reader[0],
+                            To = reader.IsDBNull(1) ? null : reader[1]
+                        };
                         items.Add(mapItem);
                     }
                 }

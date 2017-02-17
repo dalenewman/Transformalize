@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
-using Cfg.Net.Ext;
 using Transformalize.Impl;
 
 namespace Transformalize.Configuration {
@@ -56,7 +55,7 @@ namespace Transformalize.Configuration {
             if (LeftField == string.Empty)
                 return;
 
-            Join.Insert(0, new Join { LeftField = LeftField, RightField = RightField }.WithDefaults());
+            Join.Insert(0, new Join { LeftField = LeftField, RightField = RightField });
 
             LeftField = string.Empty;
             RightField = string.Empty;

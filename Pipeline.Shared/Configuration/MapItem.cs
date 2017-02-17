@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using Cfg.Net;
-using Cfg.Net.Ext;
 
 namespace Transformalize.Configuration {
     public class MapItem : CfgNode {
@@ -31,7 +30,7 @@ namespace Transformalize.Configuration {
         public object To { get; set; }
 
         public Parameter AsParameter() {
-            return new Parameter { Field = Parameter }.WithDefaults();
+            return new Parameter { Field = Parameter };
         }
 
         [Cfg]

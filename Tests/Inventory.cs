@@ -17,7 +17,6 @@
 #endregion
 using System.Linq;
 using Autofac;
-using Cfg.Net.Ext;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PoorMansTSqlFormatterLib;
 using Transformalize;

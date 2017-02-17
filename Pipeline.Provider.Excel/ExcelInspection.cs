@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -58,7 +57,7 @@ namespace Transformalize.Provider.Excel {
                 Name = "input",
                 Provider = "excel",
                 File = _fileInfo.FullName
-            }.WithDefaults();
+            };
 
             connection.Start = hasColumnNames ? 1 : 0;  // after WithDefaults()
 
@@ -66,13 +65,13 @@ namespace Transformalize.Provider.Excel {
                 Name = "ExcelInspector",
                 Pipeline = "parallel.linq",
                 Connections = new List<Connection> { connection }
-            }.WithDefaults();
+            };
 
             process.Entities.Add(new Entity {
                 Name = identifier,
                 PrependProcessNameToOutputName = false,
                 Sample = Convert.ToInt32(_context.Connection.Sample)
-            }.WithDefaults());
+            });
 
             process.Entities.First().DataTypeWarnings = false;
 
@@ -81,7 +80,7 @@ namespace Transformalize.Provider.Excel {
                     Name = name,
                     Alias = Constants.InvalidFieldNames.Contains(name) ? identifier + name : name,
                     Length = "max"
-                }.WithDefaults());
+                });
             }
 
             return process.Serialize();

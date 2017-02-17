@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
-using Cfg.Net.Ext;
 using Jint;
 using Jint.Parser;
 using Transformalize.Configuration;

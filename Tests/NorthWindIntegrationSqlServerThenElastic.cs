@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Cfg.Net.Ext;
 using Dapper;
 using Elasticsearch.Net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

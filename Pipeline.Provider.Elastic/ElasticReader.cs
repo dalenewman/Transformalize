@@ -17,12 +17,10 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Cfg.Net.Ext;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Transformalize.Configuration;

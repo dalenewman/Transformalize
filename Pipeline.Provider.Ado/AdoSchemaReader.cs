@@ -75,7 +75,7 @@ namespace Transformalize.Provider.Ado {
                                 Ordinal = ordinal,
                                 Type = dataType,
                                 PrimaryKey = isKey
-                            }.WithDefaults();
+                            };
                             AddLengthAndPrecision(field, row);
                             fields.Add(field);
                         } else {
@@ -138,7 +138,7 @@ namespace Transformalize.Provider.Ado {
                             Schema = reader.GetString(0),
                             Name = reader.GetString(1),
                             Connection = _c.Connection.Name
-                        }.WithDefaults());
+                        });
                     }
                 }
             }
@@ -159,7 +159,7 @@ namespace Transformalize.Provider.Ado {
                     Schema = owner,
                     Connection = _c.Connection.Name,
                     Fields = GetFields(_c.Connection.Table, string.Empty, owner).ToList()
-                }.WithDefaults());
+                });
             }
             return schema;
         }

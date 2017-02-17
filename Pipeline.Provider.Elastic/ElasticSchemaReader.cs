@@ -17,7 +17,6 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net.Ext;
 using Elasticsearch.Net;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -55,7 +54,7 @@ namespace Transformalize.Provider.Elastic {
         private IEnumerable<Field> PropertiesToFields(string name, IDictionary<string, object> properties) {
             if (properties != null) {
                 foreach (var field in properties) {
-                    var f = new Field { Name = field.Key }.WithDefaults();
+                    var f = new Field { Name = field.Key };
                     var attributes = field.Value as IDictionary<string, object>;
                     if (attributes != null && attributes.ContainsKey("type")) {
                         f.Type = attributes["type"].ToString();
@@ -81,7 +80,7 @@ namespace Transformalize.Provider.Elastic {
                     var types = mappings.Value as IDictionary<string, object>;
                     if (types != null) {
                         foreach (var pair in types) {
-                            var e = new Entity { Name = pair.Key }.WithDefaults();
+                            var e = new Entity { Name = pair.Key };
                             var attributes = pair.Value as IDictionary<string, object>;
                             if (attributes != null && attributes.ContainsKey("properties")) {
                                 e.Fields = PropertiesToFields(pair.Key, attributes["properties"] as IDictionary<string, object>).ToList();

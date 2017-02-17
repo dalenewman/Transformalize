@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
-using Cfg.Net.Ext;
 using Transformalize.Impl;
 
 namespace Transformalize.Configuration {
@@ -453,11 +452,11 @@ namespace Transformalize.Configuration {
         }
 
         static Parameter GetParameter(string entity, string field, string type) {
-            return new Parameter { Entity = entity, Field = field, Type = type }.WithDefaults();
+            return new Parameter { Entity = entity, Field = field, Type = type };
         }
 
         static Parameter GetParameter(string entity, string field) {
-            return new Parameter { Entity = entity, Field = field }.WithDefaults();
+            return new Parameter { Entity = entity, Field = field };
         }
 
         public bool HasConnection() {

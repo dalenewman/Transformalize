@@ -97,8 +97,6 @@ namespace Transformalize.Configuration {
         public string Version { get; set; }
         [Cfg(value = "GET")]
         public string WebMethod { get; set; }
-        [Cfg(value = true)]
-        public bool Check { get; set; }
 
         /// <summary>
         /// Timeout for each request (SQL or DML)

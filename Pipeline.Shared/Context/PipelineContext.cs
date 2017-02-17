@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -46,10 +45,10 @@ namespace Transformalize.Context {
         ) {
             ForLog = new object[4];
             Logger = logger;
-            Process = process ?? new Process { Name = "Process" }.WithDefaults();
-            Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty }.WithDefaults();
-            Field = field ?? new Field { Name = string.Empty, Alias = string.Empty }.WithDefaults();
-            Transform = transform ?? new Transform { Method = string.Empty }.WithDefaults();
+            Process = process ?? new Process { Name = "Process" };
+            Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty };
+            Field = field ?? new Field { Name = string.Empty, Alias = string.Empty };
+            Transform = transform ?? new Transform { Method = string.Empty };
             Key = Process.Name + Entity.Key + Field.Alias + Transform.Method + Transform.Index;
             ForLog[0] = Process.Name.PadRight(Process.LogLimit, ' ').Left(Process.LogLimit);
             ForLog[1] = Entity.Alias.PadRight(Process.EntityLogLimit, ' ').Left(Process.EntityLogLimit);

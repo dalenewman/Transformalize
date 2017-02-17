@@ -18,7 +18,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net.Ext;
 
 namespace Transformalize.Configuration {
     public class FieldSearchTypes : IEnumerable<FieldSearchType> {
@@ -36,7 +35,7 @@ namespace Transformalize.Configuration {
                         MultiValued = false,
                         Store = false,
                         Index = false
-                    }.WithDefaults()
+                    }
                 });
             }
         }
