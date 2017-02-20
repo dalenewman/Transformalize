@@ -113,7 +113,7 @@ namespace Transformalize.Configuration.Ext {
                         }
 
                         // temporary, may have another class of transforms that don't require copy() parameters up front
-                        if (transform.Method.In("iif", "geohashencode"))
+                        if (transform.Method.In("iif", "geohashencode","format"))
                             continue;
 
                         if (Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {

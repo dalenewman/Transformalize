@@ -46,9 +46,7 @@ namespace Transformalize.Command {
         }
 
         public void Execute(Process process) {
-
-            var suppressConsole = process.Connections.Any(c => c.Name == "original-output" && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
-            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg), suppressConsole);
+            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg), process.OutputIsConsole());
 
             if (_checkMemory) {
                 CheckMemory(process, logger);
@@ -58,7 +56,9 @@ namespace Transformalize.Command {
                 try {
                     scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {
-                    scope.Resolve<IContext>().Error(ex.Message);
+                    var context = scope.Resolve<IContext>();
+                    context.Error(ex.Message);
+                    context.Logger.Clear();
                 }
             }
         }

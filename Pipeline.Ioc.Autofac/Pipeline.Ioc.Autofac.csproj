@@ -127,7 +127,6 @@
     <Compile Include="FolderReader.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="Modules\ActionModule.cs" />
-    <Compile Include="Modules\ConnectionModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />

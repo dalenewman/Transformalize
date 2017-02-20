@@ -1,0 +1,30 @@
+<cfg name="Baby">
+  <connections>
+    <add name="baby-names.csv" provider="file" file="c:\code\transformalize\files\baby-names.csv" />
+    <add name="old-testament.txt" provider="file" file="c:\code\transformalize\files\old-testament.txt" />
+  </connections>
+  <entities>
+    <add name="Names" connection="baby-names.csv">
+      <fields>
+        <add name="Year" />
+        <add name="Name" />
+        <add name="Percent" />
+        <add name="Sex" />
+      </fields>
+      <calculated-fields>
+        <add name="Greeting" t="format(Hello {Name})" />
+      </calculated-fields>
+    </add>
+    <add name="OldNames" connection="old-testament.txt">
+      <fields>
+        <add name="OldName" />
+      </fields>
+      <calculated-fields>
+        <add name="IsOld" t="copy(OldName).js(OldName === '' ? 'No' : 'Yes')" />
+      </calculated-fields>
+    </add>
+  </entities>
+  <relationships>
+    <add left-entity="Names" left-field="Name" right-entity="OldNames" right-field="OldName" />
+  </relationships>
+</cfg>

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
@@ -48,7 +50,15 @@ namespace Transformalize.Provider.File {
             var current = _context.Connection.Start;
             var engine = FileHelpersEngineFactory.Create(_context);
 
-            using (engine.BeginReadFile(_fileInfo.FullName)) {
+            IDisposable reader;
+            try {
+                reader = engine.BeginReadFile(_fileInfo.FullName);
+            } catch (Exception ex) {
+                _context.Error(ex.Message);
+                yield break;
+            }
+
+            using (reader) {
                 foreach (var record in engine) {
                     if (end == 0 || current.Between(start, end)) {
                         var values = engine.LastRecordValues;

@@ -80,8 +80,7 @@ namespace Transformalize.Logging.NLog {
 
             if (_suppressConsole) {
                 if (LogManager.Configuration.LoggingRules.Any(r => r.Targets.Any(t => t.Name == "console"))) {
-                    foreach (
-                        var rule in LogManager.Configuration.LoggingRules.Where(r => r.Targets.Any(t => t.Name == "console"))) {
+                    foreach (var rule in LogManager.Configuration.LoggingRules.Where(r => r.Targets.Any(t => t.Name == "console"))) {
                         rule.DisableLoggingForLevel(NLogLevel.Info);
                         rule.DisableLoggingForLevel(NLogLevel.Warn);
                     }

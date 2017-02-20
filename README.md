@@ -36,8 +36,8 @@ It works with many data sources:
         </tr>
         <tr>
             <td>SqlCe</td>
-            <td>&#10003;</td>
-            <td>&#10003;</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
         </tr>
         <tr>
             <td>Elasticsearch</td>
@@ -76,47 +76,24 @@ Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
 with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
 
-Here are examples to get started with:
+### Getting Started
 
-1. [File to Console](#ftc)
-2. [File to Database](#ftdb)
-3. [Database to Database](#dbtdb) (and combining data)
+To work with data, write a configuration (aka arrangement) 
+that defines a connection and an entity.  Something like this:
 
-### <a name="ftc"></a>File to Console
+![babies.xml](./Files/babies.xml.png)
 
+This arrangement ([babies.xml](./Files/babies.xml)) contains:
 
-```xml
-<cfg name="Baby">
-  <connections>
-    <add name="input" provider="file" file="baby-names.csv" />
-  </connections>
-  <entities>
-    <add name="Names" page="1" page-size="5">
-      <fields>
-        <add name="Year" />
-        <add name="Name" />
-        <add name="Percent" />
-        <add name="Sex" />
-      </fields>
-      <calculated-fields>
-        <add name="Greeting" t="copy(Name).format(Hello {0})" />
-      </calculated-fields>
-    </add>
-  </entities>
-</cfg>
-```
+1. A single input connection to a [baby-names.csv](https://github.com/hadley/data-baby-names) file.  It uses the `file` provider.
+2. An entities collection with one `Names` entity.
+3. The fields `Year`, `Name`, `Percent`, and `Sex`.
+3. A calculated field using the `format` transform to say "Hello {Name}"
 
-The arrangement (above) defines:
-
-* An `input` connection to the *baby-names.csv* file
-* The entity's fields (a file in this case): `Year`, `Name`, `Percent`, and `Sex`.
-* We're only interested in `page` **1** with a `page-size` of **5**.
-* A calculated field using the `format` transform to say "Hello."
-
-Save it as *baby-names.xml*, and run with the command line utility; `tfl.exe`:
+Save it and run with the command line utility; `tfl.exe`:
 
 <pre>
-<strong>tfl -a baby-names.xml</strong>
+<strong>tfl -a babies.xml</strong>
 Year,Name,Percent,Sex,Greeting
 1880,John,0.081541,boy,<strong>Hello John</strong>
 1880,William,0.080511,boy,<strong>Hello William</strong>

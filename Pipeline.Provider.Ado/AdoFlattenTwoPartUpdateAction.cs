@@ -76,7 +76,13 @@ namespace Transformalize.Provider.Ado {
                     _output.Error(_sql);
                     _output.Warn("rolling back");
                     trans.Rollback();
-                    return new ActionResponse(500, ex.Message);
+                    return new ActionResponse(500, ex.Message) {
+                        Action = new Configuration.Action {
+                            Type = "internal",
+                            Description = "Flatten Action",
+                            ErrorMode = "abort"
+                        }
+                    };
                 }
             }
 

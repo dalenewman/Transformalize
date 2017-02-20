@@ -36,6 +36,11 @@ namespace Transformalize.Contracts {
         IEnumerable<IRow> Transform(IEnumerable<IRow> rows);
 
         string Returns { get; set; }
+
+        void Error(string error);
+        void Warn(string warning);
+        IEnumerable<string> Errors();
+        IEnumerable<string> Warnings();
     }
 
 }

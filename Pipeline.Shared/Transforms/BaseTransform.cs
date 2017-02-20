@@ -28,18 +28,41 @@ namespace Transformalize.Transforms {
         private const StringComparison Sc = StringComparison.OrdinalIgnoreCase;
         private Field _singleInput;
         private string _received;
+        private HashSet<string> _errors = new HashSet<string>();
+        private HashSet<string> _warnings = new HashSet<string>();
 
         public IContext Context { get; }
 
+        // this **must** be implemented
         public abstract IRow Transform(IRow row);
 
+        // this *may* be implemented
         public virtual IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
             return rows.Select(Transform);
         }
 
-        public string Returns {
+
+
+        public string Returns
+        {
             get { return Context.Transform.Returns; }
             set { Context.Transform.Returns = value; }
+        }
+
+        public void Error(string error) {
+            _errors.Add(error);
+        }
+
+        public void Warn(string warning) {
+            _warnings.Add(warning);
+        }
+
+        public IEnumerable<string> Errors() {
+            return _errors;
+        }
+
+        public IEnumerable<string> Warnings() {
+            return _warnings;
         }
 
         protected BaseTransform(IContext context, string returns) {
@@ -95,9 +118,12 @@ namespace Transformalize.Transforms {
 
             var index = Context.Field.Transforms.IndexOf(Context.Transform);
             if (index <= 0)
-                return _singleInput.Type;
+                return SingleInput().Type;
+
             var previous = Context.Field.Transforms[index - 1];
+
             _received = previous.Returns ?? _singleInput.Type;
+
             return _received;
         }
 

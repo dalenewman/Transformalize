@@ -137,7 +137,7 @@
     <Compile Include="Temp.cs" />
     <Compile Include="TestQuery.cs" />
     <Compile Include="TestReader.cs" />
-    <Compile Include="Transform.cs" />
+    <Compile Include="TestFormat.cs" />
     <Compile Include="TrimThenStartsWith.cs" />
     <Compile Include="Validate.cs" />
     <Compile Include="GeoJsonProvider.cs" />

@@ -1,0 +1,18 @@
+<cfg name="Baby">
+  <connections>
+    <add name="input" provider="file" file="baby-names.csv" />
+  </connections>
+  <entities>
+    <add name="Names" page="1" page-size="5">
+      <fields>
+        <add name="Year" />
+        <add name="Name" />
+        <add name="Percent" />
+        <add name="Sex" />
+      </fields>
+      <calculated-fields>
+        <add name="Greeting" t="format(Hello {Name})" />
+      </calculated-fields>
+    </add>
+  </entities>
+</cfg>

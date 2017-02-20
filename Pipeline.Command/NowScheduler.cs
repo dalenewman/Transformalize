@@ -58,6 +58,7 @@ namespace Transformalize.Command {
                         context.Error(error);
                     }
                     context.Error("The configuration errors must be fixed before this job will run.");
+                    context.Logger.Clear();
                     return;
                 }
 
@@ -69,6 +70,7 @@ namespace Transformalize.Command {
                                 context.Error(error);
                             }
                             context.Error("The configuration errors must be fixed before this job will run.");
+                            context.Logger.Clear();
                             return;
                         }
                     }

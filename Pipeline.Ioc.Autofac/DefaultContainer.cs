@@ -29,7 +29,7 @@ namespace Transformalize.Ioc.Autofac {
 
         public static ILifetimeScope Create(Process process, IPipelineLogger logger = null) {
 
-            logger = logger ?? new NLogPipelineLogger(SlugifyTransform.Slugify(process.Name), process.Output().Provider == "console");
+            logger = logger ?? new NLogPipelineLogger(SlugifyTransform.Slugify(process.Name), process.OutputIsConsole());
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();

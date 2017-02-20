@@ -98,7 +98,7 @@ namespace Transformalize.Ioc.Autofac {
                 case "filename": return new FileNameTransform(context);
                 case "filepath": return new FilePathTransform(context);
                 case "floor": return new FloorTransform(context);
-                case "format": return new FormatTransform(context);
+                case "format": return new BetterFormatTransform(context);
                 case "formatxml": return new FormatXmlTransfrom(context);
                 case "formatphone": return new FormatPhoneTransform(context);
                 case "hashcode": return new HashcodeTransform(context);

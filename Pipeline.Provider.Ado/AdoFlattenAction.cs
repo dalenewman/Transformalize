@@ -18,6 +18,7 @@
 using System.Linq;
 using System.Text;
 using Transformalize.Actions;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Ado.Ext;
@@ -50,12 +51,22 @@ namespace Transformalize.Provider.Ado {
                 if (_cf.AdoProvider == AdoProvider.SqlCe) {
                     var insertAction = new AdoFlattenInsertBySelectAction(_output, _cf, model);
                     var insertResponse = insertAction.Execute();
+                    insertResponse.Action = new Action {
+                        Type = "internal",
+                        Description = "Flatten Action",
+                        ErrorMode = "abort"
+                    };
                     if (insertResponse.Code != 200) {
                         return insertResponse;
                     }
                 } else {
                     var insertAction = new AdoFlattenInsertByViewAction(_output, _cf, model);
                     var insertResponse = insertAction.Execute();
+                    insertResponse.Action = new Action {
+                        Type = "internal",
+                        Description = "Flatten Action",
+                        ErrorMode = "abort"
+                    };
                     if (insertResponse.Code != 200) {
                         return insertResponse;
                     }

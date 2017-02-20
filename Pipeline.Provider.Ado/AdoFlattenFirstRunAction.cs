@@ -18,6 +18,7 @@
 using System.Data.Common;
 using Dapper;
 using Transformalize.Actions;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -55,7 +56,13 @@ namespace Transformalize.Provider.Ado {
                     trans.Commit();
                 } catch (DbException ex) {
                     trans.Rollback();
-                    return new ActionResponse(500, ex.Message);
+                    return new ActionResponse(500, ex.Message) {
+                        Action = new Action {
+                            Type = "internal",
+                            Description = "Flatten Action",
+                            ErrorMode = "abort"
+                        }
+                    };
                 }
 
             }

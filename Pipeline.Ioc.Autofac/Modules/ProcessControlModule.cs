@@ -103,6 +103,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
+                // flatten, should be the first post-action
+                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
+                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(outputConnection.Provider)) {
+                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
+                }
+
                 // templates
                 foreach (var template in _process.Templates.Where(t => t.Enabled).Where(t => t.Actions.Any(a => a.GetModes().Any(m => m == _process.Mode)))) {
                     controller.PreActions.Add(new RenderTemplateAction(template, ctx.ResolveNamed<ITemplateEngine>(template.Key)));
@@ -128,12 +134,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 foreach (var map in _process.Maps.Where(m => !string.IsNullOrEmpty(m.Query))) {
                     controller.PreActions.Add(new MapReaderAction(context, map, ctx.ResolveNamed<IMapReader>(map.Name)));
-                }
-
-                // flatten
-                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
-                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(o.Connection.Provider)) {
-                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
                 }
 
                 // for handling multiple entities with non-relational output

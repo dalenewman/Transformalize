@@ -252,23 +252,28 @@ namespace Transformalize.Configuration {
 
         public void AddSystemFields() {
 
-            if (Fields.All(f => f.Name != Constants.TflDeleted)) {
-                Fields.Insert(0, TflDeleted());
-            }
+            var fields = new List<Field> {
+                new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" },
+                new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" },
+                new Field {
+                    Name = Constants.TflHashCode,
+                    Alias = Constants.TflHashCode,
+                    System = true,
+                    Type = "int",
+                    Input = false,
+                    Default = "0",
+                    Transforms = CalculateHashCode ? new List<Transform> {
+                        new Transform {
+                            Method = "hashcode",
+                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
+                        }
+                    } : new List<Transform>()
+                },
+                new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }
+            };
 
-            if (Fields.All(f => f.Name != Constants.TflHashCode)) {
-                Fields.Insert(0, TflHashCode());
-            }
-
-            if (Fields.All(f => f.Name != Constants.TflBatchId)) {
-                Fields.Insert(0, TflBatchId());
-            }
-
-            if (Fields.All(f => f.Name != Constants.TflKey)) {
-                Fields.Insert(0, TflKey());
-            }
-
-            foreach (var field in Fields.Where(f => f.System)) {
+            foreach (var field in fields) {
+                field.System = true;
                 field.Input = false;
                 field.Output = true;
                 if (SearchType != Constants.DefaultSetting) {
@@ -276,6 +281,7 @@ namespace Transformalize.Configuration {
                 }
             }
 
+            Fields.InsertRange(0, fields);
         }
 
         public bool IsPageRequest() {
@@ -480,32 +486,35 @@ namespace Transformalize.Configuration {
         }
 
         public Field TflHashCode() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflHashCode) ?? new Field {
-                Name = Constants.TflHashCode,
-                Alias = Constants.TflHashCode,
-                System = true,
-                Type = "int",
-                Input = false,
-                Default = "0",
-                Transforms = CalculateHashCode ? new List<Transform> {
-                        new Transform {
-                            Method = "hashcode",
-                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
-                        }
-                    } : new List<Transform>()
-            };
+            try {
+                return Fields.First(f => f.Alias == Constants.TflHashCode);
+            } catch {
+                throw new Exception("TflHashCode isn't present!");
+            }
         }
 
         public Field TflKey() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflKey) ?? new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" };
+            try {
+                return Fields.First(f => f.Alias == Constants.TflKey);
+            } catch {
+                throw new Exception("TflKey isn't present!");
+            }
         }
 
         public Field TflDeleted() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflDeleted) ?? new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" };
+            try {
+                return Fields.First(f => f.Alias == Constants.TflDeleted);
+            } catch {
+                throw new Exception("TflDeleted isn't present!");
+            }
         }
 
         public Field TflBatchId() {
-            return Fields.FirstOrDefault(f => f.Alias == Constants.TflBatchId) ?? new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" };
+            try {
+                return Fields.First(f => f.Alias == Constants.TflBatchId);
+            } catch {
+                throw new Exception("TfBatchId isn't present!");
+            }
         }
 
         public Field GetVersionField() {

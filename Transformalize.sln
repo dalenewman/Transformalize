@@ -60,12 +60,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Command", "Pipelin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326-F1A6-486F-89D1-ACA0E2A24720}"
 	ProjectSection(SolutionItems) = preProject
+		Files\babies.xml = Files\babies.xml
+		Files\baby-names.csv = Files\baby-names.csv
+		Files\more-babies.xml = Files\more-babies.xml
+		Files\babies.xml.png = Files\babies.xml.png
 		Files\business.sql = Files\business.sql
 		Files\business.sqlite3 = Files\business.sqlite3
 		Files\edit-hello-world-in-orchard-cms.png = Files\edit-hello-world-in-orchard-cms.png
 		Files\er-to-star.png = Files\er-to-star.png
 		Files\notepadpp.png = Files\notepadpp.png
 		Files\npp-orderline-csv.jpg = Files\npp-orderline-csv.jpg
+		Files\old-testament.txt = Files\old-testament.txt
 		Files\vscode-orderline-json.jpg = Files\vscode-orderline-json.jpg
 	EndProjectSection
 EndProject

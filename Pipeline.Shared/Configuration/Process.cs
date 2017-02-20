@@ -591,5 +591,13 @@ namespace Transformalize.Configuration {
         public bool OutputIsRelational() {
             return Output() != null && Constants.AdoProviderSet().Contains(Output().Provider);
         }
+
+        public bool OutputIsConsole() {
+            // check if this is a master job with actions, and no real entities
+            if (Actions.Count > 0 && Entities.Count == 1 && Entities.First().GetAllFields().All(f => f.System)) {
+                return false;
+            }
+            return Connections.Any(c => c.Name == "original-output" && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
+        }
     }
 }
