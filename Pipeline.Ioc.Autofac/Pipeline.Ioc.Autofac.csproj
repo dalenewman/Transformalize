@@ -129,6 +129,7 @@
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
+    <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
@@ -272,6 +273,10 @@
     <ProjectReference Include="..\Transformalize.Transform.Html\Transformalize.Transform.Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Transformalize.Transform.Html</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Transform.LamdaParser\Transformalize.Transform.LamdaParser.csproj">
+      <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
+      <Name>Transformalize.Transform.LamdaParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.Razor\Transformalize.Transform.Razor.csproj">
       <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>

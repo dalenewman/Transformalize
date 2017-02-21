@@ -53,6 +53,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new MapModule(process).Configure);
             builder.RegisterCallback(new TemplateModule(process).Configure);
             builder.RegisterCallback(new ActionModule(process).Configure);
+            builder.RegisterCallback(new TransformModule(process).Configure);
 
             builder.RegisterCallback(new EntityPipelineModule(process).Configure);
             builder.RegisterCallback(new ProcessPipelineModule(process).Configure);

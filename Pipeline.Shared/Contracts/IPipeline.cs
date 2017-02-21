@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
     public interface IPipeline : IRead, IDisposable {
@@ -24,13 +23,14 @@ namespace Transformalize.Contracts {
         void Register(IMapReader mapReader);
         void Register(IRead reader);
         void Register(ITransform transformer);
-        void Register(IEnumerable<ITransform> transforms);
+        void Register(Transforms.Transforms transforms);
         void Register(IWrite writer);
         void Register(IUpdate updater);
         void Register(IEntityDeleteHandler deleteHandler);
         void Execute();
 
         IContext Context { get; }
+        bool Valid { get; }
     }
 
 }

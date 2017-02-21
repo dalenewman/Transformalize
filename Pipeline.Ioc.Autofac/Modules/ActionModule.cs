@@ -99,34 +99,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         return new NullAction();
                     }
 
-                    var builder = new ContainerBuilder();
-
-                    builder.RegisterInstance(context.Logger);
-                    builder.RegisterCallback(new RootModule(action.Shorthand).Configure);
-                    builder.RegisterCallback(new ContextModule(root).Configure);
-
-                    // providers
-                    builder.RegisterCallback(new AdoModule(root).Configure);
-                    builder.RegisterCallback(new LuceneModule(root).Configure);
-                    builder.RegisterCallback(new SolrModule(root).Configure);
-                    builder.RegisterCallback(new ElasticModule(root).Configure);
-                    builder.RegisterCallback(new InternalModule(root).Configure);
-                    builder.RegisterCallback(new FileModule(root).Configure);
-                    builder.RegisterCallback(new GeoJsonModule(root).Configure);
-                    // builder.RegisterCallback(new NumlModule(root).Configure);
-                    builder.RegisterCallback(new FolderModule(root).Configure);
-                    builder.RegisterCallback(new DirectoryModule(process).Configure);
-                    builder.RegisterCallback(new ExcelModule(root).Configure);
-                    builder.RegisterCallback(new WebModule(root).Configure);
-
-                    builder.RegisterCallback(new MapModule(root).Configure);
-                    builder.RegisterCallback(new TemplateModule(root).Configure);
-                    builder.RegisterCallback(new ActionModule(root).Configure);
-                    builder.RegisterCallback(new EntityPipelineModule(root).Configure);
-                    builder.RegisterCallback(new ProcessPipelineModule(root).Configure);
-                    builder.RegisterCallback(new ProcessControlModule(root).Configure);
-
-                    return new PipelineAction(builder.Build(), root);
+                    return new PipelineAction(root);
                 case "run":
                     var connection = process.Connections.First(c => c.Name == action.Connection);
                     switch (connection.Provider) {

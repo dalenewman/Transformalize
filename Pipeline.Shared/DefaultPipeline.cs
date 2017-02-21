@@ -17,7 +17,6 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize {
@@ -32,83 +31,96 @@ namespace Transformalize {
         protected List<ITransform> Transformers { get; }
         protected List<IMapReader> MapReaders { get; }
 
-        public IContext Context => _context;
-
-        readonly PipelineContext _context;
+        public IContext Context { get; }
+        public bool Valid { get; private set; }
 
         public DefaultPipeline(IOutputController controller, IContext context) {
-            _context = (PipelineContext)context;
+            Valid = true;
+            Context = context;
             _controller = controller;
             Transformers = new List<ITransform>();
             MapReaders = new List<IMapReader>();
 
-            _context.Debug(() => $"Registering {GetType().Name}.");
-            _context.Debug(() => $"Registering {_controller.GetType().Name}.");
+            Context.Debug(() => $"Registering {GetType().Name}.");
+            Context.Debug(() => $"Registering {_controller.GetType().Name}.");
         }
 
         public void Initialize() {
-            _controller.Initialize();
+            if (Valid) {
+                _controller.Initialize();
+            }
         }
 
         public void Register(IMapReader mapReader) {
-            _context.Debug(() => $"Registering {mapReader.GetType().Name}.");
+            Context.Debug(() => $"Registering {mapReader.GetType().Name}.");
             MapReaders.Add(mapReader);
         }
 
         public void Register(IRead reader) {
-            _context.Debug(() => $"Registering {reader.GetType().Name}.");
+            Context.Debug(() => $"Registering {reader.GetType().Name}.");
             Reader = reader;
         }
 
         public void Register(ITransform transform) {
-            _context.Debug(() => $"Registering {transform.GetType().Name}.");
+            Context.Debug(() => $"Registering {transform.GetType().Name}.");
             Transformers.Add(transform);
         }
 
-        public void Register(IEnumerable<ITransform> transforms) {
+        public void Register(Transforms.Transforms transforms) {
+            Valid = transforms.Valid;
             foreach (var transform in transforms) {
                 Register(transform);
             }
         }
 
         public void Register(IWrite writer) {
-            _context.Debug(() => $"Registering {writer.GetType().Name}.");
+            Context.Debug(() => $"Registering {writer.GetType().Name}.");
             Writer = writer;
         }
 
         public void Register(IUpdate updater) {
-            _context.Debug(() => $"Registering {updater.GetType().Name}.");
+            Context.Debug(() => $"Registering {updater.GetType().Name}.");
             Updater = updater;
         }
 
         public void Register(IEntityDeleteHandler deleteHandler) {
-            _context.Debug(() => $"Registering {deleteHandler.GetType().Name}.");
+            Context.Debug(() => $"Registering {deleteHandler.GetType().Name}.");
             DeleteHandler = deleteHandler;
         }
 
         public virtual IEnumerable<IRow> Read() {
-            _context.Debug(() => $"Running {Transformers.Count} transforms.");
-            if (_context.Entity.NeedsUpdate()) {
-                if (_context.Entity.Version != string.Empty) {
-                    if (_context.Entity.GetVersionField().Type == "byte[]") {
-                        var min = _context.Entity.MinVersion == null ? "null" : Utility.BytesToHexString((byte[])_context.Entity.MinVersion).TrimStart(new[] { '0' });
-                        var max = _context.Entity.MaxVersion == null ? "null" : Utility.BytesToHexString((byte[])_context.Entity.MaxVersion).TrimStart(new[] { '0' });
-                        _context.Info("Change Detected: Input:0x{0:X} != Output:0x{1:X}", max, min);
-                    } else {
-                        _context.Info("Change Detected: Input:{0} > Output:{1}", _context.Entity.MaxVersion, _context.Entity.MinVersion);
+            if (Valid) {
+                Context.Debug(() => $"Running {Transformers.Count} transforms.");
+                if (Context.Entity.NeedsUpdate()) {
+                    if (Context.Entity.Version != string.Empty) {
+                        if (Context.Entity.GetVersionField().Type == "byte[]") {
+                            var min = Context.Entity.MinVersion == null
+                                ? "null"
+                                : Utility.BytesToHexString((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' });
+                            var max = Context.Entity.MaxVersion == null
+                                ? "null"
+                                : Utility.BytesToHexString((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' });
+                            Context.Info("Change Detected: Input:0x{0:X} != Output:0x{1:X}", max, min);
+                        } else {
+                            Context.Info("Change Detected: Input:{0} > Output:{1}", Context.Entity.MaxVersion,
+                                Context.Entity.MinVersion);
+                        }
                     }
+                    return Transformers.Aggregate(Reader.Read(),
+                        (current, transformer) => transformer.Transform(current));
                 }
-                return Transformers.Aggregate(Reader.Read(), (current, transformer) => transformer.Transform(current));
+                Context.Info("Change Detected: No.");
             }
-            _context.Info("Change Detected: No.");
             return Enumerable.Empty<IRow>();
         }
 
         public void Execute() {
             _controller.Start();
-            DeleteHandler?.Delete();
-            Writer.Write(Read());
-            Updater.Update();
+            if (Valid) {
+                DeleteHandler?.Delete();
+                Writer.Write(Read());
+                Updater.Update();
+            }
             _controller.End();
         }
 

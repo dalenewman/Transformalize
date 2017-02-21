@@ -24,6 +24,7 @@ namespace Transformalize.Desktop {
         readonly IPipeline _pipeline;
 
         public IContext Context => _pipeline.Context;
+        public bool Valid => _pipeline.Valid;
 
         public ParallelPipeline(IPipeline pipeline) {
             _pipeline = pipeline;
@@ -41,7 +42,7 @@ namespace Transformalize.Desktop {
             _pipeline.Register(mapReader);
         }
 
-        public void Register(IEnumerable<ITransform> transforms) {
+        public void Register(Transformalize.Transforms.Transforms transforms) {
             _pipeline.Register(transforms);
         }
 

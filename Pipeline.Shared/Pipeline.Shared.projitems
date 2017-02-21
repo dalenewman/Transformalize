@@ -200,6 +200,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToTimeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToUpperTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToYesNoTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\Transforms.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TrimEndTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TrimStartTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TrimTransform.cs" />

@@ -28,8 +28,8 @@ namespace Transformalize.Transforms {
         private const StringComparison Sc = StringComparison.OrdinalIgnoreCase;
         private Field _singleInput;
         private string _received;
-        private HashSet<string> _errors = new HashSet<string>();
-        private HashSet<string> _warnings = new HashSet<string>();
+        private readonly HashSet<string> _errors = new HashSet<string>();
+        private readonly HashSet<string> _warnings = new HashSet<string>();
 
         public IContext Context { get; }
 

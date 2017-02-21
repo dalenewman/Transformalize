@@ -165,9 +165,6 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [Cfg(value = "Shorthand.xml")]
-        public string Shorthand { get; set; }
-
         /// <summary>
         /// Set for dependency injection
         /// </summary>

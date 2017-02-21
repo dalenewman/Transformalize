@@ -30,6 +30,7 @@ namespace Transformalize {
         public List<IAction> PreActions { get; } = new List<IAction>();
         public List<IAction> PostActions { get; } = new List<IAction>();
         private Stopwatch _stopwatch = new Stopwatch();
+        private bool _valid;
 
         public ProcessController(
             IEnumerable<IPipeline> pipelines,
@@ -38,9 +39,14 @@ namespace Transformalize {
             _stopwatch.Start();
             _pipelines = pipelines;
             _context = context;
+            _valid = _pipelines.All(p => p.Valid);
         }
 
         private bool PreExecute() {
+            if (!_valid) {
+                _context.Error("The pipelines have invalid transforms.  They must be fixed before the process can run.");
+                return false;
+            }
 
             foreach (var action in PreActions) {
                 _context.Debug(() => $"Pre-Executing {action.GetType().Name}");

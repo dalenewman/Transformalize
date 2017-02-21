@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
@@ -27,6 +29,14 @@ namespace Transformalize.Transforms.System {
 
         public override IRow Transform(IRow row) {
             return Context.Transform.ShouldRun(row) ? _transform.Transform(row) : row;
+        }
+
+        public new IEnumerable<string> Errors() {
+            return _transform.Errors();
+        }
+
+        public new IEnumerable<string> Warnings() {
+            return _transform.Warnings();
         }
     }
 }

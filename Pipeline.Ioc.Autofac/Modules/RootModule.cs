@@ -57,9 +57,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 new ReTryingReader(ctx.ResolveNamed<IReader>("web"), attempts: 3))
             );
 
-            // transform choices
-            builder.Register<ITransform>((ctx, p) => new RazorTransform(p.TypedAs<PipelineContext>())).Named<ITransform>("razor");
-
             builder.Register((ctx, p) => {
 
                 var dependencies = new List<IDependency> {

@@ -113,7 +113,7 @@ namespace Transformalize.Configuration.Ext {
                         }
 
                         // temporary, may have another class of transforms that don't require copy() parameters up front
-                        if (transform.Method.In("iif", "geohashencode","format"))
+                        if (transform.Method.In("iif", "geohashencode", "format", "eval"))
                             continue;
 
                         if (Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
@@ -697,7 +697,7 @@ namespace Transformalize.Configuration.Ext {
                         error($"The {t.Method} transform requires a script.");
                     }
                     break;
-                case "velicity":
+                case "velocity":
                 case "razor":
                     if (t.Template == string.Empty) {
                         error($"The {t.Method} transform requires a template.");
@@ -786,9 +786,13 @@ namespace Transformalize.Configuration.Ext {
                     CheckDouble(allFields, t, t.ToLat, "to-lat", error);
                     CheckDouble(allFields, t, t.ToLon, "to-lon", error);
                     break;
+                case "eval":
                 case "datemath":
                     if (t.Expression == string.Empty) {
-                        error($"The {t.Method} method requires operators and/or rounding expression (e.g. +1d+2h/m).");
+                        if (t.Method == "datemath")
+                            error($"The {t.Method} method requires operators and/or rounding expression (e.g. +1d+2h/m).");
+                        else
+                            error($"The {t.Method} method requires an expression (e.g. field1 + field2).");
                     }
                     break;
 

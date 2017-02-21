@@ -336,6 +336,7 @@
     <add name='urlencode' signature='none' />
     <add name='fromjson' signature='none' />
     <add name='datemath' signature='expression' />
+    <add name='eval' signature='expression' />
     
     <!-- VIN, Vehicle Identification Number -->
     <add name='isvin' signature='none' />

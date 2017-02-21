@@ -22,12 +22,10 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Ioc.Autofac {
     public class PipelineAction : IAction {
-        private readonly IContainer _container;
 
         public Process Process { get; }
 
-        public PipelineAction(IContainer container, Process process) {
-            _container = container;
+        public PipelineAction(Process process) {
             Process = process;
         }
 
@@ -36,7 +34,7 @@ namespace Transformalize.Ioc.Autofac {
             if (!Process.Enabled)
                 return response;
 
-            using (var scope = _container.BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(Process)) {
                 scope.Resolve<IProcessController>().Execute();
             }
 

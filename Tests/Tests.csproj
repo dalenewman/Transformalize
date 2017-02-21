@@ -98,6 +98,7 @@
     <Compile Include="CopyTransform.cs" />
     <Compile Include="CSharpTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
+    <Compile Include="EvalTransform.cs" />
     <Compile Include="NorthWindIntegrationSqlCe.cs" />
     <Compile Include="ProcessFactory.cs" />
     <Compile Include="TwoEntitiesFileOutput.cs" />
