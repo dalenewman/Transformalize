@@ -15,18 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
-using Cfg.Net.Reader;
-using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
+using Orchard.Localization;
+using Orchard.Templates.Services;
+using Orchard.UI.Notify;
+using Pipeline.Web.Orchard.Impl;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;
-using Transformalize.Transform.CSharp;
 using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Dates;
 using Transformalize.Transform.Geocode;
@@ -34,22 +36,24 @@ using Transformalize.Transform.GeoCoordinate;
 using Transformalize.Transform.Geohash;
 using Transformalize.Transform.Html;
 using Transformalize.Transform.Humanizer;
-using Transformalize.Transform.JavaScriptEngineSwitcher;
 using Transformalize.Transform.Jint;
 using Transformalize.Transform.LamdaParser;
-using Transformalize.Transform.Razor;
-using Transformalize.Transform.Velocity;
-using Transformalize.Transform.Vin;
 using Transformalize.Transforms;
 using Transformalize.Validators;
 
-namespace Transformalize.Ioc.Autofac.Modules {
+namespace Pipeline.Web.Orchard.Modules {
     public class TransformModule : Module {
         private readonly Process _process;
 
-        public TransformModule() { }
+        public Localizer T { get; set; }
+
+        public TransformModule(
+            ) {
+            T = NullLocalizer.Instance;
+        }
 
         public TransformModule(Process process) {
+            T = NullLocalizer.Instance;
             _process = process;
         }
 
@@ -94,8 +98,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new UtcNowTransform(p.Positional<IContext>(0))).Named<ITransform>("now");
             builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
             builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
-            builder.Register((c, p) => new RazorTransform(p.Positional<IContext>(0))).Named<ITransform>("razor");
-
             builder.Register((c, p) => new RegexReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("regexreplace");
             builder.Register((c, p) => new RemoveTransform(p.Positional<IContext>(0))).Named<ITransform>("remove");
             builder.Register((c, p) => new ReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("replace");
@@ -112,7 +114,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new TrimTransform(p.Positional<IContext>(0))).Named<ITransform>("trim");
             builder.Register((c, p) => new TrimEndTransform(p.Positional<IContext>(0))).Named<ITransform>("trimend");
             builder.Register((c, p) => new TrimStartTransform(p.Positional<IContext>(0))).Named<ITransform>("trimstart");
-            builder.Register((c, p) => new VelocityTransform(p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("velocity");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("upper");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("toupper");
 
@@ -176,49 +177,42 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new IsDaylightSavings(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
             builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
 
-            /* VIN, Vehicle Identification Number, note: you get red intellisense here because vin library is portable */
-            builder.Register((c, p) => new VinValidateTransform(p.Positional<IContext>(0))).Named<ITransform>("isvin");
-            builder.Register((c, p) => new VinValidateTransform(p.Positional<IContext>(0))).Named<ITransform>("vinisvalid");
-            builder.Register((c, p) => new VinGetWorldManufacturerTransform(p.Positional<IContext>(0))).Named<ITransform>("vingetworldmanufacturer");
-            builder.Register((c, p) => new VinGetModelYearTransform(p.Positional<IContext>(0))).Named<ITransform>("vingetmodelyear");
-
             // wip
             builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
             builder.Register((c, p) => new FromJsonTransform(p.Positional<IContext>(0), o => JsonConvert.SerializeObject(o, Formatting.None))).Named<ITransform>("fromjson");
 
-            builder.Register((c,p)=> new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
+            builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
 
-            builder.Register((c, p) =>
-            {
+            builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
-                return context.Transform.XmlMode == "all" ? 
-                    new Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : 
-                    new Transforms.FromXmlTransform(context) as ITransform;
+                return context.Transform.XmlMode == "all" ?
+                    new Transformalize.Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
+                    new Transformalize.Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 
-            builder.Register<ITransform>((c, p) => {
-                var context = p.Positional<IContext>(0);
-                if (c.ResolveNamed<IHost>("cs").Start()) {
-                    return new CsharpTransform(context);
-                }
-                context.Error("Unable to register csharp transform");
-                return new NullTransform(context);
-            }).Named<ITransform>("cs");
-            builder.Register((c, p) => c.ResolveNamed<ITransform>("cs", p)).Named<ITransform>("csharp");
 
+            // javascript implementation is jint only in Orchard CMS
+            builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("js");
+            builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("javascript");
 
-            builder.Register<ITransform>((c, p) => {
-                var context = p.Positional<IContext>(0);
-                switch (context.Field.Engine) {
-                    case "jint":
-                        return new JintTransform(context, c.Resolve<IReader>());
-                    default:
-                        return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
+            // razor implementation uses Orchard CMS implementation
+            builder.Register<ITransform>((ctx, p) => {
+                var c = p.Positional<IContext>(0);
+                if (ctx.IsRegistered<ITemplateProcessor>()) {
+                    try {
+                        var processor = ctx.Resolve<ITemplateProcessor>();
+                        processor.Verify(c.Transform.Template);
+                        return new OrchardRazorTransform(c, processor);
+                    } catch (Exception ex) {
+                        ctx.Resolve<INotifier>().Warning(T(ex.Message));
+                        c.Warn(ex.Message);
+                        return new NullTransform(c);
+                    }
                 }
-            }).Named<ITransform>("js");
-            builder.Register((c, p) => c.ResolveNamed<ITransform>("js", p)).Named<ITransform>("javascript");
+                return new NullTransform(c);
+            }).Named<ITransform>("razor");
 
         }
 

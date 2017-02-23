@@ -53,7 +53,7 @@ namespace Transformalize.Provider.Ado {
 
                     foreach (var batch in rows.Partition(_context.Entity.UpdateSize)) {
                         var data = batch.Select(r => r.ToExpandoObject(fields));
-                        var batchCount = cn.Execute(sql, data, trans, 0, CommandType.Text);
+                        var batchCount = Convert.ToUInt32(cn.Execute(sql, data, trans, 0, CommandType.Text));
                         _context.Increment(batchCount);
                     }
                     trans.Commit();

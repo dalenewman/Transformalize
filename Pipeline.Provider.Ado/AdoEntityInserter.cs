@@ -37,20 +37,20 @@ namespace Transformalize.Provider.Ado {
 
         public void Write(IEnumerable<IRow> rows) {
             var sql = _output.SqlInsertIntoOutput(_cf);
-            var count = 0;
+            var count = (uint) 0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 var trans = cn.BeginTransaction();
 
                 try {
                     foreach (var batch in rows.Partition(_output.Entity.InsertSize)) {
-                        var batchCount = cn.Execute(
+                        var batchCount = Convert.ToUInt32(cn.Execute(
                             sql,
                             batch.Select(r => r.ToExpandoObject(_output.OutputFields)),
                             trans,
                             0,
                             CommandType.Text
-                        );
+                        ));
                         count += batchCount;
                         // _output.Increment(batchCount);
                     }

@@ -20,12 +20,12 @@ using Transformalize.Contracts;
 namespace Transformalize {
     public class Incrementer : IIncrement {
         readonly IContext _context;
-        long _rowCount;
+        uint _rowCount;
 
         public Incrementer(IContext context) {
             _context = context;
         }
-        public void Increment(int by = 1) {
+        public void Increment(uint by = 1) {
             _rowCount += by;
             if (_rowCount % _context.Entity.LogInterval == 0) {
                 _context.Info(_rowCount.ToString());

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Cfg.Net;
 using Transformalize.Impl;
 
@@ -93,8 +94,8 @@ namespace Transformalize.Configuration {
         [Cfg(required = false)]
         public List<Order> Order { get; set; }
 
-        [Cfg(value = (long)10000)]
-        public long LogInterval { get; set; }
+        [Cfg(value = 10000)]
+        public uint LogInterval { get; set; }
 
 
         /// <summary>
@@ -315,14 +316,6 @@ namespace Transformalize.Configuration {
             ValidateFilter(names, aliases);
             ValidateOrder(names, aliases);
 
-            if (System) {
-                foreach (var field in GetAllFields().Where(f => !f.System)) {
-                    if (Constants.InvalidFieldNames.Contains(field.Alias)) {
-                        Error($"{field.Alias} is a reserved word in {Alias}.  Please alias it (<a name='{field.Alias}' alias='{Alias}{field.Alias.Remove(0, 3)}' />).");
-                    }
-                }
-            }
-
             foreach (var field in GetAllOutputFields().Where(f => f.Sortable == "true" && !string.IsNullOrEmpty(f.SortField))) {
                 if (GetField(field.SortField) == null) {
                     Error($"Can't find sort field {field.SortField} defined in field {field.Alias}.");
@@ -356,9 +349,6 @@ namespace Transformalize.Configuration {
             }
 
         }
-
-        [Cfg(value = true)]
-        public bool System { get; set; }
 
         void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
             if (Version == string.Empty)
@@ -580,9 +570,9 @@ namespace Transformalize.Configuration {
 
         // state, aagghhh!!!
         public int Identity;
-        public int Inserts { get; set; }
-        public int Updates { get; set; }
-        public int Deletes { get; set; }
+        public uint Inserts { get; set; }
+        public uint Updates { get; set; }
+        public uint Deletes { get; set; }
 
         [Cfg]
         public int Hits { get; set; }
@@ -611,5 +601,6 @@ namespace Transformalize.Configuration {
         }
 
         public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, PageSize));
+        public Regex FieldMatcher { get; set; }
     }
 }

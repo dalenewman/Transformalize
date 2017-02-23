@@ -23,7 +23,7 @@ namespace Transformalize.Ioc.Autofac {
             var threshold = process.Entities.Min(e => e.BatchId) - 1;
             var reversed = new Process {
                 Name = process.Name,
-                System = false,
+                ReadOnly = true,
                 Connections = new List<Connection>(2){
                     new Connection { Name = "input", Provider = process.InternalProvider, File = process.Output().File},
                     originalOutput
@@ -31,7 +31,6 @@ namespace Transformalize.Ioc.Autofac {
                 Entities = new List<Entity>(1) {
                     new Entity {
                         Name = process.InternalProvider == "sqlce" ?process.Flat : process.Star,
-                        System = false,
                         CalculateHashCode = false,
                         Connection = "input",
                         Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {

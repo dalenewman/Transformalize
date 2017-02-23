@@ -64,11 +64,11 @@ namespace Transformalize.Configuration.Ext {
                     error($"Trouble adapting fields created from transforms. {ex.Message}");
                 }
 
-                if (p.System) {
+                if (!p.ReadOnly) {
                     entity.AddSystemFields();
+                    entity.ModifyMissingPrimaryKey();
                 }
-
-                entity.ModifyMissingPrimaryKey();
+                
                 entity.ModifyIndexes();
             }
 

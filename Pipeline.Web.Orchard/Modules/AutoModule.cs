@@ -17,7 +17,6 @@
 
 using Autofac;
 using Cfg.Net.Environment;
-using Cfg.Net.Ext;
 using Cfg.Net.Parsers;
 using Cfg.Net.Parsers.YamlDotNet;
 using Cfg.Net.Serializers;
@@ -49,33 +48,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-
-            builder.Register(c => {
-                //var manager = c.Resolve<IShellSettingsManager>();
-                //var settings = manager.LoadSettings().FirstOrDefault(s => !string.IsNullOrEmpty(s.DataProvider) && !string.IsNullOrEmpty(s.DataConnectionString));
-                //if (settings == null) {
-                //    Logger.Error("Transformalize (Pipeline.Web.Orchard) module could not read shell settings!  Default shorthand configuration used.");
-                //    return Common.DefaultShortHand;
-                //}
-
-                //try {
-                //    using (var cn = GetConnection(settings.DataProvider, settings.DataConnectionString)) {
-                //        cn.Open();
-                //        var cmd = cn.CreateCommand();
-                //        cmd.CommandText = "SELECT ShortHand FROM Pipeline_Web_Orchard_PipelineSettingsPartRecord;";
-                //        cmd.CommandType = CommandType.Text;
-                //        var value = cmd.ExecuteScalar();
-                //        if (value != null) {
-                //            return value as string;
-                //        }
-                //    }
-                //} catch (Exception ex) {
-                //    Logger.Error("Tried to read short-hand configuration for Transformalize (Pipeline.Web.Orchard) module. {0}", ex.Message);
-                //}
-                return Common.DefaultShortHand;
-            }).Named<string>("sh");
-
-            builder.Register(c => new ShorthandRoot(c.ResolveNamed<string>("sh"))).As<ShorthandRoot>().SingleInstance();
+            builder.Register(c => new ShorthandRoot(Common.DefaultShortHand)).As<ShorthandRoot>().SingleInstance();
             builder.Register(c => new ShorthandCustomizer(c.Resolve<ShorthandRoot>(), new [] {"fields","calculated-fields"},"t","transforms","method")).As<ShorthandCustomizer>();
 
             // xml
@@ -119,7 +92,6 @@ namespace Pipeline.Web.Orchard.Modules {
                 new FastJsonParser(),
                 new JsonSerializer(),
                 new JintValidator(),
-                //new OrchardNodeModifier("host", c.Resolve<IOrchardServices>()),
                 c.Resolve<ShorthandCustomizer>(),
                 new EnvironmentModifier(),
                 new IllegalCharacterValidator()
@@ -185,7 +157,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(c => new YamlToJsonProcessPass(new YamlDotNetParser(), new JsonSerializer())).As<YamlToJsonProcessPass>();
 
             var logger = new OrchardLogger();
-            var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" }.WithDefaults());
+            var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" });
 
             builder.Register(c => new RunTimeDataReader(logger, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>())).As<IRunTimeRun>();
             builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>()))).As<IRunTimeSchemaReader>();
@@ -193,25 +165,6 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(c => new RunTimeExecuter(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>())).As<IRunTimeExecute>();
 
         }
-
-        //private IDbConnection GetConnection(string provider, string connectionString) {
-        //    var providerTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-        //        {"SqlServer", "System.Data.SqlClient.SqlConnection, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"}, 
-        //        {"SqlCe", "System.Data.SqlServerCe.SqlCeConnection, System.Data.SqlServerCe"}, 
-        //        {"MySql", "MySql.Data.MySqlClient.MySqlConnection, MySql.Data"},
-        //        {"PostgreSql","Npgsql.NpgsqlConnection, Npgsql"}
-        //    };
-
-        //    if (!providerTypes.ContainsKey(provider)) {
-        //        Logger.Warning("Transformalize for Orchard CMS may not use the {0} provider to retrieve shorthand configuration.  It can only handle SqlServer, SqlCe, PostgreSql, or MySql. The default short-hand configuration is used when this happens.");
-        //        return null;
-        //    }
-
-        //    var type = Type.GetType(providerTypes[provider.ToLower()], false, true);
-        //    var connection = (IDbConnection)Activator.CreateInstance(type);
-        //    connection.ConnectionString = connectionString;
-        //    return connection;
-        //}
 
     }
 }

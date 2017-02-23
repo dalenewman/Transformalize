@@ -26,6 +26,7 @@ using Transformalize.Configuration.Ext;
 using Transformalize.Context;
 using Transformalize.Extensions;
 using Transformalize.Logging;
+using System.Text.RegularExpressions;
 
 namespace Transformalize.Configuration {
 
@@ -335,6 +336,16 @@ namespace Transformalize.Configuration {
                     field.Output = false;
                 }
             }
+
+            // create entity field's matcher
+            foreach (var entity in Entities) {
+                var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).Select(f => f.Alias));
+#if NETS10
+                entity.FieldMatcher = new Regex(pattern);
+#else
+                entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
+#endif
+            }
         }
 
         public void ModifyIndexes() {
@@ -554,8 +565,8 @@ namespace Transformalize.Configuration {
         [Cfg]
         public List<CfgRow> Rows { get; set; }
 
-        [Cfg(value = true)]
-        public bool System { get; set; }
+        [Cfg(value = false)]
+        public bool ReadOnly { get; set; }
 
         [Cfg(value = "sqlite", domain = "sqlite,sqlce", toLower = true)]
         public string InternalProvider { get; set; }

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -42,18 +44,18 @@ namespace Transformalize.Provider.Ado {
             var sql = $"UPDATE {_cf.Enclose(_output.Entity.OutputTableName(_output.Process.Name))} SET {_output.Entity.TflDeleted().FieldName()} = CAST(1 AS BIT), {_output.Entity.TflBatchId().FieldName()} = {_output.Entity.BatchId} WHERE {criteria}";
             _output.Debug(()=>sql);
 
-            var count = 0;
+            var count = (uint)0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 foreach (var batch in rows.Partition(_output.Entity.DeleteSize)) {
                     var trans = cn.BeginTransaction();
-                    var batchCount = cn.Execute(
+                    var batchCount = Convert.ToUInt32(cn.Execute(
                         sql,
                         batch.Select(r => r.ToExpandoObject(_fields)),
                         trans,
                         0,
                         CommandType.Text
-                        );
+                        ));
                     trans.Commit();
                     count += batchCount;
                     _output.Increment(batchCount);

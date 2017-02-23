@@ -236,6 +236,11 @@ namespace Pipeline.Web.Orchard {
         <add name='body' value='' />
       </parameters>
     </add>
+    <add name='expression'>
+      <parameters>
+        <add name='expression' />
+      </parameters>
+    </add>
   </signatures>
 
   <methods>
@@ -315,6 +320,7 @@ namespace Pipeline.Web.Orchard {
     <add name='include' signature='any' />
     <add name='exclude' signature='any' />
     <add name='slugify' signature='none' />
+
     <add name='camelize' signature='none' />
     <add name='dasherize' signature='none' />
     <add name='hyphenate' signature='none' />
@@ -355,6 +361,8 @@ namespace Pipeline.Web.Orchard {
 
     <add name='isdaylightsavings' signature='none' />
     <add name='htmlencode' signature='none' />
+    <add name='datemath' signature='expression' />
+    <add name='eval' signature='expression' />
     
   </methods>
 
@@ -1084,7 +1092,7 @@ namespace Pipeline.Web.Orchard {
             foreach (var entity in process.Entities) {
                 foreach (var field in entity.Fields.Where(f => f.Facet)) {
                     if (process.Maps.All(m => m.Name != field.Alias)) {
-                        process.Maps.Add(new Map { Name = field.Alias }.WithDefaults());
+                        process.Maps.Add(new Map { Name = field.Alias });
                     }
                     var parameters = process.GetActiveParameters();
                     if (parameters.All(pr => pr.Name != field.Alias)) {
@@ -1096,7 +1104,7 @@ namespace Pipeline.Web.Orchard {
                                 Prompt = true,
                                 Value = "*",
                                 Map = field.Alias
-                            }.WithDefaults()
+                            }
                         );
                     }
                     if (entity.Filter.All(f => f.Field != field.Name)) {
@@ -1107,7 +1115,7 @@ namespace Pipeline.Web.Orchard {
                             Type = "facet",
                             Map = field.Alias,
                             Value = request.QueryString[field.Alias] ?? "*"
-                        }.WithDefaults());
+                        });
                     }
                 }
             }

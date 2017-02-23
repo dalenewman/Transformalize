@@ -51,7 +51,7 @@ namespace Transformalize.Context {
             Key = context.Key;
         }
 
-        public void Increment(int by = 1) {
+        public void Increment(uint by = 1) {
             _incrementer.Increment(by);
         }
 

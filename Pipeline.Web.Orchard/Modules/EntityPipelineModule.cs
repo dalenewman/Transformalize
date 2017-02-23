@@ -62,24 +62,26 @@ namespace Pipeline.Web.Orchard.Modules {
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
 
                 // transform
-                pipeline.Register(new SetBatchId(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields()));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
-                pipeline.Register(new SetKey(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-
-                if (provider == "sqlserver") {
-                    pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
+                if (!process.ReadOnly) {
+                    pipeline.Register(new SetBatchId(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, entity.TflBatchId())));
+                    pipeline.Register(new SetKey(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, entity.TflKey())));
                 }
 
-                //load
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite))
-                    ? ctx.ResolveNamed<IWrite>(entity.Key)
-                    : new NullWriter());
+                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f => !f.System)));
+                pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
 
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate))
-                    ? ctx.ResolveNamed<IUpdate>(entity.Key)
-                    : new NullUpdater());
+                if (!process.ReadOnly) {
+                    pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+                    if (provider == "sqlserver") {
+                        pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
+                    }
+                }
+
+                // writer
+                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : new NullWriter());
+
+                // updater
+                pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));
 
                 return pipeline;
 

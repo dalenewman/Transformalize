@@ -41,7 +41,7 @@ namespace Transformalize.Provider.Elastic {
 
         public void Write(IEnumerable<IRow> rows) {
             var builder = new StringBuilder();
-            var count = 0;
+            var count = (uint)0;
 
             foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
                 foreach (var row in part) {

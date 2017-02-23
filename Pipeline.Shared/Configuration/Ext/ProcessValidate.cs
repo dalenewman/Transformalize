@@ -34,6 +34,7 @@ namespace Transformalize.Configuration.Ext {
             ValidateDuplicateFields(p, error);
             ValidateRelationships(p, error, warn);
             ValidateEntityConnections(p, error);
+            ValidateEntityInvalidFields(p, error);
             ValidateEntityMeetsProviderExpectations(p, error);
             ValidateEntityFilterMaps(p, error);
             ValidateActionConnections(p, error);
@@ -49,6 +50,19 @@ namespace Transformalize.Configuration.Ext {
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
             ValidateFlatten(p, error, warn);
+        }
+
+        private static void ValidateEntityInvalidFields(Process p, Action<string> error) {
+            if (p.ReadOnly)
+                return;
+
+            foreach (var entity in p.Entities) {
+                foreach (var field in entity.GetAllFields().Where(f => !f.System)) {
+                    if (Constants.InvalidFieldNames.Contains(field.Alias)) {
+                        error($"{field.Alias} is a reserved word in {entity.Alias}.  Please alias it (<a name='{field.Alias}' alias='{entity.Alias}{field.Alias.Remove(0, 3)}' />).");
+                    }
+                }
+            }
         }
 
         private static void ValidateFlatten(Process p, Action<string> error, Action<string> warn) {

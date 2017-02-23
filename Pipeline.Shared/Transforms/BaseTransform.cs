@@ -70,7 +70,7 @@ namespace Transformalize.Transforms {
             Returns = returns;
         }
 
-        public long RowCount { get; set; }
+        public uint RowCount { get; set; }
 
         protected virtual void Increment() {
             RowCount++;

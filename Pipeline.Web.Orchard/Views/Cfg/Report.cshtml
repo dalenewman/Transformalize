@@ -504,8 +504,11 @@ td.sorter {
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
-            onChange: function(option, checked, select) {
+            onChange: function() {
                 controls.setPage(1);
+                if (!this.$select[0].multiple) {
+                    controls.submit(1);
+                }
             },
             maxHeight: 400,
             nonSelectedText: 'All',

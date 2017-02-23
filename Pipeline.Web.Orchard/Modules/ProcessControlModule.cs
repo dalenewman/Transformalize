@@ -86,28 +86,9 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 }
 
-                // input validation
-                if (_process.Mode == "init") {
-                    var providers = _process.Connections.Select(c => c.Provider).Distinct();
-
-                    foreach (var provider in providers) {
-                        switch (provider) {
-                            case "solr":
-                                foreach (var cn in _process.Connections.Where(c => c.Provider == "solr")) {
-                                    var connection = cn;
-                                    foreach (var entity in _process.Entities.Where(e => e.Connection == connection.Name)) {
-                                        controller.PreActions.Add(ctx.ResolveNamed<IInputValidator>(entity.Key));
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                // flatten
-                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
-                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(o.Connection.Provider)) {
-                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
+                // load maps
+                foreach (var map in _process.Maps.Where(m => !string.IsNullOrEmpty(m.Query))) {
+                    controller.PreActions.Add(new MapReaderAction(context, map, ctx.ResolveNamed<IMapReader>(map.Name)));
                 }
 
                 // templates
@@ -133,8 +114,10 @@ namespace Pipeline.Web.Orchard.Modules {
                     }
                 }
 
-                foreach(var map in _process.Maps.Where(m=>!string.IsNullOrEmpty(m.Query))){
-                    controller.PreActions.Add(new MapReaderAction(context, map, ctx.ResolveNamed<IMapReader>(map.Name)));
+                // flatten
+                var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
+                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(o.Connection.Provider)) {
+                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
                 }
 
                 return controller;

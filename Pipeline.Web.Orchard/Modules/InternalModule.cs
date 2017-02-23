@@ -91,7 +91,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                         switch (output.Connection.Provider) {
                             case "internal":
-                                return new InternalWriter(e);
+                                return new InternalWriter(output);
                             case "log":
                                 return new OrchardLogWriter(output);
                             default:

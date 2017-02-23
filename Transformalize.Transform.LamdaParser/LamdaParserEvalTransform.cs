@@ -22,10 +22,7 @@ namespace Transformalize.Transform.LamdaParser {
                 var lambdaParser = new NReco.Linq.LambdaParser { UseCache = true };
                 var exp = lambdaParser.Parse(context.Transform.Expression);
 
-                var pattern = string.Join("|", context.Entity.GetAllFields().Select(f => f.Alias));
-                var regex = new Regex(pattern, RegexOptions.Compiled);
-
-                var matches = regex.Matches(exp.ToString());
+                var matches = context.Entity.FieldMatcher.Matches(exp.ToString());
                 foreach (Match match in matches) {
                     Field field;
                     if (context.Entity.TryGetField(match.Value, out field) && _input.All(f => f.Alias != field.Alias)) {

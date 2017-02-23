@@ -53,7 +53,7 @@ namespace Pipeline.Web.Orchard.Services {
                 var sort = Sort(number, expression);
                 if (sort != Direction.None) {
                     if (string.IsNullOrEmpty(entity.Query)) {
-                        entity.Order.Add(new Order { Field = field.SortField, Sort = sort == Direction.Asc ? "asc" : "desc" }.WithDefaults());
+                        entity.Order.Add(new Order { Field = field.SortField, Sort = sort == Direction.Asc ? "asc" : "desc" });
                     } else {
                         if (orderBy == null) {
                             entity.Query = entity.Query.TrimEnd(';');

@@ -19,187 +19,86 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Cfg.Net.Contracts;
-using Cfg.Net.Ext;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
-using Transformalize.Nulls;
 using Transformalize.Transforms;
-using Transformalize.Transform.GeoCoordinate;
-using Transformalize.Transform.Geohash;
-using Transformalize.Transform.Jint;
 using Transformalize.Transforms.System;
 using Transformalize.Validators;
-using Newtonsoft.Json;
-using Transformalize.Transform.DateMath;
-using Transformalize.Transform.Dates;
-using Transformalize.Transform.Geocode;
-using Transformalize.Transform.Html;
-using Transformalize.Transform.Humanizer;
 
 namespace Pipeline.Web.Orchard.Impl {
     public static class TransformFactory {
 
-        public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
+        public static Transforms GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
+            var valid = true;
+
             foreach (var f in fields.Where(f => f.Transforms.Any())) {
                 var field = f;
+
                 if (field.RequiresCompositeValidator()) {
-                    transforms.Add(new CompositeValidator(
-                        new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field),
-                        field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t)))
-                        ));
+                    var composite = new List<ITransform>();
+                    foreach (var t in field.Transforms) {
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        ITransform add;
+                        if (TryTransform(ctx, transformContext, out add)) {
+                            composite.Add(add);
+                        } else {
+                            valid = false;
+                        }
+                    }
+                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field);
+                    transforms.Add(new CompositeValidator(entityContext, composite));
                 } else {
-                    transforms.AddRange(field.Transforms.Select(t => ShouldRunTransform(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t))));
+                    foreach (var t in field.Transforms) {
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        ITransform add;
+                        if (TryTransform(ctx, transformContext, out add)) {
+                            transforms.Add(add);
+                        } else {
+                            valid = false;
+                        }
+                    }
                 }
                 // add conversion if necessary
                 if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Transform { Method = "convert" }.WithDefaults())));
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Transform { Method = "convert" })));
                 }
             }
-            return transforms;
+
+            return new Transforms(transforms, valid);
+        }
+
+        public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
+            transform = null;
+            var success = true;
+            if (ctx.IsRegisteredWithName<ITransform>(context.Transform.Method)) {
+                var t = ShouldRunTransform(ctx, context);
+
+                foreach (var warning in t.Warnings()) {
+                    context.Warn(warning);
+                }
+
+                if (t.Errors().Any()) {
+                    foreach (var error in t.Errors()) {
+                        context.Error(error);
+                    }
+                    success = false;
+                } else {
+                    transform = t;
+                }
+            } else {
+                context.Error("The {0} method used in the {1} field is not registered.", context.Transform.Method, context.Field.Alias);
+                success = false;
+            }
+            return success;
         }
 
         public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
-            return context.Transform.ShouldRun == null ? SwitchTransform(ctx, context) : new ShouldRunTransform(context, SwitchTransform(ctx, context));
+            return context.Transform.ShouldRun == null ?
+                ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)) :
+                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)));
         }
 
-        static ITransform SwitchTransform(IComponentContext ctx, IContext context) {
-
-            switch (context.Transform.Method) {
-
-                case "abs": return new AbsTransform(context);
-                case "add": case "sum": return new AddTransform(context);
-                case "ceiling": return new CeilingTransform(context);
-                case "coalesce": return new CoalesceTransform(context);
-                case "concat": return new ConcatTransform(context);
-                case "connection": return new ConnectionTransform(context);
-                case "convert": return new ConvertTransform(context);
-                case "copy": return new CopyTransform(context);
-                case "cs":
-                case "csharp":
-                    context.Error("Unable to register csharp transform in orchard cms (for now).");
-                    return new NullTransform(context);
-                case "datediff": return new DateDiffTransform(context);
-                case "datepart": return new DatePartTransform(context);
-                case "decompress": return new DecompressTransform(context);
-                case "fileext": return new FileExtTransform(context);
-                case "filename": return new FileNameTransform(context);
-                case "filepath": return new FilePathTransform(context);
-                case "floor": return new FloorTransform(context);
-                case "format": return new FormatTransform(context);
-                case "formatxml": return new FormatXmlTransfrom(context);
-                case "formatphone": return new FormatPhoneTransform(context);
-                case "hashcode": return new HashcodeTransform(context);
-                case "htmldecode": return new DecodeTransform(context);
-                case "htmlencode": return new HtmlEncodeTransform(context);
-                case "insert": return new InsertTransform(context);
-                case "invert": return new InvertTransform(context);
-                case "join": return new JoinTransform(context);
-                case "js":
-                case "javascript": return new JintTransform(context, ctx.Resolve<IReader>());
-                case "last": return new LastTransform(context);
-                case "left": return new LeftTransform(context);
-                case "lower": case "tolower": return new ToLowerTransform(context);
-                case "map": return new MapTransform(context);
-                case "match": return new RegexMatchTransform(context);
-                case "multiply": return new MultiplyTransform(context);
-                case "next": return new NextTransform(context);
-                case "now": return new UtcNowTransform(context);
-                case "padleft": return new PadLeftTransform(context);
-                case "padright": return new PadRightTransform(context);
-                case "razor": return ctx.ResolveNamed<ITransform>("razor", new TypedParameter(typeof(PipelineContext), context));
-                case "regexreplace": return new RegexReplaceTransform(context);
-                case "remove": return new RemoveTransform(context);
-                case "replace": return new ReplaceTransform(context);
-                case "right": return new RightTransform(context);
-                case "round": return new RoundTransform(context);
-                case "splitlength": return new SplitLengthTransform(context);
-                case "substring": return new SubStringTransform(context);
-                case "tag": return new TagTransform(context);
-                case "timeago": return new RelativeTimeTransform(context, true);
-                case "timeahead": return new RelativeTimeTransform(context, false);
-                case "timezone": return new TimeZoneTransform(context);
-                case "tostring": return new ToStringTransform(context);
-                case "totime": return new ToTimeTransform(context);
-                case "toyesno": return new ToYesNoTransform(context);
-                case "trim": return new TrimTransform(context);
-                case "trimend": return new TrimEndTransform(context);
-                case "trimstart": return new TrimStartTransform(context);
-                case "upper": case "toupper": return new ToUpperTransform(context);
-                case "xmldecode": return new DecodeTransform(context);
-                case "xpath": return new XPathTransform(context);
-                case "iif": return new IIfTransform(context);
-                case "geohashencode": return new GeohashEncodeTransform(context);
-                case "geohashneighbor": return new GeohashNeighborTransform(context);
-                case "commonprefix": return new CommonPrefixTransform(context);
-                case "commonprefixes": return new CommonPrefixesTransform(context);
-                case "distance": return new DistanceTransform(context);
-
-                case "include": return new FilterTransform(context, FilterType.Include);
-                case "exclude": return new FilterTransform(context, FilterType.Exclude);
-
-                // Humanizer
-                case "camelize": return new CamelizeTransform(context);
-                case "frommetric": return new FromMetricTransform(context);
-                case "fromroman": return new FromRomanTransform(context);
-                case "humanize": return new HumanizeTransform(context);
-                case "dehumanize": return new DehumanizeTransform(context);
-                case "dasherize":
-                case "hyphenate": return new HyphenateTransform(context);
-                case "ordinalize": return new OrdinalizeTransform(context);
-                case "pascalize": return new PascalizeTransform(context);
-                case "pluralize": return new PluralizeTransform(context);
-                case "singularize": return new SingularizeTransform(context);
-                case "titleize": return new TitleizeTransform(context);
-                case "tometric": return new ToMetricTransform(context);
-                case "toordinalwords": return new ToOrdinalWordsTransform(context);
-                case "toroman": return new ToRomanTransform(context);
-                case "towords": return new ToWordsTransform(context);
-                case "underscore": return new UnderscoreTransform(context);
-                case "bytes": return new BytesTransform(context);
-
-                case "addticks": return new DateAddTransform(context, "ticks");
-                case "addmilliseconds": return new DateAddTransform(context, "milliseconds");
-                case "addseconds": return new DateAddTransform(context, "seconds");
-                case "addminutes": return new DateAddTransform(context, "minutes");
-                case "addhours": return new DateAddTransform(context, "hours");
-                case "adddays": return new DateAddTransform(context, "days");
-
-                case "fromxml": return context.Transform.XmlMode == "all" ? new Transformalize.Desktop.Transforms.FromXmlTransform(context, ctx.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : new Transformalize.Transforms.FromXmlTransform(context) as ITransform;
-                case "fromsplit": return new FromSplitTransform(context);
-                case "fromlengths": return new FromLengthsTranform(context);
-
-                // return true or false, validators
-                case "any": return new AnyValidator(context);
-                case "startswith": return new StartsWithValidator(context);
-                case "endswith": return new EndsWithValidator(context);
-                case "in": return new InValidator(context);
-                case "contains": return new ContainsValidator(context);
-                case "is": return new IsValidator(context);
-                case "equal":
-                case "equals": return new EqualsValidator(context);
-                case "isempty": return new IsEmptyValidator(context);
-                case "isdefault": return new IsDefaultValidator(context);
-                case "isnumeric": return new IsNumericValidator(context);
-
-                case "geocode": return new GeocodeTransform(context);
-                case "datemath": return new DateMathTransform(context);
-
-                // wip
-                case "web": return new WebTransform(context);
-                case "urlencode": return new UrlEncodeTransform(context);
-                case "fromjson": return new FromJsonTransform(context, o => JsonConvert.SerializeObject(o, Formatting.None));
-
-                case "isdaylightsavings": return new IsDaylightSavings(context);
-                case "slugify": return new SlugifyTransform(context);
-
-                default:
-                    context.Warn("The {0} method is not registered in the transform factory.", context.Transform.Method);
-                    return new NullTransform(context);
-            }
-        }
     }
 }

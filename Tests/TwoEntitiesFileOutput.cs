@@ -109,7 +109,7 @@ namespace Tests {
 
                     var reversed = new Process {
                         Name = process.Name,
-                        System = false,
+                        ReadOnly = true,
                         Connections = new List<Connection>(2){
                             new Connection { Name = "input", Provider = provider, File = file.FullName},
                             originalOutput
@@ -117,7 +117,6 @@ namespace Tests {
                         Entities = new List<Entity>(1) {
                             new Entity {
                                 Name = provider == "sqlce" ? process.Flat : process.Star,
-                                System = false,
                                 CalculateHashCode = false,
                                 Connection = "input",
                                 Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {

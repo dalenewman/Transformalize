@@ -21,7 +21,6 @@ using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Environment;
-using Cfg.Net.Ext;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
 using Orchard.Templates.Services;
@@ -31,12 +30,10 @@ using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
-using IParser = Transformalize.Contracts.IParser;
 using System;
 using Orchard.Localization;
 using Orchard.UI.Notify;
 using Transformalize;
-using Transformalize.Desktop;
 using Transformalize.Impl;
 using Transformalize.Transform.DateMath;
 
@@ -64,25 +61,6 @@ namespace Pipeline.Web.Orchard.Modules {
                 new ReTryingReader(ctx.ResolveNamed<IReader>("web"), attempts: 3))
             );
 
-            // javascript implementation
-            builder.Register<ITransform>((ctx, p) => new JintTransform(p.TypedAs<PipelineContext>(), ctx.Resolve<IReader>())).Named<ITransform>("js");
-            // razor implementation
-            builder.Register<ITransform>((ctx, p) => {
-                var c = p.TypedAs<PipelineContext>();
-                if (ctx.IsRegistered<ITemplateProcessor>()) {
-                    try {
-                        var processor = ctx.Resolve<ITemplateProcessor>();
-                        processor.Verify(c.Transform.Template);
-                        return new OrchardRazorTransform(c, processor);
-                    } catch (Exception ex) {
-                        ctx.Resolve<INotifier>().Warning(T(ex.Message));
-                        c.Warn(ex.Message);
-                        return new NullTransform(c);
-                    }
-                }
-                return new NullTransform(c);
-            }).Named<ITransform>("razor");
-
             builder.Register((ctx, p) => {
 
                 var dependencies = new List<IDependency> {
@@ -97,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 if (!string.IsNullOrEmpty(ctx.ResolveNamed<string>("sh"))) {
                     var shr = new ShorthandRoot(ctx.ResolveNamed<string>("sh"), ctx.ResolveNamed<IReader>("file"));
                     if (shr.Errors().Any()) {
-                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" }.WithDefaults());
+                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" });
                         foreach (var error in shr.Errors()) {
                             context.Error(error);
                         }

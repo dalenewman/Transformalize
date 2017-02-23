@@ -46,7 +46,7 @@ namespace Transformalize.Provider.Ado {
 
                 var inserts = new List<IRow>(_output.Entity.InsertSize);
                 var updates = new List<IRow>(_output.Entity.InsertSize);
-                var batchCount = 0;
+                var batchCount = (uint)0;
 
                 if (_output.Entity.IsFirstRun) {
                     foreach (var row in part) {

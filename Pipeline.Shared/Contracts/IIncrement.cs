@@ -17,6 +17,6 @@
 #endregion
 namespace Transformalize.Contracts {
     public interface IIncrement {
-        void Increment(int by = 1);
+        void Increment(uint by = 1);
     }
 }

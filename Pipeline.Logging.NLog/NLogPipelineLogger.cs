@@ -33,13 +33,18 @@ namespace Transformalize.Logging.NLog {
         const string Context = "{0} | {1} | {2} | {3}";
         readonly Logger _log;
 
-        public NLogPipelineLogger(string name, bool suppressConsole) {
+        /// <summary>
+        /// NLog implementation of IPipelineLogger
+        /// </summary>
+        /// <param name="fileName">The name used in the file target</param>
+        /// <param name="suppressConsole">If you want to suppress info and warning from console output</param>
+        public NLogPipelineLogger(string fileName, bool suppressConsole) {
             _suppressConsole = suppressConsole;
-            var invalids = name.Intersect(Path.GetInvalidPathChars()).ToArray();
+            var invalids = fileName.Intersect(Path.GetInvalidPathChars()).ToArray();
             if (invalids.Any()) {
                 throw new ArgumentException("The log name contains invalid path characters: {0}.", string.Join(", ", invalids));
             }
-            ReConfiguredLogLevel(name);
+            ReConfiguredLogLevel(fileName);
             _log = LogManager.GetLogger("TFL");
         }
 

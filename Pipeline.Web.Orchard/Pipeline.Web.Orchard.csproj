@@ -71,8 +71,8 @@
       <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.6\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.9.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.9.4\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.9.5\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -84,7 +84,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.5.0.1\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\..\..\packages\Elasticsearch.Net.5.2.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Excel, Version=2.1.2.3, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
@@ -110,6 +110,10 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NReco.LambdaParser, Version=1.0.4.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.4\lib\portable45-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
@@ -232,6 +236,9 @@
     <Reference Include="Transformalize.Transform.Jint">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Transform.Jint\bin\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Transform.LamdaParser">
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.LamdaParser\bin\$(Configuration)\Transformalize.Transform.LamdaParser.dll</HintPath>
+    </Reference>
     <Reference Include="YamlDotNet, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\YamlDotNet.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
       <Private>True</Private>
@@ -264,6 +271,7 @@
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
+    <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\CfgService.cs" />
     <Compile Include="Services\ExportLinkService.cs" />

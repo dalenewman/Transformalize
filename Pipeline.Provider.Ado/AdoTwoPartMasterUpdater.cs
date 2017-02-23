@@ -60,7 +60,7 @@ namespace Transformalize.Provider.Ado {
                     foreach (var batch in Read(cn, select).Partition(_master.UpdateSize)) {
                         var expanded = batch.ToArray();
                         cn.Execute(update, expanded, trans);
-                        _c.Increment(expanded.Length);
+                        _c.Increment(Convert.ToUInt32(expanded.Length));
                     }
                     trans.Commit();
                 } catch (Exception ex) {

@@ -105,7 +105,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var timer = new Stopwatch();
             timer.Start();
 
-            var process = new Process { Name = "Report" }.WithDefaults();
+            var process = new Process { Name = "Report" };
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
@@ -258,7 +258,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
-            var process = new Process { Name = "Export" }.WithDefaults();
+            var process = new Process { Name = "Export" };
 
             if (part == null) {
                 process.Name = "Not Found";

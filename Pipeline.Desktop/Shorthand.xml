@@ -17,6 +17,11 @@
         <add name='separator' value=',' />
       </parameters>
     </add>
+    <add name='separator-space'>
+      <parameters>
+        <add name='separator' value=' ' />
+      </parameters>
+    </add>
     <add name='padding'>
       <parameters>
         <add name='total-width' />
@@ -348,6 +353,8 @@
     <add name='htmlencode' signature='none' />
     <add name='fromaddress' signature='key' />
     <add name='frommodel' signature='model' />
+    
+    <add name='distinct' signature='separator-space' />
     
   </methods>
 

@@ -99,7 +99,7 @@ namespace Transformalize.Provider.SqlCe {
 
                     }
 
-                    _output.Increment(batch.Length);
+                    _output.Increment(Convert.ToUInt32(batch.Length));
                 }
 
                 if (_output.Entity.Inserts > 0) {
@@ -137,7 +137,7 @@ namespace Transformalize.Provider.SqlCe {
                     }
                 }
 
-                _output.Entity.Inserts += enumerated.Length;
+                _output.Entity.Inserts += Convert.ToUInt32(enumerated.Length);
             } catch (Exception ex) {
                 _output.Error(ex.Message);
             }

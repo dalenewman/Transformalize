@@ -70,7 +70,7 @@ namespace Transformalize.Context {
         public string Key => _context.Key;
 
         public IPipelineLogger Logger => _context.Logger;
-        public void Increment(int @by = 1) {
+        public void Increment(uint @by = 1) {
         }
 
         public Connection Connection { get; }

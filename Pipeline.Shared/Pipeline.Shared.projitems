@@ -149,6 +149,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixesTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\DistinctTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DateAddTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AddTransform.cs" />

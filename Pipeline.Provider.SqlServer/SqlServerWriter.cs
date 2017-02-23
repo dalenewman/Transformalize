@@ -135,7 +135,7 @@ namespace Transformalize.Provider.SqlServer {
 
                     }
 
-                    _output.Increment(batch.Length);
+                    _output.Increment(Convert.ToUInt32(batch.Length));
                 }
 
                 if (_output.Entity.Inserts > 0) {
@@ -166,7 +166,7 @@ namespace Transformalize.Provider.SqlServer {
 
             try {
                 bulkCopy.WriteToServer(rows.ToArray());
-                _output.Entity.Inserts += enumerated.Length;
+                _output.Entity.Inserts += Convert.ToUInt32(enumerated.Length);
             } catch (Exception ex) {
                 _output.Error(ex.Message);
             }

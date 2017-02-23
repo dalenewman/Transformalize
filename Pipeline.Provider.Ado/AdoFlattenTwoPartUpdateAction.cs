@@ -67,7 +67,7 @@ namespace Transformalize.Provider.Ado {
                         var expanded = batch.ToArray();
                         cn.Execute(command, expanded, trans);
                         count += expanded.Length;
-                        _output.Increment(expanded.Length);
+                        _output.Increment(Convert.ToUInt32(expanded.Length));
                     }
                     trans.Commit();
                     _output.Info($"{count} record{count.Plural()} updated in flat");

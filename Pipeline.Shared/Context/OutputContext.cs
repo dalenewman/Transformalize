@@ -35,7 +35,7 @@ namespace Transformalize.Context {
             Connection = context.Process.Output();
         }
 
-        public void Increment(int by = 1) {
+        public void Increment(uint by = 1) {
             _incrementer.Increment(by);
         }
 
