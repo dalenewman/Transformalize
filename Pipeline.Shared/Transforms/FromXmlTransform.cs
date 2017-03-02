@@ -78,7 +78,12 @@ namespace Transformalize.Transforms {
                         count++;
                         var value = node.Value ?? (field.ReadInnerXml ? node.InnerText() : node.ToString());
                         if (!string.IsNullOrEmpty(value)) {
-                            row[field] = field.Convert(value);
+                            try {
+                                row[field] = field.Convert(value);
+                            } catch (Exception ex) {
+                                Context.Error(ex.Message);
+                                Context.Error(value);
+                            }
                         }
                     }
                     if (_searchAttributes) {

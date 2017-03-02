@@ -95,6 +95,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
             builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
             builder.Register((c, p) => new RazorTransform(p.Positional<IContext>(0))).Named<ITransform>("razor");
+            builder.Register((c, p) => new TimeZoneTransform(p.Positional<IContext>(0))).Named<ITransform>("timezone");
 
             builder.Register((c, p) => new RegexReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("regexreplace");
             builder.Register((c, p) => new RemoveTransform(p.Positional<IContext>(0))).Named<ITransform>("remove");

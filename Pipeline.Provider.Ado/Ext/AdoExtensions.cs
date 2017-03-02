@@ -53,13 +53,21 @@ namespace Transformalize.Provider.Ado.Ext {
         }
 
         public static string SqlCreateOutputUniqueIndex(this OutputContext c, IConnectionFactory cf) {
+            var tableName = c.Entity.OutputTableName(c.Process.Name);
             var pk = c.Entity.GetAllFields().Where(f => f.PrimaryKey).Select(f => f.FieldName()).ToArray();
-            var indexName = ("UX_" + Utility.Identifier(c.Entity.OutputTableName(c.Process.Name) + "_" + SqlKeyName(pk))).Left(128);
-            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))} ({string.Join(",", pk.Select(cf.Enclose))});";
+            var indexName = ("UX_" + Utility.Identifier(tableName + "_" + SqlKeyName(pk))).Left(128);
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(tableName)} ({string.Join(",", pk.Select(cf.Enclose))});";
             c.Debug(() => sql);
             return sql;
         }
 
+        public static string SqlCreateFlatIndex(this OutputContext c, IConnectionFactory cf) {
+            var pk = c.Process.Entities.First(e=>e.IsMaster).GetAllFields().Where(f => f.PrimaryKey).Select(f => f.Alias).ToArray();
+            var indexName = ("UX_" + Utility.Identifier(c.Process.Flat + "_" + SqlKeyName(pk))).Left(128);
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))});";
+            c.Debug(() => sql);
+            return sql;
+        }
         public static string SqlSelectOutputSchema(this OutputContext c, IConnectionFactory cf) {
             var table = $"{cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}";
             var sql = cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ?
@@ -334,7 +342,7 @@ namespace Transformalize.Provider.Ado.Ext {
             var definitions = new List<string>();
             foreach (var entity in c.Process.GetStarFields()) {
                 foreach (var field in entity) {
-                    definitions.Add(cf.Enclose(field.Alias) + cf.SqlDataType(field) + " NOT NULL");
+                    definitions.Add(cf.Enclose(field.Alias) + " " + cf.SqlDataType(field) + " NOT NULL");
                 }
             }
 

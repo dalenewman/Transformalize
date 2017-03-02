@@ -101,7 +101,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Timeout for each request (SQL or DML)
         /// </summary>
-        [Cfg(value = 30)]
+        [Cfg(value = 60)]
         public int RequestTimeout { get; set; }
 
         // Timeout for the connection
@@ -224,6 +224,10 @@ namespace Transformalize.Configuration {
 
             if (Delimiter.Length > 1) {
                 Error($"Invalid delimiter defined for connection '{Name}'.  The delimiter '{Delimiter}' is too long.  It can only be zero or one character.");
+            }
+
+            if (Provider == "sqlce" && RequestTimeout != 0) {
+                RequestTimeout = 0;
             }
         }
 

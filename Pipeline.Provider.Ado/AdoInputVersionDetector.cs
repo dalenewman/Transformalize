@@ -58,7 +58,7 @@ namespace Transformalize.Provider.Ado {
             try {
                 using (var cn = _cf.GetConnection()) {
                     cn.Open();
-                    return cn.ExecuteScalar(sql);
+                    return cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
                 }
             } catch (Exception ex) {
                 _context.Error(ex, ex.Message + " " + sql);

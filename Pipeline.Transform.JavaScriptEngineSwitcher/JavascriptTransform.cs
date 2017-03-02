@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
@@ -29,9 +31,11 @@ namespace Transformalize.Transform.JavaScriptEngineSwitcher {
         readonly Field[] _input;
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly IJsEngine _engine;
+        private readonly IContext _context;
 
         public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, null) {
 
+            _context = context;
             _engine = factory.CreateEngine();
 
             // for js, always add the input parameter
@@ -121,7 +125,11 @@ namespace Transformalize.Transform.JavaScriptEngineSwitcher {
 
         public override void Dispose() {
             if (_engine.SupportsGarbageCollection) {
-                _engine.CollectGarbage();
+                try {
+                    _engine.CollectGarbage();
+                } catch (Exception) {
+                    _context.Debug((() => "Error collecting js garbage"));
+                }
             }
             _engine.Dispose();
         }

@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using System.Diagnostics;
+using System.Net.Mime;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -73,9 +74,9 @@ namespace Transformalize.Provider.Ado {
                 cn.Open();
                 var sql = Context.SqlControlEndBatch(_cf);
                 cn.Execute(sql, new {
-                    Context.Entity.Inserts,
-                    Context.Entity.Updates,
-                    Context.Entity.Deletes,
+                    Inserts =  Convert.ToInt64(Context.Entity.Inserts),
+                    Updates = Convert.ToInt64(Context.Entity.Updates),
+                    Deletes = Convert.ToInt64(Context.Entity.Deletes),
                     Entity = Context.Entity.Alias,
                     Context.Entity.BatchId,
                     DateTime.Now

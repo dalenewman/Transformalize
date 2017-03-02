@@ -32,8 +32,8 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.9.5\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FileHelpers, Version=3.1.5.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
@@ -60,12 +60,15 @@
     <Compile Include="DelimitedFileReader.cs" />
     <Compile Include="DelimitedFileStreamWriter.cs" />
     <Compile Include="DelimitedFileWriter.cs" />
+    <Compile Include="Actions\FileCopyAction.cs" />
     <Compile Include="FileHelpersEngineFactory.cs" />
     <Compile Include="FileImport.cs" />
     <Compile Include="FileInspection.cs" />
     <Compile Include="FileLineReader.cs" />
+    <Compile Include="Actions\FileMoveAction.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="DirectoryReader.cs" />
+    <Compile Include="Actions\FileReplaceAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

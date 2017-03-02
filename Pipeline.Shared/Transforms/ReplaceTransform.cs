@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -24,6 +26,8 @@ namespace Transformalize.Transforms {
 
         public ReplaceTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
+            context.Transform.OldValue = context.Transform.OldValue.Replace("\\r", "\r");
+            context.Transform.OldValue = context.Transform.OldValue.Replace("\\n", "\n");
         }
 
         public override IRow Transform(IRow row) {
@@ -31,5 +35,7 @@ namespace Transformalize.Transforms {
             Increment();
             return row;
         }
+
+
     }
 }

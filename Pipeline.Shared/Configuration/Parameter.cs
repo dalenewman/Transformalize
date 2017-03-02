@@ -98,7 +98,7 @@ namespace Transformalize.Configuration {
                 return true;
 
             if (string.IsNullOrEmpty(Entity)) {
-                _loadedField = process.GetAllFields().FirstOrDefault(f => f.Alias.Equals(Field, StringComparison.OrdinalIgnoreCase)) ?? process.GetAllFields().FirstOrDefault(f => f.Name.Equals(Field, StringComparison.OrdinalIgnoreCase));
+                _loadedField = process.GetAllFields().FirstOrDefault(f => f.Alias != null && f.Alias.Equals(Field, StringComparison.OrdinalIgnoreCase)) ?? process.GetAllFields().FirstOrDefault(f => f.Name != null && f.Name.Equals(Field, StringComparison.OrdinalIgnoreCase));
                 return _loadedField != null;
             }
 

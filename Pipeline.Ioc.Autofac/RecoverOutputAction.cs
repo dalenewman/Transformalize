@@ -16,11 +16,16 @@ namespace Transformalize.Ioc.Autofac {
         public ActionResponse Execute() {
 
             var process = _context.Process;
-            var originalOutput = process.Connections.First(c => c.Name == "original-output");
+            var originalOutput = process.Connections.First(c => c.Name == Constants.OriginalOutput);
             process.Connections.Remove(originalOutput);
             originalOutput.Name = "output";
 
             var threshold = process.Entities.Min(e => e.BatchId) - 1;
+            var readFirstTable = process.InternalProvider == "sqlce" && process.Entities.Count == 1;
+            var firstEntity = process.Entities.First();
+            var firstTable = firstEntity.OutputTableName(process.Name);
+            var counter = (short)0;
+
             var reversed = new Process {
                 Name = process.Name,
                 ReadOnly = true,
@@ -30,11 +35,13 @@ namespace Transformalize.Ioc.Autofac {
                 },
                 Entities = new List<Entity>(1) {
                     new Entity {
-                        Name = process.InternalProvider == "sqlce" ?process.Flat : process.Star,
+                        Name = process.InternalProvider == "sqlce" ? (readFirstTable ? firstTable : process.Flat) : process.Star,
                         CalculateHashCode = false,
                         Connection = "input",
                         Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {
-                            Name = field.Alias,
+                            Index = counter++,
+                            MasterIndex = field.Index,
+                            Name = readFirstTable ? field.FieldName() : field.Alias,
                             Alias = field.Alias,
                             Type = field.Type,
                             Input = true,
@@ -42,7 +49,7 @@ namespace Transformalize.Ioc.Autofac {
                         }).ToList(),
                         Filter = new List<Filter> {
                             new Filter {
-                                Field = Constants.TflBatchId,
+                                Field = readFirstTable ? firstEntity.TflBatchId().FieldName() : Constants.TflBatchId,
                                 Operator = "greaterthan",
                                 Value = threshold.ToString()
                             }

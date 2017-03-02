@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.9.5\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NVelocity, Version=1.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">

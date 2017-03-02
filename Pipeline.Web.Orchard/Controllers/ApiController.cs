@@ -68,7 +68,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             Logger = NullLogger.Instance;
         }
 
-        public ContentResult Run(int id) {
+        public ActionResult Run(int id) {
 
             const string action = "Run";
             var timer = new Stopwatch();
@@ -139,6 +139,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Request = action;
                     process.Time = timer.ElapsedMilliseconds;
                     RemoveCredentials(process);
+
+                    //var returnUrl = (Request.Form["ReturnUrl"] ?? Request.QueryString["ReturnUrl"]) ?? string.Empty;
+                    //if (!returnUrl.Equals(string.Empty))
+                    //    return new RedirectResult(returnUrl);
+
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     Logger.Error(ex, "Executing {0} threw error: {1}", id, ex.Message);

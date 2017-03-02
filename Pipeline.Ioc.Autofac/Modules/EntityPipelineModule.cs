@@ -60,8 +60,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // transform
                 if (!process.ReadOnly) {
-                    pipeline.Register(new SetBatchId(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, entity.TflBatchId())));
-                    pipeline.Register(new SetKey(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, entity.TflKey())));
+                    pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
                 }
 
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f=>!f.System)));

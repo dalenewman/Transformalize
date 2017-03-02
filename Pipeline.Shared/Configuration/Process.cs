@@ -330,13 +330,6 @@ namespace Transformalize.Configuration {
             ModifyRelationshipToMaster();
             ModifyIndexes();
 
-            // do not output system fields if output is trace, console, or file
-            if (Connections.First(c => c.Name == "output").Provider.In("trace", "console", "file")) {
-                foreach (var field in Entities.SelectMany(e => e.Fields).Where(f => f.System)) {
-                    field.Output = false;
-                }
-            }
-
             // create entity field's matcher
             foreach (var entity in Entities) {
                 var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).Select(f => f.Alias));
@@ -571,6 +564,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "sqlite", domain = "sqlite,sqlce", toLower = true)]
         public string InternalProvider { get; set; }
 
+        [Cfg(value=false)]
+        public bool Buffer { get; set; }
+
         public List<Parameter> GetActiveParameters() {
             if (!Environments.Any())
                 return new List<Parameter>();
@@ -608,7 +604,7 @@ namespace Transformalize.Configuration {
             if (Actions.Count > 0 && Entities.Count == 1 && Entities.First().GetAllFields().All(f => f.System)) {
                 return false;
             }
-            return Connections.Any(c => c.Name == "original-output" && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
+            return Connections.Any(c => c.Name == Constants.OriginalOutput && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
         }
     }
 }

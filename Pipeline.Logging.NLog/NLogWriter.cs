@@ -32,8 +32,8 @@ namespace Transformalize.Logging.NLog {
 
         public NLogWriter(OutputContext context) {
             _logger = LogManager.GetLogger(context.Process.Name);
-            _level = context.OutputFields.First(f => f.Name.Equals("level", StringComparison.OrdinalIgnoreCase));
-            _message = context.OutputFields.First(f => f.Name.Equals("message", StringComparison.OrdinalIgnoreCase));
+            _level = context.OutputFields.First(f => f.Alias.Equals("level", StringComparison.OrdinalIgnoreCase));
+            _message = context.OutputFields.First(f => f.Alias.Equals("message", StringComparison.OrdinalIgnoreCase));
         }
 
         public void Write(IEnumerable<IRow> rows) {
@@ -63,6 +63,9 @@ namespace Transformalize.Logging.NLog {
                         break;
                 }
             }
+
+            _logger.Info("flushing log writer");
+            LogManager.Flush();
         }
     }
 }

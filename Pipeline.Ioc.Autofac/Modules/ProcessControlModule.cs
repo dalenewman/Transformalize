@@ -137,7 +137,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 // for handling multiple entities with non-relational output
-                if (_process.Connections.Any(c => c.Name == "original-output")) {
+                if (_process.Connections.Any(c => c.Name == Constants.OriginalOutput)) {
                     controller.PostActions.Add(new RecoverOutputAction(ctx.Resolve<IContext>()));
                 }
 

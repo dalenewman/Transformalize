@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Desktop.Actions {
+namespace Transformalize.Provider.File.Actions {
     public class FileMoveAction : IAction {
         private readonly IContext _context;
         private readonly Action _action;
@@ -41,7 +42,7 @@ namespace Transformalize.Desktop.Actions {
 
             _context.Info("Moving {0} from {1} to {2}", from.Name, from.DirectoryName, to.DirectoryName);
             try {
-                File.Move(from.FullName, to.FullName);
+                System.IO.File.Move(from.FullName, to.FullName);
                 return new ActionResponse(200, $"Moved {from.Name} from {from.DirectoryName} to {to.DirectoryName}") { Action = _action };
             } catch (Exception ex) {
                 return new ActionResponse(500, ex.Message) { Action = _action };

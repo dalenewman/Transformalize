@@ -190,8 +190,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SubStringTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\DefaultTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\MinDateTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetBatchId.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetSystemFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\ShouldRunTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\StringTruncateTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\TypeTransform.cs" />

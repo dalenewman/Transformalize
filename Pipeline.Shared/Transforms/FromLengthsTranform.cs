@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -29,17 +30,28 @@ namespace Transformalize.Transforms {
         public FromLengthsTranform(IContext context) : base(context, null) {
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
-            _lengths = _output.Select(f=>Convert.ToInt32(f.Length)).ToArray();
+            _lengths = _output.Select(f => Convert.ToInt32(f.Length)).ToArray();
+        }
+
+        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+            foreach (var row in rows) {
+                var line = row[_input] as string;
+                if (line == null) {
+                    Increment();
+                } else {
+                    line = line.TrimEnd();
+                    if (line.Length == 0) {
+                        Increment();
+                    } else {
+                        yield return Transform(row);
+                    }
+                }
+            }
         }
 
         public override IRow Transform(IRow row) {
 
-            var line = row[_input] as string;
-            if (line == null) {
-                Increment();
-                return row;
-            }
-
+            var line = row[_input] as string ?? string.Empty;
             var values = new string[_lengths.Length];
 
             var index = 0;

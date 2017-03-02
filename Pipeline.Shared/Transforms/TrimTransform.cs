@@ -26,6 +26,8 @@ namespace Transformalize.Transforms {
         public TrimTransform(IContext context)
             : base(context, "string") {
             _input = SingleInput();
+            context.Transform.TrimChars = context.Transform.TrimChars.Replace("\\r", "\r");
+            context.Transform.TrimChars = context.Transform.TrimChars.Replace("\\n", "\n");
             _trimChars = Context.Transform.TrimChars.ToCharArray();
         }
 

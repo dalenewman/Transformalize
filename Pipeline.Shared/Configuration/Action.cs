@@ -67,7 +67,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Indicates what type of action to perform.
         /// </summary>
-        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,log,print,wait,sleep,internal", ignoreCase = true)]
+        [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,replace,log,print,wait,sleep,internal", ignoreCase = true)]
         public string Type { get; set; }
 
         /// <summary>

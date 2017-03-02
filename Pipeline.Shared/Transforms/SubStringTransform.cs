@@ -15,7 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
+
+using System.Runtime.InteropServices;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -24,36 +25,33 @@ namespace Transformalize.Transforms {
     public class SubStringTransform : BaseTransform {
 
         private readonly Field _input;
-        private readonly Action<IRow> _transform;
-        private readonly Func<string, string> _substring;
+        private readonly string _type;
 
         public SubStringTransform(IContext context) : base(context, "string") {
+            if (context.Transform.StartIndex == 0 && context.Transform.Length == 0) {
+                Warn($"The substring method in {context.Field.Alias} has a start index of zero and length of zero, so it will always return an empty string.");
+            }
             _input = SingleInput();
-
-            if (context.Transform.Length == 0) {
-                _substring = s => s.Length < context.Transform.StartIndex ? s : s.Substring(context.Transform.StartIndex);
-            } else {
-                _substring = s => s.Length < context.Transform.StartIndex ? s : s.Substring(context.Transform.StartIndex, context.Transform.Length);
-            }
-
-            if (_input.Type == "string" && context.Field.Type == "string") {
-                _transform = row => {
-                    row[Context.Field] = _substring(row[_input] as string);
-                };
-            } else {
-                _transform = row => {
-                    var value = _substring(row[_input].ToString());
-                    if (Context.Field.Type == "string") {
-                        row[context.Field] = value;
-                    } else {
-                        row[context.Field] = Context.Field.Convert(value);
-                    }
-                };
-            }
+            _type = Received();
         }
 
         public override IRow Transform(IRow row) {
-            _transform(row);
+            var value = _type == "string" ? ((string)row[_input]) : row[_input].ToString();
+            var len = value.Length;
+
+            if (len <= Context.Transform.StartIndex) {
+                row[Context.Field] = string.Empty;
+                Increment();
+                return row;
+            }
+
+            if (Context.Transform.Length == 0 || Context.Transform.StartIndex + Context.Transform.Length > len) {
+                row[Context.Field] = value.Substring(Context.Transform.StartIndex);
+                Increment();
+                return row;
+            }
+
+            row[Context.Field] = value.Substring(Context.Transform.StartIndex, Context.Transform.Length);
             Increment();
             return row;
         }

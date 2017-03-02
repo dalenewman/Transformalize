@@ -191,6 +191,8 @@ namespace Transformalize {
         };
 
         public static HashSet<string> InvalidFieldNames { get; internal set; } = new HashSet<string>(new[] { TflKey, TflBatchId, TflDeleted, TflHashCode }, StringComparer.OrdinalIgnoreCase);
+        public static string OriginalOutput { get; set; } = "original-output";
+
         public static Dictionary<string, Func<string, bool>> CanConvert() {
             bool boolOut;
             byte byteOut;

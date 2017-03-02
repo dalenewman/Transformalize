@@ -35,6 +35,7 @@ namespace Transformalize.Provider.Ado {
         public ActionResponse Execute() {
             var drop = _output.SqlDropFlatTable(_cf);
             var create = _output.SqlCreateFlatTable(_cf);
+            var createIndex = _output.SqlCreateFlatIndex(_cf);
 
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
@@ -44,6 +45,7 @@ namespace Transformalize.Provider.Ado {
                     _output.Debug(() => ex.Message);
                 }
                 cn.Execute(create);
+                cn.Execute(createIndex);
             }
             return new ActionResponse();
         }

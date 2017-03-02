@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Desktop.Actions {
+namespace Transformalize.Provider.File.Actions {
     public class FileCopyAction : IAction {
 
         private readonly IContext _context;
@@ -41,7 +42,7 @@ namespace Transformalize.Desktop.Actions {
             _context.Info("Copying {0} to {1}", from.Name, to.Name);
 
             try {
-                File.Copy(from.FullName, to.FullName, true);
+                System.IO.File.Copy(from.FullName, to.FullName, true);
                 status = 200;
                 message = $"Copied file from {from.Name} to {to.Name}.";
             } catch (Exception ex) {

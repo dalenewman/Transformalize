@@ -32,6 +32,7 @@ using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Jint;
 using Transformalize.Transform.Razor;
 using System.IO;
+using Transformalize.Desktop.Transforms;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -127,20 +128,22 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // handling multiple entities with non-relational output
                 var originalOutput = process.Output().Clone();
-                originalOutput.Name = "original-output";
+                originalOutput.Name = Constants.OriginalOutput;
                 originalOutput.Key = process.Name + originalOutput.Name;
 
-                if (process.Entities.Count > 1 && !process.OutputIsRelational()) {
+                if (!process.OutputIsRelational() && (process.Entities.Count > 1 || process.Buffer)) {
 
                     process.Output().Provider = process.InternalProvider;
                     var folder = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), Constants.ApplicationFolder);
-                    var file = new FileInfo(Path.Combine(folder, process.Name + "." + (process.InternalProvider == "sqlce" ? "sdf" : "sqlite3")));
+                    var file = new FileInfo(Path.Combine(folder, SlugifyTransform.Slugify(process.Name) + "." + (process.InternalProvider == "sqlce" ? "sdf" : "sqlite3")));
+                    var exists = file.Exists;
                     process.Output().File = file.FullName;
+                    process.Output().RequestTimeout = process.InternalProvider == "sqlce" ? 0 : process.Output().RequestTimeout;
                     process.Flatten = process.InternalProvider == "sqlce";
-                    process.Mode = "init";
+                    process.Mode = exists ? process.Mode : "init";
                     process.Connections.Add(originalOutput);
 
-                    if (!file.Exists) {
+                    if (!exists) {
                         if (!Directory.Exists(file.DirectoryName)) {
                             Directory.CreateDirectory(folder);
                         }

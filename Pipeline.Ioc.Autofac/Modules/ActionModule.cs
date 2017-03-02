@@ -26,6 +26,8 @@ using Transformalize.Desktop.Actions;
 using Transformalize.Extensions;
 using Transformalize.Provider.Ado;
 using Transformalize.Provider.Ado.Actions;
+using Transformalize.Provider.File.Actions;
+using FileReader = Cfg.Net.Reader.FileReader;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     /// <summary>
@@ -71,6 +73,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         new FileCopyAction(context, action);
                 case "move":
                     return new FileMoveAction(context, action);
+                case "replace":
+                    return new FileReplaceAction(context, action);
                 case "print":
                     return new PrintAction(action);
                 case "log":

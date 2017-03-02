@@ -46,7 +46,6 @@ namespace Transformalize.Configuration.Ext {
             ValidateTransforms(p, error);
             ValidateShouldRuns(p, error, warn);
             ValidateScripts(p, error);
-            ValidateCalculatedFields(p, error);
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
             ValidateFlatten(p, error, warn);
@@ -114,27 +113,6 @@ namespace Transformalize.Configuration.Ext {
         private static void ValidateParameterMaps(Process process, Action<string> error) {
             foreach (var parameter in process.Environments.SelectMany(e => e.Parameters.Where(p => p.Map != string.Empty)).Where(parameter => process.Maps.All(m => m.Name != parameter.Map))) {
                 error($"A parameter refers to invalid map: {parameter.Map}.");
-            }
-        }
-
-        static void ValidateCalculatedFields(Process p, Action<string> error) {
-            foreach (var entity in p.Entities) {
-                foreach (var field in entity.CalculatedFields.Where(f => !f.Produced)) {
-                    var transform = field.Transforms.FirstOrDefault();
-                    if (transform != null && Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
-                        if (Transform.TransformProducerSet().Contains(transform.Method)) {
-                            continue;
-                        }
-
-                        // temporary, may have another class of transforms that don't require copy() parameters up front
-                        if (transform.Method.In("iif", "geohashencode", "format", "eval"))
-                            continue;
-
-                        if (Transform.TransformSet().Contains(transform.Method) && !transform.Parameters.Any()) {
-                            error($"The transform {transform.Method} in {entity.Alias}.{field.Alias} requires input.  If using short-hand, use copy().  Otherwise, set the parameter attribute, or define a parameters collection.");
-                        }
-                    }
-                }
             }
         }
 
@@ -343,8 +321,8 @@ namespace Transformalize.Configuration.Ext {
         static void ValidateDuplicateFields(Process p, Action<string> error) {
             var fieldDuplicates = p.Entities
                 .SelectMany(e => e.GetAllFields())
-                .Where(f => f.Output && !f.PrimaryKey && !f.System)
-                .Concat(p.CalculatedFields)
+                .Where(f => f.Output && !f.PrimaryKey && !f.System && f.Name != null)
+                .Concat(p.CalculatedFields.Where(f=>f.Name != null))
                 .GroupBy(f => f.Alias.ToLower())
                 .Where(group => @group.Count() > 1)
                 .Select(group => @group.Key)

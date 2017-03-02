@@ -41,8 +41,8 @@
       <HintPath>..\packages\Autofac.4.3.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="CfgNet, Version=0.9.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.9.5\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -98,6 +98,7 @@
     <Compile Include="CopyTransform.cs" />
     <Compile Include="CSharpTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
+    <Compile Include="SubstringTest.cs" />
     <Compile Include="DistinctTest.cs" />
     <Compile Include="EvalTransform.cs" />
     <Compile Include="NorthWindIntegrationSqlCe.cs" />

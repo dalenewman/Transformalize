@@ -15,20 +15,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
-    public class SetBatchId : BaseTransform {
+    public class SetSystemFields : BaseTransform {
+        private readonly Field _tflKey;
+        private readonly Field _tflDeleted;
         private readonly Field _tflBatchId;
+        private readonly Field _tflHashCode;
 
-        public SetBatchId(IContext context) : base(context, null) {
+        public SetSystemFields(IContext context) : base(context, null) {
+            _tflKey = context.Entity.TflKey();
+            _tflDeleted = context.Entity.TflDeleted();
             _tflBatchId = context.Entity.TflBatchId();
+            _tflHashCode = context.Entity.TflHashCode();
         }
 
         public override IRow Transform(IRow row) {
+            row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
+            row[_tflDeleted] = false;
             row[_tflBatchId] = Context.Entity.BatchId;
-            // Increment();
+            row[_tflHashCode] = 0;
             return row;
         }
     }

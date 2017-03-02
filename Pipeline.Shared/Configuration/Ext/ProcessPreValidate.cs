@@ -68,7 +68,26 @@ namespace Transformalize.Configuration.Ext {
                     entity.AddSystemFields();
                     entity.ModifyMissingPrimaryKey();
                 }
-                
+
+                // allows transforms to access parameters as if they were fields
+                var parameters = p.GetActiveParameters();
+                if (parameters.Any()) {
+                    foreach (var parameter in parameters) {
+                        if (entity.GetField(parameter.Name) == null) {
+                            var field = new Field {
+                                Name = parameter.Name,
+                                Alias = parameter.Name,
+                                Type = parameter.Type,
+                                Input = false,
+                                Output = false,
+                                Default = parameter.Value,
+                                Source = "parameter"
+                            };
+                            entity.CalculatedFields.Add(field);
+                        }
+                    }
+                }
+
                 entity.ModifyIndexes();
             }
 
