@@ -112,7 +112,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize", "Transform
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9-47DE-413F-A383-39B7A23FFC22}"
 	ProjectSection(SolutionItems) = preProject
-		commands.json = commands.json
 		nuget.bat = nuget.bat
 		Pipeline.Desktop\Transformalize.Desktop.nuspec = Pipeline.Desktop\Transformalize.Desktop.nuspec
 		Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec = Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec
