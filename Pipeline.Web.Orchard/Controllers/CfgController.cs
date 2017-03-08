@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using Cfg.Net.Ext;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Core.Contents;
@@ -44,7 +43,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
         private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-        private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page"  };
+        private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page" };
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -127,6 +126,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     }
 
                     process.Load(part.Configuration, parameters);
+                    process.Buffer = false; // we don't do that on web
 
                     var provider = process.Output().Provider;
                     if (provider.In("internal", "file")) {
@@ -157,12 +157,22 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
-                                    // Common.ApplyFacet(process, Request);
+
                                     runner.Execute(process);
-                                    process.Status = 200;
-                                    process.Message = "Ok";
                                     process.Request = "Run";
                                     process.Time = timer.ElapsedMilliseconds;
+
+                                    if (process.Errors().Any()) {
+                                        foreach (var error in process.Errors()) {
+                                            _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                                        }
+                                        process.Status = 500;
+                                        process.Message = "There are errors in the pipeline.  See log.";
+                                    } else {
+                                        process.Status = 200;
+                                        process.Message = "Ok";
+                                    }
+
                                     var o = process.Output();
                                     switch (o.Provider) {
                                         case "kml":
@@ -182,7 +192,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             }
                                             Response.Flush();
                                             Response.End();
-                                            break;
+                                            return new EmptyResult();
                                         case "excel":
                                             return new FilePathResult(o.File, ExcelContentType) {
                                                 FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
@@ -214,7 +224,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         _appDataFolder.CreateDirectory(Common.FileFolder);
                     }
 
-                    var fileName = string.Format("{0}-{1}-{2}.xlsx", user, _clock.UtcNow.ToString(FileTimestamp), _slugService.Slugify(part.Title()));
+                    var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
 
                     o.Provider = "excel";
                     o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, fileName));

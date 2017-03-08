@@ -25,29 +25,40 @@ namespace Pipeline.Web.Orchard.Drivers {
 
     public class ConfigurationPartDriver : ContentPartDriver<PipelineConfigurationPart> {
 
-        protected override string Prefix {
-            get { return Common.PipelineConfigurationName; }
-        }
+        protected override string Prefix => Common.PipelineConfigurationName;
 
         //IMPORT, EXPORT
         protected override void Importing(PipelineConfigurationPart part, ImportContentContext context) {
-            part.Record.EditorMode = context.Attribute(part.PartDefinition.Name, "EditorMode");
-            part.Record.Configuration = context.Attribute(part.PartDefinition.Name, "Configuration");
-            part.Record.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
-            part.Record.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
-            part.Record.Runnable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Runnable"));
-            part.Record.Reportable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Reportable"));
-            part.Record.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
+            part.EditorMode = context.Attribute(part.PartDefinition.Name, "EditorMode");
+            part.Configuration = context.Attribute(part.PartDefinition.Name, "Configuration");
+            part.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
+            part.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
+            part.Runnable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Runnable"));
+            part.Reportable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Reportable"));
+            part.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
+            part.Migrated = true;
         }
 
         protected override void Exporting(PipelineConfigurationPart part, ExportContentContext context) {
-            context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.Record.EditorMode);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Record.Configuration);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Record.Reportable);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
+            if (part.Migrated) {
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.EditorMode);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Configuration);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.StartAddress);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.EndAddress);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Runnable);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Reportable);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", true);
+            } else {
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.Record.EditorMode);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Record.Configuration);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Record.Reportable);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", false);
+            }
         }
 
         //GET EDITOR

@@ -40,6 +40,7 @@ using Transformalize.Transform.Jint;
 using Transformalize.Transform.LamdaParser;
 using Transformalize.Transforms;
 using Transformalize.Validators;
+using Transformalize.Provider.File.Transforms;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class TransformModule : Module {
@@ -74,6 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new DateDiffTransform(p.Positional<IContext>(0))).Named<ITransform>("datediff");
             builder.Register((c, p) => new DatePartTransform(p.Positional<IContext>(0))).Named<ITransform>("datepart");
             builder.Register((c, p) => new DecompressTransform(p.Positional<IContext>(0))).Named<ITransform>("decompress");
+            builder.Register((c, p) => new CompressTransform(p.Positional<IContext>(0))).Named<ITransform>("compress");
             builder.Register((c, p) => new FileExtTransform(p.Positional<IContext>(0))).Named<ITransform>("fileext");
             builder.Register((c, p) => new FileNameTransform(p.Positional<IContext>(0))).Named<ITransform>("filename");
             builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");
@@ -116,6 +118,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new TrimStartTransform(p.Positional<IContext>(0))).Named<ITransform>("trimstart");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("upper");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("toupper");
+            builder.Register((c, p) => new TimeZoneTransform(p.Positional<IContext>(0))).Named<ITransform>("timezone");
 
             builder.Register((c, p) => new DecodeTransform(p.Positional<IContext>(0))).Named<ITransform>("xmldecode");
             builder.Register((c, p) => new XPathTransform(p.Positional<IContext>(0))).Named<ITransform>("xpath");

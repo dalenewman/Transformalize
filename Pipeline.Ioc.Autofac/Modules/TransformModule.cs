@@ -71,6 +71,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new DateDiffTransform(p.Positional<IContext>(0))).Named<ITransform>("datediff");
             builder.Register((c, p) => new DatePartTransform(p.Positional<IContext>(0))).Named<ITransform>("datepart");
             builder.Register((c, p) => new DecompressTransform(p.Positional<IContext>(0))).Named<ITransform>("decompress");
+            builder.Register((c, p) => new CompressTransform(p.Positional<IContext>(0))).Named<ITransform>("compress");
             builder.Register((c, p) => new FileExtTransform(p.Positional<IContext>(0))).Named<ITransform>("fileext");
             builder.Register((c, p) => new FileNameTransform(p.Positional<IContext>(0))).Named<ITransform>("filename");
             builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");

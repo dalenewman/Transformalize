@@ -258,6 +258,7 @@ namespace Pipeline.Web.Orchard {
     <add name='datediff' signature='datediff' />
     <add name='datepart' signature='timecomponent' />
     <add name='decompress' signature='none' />
+    <add name='compress' signature='none' />
     <add name='equal' signature='value' />
     <add name='equals' signature='value' />
     <add name='fileext' signature='none' />

@@ -31,6 +31,7 @@ using Transformalize.Extensions;
 using Transformalize.Provider.Ado;
 using Transformalize.Provider.Ado.Actions;
 using Pipeline.Web.Orchard.Impl;
+using Transformalize.Provider.File.Actions;
 using OpenAction = Pipeline.Web.Orchard.Impl.OpenAction;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -76,6 +77,8 @@ namespace Pipeline.Web.Orchard.Modules {
                         new FileCopyAction(context, action);
                 case "move":
                     return new FileMoveAction(context, action);
+                case "replace":
+                    return new FileReplaceAction(context, action);
                 case "print":
                     return new PrintAction(action);
                 case "log":

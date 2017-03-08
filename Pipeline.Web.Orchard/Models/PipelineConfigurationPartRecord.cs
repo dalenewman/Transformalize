@@ -15,7 +15,6 @@
 // limitations under the License.
 #endregion
 using System.ComponentModel.DataAnnotations;
-using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
 using Orchard.Data.Conventions;
 
