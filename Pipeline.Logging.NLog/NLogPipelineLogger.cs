@@ -28,7 +28,6 @@ using NLogLevel = global::NLog.LogLevel;
 
 namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
-        private readonly bool _suppressConsole;
 
         const string Context = "{0} | {1} | {2} | {3}";
         readonly Logger _log;
@@ -37,22 +36,20 @@ namespace Transformalize.Logging.NLog {
         /// NLog implementation of IPipelineLogger
         /// </summary>
         /// <param name="fileName">The name used in the file target</param>
-        /// <param name="suppressConsole">If you want to suppress info and warning from console output</param>
-        public NLogPipelineLogger(string fileName, bool suppressConsole) {
-            _suppressConsole = suppressConsole;
+        public NLogPipelineLogger(string fileName) {
             var invalids = fileName.Intersect(Path.GetInvalidPathChars()).ToArray();
             if (invalids.Any()) {
                 throw new ArgumentException("The log name contains invalid path characters: {0}.", string.Join(", ", invalids));
             }
-            ReConfiguredLogLevel(fileName);
             _log = LogManager.GetLogger("TFL");
+            ReConfiguredLogLevel(fileName);
         }
 
         private void ReConfiguredLogLevel(string name) {
 
+            FileTarget file = null;
             var target = LogManager.Configuration.FindTargetByName("file");
             if (target != null) {
-                FileTarget file;
                 if (target is AsyncTargetWrapper) {
                     file = (FileTarget)((AsyncTargetWrapper)target).WrappedTarget;
                 } else {
@@ -83,19 +80,24 @@ namespace Transformalize.Logging.NLog {
                 }
             }
 
-            if (_suppressConsole) {
-                if (LogManager.Configuration.LoggingRules.Any(r => r.Targets.Any(t => t.Name == "console"))) {
-                    foreach (var rule in LogManager.Configuration.LoggingRules.Where(r => r.Targets.Any(t => t.Name == "console"))) {
-                        rule.DisableLoggingForLevel(NLogLevel.Info);
-                        rule.DisableLoggingForLevel(NLogLevel.Warn);
-                    }
+            LogManager.ReconfigExistingLoggers();
+
+            if (file != null) {
+                _log.Info($"Logging to file: {file.FileName}");
+            }
+        }
+
+        public void SuppressConsole() {
+            if (LogManager.Configuration.LoggingRules.Any(r => r.Targets.Any(t => t.Name == "console"))) {
+                foreach (var rule in LogManager.Configuration.LoggingRules.Where(r => r.Targets.Any(t => t.Name == "console"))) {
+                    rule.DisableLoggingForLevel(NLogLevel.Info);
+                    rule.DisableLoggingForLevel(NLogLevel.Warn);
                 }
             }
-
             LogManager.ReconfigExistingLoggers();
         }
 
-        static string ForLog(PipelineContext context) {
+        static string ForLog(IContext context) {
             return string.Format(Context, context.ForLog);
         }
 
@@ -118,34 +120,34 @@ namespace Transformalize.Logging.NLog {
             }
         }
 
-        public void Debug(PipelineContext context, Func<string> lamda) {
+        public void Debug(IContext context, Func<string> lamda) {
             if (!_log.IsDebugEnabled)
                 return;
             _log.Debug("debug | " + ForLog(context) + " | " + lamda());
         }
 
-        public void Info(PipelineContext context, string message, params object[] args) {
+        public void Info(IContext context, string message, params object[] args) {
             if (!_log.IsInfoEnabled)
                 return;
             var custom = string.Format(message, args);
             _log.Info("info  | " + ForLog(context) + " | " + custom);
         }
 
-        public void Warn(PipelineContext context, string message, params object[] args) {
+        public void Warn(IContext context, string message, params object[] args) {
             if (!_log.IsWarnEnabled)
                 return;
             var custom = string.Format(message, args);
             _log.Warn("warn  | " + ForLog(context) + " | " + custom);
         }
 
-        public void Error(PipelineContext context, string message, params object[] args) {
+        public void Error(IContext context, string message, params object[] args) {
             if (!_log.IsErrorEnabled)
                 return;
             var custom = string.Format(message, args);
             _log.Error("error | " + ForLog(context) + " | " + custom);
         }
 
-        public void Error(PipelineContext context, Exception exception, string message, params object[] args) {
+        public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (!_log.IsErrorEnabled)
                 return;
             var custom = string.Format(message, args);

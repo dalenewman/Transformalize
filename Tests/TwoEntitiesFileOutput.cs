@@ -26,6 +26,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac;
+using Transformalize.Logging;
 using Environment = System.Environment;
 
 namespace Tests {
@@ -101,7 +102,7 @@ namespace Tests {
                         }
                     }
 
-                    using (var scope = DefaultContainer.Create(process)) {
+                    using (var scope = DefaultContainer.Create(process, new DebugLogger())) {
                         scope.Resolve<IProcessController>().Execute();
                     }
 
@@ -144,7 +145,7 @@ namespace Tests {
                         }
                     }
 
-                    using (var scope = DefaultContainer.Create(reversed)) {
+                    using (var scope = DefaultContainer.Create(reversed, new DebugLogger())) {
                         scope.Resolve<IProcessController>().Execute();
                         if (originalOutput.Provider == "internal") {
                             process.Rows = reversed.Entities.First().Rows;

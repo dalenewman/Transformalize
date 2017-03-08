@@ -20,16 +20,17 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Desktop.Transforms {
-    public class FileNameTransform : BaseTransform {
+namespace Transformalize.Provider.File.Transforms {
+    public class FileExtTransform : BaseTransform {
         private readonly Field _input;
 
-        public FileNameTransform(IContext context) : base(context, "string") {
+        public FileExtTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
         }
 
         public override IRow Transform(IRow row) {
-            row[Context.Field] = Context.Transform.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
+            var value = (string)row[_input];
+            row[Context.Field] = Path.HasExtension(value) ? Path.GetExtension(value) : string.Empty;
             Increment();
             return row;
         }

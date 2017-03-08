@@ -16,20 +16,19 @@
 // limitations under the License.
 #endregion
 
-using System;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging.NLog;
 
 namespace Transformalize.Ioc.Autofac {
     public static class DefaultContainer {
 
-        public static ILifetimeScope Create(Process process, IPipelineLogger logger = null) {
+        public static ILifetimeScope Create(Process process, IPipelineLogger logger) {
 
-            logger = logger ?? new NLogPipelineLogger(SlugifyTransform.Slugify(process.Name), process.OutputIsConsole());
+            if (process.OutputIsConsole()) {
+                logger.SuppressConsole();
+            }
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();

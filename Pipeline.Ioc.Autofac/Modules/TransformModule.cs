@@ -42,6 +42,7 @@ using Transformalize.Transform.Velocity;
 using Transformalize.Transform.Vin;
 using Transformalize.Transforms;
 using Transformalize.Validators;
+using Transformalize.Provider.File.Transforms;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {

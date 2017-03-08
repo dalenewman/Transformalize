@@ -16,13 +16,10 @@
 // limitations under the License.
 #endregion
 using Autofac;
-using Autofac.Core.Activators.Reflection;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Loggers;
 using Transformalize.Ioc.Autofac;
-using Transformalize.Ioc.Autofac.Modules;
 
 namespace Tests {
     public class PipelineAction : IAction {
@@ -30,7 +27,7 @@ namespace Tests {
         private readonly Process _process;
         private readonly IContext _context;
 
-        public PipelineAction(Process process, IContext context = null) {
+        public PipelineAction(Process process, IContext context) {
             _process = process;
             _context = context;
         }

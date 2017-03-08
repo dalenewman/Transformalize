@@ -22,10 +22,10 @@ using PoorMansTSqlFormatterLib;
 using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
-using Transformalize.Desktop.Loggers;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Provider.Ado.Ext;
 using Transformalize.Provider.SqlServer;
+using Transformalize.Provider.Trace;
 
 namespace Tests {
 

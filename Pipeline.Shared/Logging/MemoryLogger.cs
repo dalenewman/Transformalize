@@ -17,7 +17,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Logging {
@@ -29,31 +28,31 @@ namespace Transformalize.Logging {
             Log = new List<LogEntry>();
         }
 
-        public void Debug(PipelineContext context, Func<string> lamda) {
+        public void Debug(IContext context, Func<string> lamda) {
             if (DebugEnabled) {
                 Log.Add(new LogEntry(LogLevel.Debug, context, lamda()));
             }
         }
 
-        public void Info(PipelineContext context, string message, params object[] args) {
+        public void Info(IContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 Log.Add(new LogEntry(LogLevel.Info, context, message, args));
             }
         }
 
-        public void Warn(PipelineContext context, string message, params object[] args) {
+        public void Warn(IContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 Log.Add(new LogEntry(LogLevel.Warn, context, message, args));
             }
         }
 
-        public void Error(PipelineContext context, string message, params object[] args) {
+        public void Error(IContext context, string message, params object[] args) {
             if (ErrorEnabled) {
                 Log.Add(new LogEntry(LogLevel.Error, context, message, args));
             }
         }
 
-        public void Error(PipelineContext context, Exception exception, string message, params object[] args) {
+        public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (ErrorEnabled) {
                 Log.Add(new LogEntry(LogLevel.Error, context, message, args) { Exception = exception });
             }
@@ -61,6 +60,10 @@ namespace Transformalize.Logging {
 
         public void Clear() {
             Log.Clear();
+        }
+
+        public void SuppressConsole() {
+
         }
     }
 }

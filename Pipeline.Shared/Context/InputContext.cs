@@ -41,6 +41,7 @@ namespace Transformalize.Context {
 
         public string Key { get; }
         public IPipelineLogger Logger => _context.Logger;
+        public object[] ForLog => _context.ForLog;
 
         public InputContext(IContext context, IIncrement incrementer) {
             _incrementer = incrementer;

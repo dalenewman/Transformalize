@@ -31,13 +31,13 @@ namespace Transformalize.Logging {
             ErrorEnabled = levels[3];
         }
 
-        public bool InfoEnabled { get; }
+        public bool InfoEnabled { get; set; }
 
-        public bool DebugEnabled { get; }
+        public bool DebugEnabled { get; set; }
 
-        public bool WarnEnabled { get; }
+        public bool WarnEnabled { get; set; }
 
-        public bool ErrorEnabled { get; }
+        public bool ErrorEnabled { get; set; }
 
         static bool[] GetLevels(LogLevel level) {
             switch (level) {

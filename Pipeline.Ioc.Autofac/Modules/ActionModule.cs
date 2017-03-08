@@ -103,7 +103,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         return new NullAction();
                     }
 
-                    return new PipelineAction(root);
+                    return new PipelineAction(context, root);
                 case "run":
                     var connection = process.Connections.First(c => c.Name == action.Connection);
                     switch (connection.Provider) {

@@ -16,17 +16,18 @@
 // limitations under the License.
 #endregion
 using System;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Logging {
     public class NullLogger : BaseLogger, IPipelineLogger {
-        public NullLogger() : base(LogLevel.None) {}
-        public void Debug(PipelineContext context, Func<string> lamda) {}
-        public void Info(PipelineContext context, string message, params object[] args) {}
-        public void Warn(PipelineContext context, string message, params object[] args) {}
-        public void Error(PipelineContext context, string message, params object[] args) {}
-        public void Error(PipelineContext context, Exception exception, string message, params object[] args) {}
+        public NullLogger() : base(LogLevel.None) { }
+        public void Debug(IContext context, Func<string> lamda) { }
+        public void Info(IContext context, string message, params object[] args) { }
+        public void Warn(IContext context, string message, params object[] args) { }
+        public void Error(IContext context, string message, params object[] args) { }
+        public void Error(IContext context, Exception exception, string message, params object[] args) { }
         public void Clear() { }
+        public void SuppressConsole() {
+        }
     }
 }

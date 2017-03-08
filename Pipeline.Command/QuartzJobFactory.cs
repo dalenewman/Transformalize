@@ -18,14 +18,20 @@
 using System;
 using Quartz;
 using Quartz.Spi;
+using Transformalize.Contracts;
 using IScheduler = Quartz.IScheduler;
 
 namespace Transformalize.Command {
 
     public class QuartzJobFactory : IJobFactory {
+        private readonly IPipelineLogger _logger;
+
+        public QuartzJobFactory(IPipelineLogger logger) {
+            _logger = logger;
+        }
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) {
-            return new ScheduleExecutor();
+            return new ScheduleExecutor(_logger);
         }
 
         public void ReturnJob(IJob job) {

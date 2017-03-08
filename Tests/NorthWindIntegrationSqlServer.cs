@@ -19,7 +19,9 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
+using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging;
 using Transformalize.Provider.SqlServer;
 
 namespace Tests {
@@ -65,7 +67,7 @@ namespace Tests {
 
             // RUN INIT AND TEST
             var root = ResolveRoot(container, TestFile, true);
-            var responseSql = new PipelineAction(root).Execute();
+            var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -80,7 +82,7 @@ namespace Tests {
 
             // FIRST DELTA, NO CHANGES
             root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root).Execute();
+            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -101,7 +103,7 @@ namespace Tests {
 
             // RUN AND CHECK
             root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root).Execute();
+            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -126,7 +128,7 @@ namespace Tests {
             }
 
             root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root).Execute();
+            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(),root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -151,7 +153,7 @@ namespace Tests {
             }
 
             root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root).Execute();
+            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);

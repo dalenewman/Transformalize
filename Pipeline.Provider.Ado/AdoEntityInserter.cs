@@ -57,6 +57,7 @@ namespace Transformalize.Provider.Ado {
                     trans.Commit();
                 } catch (Exception ex) {
                     _output.Error(ex, ex.Message);
+                    _output.Warn("Rolling back");
                     trans.Rollback();
                 }
                 _output.Debug(() => $"{count} to {_output.Connection.Name}");

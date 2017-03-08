@@ -35,9 +35,8 @@
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=4.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.4.3.0\lib\net45\Autofac.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Autofac, Version=4.4.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.4.0\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Environment, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.Environment.0.2.2\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
@@ -246,6 +245,10 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.Console\Transformalize.Provider.Console.csproj">
+      <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
+      <Name>Transformalize.Provider.Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transformalize.Provider.GeoJson\Transformalize.Provider.GeoJson.csproj">
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
       <Name>Transformalize.Provider.GeoJson</Name>
@@ -257,6 +260,10 @@
     <ProjectReference Include="..\Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
       <Name>Transformalize.Provider.SqlCe</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.Trace\Transformalize.Provider.Trace.csproj">
+      <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
+      <Name>Transformalize.Provider.Trace</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>

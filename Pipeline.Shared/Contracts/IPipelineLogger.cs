@@ -16,17 +16,17 @@
 // limitations under the License.
 #endregion
 using System;
-using Transformalize.Context;
 
 namespace Transformalize.Contracts {
 
     public interface IPipelineLogger {
         LogLevel LogLevel { get; }
-        void Debug(PipelineContext context, Func<string> lambda);
-        void Info(PipelineContext context, string message, params object[] args);
-        void Warn(PipelineContext context, string message, params object[] args);
-        void Error(PipelineContext context, string message, params object[] args);
-        void Error(PipelineContext context, Exception exception, string message, params object[] args);
+        void Debug(IContext context, Func<string> lambda);
+        void Info(IContext context, string message, params object[] args);
+        void Warn(IContext context, string message, params object[] args);
+        void Error(IContext context, string message, params object[] args);
+        void Error(IContext context, Exception exception, string message, params object[] args);
         void Clear();
+        void SuppressConsole();
     }
 }

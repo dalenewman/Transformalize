@@ -15,37 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Collections.Generic;
 using Transformalize.Contracts;
 
-namespace Transformalize.Desktop.Writers {
-    public class ConsoleWriter : IWrite {
+namespace Transformalize.Provider.Trace {
+    public class TraceWriter : IWrite {
         private readonly ISerialize _serializer;
 
-        public ConsoleWriter(ISerialize serializer) {
+        public TraceWriter(ISerialize serializer) {
             _serializer = serializer;
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            if (!string.IsNullOrEmpty(_serializer.Header)) {
-                Console.Out.WriteLine(_serializer.Header);
-            }
-
-            using (var enumerator = rows.GetEnumerator()) {
-                var last = !enumerator.MoveNext();
-
-                while (!last) {
-                    var current = enumerator.Current;
-                    last = !enumerator.MoveNext();
-                    Console.Out.Write(_serializer.RowPrefix);
-                    Console.Out.Write(_serializer.Serialize(current));
-                    Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(_serializer.Footer)) {
-                Console.Out.WriteLine(_serializer.Footer);
+            foreach (var row in rows) {
+                System.Diagnostics.Trace.WriteLine(_serializer.Serialize(row));
             }
         }
     }

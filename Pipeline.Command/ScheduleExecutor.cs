@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Flurl;
 using Quartz;
+using Transformalize.Contracts;
 using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Command {
@@ -30,7 +31,7 @@ namespace Transformalize.Command {
         /// <summary>
         /// Called by Scheduled Run
         /// </summary>
-        public ScheduleExecutor() : base(string.Empty, "default", true) { }
+        public ScheduleExecutor(IPipelineLogger logger) : base(logger, string.Empty, "default", true) { }
 
         public new void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
 

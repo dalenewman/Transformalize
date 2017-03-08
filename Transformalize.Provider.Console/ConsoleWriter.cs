@@ -18,17 +18,34 @@
 using System.Collections.Generic;
 using Transformalize.Contracts;
 
-namespace Transformalize.Desktop.Writers {
-    public class TraceWriter : IWrite {
+namespace Transformalize.Provider.Console {
+
+    public class ConsoleWriter : IWrite {
         private readonly ISerialize _serializer;
 
-        public TraceWriter(ISerialize serializer) {
+        public ConsoleWriter(ISerialize serializer) {
             _serializer = serializer;
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            foreach (var row in rows) {
-                System.Diagnostics.Trace.WriteLine(_serializer.Serialize(row));
+            if (!string.IsNullOrEmpty(_serializer.Header)) {
+                System.Console.Out.WriteLine(_serializer.Header);
+            }
+
+            using (var enumerator = rows.GetEnumerator()) {
+                var last = !enumerator.MoveNext();
+
+                while (!last) {
+                    var current = enumerator.Current;
+                    last = !enumerator.MoveNext();
+                    System.Console.Out.Write(_serializer.RowPrefix);
+                    System.Console.Out.Write(_serializer.Serialize(current));
+                    System.Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_serializer.Footer)) {
+                System.Console.Out.WriteLine(_serializer.Footer);
             }
         }
     }

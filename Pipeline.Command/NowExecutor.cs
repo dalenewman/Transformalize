@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using Quartz;
+using Transformalize.Contracts;
 
 namespace Transformalize.Command {
     [DisallowConcurrentExecution]
@@ -26,7 +27,7 @@ namespace Transformalize.Command {
         public string Shorthand { get; set; }
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public NowExecutor(string cfg, string shorthand, string mode) : base(cfg, mode, false) {
+        public NowExecutor(IPipelineLogger logger, string cfg, string shorthand, string mode) : base(logger, cfg, mode, false) {
             Shorthand = shorthand;
         }
 

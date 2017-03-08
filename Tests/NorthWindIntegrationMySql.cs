@@ -19,7 +19,9 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
+using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Logging;
 using Transformalize.Provider.MySql;
 using Transformalize.Provider.SqlServer;
 
@@ -63,7 +65,7 @@ namespace Tests {
             }
 
             var root = ResolveRoot(container, TestFile, true);
-            var response = new PipelineAction(root).Execute();
+            var response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -76,7 +78,7 @@ namespace Tests {
 
             // FIRST DELTA, NO CHANGES
             root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root).Execute();
+            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -96,7 +98,7 @@ namespace Tests {
             }
 
             root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root).Execute();
+            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -116,7 +118,7 @@ namespace Tests {
             }
 
             root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root).Execute();
+            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);

@@ -22,7 +22,7 @@ using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Loggers;
+using Transformalize.Provider.Trace;
 
 namespace Tests {
 

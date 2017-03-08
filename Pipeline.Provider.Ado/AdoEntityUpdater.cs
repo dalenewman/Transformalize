@@ -62,7 +62,6 @@ namespace Transformalize.Provider.Ado {
                     _output.Error(ex.Message);
                     _output.Warn("rollback transaction");
                     trans.Rollback();
-                    throw;
                 }
             }
 

@@ -352,8 +352,6 @@
     <add name='isdaylightsavings' signature='none' />
     <add name='htmlencode' signature='none' />
     <add name='fromaddress' signature='key' />
-    <add name='frommodel' signature='model' />
-    
     <add name='distinct' signature='separator-space' />
     
   </methods>

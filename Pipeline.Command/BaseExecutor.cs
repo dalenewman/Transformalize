@@ -33,20 +33,26 @@ using Environment = System.Environment;
 namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class BaseExecutor : IRunTimeExecute {
+        private readonly IPipelineLogger _logger;
         private readonly bool _checkMemory;
 
         public string Cfg { get; set; }
         public string Format { get; set; }
         public string Mode { get; set; }
 
-        public BaseExecutor(string cfg, string mode, bool checkMemory) {
+        public BaseExecutor(IPipelineLogger logger, string cfg, string mode, bool checkMemory) {
+            _logger = logger;
             _checkMemory = checkMemory;
             Cfg = cfg;
             Mode = mode;
         }
 
         public void Execute(Process process) {
-            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg), process.OutputIsConsole());
+            var logger = _logger ?? new NLogPipelineLogger(SlugifyTransform.Slugify(Cfg));
+
+            if (process.OutputIsConsole()) {
+                logger.SuppressConsole();
+            }
 
             if (_checkMemory) {
                 CheckMemory(process, logger);

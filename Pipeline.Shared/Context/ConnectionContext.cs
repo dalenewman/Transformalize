@@ -70,6 +70,8 @@ namespace Transformalize.Context {
         public string Key => _context.Key;
 
         public IPipelineLogger Logger => _context.Logger;
+        public object[] ForLog => _context.ForLog;
+
         public void Increment(uint @by = 1) {
         }
 

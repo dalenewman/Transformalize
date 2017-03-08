@@ -23,7 +23,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Logging {
     public class LogEntry : CfgNode {
 
-        public PipelineContext Context { get; }
+        public IContext Context { get; }
 
         [Cfg]
         public DateTime Time { get; private set; }
@@ -38,7 +38,7 @@ namespace Transformalize.Logging {
 
         public Exception Exception { get; set; }
 
-        public LogEntry(LogLevel level, PipelineContext context, string message, params object[] args) {
+        public LogEntry(LogLevel level, IContext context, string message, params object[] args) {
             Time = DateTime.UtcNow;
             Context = context;
             LogLevel = level;

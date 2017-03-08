@@ -16,12 +16,10 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Diagnostics;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Logging;
 
-namespace Transformalize.Desktop.Loggers {
+namespace Transformalize.Provider.Trace {
 
     public class TraceLogger : BaseLogger, IPipelineLogger {
 
@@ -31,48 +29,52 @@ namespace Transformalize.Desktop.Loggers {
             : base(level) {
         }
 
-        static string ForLog(PipelineContext context) {
+        static string ForLog(IContext context) {
             return string.Format(Context, context.ForLog);
         }
 
-        public void Debug(PipelineContext context, Func<string> lamda) {
+        public void Debug(IContext context, Func<string> lamda) {
             if (DebugEnabled) {
-                Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "debug", lamda()), "debug");
+                System.Diagnostics.Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "debug", lamda()), "debug");
             }
         }
 
-        public void Info(PipelineContext context, string message, params object[] args) {
+        public void Info(IContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 var custom = string.Format(message, args);
-                Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "info ", custom), "info ");
+                System.Diagnostics.Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "info ", custom), "info ");
             }
         }
 
-        public void Warn(PipelineContext context, string message, params object[] args) {
+        public void Warn(IContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 var custom = string.Format(message, args);
-                Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "warn ", custom), "warn ");
+                System.Diagnostics.Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "warn ", custom), "warn ");
             }
         }
 
-        public void Error(PipelineContext context, string message, params object[] args) {
+        public void Error(IContext context, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "error", custom), "error");
+                System.Diagnostics.Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "error", custom), "error");
             }
         }
 
-        public void Error(PipelineContext context, Exception exception, string message, params object[] args) {
+        public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "error", custom));
-                Trace.WriteLine(exception.Message);
-                Trace.WriteLine(exception.StackTrace);
+                System.Diagnostics.Trace.WriteLine(string.Format(Format, DateTime.UtcNow, ForLog(context), "error", custom));
+                System.Diagnostics.Trace.WriteLine(exception.Message);
+                System.Diagnostics.Trace.WriteLine(exception.StackTrace);
             }
         }
 
         public void Clear() {
-            Trace.Flush();
+            System.Diagnostics.Trace.Flush();
+        }
+
+        public void SuppressConsole() {
+
         }
     }
 }

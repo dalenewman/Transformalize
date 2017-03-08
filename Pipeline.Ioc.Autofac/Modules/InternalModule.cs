@@ -20,10 +20,11 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Writers;
 using Transformalize.Extensions;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
+using Transformalize.Provider.Console;
+using Transformalize.Provider.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

@@ -21,10 +21,10 @@ using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Loggers;
 using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 using Process = Transformalize.Configuration.Process;
+using Transformalize.Provider.Trace;
 
 namespace Tests {
     public class CompositionRoot {

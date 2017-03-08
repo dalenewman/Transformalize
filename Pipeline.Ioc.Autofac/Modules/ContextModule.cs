@@ -20,9 +20,9 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Writers;
 using Transformalize.Impl;
 using Transformalize.Transform.CSharp;
+using Transformalize.Provider.Console;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

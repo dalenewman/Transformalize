@@ -16,61 +16,73 @@
 // limitations under the License.
 #endregion
 using System;
-using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Logging;
 
-namespace Transformalize.Logging {
+namespace Transformalize.Provider.Console {
+    public class ConsoleLogger : BaseLogger, IPipelineLogger {
 
-    public class DebugLogger : BaseLogger, IPipelineLogger {
+        const string Format = "{0:u} | {1} | {2} | {3}";
+        const string Context = "{0} | {1} | {2} | {3}";
 
-        const string FORMAT = "{0:u} | {1} | {2} | {3}";
-        const string CONTEXT = "{0} | {1} | {2} | {3}";
-        public DebugLogger(LogLevel level = LogLevel.Info)
+        public ConsoleLogger(LogLevel level = LogLevel.Info)
             : base(level) {
         }
 
         static string ForLog(IContext context) {
-            return string.Format(CONTEXT, context.ForLog);
+            return string.Format(Context, context.ForLog);
         }
 
         public void Debug(IContext context, Func<string> lamda) {
             if (DebugEnabled) {
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "debug", lamda());
+                System.Console.ForegroundColor = ConsoleColor.Cyan;
+                System.Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
             }
         }
 
         public void Info(IContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "info ", custom);
+                System.Console.ForegroundColor = ConsoleColor.Gray;
+                System.Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
             }
         }
 
         public void Warn(IContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "warn ", custom);
+                System.Console.ForegroundColor = ConsoleColor.Yellow;
+                System.Console.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
             }
         }
 
         public void Error(IContext context, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "error", custom);
+                System.Console.ForegroundColor = ConsoleColor.Red;
+                System.Console.Error.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
             }
         }
 
         public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "error", custom);
-                System.Diagnostics.Debug.WriteLine(exception.Message);
-                System.Diagnostics.Debug.WriteLine(exception.StackTrace);
+                System.Console.ForegroundColor = ConsoleColor.Red;
+                System.Console.Error.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
+                System.Console.Error.WriteLine(exception.Message);
+                System.Console.Error.WriteLine(exception.StackTrace);
             }
         }
 
-        public void Clear() { }
+        public void Clear() {
+            System.Console.Clear();
+        }
+
         public void SuppressConsole() {
+            DebugEnabled = false;
+            WarnEnabled = false;
+            InfoEnabled = false;
+            ErrorEnabled = true;
         }
     }
 }

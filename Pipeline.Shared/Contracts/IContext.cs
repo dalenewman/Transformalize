@@ -35,5 +35,6 @@ namespace Transformalize.Contracts {
         LogLevel LogLevel { get; }
         string Key { get; }
         IPipelineLogger Logger { get; }
+        object[] ForLog { get; }
     }
 }

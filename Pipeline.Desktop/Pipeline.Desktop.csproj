@@ -62,11 +62,6 @@
     <Compile Include="Actions\PrintAction.cs" />
     <Compile Include="Actions\WaitAction.cs" />
     <Compile Include="SchemaReader.cs" />
-    <Compile Include="Loggers\ConsoleLogger.cs" />
-    <Compile Include="Loggers\TraceLogger.cs" />
-    <Compile Include="Transforms\FileExtTransform.cs" />
-    <Compile Include="Transforms\FileNameTransform.cs" />
-    <Compile Include="Transforms\FilePathTransform.cs" />
     <Compile Include="Transforms\FromJsonTransform.cs" />
     <Compile Include="Transforms\FromXmlTransform.cs" />
     <Compile Include="Transforms\RelativeTimeTransform.cs" />
@@ -74,7 +69,6 @@
     <Compile Include="Transforms\UrlEncodeTransform.cs" />
     <Compile Include="Transforms\WebTransform.cs" />
     <Compile Include="Transforms\XPathTransform.cs" />
-    <Compile Include="Writers\ConsoleWriter.cs" />
     <Compile Include="ParallelPipeline.cs" />
     <Compile Include="Actions\WebAction.cs" />
     <Compile Include="Transforms\DecompressTransform.cs" />
@@ -82,7 +76,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transforms\FormatPhoneTransform.cs" />
     <Compile Include="Utility.cs" />
-    <Compile Include="Writers\TraceWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
