@@ -69,7 +69,7 @@ namespace Transformalize.Command {
                     .WithIdentity(schedule.Name + " Trigger", "TFL")
                     .StartNow()
                     .WithCronSchedule(schedule.Cron, x => x
-                        .WithMisfireHandlingInstructionIgnoreMisfires()
+                        .WithMisfireHandlingInstructionDoNothing()
                         .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
                     ).Build();
 

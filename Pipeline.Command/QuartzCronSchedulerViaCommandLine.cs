@@ -54,7 +54,7 @@ namespace Transformalize.Command {
             var trigger = TriggerBuilder.Create()
                 .WithIdentity("Trigger", "TFL")
                 .StartNow()
-                .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionIgnoreMisfires())
+                .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionDoNothing())
                 .Build();
 
             _scheduler.ScheduleJob(job, trigger);
