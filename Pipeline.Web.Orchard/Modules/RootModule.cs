@@ -23,16 +23,12 @@ using Cfg.Net.Contracts;
 using Cfg.Net.Environment;
 using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
-using Orchard.Templates.Services;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Nulls;
 using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
-using System;
 using Orchard.Localization;
-using Orchard.UI.Notify;
 using Transformalize;
 using Transformalize.Impl;
 using Transformalize.Transform.DateMath;
@@ -72,17 +68,15 @@ namespace Pipeline.Web.Orchard.Modules {
                     new IllegalCharacterValidator()
                 };
 
-                if (!string.IsNullOrEmpty(ctx.ResolveNamed<string>("sh"))) {
-                    var shr = new ShorthandRoot(ctx.ResolveNamed<string>("sh"), ctx.ResolveNamed<IReader>("file"));
-                    if (shr.Errors().Any()) {
-                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" });
-                        foreach (var error in shr.Errors()) {
-                            context.Error(error);
-                        }
-                        context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
-                    } else {
-                        dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
+                var shr = new ShorthandRoot(Common.DefaultShortHand);
+                if (shr.Errors().Any()) {
+                    var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" });
+                    foreach (var error in shr.Errors()) {
+                        context.Error(error);
                     }
+                    context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
+                } else {
+                    dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
                 }
 
                 var process = new Process(dependencies.ToArray());

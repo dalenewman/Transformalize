@@ -14,6 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -126,17 +127,19 @@ namespace Pipeline.Web.Orchard.Controllers {
                     }
 
                     process.Load(part.Configuration, parameters);
-                    process.Buffer = false; // we don't do that on web
+                    process.Buffer = false; // no buffering for reports
+                    process.ReadOnly = true;  // force reporting to omit system fields
 
-                    var provider = process.Output().Provider;
-                    if (provider.In("internal", "file")) {
+                    var output = process.Output();
+
+                    if (output.Provider.In("internal", "file")) {
 
                         Common.TranslatePageParametersToEntities(process, parameters, "page");
 
                         // change process for export purposes
-                        var output = Request["output"] ?? "page";
-                        if (!_renderedOutputs.Contains(output)) {
-                            ConvertToExport(user, process, part, output, parameters);
+                        var reportType = Request["output"] ?? "page";
+                        if (!_renderedOutputs.Contains(reportType)) {
+                            ConvertToExport(user, process, part, reportType, parameters);
                             process.Load(process.Serialize(), parameters);
                         }
 
@@ -216,9 +219,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         }
 
-        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string output, IDictionary<string, string> parameters) {
+        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string exportType, IDictionary<string, string> parameters) {
             var o = process.Output();
-            switch (output) {
+            switch (exportType) {
                 case "xlsx":
                     if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
                         _appDataFolder.CreateDirectory(Common.FileFolder);
@@ -230,14 +233,17 @@ namespace Pipeline.Web.Orchard.Controllers {
                     o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, fileName));
                     break;
                 case "geojson":
+                    o.Stream = true;
                     o.Provider = "geojson";
                     o.File = _slugService.Slugify(part.Title()) + ".geojson";
                     break;
                 case "kml":
+                    o.Stream = true;
                     o.Provider = "kml";
                     o.File = _slugService.Slugify(part.Title()) + ".kml";
                     break;
                 default: //csv
+                    o.Stream = true;
                     o.Provider = "file";
                     o.Delimiter = ",";
                     o.File = _slugService.Slugify(part.Title()) + ".csv";

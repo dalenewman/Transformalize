@@ -63,12 +63,14 @@ namespace Pipeline.Web.Orchard.Modules {
                 foreach (var entity in _process.Entities) {
 
                     // ENTITY WRITER
-                    builder.Register<IWrite>(ctx => {
+                    builder.Register(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
                             case "geojson":
-                                return new GeoJsonStreamWriter(output, HttpContext.Current.Response.OutputStream);
+                                return output.Connection.Stream ?
+                                    (IWrite) new GeoJsonStreamWriter(output, HttpContext.Current.Response.OutputStream) :
+                                    new GeoJsonFileWriter(output);
                             default:
                                 return new NullWriter(output);
                         }

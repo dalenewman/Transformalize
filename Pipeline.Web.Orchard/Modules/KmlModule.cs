@@ -61,14 +61,15 @@ namespace Pipeline.Web.Orchard.Modules {
 
             if (_process.Output().Provider == Provider) {
                 foreach (var entity in _process.Entities) {
-
                     // ENTITY WRITER
-                    builder.Register<IWrite>(ctx => {
+                    builder.Register(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
                             case Provider:
-                                return new KmlStreamWriter(output, HttpContext.Current.Response.OutputStream);
+                                return output.Connection.Stream ? 
+                                    (IWrite) new KmlStreamWriter(output, HttpContext.Current.Response.OutputStream):
+                                    new KmlFileWriter(output);
                             default:
                                 return new NullWriter(output);
                         }

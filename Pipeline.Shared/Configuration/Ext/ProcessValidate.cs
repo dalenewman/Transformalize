@@ -367,7 +367,7 @@ namespace Transformalize.Configuration.Ext {
         }
 
         static void ValidateSearchTypes(Process p, Action<string> error) {
-            foreach (var name in p.GetAllFields().Where(f => !f.System).Select(f => f.SearchType).Distinct()) {
+            foreach (var name in p.GetSearchFields().Where(f => !f.System).Select(f => f.SearchType).Distinct()) {
                 if (name != "none" && p.SearchTypes.All(st => st.Name != name)) {
                     error($"Search type {name} is invalid. Add it to search types, or remove it from the field using it.");
                 }

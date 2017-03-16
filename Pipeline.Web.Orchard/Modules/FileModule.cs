@@ -31,10 +31,15 @@ using Transformalize.Provider.File;
 using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
-    public class FileModule : Module {
-        private readonly Process _process;
 
-        public FileModule() { }
+    public class FileModule : Module {
+
+        private readonly Process _process;
+        private readonly IAppDataFolder _appDataFolder;
+
+        public FileModule(IAppDataFolder appDataFolder) {
+            _appDataFolder = appDataFolder;
+        }
 
         public FileModule(Process process) {
             _process = process;
@@ -113,12 +118,21 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                     // ENTITY WRITER
-                    builder.Register<IWrite>(ctx => {
+                    builder.Register(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
                             case "file":
-                                return new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream);
+                                if (output.Connection.File.StartsWith("~")){
+                                    if(output.Connection.File.StartsWith("~/App_Data", System.StringComparison.OrdinalIgnoreCase)) {
+                                        output.Connection.File = _appDataFolder.MapPath(output.Connection.File);
+                                    } else {
+                                        output.Connection.File = _appDataFolder.MapPath(Path.Combine("~/App_Data/", output.Connection.File.Trim(new[] { '~','/'})));
+                                    }
+                                }
+                                return output.Connection.Stream ?
+                                    (IWrite)new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream) :
+                                    new DelimitedFileWriter(output, output.Connection.File);
                             default:
                                 return new NullWriter(output);
                         }

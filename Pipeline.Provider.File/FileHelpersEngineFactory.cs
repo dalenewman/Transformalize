@@ -39,6 +39,12 @@ namespace Transformalize.Provider.File {
                 };
             } else {
                 engine = new FileHelperAsyncEngine(builder.CreateRecordClass()) { ErrorMode = errorMode };
+                if (context.Connection.Header != string.Empty) {
+                    engine.HeaderText = context.Connection.Header;
+                }
+                if (context.Connection.Footer != string.Empty) {
+                    engine.FooterText = context.Connection.Footer;
+                }
             }
 
             return engine;

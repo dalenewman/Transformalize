@@ -123,7 +123,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.RegisterCallback(new SolrModule(root).Configure);
                     builder.RegisterCallback(new ElasticModule(root).Configure);
                     builder.RegisterCallback(new InternalModule(root).Configure);
-                    builder.RegisterCallback(new FileModule().Configure);
+                    builder.RegisterCallback(new FileModule(ctx.Resolve<IAppDataFolder>()).Configure);
                     builder.RegisterCallback(new ExcelModule().Configure);
                     builder.RegisterCallback(new GeoJsonModule().Configure);
                     builder.RegisterCallback(new KmlModule().Configure);

@@ -47,6 +47,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Delimiter { get; set; }
 
+        [Cfg]
+        public bool Stream { get; set; }
+
         [Cfg(value = false)]
         public bool Direct { get; set; }
         [Cfg(value = true)]
