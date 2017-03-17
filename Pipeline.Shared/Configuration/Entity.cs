@@ -72,7 +72,7 @@ namespace Transformalize.Configuration {
         public int Sample { get; set; }
         [Cfg(value = "")]
         public string Schema { get; set; }
-        [Cfg(value = "")]
+        [Cfg(value = "", toLower =true)]
         public string Script { get; set; }
         [Cfg(value = "")]
         public string ScriptKeys { get; set; }

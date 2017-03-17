@@ -23,6 +23,7 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Provider.File {
+
     public class DelimitedFileWriter : IWrite {
         private readonly OutputContext _context;
         private readonly string _fileName;

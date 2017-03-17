@@ -25,12 +25,14 @@ using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
 using Transformalize.Provider.Console;
 using Transformalize.Provider.Trace;
+using Transformalize.Writers;
+using System.Collections.Generic;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
     public class InternalModule : Module {
         private readonly Process _process;
-        private readonly string[] _internal = { "internal", "console", "trace", "log" };
+        private readonly HashSet<string> _internal = new HashSet<string>(new string[] { "internal", "console", "trace", "log", "text" });
 
         public InternalModule() { }
 
@@ -49,7 +51,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             }
 
             // Entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider.In(_internal))) {
+            foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
                 builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
 
@@ -72,7 +74,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             }
 
             // Entity Output
-            if (_process.Output().Provider.In(_internal)) {
+            if (_internal.Contains(_process.Output().Provider)) {
 
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
@@ -92,6 +94,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new TraceWriter(new JsonNetSerializer(output));
                             case "internal":
                                 return new InternalWriter(output);
+                            case "text":
+                                return new StringWriter(output);
                             case "log":
                                 return new NLogWriter(output);
                             default:

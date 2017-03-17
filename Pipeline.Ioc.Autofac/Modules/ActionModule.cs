@@ -30,6 +30,7 @@ using Transformalize.Provider.File.Actions;
 using FileReader = Cfg.Net.Reader.FileReader;
 
 namespace Transformalize.Ioc.Autofac.Modules {
+
     /// <summary>
     /// The `ActionModule` is only for actions embedded in a host process:
     /// 

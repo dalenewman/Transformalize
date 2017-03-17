@@ -118,8 +118,12 @@ namespace Transformalize.Configuration.Ext {
 
         static void ValidateScripts(Process process, Action<string> error) {
             var scriptsRegistered = process.Scripts.Select(s => s.Name);
-            var scriptReferences = process.GetAllTransforms().Where(t => t.Scripts.Any()).SelectMany(t => t.Scripts).Select(s => s.Name).Distinct();
-            var problems = scriptReferences.Except(scriptsRegistered).ToArray();
+
+            var transformRefs = process.GetAllTransforms().Where(t => t.Scripts.Any()).SelectMany(t => t.Scripts).Select(s => s.Name).Distinct();
+            var entityRefs = process.Entities.Where(e => e.Script != string.Empty).Select(e => e.Script).Distinct();
+            var references = transformRefs.Union(entityRefs);
+
+            var problems = references.Except(scriptsRegistered).ToArray();
             if (problems.Length <= 0)
                 return;
             foreach (var problem in problems) {

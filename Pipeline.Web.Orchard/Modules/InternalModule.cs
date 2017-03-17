@@ -24,13 +24,17 @@ using Transformalize.Extensions;
 using Transformalize.Nulls;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
+using Transformalize.Writers;
+using Transformalize.Provider.File;
+using System.Web;
+using System.Collections.Generic;
 
 namespace Pipeline.Web.Orchard.Modules {
 
     public class InternalModule : Module {
 
         private readonly Process _process;
-        private readonly string[] _internal = { "internal", "console", "trace", "log" };
+        private readonly HashSet<string> _internal = new HashSet<string>(new string[] { "internal", "console", "trace", "log", "text" });
 
         public InternalModule() { }
 
@@ -74,7 +78,7 @@ namespace Pipeline.Web.Orchard.Modules {
             }
 
             // Entity Output
-            if (_process.Output().Provider.In(_internal)) {
+            if (_internal.Contains(_process.Output().Provider)) {
 
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
@@ -92,6 +96,8 @@ namespace Pipeline.Web.Orchard.Modules {
                         switch (output.Connection.Provider) {
                             case "internal":
                                 return new InternalWriter(output);
+                            case "text":
+                                return new FileStreamWriter(output, HttpContext.Current.Response.OutputStream);
                             case "log":
                                 return new OrchardLogWriter(output);
                             default:

@@ -23,6 +23,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Ado;
 using Process = Transformalize.Configuration.Process;
+using Cfg.Net.Contracts;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class ProcessControlModule : Module {
@@ -86,27 +87,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 }
 
-                // input validation
-                if (_process.Mode == "init") {
-                    var providers = _process.Connections.Select(c => c.Provider).Distinct();
-
-                    foreach (var provider in providers) {
-                        switch (provider) {
-                            case "solr":
-                                foreach (var connection in _process.Connections.Where(c => c.Provider == "solr")) {
-                                    foreach (var entity in _process.Entities.Where(e => e.Connection == connection.Name)) {
-                                        controller.PreActions.Add(ctx.ResolveNamed<IInputValidator>(entity.Key));
-                                    }
-                                }
-                                break;
-                        }
-                    }
-                }
-
                 // flatten, should be the first post-action
                 var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
                 if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(outputConnection.Provider)) {
                     controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
+                }
+
+                // scripts
+                if (_process.Scripts.Any()) {
+                    controller.PreActions.Add(new ScriptLoaderAction(context, ctx.Resolve<IReader>()));
                 }
 
                 // templates

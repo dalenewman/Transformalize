@@ -69,6 +69,8 @@
     <Compile Include="FileReader.cs" />
     <Compile Include="DirectoryReader.cs" />
     <Compile Include="Actions\FileReplaceAction.cs" />
+    <Compile Include="FileStreamWriter.cs" />
+    <Compile Include="FileWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />
     <Compile Include="Transforms\FileNameTransform.cs" />

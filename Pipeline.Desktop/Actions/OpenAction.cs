@@ -21,6 +21,7 @@ using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
 namespace Transformalize.Desktop.Actions {
+
     public class OpenAction : IAction {
         private readonly Action _action;
 

@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Actions {
+
     public class RenderTemplateAction : IAction {
+
         private readonly Template _template;
         private readonly ITemplateEngine _engine;
 

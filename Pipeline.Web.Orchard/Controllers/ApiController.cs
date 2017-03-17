@@ -90,12 +90,16 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
                 Logger.Debug("Authorization granted to {0} for id {1}.", User.Identity.Name, id);
                 authorized = true;
+            } else {
+                Logger.Warning("Authorization denied to {0} for id {1}.", User.Identity.Name, id);
             }
 
-            if (!authorized) {
-                if (part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase) && _ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
-                    Logger.Debug("Authorization granted to {0} for id {1}.", Request.UserHostAddress, id);
+            if (!authorized && part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase)) {
+                if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
+                    Logger.Warning("Service authorization granted to {0} for id {1}.", Request.UserHostAddress, id);
                     authorized = true;
+                } else {
+                    Logger.Warning("Service authorization denied to {0} for id {1}.", Request.UserHostAddress, id);
                 }
             }
 
@@ -127,12 +131,18 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                 try {
-                    // Common.ApplyFacet(process, Request);
+
+                    var output = process.Output();
                     runner.Execute(process);
+
                     if (process.Log.Any()) {
                         process.Status = process.Log.Any(le => le.LogLevel == LogLevel.Error) ? (short)500 : (short)200;
                         process.Message = string.Format("{0} error{1} and/or warning{1} recorded.", process.Log.Count, process.Log.Count.Plural());
                     } else {
+                        if (output.Provider == "text") {
+                            Response.Flush();
+                            return new EmptyResult();
+                        }
                         process.Status = 200;
                         process.Message = "Ok";
                     }

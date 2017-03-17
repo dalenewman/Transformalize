@@ -12,13 +12,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ActionResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\NullAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\RenderTemplateAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\ScriptLoaderAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CachingRunTimeSchemaReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CfgRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ColumnNames.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CompositeReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationLogger.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Action.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Delimiter.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Incrementer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InternalReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)InternalWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Writers\InternalWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KeyComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KeyRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)KeyType.cs" />
@@ -145,6 +145,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)RowFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Writers\StringWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixesTransform.cs" />
@@ -219,5 +220,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\IsValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StartsWithValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValueComparer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Writers\" />
   </ItemGroup>
 </Project>

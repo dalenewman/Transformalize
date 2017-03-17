@@ -15,23 +15,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Cfg.Net.Contracts;
+using System.Collections.Generic;
+using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize {
-    public class ConfigurationLogger : ILogger {
-        private readonly IContext _context;
+namespace Transformalize.Provider.File {
 
-        public ConfigurationLogger(IContext context) {
+    public class FileWriter : IWrite {
+
+        private readonly OutputContext _context;
+        private readonly Writers.StringWriter _writer;
+        public FileWriter(OutputContext context, Writers.StringWriter writer) {
             _context = context;
+            _writer = writer;
         }
-
-        public void Warn(string message, params object[] args) {
-            _context.Warn(message, args);
-        }
-
-        public void Error(string message, params object[] args) {
-            _context.Error(message, args);
+        public void Write(IEnumerable<IRow> rows) {
+            _writer.Write(rows);
+            try {
+                System.IO.File.WriteAllText(_context.Connection.File, _writer.Builder.ToString());
+            } catch (System.Exception ex) {
+                _context.Error(ex.Message);
+            }
         }
     }
 }

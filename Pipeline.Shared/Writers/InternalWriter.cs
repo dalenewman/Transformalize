@@ -17,11 +17,10 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize {
+namespace Transformalize.Writers {
 
     public class InternalWriter : IWrite {
         private readonly OutputContext _context;
