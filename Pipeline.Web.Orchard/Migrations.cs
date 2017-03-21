@@ -121,19 +121,25 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom9() {
-            var cfgs = _orchardServices.ContentManager.Query<PipelineConfigurationPart, PipelineConfigurationPartRecord>(VersionOptions.Published);
-            foreach (var cfg in cfgs.List()) {
-                if (!cfg.Migrated) {
-                    cfg.Configuration = cfg.Record.Configuration;
-                    cfg.Reportable = cfg.Record.Runnable;
-                    cfg.Runnable = cfg.Record.Runnable;
-                    cfg.NeedsInputFile = cfg.Record.NeedsInputFile;
-                    cfg.StartAddress = cfg.Record.StartAddress;
-                    cfg.EndAddress = cfg.Record.EndAddress;
-                    cfg.EditorMode = cfg.Record.EditorMode;
-                    cfg.Migrated = true;
+            try {
+                var cfgs = _orchardServices.ContentManager.Query<PipelineConfigurationPart, PipelineConfigurationPartRecord>(VersionOptions.Published);
+                foreach (var cfg in cfgs.List()) {
+                    if (!cfg.Migrated) {
+                        cfg.Configuration = cfg.Record.Configuration;
+                        cfg.Reportable = cfg.Record.Runnable;
+                        cfg.Runnable = cfg.Record.Runnable;
+                        cfg.NeedsInputFile = cfg.Record.NeedsInputFile;
+                        cfg.StartAddress = cfg.Record.StartAddress;
+                        cfg.EndAddress = cfg.Record.EndAddress;
+                        cfg.EditorMode = cfg.Record.EditorMode;
+                        cfg.Migrated = true;
+                    }
                 }
+
+            } catch (Exception ex) {
+                Logger.Warning(ex.Message);
             }
+
             return 10;
         }
 

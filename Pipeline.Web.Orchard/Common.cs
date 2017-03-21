@@ -364,6 +364,7 @@ namespace Pipeline.Web.Orchard {
     <add name='htmlencode' signature='none' />
     <add name='datemath' signature='expression' />
     <add name='eval' signature='expression' />
+    <add name='ismatch' signature='pattern' />
     
   </methods>
 

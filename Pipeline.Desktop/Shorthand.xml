@@ -354,7 +354,8 @@
     <add name='htmlencode' signature='none' />
     <add name='fromaddress' signature='key' />
     <add name='distinct' signature='separator-space' />
-    
+    <add name='ismatch' signature='pattern' />
+
   </methods>
 
 </cfg>

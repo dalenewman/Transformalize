@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -20,12 +20,11 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
-    public class RegexMatchTransform : BaseTransform {
+    public class RegexIsMatchTransform : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexMatchTransform(IContext context) : base(context, "string") {
+        public RegexIsMatchTransform(IContext context) : base(context, "bool") {
             _input = MultipleInput();
 #if NETS10
             _regex = new Regex(context.Transform.Pattern);
@@ -37,9 +36,12 @@ namespace Transformalize.Transforms {
         public override IRow Transform(IRow row) {
             foreach (var field in _input) {
                 var match = _regex.Match(row[field].ToString());
-                if (!match.Success) continue;
-                row[Context.Field] = match.Value;
-                break;
+                if (match.Success) {
+                    row[Context.Field] = true;
+                    break;
+                } else {
+                    row[Context.Field] = false;
+                }
             }
             Increment();
             return row;
