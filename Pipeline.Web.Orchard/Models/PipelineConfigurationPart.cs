@@ -26,8 +26,7 @@ namespace Pipeline.Web.Orchard.Models {
 
         public static List<SelectListItem> EditorModes = new List<SelectListItem> {
                 new SelectListItem {Selected = false, Text = "JSON", Value = "json"},
-                new SelectListItem {Selected = false, Text = "XML", Value = "xml"},
-                new SelectListItem {Selected = false, Text = "YAML", Value = "yaml"}
+                new SelectListItem {Selected = false, Text = "XML", Value = "xml"}
         };
 
         public string Configuration

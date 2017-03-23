@@ -76,24 +76,37 @@ namespace Transformalize.Configuration {
         public Field LeftField { get; set; }
         public Field ValueField { get; set; }
 
-        [Cfg(value="search",domain="search,facet,range", ignoreCase = true, toLower = true)]
+        [Cfg(value = "search", domain = "search,facet,range,filter", ignoreCase = true, toLower = true)]
         public string Type { get; set; }
 
-        [Cfg(value=100)]
+        [Cfg(value = 100)]
         public int Size { get; set; }
 
-        [Cfg(value="_term")]
+        [Cfg(value = "_term")]
         public string OrderBy { get; set; }
 
-        [Cfg(value="asc", domain="asc,desc", toLower = true)]
+        [Cfg(value = "asc", domain = "asc,desc", toLower = true)]
         public string Order { get; set; }
 
-        [Cfg(value=1)]
+        [Cfg(value = 1)]
         public int Min { get; set; }
 
         public string Key { get; set; }
 
-        [Cfg(value="", toLower = true)]
+        [Cfg(value = "", toLower = true)]
         public string Map { get; set; }
+
+        protected override void Validate() {
+            if (Type == "facet") {
+                if (Field == string.Empty) {
+                    Error("Facet filters need a field.");
+                    Error(Serialize());
+                }
+                if (Map == string.Empty) {
+                    Error("Facet filters need a map to load facets into.");
+                    Error(Serialize());
+                }
+            }
+        }
     }
 }

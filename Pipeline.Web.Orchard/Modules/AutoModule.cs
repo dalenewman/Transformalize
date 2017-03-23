@@ -18,7 +18,6 @@
 using Autofac;
 using Cfg.Net.Environment;
 using Cfg.Net.Parsers;
-using Cfg.Net.Parsers.YamlDotNet;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
 using Orchard.FileSystems.AppData;
@@ -32,10 +31,7 @@ using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
 using Transformalize;
-using Transformalize.Impl;
 using Transformalize.Transform.DateMath;
-using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AutoModule : Module {
@@ -58,8 +54,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new XmlSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
+                new EnvironmentModifier()
             )).As<XmlProcess>();
 
             builder.Register(c => new XmlToJsonProcess(
@@ -68,23 +63,11 @@ namespace Pipeline.Web.Orchard.Modules {
                 new JsonSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(), 
-                new IllegalCharacterValidator()
+                new EnvironmentModifier()
             )).As<XmlToJsonProcess>();
-
-            builder.Register(c => new XmlToYamlProcess(
-                new DateMathModifier(),
-                new NanoXmlParser(),
-                new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()),
-                new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
-            )).As<XmlToYamlProcess>();
 
             builder.Register(c => new XmlProcessPass(new NanoXmlParser(), new XmlSerializer())).As<XmlProcessPass>();
             builder.Register(c => new XmlToJsonProcessPass(new NanoXmlParser(), new JsonSerializer())).As<XmlToJsonProcessPass>();
-            builder.Register(c => new XmlToYamlProcessPass(new NanoXmlParser(), new YamlDotNetSerializer(SerializationOptions.EmitDefaults, new CamelCaseNamingConvention()))).As<XmlToYamlProcessPass>();
 
             // json
             builder.Register(c => new JsonProcess(
@@ -93,8 +76,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new JsonSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
+                new EnvironmentModifier()
             )).As<JsonProcess>();
 
             builder.Register(c => new JsonToXmlProcess(
@@ -103,58 +85,11 @@ namespace Pipeline.Web.Orchard.Modules {
                 new XmlSerializer(),
                 new JintValidator(),
                 c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
+                new EnvironmentModifier()
             )).As<JsonToXmlProcess>();
-
-            builder.Register(c => new JsonToYamlProcess(
-                new DateMathModifier(),
-                new FastJsonParser(),
-                new YamlDotNetSerializer(),
-                new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
-            )).As<JsonToYamlProcess>();
 
             builder.Register(c => new JsonProcessPass(new FastJsonParser(), new JsonSerializer())).As<JsonProcessPass>();
             builder.Register(c => new JsonToXmlProcessPass(new FastJsonParser(), new XmlSerializer())).As<JsonToXmlProcessPass>();
-            builder.Register(c => new JsonToYamlProcessPass(new FastJsonParser(), new YamlDotNetSerializer())).As<JsonToYamlProcessPass>();
-
-            // yaml
-            builder.Register(c => new YamlProcess(
-                new DateMathModifier(),
-                new YamlDotNetParser(),
-                new YamlDotNetSerializer(),
-                new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
-            )).As<YamlProcess>();
-
-            builder.Register(c => new YamlToXmlProcess(
-                new DateMathModifier(),
-                new YamlDotNetParser(),
-                new XmlSerializer(),
-                new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
-            )).As<YamlToXmlProcess>();
-
-            builder.Register(c => new YamlToJsonProcess(
-                new DateMathModifier(),
-                new YamlDotNetParser(),
-                new JsonSerializer(),
-                new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
-                new EnvironmentModifier(),
-                new IllegalCharacterValidator()
-            )).As<YamlToJsonProcess>();
-
-            builder.Register(c => new YamlProcessPass(new YamlDotNetParser(), new YamlDotNetSerializer())).As<YamlProcessPass>();
-            builder.Register(c => new YamlToXmlProcessPass(new YamlDotNetParser(), new XmlSerializer())).As<YamlToXmlProcessPass>();
-            builder.Register(c => new YamlToJsonProcessPass(new YamlDotNetParser(), new JsonSerializer())).As<YamlToJsonProcessPass>();
 
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" });

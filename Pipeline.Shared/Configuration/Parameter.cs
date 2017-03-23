@@ -29,22 +29,18 @@ namespace Transformalize.Configuration {
         private string _entity;
 
         [Cfg(value = "")]
-        public string Entity
-        {
+        public string Entity {
             get { return _entity; }
-            set
-            {
+            set {
                 _entity = value;
                 _loadedField = null;  //invalidate cache
             }
         }
 
         [Cfg(value = "")]
-        public string Field
-        {
+        public string Field {
             get { return _field; }
-            set
-            {
+            set {
                 _field = value;
                 _loadedField = null; //invalidate cache
             }
@@ -68,6 +64,15 @@ namespace Transformalize.Configuration {
         protected override void Validate() {
             switch (Type) {
                 case "string":
+                    if (InvalidCharacters != string.Empty && Value != null) {
+                        foreach (var c in InvalidCharacters.ToCharArray()) {
+                            if (c == ',' && Multiple)
+                                continue;
+                            if (Value.IndexOf(c) > -1) {
+                                Error($"The {Name} parameter contains an invalid '{c}' character");
+                            }
+                        }
+                    }
                     break;
                 default:
                     if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
@@ -78,12 +83,10 @@ namespace Transformalize.Configuration {
             if (string.IsNullOrEmpty(Label)) {
                 Label = Name;
             }
-
         }
 
         [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
-        public string Type
-        {
+        public string Type {
             get { return _type; }
             set { _type = value != null && value.StartsWith("sy", StringComparison.OrdinalIgnoreCase) ? value.ToLower().Replace("system.", string.Empty) : value; }
         }
@@ -132,15 +135,17 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Label { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Format { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Width { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Multiple { get; set; }
 
+        [Cfg(value = ";'`")]
+        public string InvalidCharacters { get; set; }
 
     }
 

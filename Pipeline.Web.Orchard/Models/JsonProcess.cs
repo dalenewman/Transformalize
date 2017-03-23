@@ -13,20 +13,12 @@ namespace Pipeline.Web.Orchard.Models {
         public JsonToXmlProcess(params IDependency[] dependencies) : base(dependencies) { }
     }
 
-    public class JsonToYamlProcess : Process {
-        public JsonToYamlProcess(params IDependency[] dependencies) : base(dependencies) { }
-    }
-
     public class JsonProcessPass : Process {
         public JsonProcessPass(params IDependency[] dependencies) : base(dependencies) { }
     }
 
     public class JsonToXmlProcessPass : Process {
         public JsonToXmlProcessPass(params IDependency[] dependencies) : base(dependencies) { }
-    }
-
-    public class JsonToYamlProcessPass : Process {
-        public JsonToYamlProcessPass(params IDependency[] dependencies) : base(dependencies) { }
     }
 
 }

@@ -60,9 +60,6 @@
       <HintPath>..\..\..\packages\Cfg-NET.Environment.0.2.2\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Parsers.YamlDotNet">
-      <HintPath>..\..\..\..\..\Cfg.Net\Cfg.Net.Parsers.YamlDotNet\bin\Release\Cfg.Net.Parsers.YamlDotNet.dll</HintPath>
-    </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.Reader.0.3.2\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
@@ -239,10 +236,6 @@
     <Reference Include="Transformalize.Transform.LamdaParser">
       <HintPath>..\..\..\..\..\Transformalize\Transformalize.Transform.LamdaParser\bin\$(Configuration)\Transformalize.Transform.LamdaParser.dll</HintPath>
     </Reference>
-    <Reference Include="YamlDotNet, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\YamlDotNet.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery.tablesorter.min.js" />
@@ -293,7 +286,6 @@
     <Compile Include="Models\PipelineSettingsPart.cs" />
     <Compile Include="Models\PipelineSettingsPartRecord.cs" />
     <Compile Include="Models\XmlProcess.cs" />
-    <Compile Include="Models\YamlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />

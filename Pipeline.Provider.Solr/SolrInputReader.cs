@@ -23,10 +23,14 @@ using SolrNet.Commands.Parameters;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Text.RegularExpressions;
 
 namespace Transformalize.Provider.Solr {
 
     public class SolrInputReader : IRead {
+
+        private const string PhrasePattern = @"\""(?>[^""]+|\""(?<number>)|\""(?<-number>))*(?(number)(?!))\""";
+        private static readonly Regex _phraseRegex = new Regex(PhrasePattern, RegexOptions.Compiled);
 
         private readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;
         private readonly InputContext _context;
@@ -36,8 +40,8 @@ namespace Transformalize.Provider.Solr {
         private readonly IRowFactory _rowFactory;
 
         public SolrInputReader(
-            ISolrReadOnlyOperations<Dictionary<string, object>> solr, 
-            InputContext context, 
+            ISolrReadOnlyOperations<Dictionary<string, object>> solr,
+            InputContext context,
             Field[] fields,
             IRowFactory rowFactory
         ) {
@@ -51,7 +55,51 @@ namespace Transformalize.Provider.Solr {
 
         public IEnumerable<IRow> Read() {
 
-            var query = _context.Entity.Filter.Any() ? new SolrMultipleCriteriaQuery(_context.Entity.Filter.Select(f => new SolrQuery(f.Expression)), "AND") : SolrQuery.All;
+            AbstractSolrQuery query = SolrQuery.All;
+            var filterQueries = new Collection<ISolrQuery>();
+            var facetQueries = new Collection<ISolrFacetQuery>();
+
+            if (_context.Entity.Filter.Any()) {
+                var queries = new Collection<ISolrQuery>();
+
+                foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "search" && f.Value != "*")) {
+                    if (filter.Field == string.Empty) {
+                        queries.Add(new SolrQuery(filter.Expression));
+                    } else {
+                        foreach (var term in Terms(filter.Value)) {
+                            queries.Add(new SolrQueryByField(filter.Field, term) { Quoted = false });
+                        }
+                    }
+                }
+
+                query = queries.Any() ? new SolrMultipleCriteriaQuery(queries, "AND") : SolrQuery.All;
+
+                foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "filter")) {
+                    if (filter.Field == string.Empty) {
+                        filterQueries.Add(new SolrQuery(filter.Expression));
+                    } else {
+                        if(filter.Value != "*") {
+                            foreach (var term in Terms(filter.Value)) {
+                                queries.Add(new SolrQueryByField(filter.Field, term) { Quoted = false });
+                            }
+                        }
+                    }
+                }
+
+                foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet")) {
+                    facetQueries.Add(new SolrFacetFieldQuery(filter.Field) {
+                        MinCount = filter.Min,
+                        Limit = filter.Size
+                    });
+                    if(filter.Value != "*") {
+                        if (filter.Value.IndexOf(',') > 0) {
+                            filterQueries.Add(new SolrQueryInList(filter.Field, filter.Value.Split(new[] { ',' })));
+                        } else {
+                            filterQueries.Add(new SolrQueryByField(filter.Field, filter.Value));
+                        }
+                    }
+                }
+            }
 
             int rows;
             StartOrCursor startOrCursor;
@@ -63,14 +111,37 @@ namespace Transformalize.Provider.Solr {
                 startOrCursor = _context.Entity.ReadSize == 0 ? (StartOrCursor)new StartOrCursor.Start(0) : StartOrCursor.Cursor.Start;
             }
 
+            var sortOrder = new Collection<SortOrder>();
+            foreach (var orderBy in _context.Entity.Order) {
+                Field field;
+                if (_context.Entity.TryGetField(orderBy.Field, out field)) {
+                    var name = field.SortField.ToLower();
+                    sortOrder.Add(new SortOrder(name, orderBy.Sort == "asc" ? SolrNet.Order.ASC : SolrNet.Order.DESC));
+                }
+            }
+            sortOrder.Add(new SortOrder("score", SolrNet.Order.DESC));
+
             var result = _solr.Query(
                 query,
                 new QueryOptions {
                     StartOrCursor = startOrCursor,
                     Rows = rows,
-                    Fields = _fieldNames
+                    Fields = _fieldNames,
+                    OrderBy = sortOrder,
+                    FilterQueries = filterQueries,
+                    Facet = new FacetParameters { Queries = facetQueries, Sort = false }
                 }
             );
+
+            foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet")) {
+                if (result.FacetFields.ContainsKey(filter.Field)) {
+                    var facet = result.FacetFields[filter.Field];
+                    var map = _context.Process.Maps.First(m => m.Name == filter.Map);
+                    foreach (var f in facet) {
+                        map.Items.Add(new MapItem { From = $"{f.Key} ({f.Value})", To = f.Key });
+                    }
+                }
+            }
 
             if (result.NumFound <= 0)
                 yield break;
@@ -90,7 +161,10 @@ namespace Transformalize.Provider.Solr {
                     new QueryOptions {
                         StartOrCursor = result.NextCursorMark,
                         Rows = _context.Entity.ReadSize,
-                        Fields = _fieldNames
+                        Fields = _fieldNames,
+                        OrderBy = sortOrder,
+                        FilterQueries = filterQueries,
+                        Facet = new FacetParameters { Queries = facetQueries, Sort = false }
                     }
                 );
 
@@ -112,7 +186,10 @@ namespace Transformalize.Provider.Solr {
                     new QueryOptions {
                         StartOrCursor = new StartOrCursor.Start(page * _context.Entity.ReadSize),
                         Rows = _context.Entity.ReadSize,
-                        Fields = _fieldNames
+                        Fields = _fieldNames,
+                        OrderBy = sortOrder,
+                        FilterQueries = filterQueries,
+                        Facet = new FacetParameters { Queries = facetQueries, Sort = false }
                     }
                     );
 
@@ -129,6 +206,32 @@ namespace Transformalize.Provider.Solr {
                 row[field] = doc[field.Name];
             }
             return row;
+        }
+
+        private IEnumerable<string> Terms(string value, string delimiter = " ") {
+
+            var processedValue = value.Trim(delimiter.ToCharArray());
+
+            if (!processedValue.Contains(" "))
+                return new[] { processedValue };
+
+            if (processedValue.StartsWith("[") && processedValue.EndsWith("]") && processedValue.Contains(" TO ") ||
+                processedValue.StartsWith("{") && processedValue.EndsWith("}") && processedValue.Contains(" TO ")) {
+                return new[] { processedValue };
+            }
+
+            if (!processedValue.Contains("\""))
+                return processedValue.Split(delimiter.ToCharArray());
+
+            var phrases = new List<string>();
+            foreach (var match in _phraseRegex.Matches(processedValue)) {
+                phrases.Add(match.ToString());
+                processedValue = processedValue.Replace(match.ToString(), string.Empty).Trim(delimiter.ToCharArray());
+            }
+
+            if (processedValue.Length > 0)
+                phrases.AddRange(processedValue.Split(delimiter.ToCharArray()));
+            return phrases;
         }
     }
 }
