@@ -350,6 +350,18 @@ namespace Transformalize.Configuration.Ext {
 
 
         static void ValidateShouldRuns(Process p, Action<string> error, Action<string> warn) {
+
+            // transform run-* fields inherit from field run-* fields if necessary
+            foreach (var entity in p.Entities) {
+                foreach (var field in entity.GetAllFields().Where(f => f.RunField != string.Empty)) {
+                    foreach (var transform in field.Transforms.Where(t => t.RunField == string.Empty)) {
+                        transform.RunField = field.RunField;
+                        transform.RunOperator = field.RunOperator;
+                        transform.RunValue = field.RunValue;
+                    }
+                }
+            }
+
             foreach (var entity in p.Entities) {
                 foreach (var field in entity.GetAllFields().Where(f => f.Transforms.Any(t => t.RunField != string.Empty))) {
                     foreach (var t in field.Transforms.Where(t => t.RunField != string.Empty)) {

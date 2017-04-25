@@ -339,6 +339,7 @@ namespace Transformalize.Configuration {
                 entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
 #endif
             }
+
         }
 
         public void ModifyIndexes() {

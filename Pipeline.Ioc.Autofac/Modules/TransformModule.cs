@@ -18,11 +18,9 @@
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
-using Cfg.Net.Reader;
 using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;

@@ -22,7 +22,9 @@ using Transformalize.Contracts;
 using Transformalize.Provider.Elastic.Ext;
 
 namespace Transformalize.Provider.Elastic {
+
     public class ElasticOutputController : BaseOutputController {
+
         private readonly IElasticLowLevelClient _client;
         private readonly Stopwatch _stopWatch;
 

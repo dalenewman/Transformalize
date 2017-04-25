@@ -149,6 +149,9 @@ namespace Transformalize.Provider.Elastic {
                                         writer.WritePropertyName("analyze_wildcard");
                                         writer.WriteValue(true);
 
+                                        writer.WritePropertyName("default_operator");
+                                        writer.WriteValue("AND");
+
                                         writer.WriteEnd(); // query_string
                                     } else {
                                         // match query

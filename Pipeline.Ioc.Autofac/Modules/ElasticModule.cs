@@ -24,14 +24,15 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Desktop;
-using Transformalize.Extensions;
 using Transformalize.Nulls;
 using Transformalize.Provider.Elastic;
 using Transformalize.Provider.Elastic.Ext;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {
+
     public class ElasticModule : Module {
+
         private readonly Process _process;
 
         public ElasticModule() { }

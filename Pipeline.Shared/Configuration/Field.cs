@@ -31,6 +31,7 @@ namespace Transformalize.Configuration {
         string _length;
         private int _precision;
         private int _scale;
+        private string _runOperator;
 
         public string PrecisionFormat { get; private set; } = "000000000";
 
@@ -532,6 +533,21 @@ namespace Transformalize.Configuration {
 
         [Cfg(value=false)]
         public bool Learn { get; set; }
+
+        [Cfg(value="")]
+        public string RunField { get; set; }
+
+        [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
+        public string RunOperator {
+            get { return _runOperator; }
+            set {
+                value = value?.TrimEnd('s');
+                _runOperator = value;
+            }
+        }
+
+        [Cfg(value = Constants.DefaultSetting)]
+        public string RunValue { get; set; }
 
         public string Source { get; set; }
     }
