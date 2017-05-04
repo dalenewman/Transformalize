@@ -10,7 +10,7 @@
 @{
     var output = Request["output"] ?? "page";
     var settings = WorkContext.CurrentSite.As<PipelineSettingsPart>();
-    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name="Missing Entity" };
+    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
     var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
     var orchard = WorkContext.Resolve<IOrchardServices>();
@@ -18,6 +18,7 @@
     var linkService = WorkContext.Resolve<IExportLinkService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
     var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
+    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description));
 
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
@@ -30,6 +31,9 @@
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushSql.min.js");
+        if (hasActions) {
+            Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js");
+        }
     }
 
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css");
@@ -125,10 +129,11 @@ td.sorter {
     @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
         <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
     }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page"/>
     <input id="id_focus" class="bsh" type="hidden" name="focus" value="@focus" />
     <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.PageSize)" />
     <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
+
     @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
         <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
     }
@@ -189,13 +194,13 @@ td.sorter {
                                                 }
                                             }
                                         </select>
-                                    }
-                                    break;
-                                }
+                                       }
+                                       break;
+                                 }
+                        </div>
                     </div>
-                </div>
+                    }
                 }
-            }
 
             <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
@@ -228,6 +233,23 @@ td.sorter {
             }
 
             <div class="btn-group pull-right">
+
+                @if (hasActions) {
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-danger">Action</button>
+                        <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            @foreach (var action in Model.Process.Actions.Where(a=>!a.Before && !a.After &&!string.IsNullOrEmpty(a.Description))) {
+                                <li>
+                                    <a class="bulk-action-link" rel="@action.Description" href="javascript:bulkAction(1,'@action.Description');">@action.Description</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
 
                 @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
                     <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
@@ -293,13 +315,25 @@ td.sorter {
                 <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
                     <thead>
                         <tr>
+                            @if (hasActions) {
+                                <th>
+                                    <div class="checkbox">
+                                        <label>
+                                            <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
+                                        </label>
+                                    </div>
+                                </th>
+                            }
                             @foreach (var field in fields) {
-                                <th>@field.Label</th>
+                                <th title="@field.Name">@field.Label</th>
                             }
                         </tr>
                         @if (isSortable) {
                             var expression = Request["sort"] ?? string.Empty;
                             <tr>
+                                @if (hasActions) {
+                                    <td class="sorter">&nbsp;</td>
+                                }
                                 @for (var i = 0; i < fields.Length; i++) {
                                     var field = fields[i];
                                     var number = i + 1;
@@ -354,6 +388,17 @@ td.sorter {
                             }
 
                             <tr class="@classValue">
+
+                                @if (hasActions) {
+                                    <td>
+                                        <div class="checkbox">
+                                            <label>
+                                                <input title="Select this row" type="checkbox" class="bulk-action shift-select" name="select-row" value="@(string.Join("|",fields.Where(f=>f.PrimaryKey).Select(f=>row[f.Alias])))" placeholder="Select Record">
+                                            </label>
+                                        </div>
+                                    </td>
+                                }
+
                                 @foreach (var field in fields) {
                                     <td>
                                         @switch (field.Type) {
@@ -492,10 +537,64 @@ td.sorter {
         },
         setSort: function(sort) {
             $('#id_sort').val(sort);
+        },
+        lastChecked : null,
+        bulkActionLength: 0
+    }
+
+    function bulkAction(page,description) {
+        var length = $('.bulk-action:checked').length;
+        if (length > 0) {
+            $.blockUI({
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .5,
+                    color: '#fff',
+                    baseZ: 1021
+                }
+            });
+            $('#id_report').attr('method', 'POST');
+            $('#id_report').append('<input type="hidden" name="__RequestVerificationToken" value="@(@Html.AntiForgeryTokenValueOrchard())" />');
+            $('#id_report').append('<input type="hidden" name="bulkAction" value="'+description+'" />');
+            $('#id_report').append('<input type="hidden" name="bulkActionLength" value="'+controls.bulkActionLength+'" />');
+            controls.submit(page);
         }
     }
 
+    function updateBulkActions() {
+        var length = $(".bulk-action:checked").length;
+        var all = length === $(".bulk-action").length;
+        $(".bulk-action-link").each(function () {
+            var link = $(this);
+            var len = (all ? "All" : $('#select-all:checked').length > 0 ? length - 1 : length);
+            controls.bulkActionLength =  len;
+            link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + len + "</span>");
+        });
+    }
+
     $(document).ready(function() {
+
+        var $boxes = $('.shift-select');
+        $boxes.click(function(e) {
+            if(!controls.lastChecked) {
+                controls.lastChecked = this;
+                return;
+            }
+
+            if(e.shiftKey) {
+                var start = $boxes.index(this);
+                var end = $boxes.index(controls.lastChecked);
+
+                $boxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', controls.lastChecked.checked);
+
+            }
+
+            controls.lastChecked = this;
+        });
 
         var isSortable = @(isSortable.ToString().ToLower());
         var focus = '@(focus)';
@@ -521,7 +620,7 @@ td.sorter {
         });
 
         // enable client side sorting if server side support is off
-        if (!isSortable) { 
+        if (!isSortable) {
             $("#id_table").tablesorter();
             $("#id_table")
                 .bind("sortStart", function() {
@@ -553,11 +652,11 @@ td.sorter {
 
             $('#id_report input').filter(function() {
                 var value = $(this).val();
-                 return value === "*" || value === "";
+                return value === "*" || value === "";
             }).attr('disabled',true);
 
             $("#id_report select").each(function() {
-                var selected = $('option:selected', this); 
+                var selected = $('option:selected', this);
                 var count = selected.length;
                 if (count === 0) {
                     $(this).attr('disabled', true);
@@ -576,14 +675,14 @@ td.sorter {
         });
 
         $('#id_clear').click(function() {
-            
+
             // set single select back to first
             $('#id_report select:not([multiple])').val($('#id_report select option:first').val());
-            
+
             // set multi-select to none
             $('#id_report select[multiple]').multiselect('deselectAll', false);
             $('#id_report select[multiple]').multiselect('updateButtonText');
-            
+
             // set other inputs to blank
             $('#id_report input:visible').val("");
 
@@ -631,6 +730,16 @@ td.sorter {
             controls.setSort(expression);
             controls.submit(@(entity.Page == 0 ? 0 : 1));
         });
+
+        $(":checkbox[name=select-all]").click(function () {
+            $(":checkbox[name=select-row]").prop("checked", this.checked);
+            updateBulkActions();
+        });
+
+        $(":checkbox[name=select-row]").click(function () {
+            updateBulkActions();
+        });
+
 
         if (focus !== '') {
             $('#id_report input[name="' + focus + '"],#id_report select[name="' + focus + '"]').focus();
