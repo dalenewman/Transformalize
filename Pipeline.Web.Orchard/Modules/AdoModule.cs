@@ -122,6 +122,9 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 // INPUT VERSION DETECTOR
                 builder.Register<IInputVersionDetector>(ctx => {
+                    if (!entity.Update)
+                        return new NullVersionDetector();
+
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "mysql":
@@ -133,7 +136,6 @@ namespace Pipeline.Web.Orchard.Modules {
                             return new NullVersionDetector();
                     }
                 }).Named<IInputVersionDetector>(entity.Key);
-
 
             }
 
@@ -217,6 +219,9 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     // OUTPUT ROW MATCHER
                     builder.Register(ctx => {
+                        if (!entity.Update)
+                            return new NullTakeAndReturnRows();
+
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
                         var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
@@ -242,7 +247,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         }
                     }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
 
-                    // UPDATER
+                    // MASTER UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         switch (output.Connection.Provider) {
@@ -272,7 +277,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                     output,
                                     cf,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
+                                    entity.Update ? (IWrite) new AdoEntityUpdater(output, cf) : new NullWriter(output)
                                 );
                             case "mysql":
                             case "postgresql":
@@ -281,7 +286,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                     output,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
                                     new AdoEntityInserter(output, cf),
-                                    new AdoEntityUpdater(output, cf)
+                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
                                 );
                             default:
                                 return new NullWriter(output);

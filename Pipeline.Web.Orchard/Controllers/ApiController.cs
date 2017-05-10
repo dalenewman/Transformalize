@@ -31,6 +31,7 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services.Contracts;
 using LogLevel = Transformalize.Contracts.LogLevel;
 using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;

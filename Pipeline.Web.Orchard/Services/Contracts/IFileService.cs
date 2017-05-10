@@ -2,7 +2,7 @@
 using Orchard;
 using Pipeline.Web.Orchard.Models;
 
-namespace Pipeline.Web.Orchard.Services {
+namespace Pipeline.Web.Orchard.Services.Contracts {
     public interface IFileService : IDependency {
         PipelineFilePart Upload(System.Web.HttpPostedFileBase input, string role, string tag);
         PipelineFilePart Create(string name, string extension);

@@ -34,6 +34,7 @@ using System.IO;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
+using Pipeline.Web.Orchard.Services.Contracts;
 using Transformalize.Extensions;
 using Process = Transformalize.Configuration.Process;
 
@@ -54,6 +55,9 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly ISlugService _slugService;
         private readonly IAppDataFolder _appDataFolder;
         private readonly IClock _clock;
+        private readonly IBatchCreateService _batchCreateService;
+        private readonly IBatchWriteService _batchWriteService;
+        private readonly IBatchRedirectService _batchRedirectService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -65,7 +69,10 @@ namespace Pipeline.Web.Orchard.Controllers {
             ICfgService cfgService,
             ISlugService slugService,
             IAppDataFolder appDataFolder,
-            IClock clock
+            IClock clock,
+            IBatchCreateService batchCreateService,
+            IBatchWriteService batchWriteService,
+            IBatchRedirectService batchRedirectService
         ) {
             _clock = clock;
             _appDataFolder = appDataFolder;
@@ -75,6 +82,9 @@ namespace Pipeline.Web.Orchard.Controllers {
             _cfgService = cfgService;
             _sortService = sortService;
             _slugService = slugService;
+            _batchCreateService = batchCreateService;
+            _batchWriteService = batchWriteService;
+            _batchRedirectService = batchRedirectService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -112,9 +122,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 process.Name = "Not Found";
             } else {
 
-                var user = _orchardServices.WorkContext.CurrentUser == null ?
-                    "Anonymous" :
-                    _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+                var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
 
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
@@ -139,8 +147,24 @@ namespace Pipeline.Web.Orchard.Controllers {
                         // change process for export purposes
                         var reportType = Request["output"] ?? "page";
                         if (!_renderedOutputs.Contains(reportType)) {
-                            ConvertToExport(user, process, part, reportType, parameters);
-                            process.Load(process.Serialize(), parameters);
+
+                            if (reportType == "batch" && Request.HttpMethod.Equals("POST")) {
+
+                                parameters["entity"] = process.Entities.First().Alias;
+                                var batchParameters = _batchCreateService.Create(process, parameters);
+                                if (batchParameters.Any()) {
+                                    batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
+                                    _batchWriteService.Write(Request, process, batchParameters);
+                                }
+
+                                var result = _batchRedirectService.Redirect(process, batchParameters);
+                                if (result != null)
+                                    return result;
+
+                            } else { // export
+                                ConvertToExport(user, process, part, reportType, parameters);
+                                process.Load(process.Serialize(), parameters);
+                            }
                         }
 
                         if (Request["sort"] != null) {
@@ -200,7 +224,9 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             return new FilePathResult(o.File, ExcelContentType) {
                                                 FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
                                             };
-                                        default:  // page and map
+                                        case "batch":
+                                            return new EmptyResult(); // needs redirect at end of insert
+                                        default:  // page and map are rendered to page
                                             break;
                                     }
                                 } catch (Exception ex) {

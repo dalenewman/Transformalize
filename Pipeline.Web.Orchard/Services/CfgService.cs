@@ -7,6 +7,7 @@ using Orchard.Core.Contents;
 using Orchard.Core.Title.Models;
 using Orchard.Tags.Models;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
 

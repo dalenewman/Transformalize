@@ -5,6 +5,7 @@
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Services
 @using Pipeline.Web.Orchard.Models
+@using Pipeline.Web.Orchard.Services.Contracts
 
 @model ReportViewModel
 @{
@@ -18,7 +19,18 @@
     var linkService = WorkContext.Resolve<IExportLinkService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
     var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
-    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description));
+    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch.", StringComparison.OrdinalIgnoreCase));
+
+    const string batchValueName = "BatchValue";
+    Field bv;
+    if (hasActions) {
+        bv = allFields.FirstOrDefault(f => f.Alias == batchValueName);
+        if (bv == null) {
+            hasActions = false;
+        } else {
+            bv.Output = false;
+        }
+    }
 
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
@@ -54,7 +66,6 @@
 
     var fields = entity.GetAllOutputFields().Where(f => !f.System).ToArray();
     var isSortable = fields.Any(f => f.Sortable == "true");
-    var focus = Request.QueryString["focus"] ?? string.Empty;
     var activeParameters = Model.Process.GetActiveParameters();
 
     AppendMeta("description", entity.Alias, ",");
@@ -129,8 +140,7 @@ td.sorter {
     @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
         <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
     }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page"/>
-    <input id="id_focus" class="bsh" type="hidden" name="focus" value="@focus" />
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
     <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.PageSize)" />
     <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
 
@@ -194,13 +204,13 @@ td.sorter {
                                                 }
                                             }
                                         </select>
-                                       }
-                                       break;
-                                 }
+                                                    }
+                                                    break;
+                                                }
                         </div>
                     </div>
-                    }
-                }
+                                                    }
+                                                }
 
             <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
@@ -242,9 +252,9 @@ td.sorter {
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            @foreach (var action in Model.Process.Actions.Where(a=>!a.Before && !a.After &&!string.IsNullOrEmpty(a.Description))) {
+                            @foreach (var action in Model.Process.Actions.Where(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase))) {
                                 <li>
-                                    <a class="bulk-action-link" rel="@action.Description" href="javascript:bulkAction(1,'@action.Description');">@action.Description</a>
+                                    <a class="bulk-action-link" rel="@action.Description" href="javascript:bulkAction(1,'@action.Description',@action.Id);">@action.Description</a>
                                 </li>
                             }
                         </ul>
@@ -393,7 +403,12 @@ td.sorter {
                                     <td>
                                         <div class="checkbox">
                                             <label>
-                                                <input title="Select this row" type="checkbox" class="bulk-action shift-select" name="select-row" value="@(string.Join("|",fields.Where(f=>f.PrimaryKey).Select(f=>row[f.Alias])))" placeholder="Select Record">
+                                                <input title="Select this row"
+                                                       type="checkbox"
+                                                       class="bulk-action shift-select"
+                                                       name="row"
+                                                       value="@(row[batchValueName])"
+                                                       placeholder="Select Record">
                                             </label>
                                         </div>
                                     </td>
@@ -542,7 +557,7 @@ td.sorter {
         bulkActionLength: 0
     }
 
-    function bulkAction(page,description) {
+    function bulkAction(page,description,id) {
         var length = $('.bulk-action:checked').length;
         if (length > 0) {
             $.blockUI({
@@ -557,10 +572,13 @@ td.sorter {
                     baseZ: 1021
                 }
             });
-            $('#id_report').attr('method', 'POST');
-            $('#id_report').append('<input type="hidden" name="__RequestVerificationToken" value="@(@Html.AntiForgeryTokenValueOrchard())" />');
-            $('#id_report').append('<input type="hidden" name="bulkAction" value="'+description+'" />');
-            $('#id_report').append('<input type="hidden" name="bulkActionLength" value="'+controls.bulkActionLength+'" />');
+            var $form = $('#id_report');
+            $form.attr('method', 'POST');
+            $form.append('<input type="hidden" name="__RequestVerificationToken" value="@(@Html.AntiForgeryTokenValueOrchard())" />');
+            $form.append('<input type="hidden" name="action" value="'+description+'" />');
+            $form.append('<input type="hidden" name="actionId" value="'+id+'" />');
+            $form.append('<input type="hidden" name="count" value="'+controls.bulkActionLength+'" />');
+            $('#id_output').val("batch");
             controls.submit(page);
         }
     }
@@ -597,7 +615,6 @@ td.sorter {
         });
 
         var isSortable = @(isSortable.ToString().ToLower());
-        var focus = '@(focus)';
         var defaultSize = @(pageSizes.FirstOrDefault());
 
         $('#id_report select').multiselect({
@@ -689,11 +706,6 @@ td.sorter {
             controls.submit(@(entity.Page == 0 ? 0 : 1));
         });
 
-        $("#id_report input:visible").change(function() {
-            // remember focus
-            $('#id_focus').val($(this).attr('name'));
-        });
-
         $('.sortable').click(function() {
             $(this).toggleClass('btn-sort').toggleClass('btn-primary');
 
@@ -732,18 +744,13 @@ td.sorter {
         });
 
         $(":checkbox[name=select-all]").click(function () {
-            $(":checkbox[name=select-row]").prop("checked", this.checked);
+            $(":checkbox[name=row]").prop("checked", this.checked);
             updateBulkActions();
         });
 
-        $(":checkbox[name=select-row]").click(function () {
+        $(":checkbox[name=row]").click(function () {
             updateBulkActions();
         });
-
-
-        if (focus !== '') {
-            $('#id_report input[name="' + focus + '"],#id_report select[name="' + focus + '"]').focus();
-        }
 
     });
 

@@ -1,5 +1,6 @@
 ﻿using Orchard;
 using Orchard.Core.Contents;
+using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
     public class SecureFileService : ISecureFileService {

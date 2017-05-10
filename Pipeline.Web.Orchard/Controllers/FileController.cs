@@ -11,6 +11,7 @@ using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
 using Orchard.Roles.Services;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Controllers {
 

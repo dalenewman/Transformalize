@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Linq;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -37,6 +38,14 @@ namespace Transformalize {
             var response = new ActionResponse();
             try {
                 _map.Items.AddRange(_mapReader.Read(_context));
+
+                // populate map based parameter with first item in map if prompt is false
+                if (_map.Items.Any()) {
+                    var parameters = _context.Process.GetActiveParameters();
+                    foreach (var p in parameters.Where(p => p.Map == _map.Name && !p.Prompt)) {
+                        p.Value = _map.Items.First().To.ToString();
+                    }
+                }
             } catch (Exception ex) {
                 response.Code = 500;
                 response.Message = "Could not read map " + _map.Name + ". Using query: " + _map.Query + ". Error: " + ex.Message;

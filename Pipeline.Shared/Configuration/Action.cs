@@ -138,6 +138,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Url { get; set; }
 
+        [Cfg]
+        public int Id { get; set; }
+
         public bool InTemplate { get; set; }
 
         [Cfg(value = "")]
@@ -151,8 +154,8 @@ namespace Transformalize.Configuration {
         }
 
         protected override void Validate() {
-            if (Type == "open" && File == string.Empty && Url == string.Empty) {
-                Error($"The {Type} action requires a file or url.");
+            if ((Type == "open" || Type == "tfl") && File == string.Empty && Url == string.Empty && Id == 0) {
+                Error($"The {Type} action requires a file, url, or id.");
             }
             if (Type == "run" && string.IsNullOrEmpty(Connection)) {
                 Error("A run action requires a connection.");

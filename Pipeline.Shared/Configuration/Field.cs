@@ -78,11 +78,9 @@ namespace Transformalize.Configuration {
         /// * xml
         /// </summary>
         [Cfg(value = "string", domain = Constants.TypeDomain, toLower = true)]
-        public string Type
-        {
+        public string Type {
             get { return _type; }
-            set
-            {
+            set {
                 if (value == null)
                     return;
 
@@ -197,7 +195,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = true)]
         public bool ReadInnerXml { get; set; }
 
-        [Cfg(serialize=false)]
+        [Cfg(serialize = false)]
         public short Index { get; set; }
 
         public short KeyIndex { get; set; }
@@ -206,11 +204,9 @@ namespace Transformalize.Configuration {
         /// Optional. Default is `18`
         /// </summary>
         [Cfg(value = 18)]
-        public int Precision
-        {
+        public int Precision {
             get { return _precision; }
-            set
-            {
+            set {
                 _precision = value;
                 var count = _precision - _scale;
                 if (count <= 0) return;
@@ -223,11 +219,9 @@ namespace Transformalize.Configuration {
         /// Optional. Default is `9`
         /// </summary>
         [Cfg(value = 9)]
-        public int Scale
-        {
+        public int Scale {
             get { return _scale; }
-            set
-            {
+            set {
                 _scale = value;
                 var count = _precision - _scale;
                 if (count <= 0) return;
@@ -303,11 +297,9 @@ namespace Transformalize.Configuration {
         /// Note: A warning is issued in the logs when this occurs, so you can increase the length if necessary.
         /// </summary>
         [Cfg(value = "64", toLower = true)]
-        public string Length
-        {
+        public string Length {
             get { return _length; }
-            set
-            {
+            set {
                 if (value == null)
                     return;
                 int number;
@@ -489,10 +481,14 @@ namespace Transformalize.Configuration {
 
         }
 
-        [Cfg(value = "", trim=true)]
+        [Cfg(value = "", trim = true)]
         public string SortField { get; set; }
 
-        [Cfg(value = Constants.DefaultSetting, domain ="true,false," + Constants.DefaultSetting, ignoreCase =true, toLower =true)]
+        [Cfg(value = "", trim = true)]
+        public string ExportField { get; set; }
+
+
+        [Cfg(value = Constants.DefaultSetting, domain = "true,false," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
         public string Sortable { get; set; }
 
         public override int GetHashCode() {
@@ -516,25 +512,25 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Target { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Body { get; set; }
 
-        [Cfg(value="chakra", domain="chakra,jint", toLower = true)]
+        [Cfg(value = "chakra", domain = "chakra,jint", toLower = true)]
         public string Engine { get; set; }
 
-        [Cfg(value="", toLower = true)]
+        [Cfg(value = "", toLower = true)]
         public string ClassMap { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Format { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Facet { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Learn { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string RunField { get; set; }
 
         [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]

@@ -17,6 +17,7 @@ using Orchard.Tags.Models;
 using Orchard.Tags.Services;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
 

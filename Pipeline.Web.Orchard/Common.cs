@@ -10,6 +10,7 @@ using Orchard.ContentManagement.Records;
 using Orchard.Tags.Models;
 using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Services;
+using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard {
     public static class Common {

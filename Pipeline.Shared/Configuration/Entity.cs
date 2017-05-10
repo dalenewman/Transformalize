@@ -35,8 +35,26 @@ namespace Transformalize.Configuration {
         [Cfg(value = "input", toLower = true)]
         public string Connection { get; set; }
 
+        // insert, update, and/or delete options (default behavior is insert=true, update=true, delete=false)
+        [Cfg(value = true)]
+        public bool Insert { get; set; }
+        [Cfg(value = true)]
+        public bool Update { get; set; }
         [Cfg(value = false)]
         public bool Delete { get; set; }
+
+        // insert, update, and delete sizes
+        [Cfg(value = 512)]
+        public int InsertSize { get; set; }
+        [Cfg(value = 256)]
+        public int UpdateSize { get; set; }
+        [Cfg(value = 256)]
+        public int DeleteSize { get; set; }
+
+        // counts of the actual inserts, updates, and deletes performed
+        public uint Inserts { get; set; }
+        public uint Updates { get; set; }
+        public uint Deletes { get; set; }
 
         public Field[] GetPrimaryKey() {
             return GetAllFields().Where(f => f.PrimaryKey).ToArray();
@@ -322,6 +340,12 @@ namespace Transformalize.Configuration {
                 }
             }
 
+            foreach(var field in GetAllOutputFields().Where(f => !string.IsNullOrEmpty(f.ExportField))){
+                if (GetField(field.ExportField) == null) {
+                    Error($"Can't find export field {field.ExportField} defined in field {field.Alias}.");
+                }
+            }
+
             // Paging Madness
             if (Page > 0) {
                 if (PageSizes.Any()) {
@@ -543,15 +567,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int ReadSize { get; set; }
 
-        [Cfg(value = 512)]
-        public int InsertSize { get; set; }
-
-        [Cfg(value = 256)]
-        public int UpdateSize { get; set; }
-
-        [Cfg(value = 256)]
-        public int DeleteSize { get; set; }
-
 
         [Cfg(value = 0)]
         public int Page { get; set; }
@@ -570,9 +585,6 @@ namespace Transformalize.Configuration {
 
         // state, aagghhh!!!
         public int Identity;
-        public uint Inserts { get; set; }
-        public uint Updates { get; set; }
-        public uint Deletes { get; set; }
 
         [Cfg]
         public int Hits { get; set; }
