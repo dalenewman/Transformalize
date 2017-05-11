@@ -268,10 +268,12 @@
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\BatchCreateService.cs" />
     <Compile Include="Services\BatchRedirectService.cs" />
+    <Compile Include="Services\BatchRunService.cs" />
     <Compile Include="Services\BatchWriteService.cs" />
     <Compile Include="Services\CfgService.cs" />
     <Compile Include="Services\Contracts\IBatchCreateService.cs" />
     <Compile Include="Services\Contracts\IBatchRedirectService.cs" />
+    <Compile Include="Services\Contracts\IBatchRunService.cs" />
     <Compile Include="Services\Contracts\IBatchWriteService.cs" />
     <Compile Include="Services\Contracts\ICfgService.cs" />
     <Compile Include="Services\Contracts\IExportLinkService.cs" />

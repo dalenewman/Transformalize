@@ -57,6 +57,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IClock _clock;
         private readonly IBatchCreateService _batchCreateService;
         private readonly IBatchWriteService _batchWriteService;
+        private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -72,6 +73,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             IClock clock,
             IBatchCreateService batchCreateService,
             IBatchWriteService batchWriteService,
+            IBatchRunService batchRunService,
             IBatchRedirectService batchRedirectService
         ) {
             _clock = clock;
@@ -84,6 +86,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             _slugService = slugService;
             _batchCreateService = batchCreateService;
             _batchWriteService = batchWriteService;
+            _batchRunService = batchRunService;
             _batchRedirectService = batchRedirectService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
@@ -138,28 +141,60 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Buffer = false; // no buffering for reports
                     process.ReadOnly = true;  // force reporting to omit system fields
 
+                    // secure actions
+                    var actions = process.Actions.Where(a => !a.Before && !a.After && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
+                    foreach (var action in actions) {
+                        var p = _orchardServices.ContentManager.Get(action.Id);
+                        if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, p)) {
+                            action.Description = "BatchUnauthorized";
+                        }
+                    }
+
                     var output = process.Output();
 
                     if (output.Provider.In("internal", "file")) {
 
                         Common.TranslatePageParametersToEntities(process, parameters, "page");
 
-                        // change process for export purposes
+                        // change process for export and batch purposes
                         var reportType = Request["output"] ?? "page";
                         if (!_renderedOutputs.Contains(reportType)) {
 
-                            if (reportType == "batch" && Request.HttpMethod.Equals("POST")) {
+                            if (reportType == "batch" && Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
-                                parameters["entity"] = process.Entities.First().Alias;
-                                var batchParameters = _batchCreateService.Create(process, parameters);
-                                if (batchParameters.Any()) {
-                                    batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
-                                    _batchWriteService.Write(Request, process, batchParameters);
+                                var action = process.Actions.FirstOrDefault(a => a.Description == parameters["action"]);
+
+                                if (action != null) {
+
+                                    // check security
+                                    var actionPart = _orchardServices.ContentManager.Get(action.Id);
+                                    if (actionPart != null && _orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
+
+                                        // security okay
+                                        parameters["entity"] = process.Entities.First().Alias;
+                                        var batchParameters = _batchCreateService.Create(process, parameters);
+
+                                        batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
+                                        var count = _batchWriteService.Write(Request, process, batchParameters);
+
+                                        if (count > 0) {
+
+                                            if (_batchRunService.Run(action, batchParameters)) {
+                                                if (action.Url == string.Empty) {
+                                                    if (batchParameters.ContainsKey("BatchId")) {
+                                                        _orchardServices.Notifier.Information(T($"Processed {count} records in batch {batchParameters["BatchId"]}."));
+                                                    } else {
+                                                        _orchardServices.Notifier.Information(T($"Processed {count} records."));
+                                                    }
+                                                } else {
+                                                    return _batchRedirectService.Redirect(action.Url, batchParameters);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        return new HttpUnauthorizedResult("You do not have access to this bulk action.");
+                                    }
                                 }
-
-                                var result = _batchRedirectService.Redirect(process, batchParameters);
-                                if (result != null)
-                                    return result;
 
                             } else { // export
                                 ConvertToExport(user, process, part, reportType, parameters);
@@ -224,8 +259,6 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             return new FilePathResult(o.File, ExcelContentType) {
                                                 FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
                                             };
-                                        case "batch":
-                                            return new EmptyResult(); // needs redirect at end of insert
                                         default:  // page and map are rendered to page
                                             break;
                                     }

@@ -14,6 +14,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
+
     public class BatchWriteService : IBatchWriteService {
 
         private const string BatchWriteIndicator = "BatchWrite";
@@ -30,7 +31,7 @@ namespace Pipeline.Web.Orchard.Services {
             Logger = NullLogger.Instance;
         }
 
-        public void Write(HttpRequestBase request, Process process, IDictionary<string, string> parameters) {
+        public int Write(HttpRequestBase request, Process process, IDictionary<string, string> parameters) {
 
             var rows = new List<CfgRow>();
 
@@ -40,7 +41,7 @@ namespace Pipeline.Web.Orchard.Services {
                 const string message = "Could not find BatchWrite action.  You need to have an action with description 'BatchWrite' that is responsible for writing your batch somewhere.";
                 Logger.Error(message);
                 _orchardServices.Notifier.Error(T(message));
-                return;
+                return 0;
             }
 
             var part = _orchardServices.ContentManager.Get(batchWrite.Id).As<PipelineConfigurationPart>();
@@ -52,12 +53,13 @@ namespace Pipeline.Web.Orchard.Services {
                     _orchardServices.Notifier.Add(NotifyType.Error, T(error));
                     Logger.Error(error);
                 }
-                return;
-            } 
+                return 0;
+            }
 
             try {
 
                 // populate rows with a search or from the request
+                var batchId = parameters["BatchId"];
                 if (parameters.ContainsKey("count") && parameters["count"] == "All") {  // with a search
                     process.Entities.First().Page = 0;
                     process.Output().Provider = "internal";
@@ -70,8 +72,8 @@ namespace Pipeline.Web.Orchard.Services {
                     var values = request.Form.GetValues("row") ?? request.QueryString.GetValues("row"); // from the request
                     if (values != null) {
                         foreach (var value in values) {
-                            var row = new CfgRow(new[] {"BatchId", "BatchValue"}) {
-                                ["BatchId"] = parameters["BatchId"],
+                            var row = new CfgRow(new[] { "BatchId", "BatchValue" }) {
+                                ["BatchId"] = batchId,
                                 ["BatchValue"] = value
                             };
                             rows.Add(row);
@@ -82,11 +84,12 @@ namespace Pipeline.Web.Orchard.Services {
                 writer.Entities.First().Rows.AddRange(rows);
                 _orchardServices.WorkContext.Resolve<IRunTimeExecute>().Execute(writer);
 
+                return rows.Count;
             } catch (Exception ex) {
                 _orchardServices.Notifier.Error(T(ex.Message));
                 Logger.Error(ex, ex.Message);
+                return 0;
             }
-            //}
         }
     }
 }

@@ -19,7 +19,7 @@
     var linkService = WorkContext.Resolve<IExportLinkService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
     var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
-    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch.", StringComparison.OrdinalIgnoreCase));
+    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     const string batchValueName = "BatchValue";
     Field bv;

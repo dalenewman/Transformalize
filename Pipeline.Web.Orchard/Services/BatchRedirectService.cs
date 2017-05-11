@@ -9,7 +9,6 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Services.Contracts;
-using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Services {
     public class BatchRedirectService : IBatchRedirectService {
@@ -23,14 +22,9 @@ namespace Pipeline.Web.Orchard.Services {
             _orchardServices = orchardServices;
         }
 
-        public ActionResult Redirect(Process process, IDictionary<string, string> parameters) {
+        public ActionResult Redirect(string url, IDictionary<string, string> parameters) {
 
-            var redirect = process.Actions.FirstOrDefault(a => a.Description.Equals("BatchRedirect", StringComparison.OrdinalIgnoreCase));
-            if (redirect == null) {
-                return null;
-            }
-
-            var matches = _placeHolderMatcher.Matches(redirect.Url);
+            var matches = _placeHolderMatcher.Matches(url);
             if (matches.Count > 0) {
 
                 var values = new List<string>();
@@ -55,20 +49,21 @@ namespace Pipeline.Web.Orchard.Services {
                 foreach (var name in names) {
                     if (parameters.ContainsKey(name)) {
                         args.Add(parameters[name]);
-                        redirect.Url = redirect.Url.Replace("{" + name, "{" + count);
+                        url = url.Replace("{" + name, "{" + count);
                         count++;
                     } else {
                         _orchardServices.Notifier.Error(T("Can not find parameter {0} for BatchRedirect url.", name));
                         return null;
                     }
                 }
-                redirect.Url = string.Format(redirect.Url, args.ToArray());
+                url = string.Format(url, args.ToArray());
             }
-            var url = new Flurl.Url(VirtualPathUtility.ToAbsolute(redirect.Url));
+
+            var flurl = new Flurl.Url(VirtualPathUtility.ToAbsolute(url));
             foreach (var p in parameters) {
-                url.QueryParams.Add(p.Key, p.Value);
+                flurl.QueryParams.Add(p.Key, p.Value);
             }
-            return new RedirectResult(url.ToString());
+            return new RedirectResult(flurl.ToString());
         }
     }
 }

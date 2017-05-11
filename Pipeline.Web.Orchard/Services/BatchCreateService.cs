@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
+using Orchard.Core.Contents;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
@@ -12,7 +14,6 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
-
     public class BatchCreateService : IBatchCreateService {
 
         private const string BatchCreateIndicator = "BatchCreate";
@@ -39,6 +40,7 @@ namespace Pipeline.Web.Orchard.Services {
             }
 
             var part = _orchardServices.ContentManager.Get(batchCreate.Id).As<PipelineConfigurationPart>();
+
             var creator = _processService.Resolve(part.EditorMode, part.EditorMode);
 
             creator.Load(part.Configuration, parameters);
