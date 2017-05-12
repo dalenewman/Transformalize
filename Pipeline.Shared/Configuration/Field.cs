@@ -484,8 +484,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "", trim = true)]
         public string SortField { get; set; }
 
-        [Cfg(value = "", trim = true)]
-        public string ExportField { get; set; }
+
+        [Cfg(value = "defer", trim = true, toLower = true, ignoreCase = true, domain = "true,false,defer")]
+        public string Export { get; set; }
 
 
         [Cfg(value = Constants.DefaultSetting, domain = "true,false," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]

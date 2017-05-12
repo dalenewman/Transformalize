@@ -340,12 +340,6 @@ namespace Transformalize.Configuration {
                 }
             }
 
-            foreach(var field in GetAllOutputFields().Where(f => !string.IsNullOrEmpty(f.ExportField))){
-                if (GetField(field.ExportField) == null) {
-                    Error($"Can't find export field {field.ExportField} defined in field {field.Alias}.");
-                }
-            }
-
             // Paging Madness
             if (Page > 0) {
                 if (PageSizes.Any()) {

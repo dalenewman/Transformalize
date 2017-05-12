@@ -35,6 +35,7 @@ using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
+using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Process = Transformalize.Configuration.Process;
 
@@ -310,20 +311,15 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             parameters["page"] = "0";
+
             foreach (var entity in process.Entities) {
+
                 entity.Page = 0;
-                foreach (var field in entity.GetAllFields().Where(f => !f.System)) {
-                    field.T = string.Empty;
-                    if (field.Output && field.Transforms.Any()) {
-                        var lastTransform = field.Transforms.Last();
-                        if (lastTransform.Method == "tag" || lastTransform.Method == "razor" && field.Raw) {
-                            var firstParameter = lastTransform.Parameters.First();
-                            field.Transforms.Remove(lastTransform);
-                            field.T = "copy(" + firstParameter.Field + ")";
-                        }
-                    }
-                }
                 entity.Fields.RemoveAll(f => f.System);
+
+                foreach (var field in entity.GetAllFields()) {
+                    field.Output = field.Output && field.Export == "defer" || field.Export == "true";
+                }
             }
         }
 

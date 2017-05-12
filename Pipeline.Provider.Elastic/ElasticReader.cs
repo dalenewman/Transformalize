@@ -100,8 +100,10 @@ namespace Transformalize.Provider.Elastic {
                         writer.WritePropertyName("must");
                         writer.WriteStartArray();
 
-                        foreach (
-                            var filter in context.Entity.Filter.Where(f => f.Value != "*" && f.Value != string.Empty)) {
+                        foreach (var filter in context.Entity.Filter.Where(f => 
+                            (f.Expression != string.Empty && f.Expression != "*") || 
+                            (f.Value != "*" && f.Value != string.Empty))
+                        ) {
                             writer.WriteStartObject();
 
                             switch (filter.Type) {
@@ -130,21 +132,54 @@ namespace Transformalize.Provider.Elastic {
                                 case "range":
                                     break;
                                 default: //search
-                                    if (_isQueryString.IsMatch(filter.Value)) {
-                                        // query_string query
+                                    if(filter.Expression == string.Empty) {
+                                        if (_isQueryString.IsMatch(filter.Value)) {
+                                            // query_string query
+                                            writer.WritePropertyName("query_string");
+                                            writer.WriteStartObject(); // query_string
+
+                                            writer.WritePropertyName("query");
+                                            writer.WriteValue(filter.Value);
+
+                                            writer.WritePropertyName("default_field");
+                                            writer.WriteValue(filter.LeftField.Name);
+
+                                            writer.WritePropertyName("analyze_wildcard");
+                                            writer.WriteValue(true);
+
+                                            writer.WritePropertyName("default_operator");
+                                            writer.WriteValue("AND");
+
+                                            writer.WriteEnd(); // query_string
+                                        } else {
+                                            // match query
+                                            writer.WritePropertyName("match");
+                                            writer.WriteStartObject(); // match
+
+                                            writer.WritePropertyName(filter.LeftField.Name);
+                                            writer.WriteStartObject(); // field name
+
+                                            writer.WritePropertyName("query");
+                                            writer.WriteValue(filter.Value);
+
+                                            writer.WritePropertyName("operator");
+                                            writer.WriteValue(filter.Continuation.ToLower());
+
+                                            writer.WriteEndObject(); // field name
+                                            writer.WriteEndObject(); // match
+                                        }
+
+                                    } else {
                                         writer.WritePropertyName("query_string");
                                         writer.WriteStartObject(); // query_string
 
-                                        writer.WritePropertyName("fields");
-                                        writer.WriteStartArray(); // fields
-                                        writer.WriteValue(filter.LeftField.Name);
-                                        writer.WriteEndArray(); // fields
-
                                         writer.WritePropertyName("query");
-                                        writer.WriteValue(filter.Value);
+                                        writer.WriteValue(filter.Expression);
 
-                                        writer.WritePropertyName("default_field");
-                                        writer.WriteValue(filter.LeftField.Name);
+                                        if(filter.Field != string.Empty) {
+                                            writer.WritePropertyName("default_field");
+                                            writer.WriteValue(filter.LeftField.Name);
+                                        }
 
                                         writer.WritePropertyName("analyze_wildcard");
                                         writer.WriteValue(true);
@@ -153,22 +188,6 @@ namespace Transformalize.Provider.Elastic {
                                         writer.WriteValue("AND");
 
                                         writer.WriteEnd(); // query_string
-                                    } else {
-                                        // match query
-                                        writer.WritePropertyName("match");
-                                        writer.WriteStartObject(); // match
-
-                                        writer.WritePropertyName(filter.LeftField.Name);
-                                        writer.WriteStartObject(); // field name
-
-                                        writer.WritePropertyName("query");
-                                        writer.WriteValue(filter.Value);
-
-                                        writer.WritePropertyName("operator");
-                                        writer.WriteValue(filter.Continuation.ToLower());
-
-                                        writer.WriteEndObject(); // field name
-                                        writer.WriteEndObject(); // match
                                     }
 
                                     break;

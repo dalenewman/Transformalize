@@ -161,7 +161,7 @@ namespace Transformalize {
         };
 
         public static readonly Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
-            {"string", (x => x)},
+            {"string", (x => x.ToString())},
             {"int16", (x => Convert.ToInt16(x))},
             {"short", (x => Convert.ToInt16(x))},
             {"int32", (x => Convert.ToInt32(x))},
