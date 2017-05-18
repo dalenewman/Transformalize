@@ -1,18 +1,91 @@
 # Transformalizing Northwind
 
-### Introduction
+Transformalize is an [open source](https://github.com/dalenewman/Transformalize) 
+extract, transform, and load tool.  It expedites and automates mundane data 
+processing tasks like cleaning, reporting, and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
 
-Transformalize is an [open source](https://github.com/dalenewman/Transformalize) extract, transform, and load tool that is 
-controlled by an arrangement (or configuration). 
+It works with many data sources:
 
-This article explains how to "Transformalize" the Northwind database.  In other 
-words, it shows how you can use Tranformalize to transform and denormalize 
-Northwind's relational tables into a star-schema.  The resulting data 
-may be used in several ways:
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Input</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>SQL Server</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
+        </tr>
+        <tr>
+            <td>MySql</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
+        </tr>
+        <tr>
+            <td>PostgreSql</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
+        </tr>
+        <tr>
+            <td>SQLite</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
+        </tr>
+        <tr>
+            <td>SqlCe</td>
+            <td>&#10004;</td>
+            <td>&#10004;</td>
+        </tr>
+        <tr>
+            <td>Elasticsearch</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+        </tr>
+        <tr>
+            <td>Files</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+        </tr>
+        <tr>
+            <td>Web</td>
+            <td>&#10003;</td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td>SOLR</td>
+            <td>&#10003;</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>Lucene</td>
+            <td>&#10003;</td>
+            <td>&#10003;</td>
+        </tr>
+        <tr>
+            <td>Console</td>
+            <td></td>
+            <td>&#10003;</td>
+        </tr>
+    </tbody>
+</table>
+
+Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
+or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
+with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
+
+---
+
+This document demonstrates the transformation (and denormalization) 
+of Northwind's relational tables into a star (or flat) schema. The 
+de-normalized output may be used in different ways (e.g.):
 
 * As an OLAP cube data source
-* To feed an Elasticsearch, SOLR, or Lucene index.
-* To provide faster, simpler, non-blocking access for SQL queries
+* To feed an Elasticsearch, SOLR, or Lucene search index.
+* To provide faster, simpler, non-blocking access for SQL queries and reporting.
 
 ### Getting Started
 
@@ -28,20 +101,17 @@ Start with an arrangment (aka configuration) that specifies an *input* and *outp
          server="localhost" 
          database="NorthWind" />
     <add name="output" 
-         provider="sqlserver" 
-         server="localhost"
-         database="NorthWindOutput"/>
+         provider="sqlite" 
+         file="c:\temp\NorthWind.sqlite3"/>
   </connections>
 </cfg>
 ```
 **Explanation**
 
 As indicated by the provider attribute, the *input* and *output* 
-connections are pointing to SQL Server databases.  I installed 
-*Northwind* database with [this](http://www.microsoft.com/en-us/download/details.aspx?id=23654), 
-and I created *NorthWindOutput* as an empty database.
-
-
+connections are pointing to relational databases. The input is SQL Server, 
+and the output is a SQLite file. If you want to try this out, 
+install the *Northwind* database with [this script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
 
 ### The NorthWind Schema
 
@@ -55,8 +125,8 @@ the arrangment as *NorthWind.xml*.
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlserver" database="NorthWind"/>
-    <add name="output" provider="sqlserver" database="NorthWindOutput"/>
+    <add name="input" provider="sqlserver" database="NorthWind" />
+    <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
   </connections>
   <entities>
     <add name="Order Details" />
@@ -130,19 +200,17 @@ run Tfl without specifying a mode:
 
 ![check mode](../Files/init-mode.gif)
 
-The default mode (not specifying a mode) reads the input and updates the 
-output **if necessary**.  This works, but is not efficient, because it reads 
-*all* the records from the input, generates a hash code, and compares it with 
-the hash code stored in the output.  
+By default, **`tfl`** reads input and updates output **if necessary**.  
+To determine if an update is necessary, it has to read *all* the input 
+and compare it with the output.  
 
-Databases provide the ability to limit (aka query) the records returned.  So, 
-we can take advantage of this by using an existing, or adding a *version* 
-column to the *Order Details* table.  A version column is a value that 
-increments anytime a record is inserted or updated. 
+It is inefficient to read *all* the input when we only need the 
+updated or new records.  So, we need to query by a field that 
+increments every time a record is inserted or updated.  Conveniently 
+enough, SQL Server offers a `ROWVERSION` type that increments 
+just like we need.
 
-Conveniently enough, SQL Server offers a `ROWVERSION` type that gives us 
-a version column without having to modify the application or add a trigger. 
-Add a `RowVersion` column like this:
+Add a `RowVersion` column to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -150,34 +218,33 @@ ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
 
 Update the *Order Details* entity to use RowVersion:
 
-![add row version](../Files/add-row-version.gif)
-
 ```xml
 <entities>
-  <!-- set version in the entity -->
-  <add name="Order Details" version="RowVersion">
+  <!-- add the version field's name in the version attribute -->
+  <add name="Order Details" version="RowVersion" >
     <fields>
       <add name="OrderID" type="int" primary-key="true" />
       <add name="ProductID" type="int" primary-key="true" />
       <add name="Discount" type="single" />
       <add name="Quantity" type="short" />
       <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
-      <!-- add version here -->
+      <!-- define the version field here -->
       <add name="RowVersion" type="byte[]" length="8" />
     </fields>
   </add>
 </entities> 
 ```
 
-When you change the structure of your output (e.g. adding a row version), you 
-have to re-initialize it.  To do that, run in `init` mode first, and then 
-run again in default mode:
+When adding row version (or any field) to an entity, the output 
+must be re-initialized.  This means you destroy and re-create 
+the output.  To do this,  run **`tfl`** in `init` mode 
+first, and then in default mode:
 
 <pre>
 <strong>tfl -a NorthWind.xml -m init</strong>
 2016-12-12 16:59:27 | warn  | NorthWind | Order Details | Initializing
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | Starting
-2016-12-12 16:59:27 | info  | NorthWind | Order Details | <strong>Change Detected: Input:0x6032C != Output:0xnull</strong>
+2016-12-12 16:59:27 | info  | NorthWind | Order Details | <strong>Change Detected: Input: 0x6032C != Output: null</strong>
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 from input
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 inserts into output Order Details
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | Ending 00:00:00.1553228
@@ -190,19 +257,22 @@ run again in default mode:
 
 ![add row version](../Files/re-init.gif)
 
-Now TFL doesn't even have to load the records. Using the row version, 
+Now **`tfl`** doesn't have to load the records. Using the row version, 
 it was able to determine the data hasn't been updated.
+
+**Output**
 
 Just to make sure, let's check the output for the data:
 
 ```sql
-SELECT TOP 10
+SELECT
 	Discount,
 	OrderID,
 	ProductID,
 	Quantity,
 	UnitPrice
-FROM NorthWindStar;
+FROM NorthWindStar
+LIMIT 10;
 ```
 
 <pre>
@@ -220,12 +290,10 @@ FROM NorthWindStar;
 0.05       10251       57          15       15.6000
 </pre>
 
-
-![first sql](../Files/first-sql.gif)
+---
 
 Review the NorthWind diagram. The next closest tables to 
-*Order Details* are *Orders* and *Products*. 
-Add the *Orders* entity. 
+*Order Details* are *Orders* and *Products*. Add the *Orders* entity. 
 
 **Hint**: Comment out *Order Details*, add entity &lt;add name=&quot;Orders&quot;/&gt; 
 and run Tfl in check mode.
@@ -252,63 +320,77 @@ and run Tfl in check mode.
 </add> 
 ```
 
-Re-initialize.
+Since we added another table, we have to re-initialize:
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
-22:32:14 | Error | NorthWind | The entity Orders must have a relationship to the master entity Order Details.
+<pre>
+<strong>tfl -a NorthWind.xml -m init</strong>
+2017-05-18 16:13:55 | error | Process | The entity field 'rowversion' occurs more than once. Remove, alias, or prefix one.
+2017-05-18 16:13:55 | error | Process | You have 2 entities so you need 1 relationships. You have 0 relationships.
+2017-05-18 16:13:55 | error | Process | The configuration errors must be fixed before this job will run.
 </pre>
 
-When another table is added, it must be related to the master table. The master table is the first table defined. In this case, it&#39;s `Order Details`. So, we have to add a relationship:
+Bad news.  The configuration is invalid.  **`tfl`** reports 
+errors instead of running.
 
-<pre class="prettyprint linenums:41">
-&lt;!-- ... ---&gt;
-&lt;/entities&gt;
-&lt;relationships&gt;
-    &lt;add left-entity=&quot;Order Details&quot; left-field=&quot;OrderID&quot; right-entity=&quot;Orders&quot; right-field=&quot;OrderID&quot;/&gt;
-&lt;/relationships&gt;
-&lt;/process&gt;&nbsp;</pre>
 
-Re-initialize.
+**Error: Unique Names Required**
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
-23:13:31 | Error | NorthWind | field overlap error in Orders. The field: RowVersion is already defined in a previous entity.  You must alias (rename) it.
-</pre>
+The first error says we can't have 
+two fields with the same name.  When we de-normalize data, 
+we need to give each field a unique name.
 
-Just like in SQL views, multiple entities (or tables) joined together can introduce identical field names. &nbsp;So, you have to re-name (or alias) any columns that have the same name. &nbsp;In this case, it&#39;s our RowVersion column that we&#39;re using to detect changes. &nbsp;So, alias the RowVersion in the Orders entity to OrdersRowVersion like this:&nbsp;
+```xml
+    <add name="RowVersion" type="byte[]" length="8" />
+```
 
-<pre class="prettyprint linenums:19">
-&lt;add name=&quot;Orders&quot; version=&quot;RowVersion&quot;&gt;
-	&lt;fields&gt;
-		&lt;!-- ... --&gt;
-		&lt;add name=&quot;RowVersion&quot; alias=&quot;OrdersRowVersion&quot; type=&quot;System.Byte[]&quot; length=&quot;8&quot; /&gt;
-	&lt;/fields&gt;
-&lt;/add&gt;
-</pre>
+needs to be updated to:
 
-Re-initialize and run twice.
+```xml
+    <!-- add new name in alias attribute -->
+    <add name="RowVersion" type="byte[]" length="8" alias="OrdersVersion" />
+```
 
-<pre class="prettyprint linenums">
-tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}
-23:23:47 | Info | NorthWind | All | Initialized TrAnSfOrMaLiZeR.
-23:23:47 | Info | NorthWind | All | Initialized NorthWindOrderDetails in NorthWindOutput on localhost.
-23:23:47 | Info | NorthWind | All | Initialized NorthWindOrders in NorthWindOutput on localhost.
-23:23:47 | Info | NorthWind | All | Process completed in 00:00:00.6609756.
-tfl NorthWind.xml
-23:24:30 | Info | NorthWind | Order Details....... | Processed 2155 inserts, and 0 updates in Order Details.
-23:24:30 | Info | NorthWind | Orders.............. | Processed 830 inserts, and 0 updates in Orders.
-23:24:30 | Info | NorthWind | Orders.............. | Process completed in 00:00:00.9719255.
-tfl NorthWind.xml
-23:24:35 | Info | NorthWind | Order Details....... | Processed 0 inserts, and 0 updates in Order Details.
-23:24:35 | Info | NorthWind | Orders.............. | Processed 0 inserts, and 0 updates in Orders.
-23:24:35 | Info | NorthWind | Orders.............. | Process completed in 00:00:00.7284382.
+**Error: Relationships Required**
+
+The second error says we need to relate *Order Details* with *Orders*.  When another 
+table is added, it must be related to the master table. 
+The master table is the first table defined. In this case, 
+it is `Order Details`. So, we have to add a relationship 
+to `Orders` like this:
+
+```xml
+  <connections/>
+  <entities/>
+  <relationships>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
+  </relationships>
+```
+
+Re-initialize and run.
+
+<pre>
+<strong>tfl -a NorthWind.xml -m init</strong>
+2017-05-18 16:42:44 | info  | NorthWind | Order Details | Starting
+2017-05-18 16:42:44 | info  | NorthWind | Order Details | Change Detected: Input: 0x71c5a > Output: null
+2017-05-18 16:42:44 | info  | NorthWind | Order Details | 2155 from input
+2017-05-18 16:42:44 | info  | NorthWind | Order Details | 2155 inserts into output
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | Starting
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | Change Detected: Input: 0x71c5b > Output: null
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | 830 from input
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | 830 inserts into output
+2017-05-18 16:42:44 | info  | NorthWind |               | Time elapsed: 00:00:01.2331675
+<strong>tfl -a NorthWind.xml</strong>
+2017-05-18 16:43:36 | info  | NorthWind | Order Details | Starting
+2017-05-18 16:43:36 | info  | NorthWind | Order Details | Change Detected: No.
+2017-05-18 16:43:36 | info  | NorthWind | Orders        | Starting
+2017-05-18 16:43:36 | info  | NorthWind | Orders        | Change Detected: No.
+2017-05-18 16:43:36 | info  | NorthWind |               | Time elapsed: 00:00:00.3415624
 </pre>
 
 View the output:
 
-<pre class="prettyprint">
-SELECT TOP 10
+```sql
+SELECT
 	Discount AS Disc,
 	OrderID,
 	ProductID AS PId,
@@ -325,12 +407,13 @@ SELECT TOP 10
 	ShipPostalCode,
 	ShipRegion,
 	ShipVia AS SId
-FROM NorthWindStar;
-</pre>
+FROM NorthWindStar
+LIMIT 10;
+```
 
-<pre class="prettyprint">
-Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate ShipAddress            ShipCity        ShippedDate ShipPostalCode ShipRegion Sid
----- ------- --- --- ---------  ------ --- -------- ---------- ------------ ---------------------- --------------- ----------- -------------- ---------- ---
+<pre>
+<strong>Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate ShipAddress            ShipCity        ShippedDate ShipPostalCode ShipRegion Sid
+---- ------- --- --- ---------  ------ --- -------- ---------- ------------ ---------------------- --------------- ----------- -------------- ---------- ---</strong>
 0.2  10248   11  12  14.0000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
 0    10248   42  10  9.8000     VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
 0    10248   72  5   34.8000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
@@ -343,31 +426,36 @@ Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate Ship
 0.05 10251   57  15  15.6000    VICTE  3   41.3400  1996-07-08 1996-08-05   2, rue du Commerce     Lyon            1996-07-15  69004                     1
 </pre>
 
-Now, rinse and repeat. &nbsp;That is, consult the NorthWind diagram and continue adding related entities until the relationships configuration look like this:
+Now, rinse and repeat. That is, consult the NorthWind diagram and continue adding related entities until the relationships configuration look like this:
 
-<pre class="prettyprint linenums:200">
-&lt;relationships&gt;
-    &lt;add left-entity=&quot;Order Details&quot; left-field=&quot;OrderID&quot; right-entity=&quot;Orders&quot; right-field=&quot;OrderID&quot; /&gt;
-    &lt;add left-entity=&quot;Order Details&quot; left-field=&quot;ProductID&quot; right-entity=&quot;Products&quot; right-field=&quot;ProductID&quot; /&gt;
-    &lt;add left-entity=&quot;Orders&quot; left-field=&quot;CustomerID&quot; right-entity=&quot;Customers&quot; right-field=&quot;CustomerID&quot; /&gt;
-    &lt;add left-entity=&quot;Orders&quot; left-field=&quot;EmployeeID&quot; right-entity=&quot;Employees&quot; right-field=&quot;EmployeeID&quot; /&gt;
-    &lt;add left-entity=&quot;Orders&quot; left-field=&quot;ShipVia&quot; right-entity=&quot;Shippers&quot; right-field=&quot;ShipperID&quot; /&gt;
-    &lt;add left-entity=&quot;Products&quot; left-field=&quot;SupplierID&quot; right-entity=&quot;Suppliers&quot; right-field=&quot;SupplierID&quot; /&gt;
-    &lt;add left-entity=&quot;Products&quot; left-field=&quot;CategoryID&quot; right-entity=&quot;Categories&quot; right-field=&quot;CategoryID&quot; /&gt;
-&lt;/relationships&gt;
-</pre>
+```xml
+<relationships>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+    <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+    <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+    <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+    <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
+    <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+    <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+</relationships>
 
-As you might expect, adding all these entities creates many duplicate field names. Instead of renaming each one, we can add a prefix to the entity. A prefix aliases all the fields as prefix + name.
+```
 
-<pre class="prettyprint linenums:150">
-&lt;add name=&quot;Employees&quot; version=&quot;RowVersion&quot; prefix=&quot;Employee&quot;&gt;
-    &lt;fields&gt;
-		&lt;!-- ... --&gt;
-    &lt;/fields&gt;
-&lt;/add&gt;
-</pre>
+As you might expect, adding all these entities creates many 
+duplicate field names. Instead of aliasing each one, 
+we can add a prefix to the entity. A prefix aliases all the 
+fields as prefix + name.
 
-Initialize, and run twice. Console output should look like this:
+```xml
+<!-- set prefix attribute to "Employee" --> 
+<add name="Employees" version="RowVersion" prefix="Employee">
+  <fields>
+  <!-- ... -->
+  </fields>
+</add>
+```
+
+Initialize, and run. Console output should look like this:
 
 <pre class="prettyprint linenums">
 tfl NorthWind.xml {&#39;mode&#39;:&#39;init&#39;}

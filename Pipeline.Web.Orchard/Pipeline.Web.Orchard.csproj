@@ -258,6 +258,8 @@
     <Compile Include="Handlers\PipelineFilePartHandler.cs" />
     <Compile Include="Impl\OpenAction.cs" />
     <Compile Include="Impl\OrchardLogWriter.cs" />
+    <Compile Include="Impl\RazorReportCompiler.cs" />
+    <Compile Include="Impl\RazorReportTemplateProcessor.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
     <Compile Include="Models\ReportViewModel.cs" />

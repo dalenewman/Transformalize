@@ -61,7 +61,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ICreateConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IDelete.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IEntityDeleteHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IEntityMatchingKeysReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITakeAndReturnRows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IExecute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IHasField.cs" />

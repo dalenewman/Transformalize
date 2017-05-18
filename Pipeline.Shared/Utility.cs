@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -97,7 +98,7 @@ namespace Transformalize {
             return name;
         }
 
-        public static byte[] HexStringToByteArray(string hex) {
+        public static byte[] HexStringToBytes(string hex) {
             var bytes = new byte[hex.Length / 2];
             var hexValue = new[] { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
 
@@ -108,15 +109,12 @@ namespace Transformalize {
             return bytes;
         }
 
-        public static string BytesToHexString(byte[] bytes) {
-            var c = new char[bytes.Length * 2];
-            for (var i = 0; i < bytes.Length; i++) {
-                var b = bytes[i] >> 4;
-                c[i * 2] = (char)(55 + b + (((b - 10) >> 31) & -7));
-                b = bytes[i] & 0xF;
-                c[i * 2 + 1] = (char)(55 + b + (((b - 10) >> 31) & -7));
+        public static string BytesToHexString(byte[] ba) {
+            var hex = new StringBuilder(ba.Length * 2);
+            foreach (var b in ba) {
+                hex.AppendFormat("{0:x2}", b);
             }
-            return new string(c);
+            return hex.ToString();
         }
 
         public static char FindDelimiter(IEnumerable<string> strings, List<Delimiter> delimiters, bool quoted) {

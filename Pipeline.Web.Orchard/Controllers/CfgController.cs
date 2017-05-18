@@ -318,6 +318,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 entity.Fields.RemoveAll(f => f.System);
 
                 foreach (var field in entity.GetAllFields()) {
+                    field.T = string.Empty; // because short-hand has already been expanded
                     field.Output = field.Output && field.Export == "defer" || field.Export == "true";
                 }
             }

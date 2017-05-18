@@ -30,6 +30,11 @@ namespace Transformalize.Configuration.Ext {
     public static class ProcessValidate {
 
         public static void Validate(this Process p, Action<string> error, Action<string> warn) {
+
+            if (p.ReadOnly && p.Buffer) {
+                error("A process can not be read-only and buffer at the same time.");
+            }
+
             ValidateDuplicateEntities(p, error);
             ValidateDuplicateFields(p, error);
             ValidateRelationships(p, error, warn);
@@ -326,7 +331,7 @@ namespace Transformalize.Configuration.Ext {
             var fieldDuplicates = p.Entities
                 .SelectMany(e => e.GetAllFields())
                 .Where(f => f.Output && !f.PrimaryKey && !f.System && f.Name != null)
-                .Concat(p.CalculatedFields.Where(f=>f.Name != null))
+                .Concat(p.CalculatedFields.Where(f => f.Name != null))
                 .GroupBy(f => f.Alias.ToLower())
                 .Where(group => @group.Count() > 1)
                 .Select(group => @group.Key)

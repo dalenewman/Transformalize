@@ -1,4 +1,8 @@
 
+using System;
+using System.Dynamic;
+using System.Web.Mvc;
+using Orchard.DisplayManagement.Implementation;
 using Orchard.Templates.Services;
 using Transformalize.Configuration;
 using Transformalize.Contracts;

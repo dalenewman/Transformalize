@@ -55,7 +55,7 @@ namespace Transformalize.Command {
 
             builder.Register<IScheduler>((ctx, p) => {
                 if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "check")) {
-                    return new NowScheduler(_options, ctx.Resolve<ISchemaHelper>());
+                    return new NowScheduler(_options, ctx.Resolve<ISchemaHelper>(), ctx.Resolve<IPipelineLogger>());
                 }
 
                 if (_options.Schedule == "internal") {

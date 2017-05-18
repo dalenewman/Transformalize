@@ -157,7 +157,7 @@ namespace Transformalize {
             {"float", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x))},
             {"byte", (x => Convert.ToByte(x))},
-            {"byte[]", (Utility.HexStringToByteArray)}
+            {"byte[]", (Utility.HexStringToBytes)}
         };
 
         public static readonly Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
@@ -186,7 +186,7 @@ namespace Transformalize {
             {"float", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x.ToString()))},
             {"byte", (x => Convert.ToByte(x))},
-            {"byte[]", (x => Utility.HexStringToByteArray(x.ToString()))}
+            {"byte[]", (x => Utility.HexStringToBytes(x.ToString()))}
         };
 
         public static HashSet<string> InvalidFieldNames { get; internal set; } = new HashSet<string>(new[] { TflKey, TflBatchId, TflDeleted, TflHashCode }, StringComparer.OrdinalIgnoreCase);

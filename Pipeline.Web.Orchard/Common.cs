@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Text;
 using System.Web;
-using Cfg.Net.Ext;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
 using Orchard.Tags.Models;
 using Transformalize.Configuration;
-using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard {
@@ -432,7 +431,7 @@ namespace Pipeline.Web.Orchard {
 
             parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
             parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
-            parameters["Orchard.ReturnUrl"] = HttpContext.Current.Request.Url.PathAndQuery;
+            parameters["Orchard.Url"] = HttpContext.Current.Request.Url.PathAndQuery;
 
             return parameters;
         }

@@ -44,7 +44,6 @@ namespace Transformalize.Command {
 
                     if (scheduler is NowScheduler)
                         return;
-
                     QuitEvent.WaitOne();
                     Console.WriteLine("Stopping...");
                     scheduler.Stop();
@@ -52,6 +51,8 @@ namespace Transformalize.Command {
             } else {
                 Environment.ExitCode = 1;
             }
+
+            NLog.LogManager.Flush();
 
         }
     }

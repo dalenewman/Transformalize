@@ -94,11 +94,11 @@ namespace Transformalize {
                 if (Context.Entity.NeedsUpdate()) {
                     if (Context.Entity.Version != string.Empty) {
                         if (Context.Entity.GetVersionField().Type == "byte[]") {
-                            var min = Context.Entity.MinVersion == null ? "null" : Utility.BytesToHexString((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' });
-                            var max = Context.Entity.MaxVersion == null ? "null" : Utility.BytesToHexString((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' });
-                            Context.Info("Change Detected: Input:0x{0:X} != Output:0x{1:X}", max, min);
+                            var min = Context.Entity.MinVersion == null ? "null" : "0x" + string.Format("{0:X}", Utility.BytesToHexString((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' }));
+                            var max = Context.Entity.MaxVersion == null ? "null" : "0x" + string.Format("{0:X}", Utility.BytesToHexString((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' }));
+                            Context.Info("Change Detected: Input: {0} > Output: {1}", max, min);
                         } else {
-                            Context.Info("Change Detected: Input:{0} > Output:{1}", Context.Entity.MaxVersion, Context.Entity.MinVersion);
+                            Context.Info("Change Detected: Input: {0} > Output: {1}", Context.Entity.MaxVersion, Context.Entity.MinVersion);
                         }
                     }
                     return Transformers.Aggregate(Reader.Read(), (current, transformer) => transformer.Transform(current));

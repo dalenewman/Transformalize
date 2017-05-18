@@ -437,6 +437,9 @@ td.sorter {
                                                     }
                                                 }
                                                 break;
+                                            case "byte[]":
+                                                @Transformalize.Utility.BytesToHexString(row[field.Alias] as byte[])
+                                                break;
                                             case "single":
                                             case "double":
                                             case "decimal":

@@ -21,25 +21,25 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging.NLog;
 
 namespace Transformalize.Command {
     public class NowScheduler : IScheduler {
 
         private readonly Options _options;
         private readonly ISchemaHelper _schemaHelper;
+        private readonly IPipelineLogger _logger;
 
-        public NowScheduler(Options options, ISchemaHelper schemaHelper) {
+        public NowScheduler(Options options, ISchemaHelper schemaHelper, IPipelineLogger logger) {
             _options = options;
             _schemaHelper = schemaHelper;
+            _logger = logger;
         }
 
         public void Start() {
 
             var builder = new ContainerBuilder();
-            builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(_options.Arrangement))).As<IPipelineLogger>().SingleInstance();
+            builder.Register(c => _logger).As<IPipelineLogger>().SingleInstance();
             builder.RegisterModule(new RootModule(_options.Shorthand));
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
             builder.Register(c => new NowExecutor(c.Resolve<IPipelineLogger>() ,_options.Arrangement, _options.Shorthand, _options.Mode)).As<IRunTimeExecute>();
@@ -118,7 +118,6 @@ namespace Transformalize.Command {
             }
         }
 
-        public void Stop() {
-        }
+        public void Stop() {}
     }
 }

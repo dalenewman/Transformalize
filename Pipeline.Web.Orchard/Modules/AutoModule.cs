@@ -15,13 +15,18 @@
 // limitations under the License.
 #endregion
 
+using System.Reflection;
+using System.Web;
 using Autofac;
 using Cfg.Net.Environment;
 using Cfg.Net.Parsers;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
+using Orchard;
+using Orchard.Caching;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
+using Orchard.Templates.Compilation.Razor;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
 using Transformalize.Configuration;
@@ -32,6 +37,7 @@ using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
 using Transformalize;
 using Transformalize.Transform.DateMath;
+using Module = Autofac.Module;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AutoModule : Module {
@@ -97,7 +103,13 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(c => new RunTimeDataReader(logger, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>())).As<IRunTimeRun>();
             builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>()))).As<IRunTimeSchemaReader>();
             builder.Register(c => new SchemaHelper(context, c.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
-            builder.Register(c => new RunTimeExecuter(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>())).As<IRunTimeExecute>();
+            builder.Register(c => new RunTimeExecuter(
+                    context, 
+                    c.Resolve<IAppDataFolder>(), 
+                    new RazorReportTemplateProcessor(new RazorReportCompiler(), c.Resolve<HttpContextBase>(), c.Resolve<IOrchardServices>()), 
+                    c.Resolve<INotifier>()
+                )
+            ).As<IRunTimeExecute>();
 
         }
 

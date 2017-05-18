@@ -16,14 +16,12 @@
 // limitations under the License.
 #endregion
 
-using System;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Newtonsoft.Json;
 using Orchard.Localization;
 using Orchard.Templates.Services;
-using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -45,7 +43,6 @@ using Transformalize.Provider.File.Transforms;
 namespace Pipeline.Web.Orchard.Modules {
     public class TransformModule : Module {
         private readonly Process _process;
-
         public Localizer T { get; set; }
 
         public TransformModule(
@@ -205,15 +202,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register<ITransform>((ctx, p) => {
                 var c = p.Positional<IContext>(0);
                 if (ctx.IsRegistered<ITemplateProcessor>()) {
-                    try {
-                        var processor = ctx.Resolve<ITemplateProcessor>();
-                        processor.Verify(c.Transform.Template);
-                        return new OrchardRazorTransform(c, processor);
-                    } catch (Exception ex) {
-                        ctx.Resolve<INotifier>().Warning(T(ex.Message));
-                        c.Warn(ex.Message);
-                        return new NullTransform(c);
-                    }
+                    return new OrchardRazorTransform(c, ctx.Resolve<ITemplateProcessor>());
                 }
                 return new NullTransform(c);
             }).Named<ITransform>("razor");
