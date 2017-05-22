@@ -46,7 +46,6 @@ namespace Transformalize.Command {
                 .StoreDurably(false)
                 .RequestRecovery(false)
                 .UsingJobData("Cfg", _options.Arrangement)
-                .UsingJobData("Shorthand", _options.Shorthand)
                 .UsingJobData("Mode", _options.Mode)
                 .UsingJobData("Schedule", string.Empty)
                 .Build();

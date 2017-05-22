@@ -40,9 +40,9 @@ namespace Transformalize.Command {
 
             var builder = new ContainerBuilder();
             builder.Register(c => _logger).As<IPipelineLogger>().SingleInstance();
-            builder.RegisterModule(new RootModule(_options.Shorthand));
+            builder.RegisterModule(new RootModule());
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-            builder.Register(c => new NowExecutor(c.Resolve<IPipelineLogger>() ,_options.Arrangement, _options.Shorthand, _options.Mode)).As<IRunTimeExecute>();
+            builder.Register(c => new NowExecutor(c.Resolve<IPipelineLogger>() ,_options.Arrangement, _options.Mode)).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();

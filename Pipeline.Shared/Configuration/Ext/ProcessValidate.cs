@@ -507,6 +507,7 @@ namespace Transformalize.Configuration.Ext {
                 case "vinisvalid":
                 case "vingetworldmanufacturer":
                 case "vingetmodelyear":
+                case "matchcount":
                     if (input.Type != "string") {
                         error($"The {t.Method} expects a string, but {input.Alias} is {input.Type}.");
                     }
@@ -694,6 +695,7 @@ namespace Transformalize.Configuration.Ext {
                     break;
                 case "match":
                 case "regexreplace":
+                case "matchcount":
                     if (t.Pattern == string.Empty) {
                         error($"The {t.Method} transform requires a pattern.");
                     }

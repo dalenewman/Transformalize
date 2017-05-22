@@ -65,7 +65,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Shorthand, Version=0.2.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.6\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.7\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -266,6 +266,7 @@
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
+    <Compile Include="Modules\ShorthandModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\BatchCreateService.cs" />

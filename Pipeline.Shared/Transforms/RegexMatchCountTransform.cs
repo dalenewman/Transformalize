@@ -20,12 +20,11 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
-    public class RegexIsMatchTransform : BaseTransform {
+    public class RegexMatchCountTransform : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexIsMatchTransform(IContext context) : base(context, "bool") {
+        public RegexMatchCountTransform(IContext context) : base(context, "int") {
             _input = MultipleInput();
 #if NETS10
             _regex = new Regex(context.Transform.Pattern);
@@ -35,15 +34,12 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Transform(IRow row) {
+            int count = 0;
             foreach (var field in _input) {
-                var match = _regex.Match(row[field].ToString());
-                if (match.Success) {
-                    row[Context.Field] = true;
-                    break;
-                } else {
-                    row[Context.Field] = false;
-                }
+                var matches = _regex.Matches(row[field].ToString());
+                count += matches.Count;
             }
+            row[Context.Field] = count;
             Increment();
             return row;
         }

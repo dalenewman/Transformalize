@@ -91,9 +91,9 @@ namespace Transformalize.Command {
             }
         }
 
-        public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
+        public void Execute(string cfg, Dictionary<string, string> parameters) {
             Process process;
-            if (ProcessFactory.TryCreate(cfg, shorthand, parameters, out process)) {
+            if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
                 process.Mode = Mode;
                 Execute(process);
             }

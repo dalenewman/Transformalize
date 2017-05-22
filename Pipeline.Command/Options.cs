@@ -28,9 +28,6 @@ namespace Transformalize.Command {
         [Option('s', "schedule", Required = false, HelpText = "a cron expression (http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger)")]
         public string Schedule { get; set; }
 
-        [Option('t', "shorthand transformations", Required = false, DefaultValue = "Shorthand.xml", HelpText = "shorthand transformations file.")]
-        public string Shorthand { get; set; }
-
         [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
         public string Mode { get; set; }
 

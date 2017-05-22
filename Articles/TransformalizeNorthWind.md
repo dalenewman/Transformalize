@@ -1,8 +1,9 @@
-# Transformalizing Northwind
+# Transformalize Northwind
 
 Transformalize is an [open source](https://github.com/dalenewman/Transformalize) 
-extract, transform, and load tool.  It expedites and automates mundane data 
-processing tasks like cleaning, reporting, and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
+extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) tool. 
+It expedites mundane data processing tasks like cleaning, reporting, 
+and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
 
 It works with many data sources:
 
@@ -75,17 +76,25 @@ It works with many data sources:
 
 Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
-with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface).
+with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface) or 
+in the included [Orchard CMS](http://www.orchardproject.net/) module.
 
 ---
 
 This document demonstrates the transformation (and denormalization) 
-of Northwind's relational tables into a star (or flat) schema. The 
-de-normalized output may be used in different ways (e.g.):
+of Northwind's relational tables into a star-schema or single flat table. 
+The de-normalized output may be used:
 
 * As an OLAP cube data source
-* To feed an Elasticsearch, SOLR, or Lucene search index.
-* To provide faster, simpler, non-blocking access for SQL queries and reporting.
+* To feed an Elasticsearch, SOLR, or Lucene search engine.
+* To allow for faster, non-blocking, simpler, and no-join SQL queries.
+
+If you want to follow along, you'll have to have:
+
+* something to edit XML with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
+* a local instance of SQL Server
+* the latest release of Tranformalize (on [GitHub](https://github.com/dalenewman/Transformalize/releases))
+* download and install the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
 
 ### Getting Started
 
@@ -108,10 +117,11 @@ Start with an arrangment (aka configuration) that specifies an *input* and *outp
 ```
 **Explanation**
 
-As indicated by the provider attribute, the *input* and *output* 
-connections are pointing to relational databases. The input is SQL Server, 
-and the output is a SQLite file. If you want to try this out, 
-install the *Northwind* database with [this script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
+In the above XML, two connections are defined.  The *input* and *output*.  The input 
+is SQL Server, and the output is a SQLite file.
+
+If you want follow along, install the *Northwind* database 
+with [this script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
 
 ### The NorthWind Schema
 
@@ -450,7 +460,7 @@ fields as prefix + name.
 <!-- set prefix attribute to "Employee" --> 
 <add name="Employees" version="RowVersion" prefix="Employee">
   <fields>
-  <!-- ... -->
+    <!-- cut for brevity -->
   </fields>
 </add>
 ```

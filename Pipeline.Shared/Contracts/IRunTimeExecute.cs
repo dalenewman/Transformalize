@@ -21,6 +21,6 @@ using Transformalize.Configuration;
 namespace Transformalize.Contracts {
     public interface IRunTimeExecute {
         void Execute(Process process);
-        void Execute(string cfg, string shorthand, Dictionary<string, string> parameters);
+        void Execute(string cfg, Dictionary<string, string> parameters);
     }
 }

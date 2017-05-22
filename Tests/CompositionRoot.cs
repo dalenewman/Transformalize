@@ -34,7 +34,8 @@ namespace Tests {
         public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null) {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
+            builder.RegisterModule(new ShorthandModule());
+            builder.RegisterModule(new RootModule());
             var container = builder.Build();
 
             Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));

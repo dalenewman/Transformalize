@@ -39,13 +39,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
     public class RootModule : Module {
 
-        private readonly string _shorthand;
-
         public RootModule() { }
-
-        public RootModule(string shorthand) {
-            _shorthand = shorthand;
-        }
 
         protected override void Load(ContainerBuilder builder) {
 
@@ -66,17 +60,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     new JintValidator()
                 };
 
-                if (!string.IsNullOrEmpty(_shorthand)) {
-                    var shr = new ShorthandRoot(_shorthand, ctx.ResolveNamed<IReader>("file"));
-                    if (shr.Errors().Any()) {
-                        var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new TraceLogger(), new Process { Name = "Error" });
-                        foreach (var error in shr.Errors()) {
-                            context.Error(error);
-                        }
-                        context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
-                    } else {
-                        dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
-                    }
+                if (ctx.IsRegisteredWithName<IDependency>("shorthand")) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand"));
                 }
 
                 var process = new Process(dependencies.ToArray());

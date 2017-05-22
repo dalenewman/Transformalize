@@ -32,7 +32,7 @@ namespace Transformalize.Ioc.Autofac {
 
             var builder = new ContainerBuilder();
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
-            builder.RegisterCallback(new RootModule(process.Shorthand).Configure);
+            builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 
             // providers

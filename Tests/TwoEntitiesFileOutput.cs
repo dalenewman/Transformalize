@@ -81,7 +81,7 @@ namespace Tests {
             var provider = "sqlite";
             var ext = "sqlite3";
 
-            var process = ProcessFactory.Create(xml, @"Shorthand.xml");
+            var process = ProcessFactory.Create(xml);
 
             if (!process.Errors().Any()) {
 

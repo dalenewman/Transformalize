@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\ContentToFileAction.cs" />
+    <Compile Include="Actions\ExitAction.cs" />
     <Compile Include="Actions\LogAction.cs" />
     <Compile Include="Actions\OpenAction.cs" />
     <Compile Include="Actions\PrintAction.cs" />

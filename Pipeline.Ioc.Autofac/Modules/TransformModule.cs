@@ -189,14 +189,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
             builder.Register((c, p) => new FromJsonTransform(p.Positional<IContext>(0), o => JsonConvert.SerializeObject(o, Formatting.None))).Named<ITransform>("fromjson");
 
-            builder.Register((c,p)=> new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
+            builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
+            builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
 
-            builder.Register((c, p) =>
-            {
+            builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
-                return context.Transform.XmlMode == "all" ? 
-                    new Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) : 
+                return context.Transform.XmlMode == "all" ?
+                    new Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 

@@ -55,9 +55,9 @@ namespace Transformalize.Ioc.Autofac {
             }
         }
 
-        public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
+        public void Execute(string cfg, Dictionary<string, string> parameters) {
             var builder = new ContainerBuilder();
-            builder.RegisterCallback(new RootModule(shorthand).Configure);
+            builder.RegisterCallback(new RootModule().Configure);
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var process = scope.Resolve<Process>(
                     new NamedParameter("cfg", cfg),

@@ -51,7 +51,7 @@ namespace Tests {
                 return new RunTimeSchemaReader(process, context);
             }).As<ISchemaReader>();
 
-            builder.RegisterModule(new RootModule("Shorthand.xml"));
+            builder.RegisterModule(new RootModule());
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var process = scope.Resolve<Process>(new NamedParameter("cfg", xml));

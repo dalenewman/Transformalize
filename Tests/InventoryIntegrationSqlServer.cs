@@ -53,7 +53,7 @@ namespace Tests {
         public void SqlServer_Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
+            builder.RegisterModule(new RootModule());
             var container = builder.Build();
 
             // PUT INVENTORY BACK IN ORGINAL LOCATION

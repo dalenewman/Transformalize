@@ -33,10 +33,10 @@ namespace Transformalize.Command {
         /// </summary>
         public ScheduleExecutor(IPipelineLogger logger) : base(logger, string.Empty, "default", true) { }
 
-        public new void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
+        public new void Execute(string cfg, Dictionary<string, string> parameters) {
 
             Process process;
-            if (ProcessFactory.TryCreate(cfg, shorthand, parameters, out process)) {
+            if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
                 process.Mode = Mode;
 
                 /* if an internal schedule with mode is running this, 
@@ -65,11 +65,7 @@ namespace Transformalize.Command {
             Mode = context.MergedJobDataMap.Get("Mode") as string;
             Schedule = context.MergedJobDataMap.Get("Schedule") as string;
 
-            Execute(
-                context.MergedJobDataMap.Get("Cfg") as string,
-                context.MergedJobDataMap.Get("Shorthand") as string,
-                new Dictionary<string, string>()
-            );
+            Execute(context.MergedJobDataMap.Get("Cfg") as string,new Dictionary<string, string>());
         }
 
         public void Dispose() {

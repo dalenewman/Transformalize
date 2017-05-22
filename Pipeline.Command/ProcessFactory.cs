@@ -28,10 +28,10 @@ using Transformalize.Logging.NLog;
 namespace Transformalize.Command {
     public static class ProcessFactory {
 
-        public static bool TryCreate(string cfg, string shorthand, Dictionary<string,string> parameters, out Process process) {
+        public static bool TryCreate(string cfg, Dictionary<string,string> parameters, out Process process) {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(shorthand));
+            builder.RegisterModule(new RootModule());
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
@@ -56,9 +56,9 @@ namespace Transformalize.Command {
             return process.Errors().Length == 0;
         }
 
-        public static Process Create(string cfg, string shorthand, Dictionary<string,string> parameters) {
+        public static Process Create(string cfg, Dictionary<string,string> parameters) {
             Process process;
-            TryCreate(cfg, shorthand, parameters, out process);
+            TryCreate(cfg, parameters, out process);
             return process;
         }
     }

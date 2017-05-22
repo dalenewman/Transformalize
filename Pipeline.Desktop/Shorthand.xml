@@ -218,12 +218,6 @@
         <add name='key' />
       </parameters>
     </add>
-    <add name='model'>
-      <parameters>
-        <add name='model' />
-        <add name='modeltype' value='decisiontree' />
-      </parameters>
-    </add>
   </signatures>
 
   <methods>

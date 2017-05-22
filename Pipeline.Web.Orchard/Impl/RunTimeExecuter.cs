@@ -104,7 +104,7 @@ namespace Pipeline.Web.Orchard.Impl {
 
         }
 
-        public void Execute(string cfg, string shorthand, Dictionary<string, string> parameters) {
+        public void Execute(string cfg, Dictionary<string, string> parameters) {
             var container = new ContainerBuilder();
 
             // Orchard CMS Stuff

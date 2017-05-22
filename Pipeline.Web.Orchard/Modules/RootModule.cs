@@ -68,15 +68,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     new IllegalCharacterValidator()
                 };
 
-                var shr = new ShorthandRoot(Common.DefaultShortHand);
-                if (shr.Errors().Any()) {
-                    var context = ctx.IsRegistered<IContext>() ? ctx.Resolve<IContext>() : new PipelineContext(ctx.IsRegistered<IPipelineLogger>() ? ctx.Resolve<IPipelineLogger>() : new OrchardLogger(), new Process { Name = "Error" });
-                    foreach (var error in shr.Errors()) {
-                        context.Error(error);
-                    }
-                    context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
-                } else {
-                    dependencies.Add(new ShorthandCustomizer(shr, new[] { "fields", "calculated-fields" }, "t", "transforms", "method"));
+                if (ctx.IsRegisteredWithName<IDependency>("shorthand")) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand"));
                 }
 
                 var process = new Process(dependencies.ToArray());

@@ -24,11 +24,9 @@ namespace Transformalize.Command {
     [DisallowConcurrentExecution]
     public class NowExecutor : BaseExecutor, IJob, IDisposable {
 
-        public string Shorthand { get; set; }
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public NowExecutor(IPipelineLogger logger, string cfg, string shorthand, string mode) : base(logger, cfg, mode, false) {
-            Shorthand = shorthand;
+        public NowExecutor(IPipelineLogger logger, string cfg, string mode) : base(logger, cfg, mode, false) {
         }
 
         /// <summary>
@@ -36,7 +34,7 @@ namespace Transformalize.Command {
         /// </summary>
         /// <param name="context"></param>
         public void Execute(IJobExecutionContext context) {
-            Execute(Cfg, Shorthand, Parameters);
+            Execute(Cfg, Parameters);
         }
 
         public void Dispose() {

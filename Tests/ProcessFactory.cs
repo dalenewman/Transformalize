@@ -28,10 +28,10 @@ using Transformalize.Provider.Trace;
 namespace Tests {
     public static class ProcessFactory {
 
-        public static bool TryCreate(string cfg, string shorthand, Dictionary<string, string> parameters, out Process process, IPipelineLogger logger) {
+        public static bool TryCreate(string cfg, Dictionary<string, string> parameters, out Process process, IPipelineLogger logger) {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(shorthand));
+            builder.RegisterModule(new RootModule());
             builder.Register(c => logger ?? new TraceLogger()).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
@@ -56,14 +56,14 @@ namespace Tests {
             return process.Errors().Length == 0;
         }
 
-        public static Process Create(string cfg, string shorthand, Dictionary<string, string> parameters, IPipelineLogger logger = null) {
+        public static Process Create(string cfg, Dictionary<string, string> parameters, IPipelineLogger logger = null) {
             Process process;
-            TryCreate(cfg, shorthand, parameters, out process, logger);
+            TryCreate(cfg, parameters, out process, logger);
             return process;
         }
 
-        public static Process Create(string cfg, string shorthand, IPipelineLogger logger = null) {
-            return Create(cfg, shorthand, new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase), logger);
+        public static Process Create(string cfg, IPipelineLogger logger = null) {
+            return Create(cfg, new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase), logger);
         }
     }
 }

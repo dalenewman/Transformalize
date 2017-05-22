@@ -69,7 +69,7 @@ namespace Tests {
         public void Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new RootModule(@"Shorthand.xml"));
+            builder.RegisterModule(new RootModule());
             var container = builder.Build();
 
             var pool = new SingleNodeConnectionPool(new Uri(ElasticConnection.Url));

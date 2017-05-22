@@ -97,6 +97,7 @@
     <Compile Include="CopyTransform.cs" />
     <Compile Include="CSharpTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
+    <Compile Include="SlaveGetsInserts.cs" />
     <Compile Include="SubstringTest.cs" />
     <Compile Include="DistinctTest.cs" />
     <Compile Include="EvalTransform.cs" />

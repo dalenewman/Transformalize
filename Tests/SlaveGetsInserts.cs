@@ -18,6 +18,7 @@
 using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
@@ -27,46 +28,101 @@ using Transformalize.Provider.SqlServer;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationSqlServer {
+    public class SlaveGetsInserts {
 
-        public string TestFile { get; set; } = @"Files\NorthWind.xml";
+        const string xml = @"
+<cfg name='Test' mode='@(Mode)' flatten='true'>
+  <parameters>
+    <add name='Mode' value='default' />
+  </parameters>
+  <connections>
+    <add name='input' provider='sqlserver' database='TestInput' />
+    <add name='output' provider='sqlserver' database='TestOutput' />
+  </connections>
+  <entities>
+    <add name='MasterTable'>
+        <fields>
+            <add name='Id' type='int' primary-key='true' />
+            <add name='d1' />
+            <add name='d2' />
+        </fields>
+    </add>
+    <add name='SlaveTable'>
+        <fields>
+            <add name='Id' type='int' primary-key='true' />
+            <add name='d3' />
+            <add name='d4' />
+        </fields>
+    </add>
+  </entities>
+  <relationships>
+    <add left-entity='MasterTable' left-field='Id' right-entity='SlaveTable' right-field='Id' />
+  </relationships>
+</cfg>
+";
 
         public Connection InputConnection { get; set; } = new Connection {
             Name = "input",
             Provider = "sqlserver",
-            ConnectionString = "server=localhost;database=NorthWind;trusted_connection=true;"
+            ConnectionString = "server=localhost;database=TestInput;trusted_connection=true;"
         };
 
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "sqlserver",
-            ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
+            ConnectionString = "Server=localhost;Database=TestOutput;trusted_connection=true;"
         };
 
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
+        public Process ResolveRoot(IContainer container, string xml, Dictionary<string, string> parameters = null) {
+            if(parameters == null) {
+                parameters = new Dictionary<string, string>();
+            }
+            return container.Resolve<Process>(new NamedParameter("cfg", xml), new NamedParameter("parameters", parameters));
         }
 
         [TestMethod]
         [Ignore]
-        public void SqlServer_Integration() {
+        public void SlaveGetsInserts_Integration() {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 
-            // CORRECT DATA AND INITIAL LOAD
+            // SETUP 
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(3, cn.Execute(@"
-                    UPDATE [Order Details] SET UnitPrice = 14.40, Quantity = 42 WHERE OrderId = 10253 AND ProductId = 39;
-                    UPDATE Orders SET CustomerID = 'CHOPS', Freight = 22.98 WHERE OrderId = 10254;
-                    UPDATE Customers SET ContactName = 'Palle Ibsen' WHERE CustomerID = 'VAFFE';
+                    IF OBJECT_ID('MasterTable') IS NULL
+	BEGIN
+		create table MasterTable(
+			Id int not null primary key,
+			d1 nvarchar(64) not null,
+			d2 nvarchar(64) not null
+		);
+END
+
+IF OBJECT_ID('SlaveTable') IS NULL
+	BEGIN
+		create table SlaveTable(
+			Id int not null primary key,
+			d3 nvarchar(64) not null,
+			d4 nvarchar(64) not null
+		);
+	END
+
+TRUNCATE TABLE MasterTable;
+TRUNCATE TABLE SlaveTable;
+
+INSERT INTO MasterTable(Id,d1,d2)VALUES(1,'d1','d2');
+INSERT INTO MasterTable(Id,d1,d2)VALUES(2,'d3','d4');
+
+INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
+
                 "));
             }
 
             // RUN INIT AND TEST
-            var root = ResolveRoot(container, TestFile, true);
+            var root = ResolveRoot(container, xml, new Dictionary<string, string>() { { "Mode", "init" } });
             var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
@@ -74,14 +130,12 @@ namespace Tests {
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT TOP 1 Inserts FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 1;"));
-                Assert.AreEqual(5, cn.ExecuteScalar<int>("SELECT TOP 1 TflBatchId FROM NorthWindStar;"), 0.0, "Should be 5, for Projects (last one with fk)");
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindFlat;"));
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestMasterTable;"));
+                Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestSlaveTable;"));
             }
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, TestFile, false);
+            root = ResolveRoot(container, xml);
             responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
@@ -89,20 +143,23 @@ namespace Tests {
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindStar;"));
-                Assert.AreEqual(0, cn.ExecuteScalar<int>("SELECT TOP 1 Inserts+Updates+Deletes FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9;"));
-                Assert.AreEqual(2155, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM NorthWindFlat;"));
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestMasterTable;"));
+                Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestSlaveTable;"));
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("select Id from TestStar where d3 = '' and d4 = '';"));
+
             }
 
-            // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO 
+            
+
+            // insert into slave
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
                 cn.Open();
-                const string sql = @"UPDATE [Order Details] SET UnitPrice = 15, Quantity = 40 WHERE OrderId = 10253 AND ProductId = 39;";
+                const string sql = @"INSERT INTO SlaveTable(Id,d3,d4)VALUES(2,'d7','d8');";
                 Assert.AreEqual(1, cn.Execute(sql));
             }
 
             // RUN AND CHECK
-            root = ResolveRoot(container, TestFile, false);
+            root = ResolveRoot(container, xml);
             responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
@@ -110,16 +167,13 @@ namespace Tests {
 
             using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
-                Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT TOP 1 Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 17;"));
-                Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-
-                Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindFlat WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindFlat WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-                Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindFlat WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
-
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestMasterTable;"));
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("SELECT COUNT(*) FROM TestSlaveTable;"));
+                Assert.AreEqual(0, cn.ExecuteScalar<int>("select Id from TestStar where d3 = '' and d4 = '';"));
+                Assert.AreEqual(2, cn.ExecuteScalar<int>("select Id from TestStar where d3 = 'd7' and d4 = 'd8';"));
             }
+
+            /*
 
             // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
@@ -128,7 +182,7 @@ namespace Tests {
             }
 
             root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(),root)).Execute();
+            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -169,6 +223,7 @@ namespace Tests {
                 Assert.AreEqual(35, cn.ExecuteScalar<int>("SELECT DISTINCT TflBatchId FROM NorthWindFlat WHERE OrdersCustomerID = 'VAFFE';"), "The TflBatchId should be updated on the master to indicate a change has occured.");
 
             }
+            */
 
         }
     }

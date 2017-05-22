@@ -15,7 +15,6 @@
 // limitations under the License.
 #endregion
 
-using System.Reflection;
 using System.Web;
 using Autofac;
 using Cfg.Net.Environment;
@@ -23,10 +22,8 @@ using Cfg.Net.Parsers;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
 using Orchard;
-using Orchard.Caching;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
-using Orchard.Templates.Compilation.Razor;
 using Orchard.Templates.Services;
 using Orchard.UI.Notify;
 using Transformalize.Configuration;
@@ -50,16 +47,13 @@ namespace Pipeline.Web.Orchard.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            builder.Register(c => new ShorthandRoot(Common.DefaultShortHand)).As<ShorthandRoot>().SingleInstance();
-            builder.Register(c => new ShorthandCustomizer(c.Resolve<ShorthandRoot>(), new [] {"fields","calculated-fields"},"t","transforms","method")).As<ShorthandCustomizer>();
-
             // xml
             builder.Register(c => new XmlProcess(
                 new DateMathModifier(),
                 new NanoXmlParser(),
                 new XmlSerializer(),
                 new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
+                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
                 new EnvironmentModifier()
             )).As<XmlProcess>();
 
@@ -68,7 +62,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new NanoXmlParser(),
                 new JsonSerializer(),
                 new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
+                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
                 new EnvironmentModifier()
             )).As<XmlToJsonProcess>();
 
@@ -81,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new FastJsonParser(),
                 new JsonSerializer(),
                 new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
+                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
                 new EnvironmentModifier()
             )).As<JsonProcess>();
 
@@ -90,7 +84,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 new FastJsonParser(),
                 new XmlSerializer(),
                 new JintValidator(),
-                c.Resolve<ShorthandCustomizer>(),
+                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
                 new EnvironmentModifier()
             )).As<JsonToXmlProcess>();
 

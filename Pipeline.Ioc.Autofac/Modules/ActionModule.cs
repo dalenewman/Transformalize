@@ -42,6 +42,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
     /// * open
     /// * print
     /// * log
+    /// * exit
     /// 
     /// </summary>
     public class ActionModule : Module {
@@ -119,6 +120,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 case "open":
                     return new OpenAction(action);
+                case "exit":
+                    return new ExitAction(context, action);
                 default:
                     context.Error("{0} action is not registered.", action.Type);
                     return new NullAction();
