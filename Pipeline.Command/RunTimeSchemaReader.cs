@@ -50,6 +50,7 @@ namespace Transformalize.Command {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_host.Logger).SingleInstance();
+            container.RegisterCallback(new ShorthandModule().Configure);
             container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(Process).Configure);
 
@@ -76,6 +77,7 @@ namespace Transformalize.Command {
 
             var container = new ContainerBuilder();
             container.RegisterInstance(_host.Logger).SingleInstance();
+            container.RegisterCallback(new ShorthandModule().Configure);
             container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(Process).Configure);
 

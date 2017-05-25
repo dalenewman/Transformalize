@@ -53,6 +53,7 @@ namespace Tests {
         public void Integration() {
 
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new ShorthandModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 

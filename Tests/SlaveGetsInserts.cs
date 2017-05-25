@@ -85,6 +85,7 @@ namespace Tests {
         public void SlaveGetsInserts_Integration() {
 
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new ShorthandModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 

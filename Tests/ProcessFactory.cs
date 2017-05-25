@@ -31,6 +31,7 @@ namespace Tests {
         public static bool TryCreate(string cfg, Dictionary<string, string> parameters, out Process process, IPipelineLogger logger) {
 
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new ShorthandModule());
             builder.RegisterModule(new RootModule());
             builder.Register(c => logger ?? new TraceLogger()).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();

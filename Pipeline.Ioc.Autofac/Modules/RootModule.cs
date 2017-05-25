@@ -23,15 +23,12 @@ using Cfg.Net.Contracts;
 using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
-using Cfg.Net.Shorthand;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Transform.DateMath;
 using Transformalize.Transform.Jint;
 using System.IO;
 using Transformalize.Desktop.Transforms;
-using Transformalize.Provider.Trace;
 
 // ReSharper disable PossibleMultipleEnumeration
 

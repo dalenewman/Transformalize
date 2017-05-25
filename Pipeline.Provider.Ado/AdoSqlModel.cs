@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System.Linq;
-using System.Security.Cryptography;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -38,6 +37,7 @@ namespace Transformalize.Provider.Ado {
         public Entity MasterEntity { get; set; }
 
         public AdoSqlModel(IContext output, IConnectionFactory cf) {
+
             Fields = output.Process.GetStarFields().SelectMany(e => e).ToArray();
             Aliases = Fields.Select(f => cf.Enclose(f.Alias)).ToArray();
             FieldNames = Fields.Select(f => f.FieldName()).ToArray();

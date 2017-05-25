@@ -46,6 +46,13 @@ namespace Pipeline.Web.Orchard {
 
             try {
 
+                SchemaBuilder.CreateTable(Common.PipelineConfigurationName + "PartRecord", table => table
+                    .ContentPartRecord()
+                    .Column("Configuration", DbType.String, column => column.Unlimited())
+                    .Column("StartAddress", DbType.String)
+                    .Column("EndAddress", DbType.String)
+                );
+
                 ContentDefinitionManager.StoreTypeDefinition(
                     new ContentTypeDefinition(Common.PipelineConfigurationName, "Pipeline")
                 );
@@ -80,6 +87,9 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom1() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord",
+                table => table
+                    .AddColumn("EditorMode", DbType.String));
             return 2;
         }
 
@@ -93,10 +103,13 @@ namespace Pipeline.Web.Orchard {
         }
 
         public int UpdateFrom3() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Runnable", DbType.Boolean));
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Reportable", DbType.Boolean));
             return 4;
         }
 
         public int UpdateFrom4() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("NeedsInputFile", DbType.Boolean));
             return 5;
         }
 

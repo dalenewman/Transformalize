@@ -57,6 +57,7 @@ namespace Transformalize.Ioc.Autofac {
 
         public void Execute(string cfg, Dictionary<string, string> parameters) {
             var builder = new ContainerBuilder();
+            builder.RegisterCallback(new ShorthandModule().Configure);
             builder.RegisterCallback(new RootModule().Configure);
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var process = scope.Resolve<Process>(
