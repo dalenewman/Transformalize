@@ -21,7 +21,6 @@ using System.Linq;
 using NLog;
 using NLog.Targets;
 using NLog.Targets.Wrappers;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using LogLevel = Transformalize.Contracts.LogLevel;
 using NLogLevel = global::NLog.LogLevel;
@@ -30,7 +29,7 @@ namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
 
         const string Context = "{0} | {1} | {2} | {3}";
-        readonly Logger _log;
+        private readonly Logger _log;
 
         /// <summary>
         /// NLog implementation of IPipelineLogger
@@ -81,10 +80,6 @@ namespace Transformalize.Logging.NLog {
             }
 
             LogManager.ReconfigExistingLoggers();
-
-            if (file != null) {
-                _log.Info($"Logging to file: {file.FileName}");
-            }
         }
 
         public void SuppressConsole() {

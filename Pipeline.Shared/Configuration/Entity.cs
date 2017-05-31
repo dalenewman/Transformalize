@@ -90,7 +90,7 @@ namespace Transformalize.Configuration {
         public int Sample { get; set; }
         [Cfg(value = "")]
         public string Schema { get; set; }
-        [Cfg(value = "", toLower =true)]
+        [Cfg(value = "", toLower = true)]
         public string Script { get; set; }
         [Cfg(value = "")]
         public string ScriptKeys { get; set; }
@@ -270,6 +270,9 @@ namespace Transformalize.Configuration {
         }
 
         public void AddSystemFields() {
+
+            if (Fields.Any(f => f.Alias == Constants.TflKey))
+                return;
 
             var fields = new List<Field> {
                 new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" },
@@ -560,7 +563,6 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = 0)]
         public int ReadSize { get; set; }
-
 
         [Cfg(value = 0)]
         public int Page { get; set; }

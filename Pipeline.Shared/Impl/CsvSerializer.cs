@@ -41,7 +41,15 @@ namespace Transformalize.Impl {
             var builder = new StringBuilder();
             for (var index = 0; index < _length; index++) {
                 var field = _fields[index];
-                builder.Append(Escape(row[field].ToString()));
+                var value = row[field];
+                switch (field.Type) {
+                    case "byte[]":
+                        builder.Append("0x" + string.Format("{0:X}", Utility.BytesToHexString(value as byte[]).TrimStart(new[] { '0' })));
+                        break;
+                    default:
+                        builder.Append(Escape(value.ToString()));
+                        break;
+                }
                 if (index < _length - 1) {
                     builder.Append(",");
                 }
@@ -49,10 +57,8 @@ namespace Transformalize.Impl {
             return builder.ToString();
         }
 
-        string ISerialize.Header
-        {
-            get
-            {
+        string ISerialize.Header {
+            get {
                 return string.Join(",", _fields.Select(f => f.Alias));
             }
         }

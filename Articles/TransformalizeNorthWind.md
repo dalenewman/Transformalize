@@ -89,54 +89,30 @@ The de-normalized output may be used:
 * To feed an Elasticsearch, SOLR, or Lucene search engine.
 * To allow for faster, non-blocking, simpler, and no-join SQL queries.
 
-If you want to follow along, you'll have to have:
+If you want to follow along, you'll have to:
 
-* something to edit XML with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
-* a local instance of SQL Server
-* the latest release of Tranformalize (on [GitHub](https://github.com/dalenewman/Transformalize/releases))
+* have something to edit XML with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
+* have a local instance of SQL Server
+* have something to browse a SQLite database file with (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
+* have the latest release of Tranformalize (on [GitHub](https://github.com/dalenewman/Transformalize/releases))
 * download and install the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
 
 ### Getting Started
 
-Start with an arrangment (aka configuration) that specifies an *input* and *output*:
-
-**Arrangement**
-
-```xml
-<cfg name="NorthWind">
-  <connections>
-    <add name="input" 
-         provider="sqlserver"
-         server="localhost" 
-         database="NorthWind" />
-    <add name="output" 
-         provider="sqlite" 
-         file="c:\temp\NorthWind.sqlite3"/>
-  </connections>
-</cfg>
-```
-**Explanation**
-
-In the above XML, two connections are defined.  The *input* and *output*.  The input 
-is SQL Server, and the output is a SQLite file.
-
-If you want follow along, install the *Northwind* database 
-with [this script](http://www.microsoft.com/en-us/download/details.aspx?id=23654).
+First, we should take a glance at the Northwind schema (part of it).
 
 ### The NorthWind Schema
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The schema (above) shows eight tables in the *NorthWind* database. 
-The most important [fact table](https://en.wikipedia.org/wiki/Fact_table) is 
-*Order Details*.  So, add it as the first entity and save 
-the arrangment as *NorthWind.xml*.
+It shows eight tables; the most important [fact table](https://en.wikipedia.org/wiki/Fact_table) 
+is *Order Details*.  Start by writing an arrangment (aka configuration) that 
+defines the *input* as Northwind's `Order Details` table:
 
 ```xml
 <cfg name="NorthWind">
   <connections>
     <add name="input" provider="sqlserver" database="NorthWind" />
-    <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
   </connections>
   <entities>
     <add name="Order Details" />
@@ -144,53 +120,76 @@ the arrangment as *NorthWind.xml*.
 </cfg>
 ```
 
-Now we need to add the fields to *Order Details*.  You could type them in, 
-or run `tfl` in *check* mode, like this:
+Running `tfl` at this point reads the `Order Details` from 
+the table (input) and writes it to the console (output):
 
 <pre>
-<strong>tfl -a NorthWind.xml -m check</strong>
+<strong>> tfl -a NorthWind.xml</strong>
+OrderID,ProductID,UnitPrice,Quantity,Discount
+10248,11,14.0000,12,0
+10248,42,9.8000,10,0
+10248,72,34.8000,5,0
+10249,14,18.6000,9,0
+10249,51,42.4000,40,0
+...
 </pre>
 
-![check mode](../Files/check-mode.gif)
 
-Check mode detects an entity's fields and outputs the 
-arrangement (to the console).  We want to redirect the output 
-so we have to do this:
+**Note**: `tfl` detected the schema.  This is handy, but 
+if you ever want to apply transformations, you must define 
+the fields yourself.  You could hand-write them, or run `tfl` in 
+`check` mode like this:
 
-<pre>
-<strong>tfl -a NorthWind.xml -m check > output.xml && start output.xml</strong>
-</pre>
+<pre><code>
+> tfl -a NorthWind.xml <strong>-m check</strong>
+...
+&lt;fields&gt;
+  &lt;add name="OrderID" type="int" primarykey="true" /&gt;
+  &lt;add name="ProductID" type="int" primarykey="true" /&gt;
+  &lt;add name="UnitPrice" type="decimal" precision="19" scale="4" /&gt;
+  &lt;add name="Quantity" type="short" /&gt;
+  &lt;add name="Discount" type="single" /&gt;
+&lt;/fields>
+...
+</code></pre>
 
-Once you have the fields in *NorthWind.xml*, your *Order Details* entity 
-should look like this:
-
-**Arrangement** (partial)
+Instead of getting order details (data), you get the schema.  Add 
+the fields section to your arrangement like this:
 
 ```xml
-<entities>
-  <add name="Order Details">
-    <fields>
-      <add name="OrderID" type="int" primary-key="true" />
-      <add name="ProductID" type="int" primary-key="true" />
-      <add name="Discount" type="single" />
-      <add name="Quantity" type="short" />
-      <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
-    </fields>
-  </add>
-</entities>  
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlserver" database="NorthWind"/>
+  </connections>
+  <entities>
+    <add name="Order Details">
+      <!-- fields are added here -->
+      <fields>
+        <add name="OrderID" type="int" primarykey="true" />
+        <add name="ProductID" type="int" primarykey="true" />
+        <add name="UnitPrice" type="decimal" precision="19" scale="4" />
+        <add name="Quantity" type="short" />
+        <add name="Discount" type="single" />
+      </fields>
+    </add>
+  </entities>
+</cfg>
 ```
 
-**Explanation**
+In order to de-normalize the Northwind data, a relational output 
+is required.  So, add this to the connections:
 
-The *Order Details* entity now has five fields. Check mode also 
-detected the primary key, and type information.
+```xml
+<add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+```
 
----
-
-With the *Order Details* fields in place, run Transformalize in Init mode:
+Now we are ready to read *Order Details* from one database and 
+write them to another.  Whenever you do this for the first time, 
+or if you want to over-write an output, run `tfl` 
+in `init` mode:
 
 <pre>
-<strong>tfl -a NorthWind.xml -m init</strong>
+<strong>> tfl -a NorthWind.xml -m init</strong>
 2016-12-12 15:59:46 | warn  | NorthWind | Order Details | Initializing
 2016-12-12 15:59:46 | info  | NorthWind | Order Details | Starting
 2016-12-12 15:59:47 | info  | NorthWind | Order Details | 2155 from input
@@ -199,10 +198,10 @@ With the *Order Details* fields in place, run Transformalize in Init mode:
 </pre>
 
 Init mode prepares the output, and bulk inserts the data into it.  Now, 
-run Tfl without specifying a mode:
+run `tfl` without specifying a mode:
 
 <pre>
-<strong>tfl -a NorthWind.xml</strong>
+<strong>> tfl -a NorthWind.xml</strong>
 2016-12-12 16:04:03 | info  | NorthWind | Order Details | Starting
 2016-12-12 16:04:03 | info  | NorthWind | Order Details | 2155 from input
 2016-12-12 16:04:03 | info  | NorthWind | Order Details | Ending 00:00:00.5467704
@@ -210,15 +209,14 @@ run Tfl without specifying a mode:
 
 ![check mode](../Files/init-mode.gif)
 
-By default, **`tfl`** reads input and updates output **if necessary**.  
-To determine if an update is necessary, it has to read *all* the input 
-and compare it with the output.  
+By default, **`tfl`** reads input and updates output **only** *if necessary*.  
+To determine if an update is necessary, `tfl` reads *all* the input 
+and compares it with the output.  This is inefficient.
 
-It is inefficient to read *all* the input when we only need the 
-updated or new records.  So, we need to query by a field that 
-increments every time a record is inserted or updated.  Conveniently 
-enough, SQL Server offers a `ROWVERSION` type that increments 
-just like we need.
+A better approach is to only read new or updated records from the 
+input.  This is possible if each row has a field that increments 
+every time a record is inserted or updated.  Conveniently 
+enough, SQL Server offers a `ROWVERSION` type for this.
 
 Add a `RowVersion` column to `Order Details` like this:
 
@@ -230,7 +228,7 @@ Update the *Order Details* entity to use RowVersion:
 
 ```xml
 <entities>
-  <!-- add the version field's name in the version attribute -->
+                            <!----- here ------>
   <add name="Order Details" version="RowVersion" >
     <fields>
       <add name="OrderID" type="int" primary-key="true" />
@@ -238,17 +236,16 @@ Update the *Order Details* entity to use RowVersion:
       <add name="Discount" type="single" />
       <add name="Quantity" type="short" />
       <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
-      <!-- define the version field here -->
+
+      <!------------------ and here ------------------->
       <add name="RowVersion" type="byte[]" length="8" />
     </fields>
   </add>
 </entities> 
 ```
 
-When adding row version (or any field) to an entity, the output 
-must be re-initialized.  This means you destroy and re-create 
-the output.  To do this,  run **`tfl`** in `init` mode 
-first, and then in default mode:
+When adding a field to an entity, the output 
+must be re-initialized.  So, please re-initialize:
 
 <pre>
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -258,25 +255,29 @@ first, and then in default mode:
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 from input
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | 2155 inserts into output Order Details
 2016-12-12 16:59:27 | info  | NorthWind | Order Details | Ending 00:00:00.1553228
+</pre>
 
+Now, to test how many rows are read, run `tfl` in default mode:
+
+<pre>
 <strong>tfl -a NorthWind.xml</strong>
 2016-12-12 16:59:40 | info  | NorthWind | Order Details | Starting
 2016-12-12 16:59:40 | info  | NorthWind | Order Details | <strong>Change Detected: No.</strong>
 2016-12-12 16:59:40 | info  | NorthWind | Order Details | Ending 00:00:00.1248674
 </pre>
 
-![add row version](../Files/re-init.gif)
-
-Now **`tfl`** doesn't have to load the records. Using the row version, 
-it was able to determine the data hasn't been updated.
+**Note**: the second run doesn't say *2155 from input* anymore, 
+instead it says *Change Detected: No*.  **`tfl`** didn't have 
+to load the records. Using the row version, it was able 
+to determine the data had not changed.
 
 **Output**
 
-Just to make sure, let's check the output for the data:
+Just to make sure things are working, using your SQLite tool, 
+query the output for data:
 
 ```sql
-SELECT
-	Discount,
+SELECT	Discount,
 	OrderID,
 	ProductID,
 	Quantity,
@@ -303,7 +304,9 @@ LIMIT 10;
 ---
 
 Review the NorthWind diagram. The next closest tables to 
-*Order Details* are *Orders* and *Products*. Add the *Orders* entity. 
+*Order Details* are *Orders* and *Products*.  Alter these 
+tables to include the `RowVersion` column, and then add 
+the *Orders* entity. 
 
 **Hint**: Comment out *Order Details*, add entity &lt;add name=&quot;Orders&quot;/&gt; 
 and run Tfl in check mode.
@@ -386,8 +389,8 @@ Re-initialize and run.
 2017-05-18 16:42:44 | info  | NorthWind | Order Details | 2155 inserts into output
 2017-05-18 16:42:44 | info  | NorthWind | Orders        | Starting
 2017-05-18 16:42:44 | info  | NorthWind | Orders        | Change Detected: Input: 0x71c5b > Output: null
-2017-05-18 16:42:44 | info  | NorthWind | Orders        | 830 from input
-2017-05-18 16:42:44 | info  | NorthWind | Orders        | 830 inserts into output
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | <strong>830 from input</strong>
+2017-05-18 16:42:44 | info  | NorthWind | Orders        | <strong>830 inserts into output</strong>
 2017-05-18 16:42:44 | info  | NorthWind |               | Time elapsed: 00:00:01.2331675
 <strong>tfl -a NorthWind.xml</strong>
 2017-05-18 16:43:36 | info  | NorthWind | Order Details | Starting
@@ -397,7 +400,10 @@ Re-initialize and run.
 2017-05-18 16:43:36 | info  | NorthWind |               | Time elapsed: 00:00:00.3415624
 </pre>
 
-View the output:
+Notice the logging indicates 830 records were processed from the `Orders` table.  
+In addition to copying the data from `Order Details` and `Orders` to 
+the output, `tfl` created a view called `NorthWindStar`.  Take a 
+look to make sure it's working:
 
 ```sql
 SELECT
