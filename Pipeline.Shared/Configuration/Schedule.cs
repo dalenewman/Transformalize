@@ -18,8 +18,7 @@
 using Cfg.Net;
 
 namespace Transformalize.Configuration {
-    public class Schedule : CfgNode
-    {
+    public class Schedule : CfgNode {
 
         [Cfg(required = true)]
         public string Name { get; set; }
@@ -32,5 +31,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Transform.TimeZoneIdDomain)]
         public string TimeZone { get; set; }
+
+        [Cfg(value = "DoNothing", domain = "DoNothing,Ignore,FireAndProceed", ignoreCase = true, toLower = true, trim = true)]
+        public string MisFire { get; set; }
     }
 }

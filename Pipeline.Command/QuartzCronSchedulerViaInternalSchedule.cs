@@ -23,6 +23,7 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 using Transformalize.Configuration;
+using Humanizer;
 
 namespace Transformalize.Command {
 
@@ -43,8 +44,6 @@ namespace Transformalize.Command {
         }
 
         public void Start() {
-            _logger.Info($"Starting Scheduler: {_options.Schedule}");
-            _scheduler.Start();
 
             foreach (var schedule in _schedule) {
 
@@ -64,17 +63,44 @@ namespace Transformalize.Command {
                     .UsingJobData("Schedule", schedule.Name)
                     .Build();
 
-                var trigger = TriggerBuilder.Create()
-                    .WithIdentity(schedule.Name + " Trigger", "TFL")
-                    .StartNow()
-                    .WithCronSchedule(schedule.Cron, x => x
-                        .WithMisfireHandlingInstructionDoNothing()
-                        .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
-                    ).Build();
+                ITrigger trigger;
+
+                switch (schedule.MisFire) {
+                    case "ignore":
+                        trigger = TriggerBuilder.Create()
+                            .WithIdentity(schedule.Name.Titleize() + " Trigger", "TFL")
+                            .StartNow()
+                            .WithCronSchedule(schedule.Cron, x => x
+                                .WithMisfireHandlingInstructionIgnoreMisfires()
+                                .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
+                            ).Build();
+
+                        break;
+                    case "fireandproceed":
+                        trigger = TriggerBuilder.Create()
+                            .WithIdentity(schedule.Name.Titleize() + " Trigger", "TFL")
+                            .StartNow()
+                            .WithCronSchedule(schedule.Cron, x => x
+                                .WithMisfireHandlingInstructionFireAndProceed()
+                                .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
+                            ).Build();
+
+                        break;
+                    default:
+                        trigger = TriggerBuilder.Create()
+                            .WithIdentity(schedule.Name.Titleize() + " Trigger", "TFL")
+                            .StartNow()
+                            .WithCronSchedule(schedule.Cron, x => x
+                                .WithMisfireHandlingInstructionDoNothing()
+                                .InTimeZone(schedule.TimeZone == Constants.DefaultSetting ? TimeZoneInfo.Local : TimeZoneInfo.FindSystemTimeZoneById(schedule.TimeZone))
+                            ).Build();
+                        break;
+                }
 
                 _scheduler.ScheduleJob(job, trigger);
 
             }
+            _scheduler.Start();
         }
 
         public void Stop() {

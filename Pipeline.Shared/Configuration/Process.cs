@@ -602,7 +602,7 @@ namespace Transformalize.Configuration {
 
         public bool OutputIsConsole() {
             // check if this is a master job with actions, and no real entities
-            if (Actions.Count > 0 && Entities.Count == 1 && Entities.First().GetAllFields().All(f => f.System)) {
+            if (Actions.Count > 0 && Entities.Count == 0) {
                 return false;
             }
             return Connections.Any(c => c.Name == Constants.OriginalOutput && c.Provider == "console" || c.Name == "output" && c.Provider == "console");

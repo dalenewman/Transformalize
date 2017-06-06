@@ -33,6 +33,7 @@ namespace Transformalize.Desktop.Actions {
             var response = new ActionResponse { Action = _action };
             try {
                 _context.Warn("Exit Action is shutting TFL down.");
+                _context.Logger.Clear();
                 Environment.Exit(0);
             } catch (Exception ex) {
                 response.Code = 500;
