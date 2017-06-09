@@ -30,6 +30,7 @@ namespace Pipeline.Web.Orchard {
         public const string ReturnUrlName = "ReturnUrl";
         public const string AllTag = "All";
         public const string TagFilterName = "tagFilter";
+        public const string BatchValueFieldName = "BatchValue";
 
         public const string DefaultShortHand = @"<cfg>
 
