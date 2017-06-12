@@ -87,7 +87,7 @@ The de-normalized output may be used:
 
 * As an OLAP cube data source
 * To feed an Elasticsearch, SOLR, or Lucene search engine.
-* To allow for faster, non-blocking, simpler, and no-join SQL queries.
+* To allow for easier and faster SQL queries.
 
 If you want to follow along, you'll have to:
 
@@ -99,7 +99,7 @@ If you want to follow along, you'll have to:
 
 ### Getting Started
 
-First, we should take a glance at the Northwind schema (part of it).
+First, we should take a glance at the Northwind schema (partial).
 
 ### The NorthWind Schema
 
@@ -136,9 +136,9 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 
 
 **Note**: `tfl` detected the schema.  This is handy, but 
-if you ever want to apply transformations, you must define 
-the fields yourself.  You could hand-write them, or run `tfl` in 
-`check` mode like this:
+if you ever want to apply transformations, or calculate 
+new fields, you must define the fields.  You could 
+hand-write them, or run `tfl` in `check` mode like this:
 
 <pre><code>
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -153,8 +153,8 @@ the fields yourself.  You could hand-write them, or run `tfl` in
 ...
 </code></pre>
 
-Instead of getting order details (data), you get the schema.  Add 
-the fields section to your arrangement like this:
+Instead of getting order details (the records), you get the schema. 
+Add the fields section to your arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -176,8 +176,43 @@ the fields section to your arrangement like this:
 </cfg>
 ```
 
-In order to de-normalize the Northwind data, a relational output 
-is required.  So, add this to the connections:
+To add a calculated field, add this under the `<fields/>` section:
+
+```xml
+<calculated-fields>
+  <add name="ExtendedPrice" 
+       type="decimal" 
+       precision="19" 
+       scale="4" 
+       t="copy(UnitPrice,Quantity).cs(UnitPrice * Quantity)" />
+</calculated-fields>
+```
+
+Running `tfl` now produces the same data as before plus the new calculated field 
+`ExtendedPrice`:
+
+<pre>
+<strong>> tfl -a NorthWind.xml</strong>
+OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>ExtendedPrice</strong>
+10248,11,14.0000,12,0,<strong>168.0000</strong>
+10248,42,9.8000,10,0,<strong>98.0000</strong>
+10248,72,34.8000,5,0,<strong>174.0000</strong>
+10249,14,18.6000,9,0,<strong>167.4000</strong>
+10249,51,42.4000,40,0,<strong>1696.0000</strong>
+...
+</pre>
+
+The calculuated field added introduced the `t` property which is 
+short for *transformation*.  The transformation ran a bit 
+of C# (cs) code to multiply `UnitPrice` and `Quantity`.  There 
+are many built in transformations to select from (to be covered later).
+
+### Denormalization
+
+The above only works with one entity, and it is extremely rare in 
+real life that you will find all the data you need in one place.  So, 
+we have to de-normalize the data.  In order to do this, a relational 
+output is required.  So, add this to the connections:
 
 ```xml
 <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
@@ -190,6 +225,7 @@ in `init` mode:
 
 <pre>
 <strong>> tfl -a NorthWind.xml -m init</strong>
+2017-06-12 17:27:19 | info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1044231.
 2016-12-12 15:59:46 | warn  | NorthWind | Order Details | Initializing
 2016-12-12 15:59:46 | info  | NorthWind | Order Details | Starting
 2016-12-12 15:59:47 | info  | NorthWind | Order Details | 2155 from input

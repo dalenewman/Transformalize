@@ -81,11 +81,9 @@ namespace Transformalize.Configuration {
         /// A name (of your choosing) to identify the process.
         /// </summary>
         [Cfg(value = "", required = true, unique = true)]
-        public string Name
-        {
+        public string Name {
             get { return _name; }
-            set
-            {
+            set {
                 _name = value;
                 if (value == null)
                     return;
@@ -269,23 +267,39 @@ namespace Transformalize.Configuration {
 
             // entities
             foreach (var entity in Entities) {
-                entity.Key = Name + entity.Alias;
+                if (Name != null && entity.Alias != null) {
+                    entity.Key = Name + entity.Alias;
+                } else {
+                    entity.Key = entity.GetHashCode().ToString();
+                }
             }
 
             // templates
             foreach (var template in Templates) {
-                template.Key = Name + template.Name;
+                if (Name != null && template.Name != null) {
+                    template.Key = Name + template.Name;
+                } else {
+                    template.Key = template.GetHashCode().ToString();
+                }
             }
 
             // actions do not have unique names, so they get a counter too
             var actionIndex = 0;
             foreach (var action in Actions) {
-                action.Key = action.Key + action.Type + ++actionIndex;
+                if (action.Key != null && action.Type != null) {
+                    action.Key = action.Key + action.Type + ++actionIndex;
+                } else {
+                    action.Key = action.GetHashCode().ToString();
+                }
             }
 
             // connections
             foreach (var connection in Connections) {
-                connection.Key = Name + connection.Name;
+                if (Name != null && connection.Name != null) {
+                    connection.Key = Name + connection.Name;
+                } else {
+                    connection.Key = connection.GetHashCode().ToString();
+                }
             }
         }
 
@@ -319,13 +333,16 @@ namespace Transformalize.Configuration {
         }
 
         protected override void PostValidate() {
+
+            ModifyKeys();
+
             if (Errors().Length != 0)
                 return;
 
             if (Entities.Any()) {
                 Entities.First().IsMaster = true;
             }
-            ModifyKeys();
+
             ModifyLogLimits();
             ModifyRelationshipToMaster();
             ModifyIndexes();
@@ -565,7 +582,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "sqlite", domain = "sqlite,sqlce", toLower = true)]
         public string InternalProvider { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Buffer { get; set; }
 
         public List<Parameter> GetActiveParameters() {

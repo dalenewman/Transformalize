@@ -234,6 +234,7 @@ namespace Transformalize.Configuration.Ext {
         }
 
         static void ValidateRelationships(Process p, Action<string> error, Action<string> warn) {
+
             // count check
             if (p.Entities.Count > 1 && p.Relationships.Count + 1 < p.Entities.Count) {
                 var message = $"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.";

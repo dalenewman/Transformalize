@@ -50,8 +50,22 @@ namespace Transformalize.Command {
                 var process = scope.Resolve<Configuration.Process>(
                     new NamedParameter("cfg", _options.Arrangement)
                 );
+
+                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != "internal" && !e.Fields.Any(f => f.Input))) {
+                    context.Debug(() => "Detecting schema...");
+                    if (_schemaHelper.Help(process)) {
+                        process.Check();
+                    }
+                }
+
+                if (_options.Mode != null && _options.Mode.ToLower() == "check") {
+                    SimplifyForOutput(process);
+                    Console.WriteLine(process.Serialize());
+                    return;
+                }
+
                 foreach (var warning in process.Warnings()) {
-                    context.Debug(()=>warning);
+                    context.Debug(() => warning);
                 }
 
                 if (process.Errors().Any()) {
@@ -63,28 +77,7 @@ namespace Transformalize.Command {
                     return;
                 }
 
-                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != "internal" && !e.Fields.Any(f => f.Input))) {
-                    context.Debug(() => "Detecting schema...");
-                    if (_schemaHelper.Help(process)) {
-                        process.Check();
-                        if (process.Errors().Any()) {
-                            foreach (var error in process.Errors()) {
-                                context.Error(error);
-                            }
-                            context.Error("The configuration errors must be fixed before this job will run.");
-                            context.Logger.Clear();
-                            return;
-                        }
-                    }
-                }
-
-                if (_options.Mode != null && _options.Mode.ToLower() == "check") {
-                    SimplifyForOutput(process);
-                    Console.WriteLine(process.Serialize());
-                    return;
-                }
-
-                if(_options.Mode != "default") {
+                if (_options.Mode != "default") {
                     process.Mode = _options.Mode;
                 } 
                 
@@ -111,6 +104,10 @@ namespace Transformalize.Command {
             foreach (var field in process.GetAllFields()) {
                 if (field.Name == field.Alias) {
                     field.Alias = null;
+                } else {
+                    if(field.Alias != null && field.Alias == field.Label) {
+                        field.Label = null;
+                    }
                 }
                 if (field.Name == field.Label) {
                     field.Label = string.Empty;

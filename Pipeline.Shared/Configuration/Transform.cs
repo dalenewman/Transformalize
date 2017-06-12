@@ -82,8 +82,7 @@ namespace Transformalize.Configuration {
         public string Left { get; set; }
         [Cfg(value = 0)]
         public int Length { get; set; }
-        [Cfg(value = null)]
-        public object LowerBound { get; set; }
+
         [Cfg(value = "Inclusive", domain = "Inclusive,Exclusive,Ignore")]
         public string LowerBoundType { get; set; }
         [Cfg(value = "None")]
@@ -200,9 +199,6 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "meters")]
         public string Units { get; set; }
-
-        [Cfg(value = null)]
-        public object UpperBound { get; set; }
 
         [Cfg(value = "Inclusive", domain = "Inclusive,Exclusive,Ignore", ignoreCase = true)]
         public string UpperBoundType { get; set; }

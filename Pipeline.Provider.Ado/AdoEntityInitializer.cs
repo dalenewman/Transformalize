@@ -49,6 +49,7 @@ namespace Transformalize.Provider.Ado {
             try {
                 cn.Execute(_context.SqlDropOutputView(_cf));
             } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Could not drop output view {_context.Entity.OutputViewName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
             }
 
@@ -60,23 +61,40 @@ namespace Transformalize.Provider.Ado {
 
             try {
                 cn.Execute(_context.SqlDropOutput(_cf));
+
             } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
             }
         }
 
         void Create(IDbConnection cn) {
             var createSql = _context.SqlCreateOutput(_cf);
-            cn.Execute(createSql);
+            try {
+                cn.Execute(createSql);
+            } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Could not create output {_context.Entity.OutputTableName(_context.Process.Name)}");
+                _context.Error(ex, ex.Message);
+            }
 
-            var createIndex = _context.SqlCreateOutputUniqueIndex(_cf);
-            cn.Execute(createIndex);
+            try {
+                var createIndex = _context.SqlCreateOutputUniqueIndex(_cf);
+                cn.Execute(createIndex);
+            } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Could not create unique index on output {_context.Entity.OutputTableName(_context.Process.Name)}");
+                _context.Error(ex, ex.Message);
+            }
 
             if (_cf.AdoProvider == AdoProvider.SqlCe)
                 return;
 
-            var createView = _context.SqlCreateOutputView(_cf);
-            cn.Execute(createView);
+            try {
+                var createView = _context.SqlCreateOutputView(_cf);
+                cn.Execute(createView);
+            } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Could not create output view {_context.Entity.OutputViewName(_context.Process.Name)}");
+                _context.Error(ex, ex.Message);
+            }
         }
 
         public ActionResponse Execute() {

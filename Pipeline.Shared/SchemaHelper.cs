@@ -61,11 +61,20 @@ namespace Transformalize {
                     field.Alias = e.Alias + field.Name;
                 }
                 var add = e.Fields.Where(f => !f.System).ToList();
+
+                var processKeys = new HashSet<string>(process.GetAllFields().Select(f => f.Alias), System.StringComparer.OrdinalIgnoreCase);
+
                 if (add.Any()) {
-                    _context.Debug(()=>$"Detected {add.Count} field{add.Count.Plural()} in {entity.Alias}.");
-                    var keys = new HashSet<string>(entity.Fields.Select(f=>f.Alias));
+                    _context.Debug(() => $"Detected {add.Count} field{add.Count.Plural()} in {entity.Alias}.");
+
+                    var entityKeys = new HashSet<string>(entity.GetAllFields().Select(f => f.Alias), System.StringComparer.OrdinalIgnoreCase);
+                    
+
                     foreach (var field in add) {
-                        if (!keys.Contains(field.Alias)) {
+                        if (!entityKeys.Contains(field.Alias)) {
+                            if (!field.PrimaryKey && processKeys.Contains(field.Alias)) {
+                                field.Alias = entity.Alias + field.Alias;
+                            }
                             entity.Fields.Add(field);
                         }
                     }
