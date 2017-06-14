@@ -49,7 +49,7 @@ namespace Transformalize.Provider.Ado {
             try {
                 cn.Execute(_context.SqlDropOutputView(_cf));
             } catch (System.Data.Common.DbException ex) {
-                _context.Error($"Could not drop output view {_context.Entity.OutputViewName(_context.Process.Name)}");
+                _context.Warn($"Could not drop output view {_context.Entity.OutputViewName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
             }
 
@@ -63,7 +63,7 @@ namespace Transformalize.Provider.Ado {
                 cn.Execute(_context.SqlDropOutput(_cf));
 
             } catch (System.Data.Common.DbException ex) {
-                _context.Error($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
+                _context.Warn($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
             }
         }

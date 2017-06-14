@@ -116,7 +116,7 @@ namespace Transformalize.Configuration {
         /// Aside from these, you may use any mode (of your choosing).  Then, you can control
         /// whether or not templates and/or actions run by setting their modes.
         /// </summary>
-        [Cfg(value = "", toLower = true)]
+        [Cfg(value = "", toLower = true, trim = true)]
         public string Mode { get; set; }
 
         /// <summary>

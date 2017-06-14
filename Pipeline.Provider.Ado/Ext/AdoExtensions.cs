@@ -56,7 +56,10 @@ namespace Transformalize.Provider.Ado.Ext {
             var tableName = c.Entity.OutputTableName(c.Process.Name);
             var pk = c.Entity.GetAllFields().Where(f => f.PrimaryKey).Select(f => f.FieldName()).ToArray();
             var indexName = ("UX_" + Utility.Identifier(tableName + "_" + SqlKeyName(pk))).Left(128);
-            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(tableName)} ({string.Join(",", pk.Select(cf.Enclose))});";
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(tableName)} ({string.Join(",", pk.Select(cf.Enclose))})";
+            if(c.Entity.IgnoreDuplicateKey && c.Connection.Provider == "sqlserver") {
+                sql += " WITH (IGNORE_DUP_KEY = ON)";
+            }
             c.Debug(() => sql);
             return sql;
         }

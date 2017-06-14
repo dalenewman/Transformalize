@@ -610,5 +610,8 @@ namespace Transformalize.Configuration {
 
         public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, PageSize));
         public Regex FieldMatcher { get; set; }
+
+        [Cfg(value = false)]
+        public bool IgnoreDuplicateKey { get; set; }
     }
 }

@@ -209,22 +209,23 @@ are many built in transformations to select from (to be covered later).
 
 ### Denormalization
 
-The above only works with one entity, and it is extremely rare in 
-real life that you will find all the data you need in one place.  So, 
-we have to de-normalize the data.  In order to do this, a relational 
-output is required.  So, add this to the connections:
+The above works with one entity.  However, it is rare that you will 
+find all the data you need in one entity.  So, we have 
+join (de-normalize) multiple entities together.  In order to do this, 
+`tfl` nees a relational output.  So, let's add this to the 
+`<connections/>` section:
 
 ```xml
 <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
 ```
 
-Now we are ready to read *Order Details* from one database and 
-write them to another.  Whenever you do this for the first time, 
-or if you want to over-write an output, run `tfl` 
+This is a SQLite output.  Now we are ready to read *Order Details* 
+from a SQL Server database, and write them to a SQLite database.  
+Whenever you do this for the first time, you must run `tfl` 
 in `init` mode:
 
 <pre>
-<strong>> tfl -a NorthWind.xml -m init</strong>
+> tfl -a NorthWind.xml <strong>-m init</strong>
 2017-06-12 17:27:19 | info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1044231.
 2016-12-12 15:59:46 | warn  | NorthWind | Order Details | Initializing
 2016-12-12 15:59:46 | info  | NorthWind | Order Details | Starting
@@ -233,7 +234,7 @@ in `init` mode:
 2016-12-12 15:59:47 | info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Init mode prepares the output, and bulk inserts the data into it.  Now, 
+Init mode prepares the output, and bulk inserts data into it.  Now, 
 run `tfl` without specifying a mode:
 
 <pre>
