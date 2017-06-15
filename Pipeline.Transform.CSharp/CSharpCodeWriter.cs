@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -82,7 +83,16 @@ namespace Transformalize.Transform.CSharp {
         private static void WriteMethods(Process process, Entity entity, Field field, StringBuilder sb, IPipelineLogger logger) {
             foreach (var transform in field.Transforms.Where(t => t.Method == "cs" || t.Method == "csharp")) {
                 var tc = new PipelineContext(logger, process, entity, field, transform);
-                var input = process.ParametersToFields(transform.Parameters, field);
+                var input = process.ParametersToFields(transform.Parameters, field).ToList();
+
+                var matches = entity.FieldMatcher.Matches(transform.Script);
+                foreach (Match match in matches) {
+                    Field newField;
+                    if (entity.TryGetField(match.Value, out newField) && input.All(f => f.Alias != newField.Alias)) {
+                        input.Add(newField);
+                    }
+                }
+
                 WriteMethod(tc, input, sb);
             }
         }

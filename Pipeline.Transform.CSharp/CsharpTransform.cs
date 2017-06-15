@@ -29,6 +29,7 @@ namespace Transformalize.Transform.CSharp {
             var name = Utility.GetMethodName(context);
 
             ConcurrentDictionary<string, CSharpHost.UserCodeInvoker> userCodes;
+
             if (CSharpHost.Cache.TryGetValue(context.Process.Name, out userCodes)) {
                 if (userCodes.TryGetValue(name, out _userCode))
                     return;
