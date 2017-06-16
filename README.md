@@ -2,8 +2,8 @@
 
 Transformalize is an [open source](https://github.com/dalenewman/Transformalize) 
 extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) tool. 
-It expedites mundane data processing tasks like cleaning, reporting, 
-and [denormalization](https://en.wikipedia.org/wiki/Denormalization).
+It expedites mundane data processing tasks like cleaning, reporting, [denormalization](https://en.wikipedia.org/wiki/Denormalization), 
+and incrementally updating your data.
 
 It works with many data sources:
 
@@ -89,14 +89,14 @@ It works with many data sources:
 Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
 with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface) or 
-in the included [Orchard CMS](http://www.orchardproject.net/) module.
+in an [Orchard CMS](http://www.orchardproject.net/) module.
 
 ---
 
 ### Transformalizing Northwind
 
 This document demonstrates the transformation (and denormalization) 
-of Northwind's relational tables into a star-schema or single flat table. 
+of Northwind's relational tables into a [star-schema](https://en.wikipedia.org/wiki/Star_schema) or single flat table. 
 The de-normalized output may be used:
 
 * As an OLAP cube data source
@@ -105,10 +105,12 @@ The de-normalized output may be used:
 
 If you want to follow along, you'll have to:
 
-* have something to edit XML with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
+* be familier with XML and have something to edit it with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
 * have a local instance of SQL Server
 * have something to browse a SQLite database file with (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
 * have the latest release of Tranformalize (on [GitHub](https://github.com/dalenewman/Transformalize/releases))
+  * add where you downloaded it to your [PATH](https://en.wikipedia.org/wiki/PATH_(variable))
+</pre>
 * download and install the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
 
 ### Getting Started
@@ -119,15 +121,15 @@ First, we should take a glance at the Northwind schema (partial).
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-It shows eight tables.  The most important [fact table](https://en.wikipedia.org/wiki/Fact_table) 
-is *Order Details*.  It is related to all of the 
-other entities and contains the money.
+The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) tables. The 
+most important [fact table](https://en.wikipedia.org/wiki/Fact_table) is 
+*Order Details*.  It is related to everything and stores the sales.
 
 ### Order Details
 
-So, let's start by writing an arrangment 
-(aka configuration) that defines the *input* as Northwind's `Order Details` 
-table:
+Let's start by writing an arrangment (aka configuration) that defines 
+the *input* as Northwind's `Order Details` table.  Open your editor and 
+paste this in:
 
 ```xml
 <cfg name="NorthWind">
@@ -140,10 +142,26 @@ table:
 </cfg>
 ```
 
-Within the main `<cfg/>` section, I've added `<connections/>` and 
-`<entities/>`.  By default, an entity assumes the **input** connection. 
-This is enough for **`tfl`** to read the `Order Details` from 
-the Northwind database:
+The root element is `<cfg/>` and it requires a `name`.  Within `<cfg/>`, 
+I've added `<connections/>` and `<entities/>` sections.
+
+#### Connections
+
+In my "input" connection, I set the `provider` to "sqlserver" and 
+the `database` to "NorthWind."  A `server` setting is unnecessary 
+because it defaults to "localhost."  Credentials (`user` and `password`) are also 
+unnecessary as I am relying on Windows' trusted security.
+
+#### Entities
+
+I set the entity's `name` to "Order Details" which matches the name of the fact table 
+I'm interested in.  By default, it's `connection` is "input."
+
+---
+
+Save your arrangement as *NorthWind.xml*.  It has enough information in it for 
+`tfl` to read the `Order Details` from the Northwind database.  Use the CLI 
+`tfl.exe` to run it like this:
 
 <pre>
 <strong>> tfl -a NorthWind.xml</strong>
@@ -157,8 +175,8 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 </pre>
 
 
-**Note**: `tfl` detected the schema automatically.  This is handy, but 
-if you ever want to apply transformations, or create a new field, 
+Transformalize detected the schema automatically.  This is handy, but 
+if you want to transform a field, or create a new field, 
 you must define the fields.  You could hand-write them, 
 or run `tfl` in `check` mode like this:
 
@@ -186,7 +204,7 @@ to your arrangement like this:
   </connections>
   <entities>
     <add name="Order Details">
-      <!-- fields are added here -->
+      <!-- add fields here -->
       <fields>
         <add name="OrderID" type="int" primary-key="true" />
         <add name="ProductID" type="int" primary-key="true" />
@@ -199,16 +217,18 @@ to your arrangement like this:
 </cfg>
 ```
 
-Now `tfl` doesn't have to detect the schema anymore, and you can create 
-another field based of the fields you've defined.  Let's add a calculated 
-field called "ExtendedPrice."  To do this, place a new `<calculated-fields/>` 
+Now you may create another field based of the fields you've defined.  Let's add 
+a calculated field called "ExtendedPrice."  To do this, place a new `<calculated-fields/>` 
 section just after the `<fields/>` section and define the field like so:
 
 ```xml
 <calculated-fields>
-  <add name="ExtendedPrice" type="decimal" scale="4" t="cs(UnitPrice*Quantity)" />
+  <add name="ExtendedPrice" type="decimal" scale="4" 
+       t="cs(UnitPrice*Quantity)" />
 </calculated-fields>
 ```
+
+**Note**: A `calculated-field` is the exact same as a field with it's `input` set to `false`.
 
 Now run `tfl`.  You should see the same data as before 
 plus your new field:
@@ -227,25 +247,25 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>ExtendedPrice</strong>
 "ExtendedPrice" was created by a C# transformation defined in 
 the **`t`** property which is short for *transformation*.  The C# transformation 
 is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
-built-in to `tfl`.
+injected in to `tfl`.
 
 ### Output
 
-Up until now, `tfl` has returned everything to the console.  This isn't 
-very useful unless you redirect it somewhere.  Let's send it to a SQLite 
+Because we have not defined an output, `tfl` has returned everything to the console.  
+This isn't useful unless you redirect it somewhere.  Let's send it to a SQLite 
 database instead.  To do this, we need to add an **output** connection:
 
 ```xml
 <connections>
     <add name="input" provider="sqlserver" database="NorthWind"/>
-    <!-- add it here in the connections -->
+    <!-- add it here -->
     <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
 </connections>
 ```
 
 ### Initialization
-Now that we intend to move *Order Details* into a persistent output, 
-we need to initialize the output.  So, run `tfl` in `init` mode:
+Now that *Order Details* goes into a persistent output, 
+we need to initialize it.  So, run `tfl` in `init` mode like this:
 
 <pre>
 > tfl -a NorthWind.xml <strong>-m init</strong>
@@ -257,20 +277,33 @@ info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Init mode creates the necessary structures for storage.  Then, 
-it bulk inserts the data.  It's important to note that this is 
-different from a general purpose ETL solution where you could 
-*map* your input to a pre-existing output.  `tfl` maintains 
-control of the output in order de-normalize it.
+Because the output is not console anymore, you'll see logging.  Initializing does three things:
 
-**Note**: Re-initializing with `tfl` will completely destroy 
-and rebuild the output.  This is done whenever you change 
-the arrangement.
+1. destroys any pre-existing output structures
+2. creates output structures
+3. bulk inserts data.
+
+Re-initializing **wipes out everything and rebuilds it from 
+scratch**.  This is done whenever you change an arrangement.  It is best to think 
+of your transformalized output as disposable.
+
+You may have noticed that Transformalize doesn't let you *map* 
+your input to a pre-existing output structure.  Instead, it maintains 
+control over the output structure.  It does this because it's main 
+purpose is to de-normalize multiple inputs into a single output, and perform 
+incremental transformed updates on that output.
+
+Here's the control you do get over your output:
+
+* order of the fields
+* re-naming fields with an `alias`
+* choice to **not** output a field by setting `output` to `false`
+
 
 ### Incrementals
 
-By default; when using persistent outputs, running `tfl` without 
-a mode performs an incremental update:
+When using persistent outputs, running `tfl` without a mode performs an 
+incremental update on the output:
 
 <pre>
 <strong>> tfl -a NorthWind.xml</strong>
@@ -282,15 +315,14 @@ info  | NorthWind |               | Time elapsed: 00:00:00.5755261
 
 To determine if an update is necessary, `tfl` reads *all* the input 
 and compares it with the output.  If the row is new or different, it will 
-be inserted or updated.  This is inefficient when your input 
-provider has the ability to keep track of and return only the 
-new or updated records.
+be inserted or updated.  While Transformalize does use keys and hashes 
+to perform the comparison, it is an unnecessary overhead when your input 
+provider has the capability to keep track of and return only new or updated records.
 
-A better approach is to only read new or updated records.  This 
-is possible if each row stores a value that increments 
-every time an insert or update occurs.  Conveniently 
-enough, SQL Server offers a `ROWVERSION` type that 
-automatically does this.
+A provider can return new or updated records when it is queryable, and 
+each record stores a value that increments every time an insert or update occurs.  
+Conveniently enough, SQL Server offers a `ROWVERSION` type that that does 
+this automatically.  All you have to do is add one to your table.
 
 So, let's add a `RowVersion` column to `Order Details` like this:
 
@@ -298,12 +330,12 @@ So, let's add a `RowVersion` column to `Order Details` like this:
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
 ```
 
-Now you have to let `tfl` know about it. Add the new `RowVersion` 
-field to *Order Details* and mark it as the `version` field:
+Now let `tfl` know about it by adding the new `RowVersion` 
+field to *Order Details* and marking it as the `version` in the entity:
 
 ```xml
 <entities>
-                            <!----- here ------>
+                            <!-- mark it here -->
   <add name="Order Details" version="RowVersion" >
     <fields>
       <add name="OrderID" type="int" primary-key="true" />
@@ -312,15 +344,15 @@ field to *Order Details* and mark it as the `version` field:
       <add name="Quantity" type="short" />
       <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
 
-      <!---------- and define the field here ---------->
+      <!-- define it here -->
       <add name="RowVersion" type="byte[]" length="8" />
     </fields>
   </add>
 </entities> 
 ```
 
-When adding a field to an entity, the output 
-must be re-initialized.  So, please re-initialize:
+When adding a field to an entity, the output must be re-initialized. So, let's run 
+`tfl` in `init` mode once again:
 
 <pre>
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -333,7 +365,7 @@ info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind |               | Time elapsed: 00:00:00.8981349
 </pre>
 
-Now, to test how many rows are read, run `tfl` in default mode:
+Now, to test how many rows are read for an incremental, run `tfl` again:
 
 <pre>
 <strong>>tfl -a NorthWind.xml</strong>
@@ -344,42 +376,43 @@ info  | NorthWind |               | Time elapsed: 00:00:00.3498366
 </pre>
 
 With a `version` field in place, the normal run 
-doesn't say *"2155 from input"* anymore, instead it says 
-*"Change Detected: No"*.  Transformalize didn't have 
-to read and compare *any* records.  Now our incremental 
-is faster, and more efficient.
+doesn't say *"2155 from input"* anymore.  Instead, it says 
+*"Change Detected: No"*.  Transformalize used the `version` field 
+to avoid reading records that didn't change.  Therefore, our incremental 
+is faster, and more efficient!
 
 ### Denormalization
 
-So far, we've worked with a single entity.  Singles are easy.  However, 
-it is rare that you will find all the data you need in one place.  More 
-often than not, the data you seek is spread out everywhere. 
-It needs to be joined with other data before it makes sense. 
-Even in Northwind, the data is stored in many different tables. 
-It's normalized; which means it is optimized for storage, not retreival. 
+So far, we've worked with a single entity.  This is easy, but you 
+should know that it is rare to find all the data you need 
+in one place.  More likely, the data you seek is spread around.
 
-They say that building a data warehouse is 80-90% ETL.  This means that 
-most of the work goes into collecting, cleaning, combining, transforming, 
-and finally loading the data into the actual data warehouse.
+Even in Northwind (a single database), the data is stored in many different tables. 
+It's normalized; which means optimized for storage and integrity, 
+rather than retreival.
 
-Transformalize tackles this 80-90%.  It helps us transform 
-and de-normalize the data incrementally, so that it's optimized 
-for retreival.
+Look at the output from "Order Details" (above).  You can't gain insight from 
+it because it's all keys and numbers.  Knowing keys allows us to look up more 
+descriptive information about the entity it refers to.  We need the *Products*
+and *Orders* descriptive information at the same level 
+as *Order Details* (price, quantity, etc).
 
 ### Orders
 
-Review the NorthWind diagram. The next closest tables to 
-*Order Details* are *Orders* and *Products*. Let's do *Orders* next.  
+Refer back to the NorthWind diagram. The next closest tables to 
+*Order Details* are *Orders* and *Products*.  This makes sense 
+since we have *OrderID8 and *ProductID* in *Order Details." Let's add 
+*Orders* to our arrangement.  Here are the steps:
 
 * Alter the table to include the `RowVersion` column. 
 This enables efficient incrementals. 
 * Add an *Orders* entity just after *Order Details*'s closing `<add/>` 
 tag but still inside the `<entities/>` tag.
 * Run `tfl` in `check` mode to get the field definitions for *Orders*.  
-* Add the fields
-* Set the version attribute to *RowVersion*
+* Add the fields to your arrangement
+* Set the version attribute to *RowVersion* in the *Orders* entity
   
-Now your arrangement should have this entity:
+Now your arrangement should have the *Orders* entity like this:
 
 ```xml
 <add name="Orders" version="RowVersion">
@@ -403,38 +436,27 @@ Now your arrangement should have this entity:
 </add> 
 ```
 
-Since we added another entity, we have to re-initialize:
-
-<pre>
-<strong>tfl -a NorthWind.xml -m init</strong>
-error | Process |  You have 2 entities so you need 1 relationships. You have 0 relationships.
-error | Process |  The configuration errors must be fixed before this job will run.
-</pre>
-
-Bad news.  The configuration is invalid.  **`tfl`** reports 
-errors instead of running.
+Before we re-initialize, we need to tell Transformalize how to relate 
+*Order Details* to *Orders*.
 
 #### Relationships
 
-The error says we need a relationship between the entities to continue. In 
-fact, every time you add an entity after the first one, it  
-must be related to the first entity via relationships. 
-It may be related directly, or through another entity, but it must be 
-related in order for `tfl` to de-normalize.
+After the first entity, any other entity you add must be related to 
+the first entity via relationships.  It may be related directly, or 
+through another entity, but it must be related in order for `tfl` to de-normalize.
 
-In this case, we need to say how the records from *Order Details* 
-and *Orders* relate.  What field in *Order Details* is used 
-to lookup more information about *Orders*?  Well, it's the 
-`OrderID` field.  Here's how it looks in your arrangement:
+Using the diagram as a reference, we need to add our first 
+entity relationship like this:
 
 ```xml
   <relationships>
-    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
+    <add left-entity="Order Details" left-field="OrderID" 
+         right-entity="Orders" right-field="OrderID"/>
   </relationships>
 ```
 
-The `<relationships/>` section should be added just after your `<entities/>`.  Since 
-we changed our arrangement, we have to re-initialize and run.
+The `<relationships/>` section is added just after your `<entities/>`.  Now 
+we can go ahead and re-initialize and run Transformalize:
 
 <pre>
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -460,44 +482,103 @@ info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.3670649
 </pre>
 
-Notice the logging indicates 830 records were processed from the `Orders` table.  
-In addition to copying the data from `Order Details` and `Orders` to 
-the output, `tfl` created a view called `NorthWindStar`.  Take a 
-look to make sure it's working:
+The logging indicates records were processed from *Order Details* and *Orders*.  
+In addition, a view called `NorthWindStar` was created.  *NorthWindStar* is a view that 
+pulls together Transformalize's star-schema output so that it appears to be a single entity.
+
+Using a SQLite program, query *NorthWindStar* to make sure Transformalize is working:
 
 ```sql
 SELECT
-	Discount AS Disc,
-	OrderID,
-	ProductID AS PId,
-	Quantity AS Qty,
-	UnitPrice,
-	CustomerID AS CustId,
-	EmployeeID AS EId,
-	Freight,
-	OrderDate,
-	RequiredDate,
-	ShipAddress,
-	ShipCity,
-	ShippedDate,
-	ShipPostalCode,
-	ShipRegion,
-	ShipVia AS SId
+    ProductID,
+    Discount,
+    Quantity,
+    UnitPrice,
+    CustomerID,
+    EmployeeID,
+    Freight,
+    OrderDate,
+    RequiredDate,
+    ShipAddress,
+    ShipCity,
+    ShippedDate,
+    ShipPostalCode,
+    ShipRegion,
+    ShipVia
 FROM NorthWindStar
 LIMIT 10;
 ```
 
 <pre>
-<strong>Disc OrderID PId Qty UnitPrice  CustId EId Freight  OrderDate  RequiredDate ShipAddress            ShipCity        ShippedDate ShipPostalCode ShipRegion Sid
----- ------- --- --- ---------  ------ --- -------- ---------- ------------ ---------------------- --------------- ----------- -------------- ---------- ---</strong>
-0.2  10248   11  12  14.0000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
-0    10248   42  10  9.8000     VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
-0    10248   72  5   34.8000    VINET  5   32.3800  1996-07-04 1996-08-01   59 rue de l&#39;Abbaye     Reims           1996-07-16  51100                     3
-0    10249   14  9   18.6000    TOMSP  6   11.6100  1996-07-05 1996-08-16   Luisenstr. 48          M&uuml;nster         1996-07-10  44087                     1
-0    10249   51  40  42.4000    TOMSP  6   11.6100  1996-07-05 1996-08-16   Luisenstr. 48          M&uuml;nster         1996-07-10  44087                     1
-0    10250   41  10  7.7000     HANAR  4   65.8300  1996-07-08 1996-08-05   Rua do Pa&ccedil;o, 67        Rio de Janeiro  1996-07-12  05454-876      RJ         2
-0.15 10250   51  35  42.4000    HANAR  4   65.8300  1996-07-08 1996-08-05   Rua do Pa&ccedil;o, 67        Rio de Janeiro  1996-07-12  05454-876      RJ         2
-0.15 10250   65  15  16.8000    HANAR  4   65.8300  1996-07-08 1996-08-05   Rua do Pa&ccedil;o, 67        Rio de Janeiro  1996-07-12  05454-876      RJ         2
-0.05 10251   22  6   16.8000    VICTE  3   41.3400  1996-07-08 1996-08-05   2, rue du Commerce     Lyon            1996-07-15  69004                     1
-0.05 10251   57  15  15.6000    VICTE  3   41.3400  1996-07-08 1996-08-05   2, rue du Commerce     Lyon            1996-07-15  69004                     1
+<strong>ProductId   Discount    Quantity    UnitPrice   CustomerID  EmployeeID  Freight OrderDate   RequiredDate    ShipAddress ...</strong>
+<strong>---------   --------    --------    ---------   ----------  ----------  ------- ---------   ------------    -----------</strong>
+11	    0.0	        12	    14	        VINET       5           32.38   1996-07-04  1996-08-01      59 rue de l'Abbaye
+42	    0.0	        10	    9.8	        VINET       5           32.38   1996-07-04  1996-08-01      59 rue de l'Abbaye
+72	    0.0	        5	    34.8        VINET       5           32.38   1996-07-04  1996-08-01      59 rue de l'Abbaye
+14	    0.0	        9	    18.6        TOMSP       6           11.61	1996-07-05  1996-08-16      Luisenstr. 48
+51	    0.0	        40	    42.4        TOMSP       6           11.61	1996-07-05  1996-08-16      Luisenstr. 48
+41	    0.0	        10	    7.7         HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
+51	    0.15        35	    42.4        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
+65	    0.15        15	    16.8        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
+22	    0.05        6	    16.8        VICTE       3           41.34	1996-07-08  1996-08-05      2, rue du Commerce
+57	    0.05        15	    15.6        VICTE       3           41.34	1996-07-08  1996-08-05      2, rue du Commerce
 </pre>
+
+### Star Schema & Single "Flat" Entity
+
+In many cases, data retrieval across multiple entities is made more expensive 
+by the number and complexity of connections (aka "joins") between entities.
+
+Data retrieval from a star-schema performs better than a relational model because the entities 
+are no more than once removed from center of the star.  That is, the connections 
+are less complex. Check out the diagram below:
+
+![Relational to Star](Files/er-to-star.png)
+
+The left side is relational.  Note the red entities are two connections away from the center, and the 
+purple entity is three away.  These connections, sometimes called "joins," are more expensive 
+the farther they are removed from the center.
+
+The right side is a star-schema.  Every entity is connected to the center.  There is no more 
+than one "join" between the center and an entity.  The cost of retrieval is less expensive.
+
+If you want to de-normalize even further, you have the option to `flatten` the output. 
+This is done in the main `<cfg/>` element like this:
+
+```xml
+<cfg name="NorthWind" flatten="true">
+    <!-- commented out for brevity -->
+</cfg>
+```
+
+After setting `flatten` to true, re-initialize.  An additional log entry is displayed stating: 
+"*2155 records inserted into flat*."  Flattening creates a single output structure named 
+*NorthWindFlat*.  You may query it just as you query *NorthWindStar*.
+
+Flattening demands more overhead to create than a star-schema, but the output is more optimized 
+for retrieval.  This is true because a flat table query has no joins, whereas a star-schema has 
+one per relation.
+
+### More Relationships
+
+When we queried *NorthWindStar* above, you may have noticed that more key fields came in with 
+the *Orders* fields.  The keys included *CustomerID*, *EmployeeID*, and *ShipVia*.  These relate to 
+the entities *Customers*, *Employees*, and *Shippers* in the Northwind database.
+
+To incorporate all the entities from NorthWind database I diagramed above, we need to follow the 
+same process outlined for adding *Orders* to *Products*, *Customers*, *Employees*, *Shippers*, *Suppliers*, and *Categories*.
+
+In the end, our relationships should look like this:
+
+```xml
+<relationships>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+    <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+    <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+    <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+    <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
+    <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+    <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+</relationships>
+```
+
