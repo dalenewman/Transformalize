@@ -1,8 +1,7 @@
 # Transformalize
 
-Transformalize is an [open source](https://github.com/dalenewman/Transformalize) 
-extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) tool. 
-It expedites mundane data processing tasks like cleaning, reporting, [denormalization](https://en.wikipedia.org/wiki/Denormalization), 
+Transformalize is an open source extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
+tool. It expedites mundane data processing tasks like cleaning, reporting, [denormalization](https://en.wikipedia.org/wiki/Denormalization), 
 and incrementally updating your data.
 
 It works with many data sources:
@@ -110,7 +109,6 @@ If you want to follow along, you'll have to:
 * have something to browse a SQLite database file with (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
 * have the latest release of Tranformalize (on [GitHub](https://github.com/dalenewman/Transformalize/releases))
   * add where you downloaded it to your [PATH](https://en.wikipedia.org/wiki/PATH_(variable))
-</pre>
 * download and install the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
 
 ### Getting Started
@@ -121,8 +119,8 @@ First, we should take a glance at the Northwind schema (partial).
 
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) tables. The 
-most important [fact table](https://en.wikipedia.org/wiki/Fact_table) is 
+The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+tables. The most important [fact table](https://en.wikipedia.org/wiki/Fact_table) is 
 *Order Details*.  It is related to everything and stores the sales.
 
 ### Order Details
@@ -134,7 +132,10 @@ paste this in:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlserver" database="NorthWind" />
+    <add name="input" 
+         provider="sqlserver"
+         server="localhost"
+         database="NorthWind" />
   </connections>
   <entities>
     <add name="Order Details" />
@@ -145,23 +146,14 @@ paste this in:
 The root element is `<cfg/>` and it requires a `name`.  Within `<cfg/>`, 
 I've added `<connections/>` and `<entities/>` sections.
 
-#### Connections
+#### Connections & Entities
 
-In my "input" connection, I set the `provider` to "sqlserver" and 
-the `database` to "NorthWind."  A `server` setting is unnecessary 
-because it defaults to "localhost."  Credentials (`user` and `password`) are also 
-unnecessary as I am relying on Windows' trusted security.
+The arrangement defines an **`input`** connection to the *NorthWind* database. Since it 
+is relying on Windows' trusted security, credentials are unnecessary.  The entity's **`name`** 
+is *Order Details* which matches the name of the table.
 
-#### Entities
-
-I set the entity's `name` to "Order Details" which matches the name of the fact table 
-I'm interested in.  By default, it's `connection` is "input."
-
----
-
-Save your arrangement as *NorthWind.xml*.  It has enough information in it for 
-`tfl` to read the `Order Details` from the Northwind database.  Use the CLI 
-`tfl.exe` to run it like this:
+This is enough to get started.  Save this arrangement as *NorthWind.xml* and use 
+the *`tfl.exe`* CLI to run it:
 
 <pre>
 <strong>> tfl -a NorthWind.xml</strong>
@@ -175,8 +167,8 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 </pre>
 
 
-Transformalize detected the schema automatically.  This is handy, but 
-if you want to transform a field, or create a new field, 
+Transformalize detected the *Order Details* schema automatically.  This is handy, 
+but if you want to transform an existing or create a new field, 
 you must define the fields.  You could hand-write them, 
 or run `tfl` in `check` mode like this:
 
@@ -194,8 +186,7 @@ or run `tfl` in `check` mode like this:
 </code></pre>
 
 Instead of getting order details (the records), `check` mode 
-returned the detected schema.  You'll need to add the fields 
-to your arrangement like this:
+returns the detected schema.  Copy the fields into the arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -204,7 +195,7 @@ to your arrangement like this:
   </connections>
   <entities>
     <add name="Order Details">
-      <!-- add fields here -->
+      <!-- copy/paste the fields here -->
       <fields>
         <add name="OrderID" type="int" primary-key="true" />
         <add name="ProductID" type="int" primary-key="true" />
@@ -217,30 +208,31 @@ to your arrangement like this:
 </cfg>
 ```
 
-Now you may create another field based of the fields you've defined.  Let's add 
-a calculated field called "ExtendedPrice."  To do this, place a new `<calculated-fields/>` 
-section just after the `<fields/>` section and define the field like so:
+Now you may create another field based of these fields.  Let's add 
+a calculated field called "ExtendedPrice."  Place a `<calculated-fields/>` 
+section just after the `<fields/>` section and define a field like so:
 
 ```xml
 <calculated-fields>
-  <add name="ExtendedPrice" type="decimal" scale="4" 
-       t="cs(UnitPrice*Quantity)" />
+  <add name="ExtendedPrice" 
+       type="decimal" 
+       scale="2" 
+       t="cs(Math.Round(UnitPrice*Quantity,2))" />
 </calculated-fields>
 ```
 
-**Note**: A `calculated-field` is the exact same as a field with it's `input` set to `false`.
+**Note**: A `calculated-field` is the same as a field with it's `input` set to `false`.
 
-Now run `tfl`.  You should see the same data as before 
-plus your new field:
+Now run `tfl`.  You should see the same data as before plus the extended price:
 
 <pre>
 <strong>> tfl -a NorthWind.xml</strong>
 OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>ExtendedPrice</strong>
-10248,11,14.0000,12,0,<strong>168.0000</strong>
-10248,42,9.8000,10,0,<strong>98.0000</strong>
-10248,72,34.8000,5,0,<strong>174.0000</strong>
-10249,14,18.6000,9,0,<strong>167.4000</strong>
-10249,51,42.4000,40,0,<strong>1696.0000</strong>
+10248,11,14.0000,12,0,<strong>168.00</strong>
+10248,42,9.8000,10,0,<strong>98.00</strong>
+10248,72,34.8000,5,0,<strong>174.00</strong>
+10249,14,18.6000,9,0,<strong>167.40</strong>
+10249,51,42.4000,40,0,<strong>1696.00</strong>
 ...
 </pre>
 
@@ -314,17 +306,15 @@ info  | NorthWind |               | Time elapsed: 00:00:00.5755261
 </pre>
 
 To determine if an update is necessary, `tfl` reads *all* the input 
-and compares it with the output.  If the row is new or different, it will 
-be inserted or updated.  While Transformalize does use keys and hashes 
-to perform the comparison, it is an unnecessary overhead when your input 
-provider has the capability to keep track of and return only new or updated records.
+and compares it with the output.  If a row is new or different, it is inserted 
+or updated.  While Transformalize uses keys and hashes 
+to perform a comparison, it is an unnecessary overhead when the input 
+provider is capable of tracking and returning only new or updated records.
 
 A provider can return new or updated records when it is queryable, and 
-each record stores a value that increments every time an insert or update occurs.  
-Conveniently enough, SQL Server offers a `ROWVERSION` type that that does 
-this automatically.  All you have to do is add one to your table.
-
-So, let's add a `RowVersion` column to `Order Details` like this:
+each record stores a version that increments on an insert or an update.  
+SQL Server includes a `ROWVERSION` type that provides a version automatically. So, 
+let's add a `RowVersion` column to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -378,36 +368,29 @@ info  | NorthWind |               | Time elapsed: 00:00:00.3498366
 With a `version` field in place, the normal run 
 doesn't say *"2155 from input"* anymore.  Instead, it says 
 *"Change Detected: No"*.  Transformalize used the `version` field 
-to avoid reading records that didn't change.  Therefore, our incremental 
-is faster, and more efficient!
+to avoid reading and comparing records that didn't change. 
+This makes the incremental faster and more efficient!
 
 ### Denormalization
 
-So far, we've worked with a single entity.  This is easy, but you 
-should know that it is rare to find all the data you need 
-in one place.  More likely, the data you seek is spread around.
+You can't gain insight from the output of *Order Details* because 
+it's all numeric. Some numbers are keys (aka [foreign keys](https://en.wikipedia.org/wiki/Foreign_key)) 
+(e.g. ProductID, OrderID). These refer to more descriptive information about other entities. 
+Others are [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) used 
+in calculations (i.e. quantity, unit price).
 
-Even in Northwind (a single database), the data is stored in many different tables. 
-It's normalized; which means optimized for storage and integrity, 
-rather than retreival.
-
-Look at the output from "Order Details" (above).  You can't gain insight from 
-it because it's all keys and numbers.  Knowing keys allows us to look up more 
-descriptive information about the entity it refers to.  We need the *Products*
-and *Orders* descriptive information at the same level 
-as *Order Details* (price, quantity, etc).
+The data in NorthWind is stored in many different tables. 
+It's normalized; optimized for storage and integrity, rather than 
+retrieval.  To denormalize *Order Details*, we need to use the keys to bring 
+the description information from *Products* and *Orders* along side 
+the numeric information in *Order Details*.
 
 ### Orders
 
-Refer back to the NorthWind diagram. The next closest tables to 
-*Order Details* are *Orders* and *Products*.  This makes sense 
-since we have *OrderID8 and *ProductID* in *Order Details." Let's add 
-*Orders* to our arrangement.  Here are the steps:
+Let's add *Orders* to our arrangement.  Here are the steps to another entity:
 
-* Alter the table to include the `RowVersion` column. 
-This enables efficient incrementals. 
-* Add an *Orders* entity just after *Order Details*'s closing `<add/>` 
-tag but still inside the `<entities/>` tag.
+* Alter the table to include the `RowVersion` column. This enables efficient incrementals. 
+* Add an *Orders* entity just after *Order Details*'s closing `<add/>` tag but still inside the `<entities/>` tag.
 * Run `tfl` in `check` mode to get the field definitions for *Orders*.  
 * Add the fields to your arrangement
 * Set the version attribute to *RowVersion* in the *Orders* entity

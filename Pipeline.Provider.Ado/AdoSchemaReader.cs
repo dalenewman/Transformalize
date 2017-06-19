@@ -62,7 +62,7 @@ namespace Transformalize.Provider.Ado {
                     var column = row["ColumnName"].ToString();
                     var ordinal = Convert.ToInt16(row["ColumnOrdinal"]);
                     var isHidden = row["IsHidden"] != DBNull.Value && Convert.ToBoolean(row["IsHidden"]);
-                    var dataType = row["DataType"] == DBNull.Value ? "string" : ((Type)row["DataType"]).Name.ToLower();
+                    var dataType = Utility.ToPreferredTypeName(row["DataType"] == DBNull.Value ? "string" : ((Type)row["DataType"]).Name.ToLower());
                     var isKey = row["IsKey"] != DBNull.Value && Convert.ToBoolean(row["IsKey"]);
 
                     var field = fields.FirstOrDefault(f => f.Name.Equals(column, StringComparison.OrdinalIgnoreCase));

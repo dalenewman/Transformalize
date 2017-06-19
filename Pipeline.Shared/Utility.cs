@@ -64,6 +64,25 @@ namespace Transformalize {
                     .ToArray();
         }
 
+        public static string ToPreferredTypeName(string t) {
+            var l = t.ToLower();
+            switch (l) {
+                case "int16":
+                    return "short";
+                case "int32":
+                    return "int";
+                case "int64":
+                    return "long";
+                case "real":
+                case "float":
+                    return "single";
+                case "boolean":
+                    return "bool";
+                default:
+                    return l;
+            }
+        }
+
         private static readonly Dictionary<string, Func<object, object, bool>> CompareMap = new Dictionary<string, Func<object, object, bool>>() {
             {"=", ((x, y) => x.Equals(y))},
             {"==", ((x, y) => x.Equals(y))},
