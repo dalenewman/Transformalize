@@ -550,6 +550,15 @@ namespace Transformalize.Configuration {
             calc.Entities.Add(entity);
             calc.ModifyKeys();
             calc.ModifyIndexes();
+
+            // create entity field's matcher
+            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).Select(f => f.Alias));
+#if NETS10
+            entity.FieldMatcher = new Regex(pattern);
+#else
+            entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
+#endif
+
             return calc;
         }
 
