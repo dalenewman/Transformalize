@@ -138,8 +138,8 @@ paste this in:
 ```
 
 The root element is `<cfg/>` and it requires a `name`.  Within `<cfg/>`, 
-I've added `<connections/>` and `<entities/>` sections.  Save the arrangement as *NorthWind.xml* and use the *`tfl.exe`* CLI to 
-run it:
+I've added `<connections/>` and `<entities/>` sections.  Save the arrangement as 
+*NorthWind.xml* and use the **`tfl.exe`** CLI to run it:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -153,10 +153,9 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 </pre>
 
 
-Transformalize detected the *Order Details* schema automatically and read it from the input and output it to the console.  This is handy, 
-but if you want to transform an existing or create a new field, 
-you must define the fields.  You could hand-write them, 
-or run `tfl` in `check` mode like this:
+Transformalize detected the *Order Details* schema automatically and read the data.  This is handy, 
+but if you want to transform existing or create new fields, you must define the fields.  You could 
+hand-write them, or run `tfl` in `check` mode like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -194,7 +193,7 @@ returns the detected schema.  Copy the fields into the arrangement like this:
 </cfg>
 ```
 
-Now you may create a *calculated field* based of these fields.  Place a `<calculated-fields/>` section just after the `<fields/>` section and 
+Now you may create a *calculated field* based off these fields.  Place a `<calculated-fields/>` section just after the `<fields/>` section and 
 define an *ExtendedPrice* field like so:
 
 ```xml
@@ -225,7 +224,9 @@ injected into `tfl`.
 
 ### Output
 
-Without an explicit output, `tfl` returns everything to the console.  Let's send it to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. To do this, we need to add an **output** connection to `<connections/>`:
+Without an explicit output, `tfl` writes to the console.  Let's send it 
+to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. To do this, we need to 
+add an **output** in `<connections/>`:
 
 ```xml
 <connections>
@@ -237,40 +238,42 @@ Without an explicit output, `tfl` returns everything to the console.  Let's send
 
 ### Initialization
 Now that *Order Details* goes into a persistent output, 
-we need to initialize it.  To do this, run `tfl` in `init` mode 
+we need to initialize it.  To do this, run **`tfl`** in `init` mode 
 using the **`-m`** flag like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m init</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1044231.
-<strong>warn  | NorthWind | Order Details | Initializing</strong>
+<strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
 info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Instead of data, you'll see logging. Initializing does three things:
+Now the *Order Details* are written to the SQLite database instead of the console.  The console 
+displays logging. Initializing does three things:
 
 1. destroys any pre-existing output structures
 2. creates output structures
 3. bulk inserts data.
 
-Re-initializing **wipes out everything and rebuilds it from 
-scratch**.  This is needed whenever you change an arrangement. 
+Re-initializing <span style="color:red;">**wipes out everything and rebuilds it from 
+scratch**</span>.  This is required when the arrangement is changed. 
 For this reason, it is best to think of your transformalized output as disposable.
 
 You may have noticed that Transformalize doesn't let you *map* 
 your input to pre-existing output.  Instead, it creates it's own 
-output structure.  Here's the control you do get over your output:
+output structure.  You get to decide:
 
-* order of the fields
-* re-naming fields with an `alias`
-* choice to **not** output a field by setting `output` to `false`
+* the order of the fields
+* the name of the fields (using `alias`)
+* whether or not to output a field (using `output`)
 
 ### Incrementals (by Default)
 
-An *Initialization* is a full rebuild; it loads all the input into the output. This can be time-consuming. Instead of rebuilding every time, ransformalize performs an incremental update on the output by default.
+An *initialization* is a full rebuild; it loads all the input into the output. This can be time-consuming when 
+run against a large database. Instead of rebuilding every time, Transformalize performs an incremental update on the output by default.
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -285,10 +288,9 @@ and compares it with the output.  If a row is new or different, it is inserted o
 to perform comparisons, it is an unnecessary overhead when the input 
 provider is capable of tracking and returning new data.
 
-A provider can return new or updated records when it is queryable, and 
-each record stores a version that increments on an insert or an update.  
-SQL Server includes a `ROWVERSION` type that provides a version automatically. So, let's add a `RowVersion` column 
-to `Order Details` like this:
+Providers are capable when they are queryable, and each record has a version that increments on 
+an insert or an update. SQL Server includes a `ROWVERSION` type that provides a version 
+automatically. So, let's add a `RowVersion` column to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -314,7 +316,7 @@ field to *Order Details* and marking it as the `version` in the entity:
   </add>
 </entities>
 ```
-When adding a field to an entity (we added RowVersion), the output must be re-initialized. So, let's run `tfl` in `init` mode once again:
+When adding a field to an entity (we added *RowVersion*), the output must be re-initialized. So, let's run `tfl` in `init` mode once again:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -327,7 +329,7 @@ info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind |               | Time elapsed: 00:00:00.8981349
 </pre>
 
-The logs include a not regarding change detection.  To test how many 
+The logs include an entry regarding change detection.  To test how many 
 rows an incremental reads, run `tfl` again:
 
 <pre style="font-size:smaller;">
@@ -357,12 +359,13 @@ tables at run-time.  This makes retrieval faster.
 
 The output of *Order Details* (above) is numeric. Some numbers 
 are keys (aka [foreign keys](https://en.wikipedia.org/wiki/Foreign_key)) 
-(e.g. `ProductID`, `OrderID`). These refer to more descriptive information in related entities. Others are [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) used 
-in calculations (i.e. quantity, unit price).
+(e.g. `ProductID`, `OrderID`). These refer to more descriptive information in related entities. 
+Others are [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) used in calculations 
+(i.e. `Quantity`, `UnitPrice`).
 
-To denormalize *Order Details*, we need to use the keys to bring 
-the description information from *Products* and *Orders* along side 
-the numbers in *Order Details*.
+To denormalize *Order Details*, we need to use `OrderID` and `ProductID` to bring 
+information from *Orders* and *Products* along side the numbers.  This means we have 
+to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
 
@@ -399,12 +402,12 @@ the arrangement should have a new entity like this:
   </fields>
 </add>
 ```
-Now we need to tell Transformalize how to relate *Order Details* to *Orders*.
+Next, we need to tell Transformalize how to relate *Order Details* to *Orders*.
 
 #### Relationships
 
-All entities must be related to the first entity in a `<relationships/>` section which follows your `<entities/>`.  To relate *Orders* to *Order Details*, add this 
-to your arrangement:
+All entities must be related to the first entity in the `<relationships/>` section which 
+follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your arrangement:
 
 ```xml
   <relationships>
@@ -415,7 +418,8 @@ to your arrangement:
   </relationships>
 ```
 
-Now we can re-initialize and run Transformalize:
+This tells Transformalize to use `OrderID` to relate the two entities. Now re-initialize 
+and run Transformalize:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -441,7 +445,10 @@ info  | NorthWind | Orders        | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.3670649
 </pre>
 
-The logging indicates records were processed from *Order Details* and *Orders*. In addition, a view called `NorthWindStar` is created.  *NorthWindStar* pulls together Transformalize's [star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a single entity.
+Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
+a view called `NorthWindStar` is created.  *NorthWindStar* pulls together Transformalize's 
+[star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a 
+single entity.
 
 Using a SQLite program, query *NorthWindStar* to make sure Transformalize is working:
 
@@ -491,7 +498,8 @@ Check out the diagram below:
 ![Relational to Star](Files/er-to-star.png)
 
 Relational is on the left, and star-schema is on the right.  To create a star-schema, all of 
-the foreign keys are moved to the center (fact table).  This makes data retrieval faster.
+the foreign keys in the relational model are moved to the center (the fact table).  This makes 
+data retrieval faster.
 
 Additionally, Transformalize can move data from the star-schema to a completely denormalized (flat) output.  In a flattened output, all of the keys, *plus all of the descriptive information* is moved to one "flat" output.
 
