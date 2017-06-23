@@ -193,7 +193,7 @@ returns the detected schema.  Copy the fields into the arrangement like this:
 </cfg>
 ```
 
-Now you may create a *calculated field* based off these fields.  Place a `<calculated-fields/>` section just after the `<fields/>` section and 
+Now you may create a *calculated field* based off these fields. Place a `<calculated-fields/>` section just after the `<fields/>` section and 
 define an *ExtendedPrice* field like so:
 
 ```xml
@@ -541,7 +541,8 @@ In the end, our relationships should look like this:
 </relationships>
 ```
 
-If you're following along but and want to check your progress you can use this [arrangement](./Files/NorthWindEntitiesRelated.xml).
+If you're following along and want to check your progress 
+you can use this [arrangement](./Files/NorthWindEntitiesRelated.xml).
 
 Now when you initialize and run Transformalize, there's a lot going on:
 
@@ -612,6 +613,8 @@ info  | NorthWind | Categories    | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.7259168
 </pre>
 
+### Incrementals (Part 2)
+
 Let's simulate a data change:
 
 ```sql
@@ -652,11 +655,11 @@ info  | NorthWind |               | Time elapsed: 00:00:00.9643939
 Using the version, Transformalize picked up the one change in *Customers*.  Since this 
 customer has purchased 35 items (in *Order Details*), the flat table is updated as well.
 
-### Scheduling Incrementals
+#### Scheduling Incrementals
 
 Most likely, you'll want to schedule incremantals so that the de-normalized data is kept 
 up to date. Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. 
-Using the `-s` schedule flag, you may pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
+Using the **`-s`** schedule flag, pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
 like this:
 
 <pre style="font-size:smaller;">
@@ -670,6 +673,42 @@ info  | NorthWind | Orders        | Change Detected: No.
 ...
 </pre>
 
-This runs an incremental every five seconds until you press **`CTRL-C`**.  
-If you want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
+This runs an incremental every five seconds until you press **`CTRL-C`**.  If you 
+want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
+
+### Transformations to Make Life Easier
+
+De-normalizing your data is nice, but most often, you'll need to transform some of it too.  Transformalize 
+de-normalizes and transforms at the same time (thus, the name).
+
+Let's use some transformations to make time [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) fields. 
+Modify the *Orders* entity to include a `<calculated-fields/>` section like this:
+
+```xml
+<calculated-fields>
+  <add name="OrderYear" type="int" t="copy(OrderDate).datePart(year)" />
+  <add name="OrderMonthSortable" t="format({OrderDate:MM-MMM}).toUpper()" />
+  <add name="OrderDaySortable" t="format({OrderDate:yyyy-MM-dd})" />
+  <add name="OrderDayOfWeek" t="copy(OrderDate).datePart(dayOfWeek)" />
+</calculated-fields>			
+```
+
+After re-initializing, *NorthWindFlat* has some helpful time related fields that allow you 
+to run queries like:
+
+```sql
+SELECT OrderDayOfWeek, SUM(ExtendedPrice) AS [Sales]
+FROM NorthWindFlat
+GROUP BY OrderDayOfWeek
+```
+<pre>
+<strong>OrderDayOfWeek  Sales</strong>
+Friday          284393.64
+Monday          275256.9
+Thursday        256143.26
+Tuesday         272113.27
+Wednesday       266546.72
+</pre>
+
+Note that the query isn't dealing with joins or parsing dates.
 
