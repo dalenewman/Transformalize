@@ -528,13 +528,148 @@ In the end, our relationships should look like this:
 
 ```xml
 <relationships>
-    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
-    <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
-    <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
-    <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
-    <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
-    <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
-    <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+  <!-- following Orders to Customers, Employees, and Shippers -->
+  <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+  <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+  <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+  <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
+
+  <!-- following Products to Suppliers and Categories -->
+  <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+  <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+  <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
 </relationships>
 ```
+
+If you're following along but and want to check your progress you can use this [arrangement](./Files/NorthWindEntitiesRelated.xml).
+
+Now when you initialize and run Transformalize, there's a lot going on:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a "c:\Temp\NorthWind.xml" -m init</strong>
+info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1017755.
+<span style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing
+warn  | NorthWind | Orders        | Initializing
+warn  | NorthWind | Products      | Initializing
+warn  | NorthWind | Customers     | Initializing
+warn  | NorthWind | Employees     | Initializing
+warn  | NorthWind | Shippers      | Initializing
+warn  | NorthWind | Suppliers     | Initializing
+warn  | NorthWind | Categories    | Initializing</span>
+info  | NorthWind | Order Details | Starting
+info  | NorthWind | Order Details | Change Detected: Input: 0x73bb3 > Output: null
+info  | NorthWind | Order Details | 2155 from input
+info  | NorthWind | Order Details | 2155 inserts into output
+info  | NorthWind | Orders        | Starting
+info  | NorthWind | Orders        | Change Detected: Input: 0x73bb4 > Output: null
+info  | NorthWind | Orders        | 830 from input
+info  | NorthWind | Orders        | 830 inserts into output
+info  | NorthWind | Products      | Starting
+info  | NorthWind | Products      | Change Detected: Input: 0xc13 > Output: null
+info  | NorthWind | Products      | 77 from input
+info  | NorthWind | Products      | 77 inserts into output
+info  | NorthWind | Customers     | Starting
+info  | NorthWind | Customers     | Change Detected: Input: 0x73bb5 > Output: null
+info  | NorthWind | Customers     | 91 from input
+info  | NorthWind | Customers     | 91 inserts into output
+info  | NorthWind | Employees     | Starting
+info  | NorthWind | Employees     | Change Detected: Input: 0x801 > Output: null
+info  | NorthWind | Employees     | 9 from input
+info  | NorthWind | Employees     | 9 inserts into output
+info  | NorthWind | Shippers      | Starting
+info  | NorthWind | Shippers      | Change Detected: Input: 0x867 > Output: null
+info  | NorthWind | Shippers      | 3 from input
+info  | NorthWind | Shippers      | 3 inserts into output
+info  | NorthWind | Suppliers     | Starting
+info  | NorthWind | Suppliers     | Change Detected: Input: 0x884 > Output: null
+info  | NorthWind | Suppliers     | 29 from input
+info  | NorthWind | Suppliers     | 29 inserts into output
+info  | NorthWind | Categories    | Starting
+info  | NorthWind | Categories    | Change Detected: Input: 0x809 > Output: null
+info  | NorthWind | Categories    | 8 from input
+info  | NorthWind | Categories    | 8 inserts into output
+info  | NorthWind |               | 2155 records inserted into flat
+info  | NorthWind |               | Time elapsed: 00:00:03.3745704
+
+<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
+info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1055892.
+info  | NorthWind | Order Details | Starting
+info  | NorthWind | Order Details | Change Detected: No.
+info  | NorthWind | Orders        | Starting
+info  | NorthWind | Orders        | Change Detected: No.
+info  | NorthWind | Products      | Starting
+info  | NorthWind | Products      | Change Detected: No.
+info  | NorthWind | Customers     | Starting
+info  | NorthWind | Customers     | Change Detected: No.
+info  | NorthWind | Employees     | Starting
+info  | NorthWind | Employees     | Change Detected: No.
+info  | NorthWind | Shippers      | Starting
+info  | NorthWind | Shippers      | Change Detected: No.
+info  | NorthWind | Suppliers     | Starting
+info  | NorthWind | Suppliers     | Change Detected: No.
+info  | NorthWind | Categories    | Starting
+info  | NorthWind | Categories    | Change Detected: No.
+info  | NorthWind |               | Time elapsed: 00:00:00.7259168
+</pre>
+
+Let's simulate a data change:
+
+```sql
+USE [NorthWind];
+
+UPDATE Customers
+SET CompanyName = 'Bottom Dollar Markets'
+WHERE CustomerID = 'BOTTM';
+```
+Now run Transformalize again:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
+info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1242668.
+info  | NorthWind | Order Details | Starting
+info  | NorthWind | Order Details | Change Detected: No.
+info  | NorthWind | Orders        | Starting
+info  | NorthWind | Orders        | Change Detected: No.
+info  | NorthWind | Products      | Starting
+info  | NorthWind | Products      | Change Detected: No.
+info  | NorthWind | Customers     | Starting
+info  | NorthWind | Customers     | Change Detected: Input: 0x75ad2 > Output: 0x73bb5
+<strong>info  | NorthWind | Customers     | 1 from input
+info  | NorthWind | Customers     | 1 to output
+info  | NorthWind | Customers     | 1 updates to output</strong>
+info  | NorthWind | Employees     | Starting
+info  | NorthWind | Employees     | Change Detected: No.
+info  | NorthWind | Shippers      | Starting
+info  | NorthWind | Shippers      | Change Detected: No.
+info  | NorthWind | Suppliers     | Starting
+info  | NorthWind | Suppliers     | Change Detected: No.
+info  | NorthWind | Categories    | Starting
+info  | NorthWind | Categories    | Change Detected: No.
+<strong>info  | NorthWind |               | 35 records updated in flat</strong>
+info  | NorthWind |               | Time elapsed: 00:00:00.9643939
+</pre>
+
+Using the version, Transformalize picked up the one change in *Customers*.  Since this 
+customer has purchased 35 items (in *Order Details*), the flat table is updated as well.
+
+### Scheduling Incrementals
+
+Most likely, you'll want to schedule incremantals so that the de-normalized data is kept 
+up to date. Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. 
+Using the `-s` schedule flag, you may pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
+like this:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a "c:\Temp\NorthWind.xml" -s "0/5 * * * * ?"
+info  | Process   |                 Starting Scheduler: 0/5 * * * * ?</strong>
+info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1032057.
+info  | NorthWind | Order Details | Starting
+info  | NorthWind | Order Details | Change Detected: No.
+info  | NorthWind | Orders        | Starting
+info  | NorthWind | Orders        | Change Detected: No.
+...
+</pre>
+
+This runs an incremental every five seconds until you press **`CTRL-C`**.  
+If you want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
 
