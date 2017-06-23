@@ -481,9 +481,9 @@ LIMIT 10;
 72	    0.0	        5	    34.8        VINET       5           32.38   1996-07-04  1996-08-01      59 rue de l'Abbaye
 14	    0.0	        9	    18.6        TOMSP       6           11.61	1996-07-05  1996-08-16      Luisenstr. 48
 51	    0.0	        40	    42.4        TOMSP       6           11.61	1996-07-05  1996-08-16      Luisenstr. 48
-41	    0.0	        10	    7.7         HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Pa�o, 67
-51	    0.15        35	    42.4        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Pa�o, 67
-65	    0.15        15	    16.8        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Pa�o, 67
+41	    0.0	        10	    7.7         HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
+51	    0.15        35	    42.4        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
+65	    0.15        15	    16.8        HANAR       4           65.83	1996-07-08  1996-08-05      Rua do Paço, 67
 22	    0.05        6	    16.8        VICTE       3           41.34	1996-07-08  1996-08-05      2, rue du Commerce
 57	    0.05        15	    15.6        VICTE       3           41.34	1996-07-08  1996-08-05      2, rue du Commerce
 </pre>
@@ -497,11 +497,15 @@ Check out the diagram below:
 
 ![Relational to Star](Files/er-to-star.png)
 
-Relational is on the left, and star-schema is on the right.  To create a star-schema, all of 
-the foreign keys in the relational model are moved to the center (the fact table).  This makes 
-data retrieval faster.
+Relational is on the left, and star-schema is on the right.  To create a star-schema, all the 
+foreign keys in the relational model are moved to the center (the fact table).  Once this is 
+accomplished, fact table data retrieval is faster because every entity is directly related.
 
-Additionally, Transformalize can move data from the star-schema to a completely denormalized (flat) output.  In a flattened output, all of the keys, *plus all of the descriptive information* is moved to one "flat" output.
+Additionally, Transformalize can move data from the star-schema to a 
+completely denormalized (flat) output.  In a flattened output, all of the keys, 
+*plus all the descriptive information* is moved to one "flat" output.  In this case, 
+fact table data retrieval is the fastest because related data has already 
+been retrieved.
 
 To completely de-normalize, set `flatten` to `true` in the main `<cfg/>` like this:
 
@@ -511,14 +515,13 @@ To completely de-normalize, set `flatten` to `true` in the main `<cfg/>` like th
 </cfg>
 ```
 
-When you re-initialize, a single output structure named *NorthWindFlat* is created and populated.  You may query it just as you query *NorthWindStar*.
+When you re-initialize, a single output structure named *NorthWindFlat* is created and populated. 
+You may query it just as you queried *NorthWindStar*.
 
 ### More Relationships
 
-When we queried *NorthWindStar* above, you may have noticed that more key fields came in with 
-the *Orders* fields.  The keys included *CustomerID*, *EmployeeID*, and *ShipVia*.  These relate to the entities *Customers*, *Employees*, and *Shippers* in the Northwind database.
-
-To incorporate all the entities from NorthWind database (diagramed above), we need to follow the *Add an Entity* process for *Products*, *Customers*, *Employees*, *Shippers*, 
+To incorporate all the entities from NorthWind database (diagramed above), we need to follow 
+the *Add an Entity* process for *Products*, *Customers*, *Employees*, *Shippers*, 
 *Suppliers*, and *Categories*.
 
 In the end, our relationships should look like this:
