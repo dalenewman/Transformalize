@@ -782,7 +782,7 @@ A quick query in your browser can confirm the records loaded:
 Kibana let's you create interactive dashboards based on Elasticsearch indexes. Here's 
 a quick 30 second video:
 
-[![NorthWind in Kibana](./files/Northwind_in_KIbana5_4YouTube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
+[![NorthWind in Kibana](files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
 
 If you liked what you saw in the video, what are you waiting for?  Once 
 you "Transformalize" your relational data, it's easy to put it 
