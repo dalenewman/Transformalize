@@ -41,7 +41,7 @@ namespace Pipeline.Web.Orchard.Services {
 
             var part = _orchardServices.ContentManager.Get(batchCreate.Id).As<PipelineConfigurationPart>();
 
-            var creator = _processService.Resolve(part.EditorMode, part.EditorMode);
+            var creator = _processService.Resolve(part);
 
             creator.Load(part.Configuration, parameters);
 

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.13
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F97BFD9-DB95-483F-BF26-6ADA42D2D334}"
 	ProjectSection(SolutionItems) = preProject
@@ -67,6 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 		Files\edit-hello-world-in-orchard-cms.png = Files\edit-hello-world-in-orchard-cms.png
 		Files\er-to-star.png = Files\er-to-star.png
 		Files\more-babies.xml = Files\more-babies.xml
+		Files\NorthWindEntitiesRelated.xml = Files\NorthWindEntitiesRelated.xml
 		Files\notepadpp.png = Files\notepadpp.png
 		Files\npp-orderline-csv.jpg = Files\npp-orderline-csv.jpg
 		Files\old-testament.txt = Files\old-testament.txt

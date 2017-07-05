@@ -82,7 +82,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             if (part == null) {
                 Logger.Warning("Request from {0} for missing id {1}.", Request.UserHostAddress, id);
-                return Get404(action, _processService, format);
+                return Get404(action, format);
             }
 
             format = GetFormat(Request, part);
@@ -106,7 +106,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             if (authorized) {
 
-                var process = _processService.Resolve(part.EditorMode, format);
+                var process = _processService.Resolve(part, part.EditorMode, format);
                 var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
 
                 process.Load(part.Configuration, parameters);
@@ -158,13 +158,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     Logger.Error(ex, "Executing {0} threw error: {1}", id, ex.Message);
-                    return Get501(Request, _orchardServices, action, ex.Message, timer.ElapsedMilliseconds);
+                    return Get501(Request, _processService, action, ex.Message, timer.ElapsedMilliseconds);
                 }
 
             }
 
             Logger.Warning("Unathorized user {0} attempting access to {1}.", User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous@" + Request.UserHostAddress, id);
-            return Get401(format, _orchardServices, action);
+            return Get401(format, action);
 
         }
 
@@ -179,7 +179,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
             if (part == null) {
-                return Get404(action, _processService, "xml");
+                return Get404(action, "xml");
             }
 
             if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
@@ -187,22 +187,11 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
 
             if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                return Get401(action, _orchardServices, part.EditorMode);
+                return Get401(action, part.EditorMode);
             }
 
             return new ContentResult { Content = part.Configuration, ContentType = "text/" + part.EditorMode };
 
-            /* can't do this until i move the "adaptors" out of process validate or entity validate
-             var process = _processService.Resolve(part.EditorMode, format, pass:true);  // a pass does not process place-holders or short-hand
-             process.Load(part.Configuration);
-             process.Request = action;
-             process.Status = 200;
-             process.Time = timer.ElapsedMilliseconds;  // not including cost of serialize
-             process.Message = "Ok";
-             RemoveCredentials(process);
-             RemoveSystemFields(process);
-             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
-             */
         }
 
         public ContentResult Check(int id) {
@@ -218,20 +207,20 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             if (part == null) {
                 timer.Stop();
-                return Get404(action, _processService, format, timer.ElapsedMilliseconds);
+                return Get404(action, format, timer.ElapsedMilliseconds);
             }
 
             format = GetFormat(Request, part);
 
             if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                return Get401(action, _orchardServices, format);
+                return Get401(action, format);
             }
 
-            var process = _processService.Resolve(part.EditorMode, format);
+            var process = _processService.Resolve(part, part.EditorMode, format);
             var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
 
             if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
-                return GetStatus(404, "Process needs an input file.", action, _orchardServices, format);
+                return GetStatus(404, "need input file", action, format);
             }
 
             process.Load(part.Configuration, parameters);
@@ -281,7 +270,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         process.Load(process.Serialize(), parameters);
                     } else {
                         var cfg = process.Serialize();
-                        process = _processService.Resolve(format, format);
+                        process = _processService.Resolve(part, format, format);
                         process.Load(cfg);
                     }
                     return true;
@@ -306,31 +295,31 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
         }
 
-        private static ContentResult Get404(string action, IProcessService service, string format, long time = 5) {
-            var process = service.Resolve("xml", format);
-            process.Request = action;
-            process.Status = 404;
-            process.Message = "Configuration not found.";
-            process.Time = time;
-            return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+        private static ContentResult Get404(string action, string format, long time = 5) {
+            var message = format == "json" ?
+                $"{{ \"request\":\"{action}\", \"status\":404, \"message\":\"not found\", \"time\":{time} }}" :
+                $"<cfg request=\"{action}\" status=\"404\" message=\"not found\" time=\"{time}\" />";
+            return new ContentResult {
+                Content = message,
+                ContentType = "text/" + format
+            };
         }
 
-        private static ContentResult Get401(string action, IOrchardServices services, string format, long time = 5) {
-            var process = format == "json" ? (Process)services.WorkContext.Resolve<JsonProcess>() : services.WorkContext.Resolve<XmlProcess>();
-            process.Request = action;
-            process.Status = 401;
-            process.Message = "Unauthorized";
-            process.Time = time;
-            return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+        private static ContentResult Get401(string action, string format, long time = 5) {
+            var message = format == "json" ?
+                $"{{ \"request\":\"{action}\", \"status\":401, \"message\":\"not allowed\", \"time\":{time} }}" :
+                $"<cfg request=\"{action}\" status=\"401\" message=\"not allowed\" time=\"{time}\" />";
+            return new ContentResult {
+                Content = message,
+                ContentType = "text/" + format
+            };
         }
 
-        private static ContentResult GetStatus(int status, string message, string action, IOrchardServices services, string format, long time = 5) {
-            var process = format == "json" ? (Process)services.WorkContext.Resolve<JsonProcess>() : services.WorkContext.Resolve<XmlProcess>();
-            process.Request = action;
-            process.Status = Convert.ToInt16(status);
-            process.Message = message;
-            process.Time = time;
-            return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
+        private static ContentResult GetStatus(int status, string message, string action, string format, long time = 5) {
+            var msg = format == "json" ?
+                $"{{ \"request\":\"{action}\", \"status\":{status}, \"message\":\"{message}\", \"time\":{time} }}" :
+                $"<cfg request=\"{action}\" status=\"{status}\" message=\"{message}\" time=\"{time}\" />";
+            return new ContentResult { Content = msg, ContentType = "text/" + format };
         }
 
 
@@ -342,9 +331,9 @@ namespace Pipeline.Web.Orchard.Controllers {
             return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
         }
 
-        private static ContentResult Get501(HttpRequestBase request, IOrchardServices services, string action, string message, long time = 5) {
+        private static ContentResult Get501(HttpRequestBase request, IProcessService service, string action, string message, long time = 5) {
             var format = request.QueryString["format"] == "json" ? "json" : "xml";
-            var process = format == "json" ? (Process)services.WorkContext.Resolve<JsonProcess>() : services.WorkContext.Resolve<XmlProcess>();
+            var process = service.Resolve(new PipelineConfigurationPart(), format, format);
             process.Request = action;
             process.Status = 501;
             process.Message = message;

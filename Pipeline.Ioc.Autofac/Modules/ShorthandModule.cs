@@ -270,6 +270,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "replace", Signature = "replace" });
                     root.Methods.Add(new Method { Name = "right", Signature = "length" });
                     root.Methods.Add(new Method { Name = "round", Signature = "decimals" });
+                    root.Methods.Add(new Method { Name = "roundto", Signature = "value" });
+                    root.Methods.Add(new Method { Name = "roundupto", Signature = "value" });
+                    root.Methods.Add(new Method { Name = "rounddownto", Signature = "value" });
                     root.Methods.Add(new Method { Name = "splitlength", Signature = "separator" });
                     root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
                     root.Methods.Add(new Method { Name = "sum", Signature = "none" });

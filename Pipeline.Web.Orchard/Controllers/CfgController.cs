@@ -130,7 +130,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
-                    process = _processService.Resolve(part.EditorMode, part.EditorMode);
+                    process = _processService.Resolve(part);
 
                     var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
                     if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {

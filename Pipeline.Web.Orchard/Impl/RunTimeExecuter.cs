@@ -24,7 +24,6 @@ using Orchard.Templates.Services;
 using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Modules;
 
 namespace Pipeline.Web.Orchard.Impl {
@@ -34,11 +33,12 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly ITemplateProcessor _templateProcessor;
         private readonly INotifier _notifier;
 
-        public RunTimeExecuter(IContext context, 
+        public RunTimeExecuter(
+            IContext context, 
             IAppDataFolder appDataFolder,
             ITemplateProcessor templateProcessor,
             INotifier notifier
-            ) {
+        ) {
             _appDataFolder = appDataFolder;
             _templateProcessor = templateProcessor;
             _notifier = notifier;
@@ -105,21 +105,7 @@ namespace Pipeline.Web.Orchard.Impl {
         }
 
         public void Execute(string cfg, Dictionary<string, string> parameters) {
-            var container = new ContainerBuilder();
-
-            // Orchard CMS Stuff
-            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
-            container.RegisterInstance(_notifier).As<INotifier>();
-            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
-
-            container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
-
-            var format = parameters.ContainsKey("format") ? parameters["format"] : "xml";
-            using (var scope = container.Build().BeginLifetimeScope()) {
-                var process = format == "json" ? scope.Resolve<JsonProcess>() : scope.Resolve<XmlProcess>() as Process;
-                Execute(process);
-            }
+            throw new NotImplementedException();
         }
     }
 }

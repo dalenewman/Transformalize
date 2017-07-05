@@ -17,10 +17,6 @@
 
 using System.Web;
 using Autofac;
-using Cfg.Net.Environment;
-using Cfg.Net.Parsers;
-using Cfg.Net.Serializers;
-using Cfg.Net.Shorthand;
 using Orchard;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
@@ -29,11 +25,8 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Transform.Jint;
 using Pipeline.Web.Orchard.Impl;
-using Pipeline.Web.Orchard.Models;
 using Transformalize;
-using Transformalize.Transform.DateMath;
 using Module = Autofac.Module;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -46,50 +39,6 @@ namespace Pipeline.Web.Orchard.Modules {
         }
 
         protected override void Load(ContainerBuilder builder) {
-
-            // xml
-            builder.Register(c => new XmlProcess(
-                new DateMathModifier(),
-                new NanoXmlParser(),
-                new XmlSerializer(),
-                new JintValidator(),
-                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
-                new EnvironmentModifier()
-            )).As<XmlProcess>();
-
-            builder.Register(c => new XmlToJsonProcess(
-                new DateMathModifier(),
-                new NanoXmlParser(),
-                new JsonSerializer(),
-                new JintValidator(),
-                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
-                new EnvironmentModifier()
-            )).As<XmlToJsonProcess>();
-
-            builder.Register(c => new XmlProcessPass(new NanoXmlParser(), new XmlSerializer())).As<XmlProcessPass>();
-            builder.Register(c => new XmlToJsonProcessPass(new NanoXmlParser(), new JsonSerializer())).As<XmlToJsonProcessPass>();
-
-            // json
-            builder.Register(c => new JsonProcess(
-                new DateMathModifier(),
-                new FastJsonParser(),
-                new JsonSerializer(),
-                new JintValidator(),
-                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
-                new EnvironmentModifier()
-            )).As<JsonProcess>();
-
-            builder.Register(c => new JsonToXmlProcess(
-                new DateMathModifier(),
-                new FastJsonParser(),
-                new XmlSerializer(),
-                new JintValidator(),
-                c.ResolveNamed<Cfg.Net.Contracts.IDependency>("shorthand"),
-                new EnvironmentModifier()
-            )).As<JsonToXmlProcess>();
-
-            builder.Register(c => new JsonProcessPass(new FastJsonParser(), new JsonSerializer())).As<JsonProcessPass>();
-            builder.Register(c => new JsonToXmlProcessPass(new FastJsonParser(), new XmlSerializer())).As<JsonToXmlProcessPass>();
 
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" });

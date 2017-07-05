@@ -41,11 +41,13 @@ namespace Transformalize.Provider.Elastic {
 
         public void Write(IEnumerable<IRow> rows) {
             var builder = new StringBuilder();
-            var count = (uint)0;
+            var fullCount = 0;
+            var batchCount = (uint)0;
 
             foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
                 foreach (var row in part) {
-                    count++;
+                    batchCount++;
+                    fullCount++;
                     foreach (var field in _context.OutputFields) {
 
                         switch (field.Type) {
@@ -74,13 +76,17 @@ namespace Transformalize.Provider.Elastic {
                 var response = _client.Bulk<DynamicResponse>(builder.ToString(), nv => nv
                     .AddQueryString("refresh", @"true")
                 );
-                _context.Increment(@by: count);
-                if (!response.Success) {
+                _context.Increment(@by: batchCount);
+                if (response.Success) {
+                    _context.Debug(() => $"{batchCount} to output");
+                } else {
                     _context.Error(response.OriginalException.Message);
                 }
                 builder.Clear();
-                count = 0;
+                batchCount = 0;
             }
+
+            _context.Info($"{fullCount} to output");
         }
     }
 }

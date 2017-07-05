@@ -40,5 +40,10 @@ namespace Pipeline.Web.Orchard.Models {
 
         public virtual bool NeedsInputFile { get; set; }
 
+        [StringLength(128)]
+        public virtual string Modes { get; set; }
+
+        [StringLength(3)]
+        public virtual string PlaceHolderStyle { get; set; }
     }
 }

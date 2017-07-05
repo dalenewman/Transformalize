@@ -102,6 +102,9 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new ReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("replace");
             builder.Register((c, p) => new RightTransform(p.Positional<IContext>(0))).Named<ITransform>("right");
             builder.Register((c, p) => new RoundTransform(p.Positional<IContext>(0))).Named<ITransform>("round");
+            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0),RoundTo.Nearest)).Named<ITransform>("roundto");
+            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Up)).Named<ITransform>("roundupto");
+            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Down)).Named<ITransform>("rounddownto");
             builder.Register((c, p) => new SplitLengthTransform(p.Positional<IContext>(0))).Named<ITransform>("splitlength");
             builder.Register((c, p) => new SubStringTransform(p.Positional<IContext>(0))).Named<ITransform>("substring");
             builder.Register((c, p) => new TagTransform(p.Positional<IContext>(0))).Named<ITransform>("tag");

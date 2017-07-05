@@ -29,6 +29,11 @@ namespace Pipeline.Web.Orchard.Models {
                 new SelectListItem {Selected = false, Text = "XML", Value = "xml"}
         };
 
+        public static List<SelectListItem> PlaceHolderStyles = new List<SelectListItem> {
+            new SelectListItem {Selected = false, Text = "@(parameter)", Value = "@()"},
+            new SelectListItem {Selected = false, Text = "@{parameter}", Value = "@{}"}
+        };
+
         public string Configuration
         {
             get
@@ -91,14 +96,28 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.EditorMode, value, true); }
         }
 
+
+
         public bool Migrated
         {
             get { return this.Retrieve(x => x.Migrated, versioned: false, defaultValue: () => false); }
             set { this.Store(x => x.Migrated, value, versioned: false); }
         }
 
+        public string Modes
+        {
+            get { return this.Retrieve(x => x.Modes, versioned: false, defaultValue: () => "init,default*"); }
+            set { this.Store(x => x.Modes, value, versioned: false); }
+        }
+
+        public string PlaceHolderStyle
+        {
+            get { return this.Retrieve(x => x.PlaceHolderStyle, versioned: false, defaultValue: () => "@()"); }
+            set { this.Store(x => x.PlaceHolderStyle, value, versioned: false); }
+        }
+
         public bool IsValid() {
-            return true;
+            return PlaceHolderStyle.Length == 3;
         }
 
     }

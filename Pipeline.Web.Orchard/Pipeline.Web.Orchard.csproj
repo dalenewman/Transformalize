@@ -266,7 +266,6 @@
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
-    <Compile Include="Modules\ShorthandModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\BatchCreateService.cs" />
@@ -294,10 +293,8 @@
     <Compile Include="Models\Editor.cs" />
     <Compile Include="Models\PipelineFilePart.cs" />
     <Compile Include="Models\PipelineFilePartRecord.cs" />
-    <Compile Include="Models\JsonProcess.cs" />
     <Compile Include="Models\PipelineSettingsPart.cs" />
     <Compile Include="Models\PipelineSettingsPartRecord.cs" />
-    <Compile Include="Models\XmlProcess.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />

@@ -417,6 +417,9 @@ namespace Transformalize.Configuration.Ext {
                 case "add":
                 case "sum":
                 case "round":
+                case "roundto":
+                case "roundupto":
+                case "rounddownto":
                 case "abs":
                 case "ceiling":
                 case "floor":
@@ -614,6 +617,13 @@ namespace Transformalize.Configuration.Ext {
                         }
                     } else {
                         error($"The {t.Method} (geocode) transform requires a collection of output fields; namely: latitude, longitude, and formattedaddress (optional).");
+                    }
+                    break;
+                case "roundupto":
+                case "rounddownto":
+                case "roundto":
+                    if (!t.Value.IsNumeric()) {
+                        error($"The {t.Method} transform requires a numeric value.");
                     }
                     break;
                 case "padleft":
@@ -820,6 +830,9 @@ namespace Transformalize.Configuration.Ext {
                     case "sum":
                     case "add":
                     case "round":
+                    case "roundto":
+                    case "roundupto":
+                    case "rounddownto":
                     case "abs":
                     case "ceiling":
                     case "floor":

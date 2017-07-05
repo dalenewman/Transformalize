@@ -48,8 +48,22 @@
     <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
 </div>
 
+<div class="editor-field">
+    @Html.LabelFor(x => x.PlaceHolderStyle, T("Place Holder Style"))
+    @Html.DropDownListFor(x => x.PlaceHolderStyle, PipelineConfigurationPart.PlaceHolderStyles)
+    @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
+</div>
+
 <fieldset>
     <legend>Run Options</legend>
+
+    <div class="editor-field">
+        @Html.LabelFor(x => x.Modes, T("Modes"))
+        @Html.TextBoxFor(x => x.Modes)
+        @Html.ValidationMessageFor(x => x.Modes)
+    </div>
+    <div class="hint">@T("Modes available on the pipeline's list page.  An asterisk indicates the default mode.")</div>
+
     <div class="editor-field">
         <table>
             <tr>

@@ -46,6 +46,11 @@ namespace Tests {
             <add name='Abs' type='decimal' t='copy(Field2).abs()' />
             <add name='Add' type='decimal' t='copy(Field1,Field2,Field3).add()' />
             <add name='AddInts' type='int' t='copy(Field3,Field4).add()' />
+            <add name='RoundTo5' type='double' t='copy(Field1).roundTo(5)' />
+            <add name='RoundTo3' type='double' t='copy(Field1).roundTo(3)' />
+            <add name='RoundTo7' type='decimal' t='copy(Field2).roundTo(7)' />
+            <add name='RoundUpTo5' type='double' t='copy(Field1).roundUpTo(5)' />
+            <add name='RoundDownTo4' type='int' t='copy(Field3).roundDownTo(4)' />
           </calculated-fields>
         </add>
       </entities>
@@ -64,7 +69,14 @@ namespace Tests {
             Assert.AreEqual(147.6874m, row[cf[4]]);
 
             Assert.AreEqual(10, row[cf[5]]);
-            
+            Assert.AreEqual(10d, row[cf[6]],"nearest 5 is 10");
+            Assert.AreEqual(12d, row[cf[7]], "nearest 3 is 12");
+            Assert.AreEqual(133m, row[cf[8]], "nearest 7 is 133");
+            Assert.AreEqual(15d, row[cf[9]], "next 5 is 15");
+            Assert.AreEqual(4, row[cf[10]], "previous 4 is 4");
+
+
+
 
         }
     }

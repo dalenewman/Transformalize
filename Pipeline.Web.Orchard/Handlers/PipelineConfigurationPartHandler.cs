@@ -77,7 +77,7 @@ namespace Pipeline.Web.Orchard.Handlers {
             if (part == null)
                 return;
             try {
-                var root = _processService.Resolve(part.EditorMode, part.EditorMode);
+                var root = _processService.Resolve(part);
                 root.Load(part.Configuration);
 
                 if (root.Errors().Any()) {

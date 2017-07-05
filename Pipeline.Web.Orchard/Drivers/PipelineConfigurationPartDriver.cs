@@ -36,6 +36,8 @@ namespace Pipeline.Web.Orchard.Drivers {
             part.Runnable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Runnable"));
             part.Reportable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Reportable"));
             part.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
+            part.Modes = context.Attribute(part.PartDefinition.Name, "Modes");
+            part.PlaceHolderStyle = context.Attribute(part.PartDefinition.Name, "PlaceHolderStyle");
             part.Migrated = true;
         }
 
@@ -48,6 +50,8 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Runnable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Reportable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Modes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.PlaceHolderStyle);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", true);
             } else {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.Record.EditorMode);
@@ -57,6 +61,9 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Record.Reportable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", "default");
+                context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", "@()");
+
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", false);
             }
         }

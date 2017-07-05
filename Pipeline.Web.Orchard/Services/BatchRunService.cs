@@ -43,7 +43,7 @@ namespace Pipeline.Web.Orchard.Services {
                 _orchardServices.Notifier.Warning(T("You do not have permission to run this bulk action."));
             }
 
-            var actionProcess = _processService.Resolve(part.EditorMode, part.EditorMode);
+            var actionProcess = _processService.Resolve(part);
 
             actionProcess.Load(part.Configuration, parameters);
 

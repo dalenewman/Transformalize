@@ -145,6 +145,7 @@ namespace Pipeline.Web.Orchard {
                         cfg.StartAddress = cfg.Record.StartAddress;
                         cfg.EndAddress = cfg.Record.EndAddress;
                         cfg.EditorMode = cfg.Record.EditorMode;
+                        cfg.Modes = string.Empty;
                         cfg.Migrated = true;
                     }
                 }
@@ -154,6 +155,16 @@ namespace Pipeline.Web.Orchard {
             }
 
             return 10;
+        }
+
+        public int UpdateFrom10() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("Modes", DbType.String));
+            return 11;
+        }
+
+        public int UpdateFrom11() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("PlaceHolderStyle", DbType.String));
+            return 12;
         }
 
     }

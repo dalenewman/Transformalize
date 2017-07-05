@@ -45,7 +45,7 @@ namespace Pipeline.Web.Orchard.Services {
             }
 
             var part = _orchardServices.ContentManager.Get(batchWrite.Id).As<PipelineConfigurationPart>();
-            var writer = _processService.Resolve(part.EditorMode, part.EditorMode);
+            var writer = _processService.Resolve(part);
             writer.Load(part.Configuration, parameters);
 
             if (writer.Errors().Any()) {

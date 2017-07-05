@@ -153,9 +153,7 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 </pre>
 
 
-Transformalize detected the *Order Details* schema automatically and read the data.  This is handy, 
-but if you want to transform existing or create new fields, you must define the fields.  You could 
-hand-write them, or run `tfl` in `check` mode like this:
+Transformalize detected the *Order Details* schema and read the data. This is handy, but if you want to modify or create new fields, you must define the your input fields.  You could hand-write them, or run `tfl` in `check` mode like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -193,23 +191,20 @@ returns the detected schema.  Copy the fields into the arrangement like this:
 </cfg>
 ```
 
-Now you may create a *calculated field* based off these fields. Place a `<calculated-fields/>` section just after the `<fields/>` section and 
-define an *ExtendedPrice* field like so:
+Now you may create a *calculated field*. Place a `<calculated-fields/>` section after the `<fields/>` section and define an *ExtendedPrice* field like  so:
 
 ```xml
 <calculated-fields>
-  <add name="ExtendedPrice" 
+  <add name="Revenue" 
        type="decimal" 
        scale="2" 
-       t="cs(Math.Round(UnitPrice*Quantity,2))" />
+       t="cs(Math.Round((UnitPrice*(1-Discount))*Quantity,2))" />
 </calculated-fields>
 ```
-
-Now run `tfl`.  You should see *ExtendedPrice* in the output now:
-
+Now run `tfl`:
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
-OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>ExtendedPrice</strong>
+OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 10248,11,14.0000,12,0,<strong>168.00</strong>
 10248,42,9.8000,10,0,<strong>98.00</strong>
 10248,72,34.8000,5,0,<strong>174.00</strong>
@@ -218,15 +213,13 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>ExtendedPrice</strong>
 ...
 </pre>
 
-*ExtendedPrice* was created by a [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) transformation defined in 
-the **`t`** property which is short for *transformation*.  The C# transformation is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
+*ExtendedPrice* is created by a [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) transformation defined in the **`t`** property.  The C# transformation is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
 injected into `tfl`.
 
 ### Output
 
-Without an explicit output, `tfl` writes to the console.  Let's send it 
-to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. To do this, we need to 
-add an **output** in `<connections/>`:
+Without an explicit output, `tfl` writes to the console. Let's send it 
+to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. Add an **output** in `<connections/>`:
 
 ```xml
 <connections>
@@ -238,7 +231,7 @@ add an **output** in `<connections/>`:
 
 ### Initialization
 Now that *Order Details* goes into a persistent output, 
-we need to initialize it.  To do this, run **`tfl`** in `init` mode 
+we need to initialize it.  Run **`tfl`** in `init` mode 
 using the **`-m`** flag like this:
 
 <pre style="font-size:smaller;">
@@ -251,10 +244,11 @@ info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Now the *Order Details* are written to the SQLite database instead of the console.  The console 
-displays logging. Initializing does three things:
+Now *Order Details* is written to a SQLite database instead of the console.  The console is free to display logging
 
-1. destroys any pre-existing output structures
+Initializing does three things:
+
+1. destroys pre-existing output structures
 2. creates output structures
 3. bulk inserts data.
 
@@ -263,7 +257,7 @@ scratch**</span>.  This is required when the arrangement is changed.
 For this reason, it is best to think of your transformalized output as disposable.
 
 You may have noticed that Transformalize doesn't let you *map* 
-your input to pre-existing output.  Instead, it creates it's own 
+input to pre-existing output.  Instead, it creates it's own 
 output structure.  You get to decide:
 
 * the order of the fields
@@ -272,8 +266,7 @@ output structure.  You get to decide:
 
 ### Incrementals (by Default)
 
-An *initialization* is a full rebuild; it loads all the input into the output. This can be time-consuming when 
-run against a large database. Instead of rebuilding every time, Transformalize performs an incremental update on the output by default.
+An *initialization* is a full rebuild which can be time-consuming against large data sets. Instead of rebuilding every time, Transformalize performs incremental updates (to the output) by default.
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -283,14 +276,12 @@ info  | NorthWind | Order Details | Starting
 info  | NorthWind |               | Time elapsed: 00:00:00.5755261
 </pre>
 
-To determine if an update is necessary, `tfl` reads the input 
-and compares it with the output.  If a row is new or different, it is inserted or updated. While Transformalize uses keys and hashes 
+To determine if an update is necessary, `tfl` reads input 
+and compares it with output.  If a row is new or different, it is inserted or updated. While Transformalize uses keys and hashes 
 to perform comparisons, it is an unnecessary overhead when the input 
 provider is capable of tracking and returning new data.
 
-Providers are capable when they are queryable, and each record has a version that increments on 
-an insert or an update. SQL Server includes a `ROWVERSION` type that provides a version 
-automatically. So, let's add a `RowVersion` column to `Order Details` like this:
+Providers are capable when they are queryable, and each record has a version that increments on an insert or an update. SQL Server includes a `ROWVERSION` type that provides a version automatically. So, let's add a `RowVersion` column to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -701,14 +692,98 @@ SELECT OrderDayOfWeek, SUM(ExtendedPrice) AS [Sales]
 FROM NorthWindFlat
 GROUP BY OrderDayOfWeek
 ```
-<pre>
+<pre style="font-size:smaller;">
 <strong>OrderDayOfWeek  Sales</strong>
 Friday          284393.64
-Monday          275256.9
+Monday          275256.90
 Thursday        256143.26
 Tuesday         272113.27
 Wednesday       266546.72
 </pre>
 
-Note that the query isn't dealing with joins or parsing dates.
+Note that the query isn't dealing with joins or parsing dates. The NorthWind 
+data in the SQLite database is flat and easy to consume. In order 
+to de-normalize it, we used a relational output (e.g. SQL Server, MySQL, PostgreSql, SQLite, or SQL CE). 
+Now that it's flat, we can move it to a non-relational 
+output as well (e.g. Elasticsearch, Lucene, File).
 
+
+### Leveraging Elasticsearch & Kibana
+
+This section demonstrates how to load the flattened Northwind 
+data into [Elasticsearch](https://www.elastic.co/products/elasticsearch) 
+and view it with [Kibana](https://www.elastic.co/products/kibana).
+
+#### Elasticsearh
+
+Start a new arrangement with this in your XML editor:
+
+```xml
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+    <add name="output" 
+         provider="elasticsearch" 
+         url="http://localhost:9200"
+         index="NorthWind"
+         version="5" />
+  </connections>
+  <search-types>
+    <add name="default" store="true" index="true" analyzer="keyword" />
+  </search-types>
+  <entities>
+    <add name="NorthWindFlat">
+    </add>
+  </entities>
+</cfg>
+```
+This arrangement shows an elasticsearch connection.  It also introduces `<search-types/>`.  
+Search types choose the [analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-analyzers.html) 
+used by the search engine. By default, the *standard* analyzer is used.  For this 
+demonstration, I set the default to *keyword*.
+
+Save as *NorthWindToElasticsearch.xml* and run in `init` mode:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a NorthWindToElasticsearch.xml -m init</strong>
+2017-06-27 09:39:04 | warn  | NorthWind | NorthWindFlat | Initializing
+2017-06-27 09:39:04 | info  | NorthWind | NorthWindFlat | Starting
+2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | 2155 from input
+2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | 2155 to output
+2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | Ending 00:00:00
+2017-06-27 09:39:06 | info  | NorthWind |               | Time elapsed: 00:00:02.7229006
+</pre>
+
+
+A quick query in your browser can confirm the records loaded:
+
+[http://localhost:9200/northwind/northwindflat/_search?q=*:*&size=0](http://localhost:9200/northwind/northwindflat/_search?q=*:*&size=0)
+
+```json
+
+{
+    "took": 2,
+    "timed_out": false,
+    "_shards": {
+        "total": 5,
+        "successful": 5,
+        "failed": 0
+    },
+    "hits": {
+        "total": 2155,
+        "max_score": 0.0,
+        "hits": []
+    }
+}
+```
+
+#### Kibana
+
+Kibana let's you create interactive dashboards based on Elasticsearch indexes. Here's 
+a quick 30 second video:
+
+[![NorthWind in Kibana](./files/Northwind_in_KIbana5_4YouTube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
+
+If you liked what you saw in the video, what are you waiting for?  Once 
+you "Transformalize" your relational data, it's easy to put it 
+into Elasticsearch and visualize it with Kibana.
