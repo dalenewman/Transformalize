@@ -191,7 +191,7 @@ returns the detected schema.  Copy the fields into the arrangement like this:
 </cfg>
 ```
 
-Now you may create a *calculated field*. Place a `<calculated-fields/>` section after the `<fields/>` section and define an *ExtendedPrice* field like  so:
+Now you may create a *calculated field*. Place a `<calculated-fields/>` section after the `<fields/>` section and define an *Revenue* field like  so:
 
 ```xml
 <calculated-fields>
@@ -213,7 +213,7 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 ...
 </pre>
 
-*ExtendedPrice* is created by a [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) transformation defined in the **`t`** property.  The C# transformation is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
+*Revenue* is created by a [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) transformation defined in the **`t`** property.  The C# transformation is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
 injected into `tfl`.
 
 ### Output
@@ -688,17 +688,17 @@ After re-initializing, *NorthWindFlat* has some helpful time related fields that
 to run queries like:
 
 ```sql
-SELECT OrderDayOfWeek, SUM(ExtendedPrice) AS [Sales]
+SELECT OrderDayOfWeek AS [Day], SUM(Revenue) AS [Sales]
 FROM NorthWindFlat
 GROUP BY OrderDayOfWeek
 ```
 <pre style="font-size:smaller;">
-<strong>OrderDayOfWeek  Sales</strong>
-Friday          284393.64
-Monday          275256.90
-Thursday        256143.26
-Tuesday         272113.27
-Wednesday       266546.72
+<strong>Day         Sales</strong>
+Friday      284393.64
+Monday      275256.90
+Thursday    256143.26
+Tuesday     272113.27
+Wednesday   266546.72
 </pre>
 
 Note that the query isn't dealing with joins or parsing dates. The NorthWind 
