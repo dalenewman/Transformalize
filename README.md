@@ -714,7 +714,7 @@ This section demonstrates how to load the flattened Northwind
 data into [Elasticsearch](https://www.elastic.co/products/elasticsearch) 
 and view it with [Kibana](https://www.elastic.co/products/kibana).
 
-#### Elasticsearh
+#### Elasticsearch
 
 Start a new arrangement with this in your XML editor:
 
