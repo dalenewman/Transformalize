@@ -30,14 +30,14 @@ using Transformalize.Contracts;
 namespace Transformalize.Transform.Razor {
     public class RazorTemplateEngine : ITemplateEngine {
 
-        private readonly PipelineContext _context;
+        private readonly IContext _context;
         private readonly Configuration.Template _template;
 
         // Using Cfg-NET's "Reader" to read content, files, or web addresses with possible parameters.
         private readonly IReader _templateReader;
         private readonly IRazorEngineService _service;
 
-        public RazorTemplateEngine(PipelineContext context, Configuration.Template template, IReader templateReader) {
+        public RazorTemplateEngine(IContext context, Configuration.Template template, IReader templateReader) {
 
             _context = context;
             _template = template;

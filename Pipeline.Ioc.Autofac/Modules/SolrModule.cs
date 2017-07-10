@@ -38,6 +38,8 @@ using Transformalize.Extensions;
 using Transformalize.Nulls;
 using Transformalize.Provider.Solr;
 using Transformalize.Provider.Solr.Ext;
+using Transformalize.Transform.Razor;
+using Cfg.Net.Contracts;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class SolrModule : Module {
@@ -148,11 +150,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     // UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        output.Debug(()=>$"{output.Connection.Provider} does not denormalize.");
+                        output.Debug(() => $"{output.Connection.Provider} does not denormalize.");
                         return new NullMasterUpdater();
                     }).Named<IUpdate>(entity.Key);
 
-                    // OUTPUT
+                    // OUTPUTRaz
                     builder.Register<IOutputController>(ctx => {
 
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
@@ -162,7 +164,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 var solr = ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(output.Connection.Key);
                                 return new SolrOutputController(
                                     output,
-                                    new NullInitializer(),
+                                    new SolrInitializer(
+                                        output, 
+                                        ctx.ResolveNamed<ISolrCoreAdmin>(output.Connection.Key),
+                                        ctx.ResolveNamed<ISolrOperations<Dictionary<string, object>>>(output.Connection.Key),
+                                        new RazorTemplateEngine(ctx.ResolveNamed<IContext>(entity.Key), new Template { Name = output.Connection.Key, File = "Files\\solr\\schema.cshtml" }, ctx.Resolve<IReader>())
+                                    ),
                                     ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
                                     new SolrOutputVersionDetector(output, solr),
                                     solr
@@ -179,8 +186,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "solr":
-                                output.Warn($"The {output.Connection.Provider} does not support output yet.  Currently the author of this library is using Solr's Data Import Handler for loading SOLR.");
-                                return new NullWriter(output);
+                                return new SolrWriter(output, ctx.ResolveNamed<ISolrOperations<Dictionary<string, object>>>(output.Connection.Key));
                             default:
                                 return new NullWriter(output);
                         }
@@ -230,7 +236,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "basicServer", (p, c) => c.ResolveNamed<ISolrBasicOperations<Dictionary<string,object>>>(key)),
                 });
-        }
 
+            // modified url to not include the core
+            builder.RegisterType<SolrCoreAdmin>()
+                .Named<ISolrCoreAdmin>(key)
+                .WithParameters(new[] {
+                    new ResolvedParameter((p, c)=> p.Name == "connection", (p, c) => new SolrConnection(url.Substring(0, url.Length - connection.Core.Length - 1))),
+                    new ResolvedParameter((p, c)=> p.Name == "headerParser", (p, c) => c.Resolve<ISolrHeaderResponseParser>()),
+                    new ResolvedParameter((p, c)=> p.Name == "resultParser", (p, c) => new SolrStatusResponseParser())
+                })
+                .As<ISolrCoreAdmin>();
+            }
+        }
     }
-}

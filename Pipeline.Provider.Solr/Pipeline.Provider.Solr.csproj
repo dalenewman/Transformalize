@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ext\SolrExtensions.cs" />
+    <Compile Include="SolrInitializer.cs" />
     <Compile Include="SolrInputReader.cs" />
     <Compile Include="SolrInputVersionDetector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="SolrOutputController.cs" />
     <Compile Include="SolrOutputVersionDetector.cs" />
     <Compile Include="SolrSchemaReader.cs" />
+    <Compile Include="SolrWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

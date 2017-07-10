@@ -35,15 +35,16 @@ namespace Transformalize.Provider.Solr.Ext {
         }
 
         public static object GetMaxValue(this ISolrReadOnlyOperations<Dictionary<string, object>> solr, string field, AbstractSolrQuery baseQuery = null) {
+            var fieldName = field.ToLower();
             var result = solr.Query(
                 baseQuery ?? SolrQuery.All,
                 new QueryOptions {
                     StartOrCursor = new StartOrCursor.Start(0),
                     Rows = 1,
-                    Fields = new List<string> { field },
-                    OrderBy = new List<SortOrder> { new SortOrder(field, Order.DESC) }
+                    Fields = new List<string> { fieldName },
+                    OrderBy = new List<SortOrder> { new SortOrder(fieldName, Order.DESC) }
                 });
-            return result.NumFound > 0 ? result[0][field] : null;
+            return result.NumFound > 0 ? result[0][fieldName] : null;
         }
 
         public static int GetCount(this ISolrReadOnlyOperations<Dictionary<string, object>> solr, AbstractSolrQuery baseQuery = null) {

@@ -26,7 +26,6 @@ using Transformalize.Contracts;
 using System.Text.RegularExpressions;
 
 namespace Transformalize.Provider.Solr {
-
     public class SolrInputReader : IRead {
 
         private const string PhrasePattern = @"\""(?>[^""]+|\""(?<number>)|\""(?<-number>))*(?(number)(?!))\""";
