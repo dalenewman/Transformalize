@@ -784,6 +784,73 @@ a quick 30 second video:
 
 [![NorthWind in Kibana](Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
 
-If you liked what you saw in the video, what are you waiting for?  Once 
-you "Transformalize" your relational data, it's easy to put it 
-into Elasticsearch and visualize it with Kibana.
+### Leveraging SOLR & Banana
+
+This section demonstrates how to load the flattened Northwind 
+data into [SOLR](http://lucene.apache.org/solr) 
+and view it with [Banana](https://github.com/lucidworks/banana).
+
+#### SOLR
+
+Start a new arrangement with this in your XML editor:
+
+```xml
+<cfg>
+    <connections>
+        <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+        <add name="output" 
+             provider="solr" 
+             server="localhost" 
+             port="8983" 
+             path="solr" 
+             core="northwind" 
+             folder="C:\java\solr-6.6.0\server\solr" />
+    </connections>
+    <entities>
+        <add name="NorthWindFlat"></add>
+    </entities>
+</cfg>
+```
+
+Save as *NorthWindToSolr.xml* and run in `init` mode:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -ac:\Temp\NorthWindToSolr.xml -m init</strong>
+2017-07-10 15:32:26 | info  |  | NorthWindFlat |             |          | Starting
+2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | 2155 from input
+2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | 2155 to output
+2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | Ending
+2017-07-10 15:32:28 | info  |  |               |             |          | Time elapsed: 00:00:03.0742282
+</pre>
+
+A quick query in your browser can confirm the records loaded:
+
+[http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json](http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json)
+
+```json
+{
+    "responseHeader": {
+        "status": 0,
+        "QTime": 0,
+        "params": {
+            "q": "*:*",
+            "indent": "on",
+            "rows": "0",
+            "wt": "json"
+        }
+    },
+    "response": {
+        "numFound": 2155,
+        "start": 0,
+        "docs": []
+    }
+}
+```
+
+#### Banana
+
+Banana let's you create interactive dashboards based on SOLR indexes. Here's 
+a quick 20 second video:
+
+[![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
+
