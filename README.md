@@ -1,10 +1,10 @@
 # Transformalize
 
 Transformalize is an open source extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
-tool. It expedites the process of cleaning, and [de-normalizing](https://en.wikipedia.org/wiki/Denormalization) relational data. It automates the movement of relational data into value-adding services 
+tool. It expedites the process of transforming, and [de-normalizing](https://en.wikipedia.org/wiki/Denormalization) relational data. It automates the movement of relational data into value-adding services 
 like data warehouses (analytics) and search engines.
 
- It works with many data sources:
+It works with many data sources:
 
 <table class="table table-condensed">
     <thead>
@@ -54,7 +54,7 @@ like data warehouses (analytics) and search engines.
         </tr>
         <tr>
             <td>Files</td>
-            <td style="color:green;">&#10003;</td>
+            <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
             <td> </td>
         </tr>
@@ -67,7 +67,7 @@ like data warehouses (analytics) and search engines.
         <tr>
             <td>SOLR</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
+            <td style="color:green">&#10003;</td>
             <td> </td>
         </tr>
         <tr>
@@ -705,7 +705,7 @@ Note that the query isn't dealing with joins or parsing dates. The NorthWind
 data in the SQLite database is flat and easy to consume. In order 
 to de-normalize it, we used a relational output (e.g. SQL Server, MySQL, PostgreSql, SQLite, or SQL CE). 
 Now that it's flat, we can move it to a non-relational 
-output as well (e.g. Elasticsearch, Lucene, File).
+output as well (e.g. Elasticsearch, SOLR, Lucene, File).
 
 
 ### Leveraging Elasticsearch & Kibana
@@ -746,12 +746,10 @@ Save as *NorthWindToElasticsearch.xml* and run in `init` mode:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -a NorthWindToElasticsearch.xml -m init</strong>
-2017-06-27 09:39:04 | warn  | NorthWind | NorthWindFlat | Initializing
-2017-06-27 09:39:04 | info  | NorthWind | NorthWindFlat | Starting
-2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | 2155 from input
-2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | 2155 to output
-2017-06-27 09:39:06 | info  | NorthWind | NorthWindFlat | Ending 00:00:00
-2017-06-27 09:39:06 | info  | NorthWind |               | Time elapsed: 00:00:02.7229006
+warn  | NorthWind | NorthWindFlat | Initializing
+info  | NorthWind | NorthWindFlat | 2155 from input
+info  | NorthWind | NorthWindFlat | 2155 to output
+info  | NorthWind |               | Time elapsed: 00:00:02.7229006
 </pre>
 
 
@@ -795,7 +793,7 @@ and view it with [Banana](https://github.com/lucidworks/banana).
 Start a new arrangement with this in your XML editor:
 
 ```xml
-<cfg>
+<cfg name="NorthWind">
     <connections>
         <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
         <add name="output" 
@@ -816,11 +814,11 @@ Save as *NorthWindToSolr.xml* and run in `init` mode:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -ac:\Temp\NorthWindToSolr.xml -m init</strong>
-2017-07-10 15:32:26 | info  |  | NorthWindFlat |             |          | Starting
-2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | 2155 from input
-2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | 2155 to output
-2017-07-10 15:32:28 | info  |  | NorthWindFlat |             |          | Ending
-2017-07-10 15:32:28 | info  |  |               |             |          | Time elapsed: 00:00:03.0742282
+info  | NorthWind | NorthWindFlat | Starting
+info  | NorthWind | NorthWindFlat | 2155 from input
+info  | NorthWind | NorthWindFlat | 2155 to output
+info  | NorthWind | NorthWindFlat | Ending
+info  | NorthWind |               | Time elapsed: 00:00:03.0742282
 </pre>
 
 A quick query in your browser can confirm the records loaded:
