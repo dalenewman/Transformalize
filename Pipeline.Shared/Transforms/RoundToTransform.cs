@@ -70,8 +70,8 @@ namespace Transformalize.Transforms {
                             break;
                         default:
                             _transform = (r) => context.Field.Convert(Math.Round(Convert.ToDecimal(r[input]) / by) * by);
-                            break;
                             Returns = context.Field.Type;
+                            break;
                     }
                 }
             }

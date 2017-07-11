@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F97BFD9-DB95-483F-BF26-6ADA42D2D334}"
 	ProjectSection(SolutionItems) = preProject
@@ -34,8 +34,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.Ado", "Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj", "{03AB8B72-1A0C-4238-B369-C37147C42A48}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.MySql", "Pipeline.Provider.MySql\Pipeline.Provider.MySql.csproj", "{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Provider.PostgreSql", "Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.csproj", "{D0E681F8-9694-4D89-B2D9-2D94862467A8}"
 EndProject
@@ -124,7 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Pipeline.Provider.Excel\Transformalize.Provider.Excel.nuspec = Pipeline.Provider.Excel\Transformalize.Provider.Excel.nuspec
 		Pipeline.Provider.File\Transformalize.Provider.File.nuspec = Pipeline.Provider.File\Transformalize.Provider.File.nuspec
 		Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec = Pipeline.Provider.Lucene\Transformalize.Provider.Lucene.nuspec
-		Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec = Pipeline.Provider.MySql\Transformalize.Provider.MySql.nuspec
+		Transformalize.Provider.MySql\Transformalize.Provider.MySql.nuspec = Transformalize.Provider.MySql\Transformalize.Provider.MySql.nuspec
 		Pipeline.Provider.OpenXml\Transformalize.Provider.OpenXml.nuspec = Pipeline.Provider.OpenXml\Transformalize.Provider.OpenXml.nuspec
 		Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec = Pipeline.Provider.PostgreSql\Transformalize.Provider.PostgreSql.nuspec
 		Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec = Pipeline.Provider.Solr\Transformalize.Provider.Solr.nuspec
@@ -157,6 +155,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Console", "Transformalize.Provider.Console\Transformalize.Provider.Console.csproj", "{32AEE29F-519F-4A61-AF6C-BC218611B6FF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Trace", "Transformalize.Provider.Trace\Transformalize.Provider.Trace.csproj", "{77811C79-9CC7-40A8-BA7C-148A02AB6AC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.MySql", "Transformalize.Provider.MySql\Transformalize.Provider.MySql.csproj", "{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -223,18 +223,6 @@ Global
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Release|x64.Build.0 = Release|Any CPU
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Release|x86.ActiveCfg = Release|Any CPU
 		{03AB8B72-1A0C-4238-B369-C37147C42A48}.Release|x86.Build.0 = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|x64.Build.0 = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Debug|x86.Build.0 = Debug|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|x64.ActiveCfg = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|x64.Build.0 = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|x86.ActiveCfg = Release|Any CPU
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9}.Release|x86.Build.0 = Release|Any CPU
 		{D0E681F8-9694-4D89-B2D9-2D94862467A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0E681F8-9694-4D89-B2D9-2D94862467A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0E681F8-9694-4D89-B2D9-2D94862467A8}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -667,6 +655,18 @@ Global
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2}.Release|x64.Build.0 = Release|Any CPU
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2}.Release|x86.ActiveCfg = Release|Any CPU
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2}.Release|x86.Build.0 = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|x64.Build.0 = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Debug|x86.Build.0 = Debug|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|x64.ActiveCfg = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|x64.Build.0 = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|x86.ActiveCfg = Release|Any CPU
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -674,7 +674,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 		{03AB8B72-1A0C-4238-B369-C37147C42A48} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
-		{B0015B18-F29C-469A-A2AF-18C21AC8E4D9} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{D0E681F8-9694-4D89-B2D9-2D94862467A8} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{FF1350DD-5297-4100-BB8F-6A3047ED8AD5} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
@@ -710,5 +709,6 @@ Global
 		{1776297E-5B89-4D60-9597-8C793299BCFD} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{32AEE29F-519F-4A61-AF6C-BC218611B6FF} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
+		{803BAF79-7028-4F09-B2F6-BC89B3AD11E3} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 	EndGlobalSection
 EndGlobal

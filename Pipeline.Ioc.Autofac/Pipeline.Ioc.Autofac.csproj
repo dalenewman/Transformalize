@@ -184,10 +184,6 @@
       <Project>{E84D0CB1-8DE6-413B-B2F1-2A8E6F7A994C}</Project>
       <Name>Pipeline.Provider.Lucene</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.MySql\Pipeline.Provider.MySql.csproj">
-      <Project>{b0015b18-f29c-469a-a2af-18c21ac8e4d9}</Project>
-      <Name>Pipeline.Provider.MySql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Provider.OpenXml\Pipeline.Provider.OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>Pipeline.Provider.OpenXml</Name>
@@ -255,6 +251,10 @@
     <ProjectReference Include="..\Transformalize.Provider.Kml\Transformalize.Provider.Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
       <Name>Transformalize.Provider.Kml</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transformalize.Provider.MySql\Transformalize.Provider.MySql.csproj">
+      <Project>{803baf79-7028-4f09-b2f6-bc89b3ad11e3}</Project>
+      <Name>Transformalize.Provider.MySql</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
