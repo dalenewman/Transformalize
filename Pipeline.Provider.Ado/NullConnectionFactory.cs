@@ -22,11 +22,11 @@ namespace Transformalize.Provider.Ado {
     public class NullConnectionFactory : IConnectionFactory {
         public AdoProvider AdoProvider { get; } = AdoProvider.None;
 
-        public IDbConnection GetConnection() {
+        public IDbConnection GetConnection(string appName = null) {
             return null;
         }
 
-        public string GetConnectionString() {
+        public string GetConnectionString(string appName = null) {
             return string.Empty;
         }
 

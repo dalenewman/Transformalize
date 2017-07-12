@@ -60,8 +60,8 @@ namespace Transformalize.Provider.SqlServer {
             _c = connection;
         }
 
-        public IDbConnection GetConnection() {
-            return new SqlConnection(GetConnectionString());
+        public IDbConnection GetConnection(string appName = null) {
+            return new SqlConnection(GetConnectionString(appName));
         }
 
         static char L { get; } = '[';
@@ -91,13 +91,13 @@ namespace Transformalize.Provider.SqlServer {
             return string.Concat(sqlDataType, length, dimensions);
         }
 
-        public string GetConnectionString() {
+        public string GetConnectionString(string appName = null) {
             if (!string.IsNullOrEmpty(_c.ConnectionString)) {
                 return _c.ConnectionString;
             }
 
             _c.ConnectionString = (new SqlConnectionStringBuilder {
-                ApplicationName = Constants.ApplicationName,
+                ApplicationName = appName ?? Constants.ApplicationName,
                 ConnectTimeout = _c.RequestTimeout,
                 DataSource = _c.Server,
                 InitialCatalog = _c.Database,

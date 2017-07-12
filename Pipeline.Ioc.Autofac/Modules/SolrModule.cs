@@ -154,7 +154,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         return new NullMasterUpdater();
                     }).Named<IUpdate>(entity.Key);
 
-                    // OUTPUTRaz
+                    // OUTPUT
                     builder.Register<IOutputController>(ctx => {
 
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);

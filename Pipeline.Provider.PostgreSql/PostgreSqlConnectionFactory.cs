@@ -162,16 +162,16 @@ namespace Transformalize.Provider.PostgreSql {
             _c = connection;
         }
 
-        public IDbConnection GetConnection() {
-            return new NpgsqlConnection(GetConnectionString());
+        public IDbConnection GetConnection(string appName = null) {
+            return new NpgsqlConnection(GetConnectionString(appName));
         }
 
-        public string GetConnectionString() {
+        public string GetConnectionString(string appName = null) {
             if (_c.ConnectionString != string.Empty)
                 return _c.ConnectionString;
 
             _c.ConnectionString = new NpgsqlConnectionStringBuilder {
-                ApplicationName = Constants.ApplicationName,
+                ApplicationName = appName ?? Constants.ApplicationName,
                 Database = _c.Database,
                 Host = _c.Server,
                 IntegratedSecurity = _c.User == string.Empty && _c.Password == string.Empty,

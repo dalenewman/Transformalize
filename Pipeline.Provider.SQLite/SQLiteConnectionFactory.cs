@@ -56,11 +56,11 @@ namespace Transformalize.Provider.SQLite {
             _c = connection;
         }
 
-        public IDbConnection GetConnection() {
-            return new SQLiteConnection(GetConnectionString());
+        public IDbConnection GetConnection(string appName = null) {
+            return new SQLiteConnection(GetConnectionString(appName));
         }
 
-        public string GetConnectionString() {
+        public string GetConnectionString(string appName = null) {
             if (_c.ConnectionString != string.Empty)
                 return _c.ConnectionString;
 

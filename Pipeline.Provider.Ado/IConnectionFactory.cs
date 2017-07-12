@@ -20,8 +20,8 @@ using Transformalize.Configuration;
 
 namespace Transformalize.Provider.Ado {
     public interface IConnectionFactory {
-        IDbConnection GetConnection();
-        string GetConnectionString();
+        IDbConnection GetConnection(string appName = null);
+        string GetConnectionString(string appName = null);
         string Enclose(string name);
         string SqlDataType(Field field);
         AdoProvider AdoProvider { get; }

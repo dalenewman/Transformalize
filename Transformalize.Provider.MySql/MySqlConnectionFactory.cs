@@ -59,11 +59,11 @@ namespace Transformalize.Provider.MySql {
             _c = connection;
         }
 
-        public IDbConnection GetConnection() {
-            return new MySqlConnection(GetConnectionString());
+        public IDbConnection GetConnection(string appName = null) {
+            return new MySqlConnection(GetConnectionString(appName));
         }
 
-        public string GetConnectionString() {
+        public string GetConnectionString(string appName = null) {
             if (_c.ConnectionString != string.Empty) {
                 return _c.ConnectionString;
             }

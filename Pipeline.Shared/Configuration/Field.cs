@@ -534,6 +534,15 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string RunField { get; set; }
 
+        [Cfg(value="default", domain ="true,false,default", toLower=true, ignoreCase=true)]
+        public string Dimension { get; set; }
+
+        [Cfg(value =false)]
+        public bool Measure { get; set; }
+
+        [Cfg(value ="sum", domain= @"Sum,Count,Min,Max,DistinctCount,None,ByAccount,AverageOfChildren,FirstChild,LastChild,FirstNonEmpty,LastNonEmpty", ignoreCase =true, toLower =true)]
+        public string AggregateFunction { get; set; }
+
         [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
         public string RunOperator {
             get { return _runOperator; }
