@@ -159,6 +159,7 @@ namespace Transformalize.Configuration.Ext {
         static void DefaultSearchTypes(Process p) {
 
             var searchFields = p.GetSearchFields().ToArray();
+            var output = p.Output();
 
             if (searchFields.Any()) {
                 if (p.SearchTypes.All(st => st.Name != "none")) {
@@ -175,7 +176,8 @@ namespace Transformalize.Configuration.Ext {
                         Name = "default",
                         MultiValued = false,
                         Store = true,
-                        Index = true
+                        Index = true,
+                        Analyzer = output != null && output.Provider == "elasticsearch" ? "keyword" : string.Empty
                     });
                 }
 

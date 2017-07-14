@@ -9,11 +9,15 @@ namespace Transformalize.Provider.SSAS {
             DataSourceViewId = input.Process.Name;
             CubeId = input.Process.Name;
             VersionId = "Version";
+            NormalMeasureGroupId = "Normal";
+            DistinctMeasureGroupId = "Distinct";
         }
         public string DatabaseId { get; }
         public string DataSourceId { get; }
         public string DataSourceViewId { get; }
         public string CubeId { get; }
         public string VersionId { get; set; }
+        public string NormalMeasureGroupId { get; set; }
+        public string DistinctMeasureGroupId { get; set; }
     }
 }

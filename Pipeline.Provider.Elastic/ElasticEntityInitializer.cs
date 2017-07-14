@@ -129,7 +129,7 @@ namespace Transformalize.Provider.Elastic {
                                 };
                             }
                         } else {
-                            if (_context.Connection.Version.StartsWith("5") && analyzer == "keyword" && type == "string") {
+                            if (_context.Connection.Version.StartsWith("5", System.StringComparison.Ordinal) && analyzer == "keyword" && type == "string") {
                                 fields[alias] = new Dictionary<string, object> {
                                     { "type", "keyword" }
                                 };

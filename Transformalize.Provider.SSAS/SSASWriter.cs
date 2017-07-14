@@ -32,31 +32,14 @@ namespace Transformalize.Provider.SSAS {
                         if (database.Dimensions.Contains(_output.Entity.Alias)) {
                             _output.Info($"Updating dimension {_output.Entity.Alias}");
                             var dimension = database.Dimensions.Find(_output.Entity.Alias);
-                            var versionField = _output.Entity.GetVersionField();
-                            if (versionField == null) {
-                                dimension.Process(ProcessType.ProcessUpdate, WriteBackTableCreation.UseExisting);
-                            } else {
-                                SSAS.Process(dimension, ProcessType.ProcessUpdate, _output);
-                            }
+                            SSAS.Process(dimension, ProcessType.ProcessUpdate, _output);
                         } else {
                             _output.Error($"{_output.Entity.Alias} dimension does not exist!");
                         }
                         if (database.Cubes.Contains(ids.CubeId)) {
                             var cube = database.Cubes.Find(ids.CubeId);
-                            if (cube.MeasureGroups.Contains(_output.Entity.Alias)) {
-                                var measureGroup = cube.MeasureGroups.Find(_output.Entity.Alias);
-                                if (measureGroup.Partitions.Contains(_output.Entity.Alias)) {
-                                    var partition = measureGroup.Partitions.Find(_output.Entity.Alias);
-                                    _output.Info($"Updating partition {_output.Entity.Alias}");
-                                    if(SSAS.Process(partition, ProcessType.ProcessData, _output)) {
-                                        SSAS.Process(partition, ProcessType.ProcessIndexes, _output);
-                                    }
-                                } else {
-                                    _output.Error($"{_output.Entity.Alias} partition does not exist!");
-                                }
-                            } else {
-                                _output.Error($"{_output.Entity.Alias} measure group does not exist!");
-                            }
+                            ProcessPartition(cube, ids.NormalMeasureGroupId);
+                            ProcessPartition(cube, ids.DistinctMeasureGroupId);
                         } else {
                             _output.Error($"{ids.CubeId} cube does not exist!");
                         }
@@ -67,6 +50,23 @@ namespace Transformalize.Provider.SSAS {
                 server.Disconnect();
             }
 
+        }
+
+        public void ProcessPartition(Cube cube, string partitionId) {
+            if (cube.MeasureGroups.Contains(partitionId)) {
+                var measureGroup = cube.MeasureGroups.Find(partitionId);
+                if (measureGroup.Partitions.Contains(partitionId)) {
+                    var partition = measureGroup.Partitions.Find(partitionId);
+                    _output.Info($"Updating partition {partitionId}");
+                    if (SSAS.Process(partition, ProcessType.ProcessData, _output)) {
+                        SSAS.Process(partition, ProcessType.ProcessIndexes, _output);
+                    }
+                } else {
+                    _output.Error($"{partitionId} partition does not exist!");
+                }
+            } else {
+                _output.Error($"{partitionId} measure group does not exist!");
+            }
         }
     }
 }

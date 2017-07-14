@@ -21,10 +21,12 @@ namespace Transformalize.Provider.SSAS {
         }
 
         public static bool Process(ProcessableMajorObject obj, ProcessType type, OutputContext output) {
-            var errors = new ErrorConfiguration() {
+            var errors = new ErrorConfiguration {
                 KeyDuplicate = ErrorOption.ReportAndStop,
                 KeyNotFound = ErrorOption.ReportAndStop,
-                NullKeyNotAllowed = ErrorOption.ReportAndStop
+                NullKeyNotAllowed = ErrorOption.ReportAndStop,
+                CalculationError = ErrorOption.ReportAndStop,
+                NullKeyConvertedToUnknown = ErrorOption.ReportAndStop
             };
             var warnings = new XmlaWarningCollection();
             obj.Process(type, errors, warnings);
@@ -61,6 +63,25 @@ namespace Transformalize.Provider.SSAS {
                 }
             }
             return true;
+        }
+
+        public static bool CanDistinctCount(OleDbType type) {
+            switch (type) {
+                case OleDbType.BigInt:
+                case OleDbType.Currency:
+                case OleDbType.Double:
+                case OleDbType.Integer:
+                case OleDbType.Single:
+                case OleDbType.SmallInt:
+                case OleDbType.TinyInt:
+                case OleDbType.UnsignedBigInt:
+                case OleDbType.UnsignedInt:
+                case OleDbType.UnsignedSmallInt:
+                case OleDbType.UnsignedTinyInt:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         public static OleDbType GetOleDbType(Field field) {

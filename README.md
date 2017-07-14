@@ -53,6 +53,18 @@ It works with many data sources:
             <td> </td>
         </tr>
         <tr>
+            <td>Lucene</td>
+            <td style="color:green">&#10003;</td>
+            <td style="color:green">&#10003;</td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td>SOLR</td>
+            <td style="color:green">&#10003;</td>
+            <td style="color:green">&#10003;</td>
+            <td> </td>
+        </tr>
+        <tr>
             <td>Files</td>
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
@@ -65,21 +77,15 @@ It works with many data sources:
             <td> </td>
         </tr>
         <tr>
-            <td>SOLR</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td> </td>
-        </tr>
-        <tr>
-            <td>Lucene</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td> </td>
-        </tr>
-        <tr>
             <td>Console</td>
             <td> </td>
             <td style="color:green">&#10003;</td>
+            <td> </td>
+        </tr>
+        <tr>
+            <td title="SQL Server Analysis Services">SSAS</td>
+            <td style="color:green"></td>
+            <td style="color:green">WIP</td>
             <td> </td>
         </tr>
     </tbody>
@@ -723,26 +729,20 @@ Start a new arrangement with this in your XML editor:
   <connections>
     <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
     <add name="output" 
-         provider="elasticsearch" 
-         url="http://localhost:9200"
+         provider="elasticsearch"
+         server="localhost"
+         port="9200"
          index="NorthWind"
          version="5" />
   </connections>
-  <search-types>
-    <add name="default" store="true" index="true" analyzer="keyword" />
-  </search-types>
   <entities>
-    <add name="NorthWindFlat">
-    </add>
+    <add name="NorthWindFlat" />
   </entities>
 </cfg>
 ```
-This arrangement shows an elasticsearch connection.  It also introduces `<search-types/>`.  
-Search types choose the [analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-analyzers.html) 
-used by the search engine. By default, the *standard* analyzer is used.  For this 
-demonstration, I set the default to *keyword*.
-
-Save as *NorthWindToElasticsearch.xml* and run in `init` mode:
+This arrangement defines an elasticsearch output 
+for the flattened SQLite input.  Save as *NorthWindToElasticsearch.xml* 
+and run in `init` mode:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -a NorthWindToElasticsearch.xml -m init</strong>
@@ -752,13 +752,11 @@ info  | NorthWind | NorthWindFlat | 2155 to output
 info  | NorthWind |               | Time elapsed: 00:00:02.7229006
 </pre>
 
-
-A quick query in your browser can confirm the records loaded:
+A quick query in your browser can confirm records loaded:
 
 [http://localhost:9200/northwind/northwindflat/_search?q=*:*&size=0](http://localhost:9200/northwind/northwindflat/_search?q=*:*&size=0)
 
 ```json
-
 {
     "took": 2,
     "timed_out": false,
@@ -777,8 +775,8 @@ A quick query in your browser can confirm the records loaded:
 
 #### Kibana
 
-Kibana let's you create interactive dashboards based on Elasticsearch indexes. Here's 
-a quick 30 second video:
+Kibana offers interactive dashboards based on Elasticsearch 
+indexes. Here's a quick 30 second video:
 
 [![NorthWind in Kibana](Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
 
@@ -847,8 +845,96 @@ A quick query in your browser can confirm the records loaded:
 
 #### Banana
 
-Banana let's you create interactive dashboards based on SOLR indexes. Here's 
-a quick 20 second video:
+Banana offers interactive dashboards based on SOLR indexes. 
+Here's a quick 20 second video:
 
 [![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
+
+### Leveraging SQL Server Analysis Services (SSAS) & Excel
+
+This section demonstrates loading the data into a *SSAS* 
+cube and browsing it with Excel.  Of course, to follow along, 
+you'll need a local instance of Analysis Services, and Excel.
+
+The SSAS provider only works with SQL Server, so first make 
+a database called `TflNorthWind`, and then modify 
+the *NorthWind.xml* arrangement to output to SQL Server 
+instead of SQLite:
+
+```xml
+<cfg name="NorthWind" flatten="true">
+  <connections>
+    <add name="input" provider="sqlserver" server="localhost" database="NorthWind"/>
+    <!-- change output to ... -->
+    <add name="output" 
+         provider="sqlserver" 
+         server="localhost"
+         database="TflNorthWind" />
+  </connections>
+  <!-- clipped for brevity -->
+</cfg>
+```
+
+Running this in `init` mode de-normalizes all the NorthWind data 
+into the `TflNorthWind` database; creating a `NorthWindFlat` 
+table there.  Next, create a new arrangement like this:
+
+```xml
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlserver" server="localhost" database="TflNorthWind" />
+    <add name="output" provider="ssas" server="localhost" database="NorthWind" />
+  </connections>
+  <entities>
+    <add name="NorthWindFlat" version="TflBatchId" alias="Properties" >
+      <fields>
+        <add name="TflKey" type="int" primary-key="true" alias="Key" />
+        <add name="TflBatchId" type="int" alias="Version" />
+        <add name="Revenue" type="decimal" scale="2" measure="true" format="$###,###,###.00" />
+        <add name="Freight" type="decimal" precision="19" scale="4" measure="true" />
+        <add name="OrderYear" alias="Year" type="int" dimension="true" />
+        <add name="OrderMonthSortable" alias="Month" />
+        <add name="Country" length="15" />
+        <add name="EmployeeID" type="int" measure="true" aggregate-function="distinctcount" label="Employees" />
+        <add name="CategoryName" alias="Category" length="15" />
+      </fields>
+    </add>
+  </entities>
+</cfg>
+```
+
+Save this as *NorthWindToSSAS.xml* and run it:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml -m init</strong>
+info  | NorthWind | Properties | Creating new OLAP database: NorthWind
+info  | NorthWind | Properties | Creating new data source: TflNorthWind
+info  | NorthWind | Properties | Creating new data source view: NorthWind
+info  | NorthWind | Properties | Creating new dimension: Properties
+info  | NorthWind | Properties | Creating new cube: NorthWind
+info  | NorthWind | Properties | Processing OLAP database NorthWind
+info  | NorthWind |            | Time elapsed: 00:00:02.1823176
+
+<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml</strong>
+info  | NorthWind | Properties | Starting
+info  | NorthWind | Properties | Change Detected: No.
+info  | NorthWind | Properties | Ending
+info  | NorthWind |            | Time elapsed: 00:00:00.7742750
+</pre>
+
+With this example, I defined the fields in order to 
+set some as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
+and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.
+I also selected a primary key and version.  
+
+The field I used for the primary key is `TflKey.` It is standard output 
+for Transformalize.  It is a [surrogate key](https://en.wikipedia.org/wiki/Surrogate_key). 
+The field I used for the version is `TflBatchId`, which is also 
+standard.  It is added to provide a version for 
+anything consuming the *Transformalized* output.
+
+**TODO**: Add Excel screen shot (or video)
+
+
+
 

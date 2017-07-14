@@ -4,12 +4,13 @@ using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Xml;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Ado;
+using System;
+using System.Collections.Generic;
+using Transformalize.Configuration;
 
 namespace Transformalize.Provider.SSAS {
 
@@ -17,13 +18,13 @@ namespace Transformalize.Provider.SSAS {
 
         readonly InputContext _input;
         readonly OutputContext _output;
-        readonly Server _server;
+        readonly Microsoft.AnalysisServices.Server _server;
         readonly IConnectionFactory _connectionFactory;
 
         public SSASInitializer(InputContext input, OutputContext output, IConnectionFactory connectionFactory) {
             _input = input;
             _output = output;
-            _server = new Server();
+            _server = new Microsoft.AnalysisServices.Server();
             _connectionFactory = connectionFactory;
         }
 
@@ -70,40 +71,27 @@ namespace Transformalize.Provider.SSAS {
 
                 // view
                 var entity = _output.Entity;
+                var fields = SSAS.GetFields(_output);
                 DataSourceView dataSourceView;
                 if (database.DataSourceViews.Contains(ids.DataSourceViewId)) {
                     dataSourceView = database.DataSourceViews.Find(ids.DataSourceViewId);
+                    if (dataSourceView.Schema.Tables.Contains(entity.Alias)) {
+                        dataSourceView.Schema.Tables.Remove(entity.Alias);
+                    }
+                    dataSourceView.Schema.Tables.Add(CreateDataTable(entity, fields));
                     _output.Info($"Updating existing data source view: {ids.DataSourceViewId}");
                 } else {
+                    _output.Info($"Creating new data source view: {ids.DataSourceViewId}");
+
                     dataSourceView = database.DataSourceViews.AddNew(ids.DataSourceViewId);
                     dataSourceView.DataSourceID = ids.DataSourceId;
-                    _output.Info($"Creating new data source view: {ids.DataSourceViewId}");
-                }
+                    dataSourceView.Schema = new DataSet("Schema");
+                    dataSourceView.Schema.Tables.Add(CreateDataTable(entity, fields));
 
-                var schema = new DataSet("Schema");
-                var sql = SSAS.CreateQuery(_output);
-                var adapter = new SqlDataAdapter(sql, new SqlConnection(_connectionFactory.GetConnectionString($"Transformalize ({_input.Process.Name})")));
-                adapter.FillSchema(schema, SchemaType.Source);
-
-                var table = schema.Tables[0];
-                table.ExtendedProperties.Add("QueryDefinition", sql);
-                table.ExtendedProperties.Add("DbTableName", entity.Name);
-                table.ExtendedProperties.Add("FriendlyName", entity.Alias);
-                table.ExtendedProperties.Add("TableType", "View");
-                table.TableName = entity.Alias;
-
-                var fields = SSAS.GetFields(_output);
-                foreach (var field in fields) {
-                    table.Columns[field.Alias].ExtendedProperties.Add("DbColumnName", field.Alias);
-                    if (field.Label == string.Empty || field.Label == field.Alias) {
-                        field.Label = field.Alias.Titleize();
+                    if (!SSAS.Save(_server, _output, dataSourceView)) {
+                        return new ActionResponse(500, $"Could not save data source view: {ids.DataSourceViewId}");
                     }
-                    table.Columns[field.Alias].ExtendedProperties.Add("FriendlyName", field.Label);
-                }
-                dataSourceView.Schema = schema;
 
-                if (!SSAS.Save(_server, _output, dataSourceView)) {
-                    return new ActionResponse(500, $"Could not save data source view: {ids.DataSourceViewId}");
                 }
 
                 Dimension dimension;
@@ -112,10 +100,11 @@ namespace Transformalize.Provider.SSAS {
                     _output.Info($"Updating existing dimension: {entity.Alias}");
                 } else {
                     dimension = database.Dimensions.AddNew(entity.Alias, entity.Alias);
+                    dimension.WriteEnabled = false;
+                    dimension.StorageMode = DimensionStorageMode.Molap;
                     _output.Info($"Creating new dimension: {entity.Alias}");
                 }
                 dimension.Source = new DataSourceViewBinding(ids.DataSourceViewId);
-                dimension.CurrentStorageMode = DimensionStorageMode.Molap;
 
                 foreach (var field in fields) {
                     DimensionAttribute dimensionAttribute;
@@ -125,13 +114,16 @@ namespace Transformalize.Provider.SSAS {
                         dimensionAttribute = dimension.Attributes.Add(field.Label, field.Alias);
                         dimensionAttribute.OrderBy = OrderBy.Key; // for now
                     }
+
+                    var optimize = field.PrimaryKey || field.Dimension == "true" || field.Dimension == "default" && !field.IsNumeric();
+                    dimensionAttribute.AttributeHierarchyEnabled = optimize;
+                    dimensionAttribute.IsAggregatable = optimize;
                     dimensionAttribute.Usage = field.PrimaryKey ? AttributeUsage.Key : AttributeUsage.Regular;
-                    dimensionAttribute.AttributeHierarchyEnabled = field.PrimaryKey || field.Dimension == "true" || field.Dimension == "default" && !field.IsNumeric();
 
                     dimensionAttribute.KeyColumns.Clear();
                     DataItem keyColumn;
                     if (field.Type == "string") {
-                        var length = field.Length == "max" ? int.MaxValue : System.Convert.ToInt32(field.Length);
+                        var length = field.Length == "max" ? int.MaxValue : Convert.ToInt32(field.Length);
                         keyColumn = new DataItem(entity.Alias, field.Alias, SSAS.GetOleDbType(field), length) { Trimming = Trimming.None };
                     } else {
                         keyColumn = new DataItem(entity.Alias, field.Alias, SSAS.GetOleDbType(field));
@@ -150,7 +142,6 @@ namespace Transformalize.Provider.SSAS {
                     _output.Info($"Updating existing cube: {ids.CubeId}");
                 } else {
                     cube = database.Cubes.AddNew(ids.CubeId, ids.CubeId);
-                    cube.Annotations.Add("http://schemas.microsoft.com/DataWarehouse/Designer/1.0:ShowFriendlyNames", "true");
                     _output.Info($"Creating new cube: {ids.CubeId}");
                 }
 
@@ -167,30 +158,14 @@ namespace Transformalize.Provider.SSAS {
                     cubeDimension.Attributes.Add(attribute.ID);
                 }
 
-                MeasureGroup measureGroup;
-                if (cube.MeasureGroups.Contains(entity.Alias)) {
-                    measureGroup = cube.MeasureGroups.Find(entity.Alias);
-                } else {
-                    measureGroup = cube.MeasureGroups.Add(entity.Alias, entity.Alias);
-                }
-                measureGroup.StorageMode = StorageMode.Molap;
-
-                // partitions
-                Partition partition;
-                if (measureGroup.Partitions.Contains(entity.Alias)) {
-                    partition = measureGroup.Partitions.Find(entity.Alias);
-                } else {
-                    partition = measureGroup.Partitions.Add(entity.Alias, entity.Alias);
-                }
-                partition.Source = new DsvTableBinding(ids.DataSourceViewId, entity.Alias);
-                partition.StorageMode = StorageMode.Molap;
+                var normalMeasureGroup = GetMeasureGroup(cube, entity, ids.NormalMeasureGroupId, ids.DataSourceViewId);
 
                 // standard count measure
                 Measure countMeasure;
-                if (measureGroup.Measures.Contains("Count")) {
-                    countMeasure = measureGroup.Measures.Find("Count");
+                if (normalMeasureGroup.Measures.Contains("Count")) {
+                    countMeasure = normalMeasureGroup.Measures.Find("Count");
                 } else {
-                    countMeasure = measureGroup.Measures.Add("Count", "Count");
+                    countMeasure = normalMeasureGroup.Measures.Add("Count", "Count");
                 }
                 countMeasure.AggregateFunction = AggregationFunction.Count;
                 countMeasure.Source = new DataItem(new RowBinding(entity.Alias), OleDbType.Integer);
@@ -199,10 +174,10 @@ namespace Transformalize.Provider.SSAS {
                 var versionField = entity.GetVersionField();
                 if (versionField != null) {
                     Measure versionMeasure;
-                    if (measureGroup.Measures.Contains(ids.VersionId)) {
-                        versionMeasure = measureGroup.Measures.Find(ids.VersionId);
+                    if (normalMeasureGroup.Measures.Contains(ids.VersionId)) {
+                        versionMeasure = normalMeasureGroup.Measures.Find(ids.VersionId);
                     } else {
-                        versionMeasure = measureGroup.Measures.Add(ids.VersionId);
+                        versionMeasure = normalMeasureGroup.Measures.Add(ids.VersionId);
                     }
                     versionMeasure.AggregateFunction = AggregationFunction.Max;
                     versionMeasure.Source = new DataItem(entity.Alias, versionField.Alias, SSAS.GetOleDbType(versionField));
@@ -210,28 +185,40 @@ namespace Transformalize.Provider.SSAS {
                 }
 
                 // defined measures
-                var measureFields = entity.GetAllOutputFields().Where(f => f.Measure && f.IsNumeric());
-                foreach (var field in measureFields) {
+                var measureFields = entity.GetAllOutputFields().Where(f => f.Measure && f.Type != "byte[]");
+
+                // normal measures
+                foreach (var field in measureFields.Where(f => f.AggregateFunction != "distinctcount")) {
                     Measure measure;
-                    if (measureGroup.Measures.Contains(field.Alias)) {
-                        measure = measureGroup.Measures.Find(field.Alias);
+                    var function = (AggregationFunction)Enum.Parse(typeof(AggregationFunction), field.AggregateFunction, true);
+                    if (normalMeasureGroup.Measures.Contains(field.Alias)) {
+                        measure = normalMeasureGroup.Measures.Find(field.Alias);
                     } else {
-                        measure = measureGroup.Measures.Add(field.Label, field.Alias);
+                        measure = normalMeasureGroup.Measures.Add(field.Label, field.Alias);
                     }
-                    measure.AggregateFunction = (AggregationFunction)System.Enum.Parse(typeof(AggregationFunction), field.AggregateFunction, true);
+                    measure.AggregateFunction = function;
                     measure.FormatString = field.Format;
                     measure.Source = new DataItem(entity.Alias, field.Alias, SSAS.GetOleDbType(field));
                 }
 
-                measureGroup.Dimensions.Clear();
-                var measureGroupDimension = new DegenerateMeasureGroupDimension(entity.Alias);
-                measureGroup.Dimensions.Add(measureGroupDimension);
-                foreach (var key in entity.GetPrimaryKey()) {
-                    var attribute = measureGroupDimension.Attributes.Add(key.Alias);
-                    attribute.Type = MeasureGroupAttributeType.Granularity;
-                    attribute.KeyColumns.Add(entity.Alias, key.Alias, SSAS.GetOleDbType(key));
+                // distinct measures
+                foreach (var field in measureFields.Where(f => f.AggregateFunction == "distinctcount")) {
+                    var type = SSAS.GetOleDbType(field);
+                    if (SSAS.CanDistinctCount(type)) {
+                        Measure measure;
+                        var distinctMeasureGroup = GetMeasureGroup(cube, entity, ids.DistinctMeasureGroupId, ids.DataSourceViewId);
+                        if (distinctMeasureGroup.Measures.Contains(field.Alias)) {
+                            measure = distinctMeasureGroup.Measures.Find(field.Alias);
+                        } else {
+                            measure = distinctMeasureGroup.Measures.Add(field.Label, field.Alias);
+                        }
+                        measure.AggregateFunction = AggregationFunction.DistinctCount;
+                        measure.FormatString = field.Format;
+                        measure.Source = new DataItem(entity.Alias, field.Alias, SSAS.GetOleDbType(field));
+                    } else {
+                        _output.Warn($"Can not distinct count {field.Label} using {field.Type} type.");
+                    }
                 }
-
 
                 if (!SSAS.Save(_server, _output, cube)) {
                     return new ActionResponse(500, $"Could not save cube: {ids.CubeId}");
@@ -243,5 +230,57 @@ namespace Transformalize.Provider.SSAS {
             return new ActionResponse();
         }
 
+        private MeasureGroup GetMeasureGroup(Cube cube, Entity entity, string id, string dataSourceViewId) {
+            MeasureGroup measureGroup;
+            if (cube.MeasureGroups.Contains(id)) {
+                measureGroup = cube.MeasureGroups.Find(id);
+            } else {
+                measureGroup = cube.MeasureGroups.Add(id);
+                measureGroup.StorageMode = StorageMode.Molap;
+            }
+            Partition partition;
+            if (measureGroup.Partitions.Contains(id)) {
+                partition = measureGroup.Partitions.Find(id);
+            } else {
+                partition = measureGroup.Partitions.Add(id);
+            }
+            partition.Source = new DsvTableBinding(dataSourceViewId, entity.Alias);
+            partition.StorageMode = StorageMode.Molap;
+
+            measureGroup.Dimensions.Clear();
+            var measureGroupDimension = new DegenerateMeasureGroupDimension(entity.Alias);
+            foreach (var key in entity.GetPrimaryKey()) {
+                var attribute = measureGroupDimension.Attributes.Add(key.Alias);
+                attribute.Type = MeasureGroupAttributeType.Granularity;
+                attribute.KeyColumns.Add(entity.Alias, key.Alias, SSAS.GetOleDbType(key));
+            }
+            measureGroup.Dimensions.Add(measureGroupDimension);
+
+            return measureGroup;
+        }
+
+        private DataTable CreateDataTable(Configuration.Entity entity, IEnumerable<Configuration.Field> fields) {
+            var schema = new DataSet("Schema");
+
+            var sql = SSAS.CreateQuery(_output);
+            var adapter = new SqlDataAdapter(sql, new SqlConnection(_connectionFactory.GetConnectionString($"Transformalize ({_input.Process.Name})")));
+            adapter.FillSchema(schema, SchemaType.Source);
+
+            var table = schema.Tables[0];
+            table.ExtendedProperties.Add("QueryDefinition", sql);
+            table.ExtendedProperties.Add("DbTableName", entity.Name);
+            table.ExtendedProperties.Add("FriendlyName", entity.Alias);
+            table.ExtendedProperties.Add("TableType", "View");
+            table.TableName = entity.Alias;
+
+            foreach (var field in fields) {
+                table.Columns[field.Alias].ExtendedProperties.Add("DbColumnName", field.Alias);
+                if (field.Label == string.Empty || field.Label == field.Alias) {
+                    field.Label = field.Alias.Titleize();
+                }
+                table.Columns[field.Alias].ExtendedProperties.Add("FriendlyName", field.Label);
+            }
+            return table.Clone();
+        }
     }
 }
