@@ -129,6 +129,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.nuspec = Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.nuspec
 		Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec = Pipeline.Provider.SQLite\Transformalize.Provider.SQLite.nuspec
 		Pipeline.Provider.SqlServer\Transformalize.Provider.SqlServer.nuspec = Pipeline.Provider.SqlServer\Transformalize.Provider.SqlServer.nuspec
+		Transformalize.Provider.SSAS\Transformalize.Provider.SSAS.nuspec = Transformalize.Provider.SSAS\Transformalize.Provider.SSAS.nuspec
 		Pipeline.Provider.Web\Transformalize.Provider.Web.nuspec = Pipeline.Provider.Web\Transformalize.Provider.Web.nuspec
 		Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec
 		Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec

@@ -50,8 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SSAS.cs" />
+    <Compile Include="SSASIdentifiers.cs" />
     <Compile Include="SSASInitializer.cs" />
     <Compile Include="SSASOutputController.cs" />
+    <Compile Include="SSASOutputVersionDetector.cs" />
+    <Compile Include="SSASWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">

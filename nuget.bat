@@ -25,8 +25,11 @@ cd ..
 cd Pipeline.Provider.Lucene
 nuget pack Transformalize.Provider.Lucene.nuspec -OutputDirectory "c:\temp\modules"
 cd ..
-cd Pipeline.Provider.MySql
+cd Transformalize.Provider.MySql
 nuget pack Transformalize.Provider.MySql.nuspec -OutputDirectory "c:\temp\modules"
+cd ..
+cd Transformalize.Provider.SSAS
+nuget pack Transformalize.Provider.SSAS.nuspec -OutputDirectory "c:\temp\modules"
 cd ..
 cd Pipeline.Provider.PostgreSql
 nuget pack Transformalize.Provider.PostgreSql.nuspec -OutputDirectory "c:\temp\modules"

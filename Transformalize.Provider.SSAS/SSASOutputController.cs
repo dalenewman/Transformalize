@@ -32,23 +32,10 @@ namespace Transformalize.Provider.SSAS {
         public override void Start() {
             base.Start();
 
-            // query and set Context.Entity.BatchId (max of TflBatchId)
-            var batchIdField = Context.Entity.TflBatchId();
-            var batchId = 0; // _solr.GetMaxValue(batchIdField.Alias);
-            if (batchId != null) {
-                Context.Entity.BatchId = Convert.ToInt32(batchId) + 1;
-            }
-
-            // query and set Context.Entity.Identity (max of Identity)
-            var identityField = Context.Entity.TflKey();
-            var identity = 0; // _solr.GetMaxValue(identityField.Alias);
-            if (identity != null) {
-                Context.Entity.Identity = Convert.ToInt32(identity);
-            }
-
-            // query record count in output and use with MinVersion to determine Context.Entity.IsFirstRun
-            Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && true;// _solr.GetCount() == 0;
-
+            // we do not actually write to SSAS, it reads directly from the input
+            Context.Entity.BatchId = 0;
+            Context.Entity.Identity = 0;
+            Context.Entity.IsFirstRun = false;
         }
     }
 }

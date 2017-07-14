@@ -66,19 +66,22 @@ namespace Transformalize.Ioc.Autofac {
                         var input = ctx.ResolveNamed<InputContext>(entity.Key);
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var factory = ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key);
+                        var initializer = _process.Mode == "init" ? (IAction)new SSASInitializer(input, output, factory) : new NullInitializer();
                         return new SSASOutputController(
                             output,
-                            new SSASInitializer(input, output, factory),
-                            new NullVersionDetector(),
-                            new NullVersionDetector()
+                            initializer,
+                            ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
+                            new SSASOutputVersionDetector(input, output)
                         );
                     }
                     ).Named<IOutputController>(entity.Key);
 
                     // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new NullWriter(output);
+                        return new SSASWriter(
+                            ctx.ResolveNamed<InputContext>(entity.Key), 
+                            ctx.ResolveNamed<OutputContext>(entity.Key)
+                        );
                     }).Named<IWrite>(entity.Key);
                 }
             }
