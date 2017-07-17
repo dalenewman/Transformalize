@@ -850,10 +850,10 @@ Here's a quick 20 second video:
 
 [![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
 
-### Leveraging SQL Server Analysis Services (SSAS) & Excel
+### Leveraging SQL Server Analysis Services (SSAS) & Excel*
 
 This section demonstrates loading the data into a *SSAS* 
-cube and browsing it with Excel.  Of course, to follow along, 
+cube and browsing it with Excel.  To follow along, 
 you'll need a local instance of Analysis Services, and Excel.
 
 The SSAS provider only works with SQL Server, so first make 
@@ -875,9 +875,8 @@ instead of SQLite:
 </cfg>
 ```
 
-Running this in `init` mode de-normalizes all the NorthWind data 
-into the `TflNorthWind` database; creating a `NorthWindFlat` 
-table there.  Next, create a new arrangement like this:
+Run this in `init` to load `NorthWindFlat` into the SQL Server. 
+Then, create a new arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -930,11 +929,12 @@ I also selected a primary key and version.
 The field I used for the primary key is `TflKey.` It is standard output 
 for Transformalize.  It is a [surrogate key](https://en.wikipedia.org/wiki/Surrogate_key). 
 The field I used for the version is `TflBatchId`, which is also 
-standard.  It is added to provide a version for 
-anything consuming the *Transformalized* output.
+standard.  It is added to provide a version for anything 
+consuming the output.
 
-**TODO**: Add Excel screen shot (or video)
+[![NorthWind in Excel](Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
 
+* Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
 
 
