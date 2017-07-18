@@ -96,17 +96,5 @@ namespace Transformalize.Configuration {
         [Cfg(value = "", toLower = true)]
         public string Map { get; set; }
 
-        protected override void Validate() {
-            if (Type == "facet") {
-                if (Field == string.Empty) {
-                    Error("Facet filters need a field.");
-                    Error(Serialize());
-                }
-                if (Map == string.Empty) {
-                    Error("Facet filters need a map to load facets into.");
-                    Error(Serialize());
-                }
-            }
-        }
     }
 }

@@ -31,7 +31,7 @@ namespace Pipeline.Web.Orchard.Models {
 
         public static List<SelectListItem> PlaceHolderStyles = new List<SelectListItem> {
             new SelectListItem {Selected = false, Text = "@(parameter)", Value = "@()"},
-            new SelectListItem {Selected = false, Text = "@{parameter}", Value = "@{}"}
+            new SelectListItem {Selected = false, Text = "@[parameter]", Value = "@[]"}
         };
 
         public string Configuration

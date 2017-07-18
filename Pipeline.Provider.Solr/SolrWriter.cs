@@ -10,11 +10,11 @@ namespace Transformalize.Provider.Solr {
 
     public class SolrWriter : IWrite {
 
-        private readonly OutputContext _context;
-        private readonly ISolrOperations<Dictionary<string,object>> _solr;
-        private readonly Field[] _fields;
+        readonly OutputContext _context;
+        readonly ISolrOperations<Dictionary<string, object>> _solr;
+        readonly Field[] _fields;
 
-        public SolrWriter(OutputContext context, ISolrOperations<Dictionary<string,object>> solr) {
+        public SolrWriter(OutputContext context, ISolrOperations<Dictionary<string, object>> solr) {
             _context = context;
             _solr = solr;
             _fields = context.OutputFields.Where(f => f.Type != "byte[]").ToArray();
@@ -29,7 +29,7 @@ namespace Transformalize.Provider.Solr {
                 foreach (var row in part) {
                     batchCount++;
                     fullCount++;
-                    docs.Add(_fields.ToDictionary(field => field.Alias.ToLower(), field=>row[field]));
+                    docs.Add(_fields.ToDictionary(field => field.Alias.ToLower(), field => row[field]));
                 }
                 var response = _solr.AddRange(docs);
 
@@ -44,7 +44,9 @@ namespace Transformalize.Provider.Solr {
 
             _solr.Commit();
 
-            _context.Info($"{fullCount} to output");
+            if (fullCount > 0) {
+                _context.Info($"{fullCount} to output");
+            }
         }
     }
 }

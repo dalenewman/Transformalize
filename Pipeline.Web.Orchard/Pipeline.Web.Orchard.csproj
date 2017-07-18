@@ -189,7 +189,7 @@
       <HintPath>..\..\..\..\..\Transformalize\Transformalize.Provider.Kml\bin\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.MySql">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.MySql\bin\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Transformalize.Provider.MySql\bin\Release\Transformalize.Provider.MySql.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.OpenXml">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Provider.OpenXml\bin\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>

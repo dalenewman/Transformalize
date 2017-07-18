@@ -1,8 +1,8 @@
 # Transformalize
 
-Transformalize is an open source extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
-tool. It expedites the process of transforming, and [de-normalizing](https://en.wikipedia.org/wiki/Denormalization) relational data. It automates the movement of relational data into value-adding services 
-like data warehouses (analytics) and search engines.
+Transformalize is an extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
+tool. It expedites the process of transforming, and [de-normalizing](https://en.wikipedia.org/wiki/Denormalization) relational data. It automates the incremental movement of relational data into value-adding services like 
+data warehouses and search engines.
 
 It works with many data sources:
 
@@ -100,16 +100,16 @@ an [Orchard CMS](http://www.orchardproject.net/) module.
 
 ### Transformalizing Northwind
 
-This document demonstrates the transformation (and denormalization) 
-of Northwind's relational database tables into a [star-schema](https://en.wikipedia.org/wiki/Star_schema) or single flat table. 
+The Northwind database is a sample relational database. I use it 
+here to demonstrate how Transformalize works.  If you want to follow along, 
+here are the prerequisites:
 
-If you want to follow along, here are the prerequisites:
-
-* something to edit XML with (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
-* a local instance of SQL Server
-* something to browse a SQLite database file with (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
-* the [latest release](https://github.com/dalenewman/Transformalize/releases) of Tranformalize with it's `PATH` added to your [environment variables](https://en.wikipedia.org/wiki/PATH_(variable)).
 * the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
+* an editor (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
+* a local instance of SQL Server
+* a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
+* the [latest release](https://github.com/dalenewman/Transformalize/releases) of Tranformalize
+  * add it's `PATH` to your [environment variables](https://en.wikipedia.org/wiki/PATH_(variable)).
 
 ### Getting Started
 
@@ -687,7 +687,7 @@ Modify the *Orders* entity to include a `<calculated-fields/>` section like this
   <add name="OrderMonthSortable" t="format({OrderDate:MM-MMM}).toUpper()" />
   <add name="OrderDaySortable" t="format({OrderDate:yyyy-MM-dd})" />
   <add name="OrderDayOfWeek" t="copy(OrderDate).datePart(dayOfWeek)" />
-</calculated-fields>			
+</calculated-fields>		
 ```
 
 After re-initializing, *NorthWindFlat* has some helpful time related fields that allow you 
@@ -707,12 +707,21 @@ Tuesday     272113.27
 Wednesday   266546.72
 </pre>
 
-Note that the query isn't dealing with joins or parsing dates. The NorthWind 
-data in the SQLite database is flat and easy to consume. In order 
-to de-normalize it, we used a relational output (e.g. SQL Server, MySQL, PostgreSql, SQLite, or SQL CE). 
-Now that it's flat, we can move it to a non-relational 
-output as well (e.g. Elasticsearch, SOLR, Lucene, File).
+Note that the query isn't dealing with joins or parsing dates. The 
+NorthWind data in the SQLite database is flat and easy to consume. 
+In order to de-normalize it, we had to use a relational 
+output (i.e. SQLite), but now that it's flat, we can leverage it 
+in non-relational providers as well.
 
+## The De-Normalized Output
+
+Transformalize records four *system* fields that may 
+be used by additional `tfl` arrangements and/or other systems:
+
+* TflKey - a surrogate key (an auto-incrementing value)
+* TflBatchId - a versionnumber corresponding to `tfl` runs
+* TflHashCode - a numerical value calculated from every field (used for comparisons)
+* TflDeleted - a boolean field tracking deletes (an optional setting)
 
 ### Leveraging Elasticsearch & Kibana
 
@@ -729,27 +738,45 @@ Start a new arrangement with this in your XML editor:
   <connections>
     <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
     <add name="output" 
-         provider="elasticsearch"
-         server="localhost"
-         port="9200"
-         index="NorthWind"
+         provider="elasticsearch" 
+         server="localhost" 
+         port="9200" 
+         index="NorthWind" 
          version="5" />
   </connections>
   <entities>
-    <add name="NorthWindFlat" />
+    <add name="NorthWindFlat" version="TflBatchId" >
+      <fields>
+        <add name="TflKey" alias="Key" type="long" primary-key="true" />
+        <add name="TflBatchId" alias="Version" type="long" />
+        <add name="Revenue" type="decimal" precision="19" scale="2" />
+        <add name="Freight" type="decimal" precision="19" scale="4" />
+        <add name="OrderDate" type="datetime" />
+        <add name="OrderYear" type="long" />
+        <add name="OrderMonthSortable" />
+        <add name="Country" length="15" />
+        <add name="CategoryName" length="15" />
+      </fields>
+    </add>
   </entities>
 </cfg>
 ```
-This arrangement defines an elasticsearch output 
-for the flattened SQLite input.  Save as *NorthWindToElasticsearch.xml* 
-and run in `init` mode:
 
+This arrangement uses an elasticsearch output.  Save as 
+*NorthWindToES.xml* and run in it:
 <pre style="font-size:smaller;">
-<strong>>tfl -a NorthWindToElasticsearch.xml -m init</strong>
+<strong>>tfl -a c:\temp\NorthWindToES.xml -m init</strong>
 warn  | NorthWind | NorthWindFlat | Initializing
 info  | NorthWind | NorthWindFlat | 2155 from input
 info  | NorthWind | NorthWindFlat | 2155 to output
 info  | NorthWind |               | Time elapsed: 00:00:02.7229006
+
+<strong>>tfl -a c:\temp\NorthWindToES.xml</strong>
+info  | NorthWind | NorthWindFlat | Starting
+info  | NorthWind | NorthWindFlat | Change Detected: No.
+info  | NorthWind | NorthWindFlat | 0 to output
+info  | NorthWind | NorthWindFlat | Ending 00:00:00
+info  | NorthWind |               | Time elapsed: 00:00:00.3594499
 </pre>
 
 A quick query in your browser can confirm records loaded:
@@ -803,20 +830,38 @@ Start a new arrangement with this in your XML editor:
              folder="C:\java\solr-6.6.0\server\solr" />
     </connections>
     <entities>
-        <add name="NorthWindFlat"></add>
+        <add name="NorthWindFlat" version="TflBatchId">
+            <fields>
+                <add name="TflKey" alias="Key" type="long" primary-key="true" />
+                <add name="TflBatchId" alias="Version" type="long" />
+                <add name="Revenue" type="decimal" precision="19" scale="2" />
+                <add name="Freight" type="decimal" precision="19" scale="4" />
+                <add name="OrderDate" type="datetime" />
+                <add name="OrderYear" type="long" />
+                <add name="OrderMonthSortable" />
+                <add name="Country" length="15" />
+                <add name="CategoryName" length="15" />
+            </fields>
+        </add>
     </entities>
 </cfg>
 ```
 
-Save as *NorthWindToSolr.xml* and run in `init` mode:
+Save as *NorthWindToSOLR.xml* and run:
 
 <pre style="font-size:smaller;">
-<strong>>tfl -ac:\Temp\NorthWindToSolr.xml -m init</strong>
+<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml -m init</strong>
 info  | NorthWind | NorthWindFlat | Starting
 info  | NorthWind | NorthWindFlat | 2155 from input
 info  | NorthWind | NorthWindFlat | 2155 to output
 info  | NorthWind | NorthWindFlat | Ending
-info  | NorthWind |               | Time elapsed: 00:00:03.0742282
+info  | NorthWind |               | Time elapsed: 00:00:03.074
+
+<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml</strong>
+info  | NorthWind | NorthWindFlat | Starting
+info  | NorthWind | NorthWindFlat | Change Detected: No.
+info  | NorthWind | NorthWindFlat | Ending
+info  | NorthWind |               | Time elapsed: 00:00:00.345
 </pre>
 
 A quick query in your browser can confirm the records loaded:
@@ -845,19 +890,19 @@ A quick query in your browser can confirm the records loaded:
 
 #### Banana
 
-Banana offers interactive dashboards based on SOLR indexes. 
-Here's a quick 20 second video:
+Similar to Kibana, Banana offers interactive dashboards.  However, it's 
+works against SOLR indexes instead of Elasticsearch. Here's a quick 20 second video:
 
 [![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
 
-### Leveraging SQL Server Analysis Services (SSAS) & Excel*
+### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel*
 
 This section demonstrates loading the data into a *SSAS* 
 cube and browsing it with Excel.  To follow along, 
 you'll need a local instance of Analysis Services, and Excel.
 
-The SSAS provider only works with SQL Server, so first make 
-a database called `TflNorthWind`, and then modify 
+The SSAS provider only works with a SQL Server input, so first 
+make a database called `TflNorthWind`, and then modify 
 the *NorthWind.xml* arrangement to output to SQL Server 
 instead of SQLite:
 
@@ -875,30 +920,30 @@ instead of SQLite:
 </cfg>
 ```
 
-Run this in `init` to load `NorthWindFlat` into the SQL Server. 
-Then, create a new arrangement like this:
+Run this in `init` mode to load `NorthWindFlat` into 
+SQL Server. Then, create a new arrangement:
 
 ```xml
 <cfg name="NorthWind">
-  <connections>
-    <add name="input" provider="sqlserver" server="localhost" database="TflNorthWind" />
-    <add name="output" provider="ssas" server="localhost" database="NorthWind" />
-  </connections>
-  <entities>
-    <add name="NorthWindFlat" version="TflBatchId" alias="Properties" >
-      <fields>
-        <add name="TflKey" type="int" primary-key="true" alias="Key" />
-        <add name="TflBatchId" type="int" alias="Version" />
-        <add name="Revenue" type="decimal" scale="2" measure="true" format="$###,###,###.00" />
-        <add name="Freight" type="decimal" precision="19" scale="4" measure="true" />
-        <add name="OrderYear" alias="Year" type="int" dimension="true" />
-        <add name="OrderMonthSortable" alias="Month" />
-        <add name="Country" length="15" />
-        <add name="EmployeeID" type="int" measure="true" aggregate-function="distinctcount" label="Employees" />
-        <add name="CategoryName" alias="Category" length="15" />
-      </fields>
-    </add>
-  </entities>
+    <connections>
+        <add name="input" provider="sqlserver" server="localhost" database="TflNorthWind" />
+        <add name="output" provider="ssas" server="localhost" database="NorthWind" />
+    </connections>
+    <entities>
+        <add name="NorthWindFlat" version="TflBatchId" alias="Properties" >
+            <fields>
+                <add name="TflKey" type="int" primarykey="true" alias="Key" />
+                <add name="TflBatchId" type="int" alias="Version" />
+                <add name="Revenue" type="decimal" scale="2" measure="true" format="$###,###,###.00" />
+                <add name="Freight" type="decimal" precision="19" scale="4" measure="true" format="$###,###,###.00" />
+                <add name="OrderYear" type="int" dimension="true" />
+                <add name="OrderMonthSortable" />
+                <add name="Country" length="15" />
+                <add name="EmployeeID" type="int" measure="true" aggregate-function="distinctcount" label="Employees" />
+                <add name="CategoryName" length="15" />
+            </fields>
+        </add>
+    </entities>
 </cfg>
 ```
 
@@ -921,20 +966,19 @@ info  | NorthWind | Properties | Ending
 info  | NorthWind |            | Time elapsed: 00:00:00.7742750
 </pre>
 
-With this example, I defined the fields in order to 
-set some as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
-and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.
-I also selected a primary key and version.  
-
-The field I used for the primary key is `TflKey.` It is standard output 
-for Transformalize.  It is a [surrogate key](https://en.wikipedia.org/wiki/Surrogate_key). 
-The field I used for the version is `TflBatchId`, which is also 
-standard.  It is added to provide a version for anything 
-consuming the output.
+This example marks some fields as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
+and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.  This 
+is needed to accurately describe the cube.  Here is a short video showing Excel browse the resulting cube.
 
 [![NorthWind in Excel](Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
 
 * Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
+### Leveraging the Orchard CMS Module
 
+The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows you to:
+
+* edit and store your arrangements
+* run your arrangements
+* page through your output in report mode
 

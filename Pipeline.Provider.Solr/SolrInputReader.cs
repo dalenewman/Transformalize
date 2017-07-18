@@ -28,15 +28,15 @@ using System.Text.RegularExpressions;
 namespace Transformalize.Provider.Solr {
     public class SolrInputReader : IRead {
 
-        private const string PhrasePattern = @"\""(?>[^""]+|\""(?<number>)|\""(?<-number>))*(?(number)(?!))\""";
-        private static readonly Regex _phraseRegex = new Regex(PhrasePattern, RegexOptions.Compiled);
+        const string PhrasePattern = @"\""(?>[^""]+|\""(?<number>)|\""(?<-number>))*(?(number)(?!))\""";
+        static readonly Regex _phraseRegex = new Regex(PhrasePattern, RegexOptions.Compiled);
 
-        private readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;
-        private readonly InputContext _context;
-        private int _localCount;
-        private readonly Collection<string> _fieldNames;
-        private readonly Field[] _fields;
-        private readonly IRowFactory _rowFactory;
+        readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;
+        readonly InputContext _context;
+        int _localCount;
+        readonly Collection<string> _fieldNames;
+        readonly Field[] _fields;
+        readonly IRowFactory _rowFactory;
 
         public SolrInputReader(
             ISolrReadOnlyOperations<Dictionary<string, object>> solr,
@@ -200,14 +200,14 @@ namespace Transformalize.Provider.Solr {
             }
         }
 
-        private static IRow DocToRow(IRow row, Field[] fields, IReadOnlyDictionary<string, object> doc) {
+        static IRow DocToRow(IRow row, Field[] fields, IReadOnlyDictionary<string, object> doc) {
             foreach (var field in fields) {
                 row[field] = doc[field.Name];
             }
             return row;
         }
 
-        private IEnumerable<string> Terms(string value, string delimiter = " ") {
+        IEnumerable<string> Terms(string value, string delimiter = " ") {
 
             var processedValue = value.Trim(delimiter.ToCharArray());
 

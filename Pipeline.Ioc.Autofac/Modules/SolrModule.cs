@@ -162,16 +162,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         switch (output.Connection.Provider) {
                             case "solr":
                                 var solr = ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(output.Connection.Key);
-                                return new SolrOutputController(
-                                    output,
-                                    new SolrInitializer(
-                                        output, 
+
+                                var initializer = _process.Mode == "init" ? (IInitializer)new SolrInitializer(
+                                        output,
                                         ctx.ResolveNamed<ISolrCoreAdmin>(output.Connection.Key),
                                         ctx.ResolveNamed<ISolrOperations<Dictionary<string, object>>>(output.Connection.Key),
                                         new RazorTemplateEngine(ctx.ResolveNamed<IContext>(entity.Key), new Template { Name = output.Connection.Key, File = "Files\\solr\\schema.cshtml" }, ctx.Resolve<IReader>())
-                                    ),
+                                    ) : new NullInitializer();
+
+                                return new SolrOutputController(
+                                    output,
+                                    initializer,
                                     ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    new SolrOutputVersionDetector(output, solr),
+                                    _process.Mode == "init" ? (IVersionDetector)new NullVersionDetector() : new SolrOutputVersionDetector(output, solr),
                                     solr
                                 );
                             default:
@@ -246,6 +249,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     new ResolvedParameter((p, c)=> p.Name == "resultParser", (p, c) => new SolrStatusResponseParser())
                 })
                 .As<ISolrCoreAdmin>();
-            }
         }
     }
+}

@@ -18,6 +18,8 @@
 using System;
 using System.Linq;
 using Cfg.Net.Ext;
+using Transformalize.Extensions;
+using System.Collections.Generic;
 
 namespace Transformalize.Configuration.Ext {
     public static class ProcessPreValidate {
@@ -80,10 +82,13 @@ namespace Transformalize.Configuration.Ext {
 
             // possible candidates for PostValidate
             MergeParameters(p);
+            AutomaticMaps(p);
             SetPrimaryKeys(p);
 
+            var output = p.Output();
+
             // force primary key to output if not internal
-            if (p.Output().IsNotInternal()) {
+            if (output.IsNotInternal()) {
                 foreach (var field in p.Entities.SelectMany(entity => p.GetAllFields().Where(field => field.PrimaryKey && !field.Output))) {
                     warn($"Primary Keys must be output. Overriding output to true for {field.Alias}.");
                     field.Output = true;
@@ -91,7 +96,7 @@ namespace Transformalize.Configuration.Ext {
             }
 
             // verify entities have level and message field for log output
-            if (p.Output().Provider == "log") {
+            if (output.Provider == "log") {
                 foreach (var fields in p.Entities.Select(entity => entity.GetAllFields().ToArray())) {
                     if (!fields.Any(f => f.Alias.Equals("message", StringComparison.OrdinalIgnoreCase))) {
                         error("Log output requires a message field");
@@ -135,6 +140,42 @@ namespace Transformalize.Configuration.Ext {
             }
         }
 
+        /// <summary>
+        /// When a filter and parameter are related via a parameter name, create the map between them, the provider fills the map
+        /// </summary>
+        /// <param name="p"></param>
+        static void AutomaticMaps(Process p) {
+            if (!p.Connections.Any(c => c.Provider.In("elasticsearch", "solr"))) {
+                return;
+            }
+
+            var parameters = p.GetActiveParameters();
+            if (parameters.Any(pr=>!pr.Prompt)) {
+                return;
+            }
+
+            foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
+                var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
+                if (connection != null) {
+                    foreach (var filter in entity.Filter.Where(QualifiesForAutomaticMap())) {
+                        var parameter = parameters.FirstOrDefault(pr => string.IsNullOrEmpty(pr.Map) && pr.Name == filter.Field && pr.Value == filter.Value);
+                        if (parameter != null) {
+                            var mapName = filter.Field.GetHashCode().ToString();
+                            parameter.Map = mapName;
+                            filter.Map = mapName;
+                            if (p.Maps == null) {
+                                p.Maps = new List<Map>();
+                            }
+                            p.Maps.Add(new Map { Name = mapName });
+                        }
+                    }
+                }
+            }
+        }
+
+        static Func<Filter, bool> QualifiesForAutomaticMap() {
+            return f => f.Type == "facet" && !string.IsNullOrEmpty(f.Field) && string.IsNullOrEmpty(f.Map);
+        }
 
         static void DefaultConnection(Process p, string name) {
             if (p.Connections.All(c => c.Name != name)) {

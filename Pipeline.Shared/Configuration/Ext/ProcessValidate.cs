@@ -230,7 +230,16 @@ namespace Transformalize.Configuration.Ext {
                 foreach (var filter in entity.Filter.Where(filter => !string.IsNullOrEmpty(filter.Map)).Where(filter => p.Maps.All(m => m.Name != filter.Map))) {
                     error($"The filter on field {filter.Field} in entity {entity.Alias} refers to invalid map: {filter.Map}");
                 }
+                foreach (var filter in entity.Filter.Where(f => f.Type == "facet")) {
+                    if (filter.Field == string.Empty) {
+                        error("Facet filters need a field.");
+                    }
+                    if (filter.Map == string.Empty) {
+                        error("Facet filters need a map to load facets into.");
+                    }
+                }
             }
+
         }
 
         static void ValidateRelationships(Process p, Action<string> error, Action<string> warn) {

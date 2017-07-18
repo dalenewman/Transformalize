@@ -37,19 +37,20 @@ namespace Transformalize.Provider.Solr {
                 return null;
 
             var version = _context.Entity.GetVersionField();
+            var versionName = version.Alias.ToLower();
 
-            _context.Debug(() => $"Detecting Max Output Version: {_context.Connection.Database}.{version.Alias.ToLower()}.");
+            _context.Debug(() => $"Detecting Max Output Version: {_context.Connection.Database}.{versionName}.");
 
             var result = _solr.Query(
-                new SolrQueryByField(_context.Entity.TflDeleted().Alias, "false"),
+                _context.Entity.Delete ? new SolrQueryByField(_context.Entity.TflDeleted().Alias.ToLower(), "false") : SolrQuery.All,
                 new QueryOptions {
                     StartOrCursor = new StartOrCursor.Start(0),
                     Rows = 1,
-                    Fields = new List<string> { version.Alias },
-                    OrderBy = new List<SortOrder> { new SortOrder(version.Alias, Order.DESC) }
+                    Fields = new List<string> { versionName },
+                    OrderBy = new List<SortOrder> { new SortOrder(versionName, Order.DESC) }
                 });
 
-            var value = result.NumFound > 0 ? result[0][version.Alias] : null;
+            var value = result.NumFound > 0 ? result[0][versionName] : null;
             if (value != null && value.GetType() != Constants.TypeSystem()[version.Type]) {
                 value = version.Convert(value);
             }
