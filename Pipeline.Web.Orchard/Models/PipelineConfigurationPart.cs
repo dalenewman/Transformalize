@@ -41,6 +41,8 @@ namespace Pipeline.Web.Orchard.Models {
                 var cfg = this.Retrieve(x => x.Configuration, versioned: true);
                 if (string.IsNullOrEmpty(cfg)) {
                     return @"<cfg name=""name"">
+    <parameters>
+    </parameters>
     <connections>
     </connections>
     <entities>
