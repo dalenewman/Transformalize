@@ -220,7 +220,7 @@ like this:
 > * The **`t`** attribute (short for **t**ransformation)
 > * The **`C#`** transformation
 
-Now you may create a *calculated field*. define a *Revenue* field 
+Now you may create a *calculated field*. Define a *Revenue* field 
 like so:
 
 ```xml
@@ -315,7 +315,7 @@ the output structure.
 
 You may have noticed that Transformalize doesn't let you *map* 
 input to pre-existing output.  Instead, it creates it's own 
-consistent output structure optimized from incremental updates. 
+consistent output structure optimized for incremental updates. 
 You decide:
 
 * what new calculated fields to add
@@ -787,7 +787,7 @@ Transformalize records four *system* fields that may
 be used by additional `tfl` arrangements and/or other systems:
 
 * TflKey - a surrogate key (an auto-incrementing value)
-* TflBatchId - a versionnumber corresponding to `tfl` runs
+* TflBatchId - a version number corresponding to `tfl` runs
 * TflHashCode - a numerical value calculated from every field (used for comparisons)
 * TflDeleted - a boolean field tracking deletes (an optional setting)
 
@@ -842,7 +842,6 @@ info  | NorthWind |               | Time elapsed: 00:00:02.7229006
 <strong>>tfl -a c:\temp\NorthWindToES.xml</strong>
 info  | NorthWind | NorthWindFlat | Starting
 info  | NorthWind | NorthWindFlat | Change Detected: No.
-info  | NorthWind | NorthWindFlat | 0 to output
 info  | NorthWind | NorthWindFlat | Ending 00:00:00
 info  | NorthWind |               | Time elapsed: 00:00:00.3594499
 </pre>
