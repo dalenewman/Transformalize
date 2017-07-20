@@ -293,7 +293,6 @@ using the **`-m`** flag like this:
 > tfl -a NorthWind.xml <strong>-m init</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1044231.
 <strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.1715532
@@ -335,7 +334,6 @@ Transformalize incrementally updates the output by default.
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1384721.
-info  | NorthWind | Order Details | Starting
 <strong>info  | NorthWind | Order Details | 2155 from input</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.5755261
 </pre>
@@ -383,14 +381,12 @@ let's initialize and run `tfl` again:
 <strong>tfl -a NorthWind.xml -m init</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1161231.
 warn  | NorthWind | Order Details | Initializing
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind |               | Time elapsed: 00:00:00.8981349
 
 <strong>>tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1064016.
-info  | NorthWind | Order Details | Starting
 <strong>info  | NorthWind | Order Details | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.3498366
 </pre>
@@ -482,20 +478,16 @@ and run Transformalize:
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1272141.
 warn  | NorthWind | Order Details | Initializing
 warn  | NorthWind | Orders        | Initializing
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
-<strong>info  | NorthWind | Orders        | Starting
-info  | NorthWind | Orders        | 830 from input
+<strong>info  | NorthWind | Orders        | 830 from input
 info  | NorthWind | Orders        | 830 inserts into output</strong>
 info  | NorthWind |               | Time elapsed: 00:00:01.0855408
 
 <strong>tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1124897.
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | Change Detected: No.
-<strong>info  | NorthWind | Orders        | Starting
-info  | NorthWind | Orders        | Change Detected: No.</strong>
+<strong>info  | NorthWind | Orders        | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.3670649
 </pre>
 
@@ -614,28 +606,20 @@ warn  | NorthWind | Employees     | Initializing
 warn  | NorthWind | Shippers      | Initializing
 warn  | NorthWind | Suppliers     | Initializing
 warn  | NorthWind | Categories    | Initializing</span>
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
-info  | NorthWind | Orders        | Starting
 info  | NorthWind | Orders        | 830 from input
 info  | NorthWind | Orders        | 830 inserts into output
-info  | NorthWind | Products      | Starting
 info  | NorthWind | Products      | 77 from input
 info  | NorthWind | Products      | 77 inserts into output
-info  | NorthWind | Customers     | Starting
 info  | NorthWind | Customers     | 91 from input
 info  | NorthWind | Customers     | 91 inserts into output
-info  | NorthWind | Employees     | Starting
 info  | NorthWind | Employees     | 9 from input
 info  | NorthWind | Employees     | 9 inserts into output
-info  | NorthWind | Shippers      | Starting
 info  | NorthWind | Shippers      | 3 from input
 info  | NorthWind | Shippers      | 3 inserts into output
-info  | NorthWind | Suppliers     | Starting
 info  | NorthWind | Suppliers     | 29 from input
 info  | NorthWind | Suppliers     | 29 inserts into output
-info  | NorthWind | Categories    | Starting
 info  | NorthWind | Categories    | 8 from input
 info  | NorthWind | Categories    | 8 inserts into output
 info  | NorthWind |               | 2155 records inserted into flat
@@ -643,21 +627,13 @@ info  | NorthWind |               | Time elapsed: 00:00:03.3745704
 
 <strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1055892.
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | Change Detected: No.
-info  | NorthWind | Orders        | Starting
 info  | NorthWind | Orders        | Change Detected: No.
-info  | NorthWind | Products      | Starting
 info  | NorthWind | Products      | Change Detected: No.
-info  | NorthWind | Customers     | Starting
 info  | NorthWind | Customers     | Change Detected: No.
-info  | NorthWind | Employees     | Starting
 info  | NorthWind | Employees     | Change Detected: No.
-info  | NorthWind | Shippers      | Starting
 info  | NorthWind | Shippers      | Change Detected: No.
-info  | NorthWind | Suppliers     | Starting
 info  | NorthWind | Suppliers     | Change Detected: No.
-info  | NorthWind | Categories    | Starting
 info  | NorthWind | Categories    | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.7259168
 </pre>
@@ -678,24 +654,16 @@ Now run Transformalize again:
 <pre style="font-size:smaller;">
 <strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1242668.
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | Change Detected: No.
-info  | NorthWind | Orders        | Starting
 info  | NorthWind | Orders        | Change Detected: No.
-info  | NorthWind | Products      | Starting
 info  | NorthWind | Products      | Change Detected: No.
-info  | NorthWind | Customers     | Starting
 info  | NorthWind | Customers     | Change Detected: Input: 0x75ad2 > Output: 0x73bb5
 <strong>info  | NorthWind | Customers     | 1 from input
 info  | NorthWind | Customers     | 1 to output
 info  | NorthWind | Customers     | 1 updates to output</strong>
-info  | NorthWind | Employees     | Starting
 info  | NorthWind | Employees     | Change Detected: No.
-info  | NorthWind | Shippers      | Starting
 info  | NorthWind | Shippers      | Change Detected: No.
-info  | NorthWind | Suppliers     | Starting
 info  | NorthWind | Suppliers     | Change Detected: No.
-info  | NorthWind | Categories    | Starting
 info  | NorthWind | Categories    | Change Detected: No.
 <strong>info  | NorthWind |               | 35 records updated in flat</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.9643939
@@ -706,20 +674,20 @@ customer has purchased 35 items (in *Order Details*), the flat table is updated 
 
 #### Scheduling Incrementals
 
-Most likely, you'll want to schedule incremantals so that the de-normalized data is kept 
-up to date. Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. 
-Using the **`-s`** schedule flag, pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
+> Intrucing the **`-s`** (schedule) flag
+
+Most likely, you'll want to schedule incremantals so that the de-normalized data is current. Transformalize 
+uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Using 
+the **`-s`** schedule flag, pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
 like this:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -a "c:\Temp\NorthWind.xml" -s "0/5 * * * * ?"
 info  | Process   |                 Starting Scheduler: 0/5 * * * * ?</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1032057.
-info  | NorthWind | Order Details | Starting
 info  | NorthWind | Order Details | Change Detected: No.
-info  | NorthWind | Orders        | Starting
 info  | NorthWind | Orders        | Change Detected: No.
-...
+... and just keeps running ...
 </pre>
 
 This runs an incremental every five seconds until you press **`CTRL-C`**.  If you 
@@ -779,6 +747,10 @@ NorthWind data in the SQLite database is flat and easy to consume.
 
 ## Post De-Normalization
 
+> Introducing:
+> * system fields in output
+> * the **`read-only`** attribute
+
 In order to de-normalize, we had to use a relational 
 output (i.e. SQLite), but now that it's flat, we can leverage it 
 in non-relational providers as well.
@@ -791,7 +763,12 @@ be used by additional `tfl` arrangements and/or other systems:
 * TflHashCode - a numerical value calculated from every field (used for comparisons)
 * TflDeleted - a boolean field tracking deletes (an optional setting)
 
+**Note:** You can disable system fields by setting `read-only` 
+to `true` in the top-most `<cfg/>` element.
+
 ### Leveraging Elasticsearch & Kibana
+
+> Introducing the **elasticsearch** provider
 
 This section demonstrates how to load the flattened Northwind 
 data into [Elasticsearch](https://www.elastic.co/products/elasticsearch) 
@@ -875,6 +852,8 @@ indexes. Here's a quick 30 second video:
 [![NorthWind in Kibana](Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
 
 ### Leveraging SOLR & Banana
+
+> Introducing the **solr** provider
 
 This section demonstrates how to load the flattened Northwind 
 data into [SOLR](http://lucene.apache.org/solr) 
@@ -962,7 +941,12 @@ works against SOLR indexes instead of Elasticsearch. Here's a quick 20 second vi
 
 [![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
 
-### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel*
+### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel
+
+> Introducing
+> * the **sqlserver** provider
+> * the **ssas** provider
+> * the `measure` and `dimension` attributes on `fields`
 
 This section demonstrates loading the data into a *SSAS* 
 cube and browsing it with Excel.  To follow along, 
@@ -1039,14 +1023,15 @@ is needed to accurately describe the cube.  Here is a short video showing Excel 
 
 [![NorthWind in Excel](Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
 
-* Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
+Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
 ### Leveraging the Orchard CMS Module
 
 > Introducing:
-> * The **`parameters`** section
-> * The **`filter`** section within an `entity`
-> * The **`page`**, **`page-size`**, and **`sortable`** attributes for an `entity`
+> * the **Orchard CMS** module
+> * the **`parameters`** section
+> * the **`filter`** section within an `entity`
+> * the **`page`**, **`page-size`**, and **`sortable`** attributes for an `entity`
 
 The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows you to:
 
@@ -1055,16 +1040,15 @@ The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows yo
 * view and page through your output in *report mode*
 * export search results (to csv, and xlsx) in *report mode*
 
-Although defining a report with a Transformalize arrangement can 
-add some complexity, it still makes sense since reporting is 
-just ETL.
+Although arranging a report in Transformalize can add some 
+complexity, it still makes sense since reporting is just ETL.
 
 Here's a quick video of a Northwind report using the Elasticsearch 
 provider we loaded earlier:
 
 [![NorthWind in Orchard CMS](Files/northwind-in-orchard-cms-youtube.png)](https://youtu.be/CCTvjsrUtHk "Northwind in Orchard CMS")
 
-The configuration for this is:
+The arrangement for this is:
 
 ```xml
 <cfg name="NorthWind">
@@ -1098,15 +1082,35 @@ The configuration for this is:
 
 #### Parameters
 
-This section allows you to pass in parameters to your arrangement. 
-The parameter place-holders (e.g. `@[orderyear]`) are replaced 
-before the arrangement is validated.
+> Introducing the **`name`**, **`label`**, **`value`**, **`prompt`**, 
+> and **`multiple`** attributes for **`parameters`**
+
+Parameters allow you to pass in arguments that manipulate 
+attribute values in the arrangement. The parameter 
+place-holders (e.g. `@[orderyear]`) are replaced with 
+a provided or default value before validation.
+
+Parameters are visible in report mode 
+when `prompt` is set to `true`.
 
 #### Filter
 
-The filter section applies field filters to your output. In the case 
-of the *SOLR* and *Elasticsearch* providers, you may use *facet* and/or *search* 
-filters.  By convention, if the parameter name matches the field 
-name for facets, Transformalize takes care of mapping the facet 
-values to a single or multi-select drop-down for parameter choices 
-on the report.
+> Introducing the **`field`**, **`operator`**, **`value`**, **`expression`**, and **`type`** attributes for each **`filter`**
+
+Filters allow you to limit your output. A filter is set in two ways:
+
+1. by setting `field`, `operator`, and `value` 
+2. by setting a provider-specific `expression`
+
+Either way, you may use parameters to manipulate 
+your filters at run-time.
+
+SOLR and Elasticsearch support faceted navigation.  When you set 
+the filter's type to *facet*, Transformalize takes 
+care of mapping the facet values to a parameter's choices.
+
+#### Paging
+
+Without paging, web-based reporting gets too big for 
+the browser.  All providers are capable of paging, 
+but SOLR and Elasticsearch do it the best.

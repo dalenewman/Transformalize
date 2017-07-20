@@ -55,7 +55,7 @@ namespace Transformalize {
         /// * query if output has any records and use in conjunction with MinVersion determine Content.Entity.IsFirstRun (MinVersion == null && outputCount == 0)
         /// </summary>
         public virtual void Start() {
-            Context.Info("Starting");
+            Context.Debug(()=>"Starting");
             Context.Entity.MaxVersion = InputVersionDetector.Detect();
             Context.Entity.MinVersion = OutputVersionDetector.Detect();
         }
@@ -64,7 +64,7 @@ namespace Transformalize {
         /// Implementation may optionally over-ride End
         /// </summary>
         public virtual void End() {
-            Context.Info("Ending");
+            Context.Debug(()=>"Ending");
         }
     }
 }
