@@ -39,13 +39,14 @@ namespace Tests {
             <add name='Field3' />
           </fields>
           <calculated-fields>
-            <add name='t1' t='copy(Field1).slice( ,1:3)' />
-            <add name='t2' t='copy(Field2).slice(.,1)' />
-            <add name='t3' t='copy(Field3).slice(.,0:1)' />
-            <add name='t4' t='copy(Field1).slice( ,2)' />
-            <add name='t5' t='copy(Field3).slice(.,-2)' />
-            <add name='t6' t='copy(Field1).slice( ,::2)' />
-            <add name='t7' t='copy(Field1).slice( ,3:0:-1)' />
+            <add name='t1' t='copy(Field1).slice(1:3, )' />
+            <add name='t2' t='copy(Field2).slice(1,.)' />
+            <add name='t3' t='copy(Field3).slice(0:1,.)' />
+            <add name='t4' t='copy(Field1).slice(2, )' />
+            <add name='t5' t='copy(Field3).slice(-2,.)' />
+            <add name='t6' t='copy(Field1).slice(::2, )' />
+            <add name='t7' t='copy(Field1).slice(3:0:-1, )' />
+            <add name='t8' t='copy(Field2).slice(0:2)' />
           </calculated-fields>
         </add>
       </entities>
@@ -63,6 +64,7 @@ namespace Tests {
             Assert.AreEqual("mineplex.com", output[0][cf[4]]);
             Assert.AreEqual("stranger in upside", output[0][cf[5]]);
             Assert.AreEqual("the in things", output[0][cf[6]]);
+            Assert.AreEqual("10", output[0][cf[7]]);
 
         }
     }

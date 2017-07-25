@@ -65,9 +65,13 @@ namespace Transformalize.Transforms {
         public override IRow Transform(IRow row) {
 
             var value = _convert ? row[_input].ToString() : row[_input] as string;
-            var split = value.Split(_separator);
 
-            row[Context.Field] = string.Join(Context.Transform.Separator, Slice(split, _start, _end, _step));
+            if(Context.Transform.Separator == string.Empty) {
+                row[Context.Field] = string.Concat(Slice(value.ToCharArray(), _start, _end, _step));
+            } else {
+                var split = value.Split(_separator);
+                row[Context.Field] = string.Join(Context.Transform.Separator, Slice(split, _start, _end, _step));
+            }
             Increment();
             return row;
         }
@@ -131,7 +135,7 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public static IEnumerable<string> Slice(string[] list, int? start = null, int? stop = null, int? step = null) {
+        public static IEnumerable<T> Slice<T>(T[] list, int? start = null, int? stop = null, int? step = null) {
             foreach (var index in SliceIndices(list.Length, start, stop, step)) {
                 yield return list[index];
             }

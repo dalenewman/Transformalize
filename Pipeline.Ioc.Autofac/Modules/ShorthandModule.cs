@@ -227,8 +227,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         Name = "slice",
                         NamedParameterIndicator = string.Empty,
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "separator" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "expression" }
+                            new Cfg.Net.Shorthand.Parameter { Name = "expression" },
+                            new Cfg.Net.Shorthand.Parameter { Name = "separator", Value="" },
                         }
                     });
 
@@ -240,7 +240,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "connection", Signature = "property" });
                     root.Methods.Add(new Method { Name = "contains", Signature = "value" });
                     root.Methods.Add(new Method { Name = "convert", Signature = "type" });
-                    root.Methods.Add(new Method { Name = "copy", Signature = "none", Ignore=true });
+                    root.Methods.Add(new Method { Name = "copy", Signature = "none", Ignore = true });
                     root.Methods.Add(new Method { Name = "cs", Signature = "script" });
                     root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
                     root.Methods.Add(new Method { Name = "datediff", Signature = "datediff" });

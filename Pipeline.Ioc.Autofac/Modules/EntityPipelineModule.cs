@@ -73,7 +73,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-
                 // writer
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : new NullWriter());
 
