@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Transformalize.Extensions {
 
@@ -43,5 +44,6 @@ namespace Transformalize.Extensions {
                 yield return new ReadOnlyCollection<T>(array);
             }
         }
+
     }
 }

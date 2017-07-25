@@ -17,6 +17,7 @@
 #endregion
 using Cfg.Net.Contracts;
 using Cfg.Net.Loggers;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Contracts;
 
@@ -24,8 +25,8 @@ namespace Transformalize.Actions {
 
     public class ScriptLoaderAction : IAction {
 
-        private readonly IContext _context;
-        private readonly IReader _reader;
+        readonly IContext _context;
+        readonly IReader _reader;
 
         public ScriptLoaderAction(IContext context, IReader reader) {
             _context = context;
@@ -38,7 +39,7 @@ namespace Transformalize.Actions {
             var message = "Ok";
             foreach (var script in _context.Process.Scripts) {
                 if (script.File != string.Empty) {
-                    script.Content = _reader.Read(script.File, null, logger);
+                    script.Content = _reader.Read(script.File, new Dictionary<string,string>() , logger);
                     if (logger.Errors().Any()) {
                         code = 500;
                         foreach (var error in logger.Errors()) {

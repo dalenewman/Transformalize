@@ -18,11 +18,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Excel;
+using ExcelDataReader;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Provider.Excel {
+
     public class ExcelLineReader {
         private readonly IConnectionContext _context;
         private readonly int _lines;
@@ -48,8 +49,6 @@ namespace Transformalize.Provider.Excel {
 
                     var emptyDetector = new StringBuilder();
 
-                    bool foundData = false;
-
                     while (reader.Read()) {
                         emptyDetector.Clear();
                         var row = new List<object>();
@@ -62,33 +61,10 @@ namespace Transformalize.Provider.Excel {
                         }
                         emptyDetector.Trim(" ");
                         if (!emptyDetector.ToString().Equals(string.Empty)) {
-                            foundData = true;
                             yield return row.ToArray();
                         }
                     }
 
-                    // second attempt, use data set
-                    if (!foundData) {
-                        var dataSet = reader.AsDataSet();
-                        using (var r = dataSet.CreateDataReader()) {
-                            while (r.Read()) {
-                                emptyDetector.Clear();
-                                var row = new List<object>();
-                                for (var i = 0; i < r.FieldCount; i++) {
-                                    if (i == _lines)
-                                        break;
-                                    var value = r.GetValue(i);
-                                    row.Add(value);
-                                    emptyDetector.Append(value);
-                                }
-                                emptyDetector.Trim(" ");
-                                if (!emptyDetector.ToString().Equals(string.Empty)) {
-                                    yield return row.ToArray();
-                                }
-
-                            }
-                        }
-                    }
                 }
             }
         }

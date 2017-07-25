@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -17,6 +15,8 @@ using System.Collections.Generic;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
+using System.Collections.Generic;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Shorthand;
@@ -223,6 +223,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     });
                     root.Signatures.Add(Simple("expression"));
                     root.Signatures.Add(Simple("key"));
+                    root.Signatures.Add(new Signature {
+                        Name = "slice",
+                        NamedParameterIndicator = string.Empty,
+                        Parameters = new List<Cfg.Net.Shorthand.Parameter> {
+                            new Cfg.Net.Shorthand.Parameter { Name = "separator" },
+                            new Cfg.Net.Shorthand.Parameter { Name = "expression" }
+                        }
+                    });
 
                     root.Methods.Add(new Method { Name = "add", Signature = "none" });
                     root.Methods.Add(new Method { Name = "abs", Signature = "none" });
@@ -356,6 +364,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
                     root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
                     root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
+                    root.Methods.Add(new Method { Name = "slice", Signature = "slice" });
                     root.Check();
                 }
 

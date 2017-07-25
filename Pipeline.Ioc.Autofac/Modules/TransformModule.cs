@@ -195,6 +195,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
+            builder.Register((c, p) => new SliceTransform(p.Positional<IContext>(0))).Named<ITransform>("slice");
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);

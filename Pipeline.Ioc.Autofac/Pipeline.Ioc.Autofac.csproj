@@ -42,12 +42,12 @@
       <HintPath>..\packages\Cfg-NET.Environment.0.2.2\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Reader, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Cfg.Net.Reader">
       <HintPath>..\packages\Cfg-NET.Reader.0.3.2\lib\net45\Cfg.Net.Reader.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Shorthand, Version=0.2.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Shorthand.0.2.7\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+      <HintPath>..\packages\Cfg-NET.Shorthand.0.2.8\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
@@ -62,7 +62,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Elasticsearch.Net.5.4.0\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <HintPath>..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>

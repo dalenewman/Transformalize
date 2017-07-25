@@ -24,14 +24,14 @@ using Transformalize.Contracts;
 namespace Transformalize.Configuration {
     public class Field : CfgNode, IField {
 
-        private static readonly string[] ExpressionSplitter = { ")." };
+        static readonly string[] ExpressionSplitter = { ")." };
         public static readonly List<string> InvalidNames = new List<string> { Constants.TflHashCode.ToLower(), Constants.TflBatchId.ToLower(), Constants.TflKey.ToLower(), Constants.TflDeleted.ToLower() };
 
         string _type;
         string _length;
-        private int _precision;
-        private int _scale;
-        private string _runOperator;
+        int _precision;
+        int _scale;
+        string _runOperator;
 
         public string PrecisionFormat { get; private set; } = "000000000";
 
@@ -542,6 +542,9 @@ namespace Transformalize.Configuration {
 
         [Cfg(value ="sum", domain= @"Sum,Count,Min,Max,DistinctCount,None,ByAccount,AverageOfChildren,FirstChild,LastChild,FirstNonEmpty,LastNonEmpty", ignoreCase =true, toLower =true)]
         public string AggregateFunction { get; set; }
+
+        [Cfg(value="")]
+        public string Expression { get; set; }
 
         [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
         public string RunOperator {

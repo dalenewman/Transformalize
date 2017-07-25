@@ -34,8 +34,9 @@
       <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NReco.LambdaParser, Version=1.0.5.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
-      <HintPath>..\packages\NReco.LambdaParser.1.0.5\lib\portable45-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
+    <Reference Include="NReco.LambdaParser, Version=1.0.6.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
+      <HintPath>..\packages\NReco.LambdaParser.1.0.6\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
