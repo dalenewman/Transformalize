@@ -118,7 +118,6 @@ namespace Tests {
                         Entities = new List<Entity>(1) {
                             new Entity {
                                 Name = provider == "sqlce" ? process.Flat : process.Star,
-                                CalculateHashCode = false,
                                 Connection = "input",
                                 Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {
                                     Name = field.Alias,

@@ -284,12 +284,12 @@ namespace Transformalize.Configuration {
                     Type = "int",
                     Input = false,
                     Default = "0",
-                    Transforms = CalculateHashCode ? new List<Transform> {
+                    Transforms = new List<Transform> {
                         new Transform {
                             Method = "hashcode",
                             Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
                         }
-                    } : new List<Transform>()
+                    }
                 },
                 new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }
             };
@@ -590,10 +590,6 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = true)]
         public bool DataTypeWarnings { get; set; }
-
-        // Determines whether or not a hash code will be calculated and placed in TflHashCode column (in output).
-        [Cfg(value = true)]
-        public bool CalculateHashCode { get; set; }
 
         [Cfg(value = Constants.DefaultSetting, toLower = true)]
         public string SearchType { get; set; }

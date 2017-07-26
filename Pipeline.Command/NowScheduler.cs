@@ -92,7 +92,6 @@ namespace Transformalize.Command {
                 connection.Delimiters.Clear();
             }
             foreach (var entity in process.Entities) {
-                entity.CalculateHashCode = true;
                 if (entity.Name == entity.Alias) {
                     entity.Alias = null;
                 }

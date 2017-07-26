@@ -91,6 +91,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestXmlDecode.cs" />
     <Compile Include="TestSlice.cs" />
     <Compile Include="AnyTransform.cs" />
     <Compile Include="CompositionRoot.cs" />

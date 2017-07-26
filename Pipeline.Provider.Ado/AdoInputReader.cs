@@ -118,8 +118,7 @@ namespace Transformalize.Provider.Ado {
                                 var expected = Constants.TypeSystem()[field.Type];
                                 var actual = row[field] == null ? expected : row[field].GetType();
                                 if (expected != actual) {
-                                    _input.Warn(
-                                        $"The {field.Alias} field in {_input.Entity.Alias} expects a {expected}, but is reading a {actual}.");
+                                    _input.Warn($"The {field.Alias} field in {_input.Entity.Alias} expects a {expected}, but is reading a {actual}.");
                                 }
                             }
                             _rowCount++;
