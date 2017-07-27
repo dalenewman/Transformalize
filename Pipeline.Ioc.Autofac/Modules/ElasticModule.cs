@@ -92,15 +92,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // Entity Input
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "elasticsearch")) {
 
-                builder.Register<IInputVersionDetector>(ctx => {
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "elasticsearch":
-                            return new ElasticInputVersionDetector(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key));
+                            return new ElasticInputProvider(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key));
                         default:
-                            return new NullVersionDetector();
+                            return new NullInputProvider();
                     }
-                }).Named<IInputVersionDetector>(entity.Key);
+                }).Named<IInputProvider>(entity.Key);
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
@@ -152,8 +152,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new ElasticOutputController(
                                     output,
                                     initializer,
-                                    ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    new ElasticOutputVersionDetector(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)),
+                                    ctx.ResolveNamed<IInputProvider>(entity.Key),
+                                    _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() :new ElasticOutputProvider(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)),
                                     ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)
                                 );
                             default:

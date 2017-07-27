@@ -31,14 +31,14 @@ namespace Transformalize.Provider.Elastic {
         public ElasticOutputController(
             OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector,
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider,
             IElasticLowLevelClient client
             ) : base(
                 context,
                 initializer,
-                inputVersionDetector,
-                outputVersionDetector
+                inputProvider,
+                outputProvider
                 ) {
             _client = client;
             _stopWatch = new Stopwatch();
@@ -77,10 +77,6 @@ namespace Transformalize.Provider.Elastic {
                 Context.Entity.Identity = (key == null ? 0 : (int)key);
                 Context.Debug(() => $"Next TflBatchId: {Context.Entity.BatchId}.");
                 Context.Debug(() => $"Last TflKey: {Context.Entity.Identity}.");
-
-                var countBody = new { query = new { match_all = new { } } };
-                Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && _client.Count<DynamicResponse>(Context.Connection.Index, Context.TypeName(), new PostData<object>(countBody)).Body["count"].Value == (long)0;
-
             } else {
                 Context.Error(result.ServerError.ToString());
                 Context.Debug(() => result.DebugInformation);

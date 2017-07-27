@@ -25,9 +25,9 @@ namespace Transformalize.Provider.SSAS {
         public SSASOutputController(
             OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector
-            ) : base(context, initializer, inputVersionDetector, outputVersionDetector) { }
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider
+            ) : base(context, initializer, inputProvider, outputProvider) { }
 
         public override void Start() {
             base.Start();
@@ -35,7 +35,6 @@ namespace Transformalize.Provider.SSAS {
             // we do not actually write to SSAS, it reads directly from the input
             Context.Entity.BatchId = 0;
             Context.Entity.Identity = 0;
-            Context.Entity.IsFirstRun = false;
         }
     }
 }

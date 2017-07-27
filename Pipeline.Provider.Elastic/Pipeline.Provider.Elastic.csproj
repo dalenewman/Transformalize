@@ -65,7 +65,7 @@
     <Compile Include="ElasticQueryReader.cs" />
     <Compile Include="ElasticReader.cs" />
     <Compile Include="ElasticInitializer.cs" />
-    <Compile Include="ElasticInputVersionDetector.cs" />
+    <Compile Include="ElasticInputProvider.cs" />
     <Compile Include="ElasticOutputController.cs" />
     <Compile Include="ElasticOutputVersionDetector.cs" />
     <Compile Include="ElasticPartialUpdater.cs" />

@@ -104,15 +104,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // entity input
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "solr")) {
 
-                builder.Register<IInputVersionDetector>(ctx => {
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "solr":
-                            return new SolrInputVersionDetector(input, ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(input.Connection.Key));
+                            return new SolrInputProvider(input, ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(input.Connection.Key));
                         default:
-                            return new NullVersionDetector();
+                            return new NullInputProvider();
                     }
-                }).Named<IInputVersionDetector>(entity.Key);
+                }).Named<IInputProvider>(entity.Key);
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
@@ -155,6 +155,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }).Named<IUpdate>(entity.Key);
 
                     // OUTPUT
+                    builder.Register<IOutputProvider>((ctx) => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var solr = ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(output.Connection.Key);
+                        return new SolrOutputProvider(output, solr);
+                    }).Named<IOutputProvider>(entity.Key);
+
                     builder.Register<IOutputController>(ctx => {
 
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
@@ -173,8 +179,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new SolrOutputController(
                                     output,
                                     initializer,
-                                    ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    _process.Mode == "init" ? (IVersionDetector)new NullVersionDetector() : new SolrOutputVersionDetector(output, solr),
+                                    ctx.ResolveNamed<IInputProvider>(entity.Key),
+                                    _process.Mode == "init" ? new NullOutputProvider() : ctx.ResolveNamed<IOutputProvider>(entity.Key),
                                     solr
                                 );
                             default:

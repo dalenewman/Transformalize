@@ -44,7 +44,7 @@ namespace Transformalize.Provider.Ado {
 
             if (model.MasterEntity.Inserts > 0) {
 
-                if (_output.Process.IsFirstRun()) {
+                if (_output.Process.Mode == "init") {
                     return new AdoFlattenFirstRunAction(_output, _cf, model).Execute();
                 }
 

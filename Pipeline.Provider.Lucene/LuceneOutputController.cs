@@ -29,15 +29,15 @@ namespace Transformalize.Provider.Lucene {
         public LuceneOutputController(
             OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector,
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider,
             SearcherFactory searcherFactory,
             IndexReaderFactory readerFactory
             ) : base(
                 context,
                 initializer,
-                inputVersionDetector,
-                outputVersionDetector
+                inputProvider,
+                outputProvider
                 ) {
             _searcherFactory = searcherFactory;
             _readerFactory = readerFactory;
@@ -68,9 +68,6 @@ namespace Transformalize.Provider.Lucene {
             Context.Debug(()=>$"Next {tflBatchId.Alias}: {Context.Entity.BatchId}.");
             Context.Debug(() => $"Last {tflKey.Alias}: {Context.Entity.Identity}.");
 
-            using (var reader = _readerFactory.Create()) {
-                Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && reader.NumDocs() == 0;
-            }
         }
 
     }

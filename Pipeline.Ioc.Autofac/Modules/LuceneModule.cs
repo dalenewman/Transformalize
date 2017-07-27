@@ -117,15 +117,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "lucene")) {
 
                 // INPUT VERSION DETECTOR
-                builder.Register<IInputVersionDetector>(ctx => {
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "lucene":
-                            return new LuceneInputVersionDetector(input, ctx.ResolveNamed<SearcherFactory>(entity.Key));
+                            return new LuceneInputProvider(input, ctx.ResolveNamed<SearcherFactory>(entity.Key));
                         default:
-                            return new NullVersionDetector();
+                            return new NullInputProvider();
                     }
-                }).Named<IInputVersionDetector>(entity.Key);
+                }).Named<IInputProvider>(entity.Key);
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
@@ -172,8 +172,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new LuceneOutputController(
                                     output,
                                     new NullInitializer(),
-                                    ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    new LuceneOutputVersionDetector(output, ctx.ResolveNamed<SearcherFactory>(entity.Key)),
+                                    ctx.ResolveNamed<IInputProvider>(entity.Key),
+                                    output.Process.Mode == null ? (IOutputProvider) new NullOutputProvider() : new LuceneOutputProvider(output, ctx.ResolveNamed<SearcherFactory>(entity.Key)),
                                     ctx.ResolveNamed<SearcherFactory>(entity.Key),
                                     ctx.ResolveNamed<IndexReaderFactory>(entity.Key)
                                 );

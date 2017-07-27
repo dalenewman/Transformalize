@@ -54,7 +54,7 @@
     <Compile Include="SSASIdentifiers.cs" />
     <Compile Include="SSASInitializer.cs" />
     <Compile Include="SSASOutputController.cs" />
-    <Compile Include="SSASOutputVersionDetector.cs" />
+    <Compile Include="SSASOutputProvider.cs" />
     <Compile Include="SSASWriter.cs" />
   </ItemGroup>
   <ItemGroup>

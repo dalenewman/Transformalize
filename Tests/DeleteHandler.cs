@@ -32,7 +32,6 @@ namespace Tests {
         [TestMethod]
         public void NoDeletes() {
             var entity = GetTestEntity();
-            entity.IsFirstRun = false;
             var input = GetTestReader(entity);
             var output = GetTestReader(entity);
             var deleter = new TestDeleter(entity, output.Data);
@@ -69,7 +68,6 @@ namespace Tests {
 
             Assert.AreEqual(0, entity.Errors().Length);
 
-            entity.IsFirstRun = false;
             var input = GetTestReader(entity);
             var output = GetTestReader(entity);
 

@@ -67,9 +67,9 @@
     <Compile Include="IndexWriterFactory.cs" />
     <Compile Include="LuceneConversion.cs" />
     <Compile Include="LuceneInitializer.cs" />
-    <Compile Include="LuceneOutputVersionDetector.cs" />
+    <Compile Include="LuceneOutputProvider.cs" />
     <Compile Include="LuceneOutputController.cs" />
-    <Compile Include="LuceneInputVersionDetector.cs" />
+    <Compile Include="LuceneInputProvider.cs" />
     <Compile Include="LuceneReader.cs" />
     <Compile Include="LuceneWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

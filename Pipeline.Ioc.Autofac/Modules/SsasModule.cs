@@ -49,7 +49,7 @@ namespace Transformalize.Ioc.Autofac {
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "ssas")) {
 
                 // input version detector
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // input reader
                 builder.Register<IRead>(ctx => {
@@ -70,8 +70,8 @@ namespace Transformalize.Ioc.Autofac {
                         return new SSASOutputController(
                             output,
                             initializer,
-                            ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                            new SSASOutputVersionDetector(input, output)
+                            ctx.ResolveNamed<IInputProvider>(entity.Key),
+                            _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() : new SSASOutputProvider(input, output)
                         );
                     }
                     ).Named<IOutputController>(entity.Key);

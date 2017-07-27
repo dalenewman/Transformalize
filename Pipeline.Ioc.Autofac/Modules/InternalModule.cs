@@ -53,7 +53,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // Entity input
             foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // READER
                 builder.Register<IRead>(ctx => {

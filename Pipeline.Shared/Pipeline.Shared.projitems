@@ -61,6 +61,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ICreateConfiguration.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IDelete.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IEntityDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IInputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITakeAndReturnRows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IExecute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IField.cs" />
@@ -93,7 +95,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\ITransformRows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IUpdate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IVersionDetector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IWrite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IWriteMasterUpdateQuery.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\LogLevel.cs" />
@@ -113,6 +114,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Incrementer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InternalReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchCountTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RoundToTransform.cs" />
@@ -142,7 +145,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullUpdater.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullCustomizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullVersionDetector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProcessController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ReadFrom.cs" />

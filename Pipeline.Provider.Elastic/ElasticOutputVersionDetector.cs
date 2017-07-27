@@ -16,22 +16,27 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Elasticsearch.Net;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Elastic.Ext;
 
 namespace Transformalize.Provider.Elastic {
-    public class ElasticOutputVersionDetector : IVersionDetector {
+    public class ElasticOutputProvider : IOutputProvider {
         private readonly OutputContext _context;
         private readonly IElasticLowLevelClient _client;
 
-        public ElasticOutputVersionDetector(OutputContext context, IElasticLowLevelClient client) {
+        public ElasticOutputProvider(OutputContext context, IElasticLowLevelClient client) {
             _context = context;
             _client = client;
         }
 
-        public object Detect() {
+        public void Delete() {
+            throw new NotImplementedException();
+        }
+
+        public object GetMaxVersion() {
 
             // TODO: Consider tlfdeleted = 0
 
@@ -68,6 +73,38 @@ namespace Transformalize.Provider.Elastic {
             var converted = value ?? null;
             _context.Debug(() => $"Found value: {converted ?? "null"}");
             return converted;
+        }
+
+        public void End() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflBatchId() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflKey() {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> ReadKeys() {
+            throw new NotImplementedException();
+        }
+
+        public void Start() {
+            throw new NotImplementedException();
+        }
+
+        public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
         }
     }
 }

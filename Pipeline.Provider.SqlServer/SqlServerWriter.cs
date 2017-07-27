@@ -99,7 +99,7 @@ namespace Transformalize.Provider.SqlServer {
 
                     var batch = part.ToArray();
 
-                    if (_output.Entity.IsFirstRun || (_output.Entity.Insert && !_output.Entity.Update)) {
+                    if (_output.Process.Mode == "init" || (_output.Entity.Insert && !_output.Entity.Update)) {
                         var inserts = new List<IRow>();
                         inserts.AddRange(batch);
                         Insert(bulkCopy, dt, inserts);

@@ -48,7 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RethinkDbInitializer.cs" />
     <Compile Include="RethinkDbOutputController.cs" />
-    <Compile Include="RethinkDbOutputVersionDetector.cs" />
+    <Compile Include="RethinkDbOutputProvider.cs" />
     <Compile Include="RethinkDbWriter.cs" />
   </ItemGroup>
   <ItemGroup>

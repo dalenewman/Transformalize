@@ -16,23 +16,25 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
-    public class AdoInputVersionDetector : IInputVersionDetector {
+    public class AdoInputProvider : IInputProvider {
         private readonly InputContext _context;
         private readonly IConnectionFactory _cf;
 
-        public AdoInputVersionDetector(InputContext context, IConnectionFactory connectionFactory) {
+        public AdoInputProvider(InputContext context, IConnectionFactory connectionFactory) {
             _context = context;
             _cf = connectionFactory;
         }
 
-        public object Detect() {
+        public object GetMaxVersion() {
 
             if (string.IsNullOrEmpty(_context.Entity.Version))
                 return null;
@@ -64,6 +66,14 @@ namespace Transformalize.Provider.Ado {
                 _context.Error(ex, ex.Message + " " + sql);
                 throw;
             }
+        }
+
+        public Schema GetSchema(Entity entity = null) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Read() {
+            throw new NotImplementedException();
         }
     }
 }

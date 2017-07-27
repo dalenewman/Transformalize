@@ -1,4 +1,6 @@
-﻿#region license
+﻿using System;
+using System.Collections.Generic;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -20,16 +22,21 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Provider.Lucene {
-    public class LuceneOutputVersionDetector : IVersionDetector {
+    public class LuceneOutputProvider : IOutputProvider {
+
         private readonly OutputContext _context;
         private readonly SearcherFactory _searcherFactory;
 
-        public LuceneOutputVersionDetector(OutputContext context, SearcherFactory searcherFactory) {
+        public LuceneOutputProvider(OutputContext context, SearcherFactory searcherFactory) {
             _context = context;
             _searcherFactory = searcherFactory;
         }
 
-        public object Detect() {
+        public void Delete() {
+            throw new NotImplementedException();
+        }
+
+        public object GetMaxVersion() {
 
             if (string.IsNullOrEmpty(_context.Entity.Version))
                 return null;
@@ -53,6 +60,38 @@ namespace Transformalize.Provider.Lucene {
 
             _context.Debug(() => "Did not find max output version");
             return null;
+        }
+
+        public void End() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflBatchId() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflKey() {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> ReadKeys() {
+            throw new NotImplementedException();
+        }
+
+        public void Start() {
+            throw new NotImplementedException();
+        }
+
+        public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
         }
     }
 }

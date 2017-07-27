@@ -29,14 +29,14 @@ namespace Transformalize.Provider.Solr {
         public SolrOutputController(
             OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector,
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider,
             ISolrReadOnlyOperations<Dictionary<string, object>> solr
             ) : base(
                 context,
                 initializer,
-                inputVersionDetector,
-                outputVersionDetector
+                inputProvider,
+                outputProvider
             ) {
             _solr = solr;
         }
@@ -57,9 +57,6 @@ namespace Transformalize.Provider.Solr {
             if (identity != null) {
                 Context.Entity.Identity = Convert.ToInt32(identity);
             }
-
-            // query record count in output and use with MinVersion to determine Context.Entity.IsFirstRun
-            Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && _solr.GetCount() == 0;
 
         }
     }

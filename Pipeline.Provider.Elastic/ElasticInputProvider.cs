@@ -16,21 +16,25 @@
 // limitations under the License.
 #endregion
 using Elasticsearch.Net;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Elastic.Ext;
+using System;
+using System.Collections.Generic;
 
 namespace Transformalize.Provider.Elastic {
-    public class ElasticInputVersionDetector : IInputVersionDetector {
+    public class ElasticInputProvider : IInputProvider {
+
         readonly InputContext _context;
         readonly IElasticLowLevelClient _client;
 
-        public ElasticInputVersionDetector(InputContext context, IElasticLowLevelClient client) {
+        public ElasticInputProvider(InputContext context, IElasticLowLevelClient client) {
             _context = context;
             _client = client;
         }
 
-        public object Detect() {
+        public object GetMaxVersion() {
             
             //TODO: Implement Filter
 
@@ -55,6 +59,14 @@ namespace Transformalize.Provider.Elastic {
             var value = version.Convert(result.Body["aggregations"]["version"]["value"].Value);
             _context.Debug(()=>$"Found value: {value}");
             return value;
+        }
+
+        public Schema GetSchema(Entity entity = null) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Read() {
+            throw new NotImplementedException();
         }
     }
 }

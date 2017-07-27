@@ -618,10 +618,6 @@ namespace Transformalize.Configuration {
             Templates?.Clear();
         }
 
-        public bool IsFirstRun() {
-            return !Entities.Any() || Entities.First().IsFirstRun;
-        }
-
         public bool OutputIsRelational() {
             return Output() != null && Constants.AdoProviderSet().Contains(Output().Provider);
         }

@@ -64,7 +64,7 @@
     <Compile Include="Ext\SolrExtensions.cs" />
     <Compile Include="SolrInitializer.cs" />
     <Compile Include="SolrInputReader.cs" />
-    <Compile Include="SolrInputVersionDetector.cs" />
+    <Compile Include="SolrInputProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolrInputValidator.cs" />
     <Compile Include="SolrOutputController.cs" />

@@ -16,20 +16,24 @@
 // limitations under the License.
 #endregion
 using Lucene.Net.Search;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System;
+using System.Collections.Generic;
 
 namespace Transformalize.Provider.Lucene {
-    public class LuceneInputVersionDetector : IInputVersionDetector {
+    public class LuceneInputProvider : IInputProvider {
+
         private readonly InputContext _context;
         private readonly SearcherFactory _searcherFactory;
 
-        public LuceneInputVersionDetector(InputContext context, SearcherFactory searcherFactory) {
+        public LuceneInputProvider(InputContext context, SearcherFactory searcherFactory) {
             _context = context;
             _searcherFactory = searcherFactory;
         }
 
-        public object Detect() {
+        public object GetMaxVersion() {
             if (string.IsNullOrEmpty(_context.Entity.Version))
                 return null;
 
@@ -53,6 +57,14 @@ namespace Transformalize.Provider.Lucene {
             _context.Debug(() => "Did not find max input version");
             return null;
 
+        }
+
+        public Schema GetSchema(Entity entity = null) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Read() {
+            throw new NotImplementedException();
         }
     }
 }

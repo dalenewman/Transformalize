@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
 using System.Collections.Generic;
 using SolrNet;
 using SolrNet.Commands.Parameters;
@@ -22,17 +23,17 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Provider.Solr {
-    public class SolrOutputVersionDetector : IOutputVersionDetector {
+    public class SolrOutputProvider : IOutputProvider {
 
         private readonly OutputContext _context;
         private readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;
 
-        public SolrOutputVersionDetector(OutputContext context, ISolrReadOnlyOperations<Dictionary<string, object>> solr) {
+        public SolrOutputProvider(OutputContext context, ISolrReadOnlyOperations<Dictionary<string, object>> solr) {
             _context = context;
             _solr = solr;
         }
 
-        public object Detect() {
+        public object GetMaxVersion() {
             if (string.IsNullOrEmpty(_context.Entity.Version))
                 return null;
 
@@ -56,6 +57,42 @@ namespace Transformalize.Provider.Solr {
             }
             _context.Debug(() => $"Found value: {value ?? "null"}");
             return value;
+        }
+
+        public void Initialize() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflBatchId() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflKey() {
+            throw new NotImplementedException();
+        }
+
+        public void Start() {
+            throw new NotImplementedException();
+        }
+
+        public void End() {
+            throw new NotImplementedException();
+        }
+
+        public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public void Delete() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> ReadKeys() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "directory")) {
 
                 // no input version detector for now
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);

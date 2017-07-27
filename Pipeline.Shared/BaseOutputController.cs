@@ -27,18 +27,18 @@ namespace Transformalize {
 
         public OutputContext Context { get; set; }
         public IAction Initializer { get; set; }
-        public IVersionDetector InputVersionDetector { get; set; }
-        public IVersionDetector OutputVersionDetector { get; set; }
+        public IInputProvider InputProvider { get; set; }
+        public IOutputProvider OutputProvider { get; set; }
 
         protected BaseOutputController(OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector) {
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider) {
             Context = context;
             Initializer = initializer;
-            InputVersionDetector = inputVersionDetector;
-            OutputVersionDetector = outputVersionDetector;
-            }
+            InputProvider = inputProvider;
+            OutputProvider = outputProvider;
+        }
 
         public virtual void Initialize() {
             Context.Debug(() => $"Initializing with {Initializer.GetType().Name}");
@@ -55,16 +55,16 @@ namespace Transformalize {
         /// * query if output has any records and use in conjunction with MinVersion determine Content.Entity.IsFirstRun (MinVersion == null && outputCount == 0)
         /// </summary>
         public virtual void Start() {
-            Context.Debug(()=>"Starting");
-            Context.Entity.MaxVersion = InputVersionDetector.Detect();
-            Context.Entity.MinVersion = OutputVersionDetector.Detect();
+            Context.Debug(() => "Starting");
+            Context.Entity.MaxVersion = InputProvider.GetMaxVersion();
+            Context.Entity.MinVersion = OutputProvider.GetMaxVersion();
         }
 
         /// <summary>
         /// Implementation may optionally over-ride End
         /// </summary>
         public virtual void End() {
-            Context.Debug(()=>"Ending");
+            Context.Debug(() => "Ending");
         }
     }
 }

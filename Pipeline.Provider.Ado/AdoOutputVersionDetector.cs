@@ -16,21 +16,26 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Provider.Ado {
-    public class AdoOutputVersionDetector : IVersionDetector {
+    public class AdoOutputProvider : IOutputProvider {
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
 
-        public AdoOutputVersionDetector(OutputContext context, IConnectionFactory cf) {
+        public AdoOutputProvider(OutputContext context, IConnectionFactory cf) {
             _context = context;
             _cf = cf;
         }
 
-        public object Detect() {
+        public void Delete() {
+            throw new NotImplementedException();
+        }
+
+        public object GetMaxVersion() {
 
             if (string.IsNullOrEmpty(_context.Entity.Version))
                 return null;
@@ -61,6 +66,38 @@ namespace Transformalize.Provider.Ado {
                 _context.Error(ex, ex.Message + " " + sql);
                 throw;
             }
+        }
+
+        public void End() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflBatchId() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflKey() {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> ReadKeys() {
+            throw new NotImplementedException();
+        }
+
+        public void Start() {
+            throw new NotImplementedException();
+        }
+
+        public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
         }
     }
 }

@@ -118,7 +118,7 @@ namespace Transformalize.Provider.Lucene {
                             doc.Add(CreateField(field, row[field.Field]));
                         }
                         doc.Add(new LuceneField("TflId", tflId, LuceneField.Store.YES, LuceneField.Index.NOT_ANALYZED_NO_NORMS));
-                        if (_output.Entity.IsFirstRun) {
+                        if (_output.Process.Mode == "init") {
                             writer.AddDocument(doc);
                         } else {
                             var term = new Term("TflId", tflId);

@@ -22,20 +22,20 @@ using Transformalize.Contracts;
 
 namespace Transformalize {
     public class EntityStatus {
+        private readonly bool _initMode;
 
         public EntityStatus(IContext ctx) {
+            _initMode = ctx.Process.Mode == "init";
             if (ctx.Entity.IsMaster)
                 return;
 
             var master = ctx.Process.Entities.First(e => e.IsMaster);
-
-            FirstRun = master.IsFirstRun;
+            
             MasterUpserted = master.Updates + master.Inserts > 0;
             Modified = ctx.Entity.Updates + ctx.Entity.Inserts + ctx.Entity.Deletes > 0;
             ForeignKeys.AddRange(ctx.Entity.Fields.Where(f => f.KeyType.HasFlag(KeyType.Foreign)));
             HasForeignKeys = ForeignKeys.Count > 0;
         }
-        public bool FirstRun { get; set; }
         public bool MasterUpserted { get; set; }
         public bool Modified { get; set; }
         public bool HasForeignKeys { get; set; }
@@ -46,7 +46,7 @@ namespace Transformalize {
             if (HasForeignKeys) {
                 return (MasterUpserted || Modified);
             }
-            return Modified && !FirstRun; //note: a FirstRun would not need to update the master's TflBatchId.
+            return Modified && !_initMode; //note: an initialization does not need to update the master's TflBatchId.
         }
     }
 }

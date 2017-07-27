@@ -11,10 +11,10 @@ namespace Transformalize.Provider.RethinkDB {
         public RethinkDbOutputController(
             OutputContext context, 
             IAction initializer, 
-            IVersionDetector inputVersionDetector, 
-            IVersionDetector outputVersionDetector,
+            IInputProvider inputProvider, 
+            IOutputProvider outputProvider,
             IConnectionFactory factory
-            ) : base(context, initializer, inputVersionDetector, outputVersionDetector) {
+            ) : base(context, initializer, inputProvider, outputProvider) {
             _factory = factory;
         }
 
@@ -47,8 +47,6 @@ namespace Transformalize.Provider.RethinkDB {
                 Context.Info($"Found Identity {Context.Entity.Identity}");
             }
 
-            // query record count in output and use with MinVersion to determine Context.Entity.IsFirstRun
-            Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && conn.Run(t.Count()) == 0;
         }
     }
 }

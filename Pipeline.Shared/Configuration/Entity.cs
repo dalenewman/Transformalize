@@ -585,9 +585,6 @@ namespace Transformalize.Configuration {
         [Cfg]
         public int Hits { get; set; }
 
-        [Cfg]
-        public bool IsFirstRun { get; set; }
-
         [Cfg(value = true)]
         public bool DataTypeWarnings { get; set; }
 

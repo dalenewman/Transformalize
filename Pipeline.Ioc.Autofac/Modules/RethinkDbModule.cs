@@ -68,7 +68,7 @@ namespace Transformalize.Ioc.Autofac {
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == PROVIDER)) {
 
                 // input version detector
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // input reader
                 builder.Register<IRead>(ctx => {
@@ -89,8 +89,8 @@ namespace Transformalize.Ioc.Autofac {
                         return new RethinkDbOutputController(
                             output,
                             initializer,
-                            ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                            _process.Mode == "init" ? (IVersionDetector) new NullVersionDetector() : new RethinkDbOutputVersionDetector(input, output, factory),
+                            ctx.ResolveNamed<IInputProvider>(entity.Key),
+                            _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() : new RethinkDbOutputProvider(input, output, factory),
                             factory
                         );
                     }

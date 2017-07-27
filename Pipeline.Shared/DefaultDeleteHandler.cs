@@ -46,7 +46,7 @@ namespace Transformalize {
         }
 
         public void Delete() {
-            if (!_context.Entity.IsFirstRun) {
+            if (_context.Process.Mode != "init") {
                 _outputDeleter.Delete(DetermineDeletes());
             }
         }

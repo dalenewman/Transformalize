@@ -72,7 +72,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "file")) {
 
                 // input version detector
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(entity.Key);
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // input read
                 builder.Register<IRead>(ctx => {

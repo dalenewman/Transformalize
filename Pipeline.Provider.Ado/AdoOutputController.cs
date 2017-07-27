@@ -33,9 +33,9 @@ namespace Transformalize.Provider.Ado {
         public AdoOutputController(
             OutputContext context,
             IAction initializer,
-            IVersionDetector inputVersionDetector,
-            IVersionDetector outputVersionDetector,
-            IConnectionFactory cf) : base(context, initializer, inputVersionDetector, outputVersionDetector) {
+            IInputProvider inputProvider,
+            IOutputProvider outputProvider,
+            IConnectionFactory cf) : base(context, initializer, inputProvider, outputProvider) {
             _cf = cf;
             _stopWatch = new Stopwatch();
         }
@@ -64,7 +64,6 @@ namespace Transformalize.Provider.Ado {
                     DateTime.Now
                 });
 
-                Context.Entity.IsFirstRun = Context.Entity.MinVersion == null && cn.ExecuteScalar<int>(Context.SqlCount(_cf)) == 0;
             }
 
         }

@@ -63,7 +63,7 @@ namespace Transformalize.Provider.SqlCe {
 
                     var batch = part.ToArray();
 
-                    if (_output.Entity.IsFirstRun) {
+                    if (_output.Process.Mode == "init") {
                         var inserts = new List<IRow>();
                         inserts.AddRange(batch);
                         Insert(inserts, cn, table);

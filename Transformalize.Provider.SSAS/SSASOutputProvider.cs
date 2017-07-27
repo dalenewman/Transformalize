@@ -1,17 +1,25 @@
-﻿using Microsoft.AnalysisServices.AdomdClient;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AnalysisServices.AdomdClient;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Provider.SSAS {
-    public class SSASOutputVersionDetector : IVersionDetector {
+
+    public class SSASOutputProvider : IOutputProvider {
         readonly OutputContext _output;
         readonly InputContext _input;
 
-        public SSASOutputVersionDetector(InputContext input, OutputContext output) {
+        public SSASOutputProvider(InputContext input, OutputContext output) {
             _input = input;
             _output = output;
         }
-        public object Detect() {
+
+        public void Delete() {
+            throw new NotImplementedException();
+        }
+
+        public object GetMaxVersion() {
 
             var ids = new SSASIdentifiers(_input, _output);
 
@@ -40,6 +48,38 @@ namespace Transformalize.Provider.SSAS {
 
             return result;
 
+        }
+
+        public void End() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflBatchId() {
+            throw new NotImplementedException();
+        }
+
+        public int GetMaxTflKey() {
+            throw new NotImplementedException();
+        }
+
+        public void Initialize() {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IRow> ReadKeys() {
+            throw new NotImplementedException();
+        }
+
+        public void Start() {
+            throw new NotImplementedException();
+        }
+
+        public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
         }
     }
 }
