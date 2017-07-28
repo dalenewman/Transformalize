@@ -153,7 +153,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     output,
                                     initializer,
                                     ctx.ResolveNamed<IInputProvider>(entity.Key),
-                                    _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() :new ElasticOutputProvider(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)),
+                                    new ElasticOutputProvider(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)),
                                     ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)
                                 );
                             default:

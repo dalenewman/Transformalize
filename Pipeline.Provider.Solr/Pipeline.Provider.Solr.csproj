@@ -68,7 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SolrInputValidator.cs" />
     <Compile Include="SolrOutputController.cs" />
-    <Compile Include="SolrOutputVersionDetector.cs" />
+    <Compile Include="SolrOutputProvider.cs" />
     <Compile Include="SolrSchemaReader.cs" />
     <Compile Include="SolrWriter.cs" />
   </ItemGroup>

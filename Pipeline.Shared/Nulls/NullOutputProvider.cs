@@ -4,20 +4,25 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
     public class NullOutputProvider : IOutputProvider {
+
         public void Delete() {
             throw new NotImplementedException();
+        }
+
+        public void Dispose() {
+            
         }
 
         public void End() {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            return 1;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public object GetMaxVersion() {

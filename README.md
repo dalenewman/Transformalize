@@ -6,18 +6,28 @@ It automates the incremental movement of data into value-adding
 services like data warehouses, search engines, and web-based reporting. 
 
 Unlike other ETL tools, it's not [doodle-ware](http://www.urbandictionary.com/define.php?term=doodleware) 
-or code-driven, it runs entirely off of arrangements.  It leverages 
-the [Cfg-NET](https://github.com/dalenewman/Cfg-NET) library to help 
-you create valid arrangements that just work.
+.  It runs entirely off of run-time configurations called *arrangements*.
 
 It works with many data sources:
+
+<div class="table-responsive">
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Relational</th>
+            <th>Non-Relational</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="vertical-align:top">
 
 <table class="table table-condensed">
     <thead>
         <tr>
             <th>Provider</th>
-            <th>Read<br/>Input</th>
-            <th>Write<br/>Output</th>
+            <th>Input</th>
+            <th>Output</th>
             <th>De-<br/>normalize</th>
         </tr>
     </thead>
@@ -52,50 +62,69 @@ It works with many data sources:
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
         </tr>
+    </tbody>
+</table>
+            
+            </td>
+            <td style="vertical-align:top">
+
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Provider</th>
+            <th>Input</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+    <tbody>
         <tr>
             <td>Elasticsearch</td>
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
         </tr>
         <tr>
             <td>Lucene</td>
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
         </tr>
         <tr>
             <td>SOLR</td>
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
         </tr>
         <tr>
             <td>Files</td>
             <td style="color:green">&#10003;</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
         </tr>
         <tr>
             <td>Web</td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
             <td> </td>
         </tr>
         <tr>
             <td>Console</td>
             <td> </td>
             <td style="color:green">&#10003;</td>
-            <td> </td>
         </tr>
         <tr>
             <td title="SQL Server Analysis Services">SSAS</td>
             <td style="color:green"></td>
             <td style="color:green">WIP</td>
-            <td> </td>
+        </tr>
+        <tr>
+            <td title="RethinkDB">RethinkDB</td>
+            <td style="color:green"></td>
+            <td style="color:green">WIP</td>
         </tr>
     </tbody>
 </table>
+            
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
 
 Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 

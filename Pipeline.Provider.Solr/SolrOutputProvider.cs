@@ -21,6 +21,7 @@ using SolrNet;
 using SolrNet.Commands.Parameters;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Provider.Solr.Ext;
 
 namespace Transformalize.Provider.Solr {
     public class SolrOutputProvider : IOutputProvider {
@@ -63,12 +64,19 @@ namespace Transformalize.Provider.Solr {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            // query and set Context.Entity.BatchId (max of TflBatchId)
+            var batchIdField = _context.Entity.TflBatchId();
+            var batchId = _solr.GetMaxValue(batchIdField.Alias);
+            return batchId != null ? Convert.ToInt32(batchId) + 1 : 0;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            // query and set Context.Entity.Identity (max of Identity)
+            var identityField = _context.Entity.TflKey();
+            var identity = _solr.GetMaxValue(identityField.Alias);
+            return identity != null ? Convert.ToInt32(identity) : 0;
+
         }
 
         public void Start() {
@@ -93,6 +101,9 @@ namespace Transformalize.Provider.Solr {
 
         public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public void Dispose() {
         }
     }
 }

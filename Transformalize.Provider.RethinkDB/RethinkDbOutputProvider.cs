@@ -9,12 +9,12 @@ namespace Transformalize.Provider.RethinkDB {
 
         readonly InputContext _input;
         readonly OutputContext _output;
-        readonly IConnectionFactory _factory;
+        readonly IConnection _cn;
 
         public RethinkDbOutputProvider(InputContext input, OutputContext output, IConnectionFactory connectionFactory) {
             _input = input;
             _output = output;
-            _factory = connectionFactory;
+            _cn = connectionFactory.Get();
         }
 
         public void Delete() {
@@ -33,13 +33,12 @@ namespace Transformalize.Provider.RethinkDB {
 
             var database = _output.Connection.Database;
             var table = _output.Entity.Alias;
-            var conn = _factory.Get();
 
             var t = Query.Db(database).Table<Dictionary<string, object>>(table);
 
             var result = _output.Entity.Delete ?
-                conn.Run(t.Filter(x=>!(bool)x[deletedName]).Max(x => x[versionName])) :
-                conn.Run(t.Max(x => x[versionName]));
+                _cn.Run(t.Filter(x => !(bool)x[deletedName]).Max(x => x[versionName])) :
+                _cn.Run(t.Max(x => x[versionName]));
 
             var value = result[versionName];
             if (value != null && value.GetType() != Constants.TypeSystem()[version.Type]) {
@@ -54,12 +53,34 @@ namespace Transformalize.Provider.RethinkDB {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            var database = _output.Connection.Database;
+            var table = _output.Entity.Alias;
+            var t = Query.Db(database).Table<Dictionary<string, object>>(table);
+
+            if (_output.Process.Mode != "init") {
+                // query and set Context.Entity.BatchId (max of TflBatchId)
+                var batchName = _output.Entity.TflBatchId().Alias;
+                var batchId = _cn.Run(t.Max(x => x[batchName]))[batchName];
+                return batchId != null ? Convert.ToInt32(batchId) + 1 : 0;
+            }
+            return 0;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            var database = _output.Connection.Database;
+            var table = _output.Entity.Alias;
+            var t = Query.Db(database).Table<Dictionary<string, object>>(table);
+
+            if (_output.Process.Mode != "init") {
+
+                // query and set Context.Entity.Identity (max of Identity)
+                var identityName = _output.Entity.TflKey().Alias;
+
+                var identity = _cn.Run(t.Max(x => x[identityName]))[identityName];
+                return identity != null ? Convert.ToInt32(identity) : 0;
+            }
+            return 0;
         }
 
         public void Initialize() {
@@ -80,6 +101,12 @@ namespace Transformalize.Provider.RethinkDB {
 
         public void Write(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public void Dispose() {
+            if (_cn != null) {
+                _cn.Dispose();
+            }
         }
     }
 }

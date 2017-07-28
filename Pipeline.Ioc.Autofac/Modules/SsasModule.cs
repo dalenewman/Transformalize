@@ -71,7 +71,7 @@ namespace Transformalize.Ioc.Autofac {
                             output,
                             initializer,
                             ctx.ResolveNamed<IInputProvider>(entity.Key),
-                            _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() : new SSASOutputProvider(input, output)
+                            new SSASOutputProvider(input, output)
                         );
                     }
                     ).Named<IOutputController>(entity.Key);

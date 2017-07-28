@@ -31,10 +31,6 @@ namespace Transformalize.Provider.SSAS {
 
         public override void Start() {
             base.Start();
-
-            // we do not actually write to SSAS, it reads directly from the input
-            Context.Entity.BatchId = 0;
-            Context.Entity.Identity = 0;
         }
     }
 }

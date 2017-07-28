@@ -211,7 +211,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     output,
                                     initializer,
                                     ctx.ResolveNamed<IInputProvider>(entity.Key),
-                                    output.Process.Mode == "init" ? new NullOutputProvider() : ctx.ResolveNamed<IOutputProvider>(entity.Key),
+                                    ctx.ResolveNamed<IOutputProvider>(entity.Key),
                                     ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)
                                 );
                             default:

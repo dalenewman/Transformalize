@@ -180,7 +180,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     output,
                                     initializer,
                                     ctx.ResolveNamed<IInputProvider>(entity.Key),
-                                    _process.Mode == "init" ? new NullOutputProvider() : ctx.ResolveNamed<IOutputProvider>(entity.Key),
+                                    ctx.ResolveNamed<IOutputProvider>(entity.Key),
                                     solr
                                 );
                             default:

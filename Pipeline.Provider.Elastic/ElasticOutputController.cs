@@ -19,7 +19,6 @@ using System.Diagnostics;
 using Elasticsearch.Net;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Elastic.Ext;
 
 namespace Transformalize.Provider.Elastic {
 
@@ -50,38 +49,7 @@ namespace Transformalize.Provider.Elastic {
         }
 
         public override void Start() {
-
             base.Start();
-
-            var body = new {
-                aggs = new {
-                    b = new {
-                        max = new {
-                            field = "tflbatchid"
-                        }
-                    },
-                    k = new {
-                        max = new {
-                            field = "tflkey"
-                        }
-                    }
-                },
-                size = 0
-            };
-            var result = _client.Search<DynamicResponse>(Context.Connection.Index, Context.TypeName(), new PostData<object>(body));
-
-            if (result.Success) {
-                var batchId = result.Body["aggregations"]["b"]["value"].Value;
-                var key = result.Body["aggregations"]["k"]["value"].Value;
-                Context.Entity.BatchId = (batchId == null ? 0 : (int)batchId) + 1;
-                Context.Entity.Identity = (key == null ? 0 : (int)key);
-                Context.Debug(() => $"Next TflBatchId: {Context.Entity.BatchId}.");
-                Context.Debug(() => $"Last TflKey: {Context.Entity.Identity}.");
-            } else {
-                Context.Error(result.ServerError.ToString());
-                Context.Debug(() => result.DebugInformation);
-            }
-
         }
 
     }

@@ -52,22 +52,6 @@ namespace Transformalize.Provider.Lucene {
         // get max tflbatchid, max tflkey
         public override void Start() {
             base.Start();
-            var tflBatchId = Context.Entity.TflBatchId();
-            var tflKey = Context.Entity.TflKey();
-            using (var searcher = _searcherFactory.Create()) {
-                var batchHits = searcher.Search(new MatchAllDocsQuery(), null, 1,
-                    new Sort(new SortField(tflBatchId.Alias, LuceneConversion.TypeSort(tflBatchId.Type), true))
-                );
-                Context.Entity.BatchId = (batchHits.TotalHits > 0 ? System.Convert.ToInt32(searcher.Doc(batchHits.ScoreDocs[0].Doc).Get(tflBatchId.Alias)) : 0) + 1;
-
-                var keyHits = searcher.Search(new MatchAllDocsQuery(), null, 1,
-                    new Sort(new SortField(tflKey.Alias, LuceneConversion.TypeSort(tflKey.Type), true))
-                );
-                Context.Entity.Identity = (keyHits.TotalHits > 0 ? System.Convert.ToInt32(searcher.Doc(keyHits.ScoreDocs[0].Doc).Get(tflKey.Alias)) : 0);
-            }
-            Context.Debug(()=>$"Next {tflBatchId.Alias}: {Context.Entity.BatchId}.");
-            Context.Debug(() => $"Last {tflKey.Alias}: {Context.Entity.Identity}.");
-
         }
 
     }

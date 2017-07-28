@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
 
     //TODO: remove IInputVersionDetector, IVersionDetector, 
 
-    public interface IOutputProvider {
+    public interface IOutputProvider : IDisposable {
         /// <summary>
         /// Initialize the output:
         /// * destroy existing structures
@@ -22,7 +23,7 @@ namespace Transformalize.Contracts {
         /// Get the maximum TflBatchId in the output, or null if init mode
         /// </summary>
         /// <returns></returns>
-        int GetMaxTflBatchId();
+        int GetNextTflBatchId();
 
         /// <summary>
         /// Get the maximum TflKey in the output, or null if init mode

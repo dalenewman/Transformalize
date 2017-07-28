@@ -30,7 +30,8 @@ namespace Transformalize {
         public IInputProvider InputProvider { get; set; }
         public IOutputProvider OutputProvider { get; set; }
 
-        protected BaseOutputController(OutputContext context,
+        protected BaseOutputController(
+            OutputContext context,
             IAction initializer,
             IInputProvider inputProvider,
             IOutputProvider outputProvider) {
@@ -58,6 +59,8 @@ namespace Transformalize {
             Context.Debug(() => "Starting");
             Context.Entity.MaxVersion = InputProvider.GetMaxVersion();
             Context.Entity.MinVersion = OutputProvider.GetMaxVersion();
+            Context.Entity.BatchId = OutputProvider.GetNextTflBatchId();
+            Context.Entity.Identity = OutputProvider.GetMaxTflKey();
         }
 
         /// <summary>

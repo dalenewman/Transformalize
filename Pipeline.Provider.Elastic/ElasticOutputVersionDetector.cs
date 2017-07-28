@@ -24,8 +24,10 @@ using Transformalize.Provider.Elastic.Ext;
 
 namespace Transformalize.Provider.Elastic {
     public class ElasticOutputProvider : IOutputProvider {
+
         private readonly OutputContext _context;
         private readonly IElasticLowLevelClient _client;
+        private ElasticsearchResponse<DynamicResponse> _commonAggregations;
 
         public ElasticOutputProvider(OutputContext context, IElasticLowLevelClient client) {
             _context = context;
@@ -79,12 +81,32 @@ namespace Transformalize.Provider.Elastic {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+
+            var result = GetAggregations();
+
+            if (result.Success) {
+                var batchId = result.Body["aggregations"]["b"]["value"].Value;
+                return (batchId == null ? 0 : (int)batchId) + 1;
+            } else {
+                _context.Error(result.ServerError.ToString());
+                _context.Debug(() => result.DebugInformation);
+                return 0;
+            }
+
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            var result = GetAggregations();
+
+            if (result.Success) {
+                var key = result.Body["aggregations"]["k"]["value"].Value;
+                return (key == null ? 0 : (int)key);
+            } else {
+                _context.Error(result.ServerError.ToString());
+                _context.Debug(() => result.DebugInformation);
+                return 0;
+            }
         }
 
         public void Initialize() {
@@ -105,6 +127,35 @@ namespace Transformalize.Provider.Elastic {
 
         public void Write(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        private ElasticsearchResponse<DynamicResponse> GetAggregations() {
+
+            if(_commonAggregations != null) {
+                return _commonAggregations;
+            }
+
+            var body = new {
+                aggs = new {
+                    b = new {
+                        max = new {
+                            field = "tflbatchid"
+                        }
+                    },
+                    k = new {
+                        max = new {
+                            field = "tflkey"
+                        }
+                    }
+                },
+                size = 0
+            };
+
+            _commonAggregations = _client.Search<DynamicResponse>(_context.Connection.Index, _context.TypeName(), new PostData<object>(body));
+            return _commonAggregations;
+        }
+
+        public void Dispose() {
         }
     }
 }

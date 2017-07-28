@@ -80,7 +80,7 @@
     <Compile Include="AdoInputBatchReader.cs" />
     <Compile Include="AdoMasterUpdater.cs" />
     <Compile Include="AdoOutputController.cs" />
-    <Compile Include="AdoOutputVersionDetector.cs" />
+    <Compile Include="AdoOutputProvider.cs" />
     <Compile Include="AdoProvider.cs" />
     <Compile Include="AdoReader.cs" />
     <Compile Include="AdoRowCreator.cs" />

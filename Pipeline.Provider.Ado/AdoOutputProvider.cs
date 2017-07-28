@@ -20,15 +20,21 @@ using System.Collections.Generic;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Data;
+using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
     public class AdoOutputProvider : IOutputProvider {
+
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
+        private readonly IDbConnection _cn;
 
         public AdoOutputProvider(OutputContext context, IConnectionFactory cf) {
             _context = context;
             _cf = cf;
+            _cn = cf.GetConnection();
+            _cn.Open();
         }
 
         public void Delete() {
@@ -58,10 +64,7 @@ namespace Transformalize.Provider.Ado {
             _context.Debug(() => $"Loading Output Version: {sql}");
 
             try {
-                using (var cn = _cf.GetConnection()) {
-                    cn.Open();
-                    return cn.ExecuteScalar(sql, commandTimeout:_context.Connection.RequestTimeout);
-                }
+                return _cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
             } catch (Exception ex) {
                 _context.Error(ex, ex.Message + " " + sql);
                 throw;
@@ -72,12 +75,13 @@ namespace Transformalize.Provider.Ado {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            var sql = _context.SqlControlLastBatchId(_cf);
+            return _cn.ExecuteScalar<int>(sql) + 1;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            return _cn.ExecuteScalar<int>($"SELECT MAX({_cf.Enclose(_context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name))};");
         }
 
         public void Initialize() {
@@ -98,6 +102,15 @@ namespace Transformalize.Provider.Ado {
 
         public void Write(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public void Dispose() {
+            if (_cn != null) {
+                if (_cn.State != ConnectionState.Closed) {
+                    _cn.Close();
+                }
+                _cn.Dispose();
+            }
         }
     }
 }

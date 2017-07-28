@@ -173,7 +173,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     output,
                                     new NullInitializer(),
                                     ctx.ResolveNamed<IInputProvider>(entity.Key),
-                                    output.Process.Mode == null ? (IOutputProvider) new NullOutputProvider() : new LuceneOutputProvider(output, ctx.ResolveNamed<SearcherFactory>(entity.Key)),
+                                    new LuceneOutputProvider(output, ctx.ResolveNamed<SearcherFactory>(entity.Key)),
                                     ctx.ResolveNamed<SearcherFactory>(entity.Key),
                                     ctx.ResolveNamed<IndexReaderFactory>(entity.Key)
                                 );

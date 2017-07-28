@@ -18,14 +18,15 @@
 using System;
 using System.Data;
 using System.Diagnostics;
-using System.Net.Mime;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.Ado {
+
     public class AdoOutputController : BaseOutputController {
+
         private readonly IConnectionFactory _cf;
 
         readonly Stopwatch _stopWatch;
@@ -40,14 +41,6 @@ namespace Transformalize.Provider.Ado {
             _stopWatch = new Stopwatch();
         }
 
-        int GetBatchId(IDbConnection cn) {
-            return cn.ExecuteScalar<int>(Context.SqlControlLastBatchId(_cf)) + 1;
-        }
-
-        int GetIdentity(IDbConnection cn) {
-            return cn.ExecuteScalar<int>($"SELECT MAX({_cf.Enclose(Context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(Context.Entity.OutputTableName(Context.Process.Name))};");
-        }
-
         public override void Start() {
             _stopWatch.Start();
             base.Start();
@@ -55,15 +48,15 @@ namespace Transformalize.Provider.Ado {
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 Context.Debug(() => "Loading BatchId.");
-                Context.Entity.BatchId = GetBatchId(cn);
-                Context.Entity.Identity = GetIdentity(cn);
                 var sql = Context.SqlControlStartBatch(_cf);
                 cn.Execute(sql, new {
                     Context.Entity.BatchId,
                     Entity = Context.Entity.Alias,
                     DateTime.Now
                 });
-
+                if (cn.State != ConnectionState.Closed) {
+                    cn.Close();
+                }
             }
 
         }
@@ -73,17 +66,19 @@ namespace Transformalize.Provider.Ado {
                 cn.Open();
                 var sql = Context.SqlControlEndBatch(_cf);
                 cn.Execute(sql, new {
-                    Inserts =  Convert.ToInt64(Context.Entity.Inserts),
+                    Inserts = Convert.ToInt64(Context.Entity.Inserts),
                     Updates = Convert.ToInt64(Context.Entity.Updates),
                     Deletes = Convert.ToInt64(Context.Entity.Deletes),
                     Entity = Context.Entity.Alias,
                     Context.Entity.BatchId,
                     DateTime.Now
                 });
-
+                if (cn.State != ConnectionState.Closed) {
+                    cn.Close();
+                }
             }
             _stopWatch.Stop();
-            Context.Debug(()=>$"Entity {Context.Entity} ending {_stopWatch.Elapsed}");
+            Context.Debug(() => $"Entity {Context.Entity} ending {_stopWatch.Elapsed}");
         }
 
     }

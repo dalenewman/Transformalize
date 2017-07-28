@@ -49,6 +49,9 @@ namespace Transformalize.Transforms {
                     case "date":
                         _toString = (o) => ((DateTime)o).ToString(context.Transform.Format);
                         break;
+                    case "byte[]":
+                        _toString = (o) => Utility.BytesToHexString((byte[])o);
+                        break;
                     default:
                         _toString = (o) => o.ToString();
                         break;

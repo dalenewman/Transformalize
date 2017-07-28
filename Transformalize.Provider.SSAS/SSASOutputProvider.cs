@@ -54,12 +54,12 @@ namespace Transformalize.Provider.SSAS {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            return 0;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            return 0;
         }
 
         public void Initialize() {
@@ -79,6 +79,10 @@ namespace Transformalize.Provider.SSAS {
         }
 
         public void Write(IEnumerable<IRow> rows) {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose() {
             throw new NotImplementedException();
         }
     }

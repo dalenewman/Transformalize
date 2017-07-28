@@ -90,7 +90,7 @@ namespace Transformalize.Ioc.Autofac {
                             output,
                             initializer,
                             ctx.ResolveNamed<IInputProvider>(entity.Key),
-                            _process.Mode == "init" ? (IOutputProvider) new NullOutputProvider() : new RethinkDbOutputProvider(input, output, factory),
+                            new RethinkDbOutputProvider(input, output, factory),
                             factory
                         );
                     }

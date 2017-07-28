@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -20,16 +18,18 @@ using System.Collections.Generic;
 using Lucene.Net.Search;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System;
+using System.Collections.Generic;
 
 namespace Transformalize.Provider.Lucene {
     public class LuceneOutputProvider : IOutputProvider {
 
         private readonly OutputContext _context;
-        private readonly SearcherFactory _searcherFactory;
+        private readonly Searcher _searcher;
 
         public LuceneOutputProvider(OutputContext context, SearcherFactory searcherFactory) {
             _context = context;
-            _searcherFactory = searcherFactory;
+            _searcher = searcherFactory.Create();
         }
 
         public void Delete() {
@@ -47,15 +47,13 @@ namespace Transformalize.Provider.Lucene {
 
             var tflDeleted = _context.Entity.TflDeleted();
             var sort = new Sort(new SortField(version.Alias, LuceneConversion.TypeSort(version.Type), true));
-            using (var searcher = _searcherFactory.Create()) {
-                var hits = searcher.Search(LuceneConversion.TypeSearch(tflDeleted, tflDeleted.Alias, false), null, 1, sort);
+            var hits = _searcher.Search(LuceneConversion.TypeSearch(tflDeleted, tflDeleted.Alias, false), null, 1, sort);
 
-                if (hits.TotalHits > 0) {
-                    var doc = searcher.Doc(hits.ScoreDocs[0].Doc);
-                    var value = doc.Get(version.Alias);
-                    _context.Debug(() => $"Found value: {value}");
-                    return version.Convert(value);
-                }
+            if (hits.TotalHits > 0) {
+                var doc = _searcher.Doc(hits.ScoreDocs[0].Doc);
+                var value = doc.Get(version.Alias);
+                _context.Debug(() => $"Found value: {value}");
+                return version.Convert(value);
             }
 
             _context.Debug(() => "Did not find max output version");
@@ -66,12 +64,22 @@ namespace Transformalize.Provider.Lucene {
             throw new NotImplementedException();
         }
 
-        public int GetMaxTflBatchId() {
-            throw new NotImplementedException();
+        public int GetNextTflBatchId() {
+            var tflBatchId = _context.Entity.TflBatchId();
+            var tflKey = _context.Entity.TflKey();
+            var batchHits = _searcher.Search(new MatchAllDocsQuery(), null, 1,
+                new Sort(new SortField(tflBatchId.Alias, LuceneConversion.TypeSort(tflBatchId.Type), true))
+            );
+            return (batchHits.TotalHits > 0 ? Convert.ToInt32(_searcher.Doc(batchHits.ScoreDocs[0].Doc).Get(tflBatchId.Alias)) : 0) + 1;
         }
 
         public int GetMaxTflKey() {
-            throw new NotImplementedException();
+            var tflBatchId = _context.Entity.TflBatchId();
+            var tflKey = _context.Entity.TflKey();
+            var keyHits = _searcher.Search(new MatchAllDocsQuery(), null, 1,
+                new Sort(new SortField(tflKey.Alias, LuceneConversion.TypeSort(tflKey.Type), true))
+            );
+            return (keyHits.TotalHits > 0 ? Convert.ToInt32(_searcher.Doc(keyHits.ScoreDocs[0].Doc).Get(tflKey.Alias)) : 0);
         }
 
         public void Initialize() {
@@ -92,6 +100,12 @@ namespace Transformalize.Provider.Lucene {
 
         public void Write(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public void Dispose() {
+            if (_searcher != null) {
+                _searcher.Dispose();
+            }
         }
     }
 }
