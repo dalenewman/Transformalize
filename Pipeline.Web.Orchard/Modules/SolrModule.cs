@@ -102,15 +102,16 @@ namespace Pipeline.Web.Orchard.Modules {
             // entity input
             foreach (var e in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "solr")) {
                 var entity = e;
-                builder.Register<IInputVersionDetector>(ctx => {
+
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "solr":
-                            return new SolrInputVersionDetector(input, ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(input.Connection.Key));
+                            return new SolrInputProvider(input, ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(input.Connection.Key));
                         default:
-                            return new NullVersionDetector();
+                            return new NullInputProvider();
                     }
-                }).Named<IInputVersionDetector>(entity.Key);
+                }).Named<IInputProvider>(entity.Key);
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
@@ -164,8 +165,8 @@ namespace Pipeline.Web.Orchard.Modules {
                                 return new SolrOutputController(
                                     output,
                                     new NullInitializer(),
-                                    ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    new SolrOutputVersionDetector(output, solr),
+                                    ctx.ResolveNamed<IInputProvider>(entity.Key),
+                                    ctx.ResolveNamed<IOutputProvider>(entity.Key),
                                     solr
                                 );
                             default:

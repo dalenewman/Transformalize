@@ -121,21 +121,19 @@ namespace Pipeline.Web.Orchard.Modules {
                 }).Named<IRead>(entity.Key);
 
                 // INPUT VERSION DETECTOR
-                builder.Register<IInputVersionDetector>(ctx => {
-                    if (!entity.Update)
-                        return new NullVersionDetector();
-
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "sqlce":
                         case "sqlserver":
-                            return new AdoInputVersionDetector(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
+                            return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
                         default:
-                            return new NullVersionDetector();
+                            return new NullInputProvider();
                     }
-                }).Named<IInputVersionDetector>(entity.Key);
+                }).Named<IInputProvider>(entity.Key);
 
             }
 
@@ -202,13 +200,14 @@ namespace Pipeline.Web.Orchard.Modules {
                             case "mysql":
                             case "postgresql":
                             case "sqlite":
+                            case "sqlce":
                             case "sqlserver":
                                 var initializer = _process.Mode == "init" ? (IAction)new AdoEntityInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) : new NullInitializer();
                                 return new AdoOutputController(
                                     output,
                                     initializer,
-                                    ctx.ResolveNamed<IInputVersionDetector>(entity.Key),
-                                    new AdoOutputVersionDetector(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)),
+                                    ctx.ResolveNamed<IInputProvider>(entity.Key),
+                                    ctx.ResolveNamed<IOutputProvider>(entity.Key),
                                     ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)
                                 );
                             default:

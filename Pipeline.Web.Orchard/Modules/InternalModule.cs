@@ -57,7 +57,8 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 var e = entity;
 
-                builder.RegisterType<NullVersionDetector>().Named<IInputVersionDetector>(e.Key);
+                // input version detector
+                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // READER
                 builder.Register<IRead>(ctx => {

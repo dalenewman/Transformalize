@@ -142,7 +142,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     } else {
                         if (output.Provider == "text") {
                             Response.Flush();
-                            return new EmptyResult();
+                            Response.End();
                         }
                         process.Status = 200;
                         process.Message = "Ok";

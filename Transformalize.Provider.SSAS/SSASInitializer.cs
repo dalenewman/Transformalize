@@ -11,6 +11,7 @@ using Transformalize.Provider.Ado;
 using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Provider.Ado.Ext;
 
 namespace Transformalize.Provider.SSAS {
 
@@ -78,7 +79,7 @@ namespace Transformalize.Provider.SSAS {
                     if (dataSourceView.Schema.Tables.Contains(entity.Alias)) {
                         dataSourceView.Schema.Tables.Remove(entity.Alias);
                     }
-                    dataSourceView.Schema.Tables.Add(CreateDataTable(entity, fields));
+                    dataSourceView.Schema.Tables.Add(CreateDataTable(_output, fields));
                     _output.Info($"Updating existing data source view: {ids.DataSourceViewId}");
                 } else {
                     _output.Info($"Creating new data source view: {ids.DataSourceViewId}");
@@ -86,7 +87,7 @@ namespace Transformalize.Provider.SSAS {
                     dataSourceView = database.DataSourceViews.AddNew(ids.DataSourceViewId);
                     dataSourceView.DataSourceID = ids.DataSourceId;
                     dataSourceView.Schema = new DataSet("Schema");
-                    dataSourceView.Schema.Tables.Add(CreateDataTable(entity, fields));
+                    dataSourceView.Schema.Tables.Add(CreateDataTable(_output, fields));
 
                     if (!SSAS.Save(_server, _output, dataSourceView)) {
                         return new ActionResponse(500, $"Could not save data source view: {ids.DataSourceViewId}");
@@ -259,19 +260,22 @@ namespace Transformalize.Provider.SSAS {
             return measureGroup;
         }
 
-        private DataTable CreateDataTable(Configuration.Entity entity, IEnumerable<Configuration.Field> fields) {
+        private DataTable CreateDataTable(IContext context, IEnumerable<Field> fields) {
             var schema = new DataSet("Schema");
 
             var sql = SSAS.CreateQuery(_output);
+            if (context.Entity.Filter.Any()) {
+                sql += " WHERE " + context.ResolveFilter(_connectionFactory);
+            }
             var adapter = new SqlDataAdapter(sql, new SqlConnection(_connectionFactory.GetConnectionString($"Transformalize ({_input.Process.Name})")));
             adapter.FillSchema(schema, SchemaType.Source);
 
             var table = schema.Tables[0];
             table.ExtendedProperties.Add("QueryDefinition", sql);
-            table.ExtendedProperties.Add("DbTableName", entity.Name);
-            table.ExtendedProperties.Add("FriendlyName", entity.Alias);
+            table.ExtendedProperties.Add("DbTableName", context.Entity.Name);
+            table.ExtendedProperties.Add("FriendlyName", context.Entity.Alias);
             table.ExtendedProperties.Add("TableType", "View");
-            table.TableName = entity.Alias;
+            table.TableName = context.Entity.Alias;
 
             foreach (var field in fields) {
                 table.Columns[field.Alias].ExtendedProperties.Add("DbColumnName", field.Alias);
