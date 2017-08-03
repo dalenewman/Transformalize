@@ -106,16 +106,22 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string Cc { get; set; }
+
         [Cfg(value = "")]
         public string Command { get; set; }
+
         [Cfg(value = "", toLower = true)]
         public string Connection { get; set; }
+
         [Cfg(value = "")]
         public string File { get; set; }
+
         [Cfg(value = "")]
         public string From { get; set; }
+
         [Cfg(value = true)]
         public bool Html { get; set; }
+
         [Cfg(value = "get", domain = "get,post", toLower = true, ignoreCase = true)]
         public string Method { get; set; }
 
@@ -124,8 +130,10 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string NewValue { get; set; }
+
         [Cfg(value = "")]
         public string OldValue { get; set; }
+
         [Cfg(value = "")]
         public string Subject { get; set; }
 
@@ -145,6 +153,9 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string Body { get; set; }
+
+        [Cfg(value="@()")]
+        public string PlaceHolderStyle { get; set; }
 
         [Cfg]
         public List<NameReference> Modes { get; set; }

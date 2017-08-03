@@ -38,13 +38,12 @@ namespace Transformalize.Command {
 
         public string Cfg { get; set; }
         public string Format { get; set; }
-        public string Mode { get; set; }
+        public Options Options { get; }
 
-        public BaseExecutor(IPipelineLogger logger, string cfg, string mode, bool checkMemory) {
+        public BaseExecutor(IPipelineLogger logger, Options options, bool checkMemory) {
             _logger = logger;
+            Options = options;
             _checkMemory = checkMemory;
-            Cfg = cfg;
-            Mode = mode;
         }
 
         public void Execute(Process process) {
@@ -58,7 +57,7 @@ namespace Transformalize.Command {
                 CheckMemory(process, logger);
             }
 
-            using (var scope = DefaultContainer.Create(process, logger)) {
+            using (var scope = DefaultContainer.Create(process, logger, Options.PlaceHolderStyle)) {
                 try {
                     scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {
@@ -83,18 +82,18 @@ namespace Transformalize.Command {
 
             if (maxMemory.CompareTo(currentBytes) < 0) {
                 context.Error(
-                    $"Process exceeded {maxMemory.Megabytes.ToString("#.0")} Mb. Current memory is {currentBytes.Megabytes.ToString("#.0")} Mb!");
+                    $"Process exceeded {maxMemory.Megabytes:#.0} Mb. Current memory is {currentBytes.Megabytes:#.0} Mb!");
                 Environment.Exit(1);
             } else {
                 context.Info(
-                    $"The process is using {currentBytes.Megabytes.ToString("#.0")} Mb of it's max {maxMemory.Megabytes.ToString("#.0")} Mb allowed.");
+                    $"The process is using {currentBytes.Megabytes:#.0} Mb of it's max {maxMemory.Megabytes:#.0} Mb allowed.");
             }
         }
 
         public void Execute(string cfg, Dictionary<string, string> parameters) {
             Process process;
             if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
-                process.Mode = Mode;
+                process.Mode = Options.Mode;
                 Execute(process);
             }
         }

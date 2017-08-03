@@ -39,8 +39,7 @@
       <HintPath>..\packages\Autofac.4.6.1\lib\net45\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Environment, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.Environment.0.2.2\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Cfg-NET.Environment.0.3.0\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Reader">
       <HintPath>..\packages\Cfg-NET.Reader.0.3.2\lib\net45\Cfg.Net.Reader.dll</HintPath>
@@ -157,7 +156,6 @@
     <Compile Include="PipelineAction.cs" />
     <Compile Include="DefaultContainer.cs" />
     <Compile Include="RecoverOutputAction.cs" />
-    <Compile Include="RunTimeExecutor.cs" />
     <Compile Include="RunTimeRunner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunTimeSchemaReader.cs" />
@@ -172,49 +170,49 @@
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Ado\Pipeline.Provider.Ado.csproj">
+    <ProjectReference Include="..\Providers\Ado\Ado.csproj">
       <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
-      <Name>Pipeline.Provider.Ado</Name>
+      <Name>Ado</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Elastic\Pipeline.Provider.Elastic.csproj">
+    <ProjectReference Include="..\Providers\Elastic\Elastic.csproj">
       <Project>{2b364bae-3d5b-467d-aa19-20ec929d14ea}</Project>
-      <Name>Pipeline.Provider.Elastic</Name>
+      <Name>Elastic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Excel\Pipeline.Provider.Excel.csproj">
+    <ProjectReference Include="..\Providers\Excel\Excel.csproj">
       <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>
-      <Name>Pipeline.Provider.Excel</Name>
+      <Name>Excel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.File\Pipeline.Provider.File.csproj">
+    <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
-      <Name>Pipeline.Provider.File</Name>
+      <Name>File</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Lucene\Pipeline.Provider.Lucene.csproj">
+    <ProjectReference Include="..\Providers\Lucene\Lucene.csproj">
       <Project>{E84D0CB1-8DE6-413B-B2F1-2A8E6F7A994C}</Project>
-      <Name>Pipeline.Provider.Lucene</Name>
+      <Name>Lucene</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.OpenXml\Pipeline.Provider.OpenXml.csproj">
+    <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
-      <Name>Pipeline.Provider.OpenXml</Name>
+      <Name>OpenXml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.PostgreSql\Pipeline.Provider.PostgreSql.csproj">
+    <ProjectReference Include="..\Providers\PostgreSql\PostgreSql.csproj">
       <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
-      <Name>Pipeline.Provider.PostgreSql</Name>
+      <Name>PostgreSql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Solr\Pipeline.Provider.Solr.csproj">
+    <ProjectReference Include="..\Providers\Solr\Solr.csproj">
       <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
-      <Name>Pipeline.Provider.Solr</Name>
+      <Name>Solr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.SQLite\Pipeline.Provider.SQLite.csproj">
-      <Project>{ff1350dd-5297-4100-bb8f-6a3047ed8ad5}</Project>
-      <Name>Pipeline.Provider.SQLite</Name>
+    <ProjectReference Include="..\Providers\SQLite\SQLite.csproj">
+      <Project>{33af802d-7061-4bba-8619-d08790de5364}</Project>
+      <Name>SQLite</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.SqlServer\Pipeline.Provider.SqlServer.csproj">
+    <ProjectReference Include="..\Providers\SqlServer\SqlServer.csproj">
       <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
-      <Name>Pipeline.Provider.SqlServer</Name>
+      <Name>SqlServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Provider.Web\Pipeline.Provider.Web.csproj">
+    <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
-      <Name>Pipeline.Provider.Web</Name>
+      <Name>Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
@@ -248,37 +246,37 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.Console\Transformalize.Provider.Console.csproj">
+    <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
-      <Name>Transformalize.Provider.Console</Name>
+      <Name>Console</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.GeoJson\Transformalize.Provider.GeoJson.csproj">
+    <ProjectReference Include="..\Providers\GeoJson\GeoJson.csproj">
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
-      <Name>Transformalize.Provider.GeoJson</Name>
+      <Name>GeoJson</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.Kml\Transformalize.Provider.Kml.csproj">
+    <ProjectReference Include="..\Providers\Kml\Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
-      <Name>Transformalize.Provider.Kml</Name>
+      <Name>Kml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.MySql\Transformalize.Provider.MySql.csproj">
+    <ProjectReference Include="..\Providers\MySql\MySql.csproj">
       <Project>{803baf79-7028-4f09-b2f6-bc89b3ad11e3}</Project>
-      <Name>Transformalize.Provider.MySql</Name>
+      <Name>MySql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.RethinkDB\Transformalize.Provider.RethinkDB.csproj">
+    <ProjectReference Include="..\Providers\RethinkDB\RethinkDB.csproj">
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
-      <Name>Transformalize.Provider.RethinkDB</Name>
+      <Name>RethinkDB</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.SqlCe\Transformalize.Provider.SqlCe.csproj">
+    <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
-      <Name>Transformalize.Provider.SqlCe</Name>
+      <Name>SqlCe</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.SSAS\Transformalize.Provider.SSAS.csproj">
+    <ProjectReference Include="..\Providers\SSAS\SSAS.csproj">
       <Project>{dc45d0b0-bd89-4334-9fcf-bec7ad1fd540}</Project>
-      <Name>Transformalize.Provider.SSAS</Name>
+      <Name>SSAS</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Provider.Trace\Transformalize.Provider.Trace.csproj">
+    <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
-      <Name>Transformalize.Provider.Trace</Name>
+      <Name>Trace</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>

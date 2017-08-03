@@ -20,15 +20,13 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging;
 using Transformalize.Provider.SqlServer;
 
 namespace Tests {
 
     [TestClass]
-    public class DeleteIntegration {
+    public class DeleteIntegration : TestBase {
 
         public Connection InputConnection { get; set; } = new Connection {
             Name = "input",
@@ -41,11 +39,6 @@ namespace Tests {
             Provider = "sqlserver",
             ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
         };
-
-        public Process ResolveRoot(IContainer container, string cfg, IDictionary<string, string> parameters) {
-            return container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
-        }
-
 
         [TestMethod]
         [Ignore]
@@ -96,7 +89,7 @@ namespace Tests {
 
             // RUN INIT AND TEST
             var root = ResolveRoot(container, cfg, InitMode());
-            var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -108,7 +101,7 @@ namespace Tests {
 
             // FIRST DELTA, NO CHANGES
             root = ResolveRoot(container, cfg, DefaultMode());
-            responseSql = new PipelineAction(root,new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -127,7 +120,7 @@ namespace Tests {
 
             // RUN AND CHECK, SHOULD STILL HAVE 3 RECORDS, but one marked TflDeleted = 1
             root = ResolveRoot(container, cfg, DefaultMode());
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -140,7 +133,7 @@ namespace Tests {
 
             // RUN AGAIN
             root = ResolveRoot(container, cfg, DefaultMode());
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -160,7 +153,7 @@ namespace Tests {
 
             // RUN AND CHECK
             root = ResolveRoot(container, cfg, DefaultMode());
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -182,3 +175,4 @@ namespace Tests {
         }
     }
 }
+

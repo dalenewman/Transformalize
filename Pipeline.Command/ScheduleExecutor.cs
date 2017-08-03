@@ -31,13 +31,13 @@ namespace Transformalize.Command {
         /// <summary>
         /// Called by Scheduled Run
         /// </summary>
-        public ScheduleExecutor(IPipelineLogger logger) : base(logger, string.Empty, "default", true) { }
+        public ScheduleExecutor(IPipelineLogger logger, Options options) : base(logger, options, true) { }
 
         public new void Execute(string cfg, Dictionary<string, string> parameters) {
 
             Process process;
             if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
-                process.Mode = Mode;
+                process.Mode = Options.Mode;
 
                 /* if an internal schedule with mode is running this, 
                    then mode should be updated if it's on any URL in TFL actions */
@@ -62,7 +62,7 @@ namespace Transformalize.Command {
         /// </summary>
         /// <param name="context"></param>
         public void Execute(IJobExecutionContext context) {
-            Mode = context.MergedJobDataMap.Get("Mode") as string;
+            Options.Mode = context.MergedJobDataMap.Get("Mode") as string;
             Schedule = context.MergedJobDataMap.Get("Schedule") as string;
 
             Execute(context.MergedJobDataMap.Get("Cfg") as string,new Dictionary<string, string>());

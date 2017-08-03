@@ -19,15 +19,13 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging;
 using Transformalize.Provider.SqlServer;
 
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationSqlServer {
+    public class NorthWindIntegrationSqlServer : TestBase {
 
         public string TestFile { get; set; } = @"Files\NorthWind.xml";
 
@@ -42,10 +40,6 @@ namespace Tests {
             Provider = "sqlserver",
             ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
         };
-
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
-        }
 
         [TestMethod]
         [Ignore]
@@ -67,8 +61,8 @@ namespace Tests {
             }
 
             // RUN INIT AND TEST
-            var root = ResolveRoot(container, TestFile, true);
-            var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var root = ResolveRoot(container, TestFile, InitMode());
+            var responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -82,8 +76,8 @@ namespace Tests {
             }
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -103,8 +97,8 @@ namespace Tests {
             }
 
             // RUN AND CHECK
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -128,8 +122,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(),root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -153,8 +147,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute("UPDATE Customers SET ContactName = 'Paul Ibsen' WHERE CustomerID = 'VAFFE';"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);

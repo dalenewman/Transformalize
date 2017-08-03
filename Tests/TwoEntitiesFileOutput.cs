@@ -26,13 +26,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac;
+using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
 using Environment = System.Environment;
 
 namespace Tests {
 
     [TestClass]
-    public class TwoEntitiesFileOutput {
+    public class TwoEntitiesFileOutput : TestBase {
 
         [TestMethod]
         public void Execute() {
@@ -81,7 +82,11 @@ namespace Tests {
             var provider = "sqlite";
             var ext = "sqlite3";
 
-            var process = ProcessFactory.Create(xml);
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new ShorthandModule());
+            builder.RegisterModule(new RootModule());
+            var container = builder.Build();
+            var process = ResolveRoot(container, xml);
 
             if (!process.Errors().Any()) {
 
@@ -102,7 +107,7 @@ namespace Tests {
                         }
                     }
 
-                    using (var scope = DefaultContainer.Create(process, new DebugLogger())) {
+                    using (var scope = DefaultContainer.Create(process, new DebugLogger(), "@()")) {
                         scope.Resolve<IProcessController>().Execute();
                     }
 
@@ -144,7 +149,7 @@ namespace Tests {
                         }
                     }
 
-                    using (var scope = DefaultContainer.Create(reversed, new DebugLogger())) {
+                    using (var scope = DefaultContainer.Create(reversed, new DebugLogger(), "@()")) {
                         scope.Resolve<IProcessController>().Execute();
                         if (originalOutput.Provider == "internal") {
                             process.Rows = reversed.Entities.First().Rows;
@@ -155,7 +160,7 @@ namespace Tests {
                 }
             }
 
-            
+
         }
     }
 }

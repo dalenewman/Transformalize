@@ -66,7 +66,7 @@ namespace Transformalize.Ioc.Autofac {
                 return new ActionResponse(500, "See error log");
             }
 
-            using (var scope = DefaultContainer.Create(reversed, _context.Logger)) {
+            using (var scope = DefaultContainer.Create(reversed, _context.Logger, "@[]")) {
                 scope.Resolve<IProcessController>().Execute();
                 if (originalOutput.Provider == "internal") {
                     process.Rows = reversed.Entities.First().Rows;

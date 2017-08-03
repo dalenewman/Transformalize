@@ -20,6 +20,7 @@ using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Context;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
 using Transformalize.Provider.MySql;
@@ -28,7 +29,7 @@ using Transformalize.Provider.SqlServer;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationMySql {
+    public class NorthWindIntegrationMySql : TestBase {
 
         public string TestFile { get; set; } = @"Files\NorthWindSqlServerToMySql.xml";
         public Connection InputConnection { get; set; } = new Connection {
@@ -42,10 +43,6 @@ namespace Tests {
             Provider = "mysql",
             ConnectionString = "Server=localhost;Database=northwindstar;Uid=root;Pwd=devdev1!;"
         };
-
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
-        }
 
         [TestMethod]
         [Ignore]
@@ -65,8 +62,8 @@ namespace Tests {
                 "));
             }
 
-            var root = ResolveRoot(container, TestFile, true);
-            var response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var root = ResolveRoot(container, TestFile, InitMode());
+            var response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -78,8 +75,8 @@ namespace Tests {
             }
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -98,8 +95,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute(sql));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -118,8 +115,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);

@@ -25,8 +25,11 @@ namespace Transformalize.Ioc.Autofac {
 
     public class RunTimeRunner : IRunTimeRun {
         private readonly IContext _context;
+        private readonly ILifetimeScope _scope;
 
-        public RunTimeRunner(IContext context) {
+        public RunTimeRunner(IContext context, ILifetimeScope scope)
+        {
+            _scope = scope;
             _context = context;
         }
 
@@ -49,8 +52,8 @@ namespace Transformalize.Ioc.Autofac {
                 return Enumerable.Empty<IRow>();
             }
 
-            using (var scope = DefaultContainer.Create(process, _context.Logger)) {
-                var controller = scope.Resolve<IProcessController>();
+            using (_scope) {
+                var controller = _scope.Resolve<IProcessController>();
                 controller.Execute();
                 return process.Entities.First().Rows;
             }

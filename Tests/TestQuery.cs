@@ -64,7 +64,7 @@ namespace Tests {
                     throw new Exception(string.Join(System.Environment.NewLine, process.Errors()));
                 }
 
-                using (var s = DefaultContainer.Create(process, new DebugLogger(LogLevel.Debug))) {
+                using (var s = DefaultContainer.Create(process, new DebugLogger(LogLevel.Debug), "@()")) {
                     var rows = s.Resolve<IProcessController>().Read().ToArray();
                     Assert.AreEqual(2155, rows.Length);
                 }

@@ -28,7 +28,7 @@ using Transformalize.Provider.SqlServer;
 namespace Tests {
 
     [TestClass]
-    public class SlaveGetsInserts {
+    public class SlaveGetsInserts : TestBase {
 
         const string xml = @"
 <cfg name='Test' mode='@(Mode)' flatten='true'>
@@ -72,13 +72,6 @@ namespace Tests {
             Provider = "sqlserver",
             ConnectionString = "Server=localhost;Database=TestOutput;trusted_connection=true;"
         };
-
-        public Process ResolveRoot(IContainer container, string xml, Dictionary<string, string> parameters = null) {
-            if(parameters == null) {
-                parameters = new Dictionary<string, string>();
-            }
-            return container.Resolve<Process>(new NamedParameter("cfg", xml), new NamedParameter("parameters", parameters));
-        }
 
         [TestMethod]
         [Ignore]
@@ -124,7 +117,7 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
 
             // RUN INIT AND TEST
             var root = ResolveRoot(container, xml, new Dictionary<string, string>() { { "Mode", "init" } });
-            var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -137,7 +130,7 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
 
             // FIRST DELTA, NO CHANGES
             root = ResolveRoot(container, xml);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -161,7 +154,7 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
 
             // RUN AND CHECK
             root = ResolveRoot(container, xml);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -182,8 +175,8 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
                 Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -207,8 +200,8 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
                 Assert.AreEqual(1, cn.Execute("UPDATE Customers SET ContactName = 'Paul Ibsen' WHERE CustomerID = 'VAFFE';"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);

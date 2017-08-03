@@ -31,7 +31,7 @@ namespace Tests {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null) {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ShorthandModule());
@@ -53,7 +53,7 @@ namespace Tests {
                 }
             }
 
-            return DefaultContainer.Create(Process, new TraceLogger(logLevel)).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
+            return DefaultContainer.Create(Process, new TraceLogger(logLevel), placeHolderStyle).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
         }
 
     }

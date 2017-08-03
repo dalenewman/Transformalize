@@ -26,6 +26,7 @@ using Lucene.Net.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Context;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
 using Transformalize.Provider.SqlServer;
@@ -33,7 +34,7 @@ using Transformalize.Provider.SqlServer;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationLucene {
+    public class NorthWindIntegrationLucene : TestBase {
 
         public string TestFile { get; set; } = @"Files\NorthWindSqlServerToLucene.xml";
         public Connection InputConnection { get; set; } = new Connection {
@@ -48,9 +49,6 @@ namespace Tests {
             Provider = "lucene",
             Folder = @"c:\temp\lucene_northwind"
         };
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
-        }
         
         [TestMethod]
         [Ignore]
@@ -71,8 +69,8 @@ namespace Tests {
                 "));
             }
 
-            var root = ResolveRoot(container, TestFile, true);
-            var response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var root = ResolveRoot(container, TestFile, InitMode());
+            var response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -82,8 +80,8 @@ namespace Tests {
             }
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -99,8 +97,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute(sql));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -109,9 +107,9 @@ namespace Tests {
                 var hits = searcher.Search(new TermQuery(new Term("TflId", "1025339")),null, 1);
                 Assert.AreEqual(1, hits.TotalHits);
                 var hit = searcher.Doc(hits.ScoreDocs[0].Doc);
-                Assert.AreEqual(15.0d, Convert.ToDecimal(hit.Get("OrderDetailsUnitPrice")));
+                Assert.AreEqual(15.0M, Convert.ToDecimal(hit.Get("OrderDetailsUnitPrice")));
                 Assert.AreEqual(40, Convert.ToInt32(hit.Get("OrderDetailsQuantity")));
-                Assert.AreEqual(40 * 15.0d, Convert.ToDecimal(hit.Get("OrderDetailsExtendedPrice")));
+                Assert.AreEqual(40 * 15.0M, Convert.ToDecimal(hit.Get("OrderDetailsExtendedPrice")));
             }
 
             // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
@@ -120,8 +118,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
             }
 
-            root = ResolveRoot(container, TestFile, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, TestFile);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -131,7 +129,7 @@ namespace Tests {
                 Assert.AreEqual(1, hits.TotalHits);
                 var hit = searcher.Doc(hits.ScoreDocs[0].Doc);
                 Assert.AreEqual("VICTE", hit.Get("OrdersCustomerID"));
-                Assert.AreEqual(20.11d, Convert.ToDecimal(hit.Get("OrdersFreight")));
+                Assert.AreEqual(20.11M, Convert.ToDecimal(hit.Get("OrdersFreight")));
             }
 
 

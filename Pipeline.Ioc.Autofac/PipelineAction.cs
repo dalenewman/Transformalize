@@ -17,27 +17,21 @@
 #endregion
 using Autofac;
 using Transformalize.Actions;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Ioc.Autofac {
     public class PipelineAction : IAction {
-        private readonly IContext _context;
+        private readonly ILifetimeScope _scope;
 
-        public Process Process { get; }
-
-        public PipelineAction(IContext context, Process process) {
-            _context = context;
-            Process = process;
+        public PipelineAction(ILifetimeScope scope) {
+            _scope = scope;
         }
 
         public ActionResponse Execute() {
             var response = new ActionResponse();
-            if (!Process.Enabled)
-                return response;
 
-            using (var scope = DefaultContainer.Create(Process, _context.Logger)) {
-                scope.Resolve<IProcessController>().Execute();
+            using (_scope) {
+                _scope.Resolve<IProcessController>().Execute();
             }
 
             return response;

@@ -34,9 +34,8 @@ using Transformalize.Desktop.Transforms;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class RootModule : Module {
 
-        public RootModule() { }
+    public class RootModule : Module {
 
         protected override void Load(ContainerBuilder builder) {
 
@@ -50,10 +49,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((ctx, p) => {
 
+                var placeHolderStyle = "@()";
+                if (ctx.IsRegisteredWithName<string>("placeHolderStyle")) {
+                    placeHolderStyle = ctx.ResolveNamed<string>("placeHolderStyle");
+                }
+
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     new DateMathModifier(),
-                    new EnvironmentModifier(),
+                    new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2])),
                     new JintValidator()
                 };
 

@@ -35,7 +35,7 @@ using Transformalize.Provider.Trace;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationSqlServerThenElastic {
+    public class NorthWindIntegrationSqlServerThenElastic : TestBase {
 
         public string ElasticTestFile { get; set; } = @"Files\NorthWindSqlServerToElastic.xml";
         public string SqlTestFile { get; set; } = @"Files\NorthWind.xml";
@@ -58,11 +58,6 @@ namespace Tests {
             Index = "northwind",
             Url = "http://localhost:9200"
         };
-
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
-        }
-
 
         [TestMethod]
         [Ignore]
@@ -87,19 +82,19 @@ namespace Tests {
                 "));
             }
 
-            var root = ResolveRoot(container, SqlTestFile, true);
-            var responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var root = ResolveRoot(container, SqlTestFile, InitMode());
+            var responseSql = Execute(root);
             Assert.AreEqual(200, responseSql.Code);
 
-            root = ResolveRoot(container, ElasticTestFile, true);
-            var responseElastic = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, ElasticTestFile, InitMode());
+            var responseElastic = Execute(root);
             Assert.AreEqual(200, responseElastic.Code);
 
             Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", "star", "{\"query\" : { \"match_all\" : { }}}").Body["count"].Value);
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, ElasticTestFile, false);
-            responseElastic = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, ElasticTestFile);
+            responseElastic = Execute(root);
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Message);
 
@@ -113,8 +108,8 @@ namespace Tests {
             }
 
             // RUN AND CHECK SQL
-            root = ResolveRoot(container, SqlTestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, SqlTestFile);
+            responseSql = Execute(root);
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
 
@@ -127,8 +122,8 @@ namespace Tests {
             }
 
             // RUN AND CHECK ELASTIC
-            root = ResolveRoot(container, ElasticTestFile, false);
-            responseElastic = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, ElasticTestFile);
+            responseElastic = Execute(root);
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Message);
 
@@ -164,8 +159,8 @@ namespace Tests {
             }
 
             // RUN AND CHECK SQL
-            root = ResolveRoot(container, SqlTestFile, false);
-            responseSql = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, SqlTestFile);
+            responseSql = Execute(root);
 
             Assert.AreEqual(200, responseSql.Code);
             Assert.AreEqual(string.Empty, responseSql.Message);
@@ -178,8 +173,8 @@ namespace Tests {
             }
 
             // RUN AND CHECK ELASTIC
-            root = ResolveRoot(container, ElasticTestFile, false);
-            responseElastic = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, ElasticTestFile);
+            responseElastic = Execute(root);
             Assert.AreEqual(200, responseElastic.Code);
             Assert.AreEqual(string.Empty, responseElastic.Message);
 

@@ -26,7 +26,7 @@ namespace Transformalize.Command {
 
         public Dictionary<string, string> Parameters { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public NowExecutor(IPipelineLogger logger, string cfg, string mode) : base(logger, cfg, mode, false) {
+        public NowExecutor(IPipelineLogger logger, Options options) : base(logger, options, false) {
         }
 
         /// <summary>

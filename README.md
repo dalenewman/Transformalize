@@ -1143,3 +1143,12 @@ care of mapping the facet values to a parameter's choices.
 Without paging, web-based reporting gets too big for 
 the browser.  All providers are capable of paging, 
 but SOLR and Elasticsearch do it the best.
+
+
+#### Credits &amp; Thanks
+
+**TODO**: list open source projects
+
+<a href="https://www.jetbrains.com/resharper">
+    <img src="Files/resharper-logo.png" alt="Resharper" style="width: 100px;"/>
+</a>

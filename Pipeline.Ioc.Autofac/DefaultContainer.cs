@@ -24,13 +24,14 @@ using Transformalize.Ioc.Autofac.Modules;
 namespace Transformalize.Ioc.Autofac {
     public static class DefaultContainer {
 
-        public static ILifetimeScope Create(Process process, IPipelineLogger logger) {
+        public static ILifetimeScope Create(Process process, IPipelineLogger logger, string placeHolderStyle) {
 
             if (process.OutputIsConsole()) {
                 logger.SuppressConsole();
             }
 
             var builder = new ContainerBuilder();
+            builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
             builder.RegisterCallback(new ShorthandModule().Configure);
             builder.RegisterCallback(new RootModule().Configure);

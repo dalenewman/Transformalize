@@ -105,7 +105,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         return new NullAction();
                     }
 
-                    return new PipelineAction(context, root);
+                    return new PipelineAction(DefaultContainer.Create(root, ctx.Resolve<IPipelineLogger>(), action.PlaceHolderStyle));
                 case "run":
                     var connection = process.Connections.First(c => c.Name == action.Connection);
                     switch (connection.Provider) {

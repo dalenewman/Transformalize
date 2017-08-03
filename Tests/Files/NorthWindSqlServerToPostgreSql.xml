@@ -33,6 +33,7 @@
       <calculated-fields>
         <add name="OrderDetailsExtendedPrice"
              type="decimal"
+             engine="jint"
              precision="19"
              scale="4"
              t="copy(OrderDetailsQuantity,OrderDetailsUnitPrice,OrderDetailsDiscount).javascript(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-OrderDetailsDiscount)))">

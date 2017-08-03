@@ -28,7 +28,7 @@ using Transformalize.Provider.SqlServer;
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationPostgreSql
+    public class NorthWindIntegrationPostgreSql : TestBase
     {
 
         public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
@@ -43,10 +43,6 @@ namespace Tests {
             Provider = "postgresql",
             ConnectionString = "Server=localhost;Port=5432;Database=NorthWindStar;User Id=postgres;Password=devdev1!;"
         };
-
-        public Process ResolveRoot(IContainer container, string file, bool init) {
-            return container.Resolve<Process>(new NamedParameter("cfg", file + (init ? "?Mode=init" : string.Empty)));
-        }
 
         [TestMethod]
         [Ignore]
@@ -66,8 +62,8 @@ namespace Tests {
                 "));
             }
 
-            var root = ResolveRoot(container, Cfg, true);
-            var response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            var root = ResolveRoot(container, Cfg, InitMode());
+            var response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -79,8 +75,8 @@ namespace Tests {
             }
 
             // FIRST DELTA, NO CHANGES
-            root = ResolveRoot(container, Cfg, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, Cfg);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -99,8 +95,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute(sql));
             }
 
-            root = ResolveRoot(container, Cfg, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, Cfg);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -108,9 +104,9 @@ namespace Tests {
             using (var cn = new PostgreSqlConnectionFactory(OutputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 17 LIMIT 1;"));
-                Assert.AreEqual(15.0, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderID = 10253 AND OrderDetailsProductID = 39;"));
+                Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderID = 10253 AND OrderDetailsProductID = 39;"));
                 Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderID= 10253 AND OrderDetailsProductID = 39;"));
-                Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderID= 10253 AND OrderDetailsProductID = 39;"));
+                Assert.AreEqual(15.0M * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderID= 10253 AND OrderDetailsProductID = 39;"));
             }
 
             // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
@@ -119,8 +115,8 @@ namespace Tests {
                 Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
             }
 
-            root = ResolveRoot(container, Cfg, false);
-            response = new PipelineAction(root, new PipelineContext(new DebugLogger(), root)).Execute();
+            root = ResolveRoot(container, Cfg);
+            response = Execute(root);
 
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
@@ -129,7 +125,7 @@ namespace Tests {
                 cn.Open();
                 Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Orders' AND BatchId = 26;"));
                 Assert.AreEqual("VICTE", cn.ExecuteScalar<string>("SELECT OrdersCustomerID FROM NorthWindStar WHERE OrderDetailsOrderID= 10254 LIMIT 1;"));
-                Assert.AreEqual(20.11, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindStar WHERE OrderDetailsOrderID= 10254;"));
+                Assert.AreEqual(20.11M, cn.ExecuteScalar<decimal>("SELECT OrdersFreight FROM NorthWindStar WHERE OrderDetailsOrderID= 10254;"));
             }
 
         }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
 
-    //TODO: remove IInputVersionDetector, IVersionDetector, 
-
     public interface IOutputProvider : IDisposable {
         /// <summary>
         /// Initialize the output:

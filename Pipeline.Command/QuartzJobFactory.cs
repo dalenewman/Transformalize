@@ -25,13 +25,16 @@ namespace Transformalize.Command {
 
     public class QuartzJobFactory : IJobFactory {
         private readonly IPipelineLogger _logger;
+        private readonly Options _options;
 
-        public QuartzJobFactory(IPipelineLogger logger) {
+        public QuartzJobFactory(Options options, IPipelineLogger logger)
+        {
+            _options = options;
             _logger = logger;
         }
 
         public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler) {
-            return new ScheduleExecutor(_logger);
+            return new ScheduleExecutor(_logger, _options);
         }
 
         public void ReturnJob(IJob job) {

@@ -61,8 +61,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                         return new NullSchemaReader();
                     }
+                    var container = DefaultContainer.Create(process, ctx.Resolve<IPipelineLogger>(), ctx.ResolveNamed<string>("placeHolderStyle"));
 
-                    return new SchemaReader(context, new RunTimeRunner(context), process);
+                    return new SchemaReader(context, new RunTimeRunner(context, container), process);
 
                 }).Named<ISchemaReader>(connection.Key);
             }
