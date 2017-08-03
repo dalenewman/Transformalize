@@ -1150,5 +1150,5 @@ but SOLR and Elasticsearch do it the best.
 **TODO**: list open source projects
 
 <a href="https://www.jetbrains.com/resharper">
-    <img src="Files/resharper-logo.png" alt="Resharper" style="width: 100px;"/>
+    <img src="Files/resharper-logo.png" alt="Resharper" width="100px" style="width: 100;"/>
 </a>
