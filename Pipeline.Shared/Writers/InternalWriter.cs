@@ -20,7 +20,7 @@ using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Writers {
+namespace Transformalize.Provider.Internal {
 
     public class InternalWriter : IWrite {
         private readonly OutputContext _context;

@@ -198,6 +198,10 @@
       <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
       <Name>PostgreSql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
+      <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
+      <Name>Rethink</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\Solr\Solr.csproj">
       <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
       <Name>Solr</Name>
@@ -217,30 +221,6 @@
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.CSharp\Pipeline.Transform.CSharp.csproj">
-      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
-      <Name>Pipeline.Transform.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.GeoCoordinate\Pipeline.Transform.GeoCoordinate.csproj">
-      <Project>{1f39c887-4dc6-4474-961b-619dff1760b3}</Project>
-      <Name>Pipeline.Transform.GeoCoordinate</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Geohash\Pipeline.Transform.Geohash.csproj">
-      <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
-      <Name>Pipeline.Transform.Geohash</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj">
-      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
-      <Name>Pipeline.Transform.Humanizer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.csproj">
-      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
-      <Name>Pipeline.Transform.JavaScriptEngineSwitcher</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj">
-      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
-      <Name>Pipeline.Transform.Jint</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
@@ -278,37 +258,49 @@
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
+    <ProjectReference Include="..\Transforms\CSharp\CSharp.csproj">
+      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
+      <Name>CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\DateMath\DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
-      <Name>Transformalize.Transform.DateMath</Name>
+      <Name>DateMath</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Dates\Transformalize.Transform.Dates.csproj">
-      <Project>{56fc16af-42fd-41bf-84b3-94d4033134de}</Project>
-      <Name>Transformalize.Transform.Dates</Name>
+    <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
+      <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
+      <Name>Geography</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
-      <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>
-      <Name>Transformalize.Transform.Geocode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Html\Transformalize.Transform.Html.csproj">
+    <ProjectReference Include="..\Transforms\Html\Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
-      <Name>Transformalize.Transform.Html</Name>
+      <Name>Html</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.LamdaParser\Transformalize.Transform.LamdaParser.csproj">
+    <ProjectReference Include="..\Transforms\Humanizer\Humanizer.csproj">
+      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
+      <Name>Humanizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\JavaScript\JavaScript.csproj">
+      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
+      <Name>JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Jint\Jint.csproj">
+      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
+      <Name>Jint</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\LamdaParser\LamdaParser.csproj">
       <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
-      <Name>Transformalize.Transform.LamdaParser</Name>
+      <Name>LamdaParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Razor\Transformalize.Transform.Razor.csproj">
+    <ProjectReference Include="..\Transforms\Razor\Razor.csproj">
       <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>
-      <Name>Transformalize.Transform.Razor</Name>
+      <Name>Razor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Velocity\Transformalize.Transform.Velocity.csproj">
-      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
-      <Name>Transformalize.Transform.Velocity</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Vin\Transformalize.Transform.Vin.csproj">
+    <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
-      <Name>Transformalize.Transform.Vin</Name>
+      <Name>Vehicle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
+      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
+      <Name>Velocity</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

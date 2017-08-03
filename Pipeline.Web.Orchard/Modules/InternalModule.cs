@@ -28,6 +28,7 @@ using Transformalize.Writers;
 using Transformalize.Provider.File;
 using System.Web;
 using System.Collections.Generic;
+using Transformalize.Provider.Internal;
 
 namespace Pipeline.Web.Orchard.Modules {
 
@@ -88,6 +89,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     var e = entity;
 
+                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IOutputProvider>(entity.Key);
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                     // WRITER

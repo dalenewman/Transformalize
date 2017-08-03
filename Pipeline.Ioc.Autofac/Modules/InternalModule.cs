@@ -20,19 +20,19 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
 using Transformalize.Provider.Console;
 using Transformalize.Provider.Trace;
 using Transformalize.Writers;
 using System.Collections.Generic;
+using Transformalize.Provider.Internal;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
     public class InternalModule : Module {
         private readonly Process _process;
-        private readonly HashSet<string> _internal = new HashSet<string>(new string[] { "internal", "console", "trace", "log", "text" });
+        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "console", "trace", "log", "text" });
 
         public InternalModule() { }
 
@@ -79,9 +79,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
+
                 foreach (var entity in _process.Entities) {
 
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IOutputProvider>(entity.Key);
 
                     // WRITER
                     builder.Register<IWrite>(ctx => {

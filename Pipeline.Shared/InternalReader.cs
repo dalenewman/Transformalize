@@ -20,7 +20,7 @@ using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize {
+namespace Transformalize.Provider.Internal {
     public class InternalReader : IRead {
 
         readonly InputContext _input;

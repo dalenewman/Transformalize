@@ -26,21 +26,18 @@ using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;
 using Transformalize.Transform.CSharp;
 using Transformalize.Transform.DateMath;
-using Transformalize.Transform.Dates;
-using Transformalize.Transform.Geocode;
-using Transformalize.Transform.GeoCoordinate;
-using Transformalize.Transform.Geohash;
+using Transformalize.Transform.Geography;
 using Transformalize.Transform.Html;
 using Transformalize.Transform.Humanizer;
-using Transformalize.Transform.JavaScriptEngineSwitcher;
+using Transformalize.Transform.JavaScript;
 using Transformalize.Transform.Jint;
 using Transformalize.Transform.LamdaParser;
 using Transformalize.Transform.Razor;
 using Transformalize.Transform.Velocity;
-using Transformalize.Transform.Vin;
 using Transformalize.Transforms;
 using Transformalize.Validators;
 using Transformalize.Provider.File.Transforms;
+using Transformalize.Transform.Vehicle;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {

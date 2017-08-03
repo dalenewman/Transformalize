@@ -165,6 +165,10 @@
       <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
       <Name>Ado</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\Console\Console.csproj">
+      <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
+      <Name>Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\Elastic\Elastic.csproj">
       <Project>{2b364bae-3d5b-467d-aa19-20ec929d14ea}</Project>
       <Name>Elastic</Name>
@@ -176,6 +180,10 @@
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
       <Name>File</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Providers\Kml\Kml.csproj">
+      <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
+      <Name>Kml</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Lucene\Lucene.csproj">
       <Project>{e84d0cb1-8de6-413b-b2f1-2a8e6f7a994c}</Project>
@@ -189,6 +197,10 @@
       <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
       <Name>PostgreSql</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
+      <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
+      <Name>Rethink</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\Solr\Solr.csproj">
       <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
       <Name>Solr</Name>
@@ -201,33 +213,13 @@
       <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
       <Name>SqlServer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\SSAS\SSAS.csproj">
+      <Project>{dc45d0b0-bd89-4334-9fcf-bec7ad1fd540}</Project>
+      <Name>SSAS</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.CSharp\Pipeline.Transform.CSharp.csproj">
-      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
-      <Name>Pipeline.Transform.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.GeoCoordinate\Pipeline.Transform.GeoCoordinate.csproj">
-      <Project>{1f39c887-4dc6-4474-961b-619dff1760b3}</Project>
-      <Name>Pipeline.Transform.GeoCoordinate</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Geohash\Pipeline.Transform.Geohash.csproj">
-      <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
-      <Name>Pipeline.Transform.Geohash</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Humanizer\Pipeline.Transform.Humanizer.csproj">
-      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
-      <Name>Pipeline.Transform.Humanizer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.JavaScriptEngineSwitcher\Pipeline.Transform.JavaScriptEngineSwitcher.csproj">
-      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
-      <Name>Pipeline.Transform.JavaScriptEngineSwitcher</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Transform.Jint\Pipeline.Transform.Jint.csproj">
-      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
-      <Name>Pipeline.Transform.Jint</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
@@ -249,17 +241,49 @@
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.DateMath\Transformalize.Transform.DateMath.csproj">
+    <ProjectReference Include="..\Transforms\CSharp\CSharp.csproj">
+      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
+      <Name>CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\DateMath\DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
-      <Name>Transformalize.Transform.DateMath</Name>
+      <Name>DateMath</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Geocode\Transformalize.Transform.Geocode.csproj">
-      <Project>{1fdaf70a-94a8-4a54-bdf7-f776aea9c5a1}</Project>
-      <Name>Transformalize.Transform.Geocode</Name>
+    <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
+      <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
+      <Name>Geography</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transformalize.Transform.Vin\Transformalize.Transform.Vin.csproj">
+    <ProjectReference Include="..\Transforms\Html\Html.csproj">
+      <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
+      <Name>Html</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Humanizer\Humanizer.csproj">
+      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
+      <Name>Humanizer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\JavaScript\JavaScript.csproj">
+      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
+      <Name>JavaScript</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Jint\Jint.csproj">
+      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
+      <Name>Jint</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\LamdaParser\LamdaParser.csproj">
+      <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
+      <Name>LamdaParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Razor\Razor.csproj">
+      <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>
+      <Name>Razor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
-      <Name>Transformalize.Transform.Vin</Name>
+      <Name>Vehicle</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
+      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
+      <Name>Velocity</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

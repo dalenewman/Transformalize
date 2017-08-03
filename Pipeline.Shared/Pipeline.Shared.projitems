@@ -113,6 +113,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsMoveAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Incrementer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InternalOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
