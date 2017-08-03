@@ -22,17 +22,21 @@ using CommandLine.Text;
 namespace Transformalize.Command {
 
     public class Options {
-        [Option('a', "arrangement", Required = true, HelpText = "an arrangement (aka configuration) file, or url.")]
+
+        [Option('a', "arrangement", Required = true, HelpText = "An arrangement (aka configuration) file, or url. Note: you may add an optional query string.")]
         public string Arrangement { get; set; }
 
-        [Option('s', "schedule", Required = false, HelpText = "a cron expression (http://www.quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger)")]
+        [Option('s', "schedule", Required = false, HelpText = "To use an arrangement schedule, set to 'internal', otherwise provide a cron expression in double-quotes.")]
         public string Schedule { get; set; }
 
-        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (i.e. init, check, default, etc.). WARNING: the mode 'init' destroys and rebuilds everything.")]
+        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (init, check, default, etc).")]
         public string Mode { get; set; }
 
-        [Option('f', "format", DefaultValue = "csv", Required = false, HelpText = "Output format (i.e. csv or json). Note: Data is only output if output connection is internal or console.")]
+        [Option('f', "format", DefaultValue = "csv", Required = false, HelpText = "Output format for console provider (csv, json).")]
         public string Format { get; set; }
+
+        [Option("phs", DefaultValue = "@()", Required = false, HelpText = "Placeholder Style: the marker, prefix, and suffix for place holders in the arrangement. Note: you can set parameters with default values in your arrangement, and also pass them in using a query string on your -a arrangement (e.g. =a \"c:\\cfg.xml?x=1&y=2\").")]
+        public string PlaceHolderStyle { get; set; }
 
         [HelpOption]
         public string GetUsage() {
