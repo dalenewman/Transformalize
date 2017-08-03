@@ -21,105 +21,95 @@ It works with many data sources:
     <tbody>
         <tr>
             <td style="vertical-align:top">
-
-<table class="table table-condensed">
-    <thead>
-        <tr>
-            <th>Provider</th>
-            <th>Input</th>
-            <th>Output</th>
-            <th>De-<br/>normalize</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>SQL Server</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>MySql</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>PostgreSql</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>SQLite</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>SqlCe</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-    </tbody>
-</table>
-            
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Input</th>
+                            <th>Output</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SQL Server</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>MySql</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSql</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>SQLite</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>SqlCe</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                    </tbody>
+                </table>
             </td>
             <td style="vertical-align:top">
-
-<table class="table table-condensed">
-    <thead>
-        <tr>
-            <th>Provider</th>
-            <th>Input</th>
-            <th>Output</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>Elasticsearch</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>Lucene</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>SOLR</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>Files</td>
-            <td style="color:green">&#10003;</td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td>Web</td>
-            <td style="color:green">&#10003;</td>
-            <td> </td>
-        </tr>
-        <tr>
-            <td>Console</td>
-            <td> </td>
-            <td style="color:green">&#10003;</td>
-        </tr>
-        <tr>
-            <td title="SQL Server Analysis Services">SSAS</td>
-            <td style="color:green"></td>
-            <td style="color:green">WIP</td>
-        </tr>
-        <tr>
-            <td title="RethinkDB">RethinkDB</td>
-            <td style="color:green"></td>
-            <td style="color:green">WIP</td>
-        </tr>
-    </tbody>
-</table>
-            
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Input</th>
+                            <th>Output</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Elasticsearch</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Lucene</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>SOLR</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Files</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Web</td>
+                            <td style="color:green">&#10003;</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Console</td>
+                            <td> </td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td title="SQL Server Analysis Services">SSAS</td>
+                            <td style="color:green"></td>
+                            <td style="color:green">WIP</td>
+                        </tr>
+                        <tr>
+                            <td title="RethinkDB">RethinkDB</td>
+                            <td style="color:green"></td>
+                            <td style="color:green">WIP</td>
+                        </tr>
+                    </tbody>
+                </table>
             </td>
         </tr>
     </tbody>
