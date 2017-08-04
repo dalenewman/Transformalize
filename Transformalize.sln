@@ -116,9 +116,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Providers\SSAS\Transformalize.Provider.SSAS.nuspec = Providers\SSAS\Transformalize.Provider.SSAS.nuspec
 		Providers\Web\Transformalize.Provider.Web.nuspec = Providers\Web\Transformalize.Provider.Web.nuspec
 		Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec
-		Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec = Pipeline.Transform.Humanizer\Transformalize.Transform.Humanizer.nuspec
-		Pipeline.Transform.JavaScriptEngineSwitcher\Transformalize.Transform.JavaScriptEngineSwitcher.nuspec = Pipeline.Transform.JavaScriptEngineSwitcher\Transformalize.Transform.JavaScriptEngineSwitcher.nuspec
-		Pipeline.Transform.Jint\Transformalize.Transform.Jint.nuspec = Pipeline.Transform.Jint\Transformalize.Transform.Jint.nuspec
+		Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec = Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec
+		Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec = Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec
+		Transforms\Jint\Transformalize.Transform.Jint.nuspec = Transforms\Jint\Transformalize.Transform.Jint.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{89D90201-5EA9-4D51-B4A7-0A977FB7504D}"

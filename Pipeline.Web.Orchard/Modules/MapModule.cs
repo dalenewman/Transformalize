@@ -53,6 +53,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "sqlce":
                         case "sqlserver":
                             if (connection != null)
                                 return new AdoMapReader(ctx.ResolveNamed<IConnectionFactory>(connection.Key), map.Name);

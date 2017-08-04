@@ -15,12 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Provider.Internal {
+
     public class InternalReader : IRead {
 
         readonly InputContext _input;

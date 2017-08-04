@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Logging.NLog</id>
-    <version>0.2.3-beta</version>
+    <version>0.2.5-beta</version>
     <title>Transformalize Logging NLog</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,8 +15,8 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.3-beta" />
-        <dependency id="NLog" version="4.4.2" />
+        <dependency id="Transformalize" version="0.2.5-beta" />
+        <dependency id="NLog" version="4.4.11" />
       </group>
     </dependencies>
   </metadata>

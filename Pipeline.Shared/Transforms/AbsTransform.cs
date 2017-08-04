@@ -16,46 +16,45 @@
 // limitations under the License.
 #endregion
 using System;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class AbsTransform : BaseTransform {
 
-        readonly Field _input;
         private readonly Func<IRow, object> _transform;
 
         public AbsTransform(IContext context) : base(context, "decimal") {
-            _input = SingleInput();
+            var input = SingleInput();
 
             var typeReceived = Received();
 
             switch (typeReceived) {
                 case "double":
                     Returns = "double";
-                    _transform = row => Math.Abs((double)row[_input]);
+                    _transform = row => Math.Abs((double)row[input]);
                     break;
                 case "decimal":
-                    _transform = row => Math.Abs((decimal)row[_input]);
+                    _transform = row => Math.Abs((decimal)row[input]);
                     break;
                 case "int":
                 case "int32":
                     Returns = "int";
-                    _transform = row => Math.Abs((int)row[_input]);
+                    _transform = row => Math.Abs((int)row[input]);
                     break;
                 case "int64":
                 case "long":
                     Returns = "long";
-                    _transform = row => Math.Abs((long)row[_input]);
+                    _transform = row => Math.Abs((long)row[input]);
                     break;
                 case "float":
                     Returns = "float";
-                    _transform = row => Math.Abs((float)row[_input]);
+                    _transform = row => Math.Abs((float)row[input]);
                     break;
                 default:
                     Returns = Context.Field.Type;
                     Context.Warn($"The Abs transform requires extra conversion to handle a {typeReceived} type.  It handles double, decimal, int, long, and float.");
-                    _transform = row => Context.Field.Convert(Math.Abs(Convert.ToDecimal(row[_input])));
+                    _transform = row => Context.Field.Convert(Math.Abs(Convert.ToDecimal(row[input])));
                     break;
             }
 

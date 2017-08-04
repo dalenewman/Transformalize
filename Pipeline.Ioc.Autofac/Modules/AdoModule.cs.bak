@@ -222,9 +222,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                     // OUTPUT ROW MATCHER
                     builder.Register(ctx => {
-                        if (!entity.Update)
-                            return new NullTakeAndReturnRows();
-
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
                         var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
@@ -250,7 +247,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
 
-                    // MASTER UPDATER
+                    // UPDATER
                     builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         switch (output.Connection.Provider) {
@@ -297,7 +294,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     output,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
                                     new AdoEntityInserter(output, cf),
-                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
+                                    new AdoEntityUpdater(output, cf)
                                 );
                             default:
                                 return new NullWriter(output);

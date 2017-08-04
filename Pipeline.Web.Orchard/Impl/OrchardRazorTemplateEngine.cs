@@ -27,7 +27,7 @@ using Transformalize.Contracts;
 namespace Pipeline.Web.Orchard.Impl {
     public class OrchardRazorTemplateEngine : ITemplateEngine {
 
-        private readonly PipelineContext _context;
+        private readonly IContext _context;
         private readonly ITemplateProcessor _templateProcessor;
         private readonly Transformalize.Configuration.Template _template;
 
@@ -35,7 +35,7 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly IReader _templateReader;
 
         public OrchardRazorTemplateEngine(
-            PipelineContext context,
+            IContext context,
             ITemplateProcessor templateProcessor,
             Transformalize.Configuration.Template template,
             IReader templateReader) {

@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2017 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Autofac.Core;
+using Cfg.Net.Contracts;
+using Orchard.Templates.Services;
+using Pipeline.Web.Orchard.Impl;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -43,9 +46,9 @@ using SolrNet.Schema;
 namespace Pipeline.Web.Orchard.Modules {
     public class SolrModule : Module {
         private readonly Process _process;
-
+        
         public SolrModule() { }
-            
+
         public SolrModule(Process process) {
             _process = process;
         }
@@ -155,6 +158,12 @@ namespace Pipeline.Web.Orchard.Modules {
                     }).Named<IUpdate>(entity.Key);
 
                     // OUTPUT
+                    builder.Register<IOutputProvider>((ctx) => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var solr = ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(output.Connection.Key);
+                        return new SolrOutputProvider(output, solr);
+                    }).Named<IOutputProvider>(entity.Key);
+
                     builder.Register<IOutputController>(ctx => {
 
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
@@ -162,6 +171,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         switch (output.Connection.Provider) {
                             case "solr":
                                 var solr = ctx.ResolveNamed<ISolrReadOnlyOperations<Dictionary<string, object>>>(output.Connection.Key);
+
                                 return new SolrOutputController(
                                     output,
                                     new NullInitializer(),
@@ -233,7 +243,18 @@ namespace Pipeline.Web.Orchard.Modules {
                 .WithParameters(new[] {
                     new ResolvedParameter((p, c) => p.Name == "basicServer", (p, c) => c.ResolveNamed<ISolrBasicOperations<Dictionary<string,object>>>(key)),
                 }).SingleInstance();
+
+            // modified url to not include the core
+            builder.RegisterType<SolrCoreAdmin>()
+                .Named<ISolrCoreAdmin>(key)
+                .WithParameters(new[] {
+                    new ResolvedParameter((p, c)=> p.Name == "connection", (p, c) => new SolrConnection(url.Substring(0, url.Length - connection.Core.Length - 1))),
+                    new ResolvedParameter((p, c)=> p.Name == "headerParser", (p, c) => c.Resolve<ISolrHeaderResponseParser>()),
+                    new ResolvedParameter((p, c)=> p.Name == "resultParser", (p, c) => new SolrStatusResponseParser())
+                })
+                .As<ISolrCoreAdmin>();
         }
 
     }
+
 }

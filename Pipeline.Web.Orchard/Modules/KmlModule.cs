@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,7 +60,11 @@ namespace Pipeline.Web.Orchard.Modules {
             }
 
             if (_process.Output().Provider == Provider) {
-                foreach (var entity in _process.Entities) {
+                foreach (var entity in _process.Entities)
+                {
+
+                    builder.Register<IOutputController>((ctx) => new NullOutputController()).Named<IOutputController>(entity.Key);
+
                     // ENTITY WRITER
                     builder.Register(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);

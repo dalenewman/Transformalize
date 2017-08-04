@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,15 +33,14 @@ using Transformalize.Provider.SQLite;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
+using Transformalize.Provider.SqlCe;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AdoModule : Module {
         private readonly Process _process;
-        private readonly string[] _ado = { "sqlserver", "mysql", "postgresql", "sqlite" };
+        private readonly HashSet<string> _ado = Constants.AdoProviderSet();
 
-        public AdoModule() {
-
-        }
+        public AdoModule() { }
 
         public AdoModule(Process process) {
             _process = process;
@@ -53,7 +52,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 return;
 
             // connections
-            foreach (var connection in _process.Connections.Where(c => c.Provider.In(_ado))) {
+            foreach (var connection in _process.Connections.Where(c => _ado.Contains(c.Provider))) {
 
                 var cn = connection;
                 // Connection Factory
@@ -67,6 +66,8 @@ namespace Pipeline.Web.Orchard.Modules {
                             return new PostgreSqlConnectionFactory(cn);
                         case "sqlite":
                             return new SqLiteConnectionFactory(cn);
+                        case "sqlce":
+                            return new SqlCeConnectionFactory(cn);
                         default:
                             return new NullConnectionFactory();
                     }
@@ -97,7 +98,7 @@ namespace Pipeline.Web.Orchard.Modules {
             // IEntityDeleteHandler
 
             // entitiy input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider.In(_ado))) {
+            foreach (var entity in _process.Entities.Where(e => _ado.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
@@ -108,6 +109,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "sqlce":
                         case "sqlserver":
                             return new AdoInputReader(
                                 input,
@@ -138,7 +140,7 @@ namespace Pipeline.Web.Orchard.Modules {
             }
 
             // entity output
-            if (_process.Output().Provider.In(_ado)) {
+            if (_ado.Contains(_process.Output().Provider)) {
 
                 var calc = _process.ToCalculatedFieldsProcess();
 
@@ -152,6 +154,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "sqlce":
                         case "sqlserver":
                             var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
                             if (_process.Flatten) {
@@ -191,6 +194,12 @@ namespace Pipeline.Web.Orchard.Modules {
                 foreach (var e in _process.Entities) {
 
                     var entity = e;
+
+                    builder.Register<IOutputProvider>(ctx => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        return new AdoOutputProvider(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+                    }).Named<IOutputProvider>(entity.Key);
+
                     // ENTITY OUTPUT CONTROLLER
                     builder.Register<IOutputController>(ctx => {
 
@@ -259,6 +268,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                     ctx.ResolveNamed<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys")
                                 );
                             case "sqlite":
+                            case "sqlce":
                                 return new AdoTwoPartMasterUpdater(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
                             default:
                                 return new NullMasterUpdater();
@@ -276,7 +286,14 @@ namespace Pipeline.Web.Orchard.Modules {
                                     output,
                                     cf,
                                     ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    entity.Update ? (IWrite) new AdoEntityUpdater(output, cf) : new NullWriter(output)
+                                    new AdoEntityUpdater(output, cf)
+                                );
+                            case "sqlce":
+                                return new SqlCeWriter(
+                                    output,
+                                    cf,
+                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    new AdoEntityUpdater(output, cf)
                                 );
                             case "mysql":
                             case "postgresql":
@@ -306,6 +323,7 @@ namespace Pipeline.Web.Orchard.Modules {
                             switch (inputContext.Connection.Provider) {
                                 case "mysql":
                                 case "postgresql":
+                                case "sqlce":
                                 case "sqlite":
                                 case "sqlserver":
                                     input = new AdoReader(

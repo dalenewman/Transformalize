@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.JavaScriptEngineSwitcher</id>
-    <version>0.2.2-beta</version>
+    <version>0.2.5-beta</version>
     <title>Transformalize Transform JavaScriptEngineSwitcher</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.2-beta" />
+        <dependency id="Transformalize" version="0.2.5-beta" />
         <dependency id="JavaScriptEngineSwitcher.Core" version="2.1.2" />
       </group>
     </dependencies>

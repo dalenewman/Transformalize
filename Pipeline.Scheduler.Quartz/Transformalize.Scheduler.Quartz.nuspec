@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Scheduler.Quartz</id>
-    <version>0.2.1-beta</version>
+    <version>0.2.5-beta</version>
     <title>Transformalize Scheduler Quartz.NET</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,8 +15,8 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.2-beta" />
-        <dependency id="Quartz" version="2.4.1" />
+        <dependency id="Transformalize" version="0.2.5-beta" />
+        <dependency id="Quartz" version="2.6.0" />
       </group>
     </dependencies>
   </metadata>

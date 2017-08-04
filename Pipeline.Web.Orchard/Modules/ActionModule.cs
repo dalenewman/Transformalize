@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,9 +48,7 @@ namespace Pipeline.Web.Orchard.Modules {
     public class ActionModule : Module {
         readonly Process _process;
 
-        public ActionModule() {
-
-        }
+        public ActionModule() { }
 
         public ActionModule(Process process) {
             _process = process;

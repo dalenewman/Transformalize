@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -49,7 +49,8 @@ namespace Pipeline.Web.Orchard.Modules {
                 return;
 
             //CONNECTIONS
-            foreach (var connection in _process.Connections.Where(c => c.Provider.In("elasticsearch"))) {
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "elasticsearch")) {
+
 
 
                 if (connection.Servers.Any()) {
@@ -111,7 +112,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     switch (input.Connection.Provider) {
                         case "elasticsearch":
-                            if (input.Entity.Query == string.Empty) {
+                            if (entity.Query == string.Empty) {
                                 return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
                             }
                             return new ElasticQueryReader(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory);
