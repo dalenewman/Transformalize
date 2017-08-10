@@ -94,12 +94,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    switch (input.Connection.Provider) {
-                        case "elasticsearch":
-                            return new ElasticInputProvider(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key));
-                        default:
-                            return new NullInputProvider();
-                    }
+                    return new ElasticInputProvider(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key));
                 }).Named<IInputProvider>(entity.Key);
 
                 // INPUT READER
@@ -107,17 +102,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
-                    switch (input.Connection.Provider) {
-                        case "elasticsearch":
-                            if (entity.Query == string.Empty) {
-                                return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
-                            }
-                            return new ElasticQueryReader(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory);
-                        default:
-                            return new NullReader(input, false);
+                    if (entity.Query == string.Empty) {
+                        return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
                     }
+                    return new ElasticQueryReader(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory);
                 }).Named<IRead>(entity.Key);
-
 
             }
 

@@ -129,6 +129,7 @@
     <Compile Include="FolderReader.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="Modules\ActionModule.cs" />
+    <Compile Include="Modules\ConsoleModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />

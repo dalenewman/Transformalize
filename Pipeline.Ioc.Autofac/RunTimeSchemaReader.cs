@@ -55,6 +55,7 @@ namespace Transformalize.Ioc.Autofac {
             container.RegisterCallback(new LuceneModule(Process).Configure);
             container.RegisterCallback(new SolrModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
+            container.RegisterCallback(new ConsoleModule(Process).Configure);
             container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new WebModule(Process).Configure);

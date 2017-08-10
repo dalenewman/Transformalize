@@ -22,7 +22,6 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
-using Transformalize.Provider.Console;
 using Transformalize.Provider.Trace;
 using Transformalize.Writers;
 using System.Collections.Generic;
@@ -32,7 +31,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
     public class InternalModule : Module {
         private readonly Process _process;
-        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "console", "trace", "log", "text" });
+        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text" });
 
         public InternalModule() { }
 
@@ -63,9 +62,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     switch (input.Connection.Provider) {
                         case "internal":
                             return new InternalReader(input, rowFactory);
-                        case "console":
-                            // todo: take standard input
-                            return new NullReader(input);
                         default:
                             return new NullReader(input, false);
                     }
@@ -83,15 +79,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 foreach (var entity in _process.Entities) {
 
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
-                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IOutputProvider>(entity.Key);
+                    builder.Register<IWrite>(ctx => new InternalWriter(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IWrite>(entity.Key);
+                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), ctx.ResolveNamed<IWrite>(entity.Key))).Named<IOutputProvider>(entity.Key);
 
                     // WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
-                            case "console":
-                                return ctx.Resolve<ConsoleWriter>() ;
                             case "trace":
                                 return new TraceWriter(new JsonNetSerializer(output));
                             case "internal":

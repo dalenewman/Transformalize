@@ -25,8 +25,10 @@ namespace Transformalize.Provider.Internal {
 
     public class InternalOutputProvider : IOutputProvider {
         private readonly OutputContext _context;
+        private readonly IWrite _writer;
 
-        public InternalOutputProvider(OutputContext context) {
+        public InternalOutputProvider(OutputContext context, IWrite writer) {
+            _writer = writer;
             _context = context;
         }
 
@@ -60,7 +62,7 @@ namespace Transformalize.Provider.Internal {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            new InternalWriter(_context).Write(rows);
+            _writer.Write(rows);
         }
 
         public void Delete() {

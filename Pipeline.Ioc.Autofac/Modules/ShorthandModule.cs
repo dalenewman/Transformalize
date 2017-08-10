@@ -231,6 +231,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "separator", Value="" },
                         }
                     });
+                    root.Signatures.Add(Simple("units"));
 
                     root.Methods.Add(new Method { Name = "add", Signature = "none" });
                     root.Methods.Add(new Method { Name = "abs", Signature = "none" });
@@ -365,6 +366,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
                     root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
                     root.Methods.Add(new Method { Name = "slice", Signature = "slice" });
+                    root.Methods.Add(new Method { Name = "bytesize", Signature = "units" });
+                    root.Methods.Add(new Method { Name = "append", Signature = "value" });
                     root.Check();
                 }
 

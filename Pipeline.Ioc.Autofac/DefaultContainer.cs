@@ -42,6 +42,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new SolrModule(process).Configure);
             builder.RegisterCallback(new ElasticModule(process).Configure);
             builder.RegisterCallback(new InternalModule(process).Configure);
+            builder.RegisterCallback(new ConsoleModule(process).Configure);
             builder.RegisterCallback(new FileModule(process).Configure);
             builder.RegisterCallback(new GeoJsonModule(process).Configure);
             builder.RegisterCallback(new KmlModule(process).Configure);

@@ -117,6 +117,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchCountTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RoundToTransform.cs" />

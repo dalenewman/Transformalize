@@ -95,11 +95,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var connection = _process.Connections.First(c => c.Name == entity.Connection);
                 builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
-
-                if (output.Provider == "console") {
-                    builder.Register(ctx => new ConsoleWriter(output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize)).As<ConsoleWriter>();
-                }
-                
+               
             }
         }
     }

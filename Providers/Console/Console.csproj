@@ -30,11 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleInputProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
+    <Compile Include="ConsoleOutputProvider.cs" />
+    <Compile Include="ConsoleReader.cs" />
     <Compile Include="ConsoleWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -43,6 +49,9 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

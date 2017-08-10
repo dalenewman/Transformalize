@@ -20,9 +20,8 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
     public class ConcatTransform : BaseTransform {
-        readonly Field[] _input;
+        private readonly Field[] _input;
 
         public ConcatTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();

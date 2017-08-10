@@ -32,10 +32,10 @@ namespace Transformalize.Provider.Ado {
     /// </summary>
     public class AdoInputReader : IRead {
 
-        int _rowCount;
-        readonly InputContext _input;
-        readonly AdoRowCreator _rowCreator;
-        readonly Field[] _fields;
+        private int _rowCount;
+        private readonly InputContext _input;
+        private readonly AdoRowCreator _rowCreator;
+        private readonly Field[] _fields;
         private readonly IConnectionFactory _factory;
         private readonly TypeTransform _typeTransform;
 

@@ -55,7 +55,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var provider = process.Output().Provider;
 
-                // read
+                // TODO: rely on IInputProvider's Read method instead (after every provider has one)
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
 
                 // transform
@@ -73,7 +73,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-                // writer
+                // writer, TODO: rely on IOutputProvider instead
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : new NullWriter());
 
                 // updater
