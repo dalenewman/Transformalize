@@ -19,39 +19,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Transform.Humanizer {
     public class FromMetricTransform : BaseTransform {
+
         private readonly Func<IRow, object> _transform;
-        private readonly Field _input;
         private readonly HashSet<string> _warnings = new HashSet<string>();
 
         public FromMetricTransform(IContext context) : base(context, context.Field.Type) {
-
-            _input = SingleInput();
-
-            switch (_input.Type) {
-                case "string":
-                    _transform = (row) => {
-                        var input = (string)row[_input];
-                        if (!IsInvalidMetricNumeral(input))
-                            return Context.Field.Convert(input.FromMetric());
-
-                        var warning = $"The value {input} is an invalid metric numeral.";
-                        if (_warnings.Add(warning)) {
-                            context.Warn(warning);
-                        }
-                        var numbers = GetNumbers(input);
-                        return Context.Field.Convert(numbers.Length > 0 ? numbers : "0");
-                    };
-                    break;
-                default:
-                    _transform = (row) => row[_input];
-                    break;
+            if (IsNotReceiving("string")) {
+                return;
             }
+
+            var input = SingleInput();
+
+            _transform = (row) => {
+                var value = (string)row[input];
+                if (!IsInvalidMetricNumeral(value))
+                    return Context.Field.Convert(value.FromMetric());
+
+                var warning = $"The value {value} is an invalid metric numeral.";
+                if (_warnings.Add(warning)) {
+                    context.Warn(warning);
+                }
+                var numbers = GetNumbers(value);
+                return Context.Field.Convert(numbers.Length > 0 ? numbers : "0");
+            };
         }
 
         public override IRow Transform(IRow row) {

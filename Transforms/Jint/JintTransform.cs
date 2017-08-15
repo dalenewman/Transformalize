@@ -37,6 +37,10 @@ namespace Transformalize.Transform.Jint {
 
         public JintTransform(IContext context, IReader reader) : base(context, null) {
 
+            if (IsMissing(context.Transform.Script)) {
+                return;
+            }
+
             // automatic parameter binding
             if (!context.Transform.Parameters.Any()) {
                 var parameters = _parser.Parse(context.Transform.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens

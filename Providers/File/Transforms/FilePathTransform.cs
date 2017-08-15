@@ -22,26 +22,22 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Provider.File.Transforms {
 
-    public class FilePathTransform : BaseTransform
-    {
+    public class FilePathTransform : BaseTransform {
         private readonly Field _input;
 
-        public FilePathTransform(IContext context) : base(context, "string")
-        {
+        public FilePathTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row)
-        {
-            if (Context.Transform.Extension)
-            {
+        public override IRow Transform(IRow row) {
+            if (Context.Transform.Extension) {
                 row[Context.Field] = Path.GetFullPath((string)row[_input]);
-            }
-            else
-            {
+            } else {
                 var value = (string)row[_input];
-                if (Path.HasExtension(value))
-                {
+                if (Path.HasExtension(value)) {
                     var path = Path.GetFullPath(value);
                     var ext = Path.GetExtension(value);
                     row[Context.Field] = path.Remove(value.Length - ext.Length);

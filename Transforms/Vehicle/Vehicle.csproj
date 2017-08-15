@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj">
+    <ProjectReference Include="..\..\Compatibility\Transformalize\Transformalize.csproj">
       <Project>{50c78faa-713d-495f-971e-47f3aca46971}</Project>
       <Name>Transformalize</Name>
     </ProjectReference>

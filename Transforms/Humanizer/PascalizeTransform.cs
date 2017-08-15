@@ -27,6 +27,10 @@ namespace Transformalize.Transform.Humanizer {
         private readonly Field _input;
 
         public PascalizeTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
             _input = SingleInput();
             switch (_input.Type) {
                 case "string":

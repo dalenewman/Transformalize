@@ -17,26 +17,28 @@
 #endregion
 using System;
 using Humanizer;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Transform.Humanizer {
     public class TitleizeTransform : BaseTransform {
         private readonly Func<IRow, object> _transform;
-        private readonly Field _input;
 
         public TitleizeTransform(IContext context) : base(context, "string") {
-            _input = SingleInput();
-            switch (_input.Type) {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
+            var input1 = SingleInput();
+            switch (input1.Type) {
                 case "string":
                     _transform = (row) => {
-                        var input = (string)row[_input];
+                        var input = (string)row[input1];
                         return input.Titleize();
                     };
                     break;
                 default:
-                    _transform = (row) => row[_input];
+                    _transform = (row) => row[input1];
                     break;
 
             }

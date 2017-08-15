@@ -38,6 +38,10 @@ namespace Transformalize.Transform.Geography {
         };
 
         public GeohashNeighborTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
             _input = SingleInput();
             _direction = _directions[context.Transform.Direction];
         }

@@ -22,13 +22,15 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Transform.DateMath {
 
-    public class IsDaylightSavings : BaseTransform {
+    public class IsDaylightSavingsTransform : BaseTransform {
 
-        private readonly IContext _context;
         private readonly Field _input;
 
-        public IsDaylightSavings(IContext context) : base(context, "bool") {
-            _context = context;
+        public IsDaylightSavingsTransform(IContext context) : base(context, "bool") {
+            if (IsNotReceiving("date")) {
+                return;
+            }
+
             _input = SingleInput();
         }
 

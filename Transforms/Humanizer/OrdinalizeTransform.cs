@@ -28,6 +28,11 @@ namespace Transformalize.Transform.Humanizer {
         private readonly Field _input;
 
         public OrdinalizeTransform(IContext context) : base(context, "string") {
+            Run = HasValidNumericInput();
+            if (!Run) {
+                return;
+            }
+
             _input = SingleInput();
             switch (_input.Type.Left(3)) {
                 case "dou":

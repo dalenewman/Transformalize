@@ -35,6 +35,10 @@ namespace Transformalize.Transform.Velocity {
 
         public VelocityTransform(IContext context, IReader reader) : base(context, context.Field.Type) {
 
+            if (IsMissing(context.Transform.Template)) {
+                return;
+            }
+
             VelocityInitializer.Init();
 
             var fileBasedTemplate = context.Process.Templates.FirstOrDefault(t => t.Name == context.Transform.Template);

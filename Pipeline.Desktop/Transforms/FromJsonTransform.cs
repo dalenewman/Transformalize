@@ -32,6 +32,12 @@ namespace Transformalize.Desktop.Transforms {
         private readonly HashSet<string> _errors = new HashSet<string>();
 
         public FromJsonTransform(IContext context, Func<object, string> serializer) : base(context, "object") {
+            if (!context.Transform.Parameters.Any()) {
+                Error($"The {context.Transform.Method} transform requires a collection of output fields.");
+                Run = false;
+                return;
+            }
+
             _serializer = serializer;
             _input = SingleInput();
             _output = MultipleOutput();

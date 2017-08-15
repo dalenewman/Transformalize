@@ -28,12 +28,16 @@ namespace Transformalize.Transform.Humanizer {
         private readonly Field _input;
 
         public ToMetricTransform(IContext context) : base(context, "string") {
+            Run = HasValidNumericInput();
+            if (!Run) {
+                return;
+            }
             _input = SingleInput();
             switch (_input.Type.Left(3)) {
                 case "int":
                 case "sho":
                     _transform = (row) => {
-                        var input = _input.Type.In("int","int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
+                        var input = _input.Type.In("int", "int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
                         return input.ToMetric();
                     };
                     break;

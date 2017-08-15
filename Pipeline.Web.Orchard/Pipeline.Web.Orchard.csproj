@@ -165,7 +165,7 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Transformalize">
-      <HintPath>..\..\..\..\..\Transformalize\Transformalize.452\bin\$(Configuration)\Transformalize.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Desktop">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\$(Configuration)\Transformalize.Desktop.dll</HintPath>

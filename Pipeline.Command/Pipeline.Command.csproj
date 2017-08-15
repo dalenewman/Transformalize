@@ -181,6 +181,10 @@
     <Compile Include="ScheduleModule.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compatibility\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
       <Project>{ee20183d-3771-4d5e-890e-cf51eb696f89}</Project>
       <Name>Pipeline.Desktop</Name>
@@ -196,10 +200,6 @@
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24f88aaf-2dc3-4aa1-b385-c6c7748cbe77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
-      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
-      <Name>Transformalize.452</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

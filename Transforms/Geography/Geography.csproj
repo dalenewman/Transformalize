@@ -62,7 +62,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Transformalize.452\Transformalize.452.csproj">
+    <ProjectReference Include="..\..\Compatibility\Transformalize.452\Transformalize.452.csproj">
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>

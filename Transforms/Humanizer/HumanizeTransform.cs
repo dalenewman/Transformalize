@@ -23,16 +23,23 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Transform.Humanizer {
+
     public class HumanizeTransform : BaseTransform {
 
         private readonly Func<IRow, object> _transform;
         private readonly Field _input;
 
-        public HumanizeTransform(IContext context) : base(context, "string") {
+        public HumanizeTransform(IContext context) : base(context, "string")
+        {
+            var type = Received() ?? _input.Type;
+
+            if (type != "string" && !type.StartsWith("date", StringComparison.OrdinalIgnoreCase)) {
+                Error($"The {Context.Transform.Method} expects a string or date, but received a {type} in field {Context.Field.Alias}.");
+                Run = false;
+                return;
+            }
 
             _input = SingleInput();
-
-            var type = Received() ?? _input.Type;
 
             switch (type) {
                 case "bytesize":

@@ -21,18 +21,22 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Desktop.Transforms {
-    public class RelativeTimeTransform : BaseTransform, ITransform {
+    public class RelativeTimeTransform : BaseTransform {
 
         private readonly bool _past;
         private readonly long _nowTicks;
         private readonly Field _input;
-        const int Second = 1;
-        const int Minute = 60 * Second;
-        const int Hour = 60 * Minute;
-        const int Day = 24 * Hour;
-        const int Month = 30 * Day;
+        private const int Second = 1;
+        private const int Minute = 60 * Second;
+        private const int Hour = 60 * Minute;
+        private const int Day = 24 * Hour;
+        private const int Month = 30 * Day;
 
         public RelativeTimeTransform(IContext context, bool past) : base(context, "string") {
+            if (IsNotReceiving("date")) {
+                return;
+            }
+
             _input = SingleInput();
             _past = past;
             var fromTimeZone = context.Transform.FromTimeZone == Constants.DefaultSetting

@@ -31,6 +31,11 @@ namespace Transformalize.Transform.Humanizer {
         private readonly HashSet<string> _warnings = new HashSet<string>();
 
         public FromRomanTransform(IContext context) : base(context, context.Field.Type) {
+
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
             _input = SingleInput();
             switch (_input.Type) {
                 case "string":

@@ -50,7 +50,7 @@ namespace Tests {
             <calculated-fields>
                 <add name='Humanized' t='copy(text).humanize()' />
                 <add name='Dehumanized' t='copy(text).dehumanize()' />
-                <add name='HumanizedDate' t='copy(date).addminutes(30.1).humanize()' />
+                <add name='HumanizedDate' t='copy(date).dateadd(30.1,minutes).humanize()' />
                 <add name='Camelized' t='copy(text).camelize()' />
                 <add name='FromMetric' type='double' t='copy(metric).fromMetric()' />
                 <add name='FromRoman' type='double' t='copy(roman).fromRoman()' />

@@ -39,6 +39,41 @@ namespace Transformalize.Transform.Geography {
         private readonly ComponentFilter _componentFilter;
 
         public GeocodeTransform(IContext context) : base(context, "object") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
+            if (context.Transform.Parameters.Any()) {
+
+                var lat = context.Transform.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
+                if (lat == null) {
+                    Error("The fromaddress (geocode) transform requires an output field named lat, or latitude.");
+                    Run = false;
+                    return;
+                }
+                if (lat.Type != "double") {
+                    Error($"The goecode {lat.Name} field must be of type double.");
+                    Run = false;
+                    return;
+                }
+
+                var lon = context.Transform.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
+                if (lon == null) {
+                    Error("The fromaddress (geocode) transform requires an output field named lon, long, or longitude.");
+                    Run = false;
+                    return;
+                }
+                if (lon.Type != "double") {
+                    Error($"The goecode {lon.Name} field must be of type double.");
+                    Run = false;
+                    return;
+                }
+            } else {
+                Error("The fromaddress (geocode) transform requires a collection of output fields; namely: latitude, longitude, and formattedaddress (optional).");
+                Run = false;
+                return;
+            }
+
             _input = SingleInput();
             _output = MultipleOutput();
             if (context.Transform.Key != string.Empty) {

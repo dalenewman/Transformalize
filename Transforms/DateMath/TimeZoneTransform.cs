@@ -23,13 +23,26 @@ using Transformalize.Transforms;
 namespace Transformalize.Transform.DateMath {
 
     public class TimeZoneTransform : BaseTransform {
-        readonly Field _input;
-        readonly Field _output;
+        private readonly Field _input;
+        private readonly Field _output;
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
         public TimeZoneTransform(IContext context) : base(context, "datetime") {
+
+            if (IsNotReceiving("date")) {
+                return;
+            }
+
+            if (IsMissing(context.Transform.FromTimeZone)) {
+                return;
+            }
+
+            if (IsMissing(context.Transform.ToTimeZone)) {
+                return;
+            }
+
             _input = SingleInput();
             _output = context.Field;
 

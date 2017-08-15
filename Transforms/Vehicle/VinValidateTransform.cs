@@ -24,6 +24,9 @@ namespace Transformalize.Transform.Vehicle {
         private readonly Field _input;
 
         public VinValidateTransform(IContext context) : base(context, "bool") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 

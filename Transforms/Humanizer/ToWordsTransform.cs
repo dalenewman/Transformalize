@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Humanizer;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
@@ -25,20 +24,24 @@ using Transformalize.Transforms;
 namespace Transformalize.Transform.Humanizer {
     public class ToWordsTransform : BaseTransform {
         private readonly Func<IRow, object> _transform;
-        private readonly Field _input;
 
         public ToWordsTransform(IContext context) : base(context, "string") {
-            _input = SingleInput();
-            switch (_input.Type.Left(3)) {
+            Run = HasValidNumericInput();
+            if (!Run) {
+                return;
+            }
+
+            var input = SingleInput();
+            switch (input.Type.Left(3)) {
                 case "int":
                 case "sho":
                     _transform = (row) => {
-                        var input = _input.Type.In("int","int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
-                        return input.ToWords();
+                        var value = input.Type.In("int","int32") ? (int)row[input] : Convert.ToInt32(row[input]);
+                        return value.ToWords();
                     };
                     break;
                 default:
-                    _transform = (row) => row[_input];
+                    _transform = (row) => row[input];
                     break;
             }
         }

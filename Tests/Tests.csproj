@@ -92,9 +92,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="TestBase.cs" />
+    <Compile Include="TestAppend.cs" />
     <Compile Include="TestXmlDecode.cs" />
     <Compile Include="TestSlice.cs" />
-    <Compile Include="AnyTransform.cs" />
+    <Compile Include="TestAny.cs" />
     <Compile Include="CompositionRoot.cs" />
     <Compile Include="ConnectionTransform.cs" />
     <Compile Include="CopyTransform.cs" />
@@ -149,6 +150,10 @@
     <Compile Include="WebReader.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compatibility\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
       <Project>{ee20183d-3771-4d5e-890e-cf51eb696f89}</Project>
       <Name>Pipeline.Desktop</Name>
@@ -220,10 +225,6 @@
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transformalize.452\Transformalize.452.csproj">
-      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
-      <Name>Transformalize.452</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\GeoJson\GeoJson.csproj">
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>

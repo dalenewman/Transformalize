@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
@@ -65,29 +64,32 @@ namespace Transformalize.Transform.DateMath {
             {"month","double" }
         };
 
-        private readonly Field _start;
-        private readonly Field _end;
         private readonly Action<IRow> _transform;
 
         public DateDiffTransform(IContext context) : base(context, PartReturns[context.Transform.TimeComponent]) {
+            if (IsNotReceiving("date")) {
+                return;
+            }
+
             var input = MultipleInput().TakeWhile(f => f.Type.StartsWith("date")).ToArray();
 
-            _start = input[0];
+            var start = input[0];
 
             if (Context.Transform.TimeComponent.In("year", "month")) {
                 Context.Warn("datediff can not determine exact years or months.  For months, it returns (days / (365/12.0)).  For years, it returns (days / 365).");
             }
 
             if (PartReturns.ContainsKey(context.Transform.TimeComponent)) {
-                if (input.Count() > 1) {
+                if (input.Count() > 1)
+                {
                     // comparing between two dates in pipeline
-                    _end = input[1];
-                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[_start], (DateTime)row[_end]);
+                    var end = input[1];
+                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[start], (DateTime)row[end]);
                 } else {
                     // comparing between one date in pipeline and now (depending on time zone)
                     var fromTimeZone = Context.Transform.FromTimeZone == Constants.DefaultSetting ? "UTC" : Context.Transform.FromTimeZone;
                     var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, fromTimeZone);
-                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent](now, (DateTime)row[_start]);
+                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent](now, (DateTime)row[start]);
                 }
 
             } else {

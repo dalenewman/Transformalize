@@ -24,6 +24,9 @@ namespace Transformalize.Transform.Vehicle {
         private readonly Field _input;
 
         public VinGetWorldManufacturerTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 

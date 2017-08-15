@@ -148,14 +148,8 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new ToWordsTransform(p.Positional<IContext>(0))).Named<ITransform>("towords");
             builder.Register((c, p) => new UnderscoreTransform(p.Positional<IContext>(0))).Named<ITransform>("underscore");
             builder.Register((c, p) => new BytesTransform(p.Positional<IContext>(0))).Named<ITransform>("bytes");
-
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "ticks")).Named<ITransform>("addticks");
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "milliseconds")).Named<ITransform>("addmilliseconds");
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "seconds")).Named<ITransform>("addseconds");
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "minutes")).Named<ITransform>("addminutes");
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "hours")).Named<ITransform>("addhours");
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0), "days")).Named<ITransform>("adddays");
-
+            builder.Register((c, p) => new ByteSizeTransform(p.Positional<IContext>(0))).Named<ITransform>("bytesize");
+            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0))).Named<ITransform>("dateadd");
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
             builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
 
@@ -175,7 +169,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
-            builder.Register((c, p) => new IsDaylightSavings(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
+            builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
             builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
 
             // wip
@@ -187,6 +181,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
             builder.Register((c, p) => new SliceTransform(p.Positional<IContext>(0))).Named<ITransform>("slice");
+            builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("append");
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);

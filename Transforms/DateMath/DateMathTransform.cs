@@ -25,6 +25,10 @@ namespace Transformalize.Transform.DateMath {
         private readonly Field _input;
 
         public DateMathTransform(IContext context) : base(context, "datetime") {
+            if (IsNotReceiving("date")) {
+                return;
+            }
+
             _input = SingleInput();
         }
 

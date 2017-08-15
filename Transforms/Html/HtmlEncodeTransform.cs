@@ -26,6 +26,9 @@ namespace Transformalize.Transform.Html {
         private readonly Field _input;
 
         public HtmlEncodeTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 

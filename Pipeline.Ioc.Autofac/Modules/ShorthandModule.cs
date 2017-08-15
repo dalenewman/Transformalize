@@ -88,6 +88,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     });
                     root.Signatures.Add(Simple("timecomponent"));
+                    root.Signatures.Add(new Signature {
+                        Name = "dateadd",
+                        Parameters = new List<Cfg.Net.Shorthand.Parameter>
+                        {
+                            new Cfg.Net.Shorthand.Parameter { Name = "value" },
+                            new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
+                        }
+                    });
                     root.Signatures.Add(new Signature() {
                         Name = "replace",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -331,14 +339,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "towords", Signature = "none" });
                     root.Methods.Add(new Method { Name = "underscore", Signature = "none" });
                     root.Methods.Add(new Method { Name = "bytes", Signature = "none" });
-
-                    root.Methods.Add(new Method { Name = "addticks", Signature = "value" });
-                    root.Methods.Add(new Method { Name = "addmillisecnds", Signature = "value" });
-                    root.Methods.Add(new Method { Name = "addseconds", Signature = "value" });
-                    root.Methods.Add(new Method { Name = "addminutes", Signature = "value" });
-                    root.Methods.Add(new Method { Name = "addhours", Signature = "value" });
-                    root.Methods.Add(new Method { Name = "adddays", Signature = "value" });
-
+                    root.Methods.Add(new Method { Name = "dateadd", Signature = "dateadd" });
                     root.Methods.Add(new Method { Name = "iif", Signature = "iif" });
                     root.Methods.Add(new Method { Name = "geohashencode", Signature = "geohash" });
                     root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });

@@ -38,7 +38,7 @@ namespace Transformalize.Provider.File {
             var searchOption = (SearchOption)Enum.Parse(typeof(SearchOption), _input.Connection.SearchOption, true);
             _input.Info($"Searching folder: {_input.Connection.Folder}");
 
-            var files = new DirectoryInfo(_input.Connection.Folder).GetFiles(_input.Connection.SearchPattern, searchOption);
+            var files = new DirectoryInfo(_input.Connection.Folder).GetFiles(_input.Connection.SearchPattern, searchOption).OrderBy(f=>f.LastAccessTimeUtc).ToArray();
             _input.Info($"Found {files.Length} files.");
 
             var names = _input.InputFields.Select(f => f.Name.ToLower()).ToArray();

@@ -139,6 +139,14 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             });
             root.Signatures.Add(Simple("timecomponent"));
+            root.Signatures.Add(new Signature {
+                Name = "dateadd",
+                Parameters = new List<Cfg.Net.Shorthand.Parameter>
+                {
+                    new Cfg.Net.Shorthand.Parameter { Name = "value" },
+                    new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
+                }
+            });
             root.Signatures.Add(new Signature() {
                 Name = "replace",
                 Parameters = new List<Parameter> {
@@ -274,6 +282,15 @@ namespace Pipeline.Web.Orchard.Services {
             });
             root.Signatures.Add(Simple("expression"));
             root.Signatures.Add(Simple("key"));
+            root.Signatures.Add(new Signature {
+                Name = "slice",
+                NamedParameterIndicator = string.Empty,
+                Parameters = new List<Parameter> {
+                    new Parameter { Name = "expression" },
+                    new Parameter { Name = "separator", Value="" },
+                }
+            });
+            root.Signatures.Add(Simple("units"));
 
             root.Methods.Add(new Method { Name = "add", Signature = "none" });
             root.Methods.Add(new Method { Name = "abs", Signature = "none" });
@@ -373,14 +390,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "towords", Signature = "none" });
             root.Methods.Add(new Method { Name = "underscore", Signature = "none" });
             root.Methods.Add(new Method { Name = "bytes", Signature = "none" });
-
-            root.Methods.Add(new Method { Name = "addticks", Signature = "value" });
-            root.Methods.Add(new Method { Name = "addmillisecnds", Signature = "value" });
-            root.Methods.Add(new Method { Name = "addseconds", Signature = "value" });
-            root.Methods.Add(new Method { Name = "addminutes", Signature = "value" });
-            root.Methods.Add(new Method { Name = "addhours", Signature = "value" });
-            root.Methods.Add(new Method { Name = "adddays", Signature = "value" });
-
+            root.Methods.Add(new Method { Name = "dateadd", Signature = "dateadd" });
             root.Methods.Add(new Method { Name = "iif", Signature = "iif" });
             root.Methods.Add(new Method { Name = "geohashencode", Signature = "geohash" });
             root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
@@ -407,6 +417,9 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
             root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
             root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
+            root.Methods.Add(new Method { Name = "slice", Signature = "slice" });
+            root.Methods.Add(new Method { Name = "bytesize", Signature = "units" });
+            root.Methods.Add(new Method { Name = "append", Signature = "value" });
             root.Check();
 
             if (!root.Errors().Any()) {

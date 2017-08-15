@@ -35,6 +35,10 @@ namespace Transformalize.Transform.JavaScript {
 
         public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, null) {
 
+            if (IsMissing(context.Transform.Script)) {
+                return;
+            }
+
             _context = context;
             _engine = factory.CreateEngine();
 

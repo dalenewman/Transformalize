@@ -39,8 +39,7 @@ namespace Transformalize.Ioc.Autofac {
                     var composite = new List<ITransform>();
                     foreach (var t in field.Transforms) {
                         var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
-                        ITransform add;
-                        if (TryTransform(ctx, transformContext, out add)) {
+                        if (TryTransform(ctx, transformContext, out ITransform add)) {
                             composite.Add(add);
                         } else {
                             valid = false;
@@ -51,8 +50,7 @@ namespace Transformalize.Ioc.Autofac {
                 } else {
                     foreach (var t in field.Transforms) {
                         var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
-                        ITransform add;
-                        if (TryTransform(ctx, transformContext, out add)) {
+                        if (TryTransform(ctx, transformContext, out ITransform add)) {
                             transforms.Add(add);
                         } else {
                             valid = false;

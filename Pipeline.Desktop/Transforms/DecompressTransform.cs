@@ -25,9 +25,13 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Desktop.Transforms {
     public class DecompressTransform : BaseTransform {
-        readonly Field _input;
+        private readonly Field _input;
 
         public DecompressTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
             _input = SingleInput();
         }
 
@@ -37,7 +41,7 @@ namespace Transformalize.Desktop.Transforms {
             return row;
         }
 
-        static string Decompress(string compressedText) {
+        private static string Decompress(string compressedText) {
             byte[] gZipBuffer = Convert.FromBase64String(compressedText);
             using (var memoryStream = new MemoryStream()) {
                 int dataLength = BitConverter.ToInt32(gZipBuffer, 0);

@@ -25,6 +25,9 @@ namespace Transformalize.Provider.File.Transforms {
         private readonly Field _input;
 
         public FileExtTransform(IContext context) : base(context, "string") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 

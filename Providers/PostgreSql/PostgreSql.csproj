@@ -68,13 +68,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Compatibility\Transformalize.452\Transformalize.452.csproj">
+      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
+      <Name>Transformalize.452</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Ado\Ado.csproj">
       <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
       <Name>Ado</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Transformalize.452\Transformalize.452.csproj">
-      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
-      <Name>Transformalize.452</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

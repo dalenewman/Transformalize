@@ -69,9 +69,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     switch (input.Connection.Provider) {
                         case "internal":
                             return new InternalReader(input, rowFactory);
-                        case "console":
-                            // todo: take standard input
-                            return new NullReader(input);
                         default:
                             return new NullReader(input, false);
                     }
@@ -89,7 +86,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     var e = entity;
 
-                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IOutputProvider>(entity.Key);
+                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), new InternalWriter(ctx.ResolveNamed<OutputContext>(entity.Key)))).Named<IOutputProvider>(entity.Key);
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                     // WRITER

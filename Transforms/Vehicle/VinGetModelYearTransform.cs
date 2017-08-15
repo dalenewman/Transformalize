@@ -24,6 +24,9 @@ namespace Transformalize.Transform.Vehicle {
         private readonly Field _input;
 
         public VinGetModelYearTransform(IContext context) : base(context, "int") {
+            if (IsNotReceiving("string")) {
+                return;
+            }
             _input = SingleInput();
         }
 

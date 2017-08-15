@@ -36,6 +36,15 @@ namespace Transformalize.Transform.Razor {
         private static readonly ConcurrentDictionary<int, IRazorEngineService> Cache = new ConcurrentDictionary<int, IRazorEngineService>();
 
         public RazorTransform(IContext context) : base(context, context.Field.Type) {
+
+            if (IsMissing(context.Transform.Template)) {
+                return;
+            }
+
+            if (context.Transform.ContentType == string.Empty) {
+                context.Transform.ContentType = "raw"; //other would be html
+            }
+
             _input = MultipleInput();
 
             var key = GetHashCode(context.Transform.Template, _input);

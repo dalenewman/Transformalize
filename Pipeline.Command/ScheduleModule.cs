@@ -50,8 +50,8 @@ namespace Transformalize.Command {
             builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(), ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
 
             // for quartz scheduler
-            builder.Register<ILoggerFactoryAdapter>((ctx => new QuartzLogAdaptor(ctx.Resolve<IContext>(), Scheduler.Quartz.Utility.ConvertLevel(ctx.Resolve<IContext>().LogLevel), true, true, false, "o"))).As<ILoggerFactoryAdapter>();
-            builder.RegisterType<QuartzJobFactory>().As<IJobFactory>().SingleInstance();
+            builder.Register<ILoggerFactoryAdapter>(ctx => new QuartzLogAdaptor(ctx.Resolve<IContext>(), Scheduler.Quartz.Utility.ConvertLevel(ctx.Resolve<IContext>().LogLevel), true, true, false, "o")).As<ILoggerFactoryAdapter>();
+            builder.Register(ctx => new QuartzJobFactory(_options, ctx.Resolve<IPipelineLogger>())).As<IJobFactory>().SingleInstance();
 
             builder.Register<IScheduler>((ctx, p) => {
                 if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "check")) {

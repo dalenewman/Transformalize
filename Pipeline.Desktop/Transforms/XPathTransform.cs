@@ -29,8 +29,20 @@ namespace Transformalize.Desktop.Transforms {
         private readonly Field _xPathField;
 
         public XPathTransform(IContext context) : base(context, null) {
+            if (IsNotReceiving("string")) {
+                return;
+            }
+
+            if (IsMissing(context.Transform.Expression)) {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(context.Transform.NameSpace) && string.IsNullOrEmpty(context.Transform.Url)) {
+                Error("If you set a namespace, you must also set the url that references the name space.");
+            }
+
             _input = SingleInput();
-            _xPathIsField = context.Process.TryGetField(context.Transform.XPath, out _xPathField);
+            _xPathIsField = context.Process.TryGetField(context.Transform.Expression, out _xPathField);
             _hasNamespace = !string.IsNullOrEmpty(context.Transform.NameSpace);
         }
 
@@ -39,7 +51,7 @@ namespace Transformalize.Desktop.Transforms {
             var xml = (string)row[_input];
 
             var doc = new XmlDocument();
-            var xPath = _xPathIsField ? row[_xPathField].ToString() : Context.Transform.XPath;
+            var xPath = _xPathIsField ? row[_xPathField].ToString() : Context.Transform.Expression;
             doc.LoadXml(xml);
 
             XmlNode node;
