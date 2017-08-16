@@ -1,8 +1,7 @@
-cd c:\code\Transformalize\Transformalize
-nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Pipeline.Desktop\Transformalize.Desktop.nuspec -OutputDirectory "c:\temp\modules"
+cd c:\code\Transformalize
+nuget pack Compatibility\Transformalize\Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Providers\Pipeline.Provider.Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Providers\Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Elastic\Transformalize.Provider.Elastic.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Excel\Transformalize.Provider.Excel.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\OpenXml\Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"

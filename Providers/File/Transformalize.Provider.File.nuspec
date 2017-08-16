@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.File</id>
-    <version>0.2.5-beta</version>
+    <version>0.2.6-beta</version>
     <title>Transformalize Provider File</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.5-beta" />
+        <dependency id="Transformalize" version="0.2.6-beta" />
         <dependency id="FileHelpers" version="3.1.5" />
       </group>
     </dependencies>
