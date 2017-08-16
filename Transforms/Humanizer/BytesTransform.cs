@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using Humanizer;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Humanizer {
+namespace Transformalize.Transforms.Humanizer {
     public class BytesTransform : BaseTransform {
         private readonly Field _input;
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{E3C5C2D6-A929-43C7-86FE-F9386EBB57D4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.Razor</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.Razor</RootNamespace>
     <AssemblyName>Transformalize.Transform.Razor</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

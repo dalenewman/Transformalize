@@ -22,22 +22,27 @@ using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;
-using Transformalize.Transform.CSharp;
-using Transformalize.Transform.DateMath;
-using Transformalize.Transform.Geography;
-using Transformalize.Transform.Html;
-using Transformalize.Transform.Humanizer;
-using Transformalize.Transform.JavaScript;
-using Transformalize.Transform.Jint;
-using Transformalize.Transform.LamdaParser;
-using Transformalize.Transform.Razor;
-using Transformalize.Transform.Velocity;
 using Transformalize.Transforms;
 using Transformalize.Validators;
 using Transformalize.Provider.File.Transforms;
-using Transformalize.Transform.Vehicle;
+using Transformalize.Provider.Web;
+using Transformalize.Transforms.Compression;
+using Transformalize.Transforms.CSharp;
+using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Geography;
+using Transformalize.Transforms.Html;
+using Transformalize.Transforms.Humanizer;
+using Transformalize.Transforms.JavaScript;
+using Transformalize.Transforms.Jint;
+using Transformalize.Transforms.Json;
+using Transformalize.Transforms.LamdaParser;
+using Transformalize.Transforms.Razor;
+using Transformalize.Transforms.Vehicle;
+using Transformalize.Transforms.Velocity;
+using Transformalize.Transforms.Xml;
+using FromXmlTransform = Transformalize.Transforms.Xml.FromXmlTransform;
+using Transformalize.Transforms.Globalization;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {
@@ -192,7 +197,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
                 return context.Transform.XmlMode == "all" ?
-                    new Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
+                    new FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 

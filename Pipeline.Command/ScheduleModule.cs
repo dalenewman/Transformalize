@@ -23,10 +23,10 @@ using Common.Logging;
 using Quartz.Spi;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Extensions;
 using Transformalize.Logging.NLog;
 using Transformalize.Scheduler.Quartz;
+using Transformalize.Transforms.Globalization;
 using Environment = System.Environment;
 
 namespace Transformalize.Command {

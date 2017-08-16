@@ -15,13 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Geography {
+namespace Transformalize.Transforms.Geography {
     public class GeohashEncodeTransform : BaseTransform {
+
         private readonly Func<IRow, string> _transform;
         private readonly Func<IRow, double> _getLatitude;
         private readonly Func<IRow, double> _getLongitude;
@@ -30,6 +32,21 @@ namespace Transformalize.Transform.Geography {
             double lon;
             double lat;
             var fields = context.GetAllEntityFields().ToArray();
+
+            if (HasInvalidCoordinate(fields, context.Transform, context.Transform.Latitude, "latitude")) {
+                return;
+            }
+
+            if (HasInvalidCoordinate(fields, context.Transform, context.Transform.Longitude, "longitude")) {
+                return;
+            }
+
+            if (context.Transform.Length < 1 || context.Transform.Length > 13) {
+                Error("The GeohashEncode method's precision must be between 1 and 13.");
+                Run = false;
+                return;
+            }
+
             var input = MultipleInput();
 
             var latField = fields.FirstOrDefault(f => f.Alias.Equals(context.Transform.Latitude));
@@ -73,6 +90,16 @@ namespace Transformalize.Transform.Geography {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
+        }
+
+        private bool HasInvalidCoordinate(Field[] fields, Configuration.Transform t, string valueOrField, string name) {
+            double doubleValue;
+            if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
+                Error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");
+                Run = false;
+                return true;
+            }
+            return false;
         }
     }
 }

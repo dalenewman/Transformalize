@@ -7,7 +7,7 @@
     <ProjectGuid>{AD2C4C26-B3C2-4ECE-8D0C-19C27A9DE70F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.Velocity</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.Velocity</RootNamespace>
     <AssemblyName>Transformalize.Transform.Velocity</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

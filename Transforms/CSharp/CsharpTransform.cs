@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.CSharp {
+namespace Transformalize.Transforms.CSharp {
     public class CsharpTransform : BaseTransform {
         private readonly CSharpHost.UserCodeInvoker _userCode;
 

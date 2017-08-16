@@ -15,18 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.IO;
+using System.Linq;
 using System.Text;
+using Cfg.Net.Contracts;
+using Cfg.Net.Loggers;
 using NVelocity;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Transforms;
-using System.Linq;
-using Cfg.Net.Contracts;
-using Cfg.Net.Loggers;
 
-namespace Transformalize.Transform.Velocity {
+namespace Transformalize.Transforms.Velocity {
 
     public class VelocityTransform : BaseTransform {
 

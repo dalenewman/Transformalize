@@ -22,12 +22,15 @@ using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Actions;
 using Transformalize.Extensions;
 using Transformalize.Provider.Ado;
 using Transformalize.Provider.Ado.Actions;
+using Transformalize.Provider.Console;
+using Transformalize.Provider.File;
 using Transformalize.Provider.File.Actions;
+using Transformalize.Provider.Web;
 using FileReader = Cfg.Net.Reader.FileReader;
+using WebReader = Cfg.Net.Reader.WebReader;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

@@ -42,6 +42,7 @@
     <Compile Include="ConsoleOutputProvider.cs" />
     <Compile Include="ConsoleReader.cs" />
     <Compile Include="ConsoleWriter.cs" />
+    <Compile Include="PrintAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

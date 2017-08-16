@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -24,10 +25,9 @@ using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
 using RazorEngine.Text;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transform.Razor {
+namespace Transformalize.Transforms.Razor {
     public class RazorTemplateEngine : ITemplateEngine {
 
         private readonly IContext _context;

@@ -8,7 +8,7 @@
     <ProjectGuid>{3E9B5D05-5D7C-4B08-9310-1E3C0A196239}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.Vehicle</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.Vehicle</RootNamespace>
     <AssemblyName>Transformalize.Transform.Vehicle</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>

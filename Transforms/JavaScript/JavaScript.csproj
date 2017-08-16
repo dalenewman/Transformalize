@@ -7,7 +7,7 @@
     <ProjectGuid>{C54A7C66-2F1D-4035-A798-4598B07CE3CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.JavaScript</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.JavaScript</RootNamespace>
     <AssemblyName>Transformalize.Transform.JavaScript</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

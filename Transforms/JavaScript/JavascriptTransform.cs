@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,8 @@ using Cfg.Net.Contracts;
 using JavaScriptEngineSwitcher.Core;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.JavaScript {
+namespace Transformalize.Transforms.JavaScript {
 
     public class JavascriptTransform : BaseTransform {
 

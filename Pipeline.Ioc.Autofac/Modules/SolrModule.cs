@@ -38,8 +38,8 @@ using Transformalize.Extensions;
 using Transformalize.Nulls;
 using Transformalize.Provider.Solr;
 using Transformalize.Provider.Solr.Ext;
-using Transformalize.Transform.Razor;
 using Cfg.Net.Contracts;
+using Transformalize.Transforms.Razor;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class SolrModule : Module {

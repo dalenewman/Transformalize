@@ -22,7 +22,6 @@ using Lucene.Net.Analysis;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Nulls;
 using Transformalize.Provider.Lucene;
 using Transformalize.Transforms.System;
@@ -243,7 +242,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
                             // feels a lot like entity pipeline on just the primary keys... may look at consolidating
                             handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
-                            handler.Register(TransformFactory.GetTransforms(ctx, _process, entity, primaryKey));
+                            handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
                             handler.Register(new StringTruncateTransfom(context, primaryKey));
 
                             return new ParallelDeleteHandler(handler);

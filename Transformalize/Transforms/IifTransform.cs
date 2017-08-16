@@ -150,6 +150,19 @@ namespace Transformalize.Transforms {
         private readonly ExpressionEvaluator _evaluator;
 
         public IIfTransform(IContext context) : base(context, "object") {
+            var fields = context.GetAllEntityFields().ToArray();
+
+            if (fields.All(f => f.Alias != context.Transform.TrueField)) {
+                Error($"The iif method's true portion: {context.Transform.TrueField}, is not a valid field.");
+                Run = false;
+                return;
+            }
+            if (fields.All(f => f.Alias != context.Transform.FalseField)) {
+                Error($"The iif method's false portion: {context.Transform.FalseField}, is not a valid field.");
+                Run = false;
+                return;
+            }
+
             _evaluator = new ExpressionEvaluator(context);
         }
 

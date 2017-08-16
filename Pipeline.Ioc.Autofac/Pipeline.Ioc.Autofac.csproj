@@ -167,10 +167,6 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
-      <Project>{EE20183D-3771-4D5E-890E-CF51EB696F89}</Project>
-      <Name>Pipeline.Desktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
@@ -259,6 +255,10 @@
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transforms\Compression\Compression.csproj">
+      <Project>{36724dd4-0a61-494b-abcb-4fe845306eb8}</Project>
+      <Name>Compression</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transforms\CSharp\CSharp.csproj">
       <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
       <Name>CSharp</Name>
@@ -270,6 +270,10 @@
     <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
       <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
       <Name>Geography</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Globalization\Globalization.csproj">
+      <Project>{55c2704f-caab-4eec-af2e-9b3a775d4598}</Project>
+      <Name>Globalization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Html\Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
@@ -287,6 +291,10 @@
       <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
       <Name>Jint</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Transforms\Json\Json.csproj">
+      <Project>{98f2bf35-376a-4dfa-baef-cc491410219f}</Project>
+      <Name>Json</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Transforms\LamdaParser\LamdaParser.csproj">
       <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
       <Name>LamdaParser</Name>
@@ -302,6 +310,10 @@
     <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
       <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
       <Name>Velocity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
+      <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>
+      <Name>Xml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

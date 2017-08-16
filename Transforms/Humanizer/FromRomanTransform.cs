@@ -15,15 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Humanizer;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Humanizer {
+namespace Transformalize.Transforms.Humanizer {
     public class FromRomanTransform : BaseTransform {
         private static readonly Regex ValidRomanNumeral = new Regex("^(?i:(?=[MDCLXVI])((M{0,3})((C[DM])|(D?C{0,3}))?((X[LC])|(L?XX{0,2})|L)?((I[VX])|(V?(II{0,2}))|V)?))$", RegexOptions.Compiled);
         private readonly Func<IRow, object> _transform;

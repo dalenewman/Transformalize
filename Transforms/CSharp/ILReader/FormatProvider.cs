@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Text;
 
-namespace Transformalize.Transform.CSharp.ILReader {
+namespace Transformalize.Transforms.CSharp.ILReader {
     public interface IFormatProvider {
         string Int32ToHex(int int32);
         string Int16ToHex(int int16);

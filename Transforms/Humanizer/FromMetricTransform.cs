@@ -15,14 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Humanizer;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Humanizer {
+namespace Transformalize.Transforms.Humanizer {
     public class FromMetricTransform : BaseTransform {
 
         private readonly Func<IRow, object> _transform;

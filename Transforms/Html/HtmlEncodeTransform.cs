@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Transformalize.Contracts;
-using Transformalize.Transforms;
+
 using System.Web;
 using Transformalize.Configuration;
+using Transformalize.Contracts;
 
-namespace Transformalize.Transform.Html {
+namespace Transformalize.Transforms.Html {
 
     public class HtmlEncodeTransform : BaseTransform {
         private readonly Field _input;

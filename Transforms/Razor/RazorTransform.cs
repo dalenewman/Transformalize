@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -25,9 +26,8 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Razor {
+namespace Transformalize.Transforms.Razor {
 
     public class RazorTransform : BaseTransform {
 

@@ -15,23 +15,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Geography {
+namespace Transformalize.Transforms.Geography {
     public class DistanceTransform : BaseTransform {
         private readonly Field[] _fields;
         private readonly Func<IRow, double> _getDistance;
 
         public DistanceTransform(IContext context) : base(context, "double") {
+
             _fields = context.GetAllEntityFields().ToArray();
+
+            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.FromLat, "from-lat")) {
+                return;
+            }
+            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.FromLon, "from-lon")) {
+                return;
+            }
+            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.ToLat, "to-lat")) {
+                return;
+            }
+            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.ToLon, "to-lon")) {
+                return;
+            }
+
             _getDistance = r => Get(
-                ValueGetter(context.Transform.FromLat)(r), 
-                ValueGetter(context.Transform.FromLon)(r), 
-                ValueGetter(context.Transform.ToLat)(r), 
+                ValueGetter(context.Transform.FromLat)(r),
+                ValueGetter(context.Transform.FromLon)(r),
+                ValueGetter(context.Transform.ToLat)(r),
                 ValueGetter(context.Transform.ToLon)(r)
             );
         }
@@ -52,9 +67,19 @@ namespace Transformalize.Transform.Geography {
         }
 
         public static double Get(double fromLat, double fromLon, double toLat, double toLon) {
-            var from = new System.Device.Location.GeoCoordinate(fromLat, fromLon);
-            var to = new System.Device.Location.GeoCoordinate(toLat, toLon);
+            var from = new global::System.Device.Location.GeoCoordinate(fromLat, fromLon);
+            var to = new global::System.Device.Location.GeoCoordinate(toLat, toLon);
             return from.GetDistanceTo(to);
+        }
+
+        private bool HasInvalidCoordinate(Field[] fields, Configuration.Transform t, string valueOrField, string name) {
+            double doubleValue;
+            if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
+                Error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");
+                Run = false;
+                return true;
+            }
+            return false;
         }
     }
 }

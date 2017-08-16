@@ -25,9 +25,9 @@ using Quartz;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Ioc.Autofac;
 using Transformalize.Logging.NLog;
+using Transformalize.Transforms.Globalization;
 using Environment = System.Environment;
 
 namespace Transformalize.Command {

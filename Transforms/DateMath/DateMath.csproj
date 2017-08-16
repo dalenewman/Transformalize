@@ -7,7 +7,7 @@
     <ProjectGuid>{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.DateMath</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.DateMath</RootNamespace>
     <AssemblyName>Transformalize.Transform.DateMath</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,6 +53,7 @@
     <Compile Include="DateMathTransform.cs" />
     <Compile Include="IsDaylightSavingsTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RelativeTimeTransform.cs" />
     <Compile Include="TimeZoneTransform.cs" />
   </ItemGroup>
   <ItemGroup>

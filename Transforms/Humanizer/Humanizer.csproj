@@ -7,7 +7,7 @@
     <ProjectGuid>{73C145B3-6DC2-4424-958D-F5EC989B3EB7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.Humanizer</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.Humanizer</RootNamespace>
     <AssemblyName>Transformalize.Transform.Humanizer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

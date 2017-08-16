@@ -27,6 +27,11 @@ namespace Transformalize.Validators {
         private readonly HashSet<object> _set = new HashSet<object>();
 
         public InValidator(IContext context) : base(context, "bool") {
+
+            if (IsMissing(context.Transform.Domain)) {
+                return;
+            }
+
             _input = SingleInput();
             var items = Utility.Split(Context.Transform.Domain, ',');
             foreach (var item in items) {

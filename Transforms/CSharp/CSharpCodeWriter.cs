@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,7 +25,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Transform.CSharp {
+namespace Transformalize.Transforms.CSharp {
 
     public interface IWriteSomething {
         /// <summary>

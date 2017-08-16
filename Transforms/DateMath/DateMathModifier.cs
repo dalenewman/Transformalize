@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using Cfg.Net.Contracts;
 
-namespace Transformalize.Transform.DateMath {
+namespace Transformalize.Transforms.DateMath {
     public class DateMathModifier : ICustomizer {
 
         private const string DefaultFormat = "yyyy-MM-dd";

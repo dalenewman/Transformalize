@@ -6,13 +6,16 @@
     <SharedGUID>13144f6b-b1fe-4029-9d2c-3c06e662d627</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>Pipeline.Shared</Import_RootNamespace>
+    <Import_RootNamespace>Transformalize</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ActionResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\ExitAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\LogAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\NullAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\RenderTemplateAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ScriptLoaderAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\WaitAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)CachingRunTimeSchemaReader.cs" />
@@ -110,15 +113,19 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CsvSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\IllegalCharacterValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RelationshipSummary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\SchemaReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsMoveAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsToParametersAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Incrementer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParallelDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ParallelPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatPhoneTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchCountTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RoundToTransform.cs" />

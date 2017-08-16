@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using NVelocity.Runtime;
 using NVelocity.Runtime.Log;
 using Transformalize.Contracts;
 using LogLevel = NVelocity.Runtime.Log.LogLevel;
 
-namespace Transformalize.Transform.Velocity {
+namespace Transformalize.Transforms.Velocity {
     public class VelocityLogSystem : ILogSystem {
         private readonly IContext _context;
 

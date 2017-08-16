@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace Transformalize.Transform.CSharp.ILReader {
+namespace Transformalize.Transforms.CSharp.ILReader {
     public sealed class ILReader : IEnumerable<ILInstruction>, IEnumerable {
         #region Static members
         static Type s_runtimeMethodInfoType = Type.GetType("System.Reflection.RuntimeMethodInfo");

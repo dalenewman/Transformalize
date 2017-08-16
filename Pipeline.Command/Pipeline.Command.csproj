@@ -185,10 +185,6 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Desktop\Pipeline.Desktop.csproj">
-      <Project>{ee20183d-3771-4d5e-890e-cf51eb696f89}</Project>
-      <Name>Pipeline.Desktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Ioc.Autofac\Pipeline.Ioc.Autofac.csproj">
       <Project>{58FF362E-4A8D-459E-A174-5AAAE7EA8953}</Project>
       <Name>Pipeline.Ioc.Autofac</Name>
@@ -200,6 +196,10 @@
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24f88aaf-2dc3-4aa1-b385-c6c7748cbe77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Globalization\Globalization.csproj">
+      <Project>{55c2704f-caab-4eec-af2e-9b3a775d4598}</Project>
+      <Name>Globalization</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

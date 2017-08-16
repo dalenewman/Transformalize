@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Transformalize.Transform.Geography {
+namespace Transformalize.Transforms.Geography {
     /// <summary>
     /// Used to control the rate of some occurrence per unit of time.
     /// </summary>

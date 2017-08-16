@@ -40,8 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlEncodeTransform.cs" />
+    <Compile Include="WebAction.cs" />
     <Compile Include="WebCsvReader.cs" />
     <Compile Include="WebReader.cs" />
+    <Compile Include="WebTransform.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

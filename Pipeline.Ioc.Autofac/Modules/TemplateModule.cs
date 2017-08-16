@@ -22,8 +22,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Transform.Razor;
-using Transformalize.Transform.Velocity;
+using Transformalize.Transforms.Razor;
+using Transformalize.Transforms.Velocity;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TemplateModule : Module {

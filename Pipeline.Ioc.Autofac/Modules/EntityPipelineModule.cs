@@ -21,7 +21,6 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 
@@ -64,7 +63,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f=>!f.System)));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
+                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
 
                 if (!process.ReadOnly) {
                     pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));

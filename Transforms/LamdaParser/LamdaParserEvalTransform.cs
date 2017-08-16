@@ -15,23 +15,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.LamdaParser {
+namespace Transformalize.Transforms.LamdaParser {
     public class LamdaParserEvalTransform : BaseTransform {
 
         private readonly Func<IRow, object> _transform;
         private readonly List<Field> _input;
         private readonly Dictionary<string, object> _typeDefaults = Constants.TypeDefaults();
 
-        public LamdaParserEvalTransform(IContext context) : base(context, "object")
-        {
+        public LamdaParserEvalTransform(IContext context) : base(context, "object") {
+            if (IsMissing(context.Transform.Expression)) {
+                return;
+            }
 
             try {
                 _input = new List<Field>(MultipleInput());

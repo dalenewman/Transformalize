@@ -21,7 +21,6 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 
@@ -73,7 +72,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // register transforms
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, calc, entity, entity.CalculatedFields));
+                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
                 pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
                 // register input and output

@@ -7,7 +7,7 @@
     <ProjectGuid>{91E95639-0EA2-42F6-9109-FAF3DAEC08CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.CSharp</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.CSharp</RootNamespace>
     <AssemblyName>Transformalize.Transform.CSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

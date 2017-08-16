@@ -15,17 +15,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using Transformalize.Contracts;
-using Transformalize.Transforms;
-using Transformalize.Configuration;
 
-namespace Transformalize.Transform.DateMath {
+using System;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms.DateMath {
     public class DateMathTransform : BaseTransform {
         private readonly Field _input;
 
         public DateMathTransform(IContext context) : base(context, "datetime") {
             if (IsNotReceiving("date")) {
+                return;
+            }
+
+            if (IsMissing(context.Transform.Expression)) {
                 return;
             }
 

@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Reflection;
 
-namespace Transformalize.Transform.CSharp.ILReader {
+namespace Transformalize.Transforms.CSharp.ILReader {
     public interface ITokenResolver {
         MethodBase AsMethod(int token);
         FieldInfo AsField(int token);

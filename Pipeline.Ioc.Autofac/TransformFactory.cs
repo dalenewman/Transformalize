@@ -28,7 +28,7 @@ using Transformalize.Validators;
 namespace Transformalize.Ioc.Autofac {
     public static class TransformFactory {
 
-        public static Transforms.Transforms GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
+        public static Transforms.Transforms GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
             var valid = true;
 
@@ -38,18 +38,18 @@ namespace Transformalize.Ioc.Autofac {
                 if (field.RequiresCompositeValidator()) {
                     var composite = new List<ITransform>();
                     foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                         if (TryTransform(ctx, transformContext, out ITransform add)) {
                             composite.Add(add);
                         } else {
                             valid = false;
                         }
                     }
-                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field);
+                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field);
                     transforms.Add(new CompositeValidator(entityContext, composite));
                 } else {
                     foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                         if (TryTransform(ctx, transformContext, out ITransform add)) {
                             transforms.Add(add);
                         } else {
@@ -58,8 +58,10 @@ namespace Transformalize.Ioc.Autofac {
                     }
                 }
                 // add conversion if necessary
-                if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Configuration.Transform { Method = "convert" })));
+                var lastType = transforms.Last().Returns;
+                if (lastType != null && field.Type != lastType) {
+                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Configuration.Transform { Method = "convert" })));
                 }
             }
 

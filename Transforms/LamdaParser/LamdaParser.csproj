@@ -7,7 +7,7 @@
     <ProjectGuid>{1776297E-5B89-4D60-9597-8C793299BCFD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.LamdaParser</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.LamdaParser</RootNamespace>
     <AssemblyName>Transformalize.Transform.LamdaParser</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

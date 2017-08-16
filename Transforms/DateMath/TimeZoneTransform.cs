@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.DateMath {
+namespace Transformalize.Transforms.DateMath {
 
     public class TimeZoneTransform : BaseTransform {
         private readonly Field _input;

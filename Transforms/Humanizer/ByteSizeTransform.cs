@@ -1,9 +1,8 @@
 using Humanizer.Bytes;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Humanizer
+namespace Transformalize.Transforms.Humanizer
 {
     public class ByteSizeTransform : BaseTransform {
         private readonly Field _input;

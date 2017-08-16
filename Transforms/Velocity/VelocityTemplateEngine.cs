@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ using NVelocity.Runtime;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transform.Velocity {
+namespace Transformalize.Transforms.Velocity {
 
     public static class VelocityInitializer {
         private static readonly object Locker = new object();

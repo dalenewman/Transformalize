@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Geography {
+namespace Transformalize.Transforms.Geography {
 
     public class GeohashNeighborTransform : BaseTransform {
         private readonly Field _input;

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,9 +27,8 @@ using Google.Maps.Geocoding;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Transforms;
 
-namespace Transformalize.Transform.Geography {
+namespace Transformalize.Transforms.Geography {
 
     public class GeocodeTransform : BaseTransform {
 

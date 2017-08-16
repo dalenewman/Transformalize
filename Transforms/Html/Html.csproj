@@ -7,7 +7,7 @@
     <ProjectGuid>{05087BE0-7469-474B-8306-8F64F5F02D50}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Transform.Html</RootNamespace>
+    <RootNamespace>Transformalize.Transforms.Html</RootNamespace>
     <AssemblyName>Transformalize.Transform.Html</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
