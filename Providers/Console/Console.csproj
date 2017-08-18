@@ -37,10 +37,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleCommandReader.cs" />
     <Compile Include="ConsoleInputProvider.cs" />
     <Compile Include="ConsoleLogger.cs" />
     <Compile Include="ConsoleOutputProvider.cs" />
-    <Compile Include="ConsoleReader.cs" />
+    <Compile Include="ConsoleInputReader.cs" />
     <Compile Include="ConsoleWriter.cs" />
     <Compile Include="PrintAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -57,6 +57,11 @@ namespace Transformalize {
         public static HashSet<string> NumericTypeSet() {
             return _numericTypes ?? (_numericTypes = new HashSet<string>(NumericTypeDomain.Split(',')));
         }
+
+        public static bool IsNumericType(string type) {
+            return NumericTypeSet().Contains(type);
+        }
+
         public static HashSet<string> ProviderSet() {
             return _providers ?? (_providers = new HashSet<string>(ProviderDomain.Split(',')));
         }

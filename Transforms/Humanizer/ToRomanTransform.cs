@@ -28,8 +28,7 @@ namespace Transformalize.Transforms.Humanizer {
         private readonly Field _input;
 
         public ToRomanTransform(IContext context) : base(context, "string") {
-            Run = HasValidNumericInput();
-            if (!Run) {
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

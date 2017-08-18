@@ -31,8 +31,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

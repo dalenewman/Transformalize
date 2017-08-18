@@ -25,8 +25,7 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, object> _transform;
 
         public AbsTransform(IContext context) : base(context, "decimal") {
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

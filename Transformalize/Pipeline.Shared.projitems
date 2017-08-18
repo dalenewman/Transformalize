@@ -53,7 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\TflType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Transform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ContentLineReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LineReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\ConnectionContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\InputContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\OutputContext.cs" />

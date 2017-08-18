@@ -80,7 +80,7 @@ namespace Transformalize.Transforms {
 
             for (var i = 0; i < values.Length && i < _output.Length; i++) {
                 var field = _output[i];
-                row[field] = field.Convert(values[i]);
+                row[field] = field.Transforms.Any() ? values[i] : field.Convert(values[i]);
             }
 
             Increment();

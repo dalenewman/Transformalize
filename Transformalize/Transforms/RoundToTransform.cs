@@ -31,8 +31,7 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, object> _transform;
         public RoundToTransform(IContext context, RoundTo roundTo) : base(context, "object") {
 
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

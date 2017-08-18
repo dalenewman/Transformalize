@@ -26,8 +26,7 @@ namespace Transformalize.Transforms {
 
         public AddTransform(IContext context) : base(context, "decimal") {
 
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumbers()) {
                 return;
             }
 

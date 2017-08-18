@@ -28,10 +28,10 @@ namespace Transformalize.Transforms.Humanizer {
         private readonly Field _input;
 
         public ToOrdinalWordsTransform(IContext context) : base(context, "string") {
-            Run = HasValidNumericInput();
-            if (!Run) {
+            if (IsNotReceivingNumber()) {
                 return;
             }
+
             _input = SingleInput();
             switch (_input.Type.Left(3)) {
                 case "int":

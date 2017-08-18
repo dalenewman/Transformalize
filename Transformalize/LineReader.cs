@@ -21,11 +21,11 @@ using Transformalize.Contracts;
 
 namespace Transformalize {
 
-    public class ContentLineReader : IReadLines {
+    public class LineReader : IReadLines {
         private readonly string _content;
         private readonly int _count;
 
-        public ContentLineReader(string content, int count = 100) {
+        public LineReader(string content, int count = 0) {
             _content = content;
             _count = count;
         }
@@ -33,13 +33,23 @@ namespace Transformalize {
         public IEnumerable<string> Read() {
             var lines = new List<string>();
             using (var reader = new StringReader(_content)) {
-                for (var i = 0; i < _count + 1; i++) {
+
+                if (_count == 0) {
                     string line;
-                    if ((line = reader.ReadLine()) == null) {
-                        break;
+                    while ((line = reader.ReadLine()) != null) {
+                        lines.Add(line);
                     }
-                    lines.Add(line);
+                } else {
+                    for (var i = 0; i < _count + 1; i++) {
+                        string line;
+                        if ((line = reader.ReadLine()) == null) {
+                            break;
+                        }
+                        lines.Add(line);
+                    }
+
                 }
+
             }
             return lines;
         }

@@ -26,8 +26,7 @@ namespace Transformalize.Transforms {
 
         public CeilingTransform(IContext context) : base(context, "decimal") {
 
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

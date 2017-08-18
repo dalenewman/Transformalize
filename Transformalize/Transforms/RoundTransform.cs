@@ -24,9 +24,9 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
 
         public RoundTransform(IContext context) : base(context, "decimal") {
-            if (!HasValidNumericInput()) {
-                Run = false;
-                return;
+            if (IsNotReceivingNumber())
+            {
+                
             }
             _input = SingleInput();
         }

@@ -25,8 +25,7 @@ namespace Transformalize.Transforms {
         private readonly Field[] _input;
 
         public MultiplyTransform(IContext context) : base(context, "decimal") {
-            if (!HasValidNumericInput()) {
-                Run = false;
+            if (IsNotReceivingNumbers()) {
                 return;
             }
 

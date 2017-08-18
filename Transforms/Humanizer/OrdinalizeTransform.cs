@@ -28,8 +28,7 @@ namespace Transformalize.Transforms.Humanizer {
         private readonly Field _input;
 
         public OrdinalizeTransform(IContext context) : base(context, "string") {
-            Run = HasValidNumericInput();
-            if (!Run) {
+            if (IsNotReceivingNumber()) {
                 return;
             }
 
@@ -43,7 +42,7 @@ namespace Transformalize.Transforms.Humanizer {
                 case "byt":
                 case "sho":
                     _transform = (row) => {
-                        var input = _input.Type.In("int","int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
+                        var input = _input.Type.In("int", "int32") ? (int)row[_input] : Convert.ToInt32(row[_input]);
                         return input.Ordinalize();
                     };
                     break;

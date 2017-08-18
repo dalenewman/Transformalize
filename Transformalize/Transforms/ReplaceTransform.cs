@@ -19,14 +19,10 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class ReplaceTransform : BaseTransform {
+    public class ReplaceTransform : StringTransform {
         private readonly Field _input;
 
         public ReplaceTransform(IContext context) : base(context, "string") {
-            if (IsNotReceiving("string")) {
-                return;
-            }
-
             if (IsMissing(context.Transform.OldValue)) {
                 return;
             }
@@ -38,7 +34,7 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].ToString().Replace(Context.Transform.OldValue, Context.Transform.NewValue);
+            row[Context.Field] = GetString(row,_input).Replace(Context.Transform.OldValue, Context.Transform.NewValue);
             Increment();
             return row;
         }

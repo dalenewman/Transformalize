@@ -21,7 +21,7 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Provider.File.Transforms {
-    public class FileExtTransform : BaseTransform {
+    public class FileExtTransform : StringTransform {
         private readonly Field _input;
 
         public FileExtTransform(IContext context) : base(context, "string") {

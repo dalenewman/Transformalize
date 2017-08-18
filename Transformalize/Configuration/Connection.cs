@@ -297,5 +297,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
         public string ModelType { get; set; }
+
+        [Cfg(value="")]
+        public string Command { get; set; }
     }
 }

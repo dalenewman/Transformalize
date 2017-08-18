@@ -133,15 +133,25 @@ namespace Transformalize.Transforms {
             return index == count - 1;
         }
 
-        protected bool HasValidNumericInput() {
-            var result = true;
-            foreach (var f in ParametersToFields()) {
-                if (f.IsNumeric())
-                    continue;
-                Error($"The {Context.Transform.Method} method expects numeric input, but {f.Alias} is {f.Type}.");
-                result = false;
+        protected bool IsNotReceivingNumber() {
+            if (!Constants.IsNumericType(Received())) {
+                Run = false;
+                Error($"The {Context.Transform.Method} method expects a numeric input, but is receiving a {Received()} type.");
+                return true;
             }
-            return result;
+
+            return false;
+        }
+
+        protected bool IsNotReceivingNumbers() {
+            foreach (var field in MultipleInput()) {
+                if (!field.IsNumeric()) {
+                    Run = false;
+                    Error($"The {Context.Transform.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
+                    return true;
+                }
+            }
+            return false;
         }
 
         protected bool IsNotReceiving(string type) {

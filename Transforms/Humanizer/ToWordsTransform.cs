@@ -26,8 +26,7 @@ namespace Transformalize.Transforms.Humanizer {
         private readonly Func<IRow, object> _transform;
 
         public ToWordsTransform(IContext context) : base(context, "string") {
-            Run = HasValidNumericInput();
-            if (!Run) {
+            if (IsNotReceivingNumber()) {
                 return;
             }
 

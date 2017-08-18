@@ -51,7 +51,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                    return new ConsoleReader(input, rowFactory);
+                    return input.Connection.Command == string.Empty ? (IRead) new ConsoleInputReader(input, rowFactory) : new ConsoleCommandReader(input, rowFactory);
                 }).Named<IRead>(entity.Key);
 
                 builder.Register<IInputProvider>(ctx => new ConsoleInputProvider(ctx.ResolveNamed<IRead>(entity.Key))).Named<IInputProvider>(entity.Key);
