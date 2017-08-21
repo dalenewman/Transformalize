@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using SolrNet;
@@ -23,7 +24,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
     public class SolrInputProvider : IInputProvider {
 
         private readonly InputContext _context;

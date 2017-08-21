@@ -15,19 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Data;
 using Dapper;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
 
     public class AdoEntityInitializer : IAction {
-
-        readonly OutputContext _context;
-        readonly IConnectionFactory _cf;
+        private readonly OutputContext _context;
+        private readonly IConnectionFactory _cf;
 
         public AdoEntityInitializer(OutputContext context, IConnectionFactory cf) {
             _context = context;
@@ -46,8 +46,10 @@ namespace Transformalize.Provider.Ado {
                 }
             }
 
-            try {
-                cn.Execute(_context.SqlDropOutputView(_cf));
+            try
+            {
+                var sql = _context.SqlDropOutputView(_cf);
+                cn.Execute(sql);
             } catch (System.Data.Common.DbException ex) {
                 _context.Warn($"Could not drop output view {_context.Entity.OutputViewName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
@@ -59,9 +61,10 @@ namespace Transformalize.Provider.Ado {
                 _context.Debug(() => ex.Message);
             }
 
-            try {
-                cn.Execute(_context.SqlDropOutput(_cf));
-
+            try
+            {
+                var sql = _context.SqlDropOutput(_cf);
+                cn.Execute(sql);
             } catch (System.Data.Common.DbException ex) {
                 _context.Warn($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);

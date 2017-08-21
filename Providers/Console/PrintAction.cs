@@ -21,7 +21,7 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Provider.Console {
+namespace Transformalize.Providers.Console {
     public class PrintAction : IAction {
         private readonly Action _action;
         private readonly string _level;

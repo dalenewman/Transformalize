@@ -7,7 +7,7 @@
     <ProjectGuid>{32AEE29F-519F-4A61-AF6C-BC218611B6FF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Console</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Console</RootNamespace>
     <AssemblyName>Transformalize.Provider.Console</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

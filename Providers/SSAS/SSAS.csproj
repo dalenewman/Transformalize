@@ -7,7 +7,7 @@
     <ProjectGuid>{DC45D0B0-BD89-4334-9FCF-BEC7AD1FD540}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.SSAS</RootNamespace>
+    <RootNamespace>Transformalize.Providers.SSAS</RootNamespace>
     <AssemblyName>Transformalize.Provider.SSAS</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

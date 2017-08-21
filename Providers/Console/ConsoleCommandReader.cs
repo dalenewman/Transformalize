@@ -4,7 +4,7 @@ using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Console
+namespace Transformalize.Providers.Console
 {
     public class ConsoleCommandReader : IRead {
         private readonly InputContext _input;

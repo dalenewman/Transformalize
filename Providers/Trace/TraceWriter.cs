@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Trace {
+namespace Transformalize.Providers.Trace {
     public class TraceWriter : IWrite {
         private readonly ISerialize _serializer;
 

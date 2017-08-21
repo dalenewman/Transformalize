@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +23,7 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Excel {
+namespace Transformalize.Providers.Excel {
     public class ExcelInspection : ICreateConfiguration {
 
         private readonly IConnectionContext _context;

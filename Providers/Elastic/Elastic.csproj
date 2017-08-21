@@ -7,7 +7,7 @@
     <ProjectGuid>{2B364BAE-3D5B-467D-AA19-20EC929D14EA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Elastic</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Elastic</RootNamespace>
     <AssemblyName>Transformalize.Provider.Elastic</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

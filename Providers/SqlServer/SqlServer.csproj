@@ -7,7 +7,7 @@
     <ProjectGuid>{16042794-2E30-42D8-A6F9-F5D8020F9EF3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.SqlServer</RootNamespace>
+    <RootNamespace>Transformalize.Providers.SqlServer</RootNamespace>
     <AssemblyName>Transformalize.Provider.SqlServer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

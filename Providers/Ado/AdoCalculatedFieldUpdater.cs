@@ -15,20 +15,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Dynamic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoCalculatedFieldUpdater : IWrite {
         private readonly OutputContext _context;
         private readonly Process _parent;

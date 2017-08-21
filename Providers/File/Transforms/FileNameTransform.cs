@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Provider.File.Transforms
+namespace Transformalize.Providers.File.Transforms
 {
     public class FileNameTransform : BaseTransform {
         private readonly Field _input;

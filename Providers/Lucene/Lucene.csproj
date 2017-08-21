@@ -7,7 +7,7 @@
     <ProjectGuid>{E84D0CB1-8DE6-413B-B2F1-2A8E6F7A994C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Lucene</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Lucene</RootNamespace>
     <AssemblyName>Transformalize.Provider.Lucene</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

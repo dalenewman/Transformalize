@@ -23,9 +23,9 @@ using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Provider.Ado.Ext;
-using Transformalize.Provider.SqlServer;
-using Transformalize.Provider.Trace;
+using Transformalize.Providers.Ado.Ext;
+using Transformalize.Providers.SqlServer;
+using Transformalize.Providers.Trace;
 
 namespace Tests {
 

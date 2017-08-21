@@ -15,14 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Collections.Generic;
 using Lucene.Net.Search;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using System;
-using System.Collections.Generic;
 
-namespace Transformalize.Provider.Lucene {
+namespace Transformalize.Providers.Lucene {
     public class LuceneInputProvider : IInputProvider {
 
         private readonly InputContext _context;

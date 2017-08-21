@@ -7,7 +7,7 @@
     <ProjectGuid>{D0E681F8-9694-4D89-B2D9-2D94862467A8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.PostgreSql</RootNamespace>
+    <RootNamespace>Transformalize.Providers.PostgreSql</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

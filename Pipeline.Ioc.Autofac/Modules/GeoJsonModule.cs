@@ -21,7 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.GeoJson;
+using Transformalize.Providers.GeoJson;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class GeoJsonModule : Module {

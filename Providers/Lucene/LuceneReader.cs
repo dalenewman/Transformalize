@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Analysis;
@@ -25,7 +26,7 @@ using Transformalize.Contracts;
 using Field = Transformalize.Configuration.Field;
 using Version = Lucene.Net.Util.Version;
 
-namespace Transformalize.Provider.Lucene {
+namespace Transformalize.Providers.Lucene {
     public class LuceneReader : IRead {
 
         private const Version V = Version.LUCENE_30;

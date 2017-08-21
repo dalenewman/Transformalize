@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
@@ -22,7 +23,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Field = Transformalize.Configuration.Field;
 
-namespace Transformalize.Provider.Lucene {
+namespace Transformalize.Providers.Lucene {
 
     public static class LuceneConversion {
 

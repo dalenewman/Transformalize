@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using RethinkDb;
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using RethinkDb;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using System.Linq;
-using Transformalize.Configuration;
-using System;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.RethinkDB {
+namespace Transformalize.Providers.RethinkDB {
     public class RethinkDbWriter : IWrite {
 
         InputContext _input;

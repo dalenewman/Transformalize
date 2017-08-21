@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using FileHelpers;
 using FileHelpers.Dynamic;
 using Transformalize.Context;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public static class FileHelpersEngineFactory {
 
         public static FileHelperAsyncEngine Create(OutputContext context) {

@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using RethinkDb;
+
+using System;
 using System.Collections.Generic;
+using RethinkDb;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using System;
 
-namespace Transformalize.Provider.RethinkDB {
+namespace Transformalize.Providers.RethinkDB {
     public class RethinkDbOutputProvider : IOutputProvider {
 
         readonly InputContext _input;

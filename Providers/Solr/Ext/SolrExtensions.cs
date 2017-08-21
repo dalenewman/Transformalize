@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +24,7 @@ using SolrNet.Commands.Parameters;
 using Transformalize.Configuration;
 using Order = SolrNet.Order;
 
-namespace Transformalize.Provider.Solr.Ext {
+namespace Transformalize.Providers.Solr.Ext {
     public static class SolrExtensions {
         public static string BuildSolrUrl(this Connection cn) {
             var builder = new UriBuilder(cn.Server.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? cn.Server : "http://" + cn.Server);

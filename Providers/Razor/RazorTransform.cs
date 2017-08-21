@@ -26,8 +26,9 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Transformalize.Transforms.Razor {
+namespace Transformalize.Providers.Razor {
 
     public class RazorTransform : BaseTransform {
 
@@ -62,7 +63,7 @@ namespace Transformalize.Transforms.Razor {
             }
 
             try {
-                _service.Compile(Context.Transform.Template, Context.Key, typeof(ExpandoObject));
+                RazorEngineServiceExtensions.Compile(_service, (string) Context.Transform.Template, (string) Context.Key, typeof(ExpandoObject));
                 Cache[key] = _service;
             } catch (Exception ex) {
                 Context.Warn(Context.Transform.Template.Replace("{", "{{").Replace("}", "}}"));

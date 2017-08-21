@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Data;
 using System.Data.Common;
 using Dapper;
+using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado.Ext;
-using Transformalize.Actions;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoInitializer : IInitializer {
-        readonly OutputContext _context;
+        private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
 
         public AdoInitializer(OutputContext context, IConnectionFactory cf) {
@@ -33,17 +34,19 @@ namespace Transformalize.Provider.Ado {
             _cf = cf;
         }
 
-        void Destroy(IDbConnection cn) {
+        private void Destroy(IDbConnection cn) {
             try {
-                if (_context.Connection.DropControl) {
-                    cn.Execute(_context.SqlDropControl(_cf));
-                }
+                if (!_context.Connection.DropControl)
+                    return;
+
+                var sql = _context.SqlDropControl(_cf);
+                cn.Execute(sql);
             } catch (DbException ex) {
                 _context.Debug(() => ex.Message);
             }
         }
 
-        void Create(IDbConnection cn) {
+        private void Create(IDbConnection cn) {
             try {
                 var sql = _context.SqlCreateControl(_cf);
                 cn.Execute(sql);

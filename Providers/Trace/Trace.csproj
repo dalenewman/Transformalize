@@ -7,7 +7,7 @@
     <ProjectGuid>{77811C79-9CC7-40A8-BA7C-148A02AB6AC2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Trace</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Trace</RootNamespace>
     <AssemblyName>Transformalize.Provider.Trace</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public class FileImport : ICreateConfiguration {
 
         private readonly FileInfo _fileInfo;

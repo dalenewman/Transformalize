@@ -23,8 +23,8 @@ using Autofac;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Providers.Trace;
 using Process = Transformalize.Configuration.Process;
-using Transformalize.Provider.Trace;
 
 namespace Tests {
     public class CompositionRoot {

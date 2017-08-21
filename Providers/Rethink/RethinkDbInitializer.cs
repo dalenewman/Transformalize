@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Linq;
+using RethinkDb;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using RethinkDb;
-using System.Linq;
 
-namespace Transformalize.Provider.RethinkDB {
+namespace Transformalize.Providers.RethinkDB {
     public class RethinkDbInitializer : IInitializer {
 
         readonly InputContext _input;

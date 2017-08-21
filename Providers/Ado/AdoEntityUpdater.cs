@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,9 +24,9 @@ using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoEntityUpdater : IWrite {
         readonly OutputContext _output;
         private readonly IConnectionFactory _cf;

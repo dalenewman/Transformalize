@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using SolrNet;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
     public class SolrSchemaReader : ISchemaReader {
         private readonly Connection _c;
         private readonly ISolrReadOnlyOperations<Dictionary<string, object>> _solr;

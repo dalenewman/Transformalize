@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Diagnostics;
-using Lucene.Net.Search;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Lucene {
+namespace Transformalize.Providers.Lucene {
     public class LuceneOutputController : BaseOutputController {
         private readonly SearcherFactory _searcherFactory;
         private readonly IndexReaderFactory _readerFactory;

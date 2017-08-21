@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using System.Text.RegularExpressions;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
     public class SolrInputReader : IRead {
 
         const string PhrasePattern = @"\""(?>[^""]+|\""(?<number>)|\""(?<-number>))*(?(number)(?!))\""";

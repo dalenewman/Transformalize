@@ -21,9 +21,9 @@ using Autofac;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
 using Process = Transformalize.Configuration.Process;
 using Cfg.Net.Contracts;
+using Transformalize.Providers.Ado;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class ProcessControlModule : Module {
@@ -74,6 +74,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "access":
                         case "sqlce":
                         case "sqlserver":
                         case "elasticsearch":

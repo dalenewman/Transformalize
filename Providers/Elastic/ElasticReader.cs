@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Elastic {
+namespace Transformalize.Providers.Elastic {
 
     public class ElasticReader : IRead {
 

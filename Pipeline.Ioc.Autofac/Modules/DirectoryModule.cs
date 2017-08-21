@@ -21,7 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.File;
+using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class DirectoryModule : Module {

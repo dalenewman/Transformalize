@@ -21,7 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Provider.Web {
+namespace Transformalize.Providers.Web {
     public class UrlEncodeTransform : BaseTransform {
         private readonly Field _input;
 

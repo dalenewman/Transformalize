@@ -190,6 +190,10 @@ namespace Transformalize.Configuration {
                 Error("The sqlite provider requires a file.");
             }
 
+            if (Provider == "access" && string.IsNullOrEmpty(File) && string.IsNullOrEmpty(Database)) {
+                Error("The access provider requires a .mdb file.");
+            }
+
             if (Provider == "lucene" && string.IsNullOrEmpty(Folder)) {
                 Error("The lucene provider requires a folder.");
             }

@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public static class ConnectionStringParser {
         static readonly string[] ServerAliases = { "server", "host", "data source", "datasource", "address", "addr", "network address" };
         static readonly string[] DatabaseAliases = { "database", "initial catalog" };

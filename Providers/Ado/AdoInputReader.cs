@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,10 +24,10 @@ using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 using Transformalize.Transforms.System;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     /// <summary>
     /// A reader for an entity's input (source).
     /// </summary>

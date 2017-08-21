@@ -22,7 +22,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Provider.Web {
+namespace Transformalize.Providers.Web {
     public class WebTransform : BaseTransform {
         private readonly Func<IRow, Configuration.Action> _getAction;
         private readonly Func<Configuration.Action, ActionResponse> _getResponse;

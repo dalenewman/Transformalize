@@ -19,7 +19,7 @@
 using System;
 using System.IO;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public static class FileUtility {
         private static readonly char[] Slash = { '\\' };
 

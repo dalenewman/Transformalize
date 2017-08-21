@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -23,9 +24,9 @@ using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoEntityInserter : IWrite {
         readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
@@ -37,22 +38,45 @@ namespace Transformalize.Provider.Ado {
 
         public void Write(IEnumerable<IRow> rows) {
             var sql = _output.SqlInsertIntoOutput(_cf);
-            var count = (uint) 0;
+            var count = (uint)0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 var trans = cn.BeginTransaction();
 
                 try {
                     foreach (var batch in rows.Partition(_output.Entity.InsertSize)) {
-                        var batchCount = Convert.ToUInt32(cn.Execute(
-                            sql,
-                            batch.Select(r => r.ToExpandoObject(_output.OutputFields)),
-                            trans,
-                            0,
-                            CommandType.Text
-                        ));
+                        var records = batch.Select(r => r.ToExpandoObject(_output.OutputFields));
+                        uint batchCount;
+                        if (_cf.AdoProvider == AdoProvider.Access) {  // hack for access
+                            try {
+                                batchCount = Convert.ToUInt32(cn.Execute(
+                                    sql,
+                                    records,
+                                    trans,
+                                    0,
+                                    CommandType.Text
+                                ));
+                            } catch (Exception) {
+
+                                // just try again (works on second attempt)
+                                batchCount = Convert.ToUInt32(cn.Execute(
+                                    sql,
+                                    records,
+                                    trans,
+                                    0,
+                                    CommandType.Text
+                                ));
+                            }
+                        } else {
+                            batchCount = Convert.ToUInt32(cn.Execute(
+                                sql,
+                                records,
+                                trans,
+                                0,
+                                CommandType.Text
+                            ));
+                        }
                         count += batchCount;
-                        // _output.Increment(batchCount);
                     }
                     trans.Commit();
                 } catch (Exception ex) {

@@ -23,7 +23,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.Lucene;
+using Transformalize.Providers.Lucene;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {

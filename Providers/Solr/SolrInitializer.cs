@@ -17,18 +17,18 @@
 #endregion
 #region license
 #endregion
-using Transformalize.Actions;
-using Transformalize.Contracts;
-using SolrNet;
-using Transformalize.Context;
-using System.Net;
+
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
+using SolrNet;
 using SolrNet.Impl;
+using Transformalize.Actions;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
 
     public class SolrInitializer : IInitializer {
 

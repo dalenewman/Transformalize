@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Lucene.Net.Search;
 
-namespace Transformalize.Provider.Lucene {
+namespace Transformalize.Providers.Lucene {
     public class SearcherFactory {
         private readonly IndexReaderFactory _readerFactory;
 

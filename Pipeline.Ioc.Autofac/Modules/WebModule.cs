@@ -21,6 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
+using Transformalize.Providers.Web;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class WebModule : Module {
@@ -57,9 +58,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     switch (input.Connection.Provider) {
                         case "web":
                             if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
-                                return new Provider.Web.WebReader(input, rowFactory);
+                                return new WebReader(input, rowFactory);
                             }
-                            return new Provider.Web.WebCsvReader(input, rowFactory);
+                            return new WebCsvReader(input, rowFactory);
                         default:
                             return new NullReader(input, false);
                     }

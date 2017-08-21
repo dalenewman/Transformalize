@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using RethinkDb;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.RethinkDB {
+namespace Transformalize.Providers.RethinkDB {
     public class RethinkDbOutputController : BaseOutputController {
 
         IConnectionFactory _factory;

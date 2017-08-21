@@ -20,7 +20,7 @@ using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Provider.SqlServer;
+using Transformalize.Providers.SqlServer;
 
 namespace Tests {
 

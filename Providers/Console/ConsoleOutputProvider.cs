@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Console {
+namespace Transformalize.Providers.Console {
     public class ConsoleOutputProvider : IOutputProvider {
         private readonly OutputContext _outputContext;
         private readonly ISerialize _serializer;

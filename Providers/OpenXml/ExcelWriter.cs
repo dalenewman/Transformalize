@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.OpenXml {
+namespace Transformalize.Providers.OpenXml {
     public class ExcelWriter : IWrite {
 
         private readonly WorkbookDfn _workbook;

@@ -22,20 +22,20 @@ using System.Globalization;
 namespace Transformalize {
     public static class Constants {
 
-        static HashSet<string> _types;
-        static HashSet<string> _numericTypes;
-        static HashSet<string> _providers;
-        static HashSet<string> _adoProviders;
-        static Dictionary<string, object> _typeDefaults;
-        static Dictionary<string, string> _stringDefaults;
-        static Dictionary<string, Type> _typeSystem;
-        static Dictionary<string, Func<string, bool>> _canConvert;
+        private static HashSet<string> _types;
+        private static HashSet<string> _numericTypes;
+        private static HashSet<string> _providers;
+        private static HashSet<string> _adoProviders;
+        private static Dictionary<string, object> _typeDefaults;
+        private static Dictionary<string, string> _stringDefaults;
+        private static Dictionary<string, Type> _typeSystem;
+        private static Dictionary<string, Func<string, bool>> _canConvert;
 
         public const string ApplicationName = "Pipeline.Net";
         public const string DefaultSetting = "[default]";
 
-        public const string ProviderDomain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,directory,geojson,kml,text,ssas,rethinkdb";
-        public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite,sqlce";
+        public const string ProviderDomain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,directory,geojson,kml,text,ssas,rethinkdb,word,razor,velocity,access";
+        public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite,sqlce,access";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
         public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";

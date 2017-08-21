@@ -21,8 +21,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.SSAS;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
+using Transformalize.Providers.SSAS;
 
 namespace Transformalize.Ioc.Autofac {
     public class SSASModule : Module {

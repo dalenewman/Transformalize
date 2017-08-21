@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,15 +23,15 @@ using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoEntityMatchingKeysReader : ITakeAndReturnRows {
 
-        readonly IConnectionContext _context;
-        readonly Field[] _keys;
+        private readonly IConnectionContext _context;
+        private readonly Field[] _keys;
         private readonly IConnectionFactory _cf;
-        readonly Field[] _fields;
-        readonly AdoRowCreator _rowCreator;
-        readonly Field _hashCode;
+        private readonly Field[] _fields;
+        private readonly AdoRowCreator _rowCreator;
+        private readonly Field _hashCode;
         private readonly string _tempTable;
         private readonly Field _deleted;
 
@@ -46,20 +47,20 @@ namespace Transformalize.Provider.Ado {
             _rowCreator = new AdoRowCreator(context, rowFactory);
         }
 
-        string SqlDrop(string tempTable, IConnectionFactory cf) {
-            var sql = $"DROP TABLE {cf.Enclose(tempTable)}";
+        private string SqlDrop(string tempTable) {
+            var sql = $"DROP TABLE {_cf.Enclose(tempTable)}";
             _context.Debug(() => sql);
             return sql;
         }
 
-        string SqlCreateKeysTable(string tempTable) {
+        private string SqlCreateKeysTable(string tempTable) {
             var columnsAndDefinitions = string.Join(",", _context.Entity.GetPrimaryKey().Select(f => _cf.Enclose(f.FieldName()) + " " + _cf.SqlDataType(f) + " NOT NULL"));
-            var sql = $"CREATE {(_cf.AdoProvider == AdoProvider.SqlServer || _cf.AdoProvider == AdoProvider.SqlCe ? string.Empty : "TEMPORARY ")}TABLE {_cf.Enclose(tempTable)}({columnsAndDefinitions})";
+            var sql = $"CREATE {(_cf.AdoProvider == AdoProvider.SqlServer || _cf.AdoProvider == AdoProvider.SqlCe || _cf.AdoProvider == AdoProvider.Access ? string.Empty : "TEMPORARY ")}TABLE {_cf.Enclose(tempTable)}({columnsAndDefinitions})";
             _context.Debug(() => sql);
             return sql;
         }
 
-        string SqlQuery() {
+        private string SqlQuery() {
             var names = string.Join(",", _keys.Select(f => "k." + _cf.Enclose(f.FieldName())));
             var table = _context.Entity.OutputTableName(_context.Process.Name);
             var joins = string.Join(" AND ", _keys.Select(f => "o." + _cf.Enclose(f.FieldName()) + " = k." + _cf.Enclose(f.FieldName())));
@@ -68,8 +69,9 @@ namespace Transformalize.Provider.Ado {
             return sql;
         }
 
-        string SqlInsertTemplate(IContext context, string tempTable, Field[] keys) {
-            var sql = $"INSERT INTO {_cf.Enclose(tempTable)} VALUES ({string.Join(",", keys.Select(k => "@" + k.FieldName()))});";
+        private string SqlInsertTemplate(IContext context, string tempTable, Field[] keys) {
+            var values = _cf.AdoProvider == AdoProvider.Access ? string.Join(",", keys.Select(k => "?")) : string.Join(",", keys.Select(k => "@" + k.FieldName()));
+            var sql = $"INSERT INTO {_cf.Enclose(tempTable)} VALUES ({values});";
             context.Debug(() => sql);
             return sql;
         }
@@ -96,7 +98,7 @@ namespace Transformalize.Provider.Ado {
                         }
                     }
 
-                    var sqlDrop = SqlDrop(_tempTable, _cf);
+                    var sqlDrop = SqlDrop(_tempTable);
                     cn.Execute(sqlDrop, null, trans);
 
                     _context.Debug(() => "commit transaction");

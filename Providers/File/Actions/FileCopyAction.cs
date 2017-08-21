@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.IO;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Provider.File.Actions {
+namespace Transformalize.Providers.File.Actions {
     public class FileCopyAction : IAction {
 
         private readonly IContext _context;

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -26,9 +27,9 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
-namespace Transformalize.Provider.SqlCe {
+namespace Transformalize.Providers.SqlCe {
 
     public class SqlCeWriter : IWrite {
 

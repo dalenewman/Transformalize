@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Data;
 using System.Diagnostics;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
 
     public class AdoOutputController : BaseOutputController {
 
@@ -49,11 +50,15 @@ namespace Transformalize.Provider.Ado {
                 cn.Open();
                 Context.Debug(() => "Loading BatchId.");
                 var sql = Context.SqlControlStartBatch(_cf);
-                cn.Execute(sql, new {
-                    Context.Entity.BatchId,
-                    Entity = Context.Entity.Alias,
-                    DateTime.Now
-                });
+                try {
+                    cn.Execute(sql, new {
+                        Context.Entity.BatchId,
+                        Entity = Context.Entity.Alias,
+                        DateTime.Now
+                    });
+                } catch (Exception e) {
+                    Context.Error(e.Message);
+                }
                 if (cn.State != ConnectionState.Closed) {
                     cn.Close();
                 }
@@ -65,14 +70,25 @@ namespace Transformalize.Provider.Ado {
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 var sql = Context.SqlControlEndBatch(_cf);
-                cn.Execute(sql, new {
-                    Inserts = Convert.ToInt64(Context.Entity.Inserts),
-                    Updates = Convert.ToInt64(Context.Entity.Updates),
-                    Deletes = Convert.ToInt64(Context.Entity.Deletes),
-                    Entity = Context.Entity.Alias,
-                    Context.Entity.BatchId,
-                    DateTime.Now
-                });
+                if (_cf.AdoProvider == AdoProvider.Access) {
+                    cn.Execute(sql, new {
+                        Inserts = Convert.ToInt32(Context.Entity.Inserts),
+                        Updates = Convert.ToInt32(Context.Entity.Updates),
+                        Deletes = Convert.ToInt32(Context.Entity.Deletes),
+                        End = DateTime.Now,
+                        Entity = Context.Entity.Alias,
+                        Context.Entity.BatchId
+                    });
+                } else {
+                    cn.Execute(sql, new {
+                        Inserts = Convert.ToInt64(Context.Entity.Inserts),
+                        Updates = Convert.ToInt64(Context.Entity.Updates),
+                        Deletes = Convert.ToInt64(Context.Entity.Deletes),
+                        End = DateTime.Now,
+                        Entity = Context.Entity.Alias,
+                        Context.Entity.BatchId
+                    });
+                }
                 if (cn.State != ConnectionState.Closed) {
                     cn.Close();
                 }

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Console {
+namespace Transformalize.Providers.Console {
     public class ConsoleInputReader : IRead {
 
         private readonly InputContext _input;

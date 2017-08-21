@@ -7,7 +7,7 @@
     <ProjectGuid>{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Excel</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Excel</RootNamespace>
     <AssemblyName>Transformalize.Provider.Excel</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

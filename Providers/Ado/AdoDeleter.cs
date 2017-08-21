@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,7 +26,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoDeleter : IDelete {
         private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;

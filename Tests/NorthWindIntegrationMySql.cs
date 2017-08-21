@@ -23,8 +23,8 @@ using Transformalize.Context;
 using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
-using Transformalize.Provider.MySql;
-using Transformalize.Provider.SqlServer;
+using Transformalize.Providers.MySql;
+using Transformalize.Providers.SqlServer;
 
 namespace Tests {
 

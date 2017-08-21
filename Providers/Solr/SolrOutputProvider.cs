@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Solr.Ext;
+using Transformalize.Providers.Solr.Ext;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
     public class SolrOutputProvider : IOutputProvider {
 
         private readonly OutputContext _context;

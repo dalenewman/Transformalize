@@ -19,9 +19,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PoorMansTSqlFormatterLib;
 using Transformalize.Configuration;
 using Transformalize.Context;
-using Transformalize.Provider.Ado.Ext;
-using Transformalize.Provider.SqlServer;
-using Transformalize.Provider.Trace;
+using Transformalize.Providers.Ado.Ext;
+using Transformalize.Providers.SqlServer;
+using Transformalize.Providers.Trace;
 
 namespace Tests {
 

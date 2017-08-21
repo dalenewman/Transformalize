@@ -27,7 +27,7 @@ using RazorEngine.Templating;
 using RazorEngine.Text;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.Razor {
+namespace Transformalize.Providers.Razor {
     public class RazorTemplateEngine : ITemplateEngine {
 
         private readonly IContext _context;

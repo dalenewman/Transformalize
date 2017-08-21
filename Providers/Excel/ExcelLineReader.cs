@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -22,7 +23,7 @@ using ExcelDataReader;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.Excel {
+namespace Transformalize.Providers.Excel {
 
     public class ExcelLineReader {
         private readonly IConnectionContext _context;

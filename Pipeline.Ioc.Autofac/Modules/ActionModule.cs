@@ -23,12 +23,12 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado;
-using Transformalize.Provider.Ado.Actions;
-using Transformalize.Provider.Console;
-using Transformalize.Provider.File;
-using Transformalize.Provider.File.Actions;
-using Transformalize.Provider.Web;
+using Transformalize.Providers.Ado;
+using Transformalize.Providers.Ado.Actions;
+using Transformalize.Providers.Console;
+using Transformalize.Providers.File;
+using Transformalize.Providers.File.Actions;
+using Transformalize.Providers.Web;
 using FileReader = Cfg.Net.Reader.FileReader;
 using WebReader = Cfg.Net.Reader.WebReader;
 

@@ -15,16 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Microsoft.AnalysisServices;
+
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using Microsoft.AnalysisServices;
 using Transformalize.Configuration;
 using Transformalize.Context;
 
-namespace Transformalize.Provider.SSAS {
+namespace Transformalize.Providers.SSAS {
     public static class SSAS {
 
         public static IEnumerable<Field> GetFields(OutputContext output) {

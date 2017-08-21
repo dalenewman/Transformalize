@@ -7,7 +7,7 @@
     <ProjectGuid>{33AF802D-7061-4BBA-8619-D08790DE5364}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.SQLite</RootNamespace>
+    <RootNamespace>Transformalize.Providers.SQLite</RootNamespace>
     <AssemblyName>Transformalize.Provider.SQLite</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

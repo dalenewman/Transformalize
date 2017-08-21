@@ -22,10 +22,10 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
-using Transformalize.Provider.Trace;
 using Transformalize.Writers;
 using System.Collections.Generic;
 using Transformalize.Provider.Internal;
+using Transformalize.Providers.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

@@ -130,6 +130,7 @@
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
+    <Compile Include="Modules\WordModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
@@ -171,6 +172,10 @@
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\Access\Access.csproj">
+      <Project>{ca54bc84-f8c1-4248-a794-42635427a714}</Project>
+      <Name>Access</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\Ado\Ado.csproj">
       <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
       <Name>Ado</Name>
@@ -198,6 +203,10 @@
     <ProjectReference Include="..\Providers\PostgreSql\PostgreSql.csproj">
       <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
       <Name>PostgreSql</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Providers\Razor\Razor.csproj">
+      <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>
+      <Name>Razor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
@@ -298,10 +307,6 @@
     <ProjectReference Include="..\Transforms\LamdaParser\LamdaParser.csproj">
       <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
       <Name>LamdaParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\Razor\Razor.csproj">
-      <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>
-      <Name>Razor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>

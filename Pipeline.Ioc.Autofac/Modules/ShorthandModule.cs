@@ -23,9 +23,9 @@ using Cfg.Net.Shorthand;
 using System.Linq;
 using Transformalize.Contracts;
 using Transformalize.Context;
-using Transformalize.Provider.Trace;
 using Transformalize.Configuration;
 using Transformalize.Nulls;
+using Transformalize.Providers.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

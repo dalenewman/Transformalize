@@ -23,8 +23,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.Excel;
-using Transformalize.Provider.OpenXml;
+using Transformalize.Providers.Excel;
+using Transformalize.Providers.OpenXml;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class ExcelModule : Module {

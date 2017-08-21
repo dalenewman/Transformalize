@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,7 +23,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public class FileReader : IRead {
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;

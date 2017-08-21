@@ -23,7 +23,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public class ContentToFileAction : IAction {
         private readonly PipelineContext _context;
         private readonly Action _action;

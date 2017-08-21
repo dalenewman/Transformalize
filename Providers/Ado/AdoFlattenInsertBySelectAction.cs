@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Data.Common;
 using System.Text;
 using Dapper;
@@ -22,9 +23,9 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoFlattenInsertBySelectAction : IAction {
 
         private readonly OutputContext _output;

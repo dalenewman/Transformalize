@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.GeoJson {
+namespace Transformalize.Providers.GeoJson {
     public class GeoJsonFileWriter : IWrite {
         private readonly OutputContext _context;
         private readonly IWrite _streamWriter;

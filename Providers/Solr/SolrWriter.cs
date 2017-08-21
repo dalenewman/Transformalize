@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using SolrNet;
+
 using System.Collections.Generic;
 using System.Linq;
+using SolrNet;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.Solr {
+namespace Transformalize.Providers.Solr {
 
     public class SolrWriter : IWrite {
 

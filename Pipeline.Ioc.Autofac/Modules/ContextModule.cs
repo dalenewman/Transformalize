@@ -21,7 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
-using Transformalize.Provider.Console;
+using Transformalize.Providers.Console;
 using Transformalize.Transforms.CSharp;
 
 namespace Transformalize.Ioc.Autofac.Modules {

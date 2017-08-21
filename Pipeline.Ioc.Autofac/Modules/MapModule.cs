@@ -19,7 +19,7 @@ using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class MapModule : Module {

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Linq;
 using Dapper;
@@ -22,7 +23,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
 
     public class AdoMasterUpdater : IUpdate {
         readonly Entity _master;

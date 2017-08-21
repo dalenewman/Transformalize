@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Linq;
 using System.Text;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
-namespace Transformalize.Provider.MySql {
+namespace Transformalize.Providers.MySql {
     public class MySqlUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
 
         private readonly IContext _c;

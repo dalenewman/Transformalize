@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Data.Common;
 using System.Linq;
 using Dapper;
@@ -24,7 +25,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoFlattenUpdateByViewAction : IAction {
 
         private readonly OutputContext _output;

@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public enum AdoProvider {
         SqlServer,
         MySql,
         None,
         PostgreSql,
         SqlCe,
-        SqLite
+        SqLite,
+        Access
     }
 }

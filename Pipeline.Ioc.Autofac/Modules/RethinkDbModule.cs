@@ -21,12 +21,12 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.RethinkDB;
 using RethinkDb;
 using RethinkDb.ConnectionFactories;
 using System;
 using System.Net;
 using System.Collections.Generic;
+using Transformalize.Providers.RethinkDB;
 
 namespace Transformalize.Ioc.Autofac {
 

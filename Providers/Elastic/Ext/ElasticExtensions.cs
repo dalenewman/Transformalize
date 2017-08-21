@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using Transformalize.Configuration;
 using Transformalize.Context;
 
-namespace Transformalize.Provider.Elastic.Ext {
+namespace Transformalize.Providers.Elastic.Ext {
     public static class ElasticExtensions {
 
         public static string TypeName(this InputContext context) {

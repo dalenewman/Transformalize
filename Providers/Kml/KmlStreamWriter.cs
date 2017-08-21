@@ -15,17 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
 using System.Xml;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Kml {
+namespace Transformalize.Providers.Kml {
     public class KmlStreamWriter : IWrite {
 
         private readonly Field _latitudeField;

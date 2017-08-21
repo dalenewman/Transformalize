@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
-namespace Transformalize.Provider.SqlServer {
+namespace Transformalize.Providers.SqlServer {
     public class SqlServerConnectionFactory : IConnectionFactory {
 
         static Dictionary<string, string> _types;

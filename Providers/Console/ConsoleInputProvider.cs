@@ -2,7 +2,7 @@
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Console {
+namespace Transformalize.Providers.Console {
     public class ConsoleInputProvider : IInputProvider {
         private readonly IRead _reader;
 

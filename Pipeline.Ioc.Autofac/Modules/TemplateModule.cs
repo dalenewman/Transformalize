@@ -22,7 +22,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Transforms.Razor;
+using Transformalize.Providers.Razor;
 using Transformalize.Transforms.Velocity;
 
 namespace Transformalize.Ioc.Autofac.Modules {

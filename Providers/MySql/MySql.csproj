@@ -7,7 +7,7 @@
     <ProjectGuid>{803BAF79-7028-4F09-B2F6-BC89B3AD11E3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.MySql</RootNamespace>
+    <RootNamespace>Transformalize.Providers.MySql</RootNamespace>
     <AssemblyName>Transformalize.Provider.MySql</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

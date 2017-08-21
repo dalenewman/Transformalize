@@ -22,8 +22,8 @@ using System.Linq;
 using Cfg.Net.Ext;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Excel;
-using Transformalize.Provider.File;
+using Transformalize.Providers.Excel;
+using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac {
     public class FolderReader : IRead {

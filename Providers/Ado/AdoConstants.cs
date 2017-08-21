@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public static class AdoConstants {
         public static string[] StringTypes { get; internal set; } = { "string", "char", "datetime", "guid" };
     }

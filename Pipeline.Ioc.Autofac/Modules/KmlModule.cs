@@ -21,7 +21,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.Kml;
+using Transformalize.Providers.Kml;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class KmlModule : Module {

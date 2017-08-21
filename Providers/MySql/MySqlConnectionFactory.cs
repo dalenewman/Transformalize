@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using MySql.Data.MySqlClient;
 using Transformalize.Configuration;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
-namespace Transformalize.Provider.MySql {
+namespace Transformalize.Providers.MySql {
     public class MySqlConnectionFactory : IConnectionFactory {
 
         static Dictionary<string, string> _types;

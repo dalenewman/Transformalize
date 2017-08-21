@@ -24,8 +24,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.Elastic;
-using Transformalize.Provider.Elastic.Ext;
+using Transformalize.Providers.Elastic;
+using Transformalize.Providers.Elastic.Ext;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {

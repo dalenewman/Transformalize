@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.File {
+namespace Transformalize.Providers.File {
     public class DelimitedFileStreamWriter : IWrite {
 
         private readonly OutputContext _context;

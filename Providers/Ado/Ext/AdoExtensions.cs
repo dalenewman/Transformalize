@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,7 +26,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Provider.Ado.Ext {
+namespace Transformalize.Providers.Ado.Ext {
     public static class AdoExtensions {
 
         public static string SqlControlTableName(this OutputContext c) {
@@ -57,7 +58,7 @@ namespace Transformalize.Provider.Ado.Ext {
             var pk = c.Entity.GetAllFields().Where(f => f.PrimaryKey).Select(f => f.FieldName()).ToArray();
             var indexName = ("UX_" + Utility.Identifier(tableName + "_" + SqlKeyName(pk))).Left(128);
             var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(tableName)} ({string.Join(",", pk.Select(cf.Enclose))})";
-            if(c.Entity.IgnoreDuplicateKey && c.Connection.Provider == "sqlserver") {
+            if (c.Entity.IgnoreDuplicateKey && c.Connection.Provider == "sqlserver") {
                 sql += " WITH (IGNORE_DUP_KEY = ON)";
             }
             c.Debug(() => sql);
@@ -65,17 +66,17 @@ namespace Transformalize.Provider.Ado.Ext {
         }
 
         public static string SqlCreateFlatIndex(this OutputContext c, IConnectionFactory cf) {
-            var pk = c.Process.Entities.First(e=>e.IsMaster).GetAllFields().Where(f => f.PrimaryKey).Select(f => f.Alias).ToArray();
+            var pk = c.Process.Entities.First(e => e.IsMaster).GetAllFields().Where(f => f.PrimaryKey).Select(f => f.Alias).ToArray();
             var indexName = ("UX_" + Utility.Identifier(c.Process.Flat + "_" + SqlKeyName(pk))).Left(128);
-            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))});";
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))}){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
         public static string SqlSelectOutputSchema(this OutputContext c, IConnectionFactory cf) {
             var table = $"{cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}";
-            var sql = cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ?
-                $"SELECT TOP 0 * FROM {table};" :
-                $"SELECT * FROM {table} LIMIT 0;";
+            var sql = cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe || cf.AdoProvider == AdoProvider.Access ?
+                $"SELECT TOP 0 * FROM {table}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}" :
+                $"SELECT * FROM {table} LIMIT 0";
             c.Debug(() => sql);
             return sql;
         }
@@ -137,7 +138,7 @@ namespace Transformalize.Provider.Ado.Ext {
             if (cf.AdoProvider == AdoProvider.SqLite) {
                 sql += $"PRIMARY KEY ({cf.Enclose(c.Entity.TflKey().FieldName())} ASC));";
             } else {
-                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Entity.OutputTableName(c.Process.Name) + "_tflkey")} PRIMARY KEY ({cf.Enclose(c.Entity.TflKey().FieldName())}));";
+                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Entity.OutputTableName(c.Process.Name) + "_tflkey")} PRIMARY KEY ({cf.Enclose(c.Entity.TflKey().FieldName())})){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             }
             c.Debug(() => sql);
             return sql;
@@ -149,8 +150,8 @@ namespace Transformalize.Provider.Ado.Ext {
 
         public static string SqlInsertIntoOutput(this OutputContext c, IConnectionFactory cf) {
             var fields = c.OutputFields.ToArray();
-            var parameters = string.Join(",", fields.Select(f => "@" + f.FieldName()));
-            var sql = $"INSERT INTO {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))} VALUES({parameters});";
+            var parameters = cf.AdoProvider == AdoProvider.Access ? string.Join(",", fields.Select(f => "?")) : string.Join(",", fields.Select(f => "@" + f.FieldName()));
+            var sql = $"INSERT INTO {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))} VALUES({parameters}){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -159,7 +160,7 @@ namespace Transformalize.Provider.Ado.Ext {
             var fields = c.Entity.GetAllFields().Where(f => f.Output).ToArray();
             var sets = string.Join(",", fields.Where(f => !f.PrimaryKey && f.Name != Constants.TflKey).Select(f => f.FieldName()).Select(n => cf.Enclose(n) + " = @" + n));
             var criteria = string.Join(" AND ", fields.Where(f => f.PrimaryKey).Select(f => f.FieldName()).Select(n => cf.Enclose(n) + " = @" + n));
-            var sql = $"UPDATE {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))} SET {sets} WHERE {criteria};";
+            var sql = $"UPDATE {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))} SET {sets} WHERE {criteria}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -169,7 +170,7 @@ namespace Transformalize.Provider.Ado.Ext {
             var fields = c.Entity.CalculatedFields.Where(f => f.Output && f.Name != Constants.TflKey).ToArray();
             var sets = string.Join(",", fields.Select(f => cnf.Enclose(original.CalculatedFields.First(cf => cf.Name == f.Name).FieldName()) + " = @" + f.FieldName()));
             var key = c.Entity.TflKey().FieldName();
-            var sql = $"UPDATE {cnf.Enclose(master.OutputTableName(original.Name))} SET {sets} WHERE {cnf.Enclose(key)} = @{key};";
+            var sql = $"UPDATE {cnf.Enclose(master.OutputTableName(original.Name))} SET {sets} WHERE {cnf.Enclose(key)} = @{key}{(cnf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -184,25 +185,28 @@ namespace Transformalize.Provider.Ado.Ext {
 
         public static string SqlDropOutput(this OutputContext c, IConnectionFactory cf) {
             var cascade = cf.AdoProvider == AdoProvider.PostgreSql ? " CASCADE" : string.Empty;
-            var sql = $"DROP TABLE {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}{cascade};";
+            var sql = $"DROP TABLE {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}{cascade}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropOutputView(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP VIEW {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))};";
+            var viewName = cf.AdoProvider == AdoProvider.Access
+                ? c.Entity.OutputViewName(c.Process.Name)
+                : cf.Enclose(c.Entity.OutputViewName(c.Process.Name));
+            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {viewName}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropOutputViewAsTable(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP TABLE {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))};";
+            var sql = $"DROP TABLE {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropControl(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP TABLE {cf.Enclose(SqlControlTableName(c))};";
+            var sql = $"DROP TABLE {cf.Enclose(SqlControlTableName(c))}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -218,54 +222,76 @@ namespace Transformalize.Provider.Ado.Ext {
         }
 
         public static string SqlControlLastBatchId(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"SELECT COALESCE(MAX({cf.Enclose("BatchId")}),0) FROM {cf.Enclose(SqlControlTableName(c))};";
+            string sql;
+            if (cf.AdoProvider == AdoProvider.Access) {
+                sql = $"SELECT IIF(ISNULL(MAX({cf.Enclose("BatchId")})),0,MAX({cf.Enclose("BatchId")})) FROM {cf.Enclose(SqlControlTableName(c))}";
+            } else {
+                sql = $"SELECT COALESCE(MAX({cf.Enclose("BatchId")}),0) FROM {cf.Enclose(SqlControlTableName(c))};";
+            }
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlControlStartBatch(this OutputContext c, IConnectionFactory cf) {
-            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")},{cf.Enclose("End")}) VALUES(@BatchId,@Entity,0,0,0,@Now,null);";
+            var values = cf.AdoProvider == AdoProvider.Access ? "?,?,0,0,0,?" : "@BatchId,@Entity,0,0,0,@Now";
+            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")}) VALUES({values}){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlControlEndBatch(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @Now WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("BatchId")} = @BatchId;";
+            string sql;
+            if (cf.AdoProvider == AdoProvider.Access) {
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = ?, {cf.Enclose("Updates")} = ?, {cf.Enclose("Deletes")} = ?, {cf.Enclose("End")} = ? WHERE {cf.Enclose("Entity")} = ? AND {cf.Enclose("BatchId")} = ?";
+            } else {
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @Now WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("BatchId")} = @BatchId{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
+            }
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlCreateControl(this OutputContext c, IConnectionFactory cf) {
+            var dateType = (cf.AdoProvider == AdoProvider.PostgreSql ? "TIMESTAMP" : "DATETIME");
+            if (cf.AdoProvider == AdoProvider.Access) {
+                dateType = "DATE";
+            }
+            var longType = cf.AdoProvider == AdoProvider.Access ? "LONG" : "BIGINT";
+            var stringType = (cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ? "N" : string.Empty);
+
             var sql = $@"
                 CREATE TABLE {cf.Enclose(SqlControlTableName(c))}(
                     {cf.Enclose("BatchId")} INTEGER NOT NULL,
-                    {cf.Enclose("Entity")} {(cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ? "N" : string.Empty)}VARCHAR(128) NOT NULL,
-                    {cf.Enclose("Inserts")} BIGINT NOT NULL,
-                    {cf.Enclose("Updates")} BIGINT NOT NULL,
-                    {cf.Enclose("Deletes")} BIGINT NOT NULL,
-                    {cf.Enclose("Start")} {(cf.AdoProvider == AdoProvider.PostgreSql ? "TIMESTAMP" : "DATETIME")} NOT NULL,
-                    {cf.Enclose("End")} {(cf.AdoProvider == AdoProvider.PostgreSql ? "TIMESTAMP" : "DATETIME")},
+                    {cf.Enclose("Entity")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
+                    {cf.Enclose("Inserts")} {longType} NOT NULL,
+                    {cf.Enclose("Updates")} {longType} NOT NULL,
+                    {cf.Enclose("Deletes")} {longType} NOT NULL,
+                    {cf.Enclose("Start")} {dateType} NOT NULL,
+                    {cf.Enclose("End")} {dateType},
                     CONSTRAINT PK_{Utility.Identifier(SqlControlTableName(c))}_BatchId PRIMARY KEY ({cf.Enclose("BatchId")}, {cf.Enclose("Entity")})
-                );";
+                ){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
+
             c.Debug(() => sql);
+
             return sql;
         }
 
         public static string SqlCreateOutputView(this OutputContext c, IConnectionFactory cf) {
             var columnNames = string.Join(",", c.GetAllEntityOutputFields().Select(f => cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
-            var sql = $@"CREATE VIEW {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))} AS SELECT {columnNames} FROM {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))};";
+            var viewName = cf.AdoProvider == AdoProvider.Access ? c.Entity.OutputViewName(c.Process.Name) : cf.Enclose(c.Entity.OutputViewName(c.Process.Name));
+            var sql = $@"CREATE VIEW {viewName} AS SELECT {columnNames} FROM {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropStarView(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP VIEW {cf.Enclose(c.Process.Star)};";
+            var viewName = cf.AdoProvider == AdoProvider.Access ? c.Process.Star : cf.Enclose(c.Process.Star);
+            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {viewName}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropFlatTable(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP TABLE {cf.Enclose(c.Process.Flat)};";
+            var sql = $"DROP TABLE {cf.Enclose(c.Process.Flat)}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -310,19 +336,15 @@ namespace Transformalize.Provider.Ado.Ext {
             var master = c.Process.Entities.First(e => e.IsMaster);
             var masterAlias = Utility.GetExcelName(master.Index);
             var masterNames = string.Join(",", starFields[0].Select(f => masterAlias + "." + cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
-            var slaveNames = string.Join(",", starFields[1].Select(f => "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") AS " + cf.Enclose(f.Alias)));
+            string slaveNames;
+            if (cf.AdoProvider == AdoProvider.Access) {
+                slaveNames = string.Join(",", starFields[1].Select(f => "IIF(ISNULL(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + "), " + DefaultValue(f, cf) + ")," + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ") AS " + cf.Enclose(f.Alias)));
+            } else {
+                slaveNames = string.Join(",", starFields[1].Select(f => "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") AS " + cf.Enclose(f.Alias)));
+            }
+
             return $"{masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)}";
         }
-
-        public static string SqlStarSets(this IContext c, IConnectionFactory cf, string alias) {
-            var starFields = c.Process.GetStarFields().ToArray();
-            var master = c.Process.Entities.First(e => e.IsMaster);
-            var masterAlias = Utility.GetExcelName(master.Index);
-            var masterNames = string.Join(",", starFields[0].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " + masterAlias + "." + cf.Enclose(f.FieldName())));
-            var slaveNames = string.Join(",", starFields[1].Select(f => alias + "." + cf.Enclose(f.Alias) + " = " + "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") "));
-            return $"{masterNames}{(slaveNames == string.Empty ? string.Empty : "," + slaveNames)}";
-        }
-
 
         public static string SqlSelectStar(this IContext c, IConnectionFactory cf) {
             var builder = new StringBuilder();
@@ -336,7 +358,7 @@ namespace Transformalize.Provider.Ado.Ext {
 
         public static string SqlCreateStarView(this IContext c, IConnectionFactory cf) {
             var select = SqlSelectStar(c, cf);
-            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS {select};";
+            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS {select}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -353,7 +375,7 @@ namespace Transformalize.Provider.Ado.Ext {
             if (cf.AdoProvider == AdoProvider.SqLite) {
                 sql += $"PRIMARY KEY ({cf.Enclose(Constants.TflKey)} ASC));";
             } else {
-                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Process.Flat + "_tflkey")} PRIMARY KEY ({cf.Enclose(Constants.TflKey)}));";
+                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Process.Flat + "_tflkey")} PRIMARY KEY ({cf.Enclose(Constants.TflKey)})){(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             }
             c.Debug(() => sql);
             return sql;

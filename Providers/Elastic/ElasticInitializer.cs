@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using Elasticsearch.Net;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Elastic {
+namespace Transformalize.Providers.Elastic {
     public class ElasticInitializer : IInitializer {
         private readonly OutputContext _context;
         private readonly IElasticLowLevelClient _client;

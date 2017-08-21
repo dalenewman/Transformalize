@@ -7,7 +7,7 @@
     <ProjectGuid>{4D9D0159-F680-4E1B-B4E6-9ED1BDB03F40}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.Web</RootNamespace>
+    <RootNamespace>Transformalize.Providers.Web</RootNamespace>
     <AssemblyName>Transformalize.Provider.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

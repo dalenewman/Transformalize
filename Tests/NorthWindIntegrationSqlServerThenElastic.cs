@@ -27,10 +27,10 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
-using Transformalize.Provider.Elastic;
-using Transformalize.Provider.Elastic.Ext;
-using Transformalize.Provider.SqlServer;
-using Transformalize.Provider.Trace;
+using Transformalize.Providers.Elastic;
+using Transformalize.Providers.Elastic.Ext;
+using Transformalize.Providers.SqlServer;
+using Transformalize.Providers.Trace;
 
 namespace Tests {
 

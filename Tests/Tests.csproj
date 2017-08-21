@@ -270,10 +270,6 @@
       <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
       <Name>LamdaParser</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Razor\Razor.csproj">
-      <Project>{e3c5c2d6-a929-43c7-86fe-f9386ebb57d4}</Project>
-      <Name>Razor</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
       <Name>Vehicle</Name>

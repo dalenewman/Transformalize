@@ -15,22 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Humanizer;
-using Microsoft.AnalysisServices;
+
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Linq;
+using Humanizer;
+using Microsoft.AnalysisServices;
 using Transformalize.Actions;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
-using System;
-using System.Collections.Generic;
-using Transformalize.Configuration;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.SSAS {
+namespace Transformalize.Providers.SSAS {
 
     public class SSASInitializer : IInitializer {
 

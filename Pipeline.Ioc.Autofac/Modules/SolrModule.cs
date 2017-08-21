@@ -36,10 +36,10 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Nulls;
-using Transformalize.Provider.Solr;
-using Transformalize.Provider.Solr.Ext;
 using Cfg.Net.Contracts;
-using Transformalize.Transforms.Razor;
+using Transformalize.Providers.Razor;
+using Transformalize.Providers.Solr;
+using Transformalize.Providers.Solr.Ext;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class SolrModule : Module {

@@ -7,7 +7,7 @@
     <ProjectGuid>{603213BC-2203-46F8-BB3A-C680D94685EC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Transformalize.Provider.RethinkDB</RootNamespace>
+    <RootNamespace>Transformalize.Providers.RethinkDB</RootNamespace>
     <AssemblyName>Transformalize.Provider.RethinkDB</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,9 +23,9 @@ using System.Data.SqlServerCe;
 using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
-namespace Transformalize.Provider.SqlCe {
+namespace Transformalize.Providers.SqlCe {
     public class SqlCeConnectionFactory : IConnectionFactory {
         static Dictionary<string, string> _types;
         readonly Connection _c;

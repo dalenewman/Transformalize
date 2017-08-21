@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
+using System.Data;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using System.Data;
-using Transformalize.Provider.Ado.Ext;
+using Transformalize.Providers.Ado.Ext;
 
-namespace Transformalize.Provider.Ado {
+namespace Transformalize.Providers.Ado {
     public class AdoOutputProvider : IOutputProvider {
 
         private readonly OutputContext _context;
@@ -34,7 +35,6 @@ namespace Transformalize.Provider.Ado {
             _context = context;
             _cf = cf;
             _cn = cf.GetConnection();
-            _cn.Open();
         }
 
         public void Delete() {
@@ -64,6 +64,9 @@ namespace Transformalize.Provider.Ado {
             _context.Debug(() => $"Loading Output Version: {sql}");
 
             try {
+                if (_cn.State != ConnectionState.Open) {
+                    _cn.Open();
+                }
                 return _cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
             } catch (Exception ex) {
                 _context.Error(ex, ex.Message + " " + sql);
@@ -76,11 +79,17 @@ namespace Transformalize.Provider.Ado {
         }
 
         public int GetNextTflBatchId() {
+            if (_cn.State != ConnectionState.Open) {
+                _cn.Open();
+            }
             var sql = _context.SqlControlLastBatchId(_cf);
             return _cn.ExecuteScalar<int>(sql) + 1;
         }
 
         public int GetMaxTflKey() {
+            if (_cn.State != ConnectionState.Open) {
+                _cn.Open();
+            }
             return _cn.ExecuteScalar<int>($"SELECT MAX({_cf.Enclose(_context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name))};");
         }
 

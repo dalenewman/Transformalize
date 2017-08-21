@@ -22,7 +22,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Nulls;
-using Transformalize.Provider.Console;
+using Transformalize.Providers.Console;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

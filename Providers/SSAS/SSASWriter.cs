@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
-using Transformalize.Contracts;
 using Microsoft.AnalysisServices;
 using Transformalize.Context;
+using Transformalize.Contracts;
 
-namespace Transformalize.Provider.SSAS {
+namespace Transformalize.Providers.SSAS {
     public class SSASWriter : IWrite {
 
         readonly InputContext _input;
