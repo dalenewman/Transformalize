@@ -22,18 +22,17 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Extensions;
 using Transformalize.Nulls;
-using Transformalize.Provider.Ado;
-using Transformalize.Provider.MySql;
-using Transformalize.Provider.PostgreSql;
-using Transformalize.Provider.SqlServer;
-using Transformalize.Provider.SQLite;
+using Transformalize.Providers.Ado;
+using Transformalize.Providers.MySql;
+using Transformalize.Providers.PostgreSql;
+using Transformalize.Providers.SqlServer;
+using Transformalize.Providers.SQLite;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
-using Transformalize.Provider.SqlCe;
+using Transformalize.Providers.SqlCe;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AdoModule : Module {

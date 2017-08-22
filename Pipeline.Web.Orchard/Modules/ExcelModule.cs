@@ -26,12 +26,12 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Nulls;
-using Transformalize.Provider.Excel;
-using Transformalize.Provider.OpenXml;
+using Transformalize.Providers.Excel;
+using Transformalize.Providers.OpenXml;
 using Pipeline.Web.Orchard.Impl;
 using Pipeline.Web.Orchard.Models;
+using Transformalize;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ExcelModule : Module {

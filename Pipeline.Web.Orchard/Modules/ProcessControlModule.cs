@@ -23,7 +23,7 @@ using Transformalize;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 using Process = Transformalize.Configuration.Process;
 using Cfg.Net.Contracts;
 

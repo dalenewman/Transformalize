@@ -23,8 +23,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Provider.GeoJson;
-using Transformalize.Provider.Kml;
+using Transformalize.Providers.GeoJson;
+using Transformalize.Providers.Kml;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class KmlModule : Module {

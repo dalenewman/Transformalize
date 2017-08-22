@@ -24,11 +24,11 @@ using Cfg.Net.Environment;
 using Cfg.Net.Reader;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transform.Jint;
+using Transformalize.Transforms.Jint;
 using Orchard.Localization;
 using Transformalize;
 using Transformalize.Impl;
-using Transformalize.Transform.DateMath;
+using Transformalize.Transforms.DateMath;
 
 // ReSharper disable PossibleMultipleEnumeration
 

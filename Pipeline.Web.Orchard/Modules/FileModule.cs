@@ -25,10 +25,10 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop;
 using Transformalize.Nulls;
-using Transformalize.Provider.File;
+using Transformalize.Providers.File;
 using Pipeline.Web.Orchard.Impl;
+using Transformalize;
 
 namespace Pipeline.Web.Orchard.Modules {
 

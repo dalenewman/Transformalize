@@ -25,17 +25,21 @@ using Orchard.Templates.Services;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Transforms;
 using Transformalize.Nulls;
-using Transformalize.Transform.DateMath;
-using Transformalize.Transform.Geography;
-using Transformalize.Transform.Html;
-using Transformalize.Transform.Humanizer;
-using Transformalize.Transform.Jint;
-using Transformalize.Transform.LamdaParser;
+using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Geography;
+using Transformalize.Transforms.Html;
+using Transformalize.Transforms.Humanizer;
+using Transformalize.Transforms.Jint;
+using Transformalize.Transforms.LamdaParser;
 using Transformalize.Transforms;
 using Transformalize.Validators;
-using Transformalize.Provider.File.Transforms;
+using Transformalize.Providers.File.Transforms;
+using Transformalize.Providers.Web;
+using Transformalize.Transforms.Compression;
+using Transformalize.Transforms.Globalization;
+using Transformalize.Transforms.Json;
+using Transformalize.Transforms.Xml;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class TransformModule : Module {
@@ -186,7 +190,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
                 return context.Transform.XmlMode == "all" ?
-                    new Transformalize.Desktop.Transforms.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
+                    new Transformalize.Transforms.Xml.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transformalize.Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 

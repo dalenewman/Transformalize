@@ -21,7 +21,7 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Provider.Ado;
+using Transformalize.Providers.Ado;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class MapModule : Module {

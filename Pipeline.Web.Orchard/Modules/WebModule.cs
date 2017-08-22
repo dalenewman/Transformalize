@@ -60,9 +60,9 @@ namespace Pipeline.Web.Orchard.Modules {
                     switch (input.Connection.Provider) {
                         case "web":
                             if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
-                                return new Transformalize.Provider.Web.WebReader(input, rowFactory);
+                                return new Transformalize.Providers.Web.WebReader(input, rowFactory);
                             }
-                            return new Transformalize.Provider.Web.WebCsvReader(input, rowFactory);
+                            return new Transformalize.Providers.Web.WebCsvReader(input, rowFactory);
                         default:
                             return new NullReader(input, false);
                     }

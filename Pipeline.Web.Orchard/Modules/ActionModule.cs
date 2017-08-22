@@ -26,13 +26,17 @@ using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Desktop.Actions;
 using Transformalize.Extensions;
-using Transformalize.Provider.Ado;
-using Transformalize.Provider.Ado.Actions;
+using Transformalize.Providers.Ado;
+using Transformalize.Providers.Ado.Actions;
 using Pipeline.Web.Orchard.Impl;
-using Transformalize.Provider.File.Actions;
+using Transformalize.Providers.Console;
+using Transformalize.Providers.File;
+using Transformalize.Providers.File.Actions;
+using Transformalize.Providers.Web;
+using FileReader = Cfg.Net.Reader.FileReader;
 using OpenAction = Pipeline.Web.Orchard.Impl.OpenAction;
+using WebReader = Cfg.Net.Reader.WebReader;
 
 namespace Pipeline.Web.Orchard.Modules {
     /// <summary>

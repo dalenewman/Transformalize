@@ -25,7 +25,7 @@ using Transformalize.Nulls;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
 using Transformalize.Writers;
-using Transformalize.Provider.File;
+using Transformalize.Providers.File;
 using System.Web;
 using System.Collections.Generic;
 using Transformalize.Provider.Internal;

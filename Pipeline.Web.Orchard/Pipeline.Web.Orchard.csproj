@@ -167,9 +167,6 @@
     <Reference Include="Transformalize">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Desktop">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Desktop\bin\$(Configuration)\Transformalize.Desktop.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Provider.Ado, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Ado.dll</HintPath>
@@ -240,6 +237,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Transform.Compression">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.Transform.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="Transformalize.Transform.CSharp">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.CSharp.dll</HintPath>
     </Reference>
@@ -249,6 +249,9 @@
     </Reference>
     <Reference Include="Transformalize.Transform.Geography">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Geography.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Globalization">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.Transform.Globalization.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Html, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -265,6 +268,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Transform.Json">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.Transform.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Transformalize.Transform.LamdaParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.LamdaParser.dll</HintPath>
@@ -274,6 +280,9 @@
     </Reference>
     <Reference Include="Transformalize.Transform.Velocity">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Velocity.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Xml">
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.Transform.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
