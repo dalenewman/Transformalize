@@ -32,8 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Google.Maps, Version=0.14.51.34051, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\gmaps-api-net.0.14.51\lib\net\Google.Maps.dll</HintPath>
@@ -42,8 +41,7 @@
       <HintPath>..\..\packages\gmaps-api-net.0.14.51\lib\net\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NGeoHash.Portable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\NGeoHash.Portable.1.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\NGeoHash.Portable.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\NGeoHash.Portable.1.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\NGeoHash.Portable.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
