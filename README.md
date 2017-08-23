@@ -55,6 +55,11 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
+                        <tr>
+                            <td>Access (32-bit)</td>
+                            <td style="color:green"></td>
+                            <td style="color:green">WIP</td>
+                        </tr>
                     </tbody>
                 </table>
             </td>
@@ -95,7 +100,7 @@ It works with many data sources:
                         </tr>
                         <tr>
                             <td>Console</td>
-                            <td> </td>
+                            <td style="color:green">WIP</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>

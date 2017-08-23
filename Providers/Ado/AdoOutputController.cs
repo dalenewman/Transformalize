@@ -18,6 +18,7 @@
 
 using System;
 using System.Data;
+using System.Data.OleDb;
 using System.Diagnostics;
 using Dapper;
 using Transformalize.Context;
@@ -51,11 +52,31 @@ namespace Transformalize.Providers.Ado {
                 Context.Debug(() => "Loading BatchId.");
                 var sql = Context.SqlControlStartBatch(_cf);
                 try {
-                    cn.Execute(sql, new {
-                        Context.Entity.BatchId,
-                        Entity = Context.Entity.Alias,
-                        DateTime.Now
-                    });
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = sql;
+                    cmd.CommandType = CommandType.Text;
+
+                    var batchId = cmd.CreateParameter();
+                    batchId.ParameterName = "BatchId";
+                    batchId.DbType = DbType.Int32;
+                    batchId.Value = Context.Entity.BatchId;
+
+                    var entity = cmd.CreateParameter();
+                    entity.ParameterName = "Entity";
+                    entity.DbType = DbType.String;
+                    entity.Value = Context.Entity.Alias;
+
+                    var end = cmd.CreateParameter();
+                    end.ParameterName = "End";
+                    end.DbType = DbType.Date;
+                    end.Value = DateTime.Now;
+
+                    cmd.Parameters.Add(batchId);
+                    cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(end);
+
+                    cmd.ExecuteNonQuery();
+
                 } catch (Exception e) {
                     Context.Error(e.Message);
                 }
@@ -71,14 +92,49 @@ namespace Transformalize.Providers.Ado {
                 cn.Open();
                 var sql = Context.SqlControlEndBatch(_cf);
                 if (_cf.AdoProvider == AdoProvider.Access) {
-                    cn.Execute(sql, new {
-                        Inserts = Convert.ToInt32(Context.Entity.Inserts),
-                        Updates = Convert.ToInt32(Context.Entity.Updates),
-                        Deletes = Convert.ToInt32(Context.Entity.Deletes),
-                        End = DateTime.Now,
-                        Entity = Context.Entity.Alias,
-                        Context.Entity.BatchId
-                    });
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = sql;
+
+                    var inserts = cmd.CreateParameter();
+                    inserts.ParameterName = "Inserts";
+                    inserts.DbType = DbType.Int32;
+                    inserts.Value = Convert.ToInt32(Context.Entity.Inserts);
+
+                    var updates = cmd.CreateParameter();
+                    updates.ParameterName = "updates";
+                    updates.DbType = DbType.Int32;
+                    updates.Value = Convert.ToInt32(Context.Entity.Updates);
+
+                    var deletes = cmd.CreateParameter();
+                    deletes.ParameterName = "deletes";
+                    deletes.DbType = DbType.Int32;
+                    deletes.Value = Convert.ToInt32(Context.Entity.Deletes);
+
+                    var end = cmd.CreateParameter();
+                    end.ParameterName = "end";
+                    end.DbType = DbType.Date;
+                    end.Value = DateTime.Now;
+
+                    var entity = cmd.CreateParameter();
+                    entity.ParameterName = "Entity";
+                    entity.DbType = DbType.String;
+                    entity.Value = Context.Entity.Alias;
+
+                    var batchId = cmd.CreateParameter();
+                    batchId.ParameterName = "BatchId";
+                    batchId.DbType = DbType.Int32;
+                    batchId.Value = Context.Entity.BatchId;
+
+                    cmd.Parameters.Add(inserts);
+                    cmd.Parameters.Add(updates);
+                    cmd.Parameters.Add(deletes);
+                    cmd.Parameters.Add(end);
+                    cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(batchId);
+
+                    cmd.ExecuteNonQuery();
+
                 } else {
                     cn.Execute(sql, new {
                         Inserts = Convert.ToInt64(Context.Entity.Inserts),

@@ -252,9 +252,6 @@ namespace Transformalize.Providers.Ado.Ext {
 
         public static string SqlCreateControl(this OutputContext c, IConnectionFactory cf) {
             var dateType = (cf.AdoProvider == AdoProvider.PostgreSql ? "TIMESTAMP" : "DATETIME");
-            if (cf.AdoProvider == AdoProvider.Access) {
-                dateType = "DATE";
-            }
             var longType = cf.AdoProvider == AdoProvider.Access ? "LONG" : "BIGINT";
             var stringType = (cf.AdoProvider == AdoProvider.SqlServer || cf.AdoProvider == AdoProvider.SqlCe ? "N" : string.Empty);
 
@@ -278,7 +275,7 @@ namespace Transformalize.Providers.Ado.Ext {
         public static string SqlCreateOutputView(this OutputContext c, IConnectionFactory cf) {
             var columnNames = string.Join(",", c.GetAllEntityOutputFields().Select(f => cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
             var viewName = cf.AdoProvider == AdoProvider.Access ? c.Entity.OutputViewName(c.Process.Name) : cf.Enclose(c.Entity.OutputViewName(c.Process.Name));
-            var sql = $@"CREATE VIEW {viewName} AS SELECT {columnNames} FROM {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
+            var sql = $@"CREATE VIEW {cf.Enclose(viewName)} AS SELECT {columnNames} FROM {cf.Enclose(c.Entity.OutputTableName(c.Process.Name))}{(cf.AdoProvider == AdoProvider.Access ? "" : ";")}";
             c.Debug(() => sql);
             return sql;
         }
@@ -300,13 +297,17 @@ namespace Transformalize.Providers.Ado.Ext {
             var master = c.Process.Entities.First(e => e.IsMaster);
             var masterAlias = Utility.GetExcelName(master.Index);
             var builder = new StringBuilder();
+            var leaves = c.Process.Entities.Where(e => !e.IsMaster).ToArray();
+
+            var open = cf.AdoProvider != AdoProvider.Access ? string.Empty : new string('(', leaves.Length);
+            var close = cf.AdoProvider != AdoProvider.Access ? string.Empty : ")";
 
             var froms = new List<string>(c.Process.Entities.Count)
             {
-                $"FROM {cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias}"
+                $"FROM {open}{cf.Enclose(master.OutputTableName(c.Process.Name))} {masterAlias}"
             };
 
-            foreach (var entity in c.Process.Entities.Where(e => !e.IsMaster)) {
+            foreach (var entity in leaves) {
                 builder.Clear();
                 builder.AppendFormat("LEFT OUTER JOIN {0} {1} ON (", cf.Enclose(entity.OutputTableName(c.Process.Name)), Utility.GetExcelName(entity.Index));
 
@@ -324,7 +325,7 @@ namespace Transformalize.Providers.Ado.Ext {
                     builder.Remove(builder.Length - 5, 5);
                 }
 
-                builder.Append(") ");
+                builder.Append($"){close}");
                 froms.Add(builder.ToString());
             }
 
@@ -338,7 +339,7 @@ namespace Transformalize.Providers.Ado.Ext {
             var masterNames = string.Join(",", starFields[0].Select(f => masterAlias + "." + cf.Enclose(f.FieldName()) + " AS " + cf.Enclose(f.Alias)));
             string slaveNames;
             if (cf.AdoProvider == AdoProvider.Access) {
-                slaveNames = string.Join(",", starFields[1].Select(f => "IIF(ISNULL(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + "), " + DefaultValue(f, cf) + ")," + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ") AS " + cf.Enclose(f.Alias)));
+                slaveNames = string.Join(",", starFields[1].Select(f => "IIF(ISNULL(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + "), " + DefaultValue(f, cf) + "," + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ") AS " + cf.Enclose(f.Alias)));
             } else {
                 slaveNames = string.Join(",", starFields[1].Select(f => "COALESCE(" + Utility.GetExcelName(f.EntityIndex) + "." + cf.Enclose(f.FieldName()) + ", " + DefaultValue(f, cf) + ") AS " + cf.Enclose(f.Alias)));
             }

@@ -188,7 +188,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // PROCESS INITIALIZER
                 builder.Register<IInitializer>(ctx => {
                     var output = ctx.Resolve<OutputContext>();
-                    return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+                    var adoInit = new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+                    switch (output.Connection.Provider) {
+                        case "access":
+                            return new AccessInitializer(adoInit, output);
+                        default:
+                            return adoInit;
+                    }
                 }).As<IInitializer>();
 
                 // ENTITIES
