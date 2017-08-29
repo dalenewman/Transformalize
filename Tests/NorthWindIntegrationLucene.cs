@@ -52,7 +52,7 @@ namespace Tests {
         
         [TestMethod]
         [Ignore]
-        public void Integration() {
+        public void Lucene_Integration() {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ShorthandModule());

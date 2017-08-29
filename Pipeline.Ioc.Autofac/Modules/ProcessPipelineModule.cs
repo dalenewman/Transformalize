@@ -85,6 +85,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     case "mysql":
                     case "postgresql":
                     case "sqlce":
+                    case "access":
                     case "sqlite":
                         pipeline.Register(ctx.Resolve<IRead>());
                         pipeline.Register(ctx.Resolve<IWrite>());

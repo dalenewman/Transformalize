@@ -22,6 +22,7 @@ using Transformalize.Configuration;
 namespace Transformalize.Providers.Ado {
     public class NullConnectionFactory : IConnectionFactory {
         public AdoProvider AdoProvider { get; } = AdoProvider.None;
+        public string Terminator { get; } = string.Empty;
 
         public IDbConnection GetConnection(string appName = null) {
             return null;

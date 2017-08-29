@@ -264,6 +264,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new MySqlUpdateMasterKeysQueryWriter(output, factory);
                             case "postgresql":
                                 return new PostgreSqlUpdateMasterKeysQueryWriter(output, factory);
+                            case "access":
+                                return new AccessUpdateMasterKeysQueryWriter(output, factory);
                             default:
                                 return new SqlServerUpdateMasterKeysQueryWriter(output, factory);
                         }
@@ -275,6 +277,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         switch (output.Connection.Provider) {
                             case "mysql":
                             case "postgresql":
+                            case "access":
                             case "sqlserver":
                                 return new AdoMasterUpdater(
                                     output,
@@ -282,7 +285,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     ctx.ResolveNamed<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys")
                                 );
                             case "sqlite":
-                            case "access":
                             case "sqlce":
                                 return new AdoTwoPartMasterUpdater(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
                             default:

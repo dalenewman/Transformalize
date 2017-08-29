@@ -56,6 +56,7 @@ namespace Transformalize.Providers.SqlServer {
         });
 
         public AdoProvider AdoProvider { get; } = AdoProvider.SqlServer;
+        public string Terminator { get; } = ";";
 
         public SqlServerConnectionFactory(Connection connection) {
             _c = connection;

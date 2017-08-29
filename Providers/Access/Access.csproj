@@ -42,6 +42,7 @@
     <Compile Include="AccessInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccessConnectionFactory.cs" />
+    <Compile Include="AccessUpdateMasterKeysQueryWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Compatibility\Transformalize.452\Transformalize.452.csproj">

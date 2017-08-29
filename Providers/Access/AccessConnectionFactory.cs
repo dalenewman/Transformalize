@@ -32,6 +32,7 @@ namespace Transformalize.Providers.Access {
         private static Dictionary<string, string> _types;
         private readonly Connection _c;
         public AdoProvider AdoProvider { get; } = AdoProvider.Access;
+        public string Terminator { get; } = string.Empty;
 
         private static Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
             {"int64", "LONG"},
@@ -39,7 +40,7 @@ namespace Transformalize.Providers.Access {
             {"long", "LONG"},
             {"boolean", "YESNO"},
             {"bool", "YESNO"},
-            {"string", "CHAR"},
+            {"string", "TEXT"},
             {"datetime", "DATETIME"},
             {"date", "DATE"},
             {"time", "DATE"},
@@ -95,12 +96,16 @@ namespace Transformalize.Providers.Access {
 
             if (length.ToUpper() == "(MAX)") {
                 length = string.Empty;
-                sqlDataType = f.Type == "byte[]" ? "BINARY" : "MEMO";
+                sqlDataType = f.Type == "byte[]" ? "OLEOBJECT" : "MEMO";
             } else {
-                if (sqlDataType == "CHAR" && int.TryParse(f.Length, out int intOut) && intOut > 255) {
+                if (sqlDataType == "TEXT" && int.TryParse(f.Length, out int intOut) && intOut > 255) {
                     length = string.Empty;
                     sqlDataType = "MEMO";
                 }
+            }
+
+            if (sqlDataType == "TEXT" && !f.VariableLength) {
+                sqlDataType = "CHAR";
             }
 
             return sqlDataType == "OLEOBJECT" ? "OLEOBJECT" : string.Concat(sqlDataType, length, dimensions);

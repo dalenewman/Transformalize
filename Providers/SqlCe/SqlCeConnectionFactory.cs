@@ -27,12 +27,13 @@ using Transformalize.Providers.Ado;
 
 namespace Transformalize.Providers.SqlCe {
     public class SqlCeConnectionFactory : IConnectionFactory {
-        static Dictionary<string, string> _types;
-        readonly Connection _c;
+        private static Dictionary<string, string> _types;
+        private readonly Connection _c;
 
         public AdoProvider AdoProvider { get; } = AdoProvider.SqlCe;
+        public string Terminator { get; } = ";";
 
-        static Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
+        private static Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
             {"int64", "BIGINT"},
             {"int", "INT"},
             {"long", "BIGINT"},
@@ -87,8 +88,8 @@ namespace Transformalize.Providers.SqlCe {
             return cs;
         }
 
-        static char L { get; } = '[';
-        static char R { get; } = ']';
+        private static char L { get; } = '[';
+        private static char R { get; } = ']';
 
         public string Enclose(string name) {
             return L + name + R;

@@ -46,7 +46,7 @@ namespace Tests {
 
         [TestMethod]
         [Ignore]
-        public void Integration() {
+        public void MySql_Integration() {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ShorthandModule());

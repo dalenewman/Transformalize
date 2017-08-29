@@ -66,14 +66,14 @@ namespace Transformalize.Providers.Ado {
                     entity.DbType = DbType.String;
                     entity.Value = Context.Entity.Alias;
 
-                    var end = cmd.CreateParameter();
-                    end.ParameterName = "End";
-                    end.DbType = DbType.Date;
-                    end.Value = DateTime.Now;
+                    var start = cmd.CreateParameter();
+                    start.ParameterName = "Start";
+                    start.DbType = _cf.AdoProvider == AdoProvider.Access ? DbType.Date : DbType.DateTime;
+                    start.Value = DateTime.Now;
 
                     cmd.Parameters.Add(batchId);
                     cmd.Parameters.Add(entity);
-                    cmd.Parameters.Add(end);
+                    cmd.Parameters.Add(start);
 
                     cmd.ExecuteNonQuery();
 
@@ -102,17 +102,17 @@ namespace Transformalize.Providers.Ado {
                     inserts.Value = Convert.ToInt32(Context.Entity.Inserts);
 
                     var updates = cmd.CreateParameter();
-                    updates.ParameterName = "updates";
+                    updates.ParameterName = "Updates";
                     updates.DbType = DbType.Int32;
                     updates.Value = Convert.ToInt32(Context.Entity.Updates);
 
                     var deletes = cmd.CreateParameter();
-                    deletes.ParameterName = "deletes";
+                    deletes.ParameterName = "Deletes";
                     deletes.DbType = DbType.Int32;
                     deletes.Value = Convert.ToInt32(Context.Entity.Deletes);
 
                     var end = cmd.CreateParameter();
-                    end.ParameterName = "end";
+                    end.ParameterName = "End";
                     end.DbType = DbType.Date;
                     end.Value = DateTime.Now;
 

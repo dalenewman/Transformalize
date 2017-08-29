@@ -52,6 +52,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
+                        case "access":
                         case "sqlce":
                         case "sqlserver":
                             if (connection != null)

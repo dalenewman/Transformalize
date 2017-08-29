@@ -41,9 +41,7 @@ namespace Transformalize.Providers.Ado {
 
         public void Write(IEnumerable<IRow> rows) {
             var sql = _context.SqlUpdateCalculatedFields(_parent, _cf);
-            var temp = new List<Field> { _context.Entity.TflKey() };
-            temp.AddRange(_context.Entity.CalculatedFields.Where(f => f.Output));
-            var fields = temp.ToArray();
+            var fields = _context.GetUpdateCalculatedFields().ToArray();
 
             using (var cn = _cf.GetConnection()) {
                 cn.Open();

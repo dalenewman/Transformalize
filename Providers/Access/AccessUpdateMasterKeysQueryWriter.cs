@@ -22,12 +22,12 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado;
 
-namespace Transformalize.Providers.SqlServer {
-    public class SqlServerUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
+namespace Transformalize.Providers.Access {
+    public class AccessUpdateMasterKeysQueryWriter : IWriteMasterUpdateQuery {
         private readonly PipelineContext _c;
         private readonly IConnectionFactory _cf;
 
-        public SqlServerUpdateMasterKeysQueryWriter(
+        public AccessUpdateMasterKeysQueryWriter(
             PipelineContext context,
             IConnectionFactory factory
         ) {
@@ -44,6 +44,8 @@ namespace Transformalize.Providers.SqlServer {
                It also keeps the master's batch id incrementing to indicate 
                updates for subsequent processes using this process' output as an input with TflBatchId 
                as a version field.
+
+               Access update goes like this: UPDATE, INNER JOIN, SET, then CRITERIA (no FROM)
             */
 
             var masterEntity = _c.Process.Entities.First(e => e.IsMaster);
@@ -52,20 +54,11 @@ namespace Transformalize.Providers.SqlServer {
 
             var entityAlias = _c.Entity.GetExcelName();
             var builder = new StringBuilder();
-            builder.AppendLine($"UPDATE {masterAlias}");
-            builder.Append("SET ");
-
-            var setPrefix = masterAlias + ".";
-
-            foreach (var field in _c.Entity.Fields.Where(f => f.KeyType.HasFlag(KeyType.Foreign))) {
-                builder.AppendLine($"{setPrefix}{_cf.Enclose(field.FieldName())} = {entityAlias}.{_cf.Enclose(field.FieldName())},");
-            }
-
-            builder.AppendLine($"{setPrefix}{_cf.Enclose(masterEntity.TflBatchId().FieldName())} = @TflBatchId");
-
-            builder.AppendFormat(" FROM {0} {1}", masterTable, masterAlias);
-
             var relationships = _c.Entity.RelationshipToMaster.Reverse().ToArray();
+
+            var open = new string('(', relationships.Length);
+
+            builder.AppendLine($"UPDATE {open}{masterTable} {masterAlias}");
 
             for (var r = 0; r < relationships.Length; r++) {
                 var relationship = relationships[r];
@@ -88,8 +81,18 @@ namespace Transformalize.Providers.SqlServer {
                         _cf.Enclose(rightAlias)
                     );
                 }
-                builder.AppendLine(")");
+                builder.AppendLine("))");  // closing the open above
             }
+
+            builder.Append("SET ");
+
+            var setPrefix = masterAlias + ".";
+
+            foreach (var field in _c.Entity.Fields.Where(f => f.KeyType.HasFlag(KeyType.Foreign))) {
+                builder.AppendLine($"{setPrefix}{_cf.Enclose(field.FieldName())} = {entityAlias}.{_cf.Enclose(field.FieldName())},");
+            }
+
+            builder.AppendLine($"{setPrefix}{_cf.Enclose(masterEntity.TflBatchId().FieldName())} = @TflBatchId");
 
             builder.Append("WHERE ");
 

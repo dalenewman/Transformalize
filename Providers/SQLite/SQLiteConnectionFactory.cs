@@ -25,10 +25,11 @@ using Transformalize.Providers.Ado;
 
 namespace Transformalize.Providers.SQLite {
     public class SqLiteConnectionFactory : IConnectionFactory {
-        static Dictionary<string, string> _types;
-        readonly Connection _c;
+        private static Dictionary<string, string> _types;
+        private readonly Connection _c;
 
         public AdoProvider AdoProvider { get; } = AdoProvider.SqLite;
+        public string Terminator { get; } = ";";
 
         public Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
             {"int64", "BIGINT"},
@@ -75,8 +76,8 @@ namespace Transformalize.Providers.SQLite {
             return _c.ConnectionString;
         }
 
-        static char L { get; } = '"';
-        static char R { get; } = '"';
+        private static char L { get; } = '"';
+        private static char R { get; } = '"';
 
         public string Enclose(string name) {
             return L + name + R;

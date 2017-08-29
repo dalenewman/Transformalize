@@ -31,6 +31,7 @@ namespace Transformalize.Providers.PostgreSql {
         readonly Connection _c;
 
         public AdoProvider AdoProvider { get; } = AdoProvider.PostgreSql;
+        public string Terminator { get; } = ";";
 
         //select * from pg_get_keywords() where catcode = 'R'
         public HashSet<string> Reserved => _reserved ??

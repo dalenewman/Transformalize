@@ -27,9 +27,8 @@ using Transformalize.Providers.Ado;
 namespace Transformalize.Providers.Oracle {
 
     public class OracleConnectionFactory : IConnectionFactory {
-
-        static Dictionary<string, string> _types;
-        readonly Connection _c;
+        private static Dictionary<string, string> _types;
+        private readonly Connection _c;
         public static Dictionary<string, string> Types => _types ?? (_types = new Dictionary<string, string> {
             {"int64", "LONG"},
             {"int", "INT"},
@@ -56,6 +55,7 @@ namespace Transformalize.Providers.Oracle {
         });
 
         public AdoProvider AdoProvider { get; } = AdoProvider.MySql;
+        public string Terminator { get; } = ";";
 
         public OracleConnectionFactory(Connection connection) {
             _c = connection;
@@ -82,8 +82,8 @@ namespace Transformalize.Providers.Oracle {
 
         }
 
-        static char L { get; } = '"';
-        static char R { get; } = '"';
+        private static char L { get; } = '"';
+        private static char R { get; } = '"';
 
         public string Enclose(string name) {
             return L + name + R;

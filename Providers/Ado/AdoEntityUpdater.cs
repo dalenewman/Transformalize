@@ -47,7 +47,7 @@ namespace Transformalize.Providers.Ado {
                     foreach (var batch in rows.Partition(_output.Entity.UpdateSize)) {
                         var batchCount = Convert.ToUInt32(cn.Execute(
                             query,
-                            batch.Select(r => r.ToExpandoObject(_output.OutputFields)),
+                            batch.Select(r => r.ToExpandoObject(_output.GetUpdateFields().ToArray())),
                             trans,
                             0,
                             CommandType.Text

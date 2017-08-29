@@ -26,5 +26,6 @@ namespace Transformalize.Providers.Ado {
         string Enclose(string name);
         string SqlDataType(Field field);
         AdoProvider AdoProvider { get; }
+        string Terminator { get; }
     }
 }

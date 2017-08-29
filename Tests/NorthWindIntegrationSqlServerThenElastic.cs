@@ -61,7 +61,7 @@ namespace Tests {
 
         [TestMethod]
         [Ignore]
-        public void Integration() {
+        public void SqlServer_Elasticsearch_Integration() {
 
             var builder = new ContainerBuilder();
             builder.RegisterModule(new ShorthandModule());
