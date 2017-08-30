@@ -45,12 +45,13 @@ namespace Transformalize.Providers.Ado {
             builder.AppendLine($"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)})");
             builder.AppendLine($"SELECT {_output.SqlStarFields(_cf)}");
 
+            var close = _cf.AdoProvider != AdoProvider.Access ? string.Empty : ")";
+
             foreach (var from in _output.SqlStarFroms(_cf)) {
                 builder.AppendLine(@from);
             }
 
-            builder.AppendFormat("LEFT OUTER JOIN {0} flat ON (flat.{1} = {2}.{3})", _cf.Enclose(_output.Process.Flat), _model.EnclosedKeyLongName, masterAlias, _model.EnclosedKeyShortName);
-
+            builder.AppendLine($"LEFT OUTER JOIN {_cf.Enclose(_output.Process.Flat)} flat ON (flat.{_model.EnclosedKeyLongName} = {masterAlias}.{_model.EnclosedKeyShortName}){close}");
             builder.AppendLine($" WHERE flat.{_model.EnclosedKeyLongName} IS NULL AND {masterAlias}.{_model.Batch} > @Threshold; ");
 
             var command = builder.ToString();

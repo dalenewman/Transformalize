@@ -122,7 +122,6 @@
     <Compile Include="IIfTransform.cs" />
     <Compile Include="InTransform.cs" />
     <Compile Include="Inventory.cs" />
-    <Compile Include="InventoryIntegrationSqlServer.cs" />
     <Compile Include="JavascriptTransform.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />

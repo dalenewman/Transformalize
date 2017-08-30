@@ -42,8 +42,8 @@ namespace Transformalize.Providers.Ado {
             var message = "Ok";
 
             var sqlInsert = _cf.AdoProvider == AdoProvider.SqlCe ?
-                $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) {_context.SqlSelectStar(_cf)};" :
-                $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) SELECT {string.Join(",", _model.Aliases)} FROM {_model.Star};";
+                $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) {_context.SqlSelectStar(_cf)}{_cf.Terminator}" :
+                $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) SELECT {string.Join(",", _model.Aliases)} FROM {_model.Star}{_cf.Terminator}";
 
             using (var cn = _cf.GetConnection()) {
                 cn.Open();

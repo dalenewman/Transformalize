@@ -28,7 +28,7 @@ using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityInserter : IWrite {
-        readonly OutputContext _output;
+        private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
 
         public AdoEntityInserter(OutputContext output, IConnectionFactory cf) {
@@ -46,36 +46,13 @@ namespace Transformalize.Providers.Ado {
                 try {
                     foreach (var batch in rows.Partition(_output.Entity.InsertSize)) {
                         var records = batch.Select(r => r.ToExpandoObject(_output.OutputFields));
-                        uint batchCount;
-                        if (_cf.AdoProvider == AdoProvider.Access) {  // hack for access
-                            try {
-                                batchCount = Convert.ToUInt32(cn.Execute(
-                                    sql,
-                                    records,
-                                    trans,
-                                    0,
-                                    CommandType.Text
-                                ));
-                            } catch (Exception) {
-
-                                // just try again (works on second attempt)
-                                batchCount = Convert.ToUInt32(cn.Execute(
-                                    sql,
-                                    records,
-                                    trans,
-                                    0,
-                                    CommandType.Text
-                                ));
-                            }
-                        } else {
-                            batchCount = Convert.ToUInt32(cn.Execute(
+                        var batchCount = Convert.ToUInt32(cn.Execute(
                                 sql,
                                 records,
                                 trans,
                                 0,
                                 CommandType.Text
                             ));
-                        }
                         count += batchCount;
                     }
                     trans.Commit();

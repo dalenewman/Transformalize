@@ -44,6 +44,11 @@ namespace Transformalize.Providers.Ado {
         }
 
         public override void Start() {
+
+            if (_cf.AdoProvider == AdoProvider.Access) {
+                SqlMapper.AddTypeMap(typeof(DateTime), DbType.Date);
+            }
+
             _stopWatch.Start();
             base.Start();
 

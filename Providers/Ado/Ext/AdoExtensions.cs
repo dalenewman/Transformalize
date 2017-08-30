@@ -208,7 +208,7 @@ namespace Transformalize.Providers.Ado.Ext {
         }
 
         public static string SqlDropOutputView(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {c.Entity.OutputViewName(c.Process.Name)}{cf.Terminator}";
+            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))}{cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }

@@ -38,12 +38,15 @@ namespace Transformalize.Providers.Ado {
 
         public ActionResponse Execute() {
 
+            var open = _cf.AdoProvider == AdoProvider.Access ? "((" : string.Empty;
+            var close = _cf.AdoProvider == AdoProvider.Access ? ")" : string.Empty;
+
             var command = $@"
 INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)})
 SELECT s.{string.Join(",s.", _model.Aliases)}
-FROM {_model.Master} m
-LEFT OUTER JOIN {_model.Flat} f ON (f.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName})
-INNER JOIN {_model.Star} s ON (s.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName})
+FROM {open}{_model.Master} m
+LEFT OUTER JOIN {_model.Flat} f ON (f.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName}){close}
+INNER JOIN {_model.Star} s ON (s.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName}){close}
 WHERE f.{_model.EnclosedKeyLongName} IS NULL
 AND m.{_model.Batch} > @Threshold;";
 
