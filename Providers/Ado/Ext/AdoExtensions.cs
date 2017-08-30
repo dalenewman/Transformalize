@@ -99,15 +99,34 @@ namespace Transformalize.Providers.Ado.Ext {
 
             switch (cf.AdoProvider) {
                 case AdoProvider.SqlServer:
+                    if (string.IsNullOrWhiteSpace(orderBy)) {
+                        orderBy = GetRequiredOrderBy(fields, cf);
+                    }
+                    var subQuery = $@"SELECT {fieldList},ROW_NUMBER() OVER ({orderBy}) AS TflRow FROM {table} WITH (NOLOCK) {filter}";
+                    return $"WITH p AS ({subQuery}) SELECT {fieldList} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
                 case AdoProvider.SqlCe:
                     if (string.IsNullOrWhiteSpace(orderBy)) {
                         orderBy = GetRequiredOrderBy(fields, cf);
                     }
-                    if (cf.AdoProvider == AdoProvider.SqlServer) {
-                        var subQuery = $@"SELECT {fieldList},ROW_NUMBER() OVER ({orderBy}) AS TflRow FROM {table} WITH (NOLOCK) {filter}";
-                        return $"WITH p AS ({subQuery}) SELECT {fieldList} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
-                    }
                     return $"SELECT {fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.PageSize} ROWS ONLY";
+                case AdoProvider.Access:
+                    // todo: make sure primary key is always include in sort to avoid wierd access top n behavior, see: https://stackoverflow.com/questions/887787/access-sql-using-top-5-returning-more-than-5-results
+                    if (string.IsNullOrWhiteSpace(orderBy)) {
+                        orderBy = GetRequiredOrderBy(fields, cf);
+                    }
+                    var xFieldList = string.Join(",", fields.Select(f => "x." + cf.Enclose(f.Name)));
+                    var yFieldList = string.Join(",", fields.Select(f => "y." + cf.Enclose(f.Name)));
+                    var flippedOrderBy = orderBy.Replace(" ASC", " ^a").Replace(" DESC"," ^d").Replace(" ^a"," DESC").Replace(" ^d"," ASC");
+
+                    return $@"SELECT {yFieldList}
+FROM (
+    SELECT TOP {c.Entity.PageSize} {xFieldList}
+    FROM (
+        SELECT TOP {end} {fieldList} FROM {table} {filter} {orderBy}
+    ) x
+   {flippedOrderBy}
+) y
+{orderBy}";
                 case AdoProvider.PostgreSql:
                     return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.PageSize} OFFSET {start}";
                 case AdoProvider.MySql:
@@ -406,9 +425,9 @@ namespace Transformalize.Providers.Ado.Ext {
         }
 
         private static string GetRequiredOrderBy(Field[] fields, IConnectionFactory cf) {
-            var keys = string.Join(", ", fields.Where(f => f.PrimaryKey).Select(f => cf.Enclose(f.Name)));
+            var keys = string.Join(", ", fields.Where(f => f.PrimaryKey).Select(f => cf.Enclose(f.Name) + " ASC"));
             if (string.IsNullOrEmpty(keys)) {
-                keys = fields.First(f => f.Input).Name;
+                keys = fields.First(f => f.Input).Name + " ASC";
             }
             return $" ORDER BY {keys}";
         }

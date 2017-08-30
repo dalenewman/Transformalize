@@ -57,8 +57,8 @@ It works with many data sources:
                         </tr>
                         <tr>
                             <td>Access (32-bit)</td>
-                            <td style="color:green"></td>
-                            <td style="color:green">WIP</td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green">BETA</td>
                         </tr>
                     </tbody>
                 </table>
@@ -100,13 +100,13 @@ It works with many data sources:
                         </tr>
                         <tr>
                             <td>Console</td>
-                            <td style="color:green">WIP</td>
+                            <td style="color:green">BETA</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
                             <td title="SQL Server Analysis Services">SSAS</td>
                             <td style="color:green"></td>
-                            <td style="color:green">WIP</td>
+                            <td style="color:green">BETA</td>
                         </tr>
                         <tr>
                             <td title="RethinkDB">RethinkDB</td>
@@ -154,15 +154,15 @@ glance at part of the Northwind schema below.
 <img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
 The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables.  It centers around *Order Details*. It is our choice 
-to de-normalize because:
+tables.  *Order Details* is our choice to de-normalize because:
 
 1. It contains sales transactions.
 2. It's related to everything.
 3. It's a [fact table](https://en.wikipedia.org/wiki/Fact_table) (in data-warehousing terms).
 
-So let's start by writing our first arrangment that defines 
-the *input* as Northwind's `Order Details` table.  Open your editor and paste this in:
+Let's write our first arrangment that defines 
+the *input* as Northwind's `Order Details` table. 
+Open your editor and paste this in:
 
 ```xml
 <cfg name="NorthWind">
@@ -322,8 +322,7 @@ info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.1715532
 </pre>
 
-Now *Order Details* is written to a SQLite database 
-instead of the console.  This frees up the console 
+Now *Order Details* is written to SQLite, which frees up the console 
 to display logging.
 
 Initializing does three things:
@@ -365,7 +364,7 @@ info  | NorthWind |               | Time elapsed: 00:00:00.5755261
 To determine if an update is necessary, `tfl` reads input 
 and compares it with output.  If a row is new or different, 
 it is inserted or updated. While Transformalize uses keys and hashes 
-to perform comparisons, it is an unnecessary overhead when the input 
+to perform comparisons, it is unnecessary when the input 
 provider is capable of tracking and returning new data.
 
 Providers are capable when they are queryable, 
@@ -398,8 +397,8 @@ field to *Order Details* and marking it as the `version` in the entity:
   </add>
 </entities>
 ```
-When adding an output field to an entity, you must re-initialize. So, 
-let's initialize and run `tfl` again:
+When adding an output field to an entity, it changes the output structure. 
+So, it must be re-initialized like so:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -415,17 +414,15 @@ info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.106
 info  | NorthWind |               | Time elapsed: 00:00:00.3498366
 </pre>
 
-With a `version` in place, the second run doesn't have to read 
-and compare the data.  Transformalize used the `version` to avoid reading and 
-comparing records that didn't change. This makes an incremental more efficient.
+With a `version` in place, the second run doesn't read and compare 
+un-changed data.  This makes an incremental update more efficient.
 
 ### Denormalization
 
-Related data in NorthWind is stored in many different tables. 
-It's normalized.  In other words, it's optimized for efficient storage 
-and integrity.  It may be retrieved (queried), but not without the 
-overhead of combining (aka joining) busy tables at run-time. This makes 
-retrieval slower.
+Related data in NorthWind is stored in many tables. It's normalized. 
+In other words, it's optimized for efficient storage and integrity. 
+It may be retrieved (queried), but not without the overhead of 
+combining (aka joining) busy tables at run-time. This makes retrieval slower.
 
 De-normalization is the process of bringing related data 
 back together.  Data is duplicated to remove the need for joining 
@@ -445,11 +442,11 @@ to add the *Orders* and *Products* entities to our arrangement.
 
 Here is the process for adding an entity:
 
-1. Identify or add a version field to the source records if possible
+1. Identify or add a version field to the source records if possible (optional)
 1. Add the entity in the `<entities/>` section.
 1. Run `tfl` in `check` mode to get the field definitions.  
 1. Add the fields to your new entity (in the arrangement)
-1. Set the version attribute on the entity
+1. Set the version attribute on the entity (optional)
 1. Relate the new entity to the first entity
   
 Follow the first 5 steps to add *Orders* to the arrangement. When finished, 
@@ -487,10 +484,8 @@ follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your 
 
 ```xml
   <relationships>
-    <add left-entity="Order Details" 
-         left-field="OrderID" 
-         right-entity="Orders" 
-         right-field="OrderID"/>
+    <add left-entity="Order Details" left-field="OrderID" 
+         right-entity="Orders" right-field="OrderID"/>
   </relationships>
 ```
 
