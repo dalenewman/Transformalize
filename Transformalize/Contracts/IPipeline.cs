@@ -27,6 +27,8 @@ namespace Transformalize.Contracts {
         void Register(IWrite writer);
         void Register(IUpdate updater);
         void Register(IEntityDeleteHandler deleteHandler);
+        void Register(IOutputProvider output);
+        void Register(IInputProvider input);
         void Execute();
 
         IContext Context { get; }

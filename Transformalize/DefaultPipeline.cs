@@ -30,6 +30,8 @@ namespace Transformalize {
         protected IEntityDeleteHandler DeleteHandler { get; private set; }
         protected List<ITransform> Transformers { get; }
         protected List<IMapReader> MapReaders { get; }
+        protected IOutputProvider OutputProvider { get; private set; }
+        protected IInputProvider InputProvider { get; private set; }
 
         public IContext Context { get; }
         public bool Valid { get; private set; }
@@ -59,6 +61,14 @@ namespace Transformalize {
         public void Register(IRead reader) {
             Context.Debug(() => $"Registering {reader.GetType().Name}.");
             Reader = reader;
+        }
+
+        public void Register(IOutputProvider output) {
+            OutputProvider = output;
+        }
+
+        public void Register(IInputProvider input) {
+            InputProvider = input;
         }
 
         public void Register(ITransform transform) {
@@ -103,7 +113,7 @@ namespace Transformalize {
                             }
                         }
                     }
-                    return Transformers.Aggregate(Reader.Read(), (current, transformer) => transformer.Transform(current));
+                    return Transformers.Aggregate(Reader == null ? InputProvider.Read() : Reader.Read(), (current, transformer) => transformer.Transform(current));
                 }
                 Context.Info("Change Detected: No.");
             }
@@ -114,7 +124,11 @@ namespace Transformalize {
             _controller.Start();
             if (Valid) {
                 DeleteHandler?.Delete();
-                Writer.Write(Read());
+                if (Writer == null) {
+                    OutputProvider.Write(Read());
+                } else {
+                    Writer.Write(Read());
+                }
                 Updater.Update();
             }
             _controller.End();

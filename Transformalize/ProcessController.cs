@@ -134,7 +134,11 @@ namespace Transformalize {
         }
 
         public IEnumerable<IRow> Read() {
-            return _pipelines.First().Read();
+            foreach (var pl in _pipelines) {
+                foreach (var row in pl.Read()) {
+                    yield return row;
+                }
+            };
         }
 
         public void Dispose() {

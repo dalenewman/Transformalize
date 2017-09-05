@@ -22,6 +22,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
+using Transformalize.Provider.Internal;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -55,7 +56,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 var provider = process.Output().Provider;
 
                 // TODO: rely on IInputProvider's Read method instead (after every provider has one)
-                pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
+                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
+                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
                 // transform
                 if (!process.ReadOnly) {
@@ -73,7 +75,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 // writer, TODO: rely on IOutputProvider instead
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : new NullWriter());
+                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
+                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
 
                 // updater
                 pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));

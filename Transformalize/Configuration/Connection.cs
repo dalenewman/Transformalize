@@ -28,8 +28,10 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string ConnectionString { get; set; }
+
         [Cfg(value = "")]
         public string ContentType { get; set; }
+
         [Cfg(value = Constants.DefaultSetting)]
         public string Data { get; set; }
         [Cfg(value = "")]
@@ -304,5 +306,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value="")]
         public string Command { get; set; }
+
+        [Cfg(value="")]
+        public string Template { get; set; }
     }
 }

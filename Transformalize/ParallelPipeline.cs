@@ -81,5 +81,13 @@ namespace Transformalize {
         public void Dispose() {
             _pipeline.Dispose();
         }
+
+        public void Register(IOutputProvider output) {
+            _pipeline.Register(output);
+        }
+
+        public void Register(IInputProvider input) {
+            _pipeline.Register(input);
+        }
     }
 }

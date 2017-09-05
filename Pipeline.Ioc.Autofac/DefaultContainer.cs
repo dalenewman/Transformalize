@@ -53,6 +53,11 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new SSASModule(process).Configure);
             builder.RegisterCallback(new RethinkDBModule(process).Configure);
 
+            // template providers
+            builder.RegisterCallback(new WordModule(process).Configure);
+            builder.RegisterCallback(new RazorModule(process).Configure);
+
+            // etc
             builder.RegisterCallback(new MapModule(process).Configure);
             builder.RegisterCallback(new TemplateModule(process).Configure);
             builder.RegisterCallback(new ActionModule(process).Configure);

@@ -75,6 +75,7 @@ namespace Transformalize {
             "padright",
             "pascalize",
             "pluralize",
+            "prepend",
             "razor",
             "regexreplace",
             "remove",

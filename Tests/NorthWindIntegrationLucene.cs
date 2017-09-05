@@ -59,7 +59,6 @@ namespace Tests {
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 
-
             // CORRECT DATA AND INITIAL LOAD
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
                 cn.Open();

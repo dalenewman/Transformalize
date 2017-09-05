@@ -16,26 +16,46 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Transformalize.Configuration;
+using DocumentFormat.OpenXml.Packaging;
+using OpenXmlPowerTools;
 using Transformalize.Contracts;
+using Field = Transformalize.Configuration.Field;
 
 namespace Transformalize.Providers.OpenXml {
     public class WordWriter : IWrite {
 
         private readonly FileInfo _fileInfo;
         private readonly Field[] _fields;
+        private readonly IConnectionContext _connectionContext;
 
         public WordWriter(IConnectionContext context) {
+            _connectionContext = context;
             _fileInfo = new FileInfo(context.Connection.File);
             _fields = context.Entity.GetAllOutputFields().Where(f => !f.System).ToArray();
         }
 
         public void Write(IEnumerable<IRow> rows) {
+            WordprocessingDocument doc;
+
+            var fileInfo = new FileInfo(_connectionContext.Connection.File);
+
+            if (fileInfo.Extension.Equals(".doc", StringComparison.OrdinalIgnoreCase)) {
+                doc = WordprocessingDocument.Open(new DocConverter().Convert(_connectionContext), true);
+            } else {
+                doc = WordprocessingDocument.Open(fileInfo.FullName, true);
+            }
+
+            var mailMerges = doc.MainDocumentPart.DocumentSettingsPart.GetXDocument().Descendants().Where(d => d.Name == W.mailMerge);
+
+            foreach (var mm in mailMerges) {
+                Console.WriteLine(mm.Value);
+            }
+
             foreach (var row in rows) {
-                // mail merge document
             }
         }
 

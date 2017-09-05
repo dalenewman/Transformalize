@@ -130,6 +130,7 @@
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
+    <Compile Include="Modules\RazorModule.cs" />
     <Compile Include="Modules\WordModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />

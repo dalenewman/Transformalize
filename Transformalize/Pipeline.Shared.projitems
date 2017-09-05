@@ -124,6 +124,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\PrependTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatPhoneTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />

@@ -30,8 +30,10 @@ namespace Transformalize.Providers.Ado {
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
         private readonly IDbConnection _cn;
+        private readonly IWrite _writer;
 
-        public AdoOutputProvider(OutputContext context, IConnectionFactory cf) {
+        public AdoOutputProvider(OutputContext context, IConnectionFactory cf, IWrite writer) {
+            _writer = writer;
             _context = context;
             _cf = cf;
             _cn = cf.GetConnection();
@@ -110,7 +112,7 @@ namespace Transformalize.Providers.Ado {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            throw new NotImplementedException();
+            _writer.Write(rows);
         }
 
         public void Dispose() {

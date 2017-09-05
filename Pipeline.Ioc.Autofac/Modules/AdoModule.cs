@@ -200,10 +200,62 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // ENTITIES
                 foreach (var entity in _process.Entities) {
 
+                    builder.Register<IOutputProvider>(ctx => {
 
-                    builder.Register<IOutputProvider>((ctx) => {
+                        IWrite writer;
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new AdoOutputProvider(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
+                        var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
+
+                        // matcher determines what's an update vs. and insert
+                        ITakeAndReturnRows matcher;
+                        if (entity.Update) {
+                            switch (output.Connection.Provider) {
+                                case "sqlite":
+                                    matcher = new TypedEntityMatchingKeysReader(new AdoEntityMatchingKeysReader(output, cf, rowFactory), output);
+                                    break;
+                                default:
+                                    matcher = new AdoEntityMatchingKeysReader(output, cf, rowFactory);
+                                    break;
+                            }
+                        } else {
+                            matcher = new NullTakeAndReturnRows();
+                        }
+
+                        switch (output.Connection.Provider) {
+                            case "sqlserver":
+                                writer = new SqlServerWriter(
+                                    output,
+                                    cf,
+                                    matcher,
+                                    new AdoEntityUpdater(output, cf)
+                                );
+                                break;
+                            case "sqlce":
+                                writer = new SqlCeWriter(
+                                    output,
+                                    cf,
+                                    matcher,
+                                    new AdoEntityUpdater(output, cf)
+                                );
+                                break;
+                            case "mysql":
+                            case "postgresql":
+                            case "access":
+                            case "sqlite":
+                                writer = new AdoEntityWriter(
+                                    output,
+                                    matcher,
+                                    new AdoEntityInserter(output, cf),
+                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
+                                );
+                                break;
+                            default:
+                                writer = new NullWriter(output);
+                                break;
+                        }
+
+                        return new AdoOutputProvider(output, cf, writer);
                     }).Named<IOutputProvider>(entity.Key);
 
                     // ENTITY OUTPUT CONTROLLER
@@ -238,22 +290,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
 
                     }).Named<IOutputController>(entity.Key);
-
-                    // OUTPUT ROW MATCHER
-                    builder.Register(ctx => {
-                        if (!entity.Update)
-                            return new NullTakeAndReturnRows();
-
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
-                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                        switch (output.Connection.Provider) {
-                            case "sqlite":
-                                return new TypedEntityMatchingKeysReader(new AdoEntityMatchingKeysReader(output, cf, rowFactory), output);
-                            default:
-                                return (ITakeAndReturnRows)new AdoEntityMatchingKeysReader(output, cf, rowFactory);
-                        }
-                    }).Named<ITakeAndReturnRows>(entity.Key);
 
                     // MASTER UPDATE QUERY
                     builder.Register<IWriteMasterUpdateQuery>(ctx => {
@@ -291,41 +327,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                 return new NullMasterUpdater();
                         }
                     }).Named<IUpdate>(entity.Key);
-
-                    // WRITER
-                    builder.Register<IWrite>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-
-                        switch (output.Connection.Provider) {
-                            case "sqlserver":
-                                return new SqlServerWriter(
-                                    output,
-                                    cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
-                                );
-                            case "sqlce":
-                                return new SqlCeWriter(
-                                    output,
-                                    cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
-                                );
-                            case "mysql":
-                            case "postgresql":
-                            case "access":
-                            case "sqlite":
-                                return new AdoEntityWriter(
-                                    output,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityInserter(output, cf),
-                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
-                                );
-                            default:
-                                return new NullWriter(output);
-                        }
-                    }).Named<IWrite>(entity.Key);
 
                     // DELETE HANDLER
                     if (entity.Delete) {

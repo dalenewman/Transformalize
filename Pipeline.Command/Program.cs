@@ -24,7 +24,7 @@ namespace Transformalize.Command {
     class Program {
         static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
 
-        static void Main(string[] args) {
+        private static void Main(string[] args) {
 
             Console.CancelKeyPress += (sender, eArgs) => {
                 QuitEvent.Set();
