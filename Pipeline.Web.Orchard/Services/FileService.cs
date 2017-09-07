@@ -8,7 +8,6 @@ using Orchard.ContentManagement;
 using Orchard.ContentPermissions.Models;
 using Orchard.Core.Common.Models;
 using Orchard.Core.Title.Models;
-using Orchard.Environment.Extensions;
 using Orchard.FileSystems.AppData;
 using Orchard.Localization;
 using Orchard.Logging;
@@ -75,11 +74,13 @@ namespace Pipeline.Web.Orchard.Services {
 
             var exportFile = string.Format("{0}-{1}-{2}", _orchardServices.WorkContext.CurrentUser.UserName, _clock.UtcNow.ToString(FileTimestamp), Path.GetFileName(input.FileName));
 
-            if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
-                _appDataFolder.CreateDirectory(Common.FileFolder);
+            var now = DateTime.UtcNow;
+            var path = Path.Combine(Common.FileFolder, now.Year.ToString(), now.ToString("MM-MMM"), now.ToString("dd"));
+            if (!_appDataFolder.DirectoryExists(path)) {
+                _appDataFolder.CreateDirectory(path);
             }
 
-            part.FullPath = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, exportFile));
+            part.FullPath = _appDataFolder.MapPath(_appDataFolder.Combine(path, exportFile));
             part.Direction = "In";
             input.SaveAs(part.FullPath);
             _orchardServices.ContentManager.Create(part);
@@ -99,13 +100,14 @@ namespace Pipeline.Web.Orchard.Services {
 
         public PipelineFilePart Create(string name, string extension) {
 
-            var file = string.Format("{0}-{1}-{2}.{3}",
-                _orchardServices.WorkContext.CurrentUser.UserName,
-                _clock.UtcNow.ToString(FileTimestamp),
-                name,
-                extension.TrimStart(".".ToCharArray())
-            );
-            var fileFolder = Common.FileFolder;
+            var file = string.Format("{0}-{1}-{2}.{3}", _orchardServices.WorkContext.CurrentUser.UserName, _clock.UtcNow.ToString(FileTimestamp), name, extension.TrimStart(".".ToCharArray()));
+
+            var now = DateTime.UtcNow;
+            var fileFolder = Path.Combine(Common.FileFolder, now.Year.ToString(), now.ToString("MM-MMM"), now.ToString("dd"));
+            if (!_appDataFolder.DirectoryExists(fileFolder)) {
+                _appDataFolder.CreateDirectory(fileFolder);
+            }
+
             if (!_appDataFolder.DirectoryExists(fileFolder)) {
                 _appDataFolder.CreateDirectory(fileFolder);
             }

@@ -32,6 +32,7 @@ namespace Pipeline.Web.Orchard {
             return new[] {
                 RouteDescriptorWithId("Api", "Cfg"),
                 RouteDescriptorWithId("Api", "Check"),
+                RouteDescriptorWithId("Api", "Form"),
                 RouteDescriptorWithId("Api", "Run"),
 
                 RouteDescriptor("File","Upload"),
@@ -41,6 +42,7 @@ namespace Pipeline.Web.Orchard {
                 RouteDescriptorWithTagFilter("File", "List"),
 
                 RouteDescriptorWithId("Cfg", "Report"),
+                RouteDescriptorWithId("Cfg","Form"),
                 RouteDescriptorWithId("Cfg", "Download"),
                 RouteDescriptorWithTagFilter("Cfg", "List"),
             };

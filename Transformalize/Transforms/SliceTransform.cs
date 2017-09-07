@@ -26,7 +26,6 @@ namespace Transformalize.Transforms {
     public class SliceTransform : StringTransform {
         private readonly Field _input;
         private readonly char[] _separator;
-        private readonly bool _convert;
         private readonly int? _start;
         private readonly int? _end;
         private readonly int? _step;

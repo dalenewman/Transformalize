@@ -92,29 +92,29 @@ namespace Pipeline.Web.Orchard.Services {
 
         private ShorthandCustomizer BuildShortHandCustomizer() {
             var root = new ShorthandRoot();
-            root.Signatures.Add(new Signature() { Name = "none" });
+            root.Signatures.Add(new Signature { Name = "none" });
             root.Signatures.Add(Simple("format"));
             root.Signatures.Add(Simple("length"));
             root.Signatures.Add(Simple("separator", ","));
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "separator-space",
                 Parameters = new List<Parameter> { new Parameter { Name = "separator", Value = " " } }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "padding",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "total-width"},
                     new Parameter {Name = "padding-char", Value = "0"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "timezone",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "from-time-zone"},
                     new Parameter {Name = "to-time-zone"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "fromtimezone",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "from-time-zone", Value = "UTC"}
@@ -122,7 +122,7 @@ namespace Pipeline.Web.Orchard.Services {
             });
             root.Signatures.Add(Simple("value", "[default]"));
             root.Signatures.Add(Simple("type", "[default]"));
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "trim",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "trim-chars", Value = " "}
@@ -131,7 +131,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Signatures.Add(Simple("script"));
             root.Signatures.Add(Simple("map"));
             root.Signatures.Add(Simple("dayofweek"));
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "substring",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "start-index"},
@@ -147,14 +147,14 @@ namespace Pipeline.Web.Orchard.Services {
                     new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "replace",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "old-value"},
                     new Parameter {Name = "new-value", Value = ""}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "regexreplace",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "pattern"},
@@ -163,48 +163,48 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             });
             root.Signatures.Add(Simple("pattern"));
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "insert",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "start-index"},
                     new Parameter {Name = "value"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "remove",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "start-index"},
                     new Parameter {Name = "count", Value = "0"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "template",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "template"},
                     new Parameter {Name = "content-type", Value = "raw"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "any",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "value"},
                     new Parameter {Name = "operator", Value = "equal"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "property",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "name"},
                     new Parameter {Name = "property"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "file",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "extension", Value = "true"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "xpath",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "xpath"},
@@ -212,7 +212,7 @@ namespace Pipeline.Web.Orchard.Services {
                     new Parameter {Name = "url", Value = ""}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "datediff",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "time-component"},
@@ -220,7 +220,7 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             });
             root.Signatures.Add(Simple("domain"));
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "tag",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "tag"},
@@ -234,7 +234,7 @@ namespace Pipeline.Web.Orchard.Services {
                     new Parameter {Name = "encode", Value = "true"}
                 }
             });
-            root.Signatures.Add(new Signature() {
+            root.Signatures.Add(new Signature {
                 Name = "decimals",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "decimals", Value = "0"}

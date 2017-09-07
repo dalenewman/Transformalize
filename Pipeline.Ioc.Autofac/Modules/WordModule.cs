@@ -24,6 +24,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Transformalize.Providers.OpenXml;
+using Word;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class WordModule : Module {
@@ -67,7 +68,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                     // ENTITY WRITER
-                    builder.Register<IWrite>(ctx => new WordWriter(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IWrite>(entity.Key);
+                    builder.Register<IWrite>(ctx => new WordWriter(ctx.ResolveNamed<OutputContext>(entity.Key), new WordConverter())).Named<IWrite>(entity.Key);
                 }
             }
 

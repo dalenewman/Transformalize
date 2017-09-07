@@ -49,6 +49,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Name { get; set; }
 
+        [Cfg(value = ";'`")]
+        public string InvalidCharacters { get; set; }
+
         [Cfg(value = null)]
         public string Value { get; set; }
 
@@ -144,8 +147,13 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool Multiple { get; set; }
 
-        [Cfg(value = ";'`")]
-        public string InvalidCharacters { get; set; }
+        public object Convert(string value) {
+            return Type == "string" ? value : Constants.ConversionMap[Type](value);
+        }
+
+        public object Convert(object value) {
+            return Constants.ObjectConversionMap[Type](value);
+        }
 
     }
 

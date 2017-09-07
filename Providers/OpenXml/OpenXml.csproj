@@ -33,33 +33,6 @@
     <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.CommonTranslatorLib">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.CommonTranslatorLib.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.DocFileFormat">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.DocFileFormat.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.OfficeDrawing">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.OfficeDrawing.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.OpenXmlLib">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.OpenXmlLib.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.Shell">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.StructuredStorage">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.StructuredStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.Tools">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.Tools.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.WordprocessingMLMapping">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.WordprocessingMLMapping.dll</HintPath>
-    </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.ZipUtils">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.ZipUtils.dll</HintPath>
-    </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=0.0.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OpenXMLSDK-MOT.2.7.1\lib\net45\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
@@ -77,7 +50,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DocConverter.cs" />
     <Compile Include="WordWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
     <Compile Include="OpenXmlExtensions.cs" />

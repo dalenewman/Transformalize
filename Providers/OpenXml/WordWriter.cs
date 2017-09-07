@@ -31,8 +31,10 @@ namespace Transformalize.Providers.OpenXml {
         private readonly FileInfo _fileInfo;
         private readonly Field[] _fields;
         private readonly IConnectionContext _connectionContext;
+        private readonly IConvertFile _docConverter;
 
-        public WordWriter(IConnectionContext context) {
+        public WordWriter(IConnectionContext context, IConvertFile docConverter) {
+            _docConverter = docConverter;
             _connectionContext = context;
             _fileInfo = new FileInfo(context.Connection.File);
             _fields = context.Entity.GetAllOutputFields().Where(f => !f.System).ToArray();
@@ -44,7 +46,7 @@ namespace Transformalize.Providers.OpenXml {
             var fileInfo = new FileInfo(_connectionContext.Connection.File);
 
             if (fileInfo.Extension.Equals(".doc", StringComparison.OrdinalIgnoreCase)) {
-                doc = WordprocessingDocument.Open(new DocConverter().Convert(_connectionContext), true);
+                doc = WordprocessingDocument.Open(_docConverter.Convert(_connectionContext), true);
             } else {
                 doc = WordprocessingDocument.Open(fileInfo.FullName, true);
             }

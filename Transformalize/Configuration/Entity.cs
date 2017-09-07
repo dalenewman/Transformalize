@@ -56,6 +56,13 @@ namespace Transformalize.Configuration {
         public uint Updates { get; set; }
         public uint Deletes { get; set; }
 
+        [Cfg(value="")]
+        public string InsertCommand { get; set; }
+        [Cfg(value = "")]
+        public string UpdateCommand { get; set; }
+        [Cfg(value = "")]
+        public string DeleteCommand { get; set; }
+
         public Field[] GetPrimaryKey() {
             return GetAllFields().Where(f => f.PrimaryKey).ToArray();
         }

@@ -194,9 +194,43 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     var entity = e;
 
+                    // WRITER
+                    builder.Register<IWrite>(ctx => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
+
+                        switch (output.Connection.Provider) {
+                            case "sqlserver":
+                                return new SqlServerWriter(
+                                    output,
+                                    cf,
+                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    new AdoEntityUpdater(output, cf)
+                                );
+                            case "sqlce":
+                                return new SqlCeWriter(
+                                    output,
+                                    cf,
+                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    new AdoEntityUpdater(output, cf)
+                                );
+                            case "mysql":
+                            case "postgresql":
+                            case "sqlite":
+                                return new AdoEntityWriter(
+                                    output,
+                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    new AdoEntityInserter(output, cf),
+                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
+                                );
+                            default:
+                                return new NullWriter(output);
+                        }
+                    }).Named<IWrite>(entity.Key);
+
                     builder.Register<IOutputProvider>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new AdoOutputProvider(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
+                        return new AdoOutputProvider(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key), ctx.ResolveNamed<IWrite>(entity.Key));
                     }).Named<IOutputProvider>(entity.Key);
 
                     // ENTITY OUTPUT CONTROLLER
@@ -273,41 +307,6 @@ namespace Pipeline.Web.Orchard.Modules {
                                 return new NullMasterUpdater();
                         }
                     }).Named<IUpdate>(entity.Key);
-
-                    // WRITER
-                    builder.Register<IWrite>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-
-                        switch (output.Connection.Provider) {
-                            case "sqlserver":
-                                return new SqlServerWriter(
-                                    output,
-                                    cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
-                                );
-                            case "sqlce":
-                                return new SqlCeWriter(
-                                    output,
-                                    cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
-                                );
-                            case "mysql":
-                            case "postgresql":
-                            case "sqlite":
-                                return new AdoEntityWriter(
-                                    output,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
-                                    new AdoEntityInserter(output, cf),
-                                    entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
-                                );
-                            default:
-                                return new NullWriter(output);
-                        }
-                    }).Named<IWrite>(entity.Key);
-
 
                     // DELETE HANDLER
                     if (entity.Delete) {

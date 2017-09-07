@@ -6,8 +6,8 @@ using DIaLOGIKa.b2xtranslator.StructuredStorage.Reader;
 using DIaLOGIKa.b2xtranslator.WordprocessingMLMapping;
 using Transformalize.Contracts;
 
-namespace Transformalize.Providers.OpenXml {
-    public class DocConverter {
+namespace Word {
+    public class WordConverter : IConvertFile {
 
         /// <summary>
         /// Converts from .doc to .docx and returns output (.docx) file name

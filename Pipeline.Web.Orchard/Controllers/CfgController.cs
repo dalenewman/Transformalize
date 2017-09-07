@@ -31,6 +31,9 @@ using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using System.IO;
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
+using Microsoft.PowerShell.Commands;
+using OpenXmlPowerTools;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
@@ -60,6 +63,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
+        private readonly IFileService _fileService;
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -75,7 +79,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             IBatchCreateService batchCreateService,
             IBatchWriteService batchWriteService,
             IBatchRunService batchRunService,
-            IBatchRedirectService batchRedirectService
+            IBatchRedirectService batchRedirectService,
+            IFileService fileService
         ) {
             _clock = clock;
             _appDataFolder = appDataFolder;
@@ -89,6 +94,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             _batchWriteService = batchWriteService;
             _batchRunService = batchRunService;
             _batchRedirectService = batchRedirectService;
+            _fileService = fileService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -112,6 +118,59 @@ namespace Pipeline.Web.Orchard.Controllers {
             );
 
             return View(viewModel);
+        }
+
+        public ActionResult Form(int id) {
+
+            var process = new Process { Name = "Form" };
+            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
+            if (part == null) {
+                process.Name = "Not Found";
+            } else {
+                var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+
+                if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+
+                    var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
+                    process = _processService.Resolve(part);
+                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                    process.Load(part.Configuration, parameters);
+
+                    if (Request.HttpMethod.Equals("POST")) {
+                        switch (Request.Form["intention"]) {
+                            case "refresh":
+                                runner.Execute(process);
+                                break;
+                            default: //save
+                                foreach (var entity in process.Entities) {
+                                    foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
+                                        if (Request.Files != null && Request.Files.Count > 0) {
+                                            var input = Request.Files.Get(field.Alias);
+                                            if (input != null && input.ContentLength > 0) {
+                                                var filePart = _fileService.Upload(input, "Authenticated", "Forms");
+                                                var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
+                                                if (parameter != null) {
+                                                    parameter.Value = Url.Action("View", "File", new {id = filePart.Id}) ?? string.Empty;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
+                                    process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString()});
+                                }
+                                runner.Execute(process);
+                                return RedirectToAction("Form", new {id});
+                        }
+                    } else {
+                        runner.Execute(process);
+                    }
+
+                } else {
+                    _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
+                }
+            }
+            return View(process);
         }
 
         public ActionResult Report(int id) {

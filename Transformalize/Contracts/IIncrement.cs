@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 namespace Transformalize.Contracts {
+
     public interface IIncrement {
         void Increment(uint by = 1);
     }

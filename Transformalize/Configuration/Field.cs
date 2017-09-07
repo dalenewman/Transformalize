@@ -106,6 +106,15 @@ namespace Transformalize.Configuration {
             }
         }
 
+        [Cfg(value="defer",domain= "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week")]
+        public string InputType { get; set; }
+
+        [Cfg(value= "")]
+        public string InputAccept { get; set; }
+
+        [Cfg(value="")]
+        public string InputCapture { get; set; }
+
         /// <summary>
         /// Optional.  Default is `false`
         /// 

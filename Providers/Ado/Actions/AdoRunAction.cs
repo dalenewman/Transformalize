@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq;
 using Cfg.Net.Contracts;
 using Dapper;
 using Transformalize.Actions;
@@ -53,7 +55,21 @@ namespace Transformalize.Providers.Ado.Actions {
                             _context.Error(error);
                         }
                     }
-                    _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
+
+                    if (_node.Command.Contains("@")) {
+                        var parameters = new ExpandoObject();
+                        var editor = (IDictionary<string, object>)parameters;
+                        var active = _context.Process.GetActiveParameters();
+                        foreach (var name in new AdoParameterFinder().Find(_node.Command).ToList()) {
+                            var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                            if (match != null) {
+                                editor[match.Name] = match.Convert(match.Value);
+                            }
+                        }
+                        _node.RowCount = cn.Execute(_node.Command, parameters, commandTimeout: _node.TimeOut);
+                    } else {
+                        _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
+                    }
                     var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
                     response.Message = message;
                     _context.Info(message);

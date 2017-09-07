@@ -1,0 +1,198 @@
+﻿@using Orchard
+@using Orchard.ContentManagement
+@using Orchard.Core.Contents
+@using Transformalize.Configuration
+@using Pipeline.Web.Orchard
+@using Pipeline.Web.Orchard.Services
+@using Pipeline.Web.Orchard.Models
+@using Pipeline.Web.Orchard.Services.Contracts
+@using Transformalize
+
+@model Transformalize.Configuration.Process
+@{
+
+    Style.Require("jQueryUI_Orchard");
+    Script.Require("jQuery").AtHead();
+    Script.Require("jQueryUI").AtHead();
+
+    AppendMeta("description", Model.Name, ",");
+    Layout.Title = Model.Name;
+}
+
+<style type="text/css">
+
+.btn-xs, .btn-group-xs > .btn {
+    border-radius: 3px;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+#busy {
+    position: fixed;
+    left: 46%;
+    top: 40%;
+    display: none;
+    background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+    background-size: 149px 149px;
+    background-repeat:no-repeat;
+    z-index: 1020;
+    height: 150px;
+    width: 150px;
+}
+
+#busy-holder {
+    background: transparent;
+    width: 100%;
+    height: 100%;
+}
+</style>
+
+@foreach (var error in Model.Errors()) {
+    <div class="alert alert-danger" role="alert">@error</div>
+}
+
+@foreach (var warning in Model.Warnings()) {
+    <div class="alert alert-warning" role="alert">@warning</div>
+}
+
+<form id="id_form" role="form" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()" />
+    <input type="hidden" id="id_intention" name="intention" value="refresh" />
+
+    @foreach (var entity in Model.Entities) {
+
+        var active = Model.GetActiveParameters();
+        var row = entity.Rows.FirstOrDefault();
+        if (row == null) {
+            row = new CfgRow(entity.Fields.Where(f => f.Input).Select(f => f.Alias).ToArray());
+            foreach (var field in entity.Fields.Where(f => f.Input)) {
+                var parameter = active.FirstOrDefault(p => p.Name.Equals(field.Alias, StringComparison.OrdinalIgnoreCase));
+                if (parameter != null && !string.IsNullOrEmpty(parameter.Value)) {
+                    row[field.Alias] = field.Convert(parameter.Value);
+                } else {
+                    row[field.Alias] = field.Default == Constants.DefaultSetting ? Constants.TypeDefaults()[field.Type] : field.Convert(field.Default);
+                }
+            }
+        }
+
+        foreach (var field in entity.Fields.Where(f => f.Input)) {
+
+            var parameter = active.FirstOrDefault(p => p.Name.Equals(field.Alias, StringComparison.OrdinalIgnoreCase));
+
+            object value;
+            if (Request.HttpMethod.Equals("GET")) {  // take value from loaded row
+                if (string.IsNullOrWhiteSpace(field.Format)) {
+                    value = row[field.Alias];
+                } else {
+                    value = field.Format.Contains("{") ? string.Format(field.Format, row[field.Alias]) : string.Format("{0:" + field.Format + "}", row[field.Alias]);
+                }
+            } else {
+                value = parameter == null ? string.Empty : parameter.Value;
+            }
+
+            if (field.PrimaryKey) {
+                <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
+            } else {
+                var map = Model.Maps.FirstOrDefault(m => m.Name.Equals(field.Name, StringComparison.OrdinalIgnoreCase));
+                if (map != null) {
+                    <div class="form-group">
+                        <label for="@field.Alias">@field.Label</label>
+                        <select class="form-control select @field.Class" name="@field.Alias" id="@field.Alias">
+                            @if (map.Items.Any()) {
+                                if (map.Items.All(i => !i.To.Equals(value))) {
+                                    value = map.Items.First().To;
+                                }
+                                foreach (var item in map.Items) {
+                                    <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
+                                }
+                            } else {
+                                <option value="" selected="selected"> </option>
+                            }
+                        </select>
+                    </div>
+                } else {
+                    var type = field.InputType == "defer" ? field.Type : field.InputType;
+                    switch (type) {
+                        case "file":
+                            <div class="form-group">
+                                <label for="@field.Alias">@field.Label</label>
+                                <input class="form-control @field.Class"
+                                       id="@(field.Alias)"
+                                       name="@(field.Alias)"
+                                       type="file"
+                                       accept="@field.InputAccept"
+                                       capture="@field.InputCapture" />
+                            </div>
+                            break;
+                        case "date":
+                        case "datetime":
+                            <div class="form-group">
+                                <label for="@field.Alias">@field.Label</label>
+                                <input class="form-control date @field.Class"
+                                       type="date"
+                                       id="@(field.Alias)"
+                                       name="@(field.Alias)"
+                                       value="@(((DateTime)value).ToString(field.Format == string.Empty ? "yyyy-MM-dd": field.Format))" />
+                            </div>
+                            break;
+                        case "bool":
+                        case "boolean":
+                            <div class="checkbox">
+                                <label>
+                                    <input name="@field.Alias"
+                                           id="@field.Alias"
+                                           type="checkbox"
+                                           checked="@((bool)value)" /> @field.Label
+                                    </label>
+                                </div>
+                            break;
+                        default:
+                            <div class="form-group">
+                                <label for="@field.Alias">@field.Label</label>
+                                <input type="text"
+                                       class="form-control @field.Class"
+                                       maxlength="@field.Length"
+                                       name="@field.Alias"
+                                       id="@field.Alias"
+                                       placeholder="@field.Label"
+                                       value="@value" />
+                            </div>
+                            break;
+                    }
+                }
+
+            }
+        }
+    }
+    <input type="submit" value="Submit" class="btn btn-default" />
+</form>
+
+<div id="busy_holder">
+    <div id="busy"></div>
+</div>
+
+<script type="text/javascript" language="javascript">
+    //<!--
+    $(document).ready(function () {
+
+        $("input").keypress(function (event) {
+            if (event.which === 13) {
+                event.preventDefault();
+                $("#id_intention").val("save");
+                $("#id_form").submit();
+            }
+        });
+
+        $(".select").change(function () {
+            $("#id_intention").val("refresh");
+            this.form.submit();
+        });
+
+        $("#id_form").submit(function (event) {
+            event.preventDefault();
+            $("#id_intention").val("save");
+            this.submit();
+        });
+    });
+    //-->
+</script>
