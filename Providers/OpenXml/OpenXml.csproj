@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CfgNet, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Cfg-NET.0.10.0\lib\net452\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.10.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Cfg-NET.0.10.1\lib\net452\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="DocumentFormat.OpenXml, Version=0.0.1.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
       <HintPath>..\..\packages\OpenXMLSDK-MOT.2.7.1\lib\net45\DocumentFormat.OpenXml.dll</HintPath>

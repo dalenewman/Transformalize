@@ -37,7 +37,7 @@ namespace Transformalize.Providers.Ado {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            var sql = _output.SqlInsertIntoOutput(_cf);
+            _output.Entity.InsertCommand = _output.SqlInsertIntoOutput(_cf);
             var count = (uint)0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
@@ -47,12 +47,12 @@ namespace Transformalize.Providers.Ado {
                     foreach (var batch in rows.Partition(_output.Entity.InsertSize)) {
                         var records = batch.Select(r => r.ToExpandoObject(_output.OutputFields));
                         var batchCount = Convert.ToUInt32(cn.Execute(
-                                sql,
-                                records,
-                                trans,
-                                0,
-                                CommandType.Text
-                            ));
+                            _output.Entity.InsertCommand,
+                            records,
+                            trans,
+                            0,
+                            CommandType.Text
+                        ));
                         count += batchCount;
                     }
                     trans.Commit();

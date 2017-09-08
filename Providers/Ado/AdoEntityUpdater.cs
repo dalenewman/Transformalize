@@ -28,7 +28,7 @@ using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityUpdater : IWrite {
-        readonly OutputContext _output;
+        private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
 
         public AdoEntityUpdater(OutputContext output, IConnectionFactory cf) {
@@ -37,7 +37,7 @@ namespace Transformalize.Providers.Ado {
         }
 
         public void Write(IEnumerable<IRow> rows) {
-            var query = _output.SqlUpdateOutput(_cf);
+            _output.Entity.UpdateCommand = _output.SqlUpdateOutput(_cf);
             var count = (uint)0;
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
@@ -46,7 +46,7 @@ namespace Transformalize.Providers.Ado {
                 try {
                     foreach (var batch in rows.Partition(_output.Entity.UpdateSize)) {
                         var batchCount = Convert.ToUInt32(cn.Execute(
-                            query,
+                            _output.Entity.UpdateCommand,
                             batch.Select(r => r.ToExpandoObject(_output.GetUpdateFields().ToArray())),
                             trans,
                             0,
