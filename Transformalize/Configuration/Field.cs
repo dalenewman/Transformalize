@@ -525,6 +525,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Body { get; set; }
 
+        [Cfg(value="")]
+        public string Src { get; set; }
+
         [Cfg(value = "chakra", domain = "chakra,jint", toLower = true)]
         public string Engine { get; set; }
 
@@ -568,5 +571,11 @@ namespace Transformalize.Configuration {
         public string RunValue { get; set; }
 
         public string Source { get; set; }
+
+        [Cfg(value=0)]
+        public int Width { get; set; }
+
+        [Cfg(value=0)]
+        public int Height { get; set; }
     }
 }

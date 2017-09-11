@@ -56,18 +56,18 @@ namespace Transformalize.Transforms {
             }
         }
 
-        private readonly Field _body;
         private readonly List<TagAttribute> _attributes = new List<TagAttribute>();
         private readonly Func<IRow, object> _encode;
+        private readonly bool _selfClosing = false;
 
         public TagTransform(IContext context) : base(context, "string") {
-
             if (string.IsNullOrEmpty(context.Transform.Tag)) {
                 Error("The tag transform requires a tag (e.g. a, span, div, etc).");
                 Run = false;
                 return;
             }
 
+            _selfClosing = Context.Transform.Tag.Equals("img", StringComparison.OrdinalIgnoreCase);
 
             if (Context.Transform.Class == string.Empty && Context.Field.Class != string.Empty) {
                 Context.Transform.Class = Context.Field.Class;
@@ -93,6 +93,18 @@ namespace Transformalize.Transforms {
                 Context.Transform.Body = Context.Field.Body;
             }
 
+            if (Context.Transform.Src == string.Empty && Context.Field.Src != string.Empty) {
+                Context.Transform.Src = Context.Field.Src;
+            }
+
+            if (Context.Transform.Width == 0 && Context.Field.Width > 0) {
+                Context.Transform.Width = Context.Field.Width;
+            }
+
+            if (Context.Transform.Height == 0 && Context.Field.Height > 0) {
+                Context.Transform.Height = Context.Field.Height;
+            }
+
             var input = MultipleInput();
             _attributes.Add(new TagAttribute(input, "href", Context.Transform.HRef));
             _attributes.Add(new TagAttribute(input, "class", Context.Transform.Class));
@@ -100,8 +112,11 @@ namespace Transformalize.Transforms {
             _attributes.Add(new TagAttribute(input, "style", Context.Transform.Style));
             _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
             _attributes.Add(new TagAttribute(input, "target", Context.Transform.Target));
+            _attributes.Add(new TagAttribute(input, "src", Context.Transform.Src));
+            _attributes.Add(new TagAttribute(input, "width", Context.Transform.Width == 0 ? string.Empty : Context.Transform.Width.ToString()));
+            _attributes.Add(new TagAttribute(input, "height", Context.Transform.Height == 0 ? string.Empty : Context.Transform.Height.ToString()));
 
-            _body = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
+            var body = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
 
             if (!Context.Field.Raw) {
                 Context.Field.Raw = true;
@@ -111,11 +126,10 @@ namespace Transformalize.Transforms {
                 var calculatedLength = _attributes.Sum(a => a.Length()) + Context.Transform.Tag.Length + 5;  // 5 = <></>
                 if (calculatedLength > Convert.ToInt32(Context.Field.Length)) {
                     Context.Warn($"The calculated length of {Context.Field.Alias} is {calculatedLength}, but it's length is set to {Context.Field.Length}.  Truncation may occur.  You need to set the length so it can accomadate tag characters, tag name, attributes, and the field's content.");
-                    Context.Field.Length = (calculatedLength + 64).ToString();
                 }
             }
 
-            _encode = (row) => Context.Transform.Encode ? Encode(row[_body].ToString()) : row[_body];
+            _encode = (row) => Context.Transform.Encode ? Encode(row[body].ToString()) : row[body];
         }
 
         public override IRow Transform(IRow row) {
@@ -130,13 +144,17 @@ namespace Transformalize.Transforms {
                 attribute.Append(sb, row);
             }
 
-            sb.Append(">");
+            if (_selfClosing) {
+                sb.Append("/>");
+            } else {
+                sb.Append(">");
 
-            // content
-            sb.Append(_encode(row));
+                // content
+                sb.Append(_encode(row));
 
-            // close
-            sb.AppendFormat("</{0}>", Context.Transform.Tag);
+                // close
+                sb.AppendFormat("</{0}>", Context.Transform.Tag);
+            }
 
             row[Context.Field] = sb.ToString();
             Increment();

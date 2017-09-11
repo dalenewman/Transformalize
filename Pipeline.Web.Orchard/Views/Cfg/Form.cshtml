@@ -27,7 +27,7 @@
     line-height: 1.5;
 }
 
-#busy {
+#id_busy {
     position: fixed;
     left: 46%;
     top: 40%;
@@ -57,7 +57,8 @@
 
 <form id="id_form" role="form" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()" />
-    <input type="hidden" id="id_intention" name="intention" value="refresh" />
+    <input type="hidden" id="id_intention" name="form_intention" value="refresh" />
+    <input type="hidden" id="id_focus" name="form_focus" value="default" />
 
     @foreach (var entity in Model.Entities) {
 
@@ -168,7 +169,7 @@
 </form>
 
 <div id="busy_holder">
-    <div id="busy"></div>
+    <div id="id_busy"></div>
 </div>
 
 <script type="text/javascript" language="javascript">
@@ -185,14 +186,24 @@
 
         $(".select").change(function () {
             $("#id_intention").val("refresh");
+            $("#id_focus").val($(this).attr("name"));
+            $('#id_busy').show();
             this.form.submit();
         });
 
         $("#id_form").submit(function (event) {
             event.preventDefault();
             $("#id_intention").val("save");
+            $("#id_focus").val($(this).attr("name"));
+            $('#id_busy').show();
             this.submit();
         });
+
+        function removeMessages() {
+            $(".zone-messages").fadeOut();
+        }
+        setTimeout(removeMessages, 5000);
+
     });
     //-->
 </script>

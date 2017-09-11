@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
+
 using System.Collections.Generic;
 using Autofac;
 using Cfg.Net.Contracts;
@@ -41,29 +41,29 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root = new ShorthandRoot(ctx.ResolveNamed<string>("shorthand"), ctx.ResolveNamed<IReader>("file"));
                 } else {
                     root = new ShorthandRoot();
-                    root.Signatures.Add(new Signature() { Name = "none" });
+                    root.Signatures.Add(new Signature { Name = "none" });
                     root.Signatures.Add(Simple("format"));
                     root.Signatures.Add(Simple("length"));
                     root.Signatures.Add(Simple("separator", ","));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "separator-space",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> { new Cfg.Net.Shorthand.Parameter { Name = "separator", Value = " " } }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "padding",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "total-width" },
                             new Cfg.Net.Shorthand.Parameter { Name = "padding-char", Value="0" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "timezone",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone" },
                             new Cfg.Net.Shorthand.Parameter { Name = "to-time-zone" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "fromtimezone",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone", Value= "UTC" }
@@ -71,7 +71,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     });
                     root.Signatures.Add(Simple("value", "[default]"));
                     root.Signatures.Add(Simple("type", "[default]"));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "trim",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "trim-chars", Value= " " }
@@ -80,7 +80,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Signatures.Add(Simple("script"));
                     root.Signatures.Add(Simple("map"));
                     root.Signatures.Add(Simple("dayofweek"));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "substring",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
@@ -96,14 +96,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "replace",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "old-value" },
                             new Cfg.Net.Shorthand.Parameter { Name = "new-value", Value="" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "regexreplace",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "pattern" },
@@ -112,48 +112,48 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     });
                     root.Signatures.Add(Simple("pattern"));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "insert",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
                             new Cfg.Net.Shorthand.Parameter { Name = "value" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "remove",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
                             new Cfg.Net.Shorthand.Parameter { Name = "count", Value="0" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "template",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "template" },
                             new Cfg.Net.Shorthand.Parameter { Name = "content-type", Value="raw" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "any",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "value" },
                             new Cfg.Net.Shorthand.Parameter { Name = "operator", Value="equal" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "property",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "name" },
                             new Cfg.Net.Shorthand.Parameter { Name = "property" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "file",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "extension", Value="true" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "xpath",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "xpath" },
@@ -161,7 +161,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "datediff",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "time-component" },
@@ -169,7 +169,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     });
                     root.Signatures.Add(Simple("domain"));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "tag",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "tag" },
@@ -180,16 +180,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "role", Value="" },
                             new Cfg.Net.Shorthand.Parameter { Name = "target", Value="" },
                             new Cfg.Net.Shorthand.Parameter { Name = "body", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "encode", Value="true" }
+                            new Cfg.Net.Shorthand.Parameter { Name = "encode", Value="true" },
+                            new Cfg.Net.Shorthand.Parameter { Name = "src", Value=""},
+                            new Cfg.Net.Shorthand.Parameter { Name = "width", Value="0"},
+                            new Cfg.Net.Shorthand.Parameter { Name = "height", Value="0"}
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "decimals",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "decimals", Value="0" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "iif",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "expression" },
@@ -197,7 +200,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "false-field" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "geohash",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "latitude" },
@@ -206,7 +209,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     });
                     root.Signatures.Add(Simple("direction"));
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "distance",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "fromlat" },
@@ -215,13 +218,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "tolon" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "humanize",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "format", Value="[default]" }
                         }
                     });
-                    root.Signatures.Add(new Signature() {
+                    root.Signatures.Add(new Signature {
                         Name = "web",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" },
@@ -387,22 +390,21 @@ namespace Transformalize.Ioc.Autofac.Modules {
             }).Named<IDependency>("shorthand");
         }
 
-        private Signature Simple(string name, string value = null) {
+        private static Signature Simple(string name, string value = null) {
             if (value == null) {
-                return new Signature() {
+                return new Signature {
                     Name = name,
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = name }
                         }
                 };
-            } else {
-                return new Signature() {
-                    Name = name,
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = name, Value = value }
-                        }
-                };
             }
+            return new Signature {
+                Name = name,
+                Parameters = new List<Cfg.Net.Shorthand.Parameter> {
+                    new Cfg.Net.Shorthand.Parameter { Name = name, Value = value }
+                }
+            };
         }
 
     }

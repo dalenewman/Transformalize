@@ -150,6 +150,15 @@ namespace Transformalize.Configuration {
         public string Body { get; set; }
 
         [Cfg(value = "")]
+        public string Src { get; set; }
+
+        [Cfg(value=0)]
+        public int Width { get; set; }
+
+        [Cfg(value=0)]
+        public int Height { get; set; }
+
+        [Cfg(value = "")]
         public string Template { get; set; }
 
         [Cfg(value = "millisecond", domain = "day,days,date,dayofweek,dayofyear,hour,hours,millisecond,minute,minutes,month,months,second,seconds,tick,ticks,year,years,weekofyear", toLower = true)]

@@ -60,7 +60,7 @@ namespace Transformalize.Providers.Ado.Actions {
                         var parameters = new ExpandoObject();
                         var editor = (IDictionary<string, object>)parameters;
                         var active = _context.Process.GetActiveParameters();
-                        foreach (var name in new AdoParameterFinder().Find(_node.Command).ToList()) {
+                        foreach (var name in new AdoParameterFinder().Find(_node.Command).Distinct().ToList()) {
                             var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
                             if (match != null) {
                                 editor[match.Name] = match.Convert(match.Value);

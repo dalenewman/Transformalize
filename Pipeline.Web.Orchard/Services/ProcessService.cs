@@ -231,7 +231,10 @@ namespace Pipeline.Web.Orchard.Services {
                     new Parameter {Name = "role", Value = ""},
                     new Parameter {Name = "target", Value = ""},
                     new Parameter {Name = "body", Value = ""},
-                    new Parameter {Name = "encode", Value = "true"}
+                    new Parameter {Name = "encode", Value = "true"},
+                    new Parameter {Name = "src", Value = "" },
+                    new Parameter {Name = "width", Value = "0" },
+                    new Parameter {Name = "height", Value = "0" }
                 }
             });
             root.Signatures.Add(new Signature {

@@ -115,17 +115,22 @@
                         </button>
 
                         @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Check" type="button" class="btn btn-success btn-xs" onclick="window.open('@(@Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                            <button title="Check" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                                 <span class="glyphicon glyphicon-check"></span>
                             </button>
                         }
                         @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(@Url.Action("Report", "Cfg", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(Url.Action("Report", "Cfg", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                                 <span class="glyphicon glyphicon-th-list"></span>
                             </button>
                         }
+                        @if (part.Tags().Any(t => t.Equals("FORM", StringComparison.OrdinalIgnoreCase))) {
+                            <button title="Form" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("Form", "Cfg", new {id = part.Id}))', '_self');">
+                                <span class="glyphicon glyphicon-baby-formula"></span>
+                            </button>
+                        }
                         @if (part.NeedsInputFile) {
-                            <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(@Url.Action("List", "File", new {tagFilter = Common.AllTag, ArrangementId = part.Id}))', '_self');">
+                            <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("List", "File", new {tagFilter = Common.AllTag, ArrangementId = part.Id}))', '_self');">
                                 <span class="glyphicon glyphicon-file"></span>
                             </button>
                         }

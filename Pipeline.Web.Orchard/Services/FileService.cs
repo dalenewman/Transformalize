@@ -72,10 +72,9 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             }
 
-            var exportFile = string.Format("{0}-{1}-{2}", _orchardServices.WorkContext.CurrentUser.UserName, _clock.UtcNow.ToString(FileTimestamp), Path.GetFileName(input.FileName));
+            var exportFile = Common.GetSafeFileName(_orchardServices.WorkContext.CurrentUser.UserName, Path.GetFileName(input.FileName));
 
-            var now = DateTime.UtcNow;
-            var path = Path.Combine(Common.FileFolder, now.Year.ToString(), now.ToString("MM-MMM"), now.ToString("dd"));
+            var path = Common.GetAppFolder();
             if (!_appDataFolder.DirectoryExists(path)) {
                 _appDataFolder.CreateDirectory(path);
             }
@@ -100,10 +99,9 @@ namespace Pipeline.Web.Orchard.Services {
 
         public PipelineFilePart Create(string name, string extension) {
 
-            var file = string.Format("{0}-{1}-{2}.{3}", _orchardServices.WorkContext.CurrentUser.UserName, _clock.UtcNow.ToString(FileTimestamp), name, extension.TrimStart(".".ToCharArray()));
+            var file = Common.GetSafeFileName(_orchardServices.WorkContext.CurrentUser.UserName, name, extension);
 
-            var now = DateTime.UtcNow;
-            var fileFolder = Path.Combine(Common.FileFolder, now.Year.ToString(), now.ToString("MM-MMM"), now.ToString("dd"));
+            var fileFolder = Common.GetAppFolder();
             if (!_appDataFolder.DirectoryExists(fileFolder)) {
                 _appDataFolder.CreateDirectory(fileFolder);
             }

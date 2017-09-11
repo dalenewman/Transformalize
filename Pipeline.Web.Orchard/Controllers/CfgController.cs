@@ -31,14 +31,11 @@ using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using System.IO;
-using DocumentFormat.OpenXml.Vml.Spreadsheet;
-using Microsoft.PowerShell.Commands;
-using OpenXmlPowerTools;
+using System.Web.UI.WebControls;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
-using Transformalize.Configuration;
 using Transformalize.Extensions;
 using Process = Transformalize.Configuration.Process;
 
@@ -47,7 +44,6 @@ namespace Pipeline.Web.Orchard.Controllers {
     [ValidateInput(false), Themed(true)]
     public class CfgController : Controller {
 
-        const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
         private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page" };
 
@@ -58,7 +54,6 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly ICfgService _cfgService;
         private readonly ISlugService _slugService;
         private readonly IAppDataFolder _appDataFolder;
-        private readonly IClock _clock;
         private readonly IBatchCreateService _batchCreateService;
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
@@ -82,7 +77,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             IBatchRedirectService batchRedirectService,
             IFileService fileService
         ) {
-            _clock = clock;
             _appDataFolder = appDataFolder;
             _orchardServices = services;
             _processService = processService;
@@ -137,31 +131,40 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Load(part.Configuration, parameters);
 
                     if (Request.HttpMethod.Equals("POST")) {
-                        switch (Request.Form["intention"]) {
-                            case "refresh":
-                                runner.Execute(process);
-                                break;
-                            default: //save
-                                foreach (var entity in process.Entities) {
-                                    foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
-                                        if (Request.Files != null && Request.Files.Count > 0) {
-                                            var input = Request.Files.Get(field.Alias);
-                                            if (input != null && input.ContentLength > 0) {
-                                                var filePart = _fileService.Upload(input, "Authenticated", "Forms");
-                                                var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
-                                                if (parameter != null) {
-                                                    parameter.Value = Url.Action("View", "File", new {id = filePart.Id}) ?? string.Empty;
-                                                }
+                        if (Request.Form["form_intention"] == "refresh") {
+                            runner.Execute(process);
+                        } else {
+
+                            var insert = new Dictionary<string, bool>();
+                            foreach (var entity in process.Entities) {
+                                foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
+                                    if (Request.Files != null && Request.Files.Count > 0) {
+                                        var input = Request.Files.Get(field.Alias);
+                                        if (input != null && input.ContentLength > 0) {
+                                            var filePart = _fileService.Upload(input, "Authenticated", "Forms");
+                                            var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
+                                            if (parameter != null) {
+                                                parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
                                             }
                                         }
                                     }
-
-                                    var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
-                                    process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString()});
                                 }
+
+                                insert[entity.Alias] = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
+                                process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert[entity.Alias] ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
+                            }
+
+                            try {
                                 runner.Execute(process);
-                                return RedirectToAction("Form", new {id});
+                                foreach (var entity in process.Entities) {
+                                    _orchardServices.Notifier.Information(insert[entity.Alias] ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
+                                }
+                                return Redirect(parameters["Orchard.ReturnUrl"]);
+                            } catch (Exception ex) {
+                                _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                            }
                         }
+
                     } else {
                         runner.Execute(process);
                     }
@@ -342,14 +345,15 @@ namespace Pipeline.Web.Orchard.Controllers {
             var o = process.Output();
             switch (exportType) {
                 case "xlsx":
-                    if (!_appDataFolder.DirectoryExists(Common.FileFolder)) {
-                        _appDataFolder.CreateDirectory(Common.FileFolder);
+                    var folder = Common.GetAppFolder();
+                    if (!_appDataFolder.DirectoryExists(folder)) {
+                        _appDataFolder.CreateDirectory(folder);
                     }
 
-                    var fileName = $"{user}-{_clock.UtcNow.ToString(FileTimestamp)}-{_slugService.Slugify(part.Title())}.xlsx";
+                    var fileName = Common.GetSafeFileName(user, _slugService.Slugify(part.Title()), "xlsx");
 
                     o.Provider = "excel";
-                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(Common.FileFolder, fileName));
+                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(folder, fileName));
                     break;
                 case "geojson":
                     o.Stream = true;

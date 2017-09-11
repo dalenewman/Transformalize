@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
+using Orchard.Services;
 using Orchard.Tags.Models;
 using Pipeline.Web.Orchard.Models;
 using Transformalize.Configuration;
@@ -35,6 +37,18 @@ namespace Pipeline.Web.Orchard {
 
         public static string CacheKey(int id, string feature) {
             return ModuleName + "." + feature + "." + id;
+        }
+
+        public static string GetSafeFileName(string user, string name, string ext) {
+            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{name}.{ext.TrimStart('.')}";
+        }
+        public static string GetSafeFileName(string user, string name) {
+            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{name}";
+        }
+
+        public static string GetAppFolder() {
+            var now = DateTime.UtcNow;
+            return Path.Combine(FileFolder, now.Year.ToString(), now.ToString("MM-MMM").ToUpper(), now.ToString("dd"));
         }
 
         public static Process FormConversion(PipelineConfigurationPart part, Process process, IDictionary<string, string> parameters) {
@@ -133,6 +147,7 @@ namespace Pipeline.Web.Orchard {
             parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
             parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
             parameters["Orchard.Url"] = HttpContext.Current.Request.Url.PathAndQuery;
+            parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : request?.UrlReferrer?.ToString() ?? orchard.WorkContext.CurrentSite.HomePage;
 
             return parameters;
         }
