@@ -30,8 +30,11 @@ using Transformalize.Providers.Trace;
 namespace Transformalize.Ioc.Autofac.Modules {
 
     public class ShorthandModule : Module {
+        private readonly string _attribute;
 
-        public ShorthandModule() { }
+        public ShorthandModule(string attribute) {
+            _attribute = attribute;
+        }
 
         protected override void Load(ContainerBuilder builder) {
 
@@ -381,13 +384,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     foreach (var error in root.Errors()) {
                         context.Error(error);
                     }
-                    context.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
+                    context.Error($"Please fix you shorthand configuration.  No short-hand is being processed for attribute {_attribute}.");
                 } else {
-                    return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
+                    return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, _attribute, "transforms", "method");
                 }
 
                 return new NullCustomizer();
-            }).Named<IDependency>("shorthand");
+            }).Named<IDependency>("shorthand-" + _attribute);
         }
 
         private static Signature Simple(string name, string value = null) {

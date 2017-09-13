@@ -170,11 +170,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new IsEmptyValidator(p.Positional<IContext>(0))).Named<ITransform>("isempty");
             builder.Register((c, p) => new IsDefaultValidator(p.Positional<IContext>(0))).Named<ITransform>("isdefault");
             builder.Register((c, p) => new IsNumericValidator(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
-            builder.Register((c, p) => new RegexIsMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
+            builder.Register((c, p) => new RegexIsMatchValidator(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
 
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
-            builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
+            builder.Register((c, p) => new IsDaylightSavingsValidator(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
             builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
 
             /* VIN, Vehicle Identification Number, note: you get red intellisense here because vin library is portable */

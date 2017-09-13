@@ -15,17 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Transformalize.Transforms {
+namespace Transformalize.Validators {
 
-    public class RegexIsMatchTransform : BaseTransform {
+    /// <summary>
+    /// returns true if matches any of the input
+    /// </summary>
+    public class RegexIsMatchValidator : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexIsMatchTransform(IContext context) : base(context, "bool") {
+        public RegexIsMatchValidator(IContext context) : base(context, "bool") {
             _input = MultipleInput();
 #if NETS10
             _regex = new Regex(context.Transform.Pattern);

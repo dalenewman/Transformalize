@@ -17,6 +17,7 @@ using Pipeline.Web.Orchard.Services.Contracts;
 namespace Pipeline.Web.Orchard {
     public static class Common {
 
+        public const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         public const string ModuleName = "Pipeline.Web.Orchard";
         public const string ModuleGroupName = "Pipeline.NET";
         public const string PipelineFileName = "PipelineFile";
@@ -783,6 +784,15 @@ namespace Pipeline.Web.Orchard {
             string mime;
 
             return _mappings.TryGetValue(extension, out mime) ? mime : "application/octet-stream";
+        }
+
+        public static Stream GenerateStreamFromString(string s) {
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(s);
+            writer.Flush();
+            stream.Position = 0;
+            return stream;
         }
 
         /// <summary>

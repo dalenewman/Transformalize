@@ -30,21 +30,18 @@ using Orchard.UI.Notify;
 using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
-using System.IO;
-using System.Web.UI.WebControls;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
-using Transformalize.Extensions;
 using Process = Transformalize.Configuration.Process;
+using Transformalize.Extensions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [ValidateInput(false), Themed(true)]
+    [ValidateInput(false), Themed]
     public class CfgController : Controller {
 
-        private const string ExcelContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
         private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page" };
 
         private readonly IOrchardServices _orchardServices;
@@ -93,6 +90,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             Logger = NullLogger.Instance;
         }
 
+        [Themed(true)]
         public ActionResult List(string tagFilter) {
 
             // Sticky Tag Filter
@@ -114,68 +112,90 @@ namespace Pipeline.Web.Orchard.Controllers {
             return View(viewModel);
         }
 
+
+
+        [Themed(true)]
         public ActionResult Form(int id) {
 
-            var process = new Process { Name = "Form" };
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
-                process.Name = "Not Found";
-            } else {
-                var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+                return new HttpNotFoundResult("Form not found.");
+            }
+            var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
 
+            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+
+
+                if (Request.HttpMethod.Equals("POST")) {
+
+                    var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
+                    var process = _processService.Resolve(part);
+                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                    process.Load(part.Configuration, parameters);
+
+                    var insert = new Dictionary<string, bool>();
+                    foreach (var entity in process.Entities) {
+                        foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
+                            if (Request.Files != null && Request.Files.Count > 0) {
+                                var input = Request.Files.Get(field.Alias);
+                                if (input != null && input.ContentLength > 0) {
+                                    var filePart = _fileService.Upload(input, "Authenticated", "Forms");
+                                    var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
+                                    if (parameter != null) {
+                                        parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
+                                    }
+                                }
+                            }
+                        }
+
+                        insert[entity.Alias] = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
+                        process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert[entity.Alias] ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
+                    }
+
+                    try {
+                        runner.Execute(process);
+                        foreach (var entity in process.Entities) {
+                            _orchardServices.Notifier.Information(insert[entity.Alias] ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
+                        }
+                        return Redirect(parameters["Orchard.ReturnUrl"]);
+                    } catch (Exception ex) {
+                        _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                    }
+                }
+                return View(part);
+
+            }
+
+            _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Anonymous users do not have permission to view this form. You may need to login.") : T("Sorry {0}. You do not have permission to view this form.", user));
+            return new HttpUnauthorizedResult();
+        }
+
+        [Themed(false)]
+        public ActionResult FormContent(int id) {
+
+            var process = new Process { Name = "Form", Id = id };
+            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
+            if (part == null) {
+                process.Status = 404;
+                process.Message = "Not Found";
+            } else {
                 if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
                     var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                     process = _processService.Resolve(part);
                     var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
                     process.Load(part.Configuration, parameters);
-
-                    if (Request.HttpMethod.Equals("POST")) {
-                        if (Request.Form["form_intention"] == "refresh") {
-                            runner.Execute(process);
-                        } else {
-
-                            var insert = new Dictionary<string, bool>();
-                            foreach (var entity in process.Entities) {
-                                foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
-                                    if (Request.Files != null && Request.Files.Count > 0) {
-                                        var input = Request.Files.Get(field.Alias);
-                                        if (input != null && input.ContentLength > 0) {
-                                            var filePart = _fileService.Upload(input, "Authenticated", "Forms");
-                                            var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
-                                            if (parameter != null) {
-                                                parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
-                                            }
-                                        }
-                                    }
-                                }
-
-                                insert[entity.Alias] = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
-                                process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert[entity.Alias] ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
-                            }
-
-                            try {
-                                runner.Execute(process);
-                                foreach (var entity in process.Entities) {
-                                    _orchardServices.Notifier.Information(insert[entity.Alias] ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
-                                }
-                                return Redirect(parameters["Orchard.ReturnUrl"]);
-                            } catch (Exception ex) {
-                                _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
-                            }
-                        }
-
-                    } else {
-                        runner.Execute(process);
-                    }
+                    runner.Execute(process);
 
                 } else {
-                    _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
+                    process.Message = "Unauthorized";
+                    process.Status = 401;
                 }
             }
             return View(process);
         }
 
+        [Themed(true)]
         public ActionResult Report(int id) {
 
             var timer = new Stopwatch();
@@ -319,7 +339,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             Response.End();
                                             return new EmptyResult();
                                         case "excel":
-                                            return new FilePathResult(o.File, ExcelContentType) {
+                                            return new FilePathResult(o.File, Common.ExcelContentType) {
                                                 FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
                                             };
                                         default:  // page and map are rendered to page
@@ -400,27 +420,19 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             if (part == null) {
                 process.Name = "Not Found";
-                return new FileStreamResult(GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
+                return new FileStreamResult(Common.GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
             }
 
             if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
                 process.Name = "Not Authorized";
-                return new FileStreamResult(GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
+                return new FileStreamResult(Common.GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
             }
 
-            return new FileStreamResult(GenerateStreamFromString(part.Configuration), "text/" + part.EditorMode) { FileDownloadName = _slugService.Slugify(part.Title()) + "." + part.EditorMode };
+            return new FileStreamResult(Common.GenerateStreamFromString(part.Configuration), "text/" + part.EditorMode) { FileDownloadName = _slugService.Slugify(part.Title()) + "." + part.EditorMode };
 
         }
 
 
-        public Stream GenerateStreamFromString(string s) {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(s);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
-        }
 
 
     }

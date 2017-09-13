@@ -56,7 +56,7 @@ namespace Transformalize.Configuration {
         public uint Updates { get; set; }
         public uint Deletes { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string InsertCommand { get; set; }
         [Cfg(value = "")]
         public string UpdateCommand { get; set; }
@@ -224,15 +224,18 @@ namespace Transformalize.Configuration {
             PreValidateSorting();
 
 
+
             foreach (var cf in CalculatedFields) {
                 cf.Input = false;
                 cf.IsCalculated = true;
             }
+
             if (!string.IsNullOrEmpty(Prefix)) {
                 foreach (var field in Fields.Where(f => f.Alias == f.Name && !f.Alias.StartsWith(Prefix))) {
                     field.Alias = Prefix + field.Name;
                 }
             }
+
             if (SearchType != Constants.DefaultSetting) {
                 foreach (var field in Fields) {
                     field.SearchType = SearchType;
@@ -335,6 +338,17 @@ namespace Transformalize.Configuration {
         }
 
         protected override void Validate() {
+
+            // if validation has been defined, check to see if corresponding valid and message fields are present and create them if not
+            var calculatedKeys = new HashSet<string>(CalculatedFields.Select(f => f.Alias ?? f.Name).Distinct(), StringComparer.OrdinalIgnoreCase);
+            foreach (var field in Fields.Where(f => !string.IsNullOrEmpty(f.V))) {
+                if (!calculatedKeys.Contains(field.ValidField)) {
+                    CalculatedFields.Add(new Field { Name = field.ValidField, Alias = field.ValidField, Input = false, Type = "bool", Default = "true", IsCalculated = true });
+                }
+                if (!calculatedKeys.Contains(field.ValidMessageField)) {
+                    CalculatedFields.Add(new Field { Name = field.ValidMessageField, Alias = field.ValidMessageField, Length = "255", Default = "", IsCalculated = true });
+                }
+            }
 
             var fields = GetAllFields().ToArray();
             var names = new HashSet<string>(fields.Select(f => f.Name).Distinct());
@@ -545,6 +559,11 @@ namespace Transformalize.Configuration {
         }
 
         public bool TryGetField(string aliasOrName, out Field field) {
+            if (string.IsNullOrEmpty(aliasOrName)) {
+                field = null;
+                return false;
+            }
+
             field = GetField(aliasOrName);
             return field != null;
         }

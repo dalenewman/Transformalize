@@ -43,7 +43,6 @@ namespace Transformalize.Validators {
                 return;
             }
 
-
             foreach (var field in MultipleInput()) {
                 if (Constants.CanConvert()[field.Type](Context.Transform.Value)) {
                     _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Transform.Value) });

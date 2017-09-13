@@ -2,14 +2,17 @@ using Cfg.Net.Environment;
 using Cfg.Net.Parsers;
 using Cfg.Net.Serializers;
 using Cfg.Net.Shorthand;
-using Orchard;
 using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Models;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Jint;
 using System.Collections.Generic;
 using System.Linq;
+using Cfg.Net.Contracts;
 using Orchard.Logging;
+using Transformalize.Nulls;
+using IDependency = Orchard.IDependency;
+using ILogger = Orchard.Logging.ILogger;
 using Parameter = Cfg.Net.Shorthand.Parameter;
 
 namespace Pipeline.Web.Orchard.Services {
@@ -23,13 +26,17 @@ namespace Pipeline.Web.Orchard.Services {
 
         public ILogger Logger { get; set; }
         private readonly object _lock = new object();
-        public static Cfg.Net.Contracts.IDependency _shortHandCustomizer;
+        public static Cfg.Net.Contracts.IDependency _shortHandCustomizerT;
+        public static Cfg.Net.Contracts.IDependency _shortHandCustomizerV;
 
         public ProcessService() {
             Logger = NullLogger.Instance;
             lock (_lock) {
-                if (_shortHandCustomizer == null) {
-                    _shortHandCustomizer = BuildShortHandCustomizer();
+                if (_shortHandCustomizerT == null) {
+                    _shortHandCustomizerT = BuildShortHandCustomizer("t");
+                }
+                if (_shortHandCustomizerV == null) {
+                    _shortHandCustomizerV = BuildShortHandCustomizer("v");
                 }
             }
         }
@@ -49,7 +56,8 @@ namespace Pipeline.Web.Orchard.Services {
                                 new FastJsonParser(),
                                 new JsonSerializer(),
                                 new JintValidator(),
-                                _shortHandCustomizer,
+                                _shortHandCustomizerT,
+                                _shortHandCustomizerV,
                                 modifier
                             );
                         default:  // xml
@@ -58,7 +66,8 @@ namespace Pipeline.Web.Orchard.Services {
                                 new FastJsonParser(),
                                 new XmlSerializer(),
                                 new JintValidator(),
-                                _shortHandCustomizer,
+                                _shortHandCustomizerT,
+                                _shortHandCustomizerV,
                                 modifier
                             );
                     }
@@ -70,7 +79,8 @@ namespace Pipeline.Web.Orchard.Services {
                                 new NanoXmlParser(),
                                 new JsonSerializer(),
                                 new JintValidator(),
-                                _shortHandCustomizer,
+                                _shortHandCustomizerT,
+                                _shortHandCustomizerV,
                                 modifier
                             );
                         default: // xml
@@ -79,7 +89,8 @@ namespace Pipeline.Web.Orchard.Services {
                                 new NanoXmlParser(),
                                 new XmlSerializer(),
                                 new JintValidator(),
-                                _shortHandCustomizer,
+                                _shortHandCustomizerT,
+                                _shortHandCustomizerV,
                                 modifier
                             );
                     }
@@ -90,7 +101,7 @@ namespace Pipeline.Web.Orchard.Services {
             return Resolve(part, part.EditorMode, part.EditorMode);
         }
 
-        private ShorthandCustomizer BuildShortHandCustomizer() {
+        private ICustomizer BuildShortHandCustomizer(string attribute) {
             var root = new ShorthandRoot();
             root.Signatures.Add(new Signature { Name = "none" });
             root.Signatures.Add(Simple("format"));
@@ -141,10 +152,9 @@ namespace Pipeline.Web.Orchard.Services {
             root.Signatures.Add(Simple("timecomponent"));
             root.Signatures.Add(new Signature {
                 Name = "dateadd",
-                Parameters = new List<Cfg.Net.Shorthand.Parameter>
-                {
-                    new Cfg.Net.Shorthand.Parameter { Name = "value" },
-                    new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
+                Parameters = new List<Parameter> {
+                    new Parameter { Name = "value" },
+                    new Parameter { Name = "timecomponent", Value="days" }
                 }
             });
             root.Signatures.Add(new Signature {
@@ -426,15 +436,15 @@ namespace Pipeline.Web.Orchard.Services {
             root.Check();
 
             if (!root.Errors().Any()) {
-                return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
+                return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, attribute, "transforms", "method");
             }
 
             foreach (var error in root.Errors()) {
                 Logger.Error(error);
             }
-            Logger.Error("Please fix you shorthand configuration.  No short-hand is being processed.");
+            Logger.Error($"Please fix you shorthand configuration.  No short-hand is being processed for attribute {attribute}.");
 
-            return new ShorthandCustomizer(new ShorthandRoot(), new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
+            return new NullCustomizer();
         }
 
         private static Signature Simple(string name, string value = null) {

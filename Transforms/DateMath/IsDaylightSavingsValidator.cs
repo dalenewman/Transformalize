@@ -22,11 +22,11 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.DateMath {
 
-    public class IsDaylightSavingsTransform : BaseTransform {
+    public class IsDaylightSavingsValidator : BaseTransform {
 
         private readonly Field _input;
 
-        public IsDaylightSavingsTransform(IContext context) : base(context, "bool") {
+        public IsDaylightSavingsValidator(IContext context) : base(context, "bool") {
             if (IsNotReceiving("date")) {
                 return;
             }

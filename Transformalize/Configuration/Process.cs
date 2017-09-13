@@ -594,6 +594,12 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool Buffer { get; set; }
 
+        /// <summary>
+        /// An optional Id (used in Orchard CMS module)
+        /// </summary>
+        [Cfg(value=0)]
+        public int Id { get; set; }
+
         public List<Parameter> GetActiveParameters() {
             if (!Environments.Any())
                 return new List<Parameter>();

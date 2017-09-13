@@ -21,6 +21,9 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
+    /// <summary>
+    /// Pulls just the matched part out of any of the time (first hit)
+    /// </summary>
     public class RegexMatchTransform : BaseTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;

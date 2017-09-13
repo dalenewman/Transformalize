@@ -56,7 +56,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         case "sqlce":
                         case "sqlserver":
                             if (connection != null)
-                                return new AdoMapReader(ctx.ResolveNamed<IConnectionFactory>(connection.Key), map.Name);
+                                return new AdoMapReader(ctx.Resolve<IContext>(), ctx.ResolveNamed<IConnectionFactory>(connection.Key), map.Name);
                             return new DefaultMapReader();
                         default:
                             return new DefaultMapReader();

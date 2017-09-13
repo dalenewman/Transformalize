@@ -37,9 +37,6 @@ namespace Transformalize.Provider.Internal {
 
         public void Initialize() {
             _context.Process.Rows.Clear();
-            foreach (var entity in _context.Process.Entities) {
-                entity.Rows.Clear();
-            }
         }
 
         public object GetMaxVersion() {

@@ -24,14 +24,15 @@ using Transformalize.Contracts;
 namespace Transformalize.Configuration {
     public class Field : CfgNode, IField {
 
-        static readonly string[] ExpressionSplitter = { ")." };
+
+        private static readonly string[] ExpressionSplitter = { ")." };
         public static readonly List<string> InvalidNames = new List<string> { Constants.TflHashCode.ToLower(), Constants.TflBatchId.ToLower(), Constants.TflKey.ToLower(), Constants.TflDeleted.ToLower() };
 
-        string _type;
-        string _length;
-        int _precision;
-        int _scale;
-        string _runOperator;
+        private string _type;
+        private string _length;
+        private int _precision;
+        private int _scale;
+        private string _runOperator;
 
         public string PrecisionFormat { get; private set; } = "000000000";
 
@@ -106,13 +107,13 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [Cfg(value="defer",domain= "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week")]
+        [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week")]
         public string InputType { get; set; }
 
-        [Cfg(value= "")]
+        [Cfg(value = "")]
         public string InputAccept { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string InputCapture { get; set; }
 
         /// <summary>
@@ -355,6 +356,15 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string T { get; set; }
 
+        [Cfg(value = "")]
+        public string V { get; set; }
+
+        [Cfg(value = "")]
+        public string ValidField { get; set; }
+
+        [Cfg(value = "")]
+        public string ValidMessageField { get; set; }
+
         [Cfg(value = true)]
         public bool Unicode { get; set; }
 
@@ -381,9 +391,16 @@ namespace Transformalize.Configuration {
         public bool System { get; set; }
 
         protected override void Validate() {
+            if (!string.IsNullOrEmpty(V)) {
+                if (ValidField == string.Empty) {
+                    ValidField = Alias + "Valid";
+                }
+                if (ValidMessageField == string.Empty) {
+                    ValidMessageField = Alias + "Message";
+                }
+            }
         }
 
-        //custom
         protected override void PreValidate() {
 
             if (string.IsNullOrEmpty(Alias)) { Alias = Name; }
@@ -457,7 +474,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        bool RequiresCopyParameters() {
+        private bool RequiresCopyParameters() {
             return T.StartsWith("copy(", StringComparison.Ordinal);
         }
 
@@ -525,7 +542,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Body { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Src { get; set; }
 
         [Cfg(value = "chakra", domain = "chakra,jint", toLower = true)]
@@ -546,21 +563,21 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string RunField { get; set; }
 
-        [Cfg(value="default", domain ="true,false,default", toLower=true, ignoreCase=true)]
+        [Cfg(value = "default", domain = "true,false,default", toLower = true, ignoreCase = true)]
         public string Dimension { get; set; }
 
-        [Cfg(value =false)]
+        [Cfg(value = false)]
         public bool Measure { get; set; }
 
-        [Cfg(value ="sum", domain= @"Sum,Count,Min,Max,DistinctCount,None,ByAccount,AverageOfChildren,FirstChild,LastChild,FirstNonEmpty,LastNonEmpty", ignoreCase =true, toLower =true)]
+        [Cfg(value = "sum", domain = @"Sum,Count,Min,Max,DistinctCount,None,ByAccount,AverageOfChildren,FirstChild,LastChild,FirstNonEmpty,LastNonEmpty", ignoreCase = true, toLower = true)]
         public string AggregateFunction { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Expression { get; set; }
 
         [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
         public string RunOperator {
-            get { return _runOperator; }
+            get => _runOperator;
             set {
                 value = value?.TrimEnd('s');
                 _runOperator = value;
@@ -572,10 +589,10 @@ namespace Transformalize.Configuration {
 
         public string Source { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Width { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Height { get; set; }
     }
 }

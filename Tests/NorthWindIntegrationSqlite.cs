@@ -50,7 +50,7 @@ namespace Tests {
         public void SqlLite_Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ShorthandModule());
+            builder.RegisterModule(new ShorthandModule("t"));
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 

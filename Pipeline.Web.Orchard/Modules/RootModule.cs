@@ -65,8 +65,12 @@ namespace Pipeline.Web.Orchard.Modules {
                     new IllegalCharacterValidator()
                 };
 
-                if (ctx.IsRegisteredWithName<IDependency>("shorthand")) {
-                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand"));
+                if (ctx.IsRegisteredWithName<IDependency>("shorthand-t")) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-t"));
+                }
+
+                if (ctx.IsRegisteredWithName<IDependency>("shorthand-v")) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
 
                 var process = new Process(dependencies.ToArray());

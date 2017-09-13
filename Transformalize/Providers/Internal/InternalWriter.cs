@@ -34,9 +34,16 @@ namespace Transformalize.Provider.Internal {
 
             var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
             var keys = fields.Select(f => f.Alias).ToArray();
-            _context.Entity.Rows.Clear();
+            var cleared = false;
 
             foreach (var row in rows) {
+
+                // only clear the output if rows need to be written, otherwise leave it alone
+                if (!cleared) {
+                    _context.Entity.Rows.Clear();
+                    cleared = true;
+                }
+
                 _context.Entity.Rows.Add(row.ToCfgRow(fields, keys));
                 _context.Increment();
             }

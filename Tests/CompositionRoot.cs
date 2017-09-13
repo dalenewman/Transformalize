@@ -34,7 +34,8 @@ namespace Tests {
         public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ShorthandModule());
+            builder.RegisterModule(new ShorthandModule("t"));
+            builder.RegisterModule(new ShorthandModule("v"));
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 

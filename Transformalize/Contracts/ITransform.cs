@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
+
+    /// <inheritdoc />
     /// <summary>
     /// all transformers should implement this, they need to transform the data and Increment()
     /// </summary>
