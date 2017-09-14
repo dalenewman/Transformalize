@@ -80,7 +80,7 @@ namespace Transformalize.Transforms.System {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var field in CalculatedFieldDefaults) {
                 field.Setter(row);
             }

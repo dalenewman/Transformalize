@@ -17,26 +17,32 @@
 #endregion
 using System;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class IsNumericValidator : BaseTransform {
+    public class NumericValidator : StringValidate {
         private readonly Func<IRow, bool> _transform;
 
-        public IsNumericValidator(IContext context) : base(context, "bool") {
+        public NumericValidator(IContext context) : base(context) {
+            if (!Run)
+                return;
+
             var input = SingleInput();
             if (input.IsNumeric()) {
                 _transform = row => true;
             } else {
                 _transform = row => {
                     double val;
-                    return double.TryParse(row[input].ToString(), out val);
+                    return double.TryParse(GetString(row, input), out val);
                 };
             }
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = _transform(row);
+        public override IRow Operate(IRow row) {
+            var valid = _transform(row);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, "Must be numeric.");
+            }
             Increment();
             return row;
         }

@@ -27,7 +27,6 @@ using Transformalize.Providers.File.Transforms;
 using Transformalize.Providers.Razor;
 using Transformalize.Providers.Web;
 using Transformalize.Transforms;
-using Transformalize.Validators;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.CSharp;
 using Transformalize.Transforms.DateMath;
@@ -159,22 +158,22 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
 
             // return true or false, validators
-            builder.Register((c, p) => new AnyValidator(p.Positional<IContext>(0))).Named<ITransform>("any");
-            builder.Register((c, p) => new StartsWithValidator(p.Positional<IContext>(0))).Named<ITransform>("startswith");
-            builder.Register((c, p) => new EndsWithValidator(p.Positional<IContext>(0))).Named<ITransform>("endswith");
-            builder.Register((c, p) => new InValidator(p.Positional<IContext>(0))).Named<ITransform>("in");
-            builder.Register((c, p) => new ContainsValidator(p.Positional<IContext>(0))).Named<ITransform>("contains");
-            builder.Register((c, p) => new IsValidator(p.Positional<IContext>(0))).Named<ITransform>("is");
-            builder.Register((c, p) => new EqualsValidator(p.Positional<IContext>(0))).Named<ITransform>("equal");
-            builder.Register((c, p) => new EqualsValidator(p.Positional<IContext>(0))).Named<ITransform>("equals");
-            builder.Register((c, p) => new IsEmptyValidator(p.Positional<IContext>(0))).Named<ITransform>("isempty");
-            builder.Register((c, p) => new IsDefaultValidator(p.Positional<IContext>(0))).Named<ITransform>("isdefault");
-            builder.Register((c, p) => new IsNumericValidator(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
-            builder.Register((c, p) => new RegexIsMatchValidator(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
+            builder.Register((c, p) => new AnyTransform(p.Positional<IContext>(0))).Named<ITransform>("any");
+            builder.Register((c, p) => new StartsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("startswith");
+            builder.Register((c, p) => new EndsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("endswith");
+            builder.Register((c, p) => new InTransform(p.Positional<IContext>(0))).Named<ITransform>("in");
+            builder.Register((c, p) => new ContainsTransform(p.Positional<IContext>(0))).Named<ITransform>("contains");
+            builder.Register((c, p) => new IsTransform(p.Positional<IContext>(0))).Named<ITransform>("is");
+            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("equal");
+            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("equals");
+            builder.Register((c, p) => new IsEmptyTransform(p.Positional<IContext>(0))).Named<ITransform>("isempty");
+            builder.Register((c, p) => new IsDefaultTransform(p.Positional<IContext>(0))).Named<ITransform>("isdefault");
+            builder.Register((c, p) => new IsNumericTransform(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
+            builder.Register((c, p) => new RegexIsMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
 
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
-            builder.Register((c, p) => new IsDaylightSavingsValidator(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
+            builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
             builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
 
             /* VIN, Vehicle Identification Number, note: you get red intellisense here because vin library is portable */
@@ -197,7 +196,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
-                return context.Transform.XmlMode == "all" ?
+                return context.Operation.XmlMode == "all" ?
                     new FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");

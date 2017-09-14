@@ -29,24 +29,24 @@ namespace Transformalize.Transforms {
                 return;
             }
             
-            if (IsMissing(context.Transform.Pattern)) {
+            if (IsMissing(context.Operation.Pattern)) {
                 return;
             }
 
             var input = SingleInput();
 #if NETS10
-            var regex = new Regex(context.Transform.Pattern);
+            var regex = new Regex(context.Operation.Pattern);
 #else
-            var regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
+            var regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
 #endif
-            if (context.Transform.Count == 0) {
-                _transform = r => r[Context.Field] = regex.Replace(r[input].ToString(), context.Transform.NewValue);
+            if (context.Operation.Count == 0) {
+                _transform = r => r[Context.Field] = regex.Replace(r[input].ToString(), context.Operation.NewValue);
             } else {
-                _transform = r => r[Context.Field] = regex.Replace(r[input].ToString(), context.Transform.NewValue, context.Transform.Count);
+                _transform = r => r[Context.Field] = regex.Replace(r[input].ToString(), context.Operation.NewValue, context.Operation.Count);
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             _transform(row);
             Increment();
             return row;

@@ -24,13 +24,13 @@ namespace Transformalize.Transforms {
         private readonly Field[] _input;
 
         public JoinTransform(IContext context) : base(context, "string") {
-            if (IsMissing(context.Transform.Separator)) {
+            if (IsMissing(context.Operation.Separator)) {
                 return;
             }
             _input = MultipleInput();
         }
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = string.Join(Context.Transform.Separator, _input.Select(f=>row[f]));
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = string.Join(Context.Operation.Separator, _input.Select(f=>row[f]));
             Increment();
             return row;
         }

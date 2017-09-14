@@ -51,7 +51,7 @@ namespace Tests {
                 return new RunTimeSchemaReader(process, context);
             }).As<ISchemaReader>();
 
-            builder.RegisterModule(new ShorthandModule("t"));
+            builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new RootModule());
 
             using (var scope = builder.Build().BeginLifetimeScope()) {

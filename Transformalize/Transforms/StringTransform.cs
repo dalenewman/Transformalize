@@ -1,4 +1,8 @@
-namespace Pipeline.Shared {
+using System;
+using Transformalize.Configuration;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms {
     public abstract class StringTransform : BaseTransform {
 
         protected readonly Func<IRow, Field, string> GetString;

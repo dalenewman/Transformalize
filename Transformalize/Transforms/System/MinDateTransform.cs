@@ -34,7 +34,7 @@ namespace Transformalize.Transforms.System {
             _toString = context.Process.Connections.First(c => c.Name == context.Entity.Connection).Provider == "mysql";
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var date in _dates) {
                 if (_toString) {
                     if (Convert.ToDateTime(row[date].ToString()) < _minDate) {

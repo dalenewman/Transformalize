@@ -38,22 +38,22 @@ namespace Transformalize.Providers.Razor {
 
         public RazorTransform(IContext context) : base(context, context.Field.Type) {
 
-            if (IsMissing(context.Transform.Template)) {
+            if (IsMissing(context.Operation.Template)) {
                 return;
             }
 
-            if (context.Transform.ContentType == string.Empty) {
-                context.Transform.ContentType = "raw"; //other would be html
+            if (context.Operation.ContentType == string.Empty) {
+                context.Operation.ContentType = "raw"; //other would be html
             }
 
             _input = MultipleInput();
 
-            var key = GetHashCode(context.Transform.Template, _input);
+            var key = GetHashCode(context.Operation.Template, _input);
 
             if (!Cache.TryGetValue(key, out _service)) {
                 var config = new TemplateServiceConfiguration {
                     DisableTempFileLocking = true,
-                    EncodedStringFactory = Context.Transform.ContentType == "html"
+                    EncodedStringFactory = Context.Operation.ContentType == "html"
                         ? (IEncodedStringFactory)new HtmlEncodedStringFactory()
                         : new RawStringFactory(),
                     Language = Language.CSharp,
@@ -63,16 +63,16 @@ namespace Transformalize.Providers.Razor {
             }
 
             try {
-                RazorEngineServiceExtensions.Compile(_service, (string) Context.Transform.Template, (string) Context.Key, typeof(ExpandoObject));
+                RazorEngineServiceExtensions.Compile(_service, (string) Context.Operation.Template, (string) Context.Key, typeof(ExpandoObject));
                 Cache[key] = _service;
             } catch (Exception ex) {
-                Context.Warn(Context.Transform.Template.Replace("{", "{{").Replace("}", "}}"));
+                Context.Warn(Context.Operation.Template.Replace("{", "{{").Replace("}", "}}"));
                 Context.Warn(ex.Message);
                 throw;
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var output = _service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input));
             row[Context.Field] = Context.Field.Convert(output.Trim(' ', '\n', '\r'));
             Increment();

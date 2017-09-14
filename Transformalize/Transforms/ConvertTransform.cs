@@ -26,7 +26,7 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = Context.Field.Convert(row[_input]);
             Increment();
             return row;

@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -15,27 +15,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
-using System;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.DateMath {
-
-    public class IsDaylightSavingsValidator : BaseTransform {
+namespace Transformalize.Validators {
+    public class EmptyValidator : StringValidate {
 
         private readonly Field _input;
 
-        public IsDaylightSavingsValidator(IContext context) : base(context, "bool") {
-            if (IsNotReceiving("date")) {
+        public EmptyValidator(IContext context) : base(context) {
+            if (!Run)
+                return;
+
+            if (IsNotReceiving("string")) {
                 return;
             }
-
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = ((DateTime)row[_input]).IsDaylightSavingTime();
+        public override IRow Operate(IRow row) {
+            var valid = GetString(row, _input) == string.Empty;
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, "Must be empty.");
+            }
             Increment();
             return row;
         }

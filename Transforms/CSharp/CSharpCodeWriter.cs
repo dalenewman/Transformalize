@@ -132,7 +132,7 @@ namespace Transformalize.Transforms.CSharp {
 
             sb.Append("        ");
             // handles csharp body or an expression
-            sb.AppendLine(tc.Transform.Script.Contains("return ") ? tc.Transform.Script : "return " + (tc.Transform.Script.EndsWith(";") ? tc.Transform.Script : tc.Transform.Script + ";"));
+            sb.AppendLine(tc.Operation.Script.Contains("return ") ? tc.Operation.Script : "return " + (tc.Operation.Script.EndsWith(";") ? tc.Operation.Script : tc.Operation.Script + ";"));
             sb.AppendLine("    }");
 
         }

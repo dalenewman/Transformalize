@@ -34,7 +34,7 @@ namespace Transformalize.Transforms.Humanizer {
             var type = Received() ?? _input.Type;
 
             if (type != "string" && !type.StartsWith("date", StringComparison.OrdinalIgnoreCase)) {
-                Error($"The {Context.Transform.Method} expects a string or date, but received a {type} in field {Context.Field.Alias}.");
+                Error($"The {context.Operation.Method} expects a string or date, but received a {type} in field {Context.Field.Alias}.");
                 Run = false;
                 return;
             }
@@ -45,7 +45,7 @@ namespace Transformalize.Transforms.Humanizer {
                 case "bytesize":
                     _transform = (row) => {
                         var input = (ByteSize)row[_input];
-                        return context.Transform.Format == Constants.DefaultSetting ? input.Humanize() : input.Humanize(context.Transform.Format);
+                        return context.Operation.Format == Constants.DefaultSetting ? input.Humanize() : input.Humanize(context.Operation.Format);
                     };
                     break;
                 case "date":
@@ -68,7 +68,7 @@ namespace Transformalize.Transforms.Humanizer {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;

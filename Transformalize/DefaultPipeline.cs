@@ -22,13 +22,13 @@ using Transformalize.Contracts;
 namespace Transformalize {
     public class DefaultPipeline : IPipeline {
 
-        readonly IOutputController _controller;
+        private readonly IOutputController _controller;
 
         protected IRead Reader { get; private set; }
         protected IWrite Writer { get; private set; }
         protected IUpdate Updater { get; private set; }
         protected IEntityDeleteHandler DeleteHandler { get; private set; }
-        protected List<ITransform> Transformers { get; }
+        protected List<ITransform> Transforms { get; }
         protected List<IMapReader> MapReaders { get; }
         protected IOutputProvider OutputProvider { get; private set; }
         protected IInputProvider InputProvider { get; private set; }
@@ -40,7 +40,7 @@ namespace Transformalize {
             Valid = true;
             Context = context;
             _controller = controller;
-            Transformers = new List<ITransform>();
+            Transforms = new List<ITransform>();
             MapReaders = new List<IMapReader>();
 
             Context.Debug(() => $"Registering {GetType().Name}.");
@@ -73,7 +73,7 @@ namespace Transformalize {
 
         public void Register(ITransform transform) {
             Context.Debug(() => $"Registering {transform.GetType().Name}.");
-            Transformers.Add(transform);
+            Transforms.Add(transform);
         }
 
         public void Register(Transforms.Transforms transforms) {
@@ -100,7 +100,7 @@ namespace Transformalize {
 
         public virtual IEnumerable<IRow> Read() {
             if (Valid) {
-                Context.Debug(() => $"Running {Transformers.Count} transforms.");
+                Context.Debug(() => $"Running {Transforms.Count} transforms.");
                 if (Context.Entity.NeedsUpdate()) {
                     if (Context.Process.Mode != "init") {
                         if (Context.Entity.Version != string.Empty) {
@@ -113,7 +113,7 @@ namespace Transformalize {
                             }
                         }
                     }
-                    return Transformers.Aggregate(Reader == null ? InputProvider.Read() : Reader.Read(), (current, transformer) => transformer.Transform(current));
+                    return Transforms.Aggregate(Reader == null ? InputProvider.Read() : Reader.Read(), (current, transformer) => transformer.Operate(current));
                 }
                 Context.Info("Change Detected: No.");
             }
@@ -134,14 +134,15 @@ namespace Transformalize {
             _controller.End();
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// CAUTION: If you're using Read without Execute, make sure you consume enumerable before disposing
         /// </summary>
         public void Dispose() {
-            foreach (var transform in Transformers) {
+            foreach (var transform in Transforms) {
                 transform.Dispose();
             }
-            Transformers.Clear();
+            Transforms.Clear();
             Reader = null;
             Writer = null;
             Updater = null;

@@ -24,17 +24,17 @@ namespace Transformalize.Transforms {
         private readonly char[] _trimChars;
 
         public TrimTransform(IContext context) : base(context, "string") {
-            if (IsMissing(context.Transform.TrimChars)) {
+            if (IsMissing(context.Operation.TrimChars)) {
                 return;
             }
 
             _input = SingleInput();
-            context.Transform.TrimChars = context.Transform.TrimChars.Replace("\\r", "\r");
-            context.Transform.TrimChars = context.Transform.TrimChars.Replace("\\n", "\n");
-            _trimChars = Context.Transform.TrimChars.ToCharArray();
+            context.Operation.TrimChars = context.Operation.TrimChars.Replace("\\r", "\r");
+            context.Operation.TrimChars = context.Operation.TrimChars.Replace("\\n", "\n");
+            _trimChars = Context.Operation.TrimChars.ToCharArray();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = GetString(row,_input).Trim(_trimChars);
             Increment();
             return row;

@@ -61,7 +61,7 @@ namespace Transformalize.Ioc.Autofac {
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {
                     context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Configuration.Transform { Method = "convert" })));
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
             }
 
@@ -71,7 +71,7 @@ namespace Transformalize.Ioc.Autofac {
         public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
             transform = null;
             var success = true;
-            if (ctx.IsRegisteredWithName<ITransform>(context.Transform.Method)) {
+            if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
                 var t = ShouldRunTransform(ctx, context);
 
                 foreach (var warning in t.Warnings()) {
@@ -87,16 +87,16 @@ namespace Transformalize.Ioc.Autofac {
                     transform = t;
                 }
             } else {
-                context.Error($"The {context.Transform.Method} method used in the {context.Field.Alias} field is not registered.");
+                context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
                 success = false;
             }
             return success;
         }
 
         public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
-            return context.Transform.ShouldRun == null ?
-                ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)) :
-                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)));
+            return context.Operation.ShouldRun == null ?
+                ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)) :
+                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)));
         }
 
     }

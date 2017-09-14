@@ -33,31 +33,31 @@ namespace Transformalize.Transforms.Xml {
                 return;
             }
 
-            if (IsMissing(context.Transform.Expression)) {
+            if (IsMissing(context.Operation.Expression)) {
                 return;
             }
 
-            if (!string.IsNullOrEmpty(context.Transform.NameSpace) && string.IsNullOrEmpty(context.Transform.Url)) {
+            if (!string.IsNullOrEmpty(context.Operation.NameSpace) && string.IsNullOrEmpty(context.Operation.Url)) {
                 Error("If you set a namespace, you must also set the url that references the name space.");
             }
 
             _input = SingleInput();
-            _xPathIsField = context.Process.TryGetField(context.Transform.Expression, out _xPathField);
-            _hasNamespace = !string.IsNullOrEmpty(context.Transform.NameSpace);
+            _xPathIsField = context.Process.TryGetField(context.Operation.Expression, out _xPathField);
+            _hasNamespace = !string.IsNullOrEmpty(context.Operation.NameSpace);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
 
             var xml = (string)row[_input];
 
             var doc = new XmlDocument();
-            var xPath = _xPathIsField ? row[_xPathField].ToString() : Context.Transform.Expression;
+            var xPath = _xPathIsField ? row[_xPathField].ToString() : Context.Operation.Expression;
             doc.LoadXml(xml);
 
             XmlNode node;
             if (_hasNamespace) {
                 var ns = new XmlNamespaceManager(doc.NameTable);
-                ns.AddNamespace(Context.Transform.NameSpace, Context.Transform.Url);
+                ns.AddNamespace(Context.Operation.NameSpace, Context.Operation.Url);
                 node = doc.SelectSingleNode(xPath, ns);
             } else {
                 node = doc.SelectSingleNode(xPath);

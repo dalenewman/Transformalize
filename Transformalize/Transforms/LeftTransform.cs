@@ -29,17 +29,17 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.Length == 0) {
+            if (context.Operation.Length == 0) {
                 Error("The left transform requires a length parameter.");
                 Run = false;
                 return;
             }
 
-            _length = context.Transform.Length;
+            _length = context.Operation.Length;
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].ToString().Left(_length);
             Increment();
             return row;

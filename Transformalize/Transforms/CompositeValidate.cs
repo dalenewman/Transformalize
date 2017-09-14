@@ -15,13 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Validators {
+namespace Transformalize.Transforms {
     public class CompositeValidator : BaseTransform {
         readonly IEnumerable<ITransform> _transforms;
         readonly Func<IRow, object> _validate;
@@ -31,13 +31,13 @@ namespace Transformalize.Validators {
             _transforms = transforms.ToArray();
 
             if (context.Field.Type.StartsWith("bool", StringComparison.Ordinal)) {
-                _validate = r => _transforms.All(t => (bool)t.Transform(r)[context.Field]);
+                _validate = r => _transforms.All(t => (bool)t.Operate(r)[context.Field]);
             } else {
-                _validate = r => string.Concat(_transforms.Select(t => t.Transform(r)[context.Field] + " ")).Trim();
+                _validate = r => string.Concat(_transforms.Select(t => t.Operate(r)[context.Field] + " ")).Trim();
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _validate(row);
             Increment();
             return row;

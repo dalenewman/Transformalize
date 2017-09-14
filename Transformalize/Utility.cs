@@ -52,6 +52,22 @@ namespace Transformalize {
                     .ToArray();
         }
 
+        public static string ReadableDomain(IEnumerable<object> items) {
+            if (items == null)
+                return string.Empty;
+
+            var expanded = items.ToList();
+
+            if (expanded.Count == 1) {
+                return expanded[0]?.ToString() ?? string.Empty;
+            }
+
+            var last = expanded.Last();
+            expanded.Remove(last);
+
+            return string.Join(", ", expanded) + ", or " + last;
+        }
+
         public static string[] Split(string arg, string[] splitter, int skip = 0) {
             if (arg.Equals(string.Empty))
                 return new string[0];
@@ -183,7 +199,7 @@ namespace Transformalize {
         }
 
         public static string GetMethodName(IContext context) {
-            return Identifier(context.Field.Alias) + context.Transform.Index;
+            return Identifier(context.Field.Alias) + context.Operation.Index;
         }
 
     }

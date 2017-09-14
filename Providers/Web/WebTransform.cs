@@ -34,30 +34,30 @@ namespace Transformalize.Providers.Web {
 
             if (_input.Equals(Context.Field)) {
                 // the url in this field will be transformed inline a web response
-                _getAction = row => new Configuration.Action { Type = "web", Url = row[Context.Field] as string, Method = context.Transform.WebMethod, Body = context.Transform.Body };
+                _getAction = row => new Configuration.Action { Type = "web", Url = row[Context.Field] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
             } else {
-                if (context.Entity.TryGetField(context.Transform.Url, out url)) {
+                if (context.Entity.TryGetField(context.Operation.Url, out url)) {
                     // url referenced a field
-                    _getAction = row => new Configuration.Action { Type = "web", Url = row[url] as string, Method = context.Transform.WebMethod, Body = context.Transform.Body };
+                    _getAction = row => new Configuration.Action { Type = "web", Url = row[url] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
                 } else {
-                    if (context.Transform.Url != string.Empty) {
+                    if (context.Operation.Url != string.Empty) {
                         // url is literal url
-                        _getAction = row => new Configuration.Action { Type = "web", Url = context.Transform.Url, Method = context.Transform.WebMethod, Body = context.Transform.Body };
+                        _getAction = row => new Configuration.Action { Type = "web", Url = context.Operation.Url, Method = context.Operation.WebMethod, Body = context.Operation.Body };
                     } else {
                         // the url as copied in via a parameter (aka copy(url))
-                        _getAction = row => new Configuration.Action { Type = "web", Url = row[_input] as string, Method = context.Transform.WebMethod, Body = context.Transform.Body };
+                        _getAction = row => new Configuration.Action { Type = "web", Url = row[_input] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
                     }
                 }
             }
 
-            if (context.Transform.WebMethod == "GET") {
+            if (context.Operation.WebMethod == "GET") {
                 _getResponse = WebAction.Get;
             } else {
                 _getResponse = WebAction.Post;
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var response = _getResponse(_getAction(row));
             Increment();
             row[Context.Field] = response.Message;

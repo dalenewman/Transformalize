@@ -19,36 +19,38 @@
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
     /// <summary>
     /// returns true if matches any of the input
     /// </summary>
-    public class RegexIsMatchValidator : BaseTransform {
+    public class MatchValidator : StringValidate {
         private readonly Regex _regex;
-        private readonly Field[] _input;
+        private readonly Field _input;
 
-        public RegexIsMatchValidator(IContext context) : base(context, "bool") {
-            _input = MultipleInput();
+        public MatchValidator(IContext context) : base(context) {
+
+            if (!Run)
+                return;
+
+            _input = SingleInput();
 #if NETS10
-            _regex = new Regex(context.Transform.Pattern);
+            _regex = new Regex(context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
 #endif
         }
 
-        public override IRow Transform(IRow row) {
-            foreach (var field in _input) {
-                var match = _regex.Match(row[field].ToString());
-                if (match.Success) {
-                    row[Context.Field] = true;
-                    break;
-                } else {
-                    row[Context.Field] = false;
-                }
+        public override IRow Operate(IRow row) {
+
+            var match = _regex.Match(GetString(row, _input));
+            row[ValidField] = match.Success;
+
+            if (!match.Success) {
+                AppendMessage(row, $"Must match pattern {Context.Operation.Pattern}.");
             }
+
             Increment();
             return row;
         }

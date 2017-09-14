@@ -34,8 +34,8 @@ namespace Transformalize.Transforms {
             if (!Run)
                 return;
 
-            if (!context.Transform.Parameters.Any()) {
-                Error($"The {context.Transform.Method} transform requires a collection of output fields.");
+            if (!context.Operation.Parameters.Any()) {
+                Error($"The {context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;
                 return;
             }
@@ -51,7 +51,7 @@ namespace Transformalize.Transforms {
             _lengths = _output.Select(f => Convert.ToInt32(f.Length)).ToArray();
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
             foreach (var row in rows) {
                 var line = row[_input] as string;
                 if (line == null) {
@@ -61,13 +61,13 @@ namespace Transformalize.Transforms {
                     if (line.Length == 0) {
                         Increment();
                     } else {
-                        yield return Transform(row);
+                        yield return Operate(row);
                     }
                 }
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
 
             var line = row[_input] as string ?? string.Empty;
             var values = new string[_lengths.Length];

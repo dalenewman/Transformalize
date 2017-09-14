@@ -10,9 +10,9 @@ namespace Transformalize.Transforms.Humanizer
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var input = ByteSize.Parse(row[_input].ToString());
-            switch (Context.Transform.Units) {
+            switch (Context.Operation.Units) {
                 case "bits":
                     row[Context.Field] = input.Bits;
                     break;

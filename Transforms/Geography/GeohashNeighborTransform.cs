@@ -43,10 +43,10 @@ namespace Transformalize.Transforms.Geography {
             }
 
             _input = SingleInput();
-            _direction = _directions[context.Transform.Direction];
+            _direction = _directions[context.Operation.Direction];
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = NGeoHash.Portable.GeoHash.Neighbor((string)row[_input], _direction);
             Increment();
             return row;

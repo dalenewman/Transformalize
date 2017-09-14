@@ -31,7 +31,7 @@ namespace Transformalize.Transforms {
 
         public MapTransform(IContext context) : base(context, null) {
 
-            if (context.Transform.Map == string.Empty) {
+            if (context.Operation.Map == string.Empty) {
                 Error("The map method requires a map");
                 Run = false;
                 return;
@@ -40,9 +40,9 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
 
-            var map = Context.Process.Maps.First(m => m.Name == Context.Transform.Map);
+            var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
 
             // seems like i have over-complicated this...
             foreach (var item in map.Items) {
@@ -63,10 +63,10 @@ namespace Transformalize.Transforms {
                 _catchAll = Context.Field.Convert(Context.Field.Default);
             }
 
-            return base.Transform(rows);
+            return base.Operate(rows);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
 
             Func<IRow, object> objects;
             if (_map.TryGetValue(row[_input], out objects)) {

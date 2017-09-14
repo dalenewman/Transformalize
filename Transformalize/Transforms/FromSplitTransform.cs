@@ -32,13 +32,13 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (!context.Transform.Parameters.Any()) {
-                Error($"The {context.Transform.Method} transform requires a collection of output fields.");
+            if (!context.Operation.Parameters.Any()) {
+                Error($"The {context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;
                 return;
             }
 
-            if (context.Transform.Separator == Constants.DefaultSetting) {
+            if (context.Operation.Separator == Constants.DefaultSetting) {
                 Error("The fromsplit method requires a separator.");
                 Run = false;
                 return;
@@ -46,10 +46,10 @@ namespace Transformalize.Transforms {
             
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
-            _separator = context.Transform.Separator.ToCharArray();
+            _separator = context.Operation.Separator.ToCharArray();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var values = row[_input].ToString().Split(_separator);
             if (values.Length > 0) {
                 for (var i = 0; i < values.Length && i < _output.Length; i++) {

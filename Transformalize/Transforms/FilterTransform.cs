@@ -33,36 +33,36 @@ namespace Transformalize.Transforms {
         private readonly FilterType _filterType;
 
         public FilterTransform(IContext context, FilterType filterType) : base(context, null) {
-            if (IsMissing(context.Transform.Operator)) {
+            if (IsMissing(context.Operation.Operator)) {
                 return;
             }
-            if (IsMissing(context.Transform.Value)) {
+            if (IsMissing(context.Operation.Value)) {
                 return;
             }
 
             var input = SingleInput();
 
             if (input.Type == "byte[]") {
-                Error($"The {context.Transform.Method} method doesn't work with byte arrays.");
+                Error($"The {context.Operation.Method} method doesn't work with byte arrays.");
                 Run = false;
                 return;
             }
 
-            if (input.Type != "string" && !Constants.CanConvert()[input.Type](context.Transform.Value)) {
-                Error($"The {context.Transform.Method} method's value of {context.Transform.Value} can't be converted to a {input.Type} for comparison.");
+            if (input.Type != "string" && !Constants.CanConvert()[input.Type](context.Operation.Value)) {
+                Error($"The {context.Operation.Method} method's value of {context.Operation.Value} can't be converted to a {input.Type} for comparison.");
                 Run = false;
                 return;
             }
 
             _filterType = filterType;
-            _filter = GetFunc(input, context.Transform.Operator, SingleInput().Convert(context.Transform.Value));
+            _filter = GetFunc(input, context.Operation.Operator, SingleInput().Convert(context.Operation.Value));
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
             return _filterType == FilterType.Include ? rows.Where(row => _filter(row)) : rows.Where(row => !_filter(row));
         }
 

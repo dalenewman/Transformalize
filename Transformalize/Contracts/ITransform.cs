@@ -15,35 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
-
     /// <inheritdoc />
     /// <summary>
     /// all transformers should implement this, they need to transform the data and Increment()
     /// </summary>
-    public interface ITransform : IDisposable {
-
-        IContext Context { get; }
-        bool Run { get; set; }
-
-        /// <summary>
-        /// This transforms the row in the pipeline.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <returns></returns>
-        IRow Transform(IRow row);
-
-        IEnumerable<IRow> Transform(IEnumerable<IRow> rows);
-
+    public interface ITransform : IOperation {
         string Returns { get; set; }
-
-        void Error(string error);
-        void Warn(string warning);
-        IEnumerable<string> Errors();
-        IEnumerable<string> Warnings();
     }
 
 }

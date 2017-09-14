@@ -30,7 +30,7 @@ namespace Transformalize.Transforms.Globalization {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = Slugify(GetString(row, _input));
             Increment();
             return row;

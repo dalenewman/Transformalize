@@ -33,8 +33,8 @@ namespace Transformalize.Providers.File.Transforms
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = Context.Transform.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = Context.Operation.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
             Increment();
             return row;
         }

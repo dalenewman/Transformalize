@@ -41,7 +41,7 @@ namespace Transformalize.Ioc.Autofac {
             foreach (var file in files) {
                 input.Debug(() => $"Found file: {file.Name}");
 
-                var context = new PipelineContext(input.Logger, input.Process, input.Entity, input.Field, input.Transform);
+                var context = new PipelineContext(input.Logger, input.Process, input.Entity, input.Field, input.Operation);
 
                 var fileConnection = input.Connection.Clone();
                 fileConnection.Provider = "file";

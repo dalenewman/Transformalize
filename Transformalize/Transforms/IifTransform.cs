@@ -51,7 +51,7 @@ namespace Transformalize.Transforms {
                 ProcessLeftSide(context);
                 ProcessRightSide(context);
 
-                var operatorMatch = _operator.Match(context.Transform.Expression);
+                var operatorMatch = _operator.Match(context.Operation.Expression);
                 var @operator = operatorMatch.Success ? operatorMatch.Value.Trim() : string.Empty;
 
                 switch (@operator) {
@@ -97,19 +97,19 @@ namespace Transformalize.Transforms {
                                 if (LeftField.Type == "string" && RightField.Type == "string") {
                                     return ((string)row[LeftField]).StartsWith((string)row[RightField]) ? 1 : 0;
                                 }
-                                context.Warn($"The expression {context.Transform.Expression} has a startsWith (^=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
+                                context.Warn($"The expression {context.Operation.Expression} has a startsWith (^=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
                                 return -1;
                             case "$=":
                                 if (LeftField.Type == "string" && RightField.Type == "string") {
                                     return ((string)row[LeftField]).EndsWith((string)row[RightField]) ? 1 : 0;
                                 }
-                                context.Warn($"The expression {context.Transform.Expression} has an endsWith ($=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
+                                context.Warn($"The expression {context.Operation.Expression} has an endsWith ($=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
                                 return -1;
                             case "*=":
                                 if (LeftField.Type == "string" && RightField.Type == "string") {
                                     return ((string)row[LeftField]).Contains((string)row[RightField]) ? 1 : 0;
                                 }
-                                context.Warn($"The expression {context.Transform.Expression} has a continas (*=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
+                                context.Warn($"The expression {context.Operation.Expression} has a continas (*=) which may only operator on strings.  Your left field is {LeftField.Type}, and your right field is {RightField.Type}.");
                                 return -1;
                             default:
                                 var compare = row[LeftField] as IComparable;
@@ -125,21 +125,21 @@ namespace Transformalize.Transforms {
                     _compare = (row) => -1;
                 }
 
-                TrueField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == context.Transform.TrueField);
-                FalseField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == context.Transform.FalseField);
+                TrueField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == context.Operation.TrueField);
+                FalseField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == context.Operation.FalseField);
 
 
             }
 
             private void ProcessRightSide(IContext context) {
-                var rightFieldMatch = _rightSide.Match(context.Transform.Expression);
+                var rightFieldMatch = _rightSide.Match(context.Operation.Expression);
                 RightFieldInput = rightFieldMatch.Success ? rightFieldMatch.Value.Trim() : string.Empty;
                 RightField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == RightFieldInput);
                 RightIsField = RightField != null;
             }
 
             private void ProcessLeftSide(IContext context) {
-                var leftFieldMatch = _leftSide.Match(context.Transform.Expression);
+                var leftFieldMatch = _leftSide.Match(context.Operation.Expression);
                 LeftFieldInput = leftFieldMatch.Success ? leftFieldMatch.Value.Trim() : string.Empty;
                 LeftField = context.GetAllEntityFields().FirstOrDefault(f => f.Alias == LeftFieldInput);
                 LeftIsField = LeftField != null;
@@ -152,13 +152,13 @@ namespace Transformalize.Transforms {
         public IIfTransform(IContext context) : base(context, "object") {
             var fields = context.GetAllEntityFields().ToArray();
 
-            if (fields.All(f => f.Alias != context.Transform.TrueField)) {
-                Error($"The iif method's true portion: {context.Transform.TrueField}, is not a valid field.");
+            if (fields.All(f => f.Alias != context.Operation.TrueField)) {
+                Error($"The iif method's true portion: {context.Operation.TrueField}, is not a valid field.");
                 Run = false;
                 return;
             }
-            if (fields.All(f => f.Alias != context.Transform.FalseField)) {
-                Error($"The iif method's false portion: {context.Transform.FalseField}, is not a valid field.");
+            if (fields.All(f => f.Alias != context.Operation.FalseField)) {
+                Error($"The iif method's false portion: {context.Operation.FalseField}, is not a valid field.");
                 Run = false;
                 return;
             }
@@ -166,7 +166,7 @@ namespace Transformalize.Transforms {
             _evaluator = new ExpressionEvaluator(context);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _evaluator.Evaluate(row);
             Increment();
             return row;

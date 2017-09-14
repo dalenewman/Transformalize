@@ -28,11 +28,11 @@ namespace Transformalize.Transforms {
         private readonly object _value;
         public ConnectionTransform(IContext context) : base(context, "string") {
 
-            if (IsMissing(context.Transform.Name)) {
+            if (IsMissing(context.Operation.Name)) {
                 return;
             }
 
-            if (IsMissing(context.Transform.Property)) {
+            if (IsMissing(context.Operation.Property)) {
                 return;
             }
 
@@ -44,17 +44,17 @@ namespace Transformalize.Transforms {
             props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
 #endif
 
-            if (!context.Transform.Property.In(props)) {
-                Error($"The connection property {context.Transform.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
+            if (!context.Operation.Property.In(props)) {
+                Error($"The connection property {context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
                 Run = false;
                 return;
             }
 
-            var connection = context.Process.Connections.First(c => c.Name == context.Transform.Name);
-            _value = Utility.GetPropValue(connection, context.Transform.Property);
+            var connection = context.Process.Connections.First(c => c.Name == context.Operation.Name);
+            _value = Utility.GetPropValue(connection, context.Operation.Property);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _value;
             Increment();
             return row;

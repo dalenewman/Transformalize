@@ -55,7 +55,7 @@ namespace Tests {
         public void Lucene_Integration() {
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ShorthandModule("t"));
+            builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
 

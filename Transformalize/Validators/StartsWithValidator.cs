@@ -21,19 +21,28 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Validators {
 
-    public class StartsWithValidator : StringTransform {
+    public class StartsWithValidator : StringValidate {
 
         private readonly Field _input;
 
-        public StartsWithValidator(IContext context) : base(context, "bool") {
-            if (IsMissing(context.Transform.Value)) {
+        public StartsWithValidator(IContext context) : base(context) {
+            if (!Run) {
+                return;
+            }
+
+            if (IsMissing(context.Operation.Value)) {
                 return;
             }
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = GetString(row,_input).StartsWith(Context.Transform.Value);
+        public override IRow Operate(IRow row) {
+            var value = GetString(row, _input);
+            var valid = value.StartsWith(Context.Operation.Value);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must start with {Context.Operation.Value}.");
+            }
             Increment();
             return row;
         }

@@ -19,42 +19,47 @@ using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class EqualsValidator : BaseTransform {
-        private readonly Field _first;
-        private readonly Field[] _rest;
+    public class EqualsValidator : BaseValidate {
         private readonly object _value;
-        private readonly Action<IRow> _validator;
+        private readonly Func<IRow, bool> _validator;
 
-        public EqualsValidator(IContext context) : base(context, "bool") {
+        public EqualsValidator(IContext context) : base(context) {
+            if (!Run)
+                return;
+
+            Field[] rest;
             bool sameTypes;
             var input = MultipleInput();
-            _first = input.First();
+            var first = input.First();
 
-            if (context.Transform.Value == Constants.DefaultSetting) {
-                _rest = input.Skip(1).ToArray();
-                sameTypes = _rest.All(f => f.Type == _first.Type);
+            if (context.Operation.Value == Constants.DefaultSetting) {
+                rest = input.Skip(1).ToArray();
+                sameTypes = rest.All(f => f.Type == first.Type);
             } else {
-                _value = _first.Convert(context.Transform.Value);
-                _rest = input.ToArray();
-                sameTypes = input.All(f => f.Type == _first.Type);
+                _value = first.Convert(context.Operation.Value);
+                rest = input.ToArray();
+                sameTypes = input.All(f => f.Type == first.Type);
             }
 
             if (sameTypes) {
                 if (_value == null) {
-                    _validator = row => row[Context.Field] = _rest.All(f => row[f].Equals(row[_first]));
+                    _validator = row => rest.All(f => row[f].Equals(row[first]));
                 } else {
-                    _validator = row => row[Context.Field] = _rest.All(f => row[f].Equals(_value));
+                    _validator = row => rest.All(f => row[f].Equals(_value));
                 }
             } else {
-                _validator = row => row[Context.Field] = false;
+                _validator = row => false;
             }
         }
 
-        public override IRow Transform(IRow row) {
-            _validator(row);
+        public override IRow Operate(IRow row) {
+            var valid = _validator(row);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must equal {_value}");
+            }
             Increment();
             return row;
         }

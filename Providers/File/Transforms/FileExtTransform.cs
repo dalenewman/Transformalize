@@ -19,6 +19,7 @@
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Providers.File.Transforms {
     public class FileExtTransform : StringTransform {
@@ -31,7 +32,7 @@ namespace Transformalize.Providers.File.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var value = (string)row[_input];
             row[Context.Field] = Path.HasExtension(value) ? Path.GetExtension(value) : string.Empty;
             Increment();

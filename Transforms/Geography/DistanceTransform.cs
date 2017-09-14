@@ -30,28 +30,28 @@ namespace Transformalize.Transforms.Geography {
 
             _fields = context.GetAllEntityFields().ToArray();
 
-            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.FromLat, "from-lat")) {
+            if (HasInvalidCoordinate(_fields, context.Operation, context.Operation.FromLat, "from-lat")) {
                 return;
             }
-            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.FromLon, "from-lon")) {
+            if (HasInvalidCoordinate(_fields, context.Operation, context.Operation.FromLon, "from-lon")) {
                 return;
             }
-            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.ToLat, "to-lat")) {
+            if (HasInvalidCoordinate(_fields, context.Operation, context.Operation.ToLat, "to-lat")) {
                 return;
             }
-            if (HasInvalidCoordinate(_fields, context.Transform, context.Transform.ToLon, "to-lon")) {
+            if (HasInvalidCoordinate(_fields, context.Operation, context.Operation.ToLon, "to-lon")) {
                 return;
             }
 
             _getDistance = r => Get(
-                ValueGetter(context.Transform.FromLat)(r),
-                ValueGetter(context.Transform.FromLon)(r),
-                ValueGetter(context.Transform.ToLat)(r),
-                ValueGetter(context.Transform.ToLon)(r)
+                ValueGetter(context.Operation.FromLat)(r),
+                ValueGetter(context.Operation.FromLon)(r),
+                ValueGetter(context.Operation.ToLat)(r),
+                ValueGetter(context.Operation.ToLon)(r)
             );
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _getDistance(row);
             Increment();
             return row;
@@ -72,7 +72,7 @@ namespace Transformalize.Transforms.Geography {
             return from.GetDistanceTo(to);
         }
 
-        private bool HasInvalidCoordinate(Field[] fields, Configuration.Transform t, string valueOrField, string name) {
+        private bool HasInvalidCoordinate(Field[] fields, Operation t, string valueOrField, string name) {
             double doubleValue;
             if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
                 Error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");

@@ -33,8 +33,8 @@ namespace Transformalize.Providers.File.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            if (Context.Transform.Extension) {
+        public override IRow Operate(IRow row) {
+            if (Context.Operation.Extension) {
                 row[Context.Field] = Path.GetFullPath((string)row[_input]);
             } else {
                 var value = (string)row[_input];

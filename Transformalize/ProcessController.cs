@@ -30,7 +30,7 @@ namespace Transformalize {
         public List<IAction> PreActions { get; } = new List<IAction>();
         public List<IAction> PostActions { get; } = new List<IAction>();
         private Stopwatch _stopwatch = new Stopwatch();
-        private bool _valid;
+        private readonly bool _valid;
 
         public ProcessController(
             IEnumerable<IPipeline> pipelines,

@@ -23,18 +23,18 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
 
         public ReplaceTransform(IContext context) : base(context, "string") {
-            if (IsMissing(context.Transform.OldValue)) {
+            if (IsMissing(context.Operation.OldValue)) {
                 return;
             }
 
             _input = SingleInput();
 
-            context.Transform.OldValue = context.Transform.OldValue.Replace("\\r", "\r");
-            context.Transform.OldValue = context.Transform.OldValue.Replace("\\n", "\n");
+            context.Operation.OldValue = context.Operation.OldValue.Replace("\\r", "\r");
+            context.Operation.OldValue = context.Operation.OldValue.Replace("\\n", "\n");
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = GetString(row,_input).Replace(Context.Transform.OldValue, Context.Transform.NewValue);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = GetString(row,_input).Replace(Context.Operation.OldValue, Context.Operation.NewValue);
             Increment();
             return row;
         }

@@ -26,7 +26,7 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         public CopyTransform(IContext context)
             : base(context, null) {
-            if (context.Transform.Parameter == string.Empty && !context.Transform.Parameters.Any()) {
+            if (context.Operation.Parameter == string.Empty && !context.Operation.Parameters.Any()) {
                 Error("The copy transform requires at least one parameter.");
                 Run = false;
                 return;
@@ -35,7 +35,7 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input];
             Increment();
             return row;

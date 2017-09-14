@@ -20,13 +20,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
-    public class AnyValidator : BaseTransform {
-
-        class FieldWithValue {
+    public class AnyValidator : StringValidate {
+        private class FieldWithValue {
             public Field Field { get; set; }
             public object Value { get; set; }
         }
@@ -34,22 +32,26 @@ namespace Transformalize.Validators {
         private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
         private readonly Func<IRow, bool> _func;
 
-        public AnyValidator(IContext context) : base(context, "bool") {
+        public AnyValidator(IContext context) : base(context) {
 
-            if (IsMissing(context.Transform.Operator)) {
+            if (!Run)
+                return;
+
+            if (IsMissing(context.Operation.Operator)) {
                 return;
             }
-            if (IsMissing(context.Transform.Value)) {
+
+            if (IsMissing(context.Operation.Value)) {
                 return;
             }
 
             foreach (var field in MultipleInput()) {
-                if (Constants.CanConvert()[field.Type](Context.Transform.Value)) {
-                    _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Transform.Value) });
+                if (Constants.CanConvert()[field.Type](Context.Operation.Value)) {
+                    _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Operation.Value) });
                 }
             }
 
-            _func = GetFunc(Context.Transform.Operator);
+            _func = GetFunc(Context.Operation.Operator);
         }
 
         /// <summary>
@@ -77,8 +79,12 @@ namespace Transformalize.Validators {
             }
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = _func(row);
+        public override IRow Operate(IRow row) {
+            var valid = _func(row);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must equal {Context.Operation.Value}.");
+            }
             Increment();
             return row;
         }

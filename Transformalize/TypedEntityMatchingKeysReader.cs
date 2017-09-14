@@ -32,7 +32,7 @@ namespace Transformalize {
         }
 
         public IEnumerable<IRow> Read(IEnumerable<IRow> input) {
-            return _reader.Read(input).Select(r => _typeTransform.Transform(r));
+            return _reader.Read(input).Select(r => _typeTransform.Operate(r));
         }
 
         static IEnumerable<Field> CombineFields(IEnumerable<Field> keys, Field hashCode) {

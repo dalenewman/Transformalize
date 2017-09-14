@@ -66,7 +66,7 @@ namespace Transformalize.Transforms.DateMath {
 
         private readonly Action<IRow> _transform;
 
-        public DateDiffTransform(IContext context) : base(context, PartReturns[context.Transform.TimeComponent]) {
+        public DateDiffTransform(IContext context) : base(context, PartReturns[context.Operation.TimeComponent]) {
             if (IsNotReceiving("date")) {
                 return;
             }
@@ -75,32 +75,32 @@ namespace Transformalize.Transforms.DateMath {
 
             var start = input[0];
 
-            if (Context.Transform.TimeComponent.In("year", "month")) {
+            if (Context.Operation.TimeComponent.In("year", "month")) {
                 Context.Warn("datediff can not determine exact years or months.  For months, it returns (days / (365/12.0)).  For years, it returns (days / 365).");
             }
 
-            if (PartReturns.ContainsKey(context.Transform.TimeComponent)) {
+            if (PartReturns.ContainsKey(context.Operation.TimeComponent)) {
                 if (input.Count() > 1)
                 {
                     // comparing between two dates in pipeline
                     var end = input[1];
-                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent]((DateTime)row[start], (DateTime)row[end]);
+                    _transform = row => row[context.Field] = Parts[context.Operation.TimeComponent]((DateTime)row[start], (DateTime)row[end]);
                 } else {
                     // comparing between one date in pipeline and now (depending on time zone)
-                    var fromTimeZone = Context.Transform.FromTimeZone == Constants.DefaultSetting ? "UTC" : Context.Transform.FromTimeZone;
+                    var fromTimeZone = Context.Operation.FromTimeZone == Constants.DefaultSetting ? "UTC" : context.Operation.FromTimeZone;
                     var now = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, fromTimeZone);
-                    _transform = row => row[context.Field] = Parts[context.Transform.TimeComponent](now, (DateTime)row[start]);
+                    _transform = row => row[context.Field] = Parts[context.Operation.TimeComponent](now, (DateTime)row[start]);
                 }
 
             } else {
-                Context.Warn($"datediff does not support time component {Context.Transform.TimeComponent}.");
+                Context.Warn($"datediff does not support time component {Context.Operation.TimeComponent}.");
                 var defaults = Constants.TypeDefaults();
                 _transform = row => row[Context.Field] = Context.Field.Default != Constants.DefaultSetting ? Context.Field.Convert(Context.Field.Default) : defaults[Context.Field.Type];
             }
 
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             _transform(row);
             Increment();
             return row;

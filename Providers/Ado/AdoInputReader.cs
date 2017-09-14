@@ -107,7 +107,7 @@ namespace Transformalize.Providers.Ado {
                             _rowCount++;
                             _input.Increment();
                             var row = _rowCreator.Create(reader, _fields);
-                            _typeTransform.Transform(row);
+                            _typeTransform.Operate(row);
                             yield return row;
                         }
                     } else {

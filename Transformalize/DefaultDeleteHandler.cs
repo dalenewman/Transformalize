@@ -41,7 +41,7 @@ namespace Transformalize {
         }
 
         public IEnumerable<IRow> DetermineDeletes() {
-            var input = _transforms.Aggregate(_inputReader.Read(), (current, transform) => current.Select(transform.Transform));
+            var input = _transforms.Aggregate(_inputReader.Read(), (current, transform) => current.Select(transform.Operate));
             return _outputReader.Read().Except(input, new KeyComparer(_context.Entity.GetPrimaryKey()));
         }
 

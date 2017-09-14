@@ -32,7 +32,7 @@ namespace Transformalize.Transforms {
             _input = MultipleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = Context.Field.Convert(_input.Aggregate<Field, decimal>(1, (current, field) => current * (field.Type == "decimal" ? (decimal)row[field] : Convert.ToDecimal(row[field]))));
             Increment();
             return row;

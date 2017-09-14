@@ -129,12 +129,13 @@
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
     <Compile Include="Modules\RazorModule.cs" />
+    <Compile Include="Modules\ShorthandValidateModule.cs" />
     <Compile Include="Modules\WordModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
-    <Compile Include="Modules\ShorthandModule.cs" />
+    <Compile Include="Modules\ShorthandTransformModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />

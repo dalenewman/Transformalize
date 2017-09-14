@@ -19,21 +19,26 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class InValidator : BaseTransform {
+
+    public class InValidator : BaseValidate {
+
         private readonly Field _input;
         private readonly HashSet<object> _set = new HashSet<object>();
+        private readonly string _readableDomain;
 
-        public InValidator(IContext context) : base(context, "bool") {
+        public InValidator(IContext context) : base(context) {
 
-            if (IsMissing(context.Transform.Domain)) {
+            if (!Run)
+                return;
+
+            if (IsMissing(context.Operation.Domain)) {
                 return;
             }
 
             _input = SingleInput();
-            var items = Utility.Split(Context.Transform.Domain, ',');
+            var items = Utility.Split(Context.Operation.Domain, ',');
             foreach (var item in items) {
                 try {
                     _set.Add(_input.Convert(item));
@@ -41,10 +46,16 @@ namespace Transformalize.Validators {
                     context.Warn($"In transform can't convert {item} to {_input.Type} {ex.Message}.");
                 }
             }
+
+            _readableDomain = Utility.ReadableDomain(items);
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = _set.Contains(row[_input]);
+        public override IRow Operate(IRow row) {
+            var valid = _set.Contains(row[_input]);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must be {_readableDomain}.");
+            }
             Increment();
             return row;
         }

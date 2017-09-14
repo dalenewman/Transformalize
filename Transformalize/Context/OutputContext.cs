@@ -29,7 +29,7 @@ namespace Transformalize.Context {
 
         public int RowCapacity => 0;
 
-        public OutputContext(IContext context, IIncrement incrementer) : base(context.Logger, context.Process, context.Entity, context.Field, context.Transform) {
+        public OutputContext(IContext context, IIncrement incrementer) : base(context.Logger, context.Process, context.Entity, context.Field, context.Operation) {
             _incrementer = incrementer;
             OutputFields = context.GetAllEntityOutputFields().ToArray();
             Connection = context.Process.Output();

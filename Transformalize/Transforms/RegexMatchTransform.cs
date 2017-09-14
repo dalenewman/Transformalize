@@ -33,19 +33,19 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (IsMissing(context.Transform.Pattern)) {
+            if (IsMissing(context.Operation.Pattern)) {
                 return;
             }
 
             _input = MultipleInput();
 #if NETS10
-            _regex = new Regex(context.Transform.Pattern);
+            _regex = new Regex(context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Transform.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
 #endif
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var field in _input) {
                 var match = _regex.Match(row[field].ToString());
                 if (!match.Success) continue;

@@ -61,83 +61,83 @@ namespace Transformalize.Transforms {
         private readonly bool _selfClosing = false;
 
         public TagTransform(IContext context) : base(context, "string") {
-            if (string.IsNullOrEmpty(context.Transform.Tag)) {
+            if (string.IsNullOrEmpty(context.Operation.Tag)) {
                 Error("The tag transform requires a tag (e.g. a, span, div, etc).");
                 Run = false;
                 return;
             }
 
-            _selfClosing = Context.Transform.Tag.Equals("img", StringComparison.OrdinalIgnoreCase);
+            _selfClosing = Context.Operation.Tag.Equals("img", StringComparison.OrdinalIgnoreCase);
 
-            if (Context.Transform.Class == string.Empty && Context.Field.Class != string.Empty) {
-                Context.Transform.Class = Context.Field.Class;
+            if (Context.Operation.Class == string.Empty && Context.Field.Class != string.Empty) {
+                Context.Operation.Class = Context.Field.Class;
             }
 
-            if (Context.Transform.Style == string.Empty && Context.Field.Style != string.Empty) {
-                Context.Transform.Style = Context.Field.Style;
+            if (Context.Operation.Style == string.Empty && Context.Field.Style != string.Empty) {
+                Context.Operation.Style = Context.Field.Style;
             }
 
-            if (Context.Transform.Role == string.Empty && Context.Field.Role != string.Empty) {
-                Context.Transform.Role = Context.Field.Role;
+            if (Context.Operation.Role == string.Empty && Context.Field.Role != string.Empty) {
+                Context.Operation.Role = Context.Field.Role;
             }
 
-            if (Context.Transform.HRef == string.Empty && Context.Field.HRef != string.Empty) {
-                Context.Transform.HRef = Context.Field.HRef;
+            if (Context.Operation.HRef == string.Empty && Context.Field.HRef != string.Empty) {
+                Context.Operation.HRef = Context.Field.HRef;
             }
 
-            if (Context.Transform.Target == string.Empty && Context.Field.Target != string.Empty) {
-                Context.Transform.Target = Context.Field.Target;
+            if (Context.Operation.Target == string.Empty && Context.Field.Target != string.Empty) {
+                Context.Operation.Target = Context.Field.Target;
             }
 
-            if (Context.Transform.Body == string.Empty && Context.Field.Body != string.Empty) {
-                Context.Transform.Body = Context.Field.Body;
+            if (Context.Operation.Body == string.Empty && Context.Field.Body != string.Empty) {
+                Context.Operation.Body = Context.Field.Body;
             }
 
-            if (Context.Transform.Src == string.Empty && Context.Field.Src != string.Empty) {
-                Context.Transform.Src = Context.Field.Src;
+            if (Context.Operation.Src == string.Empty && Context.Field.Src != string.Empty) {
+                Context.Operation.Src = Context.Field.Src;
             }
 
-            if (Context.Transform.Width == 0 && Context.Field.Width > 0) {
-                Context.Transform.Width = Context.Field.Width;
+            if (Context.Operation.Width == 0 && Context.Field.Width > 0) {
+                Context.Operation.Width = Context.Field.Width;
             }
 
-            if (Context.Transform.Height == 0 && Context.Field.Height > 0) {
-                Context.Transform.Height = Context.Field.Height;
+            if (Context.Operation.Height == 0 && Context.Field.Height > 0) {
+                Context.Operation.Height = Context.Field.Height;
             }
 
             var input = MultipleInput();
-            _attributes.Add(new TagAttribute(input, "href", Context.Transform.HRef));
-            _attributes.Add(new TagAttribute(input, "class", Context.Transform.Class));
-            _attributes.Add(new TagAttribute(input, "title", Context.Transform.Title));
-            _attributes.Add(new TagAttribute(input, "style", Context.Transform.Style));
-            _attributes.Add(new TagAttribute(input, "role", Context.Transform.Role));
-            _attributes.Add(new TagAttribute(input, "target", Context.Transform.Target));
-            _attributes.Add(new TagAttribute(input, "src", Context.Transform.Src));
-            _attributes.Add(new TagAttribute(input, "width", Context.Transform.Width == 0 ? string.Empty : Context.Transform.Width.ToString()));
-            _attributes.Add(new TagAttribute(input, "height", Context.Transform.Height == 0 ? string.Empty : Context.Transform.Height.ToString()));
+            _attributes.Add(new TagAttribute(input, "href", Context.Operation.HRef));
+            _attributes.Add(new TagAttribute(input, "class", Context.Operation.Class));
+            _attributes.Add(new TagAttribute(input, "title", Context.Operation.Title));
+            _attributes.Add(new TagAttribute(input, "style", Context.Operation.Style));
+            _attributes.Add(new TagAttribute(input, "role", Context.Operation.Role));
+            _attributes.Add(new TagAttribute(input, "target", Context.Operation.Target));
+            _attributes.Add(new TagAttribute(input, "src", Context.Operation.Src));
+            _attributes.Add(new TagAttribute(input, "width", Context.Operation.Width == 0 ? string.Empty : Context.Operation.Width.ToString()));
+            _attributes.Add(new TagAttribute(input, "height", Context.Operation.Height == 0 ? string.Empty : Context.Operation.Height.ToString()));
 
-            var body = Context.Transform.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Transform.Body) ?? input.FirstOrDefault(f => f.Name == Context.Transform.Body)) ?? input.First();
+            var body = Context.Operation.Body == string.Empty ? input.First() : (input.FirstOrDefault(f => f.Alias == Context.Operation.Body) ?? input.FirstOrDefault(f => f.Name == Context.Operation.Body)) ?? input.First();
 
             if (!Context.Field.Raw) {
                 Context.Field.Raw = true;
             }
 
             if (Context.Field.Length != "max") {
-                var calculatedLength = _attributes.Sum(a => a.Length()) + Context.Transform.Tag.Length + 5;  // 5 = <></>
+                var calculatedLength = _attributes.Sum(a => a.Length()) + Context.Operation.Tag.Length + 5;  // 5 = <></>
                 if (calculatedLength > Convert.ToInt32(Context.Field.Length)) {
                     Context.Warn($"The calculated length of {Context.Field.Alias} is {calculatedLength}, but it's length is set to {Context.Field.Length}.  Truncation may occur.  You need to set the length so it can accomadate tag characters, tag name, attributes, and the field's content.");
                 }
             }
 
-            _encode = (row) => Context.Transform.Encode ? Encode(row[body].ToString()) : row[body];
+            _encode = (row) => Context.Operation.Encode ? Encode(row[body].ToString()) : row[body];
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var sb = new StringBuilder();
 
             // open
 
-            sb.AppendFormat("<{0}", Context.Transform.Tag);
+            sb.AppendFormat("<{0}", Context.Operation.Tag);
 
             // attributes
             foreach (var attribute in _attributes) {
@@ -153,7 +153,7 @@ namespace Transformalize.Transforms {
                 sb.Append(_encode(row));
 
                 // close
-                sb.AppendFormat("</{0}>", Context.Transform.Tag);
+                sb.AppendFormat("</{0}>", Context.Operation.Tag);
             }
 
             row[Context.Field] = sb.ToString();

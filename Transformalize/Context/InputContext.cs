@@ -37,7 +37,7 @@ namespace Transformalize.Context {
 
         public Process Process => _context.Process;
 
-        public Transform Transform => _context.Transform;
+        public Operation Operation => _context.Operation;
 
         public string Key { get; }
         public IPipelineLogger Logger => _context.Logger;

@@ -28,13 +28,13 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.TotalWidth == 0) {
+            if (context.Operation.TotalWidth == 0) {
                 Error("The padleft transform requires total width.");
                 Run = false;
                 return;
             }
 
-            if (context.Transform.PaddingChar == default(char)) {
+            if (context.Operation.PaddingChar == default(char)) {
                 Error("The padleft transform requires a padding character.");
                 Run = false;
                 return;
@@ -43,8 +43,8 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].ToString().PadLeft(Context.Transform.TotalWidth, Context.Transform.PaddingChar);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = row[_input].ToString().PadLeft(Context.Operation.TotalWidth, Context.Operation.PaddingChar);
             Increment();
             return row;
         }

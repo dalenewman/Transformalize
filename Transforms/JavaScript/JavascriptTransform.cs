@@ -35,7 +35,7 @@ namespace Transformalize.Transforms.JavaScript {
 
         public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, null) {
 
-            if (IsMissing(context.Transform.Script)) {
+            if (IsMissing(context.Operation.Script)) {
                 return;
             }
 
@@ -51,15 +51,15 @@ namespace Transformalize.Transforms.JavaScript {
             }
 
             // load any specified scripts
-            if (context.Transform.Scripts.Any()) {
-                foreach (var sc in context.Transform.Scripts) {
+            if (context.Operation.Scripts.Any()) {
+                foreach (var sc in context.Operation.Scripts) {
                     ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
                 }
             }
 
             // make this reference the host field
-            context.Transform.Script = $"var self = {context.Field.Alias};\r\n{context.Transform.Script}";
-            context.Debug(() => $"Script in {context.Field.Alias} : {context.Transform.Script.Replace("{", "{{").Replace("}", "}}")}");
+            context.Operation.Script = $"var self = {context.Field.Alias};\r\n{context.Operation.Script}";
+            context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
         void ProcessScript(IContext context, IReader reader, Script script) {
@@ -99,12 +99,12 @@ namespace Transformalize.Transforms.JavaScript {
             return content;
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var field in _input) {
                 _engine.SetVariableValue(field.Alias, row[field]);
             }
             try {
-                var value = Context.Field.Convert(_engine.Evaluate(Context.Transform.Script));
+                var value = Context.Field.Convert(_engine.Evaluate(Context.Operation.Script));
                 if (value == null && !_errors.ContainsKey(0)) {
                     Context.Error($"{_engine.Name} transform in {Context.Field.Alias} returns null!");
                     _errors[0] = $"{_engine.Name} transform in {Context.Field.Alias} returns null!";
@@ -113,7 +113,7 @@ namespace Transformalize.Transforms.JavaScript {
                 }
             } catch (JsRuntimeException jse) {
                 if (!_errors.ContainsKey(jse.LineNumber)) {
-                    Context.Error("Script: " + Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
+                    Context.Error("Script: " + Context.Operation.Script.Replace("{", "{{").Replace("}", "}}"));
                     Context.Error(jse, "Error Message: " + jse.Message);
                     Context.Error("Variables:");
                     foreach (var field in _input) {

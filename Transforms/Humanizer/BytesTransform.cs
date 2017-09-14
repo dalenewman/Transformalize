@@ -29,7 +29,7 @@ namespace Transformalize.Transforms.Humanizer {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             switch (_input.Type) {
                 case "byte":
                     row[Context.Field] = ((byte)row[_input]).Bytes();

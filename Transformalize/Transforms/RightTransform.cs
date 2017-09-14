@@ -30,7 +30,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.Length == 0) {
+            if (context.Operation.Length == 0) {
                 Error("The right transform requires a length parameter.");
                 Run = false;
                 return;
@@ -39,8 +39,8 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].ToString().Right(Context.Transform.Length);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = row[_input].ToString().Right(Context.Operation.Length);
             Increment();
             return row;
         }

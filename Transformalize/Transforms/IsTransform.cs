@@ -15,25 +15,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
-namespace Transformalize.Validators {
-    public class IsEmptyValidator : BaseTransform {
+namespace Transformalize.Transforms {
+    public class IsTransform : StringTransform {
         private readonly Field _input;
+        private readonly Func<string, object> _canConvert;
+        private readonly bool _isCompatible;
 
-        public IsEmptyValidator(IContext context) : base(context, "bool") {
-            if (IsNotReceiving("string")) {
+        public IsTransform(IContext context) : base(context, "bool") {
+            if (IsMissing(context.Operation.Type)) {
                 return;
             }
             _input = SingleInput();
+            _isCompatible = Received() == context.Operation.Type || _input.IsNumeric() && context.Operation.Type == "double";
+            _canConvert = v => Constants.CanConvert()[context.Operation.Type](v);
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = (string)row[_input] == string.Empty;
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = _isCompatible ? true : _canConvert(GetString(row, _input));
             Increment();
             return row;
         }
+
     }
 }

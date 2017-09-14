@@ -27,7 +27,7 @@ namespace Transformalize.Transforms {
             _input = MultipleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = Get(_input.Select(f => f.Type == "string" ? (string)row[f] : row[f].ToString()).ToArray());
             Increment();
             return row;

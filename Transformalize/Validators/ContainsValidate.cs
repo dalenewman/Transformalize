@@ -20,36 +20,31 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Validators {
-    public class ContainsValidator : StringTransform {
+    public class ContainsValidator : StringValidate {
         private readonly Field[] _input;
         private readonly Field _valueField;
         private readonly bool _valueIsField;
-        private readonly Field _outputField;
-        private readonly Field _messageField;
-        private readonly bool _hasMessageField;
 
-        public ContainsValidator(IContext context) : base(context, "bool") {
-            if (IsMissing(context.Transform.Value)) {
+        public ContainsValidator(IContext context) : base(context) {
+
+            if (!Run)
+                return;
+
+            if (IsMissing(context.Operation.Value)) {
                 return;
             }
             _input = MultipleInput();
-            _valueIsField = context.Entity.TryGetField(context.Transform.Value, out _valueField);
-
-            if (!context.Entity.TryGetField(context.Field.ValidField, out _outputField)) {
-                _outputField = context.Field;
-            }
-
-            _hasMessageField = context.Entity.TryGetField(context.Field.ValidMessageField, out _messageField);
+            _valueIsField = context.Entity.TryGetField(context.Operation.Value, out _valueField);
 
         }
 
-        public override IRow Transform(IRow row) {
-            var valueItMustContain = _valueIsField ? GetString(row, _valueField) : Context.Transform.Value;
+        public override IRow Operate(IRow row) {
+            var valueItMustContain = _valueIsField ? GetString(row, _valueField) : Context.Operation.Value;
             var valid = _input.Any(f => GetString(row, f).Contains(valueItMustContain));
-            if (!valid && _hasMessageField) {
-                row[_messageField] = GetString(row, _messageField) + $"Must contain {valueItMustContain}. ";
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must contain {valueItMustContain}.");
             }
-            row[_outputField] = valid;
             Increment();
             return row;
         }

@@ -35,25 +35,25 @@ namespace Transformalize.Transforms.DateMath {
                 return;
             }
 
-            if (IsMissing(context.Transform.FromTimeZone)) {
+            if (IsMissing(context.Operation.FromTimeZone)) {
                 return;
             }
 
-            if (IsMissing(context.Transform.ToTimeZone)) {
+            if (IsMissing(context.Operation.ToTimeZone)) {
                 return;
             }
 
             _input = SingleInput();
             _output = context.Field;
 
-            var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Transform.FromTimeZone);
-            _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Transform.ToTimeZone);
+            var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.FromTimeZone);
+            _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.ToTimeZone);
 
             _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             Increment();
             var date = (DateTime)row[_input];
             if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {

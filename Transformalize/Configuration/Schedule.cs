@@ -29,7 +29,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "default")]
         public string Mode { get; set; }
 
-        [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Transform.TimeZoneIdDomain)]
+        [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Operation.TimeZoneIdDomain)]
         public string TimeZone { get; set; }
 
         [Cfg(value = "DoNothing", domain = "DoNothing,Ignore,FireAndProceed", ignoreCase = true, toLower = true, trim = true)]

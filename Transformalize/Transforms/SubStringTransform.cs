@@ -29,30 +29,30 @@ namespace Transformalize.Transforms {
             if (IsNotReceiving("string")) {
                 return;
             }
-            if (context.Transform.StartIndex == 0 && context.Transform.Length == 0) {
+            if (context.Operation.StartIndex == 0 && context.Operation.Length == 0) {
                 Warn($"The substring method in {context.Field.Alias} has a start index of zero and length of zero, so it will always return an empty string.");
             }
             _input = SingleInput();
             _type = Received();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var value = _type == "string" ? ((string)row[_input]) : row[_input].ToString();
             var len = value.Length;
 
-            if (len <= Context.Transform.StartIndex) {
+            if (len <= Context.Operation.StartIndex) {
                 row[Context.Field] = string.Empty;
                 Increment();
                 return row;
             }
 
-            if (Context.Transform.Length == 0 || Context.Transform.StartIndex + Context.Transform.Length > len) {
-                row[Context.Field] = value.Substring(Context.Transform.StartIndex);
+            if (Context.Operation.Length == 0 || Context.Operation.StartIndex + Context.Operation.Length > len) {
+                row[Context.Field] = value.Substring(Context.Operation.StartIndex);
                 Increment();
                 return row;
             }
 
-            row[Context.Field] = value.Substring(Context.Transform.StartIndex, Context.Transform.Length);
+            row[Context.Field] = value.Substring(Context.Operation.StartIndex, Context.Operation.Length);
             Increment();
             return row;
         }

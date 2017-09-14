@@ -418,7 +418,7 @@ namespace Transformalize.Configuration {
             return relationships;
         }
 
-        public IEnumerable<Transform> GetAllTransforms() {
+        public IEnumerable<Operation> GetAllTransforms() {
             var transforms = Entities.SelectMany(entity => entity.GetAllTransforms()).ToList();
             transforms.AddRange(CalculatedFields.SelectMany(field => field.Transforms));
             return transforms;

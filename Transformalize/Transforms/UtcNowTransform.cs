@@ -22,7 +22,7 @@ namespace Transformalize.Transforms {
     public class UtcNowTransform : BaseTransform {
         public UtcNowTransform(IContext context) : base(context, "datetime") {}
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = DateTime.UtcNow;
             return row;
         }

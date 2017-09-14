@@ -60,7 +60,7 @@ namespace Transformalize.Logging {
         public string Field => Context?.Field?.Alias;
 
         [Cfg]
-        public string Transform => Context?.Transform?.Method;
+        public string Transform => Context?.Operation?.Method;
 
 
     }

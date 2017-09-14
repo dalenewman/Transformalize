@@ -57,8 +57,8 @@ namespace Transformalize.Transforms.Xml {
             _outerFields = _fields.Except(output).ToArray();
             _typeDefaults = Constants.TypeDefaults();
 
-            _root = context.Transform.Root;
-            _findRoot = !string.IsNullOrEmpty(context.Transform.Root);
+            _root = context.Operation.Root;
+            _findRoot = !string.IsNullOrEmpty(context.Operation.Root);
 
             foreach (var field in output) {
                 if (!_searchAttributes && field.NodeType.Equals("attribute", Ic)) {
@@ -68,7 +68,7 @@ namespace Transformalize.Transforms.Xml {
             }
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
             foreach (var row in rows) {
                 var outerRow = row;
                 var innerRow = _rowFactory.Create();
@@ -163,7 +163,7 @@ namespace Transformalize.Transforms.Xml {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             throw new NotImplementedException();
         }
     }

@@ -24,7 +24,7 @@ namespace Transformalize.Contracts {
         Process Process { get; }
         Entity Entity { get; }
         Field Field { get; }
-        Transform Transform { get; }
+        Operation Operation { get; }
         void Debug(Func<string> lamda);
         void Error(string message, params object[] args);
         void Error(Exception exception, string message, params object[] args);

@@ -38,8 +38,8 @@ namespace Transformalize.Transforms {
         public FromXmlTransform(IContext context)
             : base(context, null) {
 
-            if (!context.Transform.Parameters.Any()) {
-                Error($"The {context.Transform.Method} transform requires a collection of output fields.");
+            if (!context.Operation.Parameters.Any()) {
+                Error($"The {context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;
                 return;
             }
@@ -60,7 +60,7 @@ namespace Transformalize.Transforms {
 
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var xml = row[_input] as string;
             if (string.IsNullOrEmpty(xml)) {
                 Increment();

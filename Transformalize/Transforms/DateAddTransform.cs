@@ -34,13 +34,13 @@ namespace Transformalize.Transforms {
 
             _input = SingleInput();
 
-            if (!double.TryParse(context.Transform.Value, out double value)) {
-                Error($"The {context.Transform.Method} transform requires a double numeric parameter.  {context.Transform.Value} can not be parsed as a double.");
+            if (!double.TryParse(context.Operation.Value, out double value)) {
+                Error($"The {context.Operation.Method} transform requires a double numeric parameter.  {context.Operation.Value} can not be parsed as a double.");
                 Run = false;
                 return;
             }
 
-            switch (context.Transform.TimeComponent.ToLower()) {
+            switch (context.Operation.TimeComponent.ToLower()) {
                 case "second":
                 case "seconds":
                     _amount = TimeSpan.FromSeconds(value);
@@ -63,21 +63,21 @@ namespace Transformalize.Transforms {
                     break;
                 case "tick":
                 case "ticks":
-                    _amount = TimeSpan.FromTicks(Convert.ToInt64(context.Transform.Value));
+                    _amount = TimeSpan.FromTicks(Convert.ToInt64(context.Operation.Value));
                     long addTicksLong;
-                    if (!long.TryParse(context.Transform.Value, out addTicksLong)) {
-                        Error($"The dateadd ticks transform requires a long (int64) numeric parameter.  {context.Transform.Value} can not be parsed as a long.");
+                    if (!long.TryParse(context.Operation.Value, out addTicksLong)) {
+                        Error($"The dateadd ticks transform requires a long (int64) numeric parameter.  {context.Operation.Value} can not be parsed as a long.");
                     }
                     break;
                 default:
-                    context.Warn($"Add time does not support {context.Transform.TimeComponent}. No time being added");
+                    context.Warn($"Add time does not support {context.Operation.TimeComponent}. No time being added");
                     _amount = new TimeSpan();
                     break;
 
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = ((DateTime)row[_input]).Add(_amount);
             Increment();
             return row;

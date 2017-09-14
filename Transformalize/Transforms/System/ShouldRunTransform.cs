@@ -26,8 +26,8 @@ namespace Transformalize.Transforms.System {
             _transform = transform;
         }
 
-        public override IRow Transform(IRow row) {
-            return Context.Transform.ShouldRun(row) ? _transform.Transform(row) : row;
+        public override IRow Operate(IRow row) {
+            return Context.Operation.ShouldRun(row) ? _transform.Operate(row) : row;
         }
 
         public new IEnumerable<string> Errors() {

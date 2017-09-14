@@ -22,7 +22,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
 
-    public class Transform : CfgNode {
+    public class Operation : CfgNode {
 
         public const string ProducerDomain = "fromxml,fromsplit,fromlengths,fromjson,fromaddress";
         public const string TransformProducerDomain = "now,next,last,connection";

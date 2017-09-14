@@ -20,27 +20,27 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Extensions {
     public static class ContextExtensions {
-        public static Transform PreviousTransform(this IContext context) {
-            if (context.Transform.Method == string.Empty)
+        public static Operation PreviousTransform(this IContext context) {
+            if (context.Operation.Method == string.Empty)
                 return null;
 
             if (context.Field.Transforms.Count <= 1)
                 return null;
 
-            var index = context.Field.Transforms.IndexOf(context.Transform);
+            var index = context.Field.Transforms.IndexOf(context.Operation);
 
             return index == 0 ? null : context.Field.Transforms[index - 1];
         }
 
-        public static Transform NextTransform(this IContext context) {
-            if (context.Transform.Method == string.Empty)
+        public static Operation NextTransform(this IContext context) {
+            if (context.Operation.Method == string.Empty)
                 return null;
 
             if (context.Field.Transforms.Count <= 1)
                 return null;
 
             var last = context.Field.Transforms.Count - 1;
-            var index = context.Field.Transforms.IndexOf(context.Transform);
+            var index = context.Field.Transforms.IndexOf(context.Operation);
 
             return index >= last ? null : context.Field.Transforms[index + 1];
         }

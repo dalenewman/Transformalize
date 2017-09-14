@@ -37,13 +37,13 @@ namespace Transformalize.Transforms.Jint {
 
         public JintTransform(IContext context, IReader reader) : base(context, null) {
 
-            if (IsMissing(context.Transform.Script)) {
+            if (IsMissing(context.Operation.Script)) {
                 return;
             }
 
             // automatic parameter binding
-            if (!context.Transform.Parameters.Any()) {
-                var parameters = _parser.Parse(context.Transform.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
+            if (!context.Operation.Parameters.Any()) {
+                var parameters = _parser.Parse(context.Operation.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
                     .Where(o => o.Type == global::Jint.Parser.Tokens.Identifier)
                     .Select(o => o.Value.ToString())
                     .Intersect(context.GetAllEntityFields().Select(f => f.Alias))
@@ -51,7 +51,7 @@ namespace Transformalize.Transforms.Jint {
                     .ToArray();
                 if (parameters.Any()) {
                     foreach (var parameter in parameters) {
-                        context.Transform.Parameters.Add(new Parameter { Field = parameter });
+                        context.Operation.Parameters.Add(new Parameter { Field = parameter });
                     }
                 }
             }
@@ -65,15 +65,15 @@ namespace Transformalize.Transforms.Jint {
             }
 
             // load any specified scripts
-            if (context.Transform.Scripts.Any()) {
-                foreach (var sc in context.Transform.Scripts) {
+            if (context.Operation.Scripts.Any()) {
+                foreach (var sc in context.Operation.Scripts) {
                     ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
                 }
             }
 
             // make this reference the host field
-            context.Transform.Script = $"var self = {context.Field.Alias};\r\n{context.Transform.Script}";
-            context.Debug(() => $"Script in {context.Field.Alias} : {context.Transform.Script.Replace("{", "{{").Replace("}", "}}")}");
+            context.Operation.Script = $"var self = {context.Field.Alias};\r\n{context.Operation.Script}";
+            context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
         void ProcessScript(IContext context, IReader reader, Script script) {
@@ -126,12 +126,12 @@ namespace Transformalize.Transforms.Jint {
             return content;
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var field in _input) {
                 _jint.SetValue(field.Alias, row[field]);
             }
             try {
-                var value = Context.Field.Convert(_jint.Execute(Context.Transform.Script).GetCompletionValue().ToObject());
+                var value = Context.Field.Convert(_jint.Execute(Context.Operation.Script).GetCompletionValue().ToObject());
                 if (value == null && !_errors.ContainsKey(0)) {
                     Context.Error($"Jint transform in {Context.Field.Alias} returns null!");
                     _errors[0] = $"Jint transform in {Context.Field.Alias} returns null!";
@@ -140,7 +140,7 @@ namespace Transformalize.Transforms.Jint {
                 }
             } catch (global::Jint.Runtime.JavaScriptException jse) {
                 if (!_errors.ContainsKey(jse.LineNumber)) {
-                    Context.Error("Script: " + Context.Transform.Script.Replace("{", "{{").Replace("}", "}}"));
+                    Context.Error("Script: " + Context.Operation.Script.Replace("{", "{{").Replace("}", "}}"));
                     Context.Error(jse, "Error Message: " + jse.Message);
                     Context.Error("Variables:");
                     foreach (var field in _input) {

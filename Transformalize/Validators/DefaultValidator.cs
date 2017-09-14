@@ -17,21 +17,28 @@
 #endregion
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class IsDefaultValidator : BaseTransform {
+
+    public class DefaultValidator : BaseValidate {
         private readonly Field _input;
         private readonly object _default;
 
-        public IsDefaultValidator(IContext context) : base(context, "bool") {
+        public DefaultValidator(IContext context) : base(context) {
+            if (!Run)
+                return;
+
             _input = SingleInput();
             var types = Constants.TypeDefaults();
             _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].Equals(_default);
+        public override IRow Operate(IRow row) {
+            var valid = row[_input].Equals(_default);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must be default value of {_default}.");
+            }
             Increment();
             return row;
         }

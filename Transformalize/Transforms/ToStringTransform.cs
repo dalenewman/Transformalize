@@ -28,28 +28,28 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
             Run = Received() != "string";
 
-            if (context.Transform.Format == string.Empty) {
+            if (context.Operation.Format == string.Empty) {
                 _toString = (o) => o.ToString();
             } else {
                 switch (_input.Type) {
                     case "int32":
                     case "int":
-                        _toString = (o) => ((int)o).ToString(context.Transform.Format);
+                        _toString = (o) => ((int)o).ToString(context.Operation.Format);
                         break;
                     case "double":
-                        _toString = (o) => ((double)o).ToString(context.Transform.Format);
+                        _toString = (o) => ((double)o).ToString(context.Operation.Format);
                         break;
                     case "short":
                     case "int16":
-                        _toString = (o) => ((short)o).ToString(context.Transform.Format);
+                        _toString = (o) => ((short)o).ToString(context.Operation.Format);
                         break;
                     case "long":
                     case "int64":
-                        _toString = (o) => ((long)o).ToString(context.Transform.Format);
+                        _toString = (o) => ((long)o).ToString(context.Operation.Format);
                         break;
                     case "datetime":
                     case "date":
-                        _toString = (o) => ((DateTime)o).ToString(context.Transform.Format);
+                        _toString = (o) => ((DateTime)o).ToString(context.Operation.Format);
                         break;
                     case "byte[]":
                         _toString = (o) => Utility.BytesToHexString((byte[])o);
@@ -61,7 +61,7 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _toString(row[_input]);
             Increment();
             return row;

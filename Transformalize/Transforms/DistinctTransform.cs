@@ -35,16 +35,16 @@ namespace Transformalize.Transforms {
             }
 
             // check separator
-            if (context.Transform.Separator == Constants.DefaultSetting) {
-                context.Transform.Separator = " ";
+            if (context.Operation.Separator == Constants.DefaultSetting) {
+                context.Operation.Separator = " ";
             }
 
-            _sep = context.Transform.Separator.ToCharArray();
+            _sep = context.Operation.Separator.ToCharArray();
 
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = string.Join(Context.Transform.Separator, ((string)row[_input]).Split(_sep, StringSplitOptions.RemoveEmptyEntries).Distinct());
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = string.Join(Context.Operation.Separator, ((string)row[_input]).Split(_sep, StringSplitOptions.RemoveEmptyEntries).Distinct());
             Increment();
             return row;
         }

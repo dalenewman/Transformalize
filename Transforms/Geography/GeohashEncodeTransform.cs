@@ -33,15 +33,15 @@ namespace Transformalize.Transforms.Geography {
             double lat;
             var fields = context.GetAllEntityFields().ToArray();
 
-            if (HasInvalidCoordinate(fields, context.Transform, context.Transform.Latitude, "latitude")) {
+            if (HasInvalidCoordinate(fields, context.Operation, context.Operation.Latitude, "latitude")) {
                 return;
             }
 
-            if (HasInvalidCoordinate(fields, context.Transform, context.Transform.Longitude, "longitude")) {
+            if (HasInvalidCoordinate(fields, context.Operation, context.Operation.Longitude, "longitude")) {
                 return;
             }
 
-            if (context.Transform.Length < 1 || context.Transform.Length > 13) {
+            if (context.Operation.Length < 1 || context.Operation.Length > 13) {
                 Error("The GeohashEncode method's precision must be between 1 and 13.");
                 Run = false;
                 return;
@@ -49,18 +49,18 @@ namespace Transformalize.Transforms.Geography {
 
             var input = MultipleInput();
 
-            var latField = fields.FirstOrDefault(f => f.Alias.Equals(context.Transform.Latitude));
-            var longField = fields.FirstOrDefault(f => f.Alias.Equals(context.Transform.Longitude));
+            var latField = fields.FirstOrDefault(f => f.Alias.Equals(context.Operation.Latitude));
+            var longField = fields.FirstOrDefault(f => f.Alias.Equals(context.Operation.Longitude));
 
             if (latField == null) {
-                if (double.TryParse(context.Transform.Latitude, out lat)) {
+                if (double.TryParse(context.Operation.Latitude, out lat)) {
                     _getLatitude = row => lat;
                 } else {
                     if (input.Length > 0) {
                         latField = input.First();
                         _getLatitude = row => Convert.ToDouble(row[latField]);
                     } else {
-                        context.Warn($"Trouble determing latitude for geohash method. {context.Transform.Latitude} is not a field or a double value.");
+                        context.Warn($"Trouble determing latitude for geohash method. {context.Operation.Latitude} is not a field or a double value.");
                     }
 
                 }
@@ -69,30 +69,30 @@ namespace Transformalize.Transforms.Geography {
             }
 
             if (longField == null) {
-                if (double.TryParse(context.Transform.Longitude, out lon)) {
+                if (double.TryParse(context.Operation.Longitude, out lon)) {
                     _getLongitude = row => lon;
                 } else {
                     if (input.Length > 1) {
                         longField = input[1];
                         _getLongitude = row => Convert.ToDouble(row[longField]);
                     } else {
-                        context.Warn($"Trouble determining longitude for geohash method. {context.Transform.Longitude} is not a field or a double value.");
+                        context.Warn($"Trouble determining longitude for geohash method. {context.Operation.Longitude} is not a field or a double value.");
                     }
                 }
             } else {
                 _getLongitude = row => Convert.ToDouble(row[longField]);
             }
 
-            _transform = row => NGeoHash.Portable.GeoHash.Encode(_getLatitude(row), _getLongitude(row), context.Transform.Length);
+            _transform = row => NGeoHash.Portable.GeoHash.Encode(_getLatitude(row), _getLongitude(row), context.Operation.Length);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
         }
 
-        private bool HasInvalidCoordinate(Field[] fields, Configuration.Transform t, string valueOrField, string name) {
+        private bool HasInvalidCoordinate(Field[] fields, Operation t, string valueOrField, string name) {
             double doubleValue;
             if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
                 Error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");

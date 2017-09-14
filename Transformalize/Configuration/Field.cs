@@ -24,7 +24,6 @@ using Transformalize.Contracts;
 namespace Transformalize.Configuration {
     public class Field : CfgNode, IField {
 
-
         private static readonly string[] ExpressionSplitter = { ")." };
         public static readonly List<string> InvalidNames = new List<string> { Constants.TflHashCode.ToLower(), Constants.TflBatchId.ToLower(), Constants.TflKey.ToLower(), Constants.TflDeleted.ToLower() };
 
@@ -363,7 +362,7 @@ namespace Transformalize.Configuration {
         public string ValidField { get; set; }
 
         [Cfg(value = "")]
-        public string ValidMessageField { get; set; }
+        public string MessageField { get; set; }
 
         [Cfg(value = true)]
         public bool Unicode { get; set; }
@@ -373,7 +372,11 @@ namespace Transformalize.Configuration {
 
         //lists
         [Cfg]
-        public List<Transform> Transforms { get; set; }
+        public List<Operation> Transforms { get; set; }
+
+        [Cfg]
+        public List<Operation> Validators { get; set; }
+
         [Cfg]
         public List<string> Domain { get; set; }
 
@@ -395,8 +398,8 @@ namespace Transformalize.Configuration {
                 if (ValidField == string.Empty) {
                     ValidField = Alias + "Valid";
                 }
-                if (ValidMessageField == string.Empty) {
-                    ValidMessageField = Alias + "Message";
+                if (MessageField == string.Empty) {
+                    MessageField = Alias + "Message";
                 }
             }
         }
@@ -430,7 +433,7 @@ namespace Transformalize.Configuration {
 
             if (RequiresCopyParameters()) {
                 if (!Transforms.Any()) {
-                    Transforms.Add(new Transform { Method = "copy" });
+                    Transforms.Add(new Operation { Method = "copy" });
                 }
                 var first = Transforms.First();
                 var expression = Utility.Split(T, ExpressionSplitter)[0];

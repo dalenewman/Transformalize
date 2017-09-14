@@ -31,14 +31,14 @@ namespace Transformalize.Transforms {
 
         public BetterFormatTransform(IContext context) : base(context, "string") {
 
-            _transform = row => context.Transform.Format;
+            _transform = row => context.Operation.Format;
             Regex regex = null;
 #if NETS10
             regex = new Regex(Pattern);
 #else
             regex = new Regex(Pattern, RegexOptions.Compiled);
 #endif
-            var matches = regex.Matches(context.Transform.Format);
+            var matches = regex.Matches(context.Operation.Format);
 
             if (matches.Count == 0) {
                 Error($"a format transform in {Context.Field.Alias} is missing place-holders.");
@@ -74,7 +74,7 @@ namespace Transformalize.Transforms {
                     Field field;
                     if (context.Process.TryGetField(name, out field)) {
                         fields.Add(field);
-                        context.Transform.Format = context.Transform.Format.Replace("{" + name, "{" + count);
+                        context.Operation.Format = context.Operation.Format.Replace("{" + name, "{" + count);
                         count++;
                     } else {
                         Error($"Invalid field name {name} found in a format transform in field {Context.Field.Alias}.");
@@ -90,10 +90,10 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            _transform = row => string.Format(Context.Transform.Format, _input.Select(f => row[f]).ToArray());
+            _transform = row => string.Format(Context.Operation.Format, _input.Select(f => row[f]).ToArray());
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;

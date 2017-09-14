@@ -21,7 +21,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Nulls {
     public class NullTransform : BaseTransform {
         public NullTransform(IContext context) : base(context, null) { }
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             return row;
         }
     }

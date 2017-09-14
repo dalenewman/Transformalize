@@ -27,7 +27,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.StartIndex == 0) {
+            if (context.Operation.StartIndex == 0) {
                 Error("The remove transform requires a start-index greater than 0.");
                 Run = false;
                 return;
@@ -36,10 +36,10 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = Context.Transform.Count > 0
-                ? row[_input].ToString().Remove(Context.Transform.StartIndex, Context.Transform.Count)
-                : row[_input].ToString().Remove(Context.Transform.StartIndex);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = Context.Operation.Count > 0
+                ? row[_input].ToString().Remove(Context.Operation.StartIndex, Context.Operation.Count)
+                : row[_input].ToString().Remove(Context.Operation.StartIndex);
             Increment();
             return row;
         }

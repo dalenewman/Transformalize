@@ -35,17 +35,17 @@ namespace Transformalize.Transforms.Velocity {
 
         public VelocityTransform(IContext context, IReader reader) : base(context, context.Field.Type) {
 
-            if (IsMissing(context.Transform.Template)) {
+            if (IsMissing(context.Operation.Template)) {
                 return;
             }
 
             VelocityInitializer.Init();
 
-            var fileBasedTemplate = context.Process.Templates.FirstOrDefault(t => t.Name == context.Transform.Template);
+            var fileBasedTemplate = context.Process.Templates.FirstOrDefault(t => t.Name == context.Operation.Template);
 
             if (fileBasedTemplate != null) {
                 var memoryLogger = new MemoryLogger();
-                context.Transform.Template = reader.Read(fileBasedTemplate.File, null, memoryLogger);
+                context.Operation.Template = reader.Read(fileBasedTemplate.File, null, memoryLogger);
                 if (memoryLogger.Errors().Any()) {
                     foreach (var error in memoryLogger.Errors()) {
                         context.Error(error);
@@ -57,7 +57,7 @@ namespace Transformalize.Transforms.Velocity {
             _templateName = Context.Field.Alias + " Template";
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
 
             var context = new VelocityContext();
             foreach (var field in _input) {
@@ -66,7 +66,7 @@ namespace Transformalize.Transforms.Velocity {
 
             var sb = new StringBuilder();
             using (var sw = new StringWriter(sb)) {
-                NVelocity.App.Velocity.Evaluate(context, sw, _templateName, Context.Transform.Template);
+                NVelocity.App.Velocity.Evaluate(context, sw, _templateName, Context.Operation.Template);
                 sw.Flush();
             }
 

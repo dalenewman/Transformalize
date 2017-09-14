@@ -43,9 +43,9 @@ namespace Transformalize.Transforms.Geography {
                 return;
             }
 
-            if (context.Transform.Parameters.Any()) {
+            if (context.Operation.Parameters.Any()) {
 
-                var lat = context.Transform.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
+                var lat = context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
                 if (lat == null) {
                     Error("The fromaddress (geocode) transform requires an output field named lat, or latitude.");
                     Run = false;
@@ -57,7 +57,7 @@ namespace Transformalize.Transforms.Geography {
                     return;
                 }
 
-                var lon = context.Transform.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
+                var lon = context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
                 if (lon == null) {
                     Error("The fromaddress (geocode) transform requires an output field named lon, long, or longitude.");
                     Run = false;
@@ -76,28 +76,28 @@ namespace Transformalize.Transforms.Geography {
 
             _input = SingleInput();
             _output = MultipleOutput();
-            if (context.Transform.Key != string.Empty) {
-                GoogleSigned.AssignAllServices(new GoogleSigned(context.Transform.Key));
+            if (context.Operation.Key != string.Empty) {
+                GoogleSigned.AssignAllServices(new GoogleSigned(context.Operation.Key));
             }
             _originalConnectionLimit = ServicePointManager.DefaultConnectionLimit;
             ServicePointManager.DefaultConnectionLimit = 255;
-            _rateGate = new RateGate(Context.Transform.Limit, TimeSpan.FromMilliseconds(Context.Transform.Time));
+            _rateGate = new RateGate(context.Operation.Limit, TimeSpan.FromMilliseconds(context.Operation.Time));
             _componentFilter = new ComponentFilter {
-                AdministrativeArea = Context.Transform.AdministrativeArea,
-                Country = Context.Transform.Country,
-                Locality = Context.Transform.Locality,
-                PostalCode = Context.Transform.PostalCode,
-                Route = Context.Transform.Route
+                AdministrativeArea = context.Operation.AdministrativeArea,
+                Country = context.Operation.Country,
+                Locality = context.Operation.Locality,
+                PostalCode = context.Operation.PostalCode,
+                Route = context.Operation.Route
             };
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
             foreach (var batch in rows.Partition(Context.Entity.UpdateSize)) {
                 var enumerated = batch.ToArray();
                 var collected = new ConcurrentBag<IRow>();
                 Parallel.ForEach(enumerated, (row) => {
                     _rateGate.WaitToProceed();
-                    collected.Add(Transform(row));
+                    collected.Add(Operate(row));
                     Increment();
                 });
                 foreach (var row in collected) {
@@ -106,7 +106,7 @@ namespace Transformalize.Transforms.Geography {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var request = new GeocodingRequest {
                 Address = row[_input].ToString(),
                 Sensor = false,

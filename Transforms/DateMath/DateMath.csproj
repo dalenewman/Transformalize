@@ -44,7 +44,7 @@
     <Compile Include="DateDiffTransform.cs" />
     <Compile Include="DateMathModifier.cs" />
     <Compile Include="DateMathTransform.cs" />
-    <Compile Include="IsDaylightSavingsValidator.cs" />
+    <Compile Include="IsDaylightSavingsTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RelativeTimeTransform.cs" />
     <Compile Include="TimeZoneTransform.cs" />

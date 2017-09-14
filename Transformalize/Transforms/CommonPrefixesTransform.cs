@@ -27,10 +27,10 @@ namespace Transformalize.Transforms {
 
         public CommonPrefixesTransform(IContext context) : base(context, "string") {
             _input = MultipleInput();
-            _sep = Context.Transform.Separator == Constants.DefaultSetting ? "," : Context.Transform.Separator;
+            _sep = Context.Operation.Separator == Constants.DefaultSetting ? "," : Context.Operation.Separator;
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = string.Join(_sep, Get(_input.Select(f => f.Type == "string" ? (string)row[f] : row[f].ToString()).ToArray()));
             Increment();
             return row;

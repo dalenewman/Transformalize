@@ -55,16 +55,16 @@ namespace Transformalize.Transforms {
 
         private readonly Func<IRow, object> _transform;
 
-        public DatePartTransform(IContext context) : base(context, PartReturns[context.Transform.TimeComponent]) {
+        public DatePartTransform(IContext context) : base(context, PartReturns[context.Operation.TimeComponent]) {
             if (IsNotReceiving("date")) {
                 return;
             }
 
             var input = SingleInput();
-            _transform = row => Parts[context.Transform.TimeComponent]((DateTime)row[input]);
+            _transform = row => Parts[context.Operation.TimeComponent]((DateTime)row[input]);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;

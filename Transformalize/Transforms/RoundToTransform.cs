@@ -35,8 +35,8 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (!context.Transform.Value.IsNumeric()) {
-                Error($"The {context.Transform.Method} transform requires a numeric value.");
+            if (!context.Operation.Value.IsNumeric()) {
+                Error($"The {context.Operation.Method} transform requires a numeric value.");
                 Run = false;
                 return;
             }
@@ -44,7 +44,7 @@ namespace Transformalize.Transforms {
             var input = SingleInput();
 
             if (Received() == "double") {
-                var by = Convert.ToDouble(context.Transform.Value);
+                var by = Convert.ToDouble(context.Operation.Value);
                 switch (roundTo) {
                     case RoundTo.Up:
                         _transform = (r) => Math.Ceiling((double)r[input] / by) * by;
@@ -58,7 +58,7 @@ namespace Transformalize.Transforms {
                 }
                 Returns = "double";
             } else {
-                var by = Convert.ToDecimal(context.Transform.Value);
+                var by = Convert.ToDecimal(context.Operation.Value);
                 if(Received() == "decimal") {
                     switch (roundTo) {
                         case RoundTo.Up:
@@ -89,7 +89,7 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;

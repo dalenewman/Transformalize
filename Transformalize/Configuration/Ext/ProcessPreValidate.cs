@@ -231,7 +231,7 @@ namespace Transformalize.Configuration.Ext {
             }
             var index = 0;
             foreach (var field in p.CalculatedFields) {
-                foreach (var transform in field.Transforms.Where(t => !Transform.ProducerSet().Contains(t.Method))) {
+                foreach (var transform in field.Transforms.Where(t => !Operation.ProducerSet().Contains(t.Method))) {
                     if (!string.IsNullOrEmpty(transform.Parameter)) {
                         if (transform.Parameter == All) {
                             foreach (var entity in p.Entities) {

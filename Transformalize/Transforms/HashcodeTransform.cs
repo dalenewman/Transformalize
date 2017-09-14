@@ -32,7 +32,7 @@ namespace Transformalize.Transforms {
             _builder = new StringBuilder();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = GetStringHashCode(_input.Select(f => row[f]));
             return row;
         }

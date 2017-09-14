@@ -51,7 +51,7 @@ namespace Transformalize.Transforms.System {
             _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Name, f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             foreach (var field in _strings) {
                 row[field] = row[field].ToString().Left(field.Length);
             }

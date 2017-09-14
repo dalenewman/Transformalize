@@ -28,7 +28,7 @@ namespace Transformalize.Context {
         public Process Process { get; set; }
         public Entity Entity { get; set; }
         public Field Field { get; set; }
-        public Transform Transform { get; set; }
+        public Operation Operation { get; set; }
         public object[] ForLog { get; }
         public IPipelineLogger Logger { get; set; }
 
@@ -41,19 +41,19 @@ namespace Transformalize.Context {
             Process process = null,
             Entity entity = null,
             Field field = null,
-            Transform transform = null
+            Operation operation = null
         ) {
             ForLog = new object[4];
             Logger = logger;
             Process = process ?? new Process { Name = "Process" };
             Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty };
             Field = field ?? new Field { Name = string.Empty, Alias = string.Empty };
-            Transform = transform ?? new Transform { Method = string.Empty };
-            Key = Process.Name + Entity.Key + Field.Alias + Transform.Method + Transform.Index;
+            Operation = operation ?? new Operation { Method = string.Empty };
+            Key = Process.Name + Entity.Key + Field.Alias + Operation.Method + Operation.Index;
             ForLog[0] = Process.Name.PadRight(Process.LogLimit, ' ').Left(Process.LogLimit);
             ForLog[1] = Entity.Alias.PadRight(Process.EntityLogLimit, ' ').Left(Process.EntityLogLimit);
             ForLog[2] = Field.Alias.PadRight(Process.FieldLogLimit, ' ').Left(Process.FieldLogLimit);
-            ForLog[3] = Transform.Method.PadRight(Process.TransformLogLimit, ' ').Left(Process.TransformLogLimit);
+            ForLog[3] = Operation.Method.PadRight(Process.TransformLogLimit, ' ').Left(Process.TransformLogLimit);
         }
 
         public void Info(string message, params object[] args) {

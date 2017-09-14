@@ -27,7 +27,7 @@ namespace Transformalize.Contracts {
     public class DefaultMapReader : IMapReader {
 
         public IEnumerable<MapItem> Read(IContext context) {
-            var map = context.Process.Maps.FirstOrDefault(m => m.Name == context.Transform.Map);
+            var map = context.Process.Maps.FirstOrDefault(m => m.Name == context.Operation.Map);
             return map == null ? Enumerable.Empty<MapItem>() : map.Items;
         }
     }

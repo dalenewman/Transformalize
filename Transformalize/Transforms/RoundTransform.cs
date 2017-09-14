@@ -31,9 +31,9 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var input = Convert.ToDecimal(row[_input]);
-            row[Context.Field] = Math.Round(input, Context.Transform.Decimals);
+            row[Context.Field] = Math.Round(input, Context.Operation.Decimals);
             Increment();
             return row;
         }

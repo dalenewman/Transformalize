@@ -35,7 +35,7 @@ namespace Transformalize.Context {
 
         public Field Field => _context.Field;
 
-        public Transform Transform => _context.Transform;
+        public Operation Operation => _context.Operation;
 
         public void Debug(Func<string> lamda) {
             _context.Debug(lamda);

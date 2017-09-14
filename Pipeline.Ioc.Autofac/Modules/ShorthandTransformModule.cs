@@ -29,19 +29,16 @@ using Transformalize.Providers.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class ShorthandModule : Module {
-        private readonly string _attribute;
+    public class ShorthandTransformModule : Module {
 
-        public ShorthandModule(string attribute) {
-            _attribute = attribute;
-        }
+        public const string Name = "shorthand-t";
 
         protected override void Load(ContainerBuilder builder) {
 
             builder.Register<IDependency>((ctx, p) => {
                 ShorthandRoot root;
-                if (ctx.IsRegisteredWithName<string>("shorthand")) {
-                    root = new ShorthandRoot(ctx.ResolveNamed<string>("shorthand"), ctx.ResolveNamed<IReader>("file"));
+                if (ctx.IsRegisteredWithName<string>(Name)) {
+                    root = new ShorthandRoot(ctx.ResolveNamed<string>(Name), ctx.ResolveNamed<IReader>("file"));
                 } else {
                     root = new ShorthandRoot();
                     root.Signatures.Add(new Signature { Name = "none" });
@@ -384,13 +381,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     foreach (var error in root.Errors()) {
                         context.Error(error);
                     }
-                    context.Error($"Please fix you shorthand configuration.  No short-hand is being processed for attribute {_attribute}.");
+                    context.Error("Please fix you shorthand configuration.  No short-hand is being processed for the t attribute.");
                 } else {
-                    return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, _attribute, "transforms", "method");
+                    return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
                 }
 
                 return new NullCustomizer();
-            }).Named<IDependency>("shorthand-" + _attribute);
+            }).Named<IDependency>(Name);
         }
 
         private static Signature Simple(string name, string value = null) {

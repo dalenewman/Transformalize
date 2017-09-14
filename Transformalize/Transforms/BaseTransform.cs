@@ -34,17 +34,22 @@ namespace Transformalize.Transforms {
         public IContext Context { get; }
         public bool Run { get; set; } = true;
 
+        protected BaseTransform(IContext context, string returns) {
+            Context = context;
+            Returns = returns;
+        }
+
         // this **must** be implemented
-        public abstract IRow Transform(IRow row);
+        public abstract IRow Operate(IRow row);
 
         // this *may* be implemented
-        public virtual IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
-            return Run ? rows.Select(Transform) : rows;
+        public virtual IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            return Run ? rows.Select(Operate) : rows;
         }
 
         public string Returns {
-            get => Context.Transform.Returns;
-            set => Context.Transform.Returns = value;
+            get => Context.Operation.Returns;
+            set => Context.Operation.Returns = value;
         }
 
         public void Error(string error) {
@@ -63,14 +68,9 @@ namespace Transformalize.Transforms {
             return _warnings;
         }
 
-        protected BaseTransform(IContext context, string returns) {
-            Context = context;
-            Returns = returns;
-        }
-
         public uint RowCount { get; set; }
 
-        protected virtual void Increment() {
+        public virtual void Increment() {
             RowCount++;
             if (RowCount % Context.Entity.LogInterval == 0) {
                 Context.Info(RowCount.ToString());
@@ -82,7 +82,7 @@ namespace Transformalize.Transforms {
         /// </summary>
         /// <returns></returns>
         private List<Field> ParametersToFields() {
-            return Context.Process.ParametersToFields(Context.Transform.Parameters, Context.Field);
+            return Context.Process.ParametersToFields(Context.Operation.Parameters, Context.Field);
         }
 
         public Field SingleInput() {
@@ -94,10 +94,10 @@ namespace Transformalize.Transforms {
         /// </summary>
         /// <returns></returns>
         public Field SingleInputForMultipleOutput() {
-            if (Context.Transform.Parameter != string.Empty) {
+            if (Context.Operation.Parameter != string.Empty) {
                 return Context.Entity == null
-                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, Sc) || f.Name.Equals(Context.Transform.Parameter, Sc))
-                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Transform.Parameter, Sc) || f.Name.Equals(Context.Transform.Parameter, Sc));
+                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Operation.Parameter, Sc) || f.Name.Equals(Context.Operation.Parameter, Sc))
+                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Operation.Parameter, Sc) || f.Name.Equals(Context.Operation.Parameter, Sc));
             }
             return Context.Field;
         }
@@ -114,7 +114,7 @@ namespace Transformalize.Transforms {
             if (_received != null)
                 return _received;
 
-            var index = Context.Field.Transforms.IndexOf(Context.Transform);
+            var index = Context.Field.Transforms.IndexOf(Context.Operation);
             if (index <= 0)
                 return SingleInput().Type;
 
@@ -129,14 +129,14 @@ namespace Transformalize.Transforms {
             var count = Context.Field.Transforms.Count;
             if (count == 1)
                 return true;
-            var index = Context.Field.Transforms.IndexOf(Context.Transform);
+            var index = Context.Field.Transforms.IndexOf(Context.Operation);
             return index == count - 1;
         }
 
         protected bool IsNotReceivingNumber() {
             if (!Constants.IsNumericType(Received())) {
                 Run = false;
-                Error($"The {Context.Transform.Method} method expects a numeric input, but is receiving a {Received()} type.");
+                Error($"The {Context.Operation.Method} method expects a numeric input, but is receiving a {Received()} type.");
                 return true;
             }
 
@@ -147,7 +147,7 @@ namespace Transformalize.Transforms {
             foreach (var field in MultipleInput()) {
                 if (!field.IsNumeric()) {
                     Run = false;
-                    Error($"The {Context.Transform.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
+                    Error($"The {Context.Operation.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
                     return true;
                 }
             }
@@ -158,7 +158,7 @@ namespace Transformalize.Transforms {
             foreach (var f in ParametersToFields()) {
                 if (f.Type.StartsWith(type))
                     continue;
-                Error($"The {Context.Transform.Method} method expects {type} input, but {f.Alias} is {f.Type}.");
+                Error($"The {Context.Operation.Method} method expects {type} input, but {f.Alias} is {f.Type}.");
                 Run = false;
                 return true;
             }
@@ -167,7 +167,7 @@ namespace Transformalize.Transforms {
 
         protected bool IsMissing(string value) {
             if (value == Constants.DefaultSetting || value == string.Empty) {
-                Error($"The {Context.Transform.Method} is missing a required ({nameof(value)}) parameter.");
+                Error($"The {Context.Operation.Method} is missing a required ({nameof(value)}) parameter.");
                 Run = false;
                 return true;
             }
@@ -178,5 +178,4 @@ namespace Transformalize.Transforms {
         public virtual void Dispose() {
         }
     }
-
 }

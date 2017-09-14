@@ -27,20 +27,20 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.StartIndex == 0) {
+            if (context.Operation.StartIndex == 0) {
                 Error("The insert transform requires a start-index greater than 0.");
                 Run = false;
                 return;
             }
-            if (context.Transform.Value == string.Empty) {
+            if (context.Operation.Value == string.Empty) {
                 Warn("The insert transform should have a value to insert.");
             }
 
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input].ToString().Insert(Context.Transform.StartIndex, Context.Transform.Value);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = row[_input].ToString().Insert(Context.Operation.StartIndex, Context.Operation.Value);
             Increment();
             return row;
         }

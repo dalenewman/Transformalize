@@ -28,12 +28,12 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (IsMissing(context.Transform.DayOfWeek)) {
+            if (IsMissing(context.Operation.DayOfWeek)) {
                 return;
             }
 
             var from = DateTime.Today;
-            var to = Enum.Parse(typeof(DayOfWeek), context.Transform.DayOfWeek, true);
+            var to = Enum.Parse(typeof(DayOfWeek), context.Operation.DayOfWeek, true);
             var start = (int)from.DayOfWeek;
             var target = (int)to;
             if (target <= start)
@@ -41,7 +41,7 @@ namespace Transformalize.Transforms {
             _next = from.AddDays(target - start);
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _next;
             Increment();
             return row;

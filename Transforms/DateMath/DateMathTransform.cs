@@ -29,15 +29,15 @@ namespace Transformalize.Transforms.DateMath {
                 return;
             }
 
-            if (IsMissing(context.Transform.Expression)) {
+            if (IsMissing(context.Operation.Expression)) {
                 return;
             }
 
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = DaleNewman.DateMath.Apply((DateTime)row[_input], Context.Transform.Expression);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = DaleNewman.DateMath.Apply((DateTime)row[_input], Context.Operation.Expression);
             Increment();
             return row;
         }

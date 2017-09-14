@@ -33,7 +33,7 @@ namespace Transformalize.Transforms {
 
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var first = _input.FirstOrDefault(f => !row[f.Field].Equals(f.Default));
             if (first != null) {
                 row[Context.Field] = Context.Field.Type == first.Field.Type ? row[first.Field] : Context.Field.Convert(row[first.Field]);

@@ -29,17 +29,17 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.Separator == Constants.DefaultSetting) {
+            if (context.Operation.Separator == Constants.DefaultSetting) {
                 Error("The splitlength transform requires a separator.");
                 Run = false;
                 return;
             }
 
             _input = SingleInput();
-            _separator = context.Transform.Separator.ToCharArray();
+            _separator = context.Operation.Separator.ToCharArray();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].ToString().Split(_separator).Length;
             Increment();
             return row;

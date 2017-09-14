@@ -27,7 +27,7 @@ namespace Transformalize.Transforms {
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var xml = row[_input] as string;
             row[Context.Field] = string.IsNullOrEmpty(xml) ? string.Empty : XDocument.Parse(xml).ToString();
             Increment();

@@ -40,14 +40,14 @@ namespace Transformalize.Transforms.CSharp {
             _userCode = objects => dv;
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = _userCode(row.ToArray());
             Increment();
             return row;
         }
 
-        public override IEnumerable<IRow> Transform(IEnumerable<IRow> rows) {
-            return rows.Select(Transform);
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            return rows.Select(Operate);
         }
     }
 }

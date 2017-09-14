@@ -33,9 +33,9 @@ namespace Transformalize.Transforms {
         public SliceTransform(IContext context) : base(context, "string") {
 
             _input = SingleInput();
-            _separator = context.Transform.Separator.ToCharArray();
+            _separator = context.Operation.Separator.ToCharArray();
 
-            var split = context.Transform.Expression.Split(':');
+            var split = context.Operation.Expression.Split(':');
             switch (split.Length) {
                 case 0:
                     _start = 0;
@@ -60,15 +60,15 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
 
             var value = GetString(row, _input);
 
-            if (Context.Transform.Separator == string.Empty) {
+            if (Context.Operation.Separator == string.Empty) {
                 row[Context.Field] = string.Concat(Slice(value.ToCharArray(), _start, _end, _step));
             } else {
                 var split = value.Split(_separator);
-                row[Context.Field] = string.Join(Context.Transform.Separator, Slice(split, _start, _end, _step));
+                row[Context.Field] = string.Join(Context.Operation.Separator, Slice(split, _start, _end, _step));
             }
             Increment();
             return row;

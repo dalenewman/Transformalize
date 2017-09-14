@@ -33,7 +33,7 @@ namespace Transformalize.Transforms.System {
             _tflHashCode = context.Entity.TflHashCode();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
             row[_tflDeleted] = false;
             row[_tflBatchId] = Context.Entity.BatchId;

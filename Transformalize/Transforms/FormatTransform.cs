@@ -29,19 +29,19 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (context.Transform.Format == string.Empty) {
+            if (context.Operation.Format == string.Empty) {
                 Error($"The format transform in field {context.Field.Alias} requires a format parameter.");
                 Run = false;
                 return;
             }
 
-            if (context.Transform.Format.IndexOf('{') == -1) {
+            if (context.Operation.Format.IndexOf('{') == -1) {
                 Error("The format transform's format must contain a curly braced place-holder.");
                 Run = false;
                 return;
             }
 
-            if (context.Transform.Format.IndexOf('}') == -1) {
+            if (context.Operation.Format.IndexOf('}') == -1) {
                 Error("The format transform's format must contain a curly braced place-holder.");
                 Run = false;
                 return;
@@ -50,8 +50,8 @@ namespace Transformalize.Transforms {
             _input = MultipleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = string.Format(Context.Transform.Format, _input.Select(f => row[f]).ToArray());
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = string.Format(Context.Operation.Format, _input.Select(f => row[f]).ToArray());
             Increment();
             return row;
         }

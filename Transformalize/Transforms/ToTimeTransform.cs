@@ -25,8 +25,8 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         public ToTimeTransform(IContext context) : base(context, "string") {
 
-            if (!Context.Transform.TimeComponent.In("hour", "minute", "second", "millisecond", "day", "tick")) {
-                Error($"The {Context.Transform.Method} expects a time component of day, hour, minute, second, millisecond, or tick.");
+            if (!Context.Operation.TimeComponent.In("hour", "minute", "second", "millisecond", "day", "tick")) {
+                Error($"The {Context.Operation.Method} expects a time component of day, hour, minute, second, millisecond, or tick.");
                 Run = false;
                 return;
             }
@@ -36,33 +36,33 @@ namespace Transformalize.Transforms {
             }
 
             _input = SingleInput();
-            if (Context.Transform.Format == string.Empty) {
-                Context.Transform.Format = @"d\.hh\:mm\:ss";
+            if (Context.Operation.Format == string.Empty) {
+                Context.Operation.Format = @"d\.hh\:mm\:ss";
             }
 
         }
 
         // "day,date,dayofweek,dayofyear,hour,millisecond,minute,month,second,tick,year,weekofyear", toLower = true)]
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             var value = _input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input]);
-            switch (Context.Transform.TimeComponent) {
+            switch (Context.Operation.TimeComponent) {
                 case "minute":
-                    row[Context.Field] = TimeSpan.FromMinutes(value).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromMinutes(value).ToString(Context.Operation.Format);
                     break;
                 case "second":
-                    row[Context.Field] = TimeSpan.FromSeconds(value).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromSeconds(value).ToString(Context.Operation.Format);
                     break;
                 case "millisecond":
-                    row[Context.Field] = TimeSpan.FromMilliseconds(value).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromMilliseconds(value).ToString(Context.Operation.Format);
                     break;
                 case "tick":
-                    row[Context.Field] = TimeSpan.FromTicks(Convert.ToInt64(row[_input])).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromTicks(Convert.ToInt64(row[_input])).ToString(Context.Operation.Format);
                     break;
                 case "day":
-                    row[Context.Field] = TimeSpan.FromDays(value).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromDays(value).ToString(Context.Operation.Format);
                     break;
                 default:
-                    row[Context.Field] = TimeSpan.FromHours(value).ToString(Context.Transform.Format);
+                    row[Context.Field] = TimeSpan.FromHours(value).ToString(Context.Operation.Format);
                     break;
             }
             Increment();

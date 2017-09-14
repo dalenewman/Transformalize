@@ -19,18 +19,25 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Validators {
-    public class EndsWithValidator : StringTransform {
+    public class EndsWithValidator : StringValidate {
         private readonly Field _input;
 
-        public EndsWithValidator(IContext context) : base(context, "bool") {
-            if (IsMissing(context.Transform.Value)) {
+        public EndsWithValidator(IContext context) : base(context) {
+            if (!Run)
+                return;
+
+            if (IsMissing(context.Operation.Value)) {
                 return;
             }
             _input = SingleInput();
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = GetString(row,_input).EndsWith(Context.Transform.Value);
+        public override IRow Operate(IRow row) {
+            var valid = GetString(row, _input).EndsWith(Context.Operation.Value);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must end with {Context.Operation.Value}.");
+            }
             Increment();
             return row;
         }

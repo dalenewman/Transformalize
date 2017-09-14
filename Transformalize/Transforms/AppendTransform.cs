@@ -10,11 +10,11 @@ namespace Transformalize.Transforms {
 
         public AppendTransform(IContext context) : base(context, "string") {
             _input = SingleInput();
-            _isField = context.Entity.FieldMatcher.IsMatch(context.Transform.Value);
+            _isField = context.Entity.FieldMatcher.IsMatch(context.Operation.Value);
             if (_isField) {
-                _field = context.Entity.GetField(context.Transform.Value);
+                _field = context.Entity.GetField(context.Operation.Value);
             }
-            Run = context.Transform.Value != Constants.DefaultSetting;
+            Run = context.Operation.Value != Constants.DefaultSetting;
 
             if (Run) {
                 if (Received() != "string") {
@@ -25,8 +25,8 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public override IRow Transform(IRow row) {
-            row[Context.Field] = row[_input] + (_isField ? row[_field].ToString() : Context.Transform.Value);
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = row[_input] + (_isField ? row[_field].ToString() : Context.Operation.Value);
             Increment();
             return row;
         }

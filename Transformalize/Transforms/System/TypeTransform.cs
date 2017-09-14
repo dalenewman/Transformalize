@@ -32,7 +32,7 @@ namespace Transformalize.Transforms.System {
             _fieldTypes = fields.Where(f => f.Type != "string").ToArray().Select(f => new Tuple<Field, Type>(f, Constants.TypeSystem()[f.Type])).ToArray();
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             // only check the types on the first row because the answer is the same for every row. 
             if (_cache == null) {
                 lock (_locker) {

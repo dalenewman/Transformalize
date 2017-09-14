@@ -294,8 +294,8 @@ namespace Transformalize.Configuration {
                     Type = "int",
                     Input = false,
                     Default = "0",
-                    Transforms = new List<Transform> {
-                        new Transform {
+                    Transforms = new List<Operation> {
+                        new Operation {
                             Method = "hashcode",
                             Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
                         }
@@ -345,8 +345,8 @@ namespace Transformalize.Configuration {
                 if (!calculatedKeys.Contains(field.ValidField)) {
                     CalculatedFields.Add(new Field { Name = field.ValidField, Alias = field.ValidField, Input = false, Type = "bool", Default = "true", IsCalculated = true });
                 }
-                if (!calculatedKeys.Contains(field.ValidMessageField)) {
-                    CalculatedFields.Add(new Field { Name = field.ValidMessageField, Alias = field.ValidMessageField, Length = "255", Default = "", IsCalculated = true });
+                if (!calculatedKeys.Contains(field.MessageField)) {
+                    CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true });
                 }
             }
 
@@ -433,7 +433,7 @@ namespace Transformalize.Configuration {
         }
 
 
-        public IEnumerable<Transform> GetAllTransforms() {
+        public IEnumerable<Operation> GetAllTransforms() {
             var transforms = Fields.SelectMany(field => field.Transforms).ToList();
             transforms.AddRange(CalculatedFields.SelectMany(field => field.Transforms));
             return transforms;
@@ -442,7 +442,7 @@ namespace Transformalize.Configuration {
         public void MergeParameters() {
 
             foreach (var field in Fields) {
-                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !Transform.ProducerSet().Contains(t.Method))) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !Operation.ProducerSet().Contains(t.Method))) {
                     if (transform.Parameter == "*") {
                         foreach (var f in Fields.Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != f.Alias)) {
@@ -463,7 +463,7 @@ namespace Transformalize.Configuration {
 
             var index = 0;
             foreach (var calculatedField in CalculatedFields) {
-                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !Transform.ProducerSet().Contains(t.Method))) {
+                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !Operation.ProducerSet().Contains(t.Method))) {
                     if (transform.Parameter == "*") {
                         foreach (var field in GetAllFields().Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != field.Alias)) {
@@ -502,7 +502,7 @@ namespace Transformalize.Configuration {
         }
 
         public void AdaptFieldsCreatedFromTransforms() {
-            foreach (var method in Transform.ProducerSet()) {
+            foreach (var method in Operation.ProducerSet()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);
                 }

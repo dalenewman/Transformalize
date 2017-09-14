@@ -39,14 +39,14 @@ namespace Transformalize.Transforms.DateMath {
 
             _input = SingleInput();
             _past = past;
-            var fromTimeZone = context.Transform.FromTimeZone == Constants.DefaultSetting
+            var fromTimeZone = context.Operation.FromTimeZone == Constants.DefaultSetting
                 ? "UTC"
-                : context.Transform.FromTimeZone;
+                : context.Operation.FromTimeZone;
             _nowTicks = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, fromTimeZone).Ticks;
 
         }
 
-        public override IRow Transform(IRow row) {
+        public override IRow Operate(IRow row) {
             row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks, _past);
             Increment();
             return row;
