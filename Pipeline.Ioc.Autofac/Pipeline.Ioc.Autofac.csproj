@@ -130,6 +130,7 @@
     <Compile Include="Modules\ConsoleModule.cs" />
     <Compile Include="Modules\RazorModule.cs" />
     <Compile Include="Modules\ShorthandValidateModule.cs" />
+    <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\WordModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RunTimeSchemaReader.cs" />
     <Compile Include="TransformFactory.cs" />
+    <Compile Include="ValidateFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compatibility\Transformalize.452\Transformalize.452.csproj">

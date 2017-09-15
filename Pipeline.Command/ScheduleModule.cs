@@ -24,6 +24,7 @@ using Quartz.Spi;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using Transformalize.Impl;
 using Transformalize.Logging.NLog;
 using Transformalize.Scheduler.Quartz;
 using Transformalize.Transforms.Globalization;

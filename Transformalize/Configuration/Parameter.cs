@@ -79,7 +79,7 @@ namespace Transformalize.Configuration {
                     break;
                 default:
                     if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
-                        Error($"The parameter {Name} is supposed to be a {Type}, but it can not be parsed as such.");
+                        Error($"The parameter {Name} is supposed to be a {Type}, but {Value} can not be parsed as such.");
                     }
                     break;
             }

@@ -19,6 +19,7 @@
 using System.Diagnostics;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Providers.Lucene {
     public class LuceneOutputController : BaseOutputController {

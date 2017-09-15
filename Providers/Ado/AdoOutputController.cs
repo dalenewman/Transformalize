@@ -22,6 +22,7 @@ using System.Diagnostics;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {

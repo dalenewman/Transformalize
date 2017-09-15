@@ -25,6 +25,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
+using Transformalize.Impl;
 using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Logging;
 using Transformalize.Providers.Elastic;

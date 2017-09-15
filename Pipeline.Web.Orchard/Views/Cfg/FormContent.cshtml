@@ -1,6 +1,46 @@
 ﻿@using Transformalize
 @using System.Linq
+@using Transformalize.Configuration
+@using Transformalize.Impl
 @model Transformalize.Configuration.Process
+@{
+    var request = WorkContext.HttpContext.Request;
+    var method = request.HttpMethod;
+    var entity = Model.Entities.First();
+    var row = entity.Rows.FirstOrDefault();
+    var fields = entity.Fields.Where(f => f.Input).ToArray();
+
+    // determine focus
+    string focus;
+    if (method == "GET") {
+        focus = fields.First(f => !f.PrimaryKey).Alias;
+    } else {
+        var invalid = fields.FirstOrDefault(f => f.ValidField != string.Empty && !(bool)row[f.ValidField]);
+
+        if (invalid == null) {
+            var previous = fields.First(f => f.Name == request.Form["form_focus"]);
+            var maxIndex = fields.Where(f => !f.PrimaryKey).Max(f => f.Index);
+            if (previous.Index < maxIndex) {
+                focus = fields.First(f => f.Index == previous.Index + 1).Alias;
+            } else {
+                focus = "submit";
+            }
+        } else {
+            focus = invalid.Alias;
+        }
+
+    }
+}
+
+@functions {
+    private bool IsValid(CfgRow row, Field field) {
+        return WorkContext.HttpContext.Request.HttpMethod == "GET" || field.ValidField == string.Empty || (bool)row[field.ValidField];
+    }
+
+    private string Status(CfgRow row, Field field) {
+        return IsValid(row, field) ? string.Empty : "has-error";
+    }
+}
 
 @foreach (var error in Model.Errors()) {
     <div class="alert alert-danger" role="alert">@error</div>
@@ -10,56 +50,29 @@
     <div class="alert alert-warning" role="alert">@warning</div>
 }
 
-<form id="id_form" role="form" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryTokenValueOrchard()" />
-    <input type="hidden" id="id_intention" name="form_intention" value="refresh" />
-    <input type="hidden" id="id_focus" name="form_focus" value="default" />
+@using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
 
-    @foreach (var entity in Model.Entities) {
+    <input type="hidden" id="id_focus" name="form_focus" value="@focus" />
 
-        var active = Model.GetActiveParameters();
+    if (row != null) {
 
-        var row = entity.Rows.FirstOrDefault();
-        if (row == null) {
-            row = new CfgRow(entity.Fields.Where(f => f.Input).Select(f => f.Alias).ToArray());
-            foreach (var field in entity.Fields.Where(f => f.Input)) {
-                var parameter = active.FirstOrDefault(p => p.Name.Equals(field.Alias, StringComparison.OrdinalIgnoreCase));
-                if (parameter != null && !string.IsNullOrEmpty(parameter.Value)) {
-                    row[field.Alias] = field.Convert(parameter.Value);
-                } else {
-                    row[field.Alias] = field.Default == Constants.DefaultSetting ? Constants.TypeDefaults()[field.Type] : field.Convert(field.Default);
-                }
-            }
-        }
+        foreach (var field in fields) {
 
-        foreach (var field in entity.Fields.Where(f => f.Input)) {
-
-            var parameter = active.FirstOrDefault(p => p.Name.Equals(field.Alias, StringComparison.OrdinalIgnoreCase));
-
-            object value;
-            if (Request.HttpMethod.Equals("GET")) {  // take value from loaded row
-                if (string.IsNullOrWhiteSpace(field.Format)) {
-                    value = row[field.Alias];
-                } else {
-                    value = field.Format.Contains("{") ? string.Format(field.Format, row[field.Alias]) : string.Format("{0:" + field.Format + "}", row[field.Alias]);
-                }
-            } else {
-                value = parameter == null ? string.Empty : parameter.Value;
-            }
+            var value = row[field.Alias];
 
             if (field.PrimaryKey) {
                 <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
             } else {
                 var map = Model.Maps.FirstOrDefault(m => m.Name.Equals(field.Name, StringComparison.OrdinalIgnoreCase));
                 if (map != null) {
-                    <div class="form-group">
+                    <div class="form-group @(Status(row,field))">
                         <label for="@field.Alias">@field.Label</label>
-                        <select class="form-control select @field.Class" name="@field.Alias" id="@field.Alias">
+                        <select class="form-control @field.Class" name="@field.Alias" id="id_@field.Alias">
                             @if (map.Items.Any()) {
-                                if (map.Items.All(i => !i.To.Equals(value))) {
-                                    value = map.Items.First().To;
-                                }
-                                foreach (var item in map.Items) {
+                                    if (map.Items.All(i => !i.To.Equals(value))) {
+                                        value = map.Items.First().To;
+                                    }
+                                    foreach (var item in map.Items) {
                                     <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
                                 }
                             } else {
@@ -71,58 +84,67 @@
                     var type = field.InputType == "defer" ? field.Type : field.InputType;
                     switch (type) {
                         case "file":
-                            <div class="form-group">
+                            <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
                                 <input class="form-control @field.Class"
-                                       id="@(field.Alias)"
+                                       id="id_@(field.Alias)"
                                        name="@(field.Alias)"
                                        type="file"
                                        accept="@field.InputAccept"
                                        capture="@field.InputCapture" />
+                                @if (!IsValid(row, field)) {
+                                    <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
+                                }
                             </div>
                             break;
                         case "date":
                         case "datetime":
-                            <div class="form-group">
+                            <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
-                                <input class="form-control date @field.Class"
+                                <input class="form-control @field.Class"
                                        type="date"
-                                       id="@(field.Alias)"
+                                       id="id_@(field.Alias)"
                                        name="@(field.Alias)"
                                        value="@(((DateTime)value).ToString(field.Format == string.Empty ? "yyyy-MM-dd": field.Format))" />
+                                @if (!IsValid(row, field)) {
+                                    <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
+                                }
                             </div>
                             break;
                         case "bool":
                         case "boolean":
-                            <div class="checkbox">
-                                <label>
-                                    <input name="@field.Alias"
-                                           id="@field.Alias"
-                                           type="checkbox"
-                                           checked="@((bool)value)" /> @field.Label
-                                    </label>
+                            <div class="@(Status(row, field))">
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="@field.Alias"
+                                               id="id_@field.Alias"
+                                               type="checkbox"
+                                               checked="@((bool)value)" /> @field.Label
+                                        </label>
+                                    </div>
                                 </div>
                             break;
                         default:
-                            <div class="form-group">
+                            <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
                                 <input type="text"
                                        class="form-control @field.Class"
                                        maxlength="@field.Length"
                                        name="@field.Alias"
-                                       id="@field.Alias"
+                                       id="id_@field.Alias"
                                        placeholder="@field.Label"
                                        value="@value" />
+                                @if (!IsValid(row, field)) {
+                                    <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
+                                }
                             </div>
-                            if (field.ValidField != string.Empty && !(bool)row[field.ValidField]) {
-                                <div>There is a problem: @(row[field.ValidMessageField])</div>
-                            }
                             break;
                     }
                 }
             }
         }
-
     }
-    <input type="submit" value="Submit" class="btn btn-default" />
-</form>
+
+    <input name="submit" type="submit" value="Submit" class="btn btn-default" />
+}
+

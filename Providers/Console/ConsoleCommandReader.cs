@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
-namespace Transformalize.Providers.Console
-{
+namespace Transformalize.Providers.Console {
     public class ConsoleCommandReader : IRead {
         private readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
@@ -43,8 +43,7 @@ namespace Transformalize.Providers.Console
             var output = p.StandardOutput.ReadToEnd();
 
             var lineNumber = 1;
-            foreach (var line in new LineReader(output).Read())
-            {
+            foreach (var line in new LineReader(output).Read()) {
 
                 if (line == string.Empty || lineNumber < _input.Connection.Start) {
                     lineNumber++;

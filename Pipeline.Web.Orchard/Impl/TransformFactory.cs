@@ -1,7 +1,7 @@
 #region license
 // Transformalize
-// A Configurable ETL Solution Specializing in Incremental Denormalization.
-// Copyright 2013 Dale Newman
+// Configurable Extract, Transform, and Load
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 using Transformalize.Transforms.System;
-using Transformalize.Validators;
 
 namespace Pipeline.Web.Orchard.Impl {
+    
     public static class TransformFactory {
 
-        public static Transforms GetTransforms(IComponentContext ctx, Process process, Entity entity, IEnumerable<Field> fields) {
+        public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
-            var valid = true;
 
             foreach (var f in fields.Where(f => f.Transforms.Any())) {
                 var field = f;
@@ -39,40 +38,38 @@ namespace Pipeline.Web.Orchard.Impl {
                 if (field.RequiresCompositeValidator()) {
                     var composite = new List<ITransform>();
                     foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                         ITransform add;
                         if (TryTransform(ctx, transformContext, out add)) {
                             composite.Add(add);
-                        } else {
-                            valid = false;
                         }
                     }
-                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field);
+                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field);
                     transforms.Add(new CompositeValidator(entityContext, composite));
                 } else {
                     foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, t);
+                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                         ITransform add;
                         if (TryTransform(ctx, transformContext, out add)) {
                             transforms.Add(add);
-                        } else {
-                            valid = false;
                         }
                     }
                 }
                 // add conversion if necessary
-                if (transforms.Last().Returns != null && field.Type != transforms.Last().Returns) {
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity, field, new Transform { Method = "convert" })));
+                var lastType = transforms.Last().Returns;
+                if (lastType != null && field.Type != lastType) {
+                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
+                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
             }
 
-            return new Transforms(transforms, valid);
+            return transforms;
         }
 
         public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
             transform = null;
             var success = true;
-            if (ctx.IsRegisteredWithName<ITransform>(context.Transform.Method)) {
+            if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
                 var t = ShouldRunTransform(ctx, context);
 
                 foreach (var warning in t.Warnings()) {
@@ -88,16 +85,16 @@ namespace Pipeline.Web.Orchard.Impl {
                     transform = t;
                 }
             } else {
-                context.Error("The {0} method used in the {1} field is not registered.", context.Transform.Method, context.Field.Alias);
+                context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
                 success = false;
             }
             return success;
         }
 
         public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
-            return context.Transform.ShouldRun == null ?
-                ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)) :
-                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Transform.Method, new PositionalParameter(0, context)));
+            return context.Operation.ShouldRun == null ?
+                ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)) :
+                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)));
         }
 
     }

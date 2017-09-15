@@ -22,6 +22,7 @@ using System.Linq;
 using Cfg.Net.Ext;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Providers.Excel;
 using Transformalize.Providers.File;
 

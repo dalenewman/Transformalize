@@ -18,6 +18,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -33,6 +34,7 @@ using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
 using Transformalize.Providers.SqlCe;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class AdoModule : Module {
@@ -100,25 +102,44 @@ namespace Pipeline.Web.Orchard.Modules {
             foreach (var entity in _process.Entities.Where(e => _ado.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
                 // INPUT READER
-                builder.Register<IRead>(ctx => {
+                builder.Register(ctx => {
+
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-
+                    IRead dataReader;
                     switch (input.Connection.Provider) {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
                         case "sqlce":
                         case "sqlserver":
-                            return new AdoInputReader(
+                            dataReader = new AdoInputReader(
                                 input,
                                 input.InputFields,
                                 ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key),
                                 rowFactory
                             );
+                            break;
                         default:
-                            return new NullReader(input, false);
+                            dataReader = new NullReader(input, false);
+                            break;
                     }
+
+                    // if key filter exists
+                    if (entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
+                        if (entity.GetPrimaryKey().All(f => entity.Filter.First(i => i.Field == f.Alias || i.Field == f.Name).Value == f.Default)) {
+
+                            // this is a form insert, create a new default row and apply parameters
+                            return new ParameterRowReader(input, new DefaultRowReader(input, rowFactory));
+                        }
+
+                        // this is a form update, read the row and apply parameters if it's post
+                        if (HttpContext.Current.Request.HttpMethod == "POST") {
+                            return new ParameterRowReader(input, dataReader);
+                        }
+                    }
+
+                    return dataReader;
                 }).Named<IRead>(entity.Key);
 
                 // INPUT VERSION DETECTOR
@@ -355,7 +376,7 @@ namespace Pipeline.Web.Orchard.Modules {
                             // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
                             // feels a lot like entity pipeline on just the primary keys... may look at consolidating
                             handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
-                            handler.Register(TransformFactory.GetTransforms(ctx, _process, entity, primaryKey));
+                            handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
                             handler.Register(new StringTruncateTransfom(context, primaryKey));
 
                             return new ParallelDeleteHandler(handler);

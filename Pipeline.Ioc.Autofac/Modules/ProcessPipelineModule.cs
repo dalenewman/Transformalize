@@ -21,6 +21,7 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 

@@ -33,7 +33,7 @@ namespace Transformalize.Providers.Ado.Ext {
             return Utility.Identifier(c.Process.Name) + "Control";
         }
 
-        static string DefaultValue(Field field, IConnectionFactory cf) {
+        private static string DefaultValue(Field field, IConnectionFactory cf) {
 
             if (field.Default == null)
                 return "NULL";

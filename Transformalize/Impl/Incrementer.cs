@@ -16,22 +16,21 @@
 // limitations under the License.
 #endregion
 
-using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Impl;
 
-namespace Transformalize.Providers.SSAS {
-    public class SSASOutputController : BaseOutputController {
+namespace Transformalize.Impl {
+    public class Incrementer : IIncrement {
+        readonly IContext _context;
+        uint _rowCount;
 
-        public SSASOutputController(
-            OutputContext context,
-            IAction initializer,
-            IInputProvider inputProvider,
-            IOutputProvider outputProvider
-            ) : base(context, initializer, inputProvider, outputProvider) { }
-
-        public override void Start() {
-            base.Start();
+        public Incrementer(IContext context) {
+            _context = context;
+        }
+        public void Increment(uint by = 1) {
+            _rowCount += by;
+            if (_rowCount % _context.Entity.LogInterval == 0) {
+                _context.Info(_rowCount.ToString());
+            }
         }
     }
 }

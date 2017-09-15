@@ -23,14 +23,14 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 using Transformalize.Transforms.System;
-using Transformalize.Validators;
 
 namespace Transformalize.Ioc.Autofac {
+
+
     public static class TransformFactory {
 
-        public static Transforms.Transforms GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
+        public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
-            var valid = true;
 
             foreach (var f in fields.Where(f => f.Transforms.Any())) {
                 var field = f;
@@ -39,10 +39,8 @@ namespace Transformalize.Ioc.Autofac {
                     var composite = new List<ITransform>();
                     foreach (var t in field.Transforms) {
                         var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        if (TryTransform(ctx, transformContext, out ITransform add)) {
+                        if (TryTransform(ctx, transformContext, out var add)) {
                             composite.Add(add);
-                        } else {
-                            valid = false;
                         }
                     }
                     var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field);
@@ -50,10 +48,8 @@ namespace Transformalize.Ioc.Autofac {
                 } else {
                     foreach (var t in field.Transforms) {
                         var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        if (TryTransform(ctx, transformContext, out ITransform add)) {
+                        if (TryTransform(ctx, transformContext, out var add)) {
                             transforms.Add(add);
-                        } else {
-                            valid = false;
                         }
                     }
                 }
@@ -65,7 +61,7 @@ namespace Transformalize.Ioc.Autofac {
                 }
             }
 
-            return new Transforms.Transforms(transforms, valid);
+            return transforms;
         }
 
         public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {

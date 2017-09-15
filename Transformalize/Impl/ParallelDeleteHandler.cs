@@ -15,26 +15,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
+
 using System.Collections.Generic;
+using System.Linq;
+using Transformalize.Contracts;
 
-namespace Transformalize.Contracts {
-    public interface IPipeline : IRead, IDisposable {
-        void Initialize();
-        void Register(IMapReader mapReader);
-        void Register(IRead reader);
-        void Register(ITransform transformer);
-        void Register(IEnumerable<ITransform> transforms);
-        void Register(IValidate validator);
-        void Register(IEnumerable<IValidate> validators);
-        void Register(IWrite writer);
-        void Register(IUpdate updater);
-        void Register(IEntityDeleteHandler deleteHandler);
-        void Register(IOutputProvider output);
-        void Register(IInputProvider input);
-        void Execute();
+namespace Transformalize.Impl {
+    public class ParallelDeleteHandler : IEntityDeleteHandler {
+        private readonly IEntityDeleteHandler _deleteHandler;
 
-        IContext Context { get; }
+        public ParallelDeleteHandler(IEntityDeleteHandler deleteHandler) {
+            _deleteHandler = deleteHandler;
+        }
+
+        public IEnumerable<IRow> DetermineDeletes() {
+#if NETS10
+            return _deleteHandler.DetermineDeletes();
+#else
+            return _deleteHandler.DetermineDeletes().AsParallel();
+#endif
+        }
+
+        public void Delete() {
+            _deleteHandler.Delete();
+        }
     }
-
 }

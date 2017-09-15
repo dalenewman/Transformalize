@@ -81,7 +81,7 @@ namespace Transformalize.Transforms.System {
         }
 
         public override IRow Operate(IRow row) {
-            foreach (var field in CalculatedFieldDefaults) {
+            foreach (var field in CalculatedFieldDefaults.Where(f=>row[f] == null)) {
                 field.Setter(row);
             }
             foreach (var field in FieldDefaults.Where(f => row[f] == null || f.DefaultWhiteSpace && f.Type == "string" && string.IsNullOrWhiteSpace((string)row[f]))) {

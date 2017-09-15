@@ -19,6 +19,7 @@
 using RethinkDb;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Providers.RethinkDB {
     public class RethinkDbOutputController : BaseOutputController {

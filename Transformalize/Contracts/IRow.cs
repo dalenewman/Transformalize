@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using Transformalize.Configuration;
+using Transformalize.Impl;
 
 namespace Transformalize.Contracts {
     public interface IRow {

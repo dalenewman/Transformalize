@@ -23,6 +23,7 @@ using Elasticsearch.Net;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Providers.Elastic;
 using Transformalize.Providers.Elastic.Ext;

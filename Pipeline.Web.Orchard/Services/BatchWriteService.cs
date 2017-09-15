@@ -9,9 +9,9 @@ using Orchard.Logging;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services.Contracts;
-using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Services {
 

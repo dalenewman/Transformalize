@@ -20,6 +20,7 @@ using System.Diagnostics;
 using Elasticsearch.Net;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Providers.Elastic {
 

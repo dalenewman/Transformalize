@@ -17,15 +17,14 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Contracts;
+using System.Linq;
 
-namespace Transformalize {
+namespace Transformalize.Impl {
     public class ParallelPipeline : IPipeline {
         private readonly IPipeline _pipeline;
 
         public IContext Context => _pipeline.Context;
-        public bool Valid => _pipeline.Valid;
 
         public ParallelPipeline(IPipeline pipeline) {
             _pipeline = pipeline;
@@ -43,7 +42,7 @@ namespace Transformalize {
             _pipeline.Register(mapReader);
         }
 
-        public void Register(Transforms.Transforms transforms) {
+        public void Register(IEnumerable<ITransform> transforms) {
             _pipeline.Register(transforms);
         }
 
@@ -53,6 +52,10 @@ namespace Transformalize {
 
         public void Register(IEntityDeleteHandler deleteHandler) {
             _pipeline.Register(deleteHandler);
+        }
+
+        public void Register(IEnumerable<IValidate> validators) {
+            _pipeline.Register(validators);
         }
 
         public void Register(IWrite writer) {
@@ -75,6 +78,7 @@ namespace Transformalize {
 #endif
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// CAUTION: If you're using Read without Execute, make sure you consume enumerable before disposing
         /// </summary>
@@ -88,6 +92,10 @@ namespace Transformalize {
 
         public void Register(IInputProvider input) {
             _pipeline.Register(input);
+        }
+
+        public void Register(IValidate validator) {
+            _pipeline.Register(validator);
         }
     }
 }

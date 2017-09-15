@@ -17,27 +17,33 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Contracts;
 
-namespace Transformalize {
-    public class ParallelDeleteHandler : IEntityDeleteHandler {
-        private readonly IEntityDeleteHandler _deleteHandler;
+namespace Transformalize.Impl {
+    public class RowFactory : IRowFactory {
+        private readonly int _capacity;
+        private readonly bool _isMaster;
+        private readonly bool _keys;
 
-        public ParallelDeleteHandler(IEntityDeleteHandler deleteHandler) {
-            _deleteHandler = deleteHandler;
+        public RowFactory(int capacity, bool isMaster, bool keys) {
+            _capacity = capacity;
+            _isMaster = isMaster;
+            _keys = keys;
         }
 
-        public IEnumerable<IRow> DetermineDeletes() {
-#if NETS10
-            return _deleteHandler.DetermineDeletes();
-#else
-            return _deleteHandler.DetermineDeletes().AsParallel();
-#endif
+        public IRow Create() {
+            if (_keys)
+                return new KeyRow(_capacity);
+
+            return _isMaster ? new MasterRow(_capacity) : (IRow)new SlaveRow(_capacity);
         }
 
-        public void Delete() {
-            _deleteHandler.Delete();
+        public IRow Clone(IRow row, IEnumerable<IField> fields) {
+            var newRow = Create();
+            foreach (var field in fields) {
+                newRow[field] = row[field];
+            }
+            return newRow;
         }
     }
 }

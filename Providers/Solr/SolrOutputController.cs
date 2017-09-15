@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using SolrNet;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Providers.Solr {
     public class SolrOutputController : BaseOutputController {

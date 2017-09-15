@@ -26,6 +26,7 @@ using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 
@@ -44,7 +45,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(ctx => {
                 var context = ctx.ResolveNamed<IContext>(entity.Key);
                 IPipeline pipeline;
-                context.Debug(() => string.Format("Registering {0} for entity {1}.", type, entity.Alias));
+                context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
                 var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":
@@ -66,7 +67,8 @@ namespace Pipeline.Web.Orchard.Modules {
                 }
 
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f => !f.System)));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, process, entity, entity.GetAllFields().Where(f => f.Transforms.Any())));
+                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
+                pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
                 if (!process.ReadOnly) {
                     pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));

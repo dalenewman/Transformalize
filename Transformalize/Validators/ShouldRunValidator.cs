@@ -15,32 +15,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections;
 using System.Collections.Generic;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms {
+namespace Transformalize.Validators {
+    public class ShouldRunValidator : BaseValidate {
 
-    public class Transforms : IEnumerable<ITransform> {
+        private readonly IValidate _validator;
 
-        public bool Valid { get; set; }
-
-        private readonly List<ITransform> _transforms;
-
-        public Transforms() {
-            _transforms = new List<ITransform>();
+        public ShouldRunValidator(IContext context, IValidate validator) : base(context) {
+            _validator = validator;
         }
 
-        public Transforms(IEnumerable<ITransform> transforms, bool valid) {
-            _transforms = new List<ITransform>(transforms);
-            Valid = valid;
-        }
-        public IEnumerator<ITransform> GetEnumerator() {
-            return _transforms.GetEnumerator();
+        public override IRow Operate(IRow row) {
+            return Context.Operation.ShouldRun(row) ? _validator.Operate(row) : row;
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
+        public new IEnumerable<string> Errors() {
+            return _validator.Errors();
+        }
+
+        public new IEnumerable<string> Warnings() {
+            return _validator.Warnings();
         }
     }
 }

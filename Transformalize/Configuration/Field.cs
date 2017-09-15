@@ -281,6 +281,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = Constants.DefaultSetting)]
         public string Default { get; set; }
 
+        public object DefaultValue() {
+            return Default != Constants.DefaultSetting ? Convert(Default) : Constants.TypeDefaults()[Type];
+        }
+
         /// <summary>
         /// Optional.  Default is `, `
         /// 

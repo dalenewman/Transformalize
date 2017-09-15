@@ -269,7 +269,7 @@
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Json">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\Release\Transformalize.Transform.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Json.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.LamdaParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -308,6 +308,7 @@
     <Compile Include="Impl\OrchardLogWriter.cs" />
     <Compile Include="Impl\RazorReportCompiler.cs" />
     <Compile Include="Impl\RazorReportTemplateProcessor.cs" />
+    <Compile Include="Impl\ValidateFactory.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
     <Compile Include="Models\ReportViewModel.cs" />
@@ -315,6 +316,7 @@
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
+    <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Services\BatchCreateService.cs" />
     <Compile Include="Services\BatchRedirectService.cs" />

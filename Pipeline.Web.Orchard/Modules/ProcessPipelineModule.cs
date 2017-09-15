@@ -25,7 +25,7 @@ using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
-using Transformalize;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 
@@ -53,7 +53,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 var outputContext = new OutputContext(context, new Incrementer(context));
 
                 IPipeline pipeline;
-                context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
+                context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
                 var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
                 switch (_process.Pipeline) {
                     case "parallel.linq":
@@ -75,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 // register transforms
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, calc, entity, entity.CalculatedFields));
+                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
                 pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
                 // register input and output

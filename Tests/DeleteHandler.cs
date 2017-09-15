@@ -22,6 +22,7 @@ using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Providers.Trace;
 
 namespace Tests {

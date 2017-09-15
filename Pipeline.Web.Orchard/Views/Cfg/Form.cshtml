@@ -4,9 +4,9 @@
 @{
     AppendMeta("description", Model.Title(), ",");
     Layout.Title = Model.Title();
+    Script.Require("jQuery").AtHead();
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery-autotab/1.9.2/js/jquery.autotab.min.js").AtHead();
 }
-
-<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
 <style type="text/css">
 
@@ -47,38 +47,31 @@
     //<!--
     $(document).ready(function () {
 
-        var url = "@(Url.Action("FormContent", new { Model.Id}))";
+        var ajaxUrl = "@(Url.Action("FormContent", new { Model.Id}))" + window.location.search;
+        var saveUrl = "@(Url.Action("Form", new { Model.Id}))" + window.location.search;
+
+        $(document).bind("ajaxSend", function () {
+            $('#id_busy').show();
+        }).bind("ajaxComplete", function () {
+            $("#id_busy").hide();
+        });
 
         function bind(html) {
             $("#id_content").html(html);
+            $("#id_form").attr("action", saveUrl);
 
-            $(".select").change(function () {
-                $('#id_busy').show();
-                // this.form.submit();
+            $("select,input").autotab();
+
+            var focus = $('#id_focus').val();
+            console.log('setting focus to ' + focus);
+            $('#id_' + focus).focus().select();
+
+            $("select,input:not(input[name='submit']):not(input[type='file'])").change(function () {
                 console.log("checking data...");
-                $.ajax({
-                    url: url,
-                    type: "POST",
-                    data: $("#id_form").serialize(),
-                    success: function(html) {
-                        $('#id_busy').hide();
-                        bind(html);
-                    },
-                    error: function (html) {
-                        $('#id_busy').hide();
-                         bind(html);
-                    }
-                }, "html");
+                post();
             });
 
-            $("#id_form").submit(function (event) {
-                event.preventDefault();
-                $('#id_busy').show();
-                console.log("submitting data");
-                this.submit();
-            });
-
-            $("input").keypress(function (event) {
+            $("select,input:not(input[name='submit'])").keypress(function (event) {
                 if (event.which === 13) {
                     event.preventDefault();
                     var inputs = $(this).closest('form').find(':input');
@@ -86,11 +79,30 @@
                 }
             });
 
+            $("select,input:not(input[name='submit'])").focusin(function () {
+                $("#id_focus").val($(this).attr("name"));
+                console.log($(this).attr("name") + " has focus");
+            });
+
         }
 
-        $.get(url, function (html) {
+        $.get(ajaxUrl, function (html) {
             bind(html);
         }, "html");
+
+        function post() {
+            $.ajax({
+                url: ajaxUrl,
+                type: "POST",
+                data: $("#id_form").serialize(),
+                success: function (html) {
+                    bind(html);
+                },
+                error: function (html) {
+                    bind(html);
+                }
+            }, "html");
+        }
 
         function removeMessages() {
             $(".zone-messages").fadeOut();

@@ -155,8 +155,8 @@ namespace Transformalize {
             {"decimal", (x => decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
             {"char", (x => Convert.ToChar(x))},
             {"datetime", (x => Convert.ToDateTime(x))},
-            {"boolean", (x => Convert.ToBoolean(x))},
-            {"bool", (x => Convert.ToBoolean(x)) },
+            {"boolean", (x => Convert.ToBoolean(NormalizeBool(x)))},
+            {"bool", (x => Convert.ToBoolean(NormalizeBool(x))) },
             {"single", (x => Convert.ToSingle(x))},
             {"real", (x => Convert.ToSingle(x))},
             {"float", (x => Convert.ToSingle(x))},
@@ -197,6 +197,24 @@ namespace Transformalize {
         public static HashSet<string> InvalidFieldNames { get; internal set; } = new HashSet<string>(new[] { TflKey, TflBatchId, TflDeleted, TflHashCode }, StringComparer.OrdinalIgnoreCase);
         public static string OriginalOutput { get; set; } = "original-output";
 
+        public static string NormalizeBool(string s) {
+            if (string.IsNullOrEmpty(s))
+                return "false";
+
+            s = s.ToLower();
+            switch (s) {
+                case "1":
+                case "on":
+                    return "true";
+                case "0":
+                case "off":
+                    return "false";
+                default:
+                    return s;
+            }
+
+        }
+
         public static Dictionary<string, Func<string, bool>> CanConvert() {
             bool boolOut;
             byte byteOut;
@@ -216,8 +234,8 @@ namespace Transformalize {
 
             return _canConvert ?? (
                 _canConvert = new Dictionary<string, Func<string, bool>> {
-                    {"bool",s=> bool.TryParse(s, out boolOut)},
-                    {"boolean",s=> bool.TryParse(s, out boolOut)},
+                    {"bool",s=> bool.TryParse(NormalizeBool(s), out boolOut)},
+                    {"boolean",s=> bool.TryParse(NormalizeBool(s), out boolOut)},
                     {"byte",s=>byte.TryParse(s, out byteOut)},
                     {"byte[]", s => false},
                     {"char",s=>char.TryParse(s, out charOut)},

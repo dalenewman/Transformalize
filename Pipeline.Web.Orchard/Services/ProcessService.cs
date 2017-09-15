@@ -33,10 +33,10 @@ namespace Pipeline.Web.Orchard.Services {
             Logger = NullLogger.Instance;
             lock (_lock) {
                 if (_shortHandCustomizerT == null) {
-                    _shortHandCustomizerT = BuildShortHandCustomizer("t");
+                    _shortHandCustomizerT = BuildShortHandTransformCustomizer();
                 }
                 if (_shortHandCustomizerV == null) {
-                    _shortHandCustomizerV = BuildShortHandCustomizer("v");
+                    _shortHandCustomizerV = BuildShortHandValidateCustomizer();
                 }
             }
         }
@@ -101,7 +101,7 @@ namespace Pipeline.Web.Orchard.Services {
             return Resolve(part, part.EditorMode, part.EditorMode);
         }
 
-        private ICustomizer BuildShortHandCustomizer(string attribute) {
+        private ICustomizer BuildShortHandTransformCustomizer() {
             var root = new ShorthandRoot();
             root.Signatures.Add(new Signature { Name = "none" });
             root.Signatures.Add(Simple("format"));
@@ -436,13 +436,69 @@ namespace Pipeline.Web.Orchard.Services {
             root.Check();
 
             if (!root.Errors().Any()) {
-                return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, attribute, "transforms", "method");
+                return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
             }
 
             foreach (var error in root.Errors()) {
                 Logger.Error(error);
             }
-            Logger.Error($"Please fix you shorthand configuration.  No short-hand is being processed for attribute {attribute}.");
+            Logger.Error("Please fix you shorthand configuration.  No short-hand is being processed for t attribute.");
+
+            return new NullCustomizer();
+        }
+
+        private ICustomizer BuildShortHandValidateCustomizer() {
+            var root = new ShorthandRoot();
+            root.Signatures.Add(new Signature { Name = "none" });
+            root.Signatures.Add(Simple("length"));
+            root.Signatures.Add(Simple("separator", ","));
+            root.Signatures.Add(Simple("value", "[default]"));
+            root.Signatures.Add(Simple("type", "[default]"));
+            root.Signatures.Add(Simple("pattern"));
+            root.Signatures.Add(new Signature {
+                Name = "any",
+                Parameters = new List<Parameter> {
+                    new Parameter {Name = "value"},
+                    new Parameter {Name = "operator", Value = "equal"}
+                }
+            });
+            root.Signatures.Add(new Signature {
+                Name = "range",
+                Parameters = new List<Parameter> {
+                    new Parameter {Name = "min"},
+                    new Parameter {Name = "max"}
+                }
+            });
+            root.Signatures.Add(Simple("domain"));
+
+            root.Methods.Add(new Method { Name = "required", Signature = "none" });
+            root.Methods.Add(new Method { Name = "maxlength", Signature = "length" });
+            root.Methods.Add(new Method { Name = "minlength", Signature = "length" });
+            root.Methods.Add(new Method { Name = "range", Signature = "range" });
+            root.Methods.Add(new Method { Name = "max", Signature = "value" });
+            root.Methods.Add(new Method { Name = "min", Signature = "value" });
+            root.Methods.Add(new Method { Name = "any", Signature = "any" });
+            root.Methods.Add(new Method { Name = "contains", Signature = "value" });
+            root.Methods.Add(new Method { Name = "equals", Signature = "value" });
+            root.Methods.Add(new Method { Name = "is", Signature = "type" });
+            root.Methods.Add(new Method { Name = "in", Signature = "domain" });
+            root.Methods.Add(new Method { Name = "matches", Signature = "pattern" });
+            root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
+            root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
+            root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
+            root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
+            root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
+            root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
+            root.Check();
+
+            if (!root.Errors().Any()) {
+                return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "v", "validators", "method");
+            }
+
+            foreach (var error in root.Errors()) {
+                Logger.Error(error);
+            }
+            Logger.Error("Please fix you shorthand configuration.  No short-hand is being processed for v attribute.");
 
             return new NullCustomizer();
         }

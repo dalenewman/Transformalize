@@ -27,6 +27,7 @@ using Transformalize.Context;
 using Transformalize.Extensions;
 using Transformalize.Logging;
 using System.Text.RegularExpressions;
+using Transformalize.Impl;
 
 namespace Transformalize.Configuration {
 

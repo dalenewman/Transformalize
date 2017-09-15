@@ -20,10 +20,13 @@ namespace Transformalize.Validators {
 
         protected BaseValidate(IContext context) {
             Context = context;
+
             if (!context.Entity.TryGetField(Context.Field.ValidField, out _validField)) {
                 Error($"The validator {Context.Operation.Method} can't find it's valid-field {Context.Field.ValidField}.");
                 Run = false;
+                return;
             }
+
             Context.Entity.TryGetField(Context.Field.MessageField, out _messageField);
 
             if (MessageField == null) {
@@ -40,7 +43,7 @@ namespace Transformalize.Validators {
 
         // this *may* be implemented
         public virtual IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-            return Run ? rows.Select(Operate) : rows;
+            return Run && Context.Field.Validators.Any() ? rows.Select(Operate) : rows;
         }
 
         public void Error(string error) {

@@ -20,6 +20,7 @@ using System.Dynamic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize {
     public abstract class BaseRow {

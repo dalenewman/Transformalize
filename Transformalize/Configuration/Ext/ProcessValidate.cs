@@ -378,20 +378,24 @@ namespace Transformalize.Configuration.Ext {
             }
 
             foreach (var entity in p.Entities) {
-                foreach (var field in entity.GetAllFields().Where(f => f.Transforms.Any(t => t.RunField != string.Empty))) {
-                    foreach (var t in field.Transforms.Where(t => t.RunField != string.Empty)) {
-                        Field runField;
-                        if (entity.TryGetField(t.RunField, out runField)) {
-                            var runValue = runField.Type == "bool" && t.RunValue == Constants.DefaultSetting ? "true" : t.RunValue;
-                            try {
-                                var value = Constants.ConversionMap[runField.Type](runValue);
-                                t.ShouldRun = row => Utility.Evaluate(row[runField], t.RunOperator, value);
-                            } catch (Exception ex) {
-                                error($"Trouble converting {runValue} to {runField.Type}. {ex.Message}");
-                            }
-                        } else {
-                            warn($"Run Field {t.RunField} does not exist in {entity.Alias}, so it will not be evaluated.");
+                EvaluateRunFields(entity, f => f.Transforms, error, warn);
+                EvaluateRunFields(entity, f => f.Validators, error, warn);
+            }
+        }
+
+        private static void EvaluateRunFields(Entity entity, Func<Field, List<Operation>> operations, Action<string> error, Action<string> warn) {
+            foreach (var field in entity.GetAllFields().Where(f => operations(f).Any(t => t.RunField != string.Empty))) {
+                foreach (var operation in operations(field).Where(t => t.RunField != string.Empty)) {
+                    if (entity.TryGetField(operation.RunField, out var runField)) {
+                        var runValue = runField.Type == "bool" && operation.RunValue == Constants.DefaultSetting ? "true" : operation.RunValue;
+                        try {
+                            var value = Constants.ConversionMap[runField.Type](runValue);
+                            operation.ShouldRun = row => Utility.Evaluate(row[runField], operation.RunOperator, value);
+                        } catch (Exception ex) {
+                            error($"Trouble converting {runValue} to {runField.Type}. {ex.Message}");
                         }
+                    } else {
+                        warn($"Run Field {operation.RunField} does not exist in {entity.Alias}, so it will not be evaluated.");
                     }
                 }
             }

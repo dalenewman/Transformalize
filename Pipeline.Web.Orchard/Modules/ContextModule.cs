@@ -22,6 +22,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ContextModule : Module {

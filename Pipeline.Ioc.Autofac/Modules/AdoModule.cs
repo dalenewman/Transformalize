@@ -21,6 +21,7 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Providers.Access;
 using Transformalize.Providers.Ado;
@@ -99,9 +100,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // INPUT READER
                 builder.Register<IRead>(ctx => {
+
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-
                     switch (input.Connection.Provider) {
                         case "mysql":
                         case "postgresql":
@@ -118,6 +119,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         default:
                             return new NullReader(input, false);
                     }
+
                 }).Named<IRead>(entity.Key);
 
                 // INPUT VERSION DETECTOR

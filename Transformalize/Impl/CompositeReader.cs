@@ -15,21 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Contracts;
 
-namespace Transformalize {
-    public class Incrementer : IIncrement {
-        readonly IContext _context;
-        uint _rowCount;
+namespace Transformalize.Impl {
 
-        public Incrementer(IContext context) {
-            _context = context;
+    public class CompositeReader : IRead {
+        private readonly IEnumerable<IRead> _readers;
+
+        public CompositeReader(params IRead[] readers) {
+            _readers = readers;
         }
-        public void Increment(uint by = 1) {
-            _rowCount += by;
-            if (_rowCount % _context.Entity.LogInterval == 0) {
-                _context.Info(_rowCount.ToString());
-            }
+
+        public CompositeReader(IEnumerable<IRead> readers) {
+            _readers = readers;
+        }
+
+        public IEnumerable<IRow> Read() {
+            return _readers.SelectMany(reader => reader.Read());
         }
     }
 }

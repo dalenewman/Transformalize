@@ -15,11 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Contracts;
 
-namespace Transformalize {
+namespace Transformalize.Impl {
 
     public class LineReader : IReadLines {
         private readonly string _content;

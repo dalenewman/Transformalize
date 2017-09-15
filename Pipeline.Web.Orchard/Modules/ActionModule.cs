@@ -131,6 +131,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     builder.RegisterCallback(new KmlModule().Configure);
 
                     builder.RegisterCallback(new TransformModule(root).Configure);
+                    builder.RegisterCallback(new ValidateModule(root).Configure);
                     builder.RegisterCallback(new MapModule(root).Configure);
                     builder.RegisterCallback(new ActionModule(root).Configure);
                     builder.RegisterCallback(new EntityPipelineModule(root).Configure);
