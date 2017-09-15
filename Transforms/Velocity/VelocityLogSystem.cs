@@ -15,7 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-
 using NVelocity.Runtime;
 using NVelocity.Runtime.Log;
 using Transformalize.Contracts;
