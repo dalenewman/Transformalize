@@ -567,6 +567,11 @@ td.sorter {
 
     $(document).ready(function() {
 
+        function removeMessages() {
+            $(".zone-messages").fadeOut();
+        }
+        setTimeout(removeMessages, 5000);
+
         var $boxes = $('.shift-select');
         $boxes.click(function(e) {
             if(!controls.lastChecked) {

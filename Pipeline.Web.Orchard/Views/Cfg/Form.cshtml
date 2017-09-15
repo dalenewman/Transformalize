@@ -1,4 +1,7 @@
-﻿@using Pipeline.Web.Orchard.Models
+﻿@using Orchard
+@using Orchard.Core.Contents
+@using Pipeline.Web.Orchard
+@using Pipeline.Web.Orchard.Models
 
 @model PipelineConfigurationPart
 @{
@@ -6,6 +9,7 @@
     Layout.Title = Model.Title();
     Script.Require("jQuery").AtHead();
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery-autotab/1.9.2/js/jquery.autotab.min.js").AtHead();
+    var orchard = WorkContext.Resolve<IOrchardServices>();
 }
 
 <style type="text/css">
@@ -35,6 +39,14 @@
         height: 100%;
     }
 </style>
+
+@if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+    <div class="btn-group pull-right">
+        <button title="edit this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+            <span class="glyphicon glyphicon-edit"></span>
+        </button>
+    </div>
+}
 
 <div id="id_content">
 </div>
