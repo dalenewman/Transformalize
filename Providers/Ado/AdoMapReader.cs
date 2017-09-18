@@ -68,11 +68,21 @@ namespace Transformalize.Providers.Ado {
 
                 using (reader) {
                     while (reader.Read()) {
-                        var mapItem = new MapItem {
-                            From = reader.IsDBNull(0) ? null : reader[0],
-                            To = reader.IsDBNull(1) ? null : reader[1]
-                        };
-                        items.Add(mapItem);
+                        if (reader.FieldCount > 0) {
+                            if (reader.FieldCount > 1) {
+                                var mapItem = new MapItem {
+                                    From = reader.IsDBNull(0) ? null : reader[0],
+                                    To = reader.IsDBNull(1) ? null : reader[1]
+                                };
+                                items.Add(mapItem);
+                            } else {
+                                var mapItem = new MapItem {
+                                    From = reader.IsDBNull(0) ? null : reader[0],
+                                    To = reader.IsDBNull(0) ? null : reader[0]
+                                };
+                                items.Add(mapItem);
+                            }
+                        }
                     }
                 }
             }

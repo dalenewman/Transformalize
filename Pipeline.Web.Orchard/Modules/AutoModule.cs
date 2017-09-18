@@ -26,7 +26,6 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Impl;
-using Transformalize;
 using Transformalize.Impl;
 using Module = Autofac.Module;
 

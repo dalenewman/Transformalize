@@ -34,7 +34,6 @@ namespace Pipeline.Web.Orchard.Drivers {
             part.StartAddress = context.Attribute(part.PartDefinition.Name, "StartAddress");
             part.EndAddress = context.Attribute(part.PartDefinition.Name, "EndAddress");
             part.Runnable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Runnable"));
-            part.Reportable = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "Reportable"));
             part.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
             part.Modes = context.Attribute(part.PartDefinition.Name, "Modes");
             part.PlaceHolderStyle = context.Attribute(part.PartDefinition.Name, "PlaceHolderStyle");
@@ -48,7 +47,6 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.StartAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.EndAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Runnable);
-                context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Reportable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.NeedsInputFile);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Modes);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.PlaceHolderStyle);
@@ -59,7 +57,6 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("StartAddress", part.Record.StartAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
-                context.Element(part.PartDefinition.Name).SetAttributeValue("Reportable", part.Record.Reportable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", "default");
                 context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", "@()");

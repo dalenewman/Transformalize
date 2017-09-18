@@ -119,12 +119,12 @@
                                 <span class="glyphicon glyphicon-check"></span>
                             </button>
                         }
-                        @if (part.Reportable && !part.NeedsInputFile || part.Reportable && part.NeedsInputFile && inputFileId > 0) {
+                        @if (part.ReportMode() && !part.NeedsInputFile || part.ReportMode() && part.NeedsInputFile && inputFileId > 0) {
                             <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(Url.Action("Report", "Cfg", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                                 <span class="glyphicon glyphicon-th-list"></span>
                             </button>
                         }
-                        @if (part.Tags().Any(t => t.Equals("FORM", StringComparison.OrdinalIgnoreCase))) {
+                        @if (part.FormMode()) {
                             <button title="Form" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("Form", "Cfg", new {id = part.Id}))', '_self');">
                                 <span class="glyphicon glyphicon-baby-formula"></span>
                             </button>

@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -15,32 +15,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Validators {
-    public class RequiredValidator : StringValidate {
+
+    public class MapValidator : BaseValidate {
 
         private readonly Field _input;
-        private readonly object _default;
+        private readonly HashSet<object> _map = new HashSet<object>();
 
-        public RequiredValidator(IContext context) : base(context) {
-            if (!Run) {
+        public MapValidator(IContext context) : base(context) {
+
+            if (!Run)
+                return;
+
+            if (context.Operation.Map == string.Empty) {
+                Error("The map method requires a map");
+                Run = false;
                 return;
             }
-            var defaults = Constants.TypeDefaults();
+
             _input = SingleInput();
-            _default = _input.Default == Constants.DefaultSetting ? defaults[_input.Type] : _input.Convert(_input.Default);
+        }
+
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+
+            var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
+            foreach (var item in map.Items) {
+                _map.Add(_input.Convert(item.From));
+            }
+
+            return base.Operate(rows);
         }
 
         public override IRow Operate(IRow row) {
-            var valid = !row[_input].Equals(_default);
+            var valid = _map.Contains(row[_input]);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, "Is required.");
+                AppendMessage(row, "Is invalid.");
             }
             Increment();
             return row;
         }
     }
+
 }

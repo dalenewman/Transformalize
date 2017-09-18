@@ -24,6 +24,7 @@ namespace Transformalize {
         public static List<string> List = new List<string>{
             "abs",
             "add",
+            "all",
             "any",
             "append",
             "bytes",

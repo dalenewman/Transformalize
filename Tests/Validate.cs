@@ -77,7 +77,7 @@ namespace Tests {
             <add name='Field3' />
           </fields>
           <calculated-fields>
-            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field2).equal()' />
+            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field2).equals()' />
           </calculated-fields>
         </add>
       </entities>

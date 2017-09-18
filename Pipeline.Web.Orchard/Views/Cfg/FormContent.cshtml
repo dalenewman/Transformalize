@@ -28,8 +28,8 @@
         } else {
             focus = invalid.Alias;
         }
-
     }
+    var valid = entity.ValidField != string.Empty && (row != null && (bool)row[entity.ValidField]);
 }
 
 @functions {
@@ -43,11 +43,11 @@
 }
 
 @foreach (var error in Model.Errors()) {
-    <div class="alert alert-danger" role="alert">@error</div>
+<div class="alert alert-danger" role="alert">@error</div>
 }
 
 @foreach (var warning in Model.Warnings()) {
-    <div class="alert alert-warning" role="alert">@warning</div>
+<div class="alert alert-warning" role="alert">@warning</div>
 }
 
 @using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
@@ -145,6 +145,10 @@
         }
     }
 
-    <input name="submit" type="submit" value="Submit" class="btn btn-default" />
+    <input name="submit" 
+           type="submit" 
+           value="Submit" 
+           disabled="@(!valid)"
+           class="btn @(valid ? "btn-primary" : "btn-warning")" />
 }
 

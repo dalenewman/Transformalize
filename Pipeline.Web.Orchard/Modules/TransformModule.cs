@@ -63,6 +63,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
             builder.Register((c, p) => new AbsTransform(p.Positional<IContext>(0))).Named<ITransform>("abs");
             builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("add");
+            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("all");
             builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("sum");
             builder.Register((c, p) => new CeilingTransform(p.Positional<IContext>(0))).Named<ITransform>("ceiling");
             builder.Register((c, p) => new CoalesceTransform(p.Positional<IContext>(0))).Named<ITransform>("coalesce");

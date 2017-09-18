@@ -223,8 +223,6 @@ namespace Transformalize.Configuration {
 
             PreValidateSorting();
 
-
-
             foreach (var cf in CalculatedFields) {
                 cf.Input = false;
                 cf.IsCalculated = true;
@@ -341,12 +339,39 @@ namespace Transformalize.Configuration {
 
             // if validation has been defined, check to see if corresponding valid and message fields are present and create them if not
             var calculatedKeys = new HashSet<string>(CalculatedFields.Select(f => f.Alias ?? f.Name).Distinct(), StringComparer.OrdinalIgnoreCase);
-            foreach (var field in Fields.Where(f => !string.IsNullOrEmpty(f.V))) {
-                if (!calculatedKeys.Contains(field.ValidField)) {
-                    CalculatedFields.Add(new Field { Name = field.ValidField, Alias = field.ValidField, Input = false, Type = "bool", Default = "true", IsCalculated = true });
+
+            if (Fields.Any(f => f.Validators.Any())) {
+                foreach (var field in Fields.Where(f => f.Validators.Any())) {
+
+                    if (!calculatedKeys.Contains(field.ValidField)) {
+                        CalculatedFields.Add(new Field {
+                            Name = field.ValidField,
+                            Alias = field.ValidField,
+                            Input = false,
+                            Type = "bool",
+                            Default = "true",
+                            IsCalculated = true
+                        });
+                    }
+
+                    if (!calculatedKeys.Contains(field.MessageField)) {
+                        CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true });
+                    }
                 }
-                if (!calculatedKeys.Contains(field.MessageField)) {
-                    CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true });
+                // create an entity-wide valid field if necessary
+                if (ValidField == string.Empty) {
+                    var valid = Alias + "Valid";
+                    if (!CalculatedFields.Any(f => f.Name.Equals(valid))) {
+                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid };
+                        add.Validators.Add(new Operation {
+                            Method = "all",
+                            Operator = "equals",
+                            Value = "true",
+                            Parameters = GetAllFields().Where(f => f.ValidField != string.Empty).Select(f => f.ValidField).Distinct().Select(n => new Parameter { Field = n }).ToList()
+                        });
+                        CalculatedFields.Add(add);
+                        ValidField = valid;
+                    }
                 }
             }
 
@@ -391,6 +416,9 @@ namespace Transformalize.Configuration {
             }
 
         }
+
+        [Cfg(value = "")]
+        public string ValidField { get; set; }
 
         void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
             if (Version == string.Empty)

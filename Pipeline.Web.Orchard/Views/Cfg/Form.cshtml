@@ -72,13 +72,18 @@
             $("#id_content").html(html);
             $("#id_form").attr("action", saveUrl);
 
-            $("select,input").autotab();
+            $("select,input:not(input[type='hidden'])").autotab();
 
             var focus = $('#id_focus').val();
             console.log('setting focus to ' + focus);
             $('#id_' + focus).focus().select();
 
-            $("select,input:not(input[name='submit']):not(input[type='file'])").change(function () {
+            $("select,input:not(input[type='submit']):not(input[type='file']):not(input[type='date'])").change(function () {
+                console.log("checking data...");
+                post();
+            });
+
+            $("input[type='date']").focusout(function () {
                 console.log("checking data...");
                 post();
             });

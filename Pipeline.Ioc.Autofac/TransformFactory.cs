@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Cfg.Net;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -32,7 +33,7 @@ namespace Transformalize.Ioc.Autofac {
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
 
-            foreach (var f in fields.Where(f => f.Transforms.Any())) {
+            foreach (var f in fields.Where(f => f.Transforms.Any() || f.Validators.Any())) {
                 var field = f;
 
                 if (field.RequiresCompositeValidator()) {
@@ -53,12 +54,14 @@ namespace Transformalize.Ioc.Autofac {
                         }
                     }
                 }
+                
                 // add conversion if necessary
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {
                     context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
                     transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
+
             }
 
             return transforms;

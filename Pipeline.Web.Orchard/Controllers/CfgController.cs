@@ -133,34 +133,52 @@ namespace Pipeline.Web.Orchard.Controllers {
                     var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
                     process.Load(part.Configuration, parameters);
 
-                    var insert = new Dictionary<string, bool>();
-                    foreach (var entity in process.Entities) {
-                        foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
-                            if (Request.Files != null && Request.Files.Count > 0) {
-                                var input = Request.Files.Get(field.Alias);
-                                if (input != null && input.ContentLength > 0) {
-                                    var filePart = _fileService.Upload(input, "Authenticated", "Forms");
-                                    var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
-                                    if (parameter != null) {
-                                        parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
-                                    }
-                                }
-                            }
-                        }
-
-                        insert[entity.Alias] = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
-                        process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert[entity.Alias] ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
+                    if (process.Errors().Any() || process.Warnings().Any()) {
+                        return View(part);
                     }
+
+                    var entity = process.Entities.First();
 
                     try {
                         runner.Execute(process);
-                        foreach (var entity in process.Entities) {
-                            _orchardServices.Notifier.Information(insert[entity.Alias] ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
+
+                        if (entity.Rows.Count == 1 && (bool) entity.Rows[0][entity.ValidField]) {
+
+                            // reset, modify for actual insert, and execute again
+                            process = _processService.Resolve(part);
+                            process.Load(part.Configuration, parameters);
+                            var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
+                            process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
+
+                            foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
+                                if (Request.Files != null && Request.Files.Count > 0) {
+                                    var input = Request.Files.Get(field.Alias);
+                                    if (input != null && input.ContentLength > 0) {
+                                        var filePart = _fileService.Upload(input, "Authenticated", "Forms");
+                                        var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
+                                        if (parameter != null) {
+                                            parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
+                                        }
+                                    }
+                                }
+                            }
+
+                            try {
+                                runner.Execute(process);
+                                _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
+                                return Redirect(parameters["Orchard.ReturnUrl"]);
+                            } catch (Exception ex) {
+                                _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                            }
+
                         }
-                        return Redirect(parameters["Orchard.ReturnUrl"]);
                     } catch (Exception ex) {
                         _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                        return View(part);
                     }
+
+                    
+
                 }
                 return View(part);
 

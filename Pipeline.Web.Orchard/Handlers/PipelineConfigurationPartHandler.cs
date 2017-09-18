@@ -30,8 +30,7 @@ using Pipeline.Web.Orchard.Services;
 namespace Pipeline.Web.Orchard.Handlers {
 
     public class PipelineConfigurationPartHandler : ContentHandler {
-
-        readonly INotifier _notifier;
+        private readonly INotifier _notifier;
         private readonly IProcessService _processService;
 
         public Localizer T { get; set; }
@@ -55,20 +54,29 @@ namespace Pipeline.Web.Orchard.Handlers {
                 return;
 
             base.GetItemMetadata(context);
-            if (part.Reportable) {
+            if (part.ReportMode()) {
                 context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                     {"Area", Common.ModuleName},
-                    {"Controller", "Report"},
+                    {"Controller", "Cfg"},
                     {"Action", "Report"},
                     {"id", context.ContentItem.Id}
                 };
             } else {
-                context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                    {"Area", Common.ModuleName},
-                    {"Controller", "Api"},
-                    {"Action", "Api/Cfg"},
-                    {"id", context.ContentItem.Id}
-                };
+                if (part.FormMode()) {
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Cfg"},
+                        {"Action", "Form"},
+                        {"id", context.ContentItem.Id}
+                    };
+                } else {
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Api"},
+                        {"Action", "Api/Cfg"},
+                        {"id", context.ContentItem.Id}
+                    };
+                }
             }
         }
 

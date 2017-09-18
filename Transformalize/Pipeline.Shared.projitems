@@ -131,6 +131,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CompositeValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ContainsTransform.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatPhoneTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\StartsWithTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\MapValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\MatchValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchCountTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RoundToTransform.cs" />

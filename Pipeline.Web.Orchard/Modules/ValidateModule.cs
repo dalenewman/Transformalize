@@ -38,6 +38,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // return true or false, validators
             builder.Register((c, p) => new AnyValidator(p.Positional<IContext>(0))).Named<IValidate>("any");
+            builder.Register((c, p) => new AllValidator(p.Positional<IContext>(0))).Named<IValidate>("all");
             builder.Register((c, p) => new StartsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("startswith");
             builder.Register((c, p) => new EndsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("endswith");
             builder.Register((c, p) => new InValidator(p.Positional<IContext>(0))).Named<IValidate>("in");
@@ -49,6 +50,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("numeric");
             builder.Register((c, p) => new MatchValidator(p.Positional<IContext>(0))).Named<IValidate>("matches");
             builder.Register((c, p) => new RequiredValidator(p.Positional<IContext>(0))).Named<IValidate>("required");
+            builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0))).Named<IValidate>("map");
 
             //builder.Register<IValidate>((c, p) => {
             //    var context = p.Positional<IContext>(0);

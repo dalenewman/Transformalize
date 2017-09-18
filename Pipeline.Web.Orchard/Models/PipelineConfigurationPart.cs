@@ -15,11 +15,13 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
 using Orchard.Tags.Models;
+using System.Linq;
 
 namespace Pipeline.Web.Orchard.Models {
     public class PipelineConfigurationPart : ContentPart<PipelineConfigurationPartRecord> {
@@ -80,12 +82,6 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.Runnable, value, true); }
         }
 
-        public bool Reportable
-        {
-            get { return this.Retrieve(x => x.Reportable, versioned: true); }
-            set { this.Store(x => x.Reportable, value, true); }
-        }
-
         public bool NeedsInputFile
         {
             get { return this.Retrieve(x => x.NeedsInputFile, versioned: true); }
@@ -110,6 +106,14 @@ namespace Pipeline.Web.Orchard.Models {
         {
             get { return this.Retrieve(x => x.Modes, versioned: false, defaultValue: () => "init,default*"); }
             set { this.Store(x => x.Modes, value, versioned: false); }
+        }
+
+        public bool ReportMode() {
+            return Modes.Split(',').Contains("report", StringComparer.OrdinalIgnoreCase);
+        }
+
+        public bool FormMode() {
+            return Modes.Split(',').Contains("form", StringComparer.OrdinalIgnoreCase);
         }
 
         public string PlaceHolderStyle

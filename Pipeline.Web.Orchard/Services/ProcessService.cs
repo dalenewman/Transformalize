@@ -198,7 +198,7 @@ namespace Pipeline.Web.Orchard.Services {
                 Name = "any",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "value"},
-                    new Parameter {Name = "operator", Value = "equal"}
+                    new Parameter {Name = "operator", Value = "equals"}
                 }
             });
             root.Signatures.Add(new Signature {
@@ -307,6 +307,7 @@ namespace Pipeline.Web.Orchard.Services {
 
             root.Methods.Add(new Method { Name = "add", Signature = "none" });
             root.Methods.Add(new Method { Name = "abs", Signature = "none" });
+            root.Methods.Add(new Method { Name = "all", Signature = "any" });
             root.Methods.Add(new Method { Name = "any", Signature = "any" });
             root.Methods.Add(new Method { Name = "ceiling", Signature = "none" });
             root.Methods.Add(new Method { Name = "concat", Signature = "none" });
@@ -470,6 +471,7 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             });
             root.Signatures.Add(Simple("domain"));
+            root.Signatures.Add(Simple("map"));
 
             root.Methods.Add(new Method { Name = "required", Signature = "none" });
             root.Methods.Add(new Method { Name = "maxlength", Signature = "length" });
@@ -489,6 +491,8 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
             root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
             root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
+            root.Methods.Add(new Method { Name = "map", Signature = "map" });
+
             root.Check();
 
             if (!root.Errors().Any()) {

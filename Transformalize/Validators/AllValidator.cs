@@ -21,11 +21,10 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms {
+namespace Transformalize.Validators {
 
-    public class AnyTransform : BaseTransform {
-
-        class FieldWithValue {
+    public class AllValidator : StringValidate {
+        private class FieldWithValue {
             public Field Field { get; set; }
             public object Value { get; set; }
         }
@@ -33,11 +32,15 @@ namespace Transformalize.Transforms {
         private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
         private readonly Func<IRow, bool> _func;
 
-        public AnyTransform(IContext context) : base(context, "bool") {
+        public AllValidator(IContext context) : base(context) {
+
+            if (!Run)
+                return;
 
             if (IsMissing(context.Operation.Operator)) {
                 return;
             }
+
             if (IsMissing(context.Operation.Value)) {
                 return;
             }
@@ -61,9 +64,8 @@ namespace Transformalize.Transforms {
             // equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=
             switch (@operator) {
                 case "notequal":
-                case "notequals":
                 case "!=":
-                    return row => _input.Any(f => !row[f.Field].Equals(f.Value));
+                    return row => _input.All(f => !row[f.Field].Equals(f.Value));
                 case "lessthan":
                 case "<":
                 case "lessthanequal":
@@ -73,12 +75,16 @@ namespace Transformalize.Transforms {
                 case "greaterthanequal":
                 case ">=":
                 default:
-                    return row => _input.Any(f => row[f.Field].Equals(f.Value));
+                    return row => _input.All(f => row[f.Field].Equals(f.Value));
             }
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = _func(row);
+            var valid = _func(row);
+            row[ValidField] = valid;
+            if (!valid) {
+                AppendMessage(row, $"Must be {Context.Operation.Value}.");
+            }
             Increment();
             return row;
         }

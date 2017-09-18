@@ -139,7 +139,6 @@ namespace Pipeline.Web.Orchard {
                 foreach (var cfg in cfgs.List()) {
                     if (!cfg.Migrated) {
                         cfg.Configuration = cfg.Record.Configuration;
-                        cfg.Reportable = cfg.Record.Runnable;
                         cfg.Runnable = cfg.Record.Runnable;
                         cfg.NeedsInputFile = cfg.Record.NeedsInputFile;
                         cfg.StartAddress = cfg.Record.StartAddress;

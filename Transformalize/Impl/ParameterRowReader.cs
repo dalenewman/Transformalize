@@ -69,6 +69,17 @@ namespace Transformalize.Impl {
                     if (p != null) {
                         if (Constants.CanConvert()[field.Type](p.Value)) {
                             row[field] = field.Convert(p.Value);
+                            var len = field.Length.Equals("max", StringComparison.OrdinalIgnoreCase) ? int.MaxValue : Convert.ToInt32(field.Length);
+                            if (p.Value != null && p.Value.Length > len) {
+                                if (field.ValidField != string.Empty) {
+                                    var validField = _context.Entity.CalculatedFields.First(f => f.Alias == field.ValidField);
+                                    row[validField] = false;
+                                }
+                                if (field.MessageField != string.Empty) {
+                                    var messageField = _context.Entity.CalculatedFields.First(f => f.Alias == field.MessageField);
+                                    row[messageField] = $"This field is limited to {len} characters.  Anything more than that is truncated.|";
+                                }
+                            }
                         } else {
                             if (field.ValidField != string.Empty) {
                                 var validField = _context.Entity.CalculatedFields.First(f => f.Alias == field.ValidField);
@@ -76,7 +87,41 @@ namespace Transformalize.Impl {
                             }
                             if (field.MessageField != string.Empty) {
                                 var messageField = _context.Entity.CalculatedFields.First(f => f.Alias == field.MessageField);
-                                row[messageField] = $"Can not convert {p.Value} to a {field.Type}.|";
+                                switch (field.Type) {
+                                    case "char":
+                                        row[messageField] = "Must be a single chracter.|";
+                                        break;
+                                    case "byte":
+                                        row[messageField] = "Must be a whole number (not a fraction) between 0 and 255.|";
+                                        break;
+                                    case "bool":
+                                    case "boolean":
+                                        row[messageField] = "Must be true of false.|";
+                                        break;
+                                    case "int":
+                                    case "int32":
+                                        row[messageField] = "Must a whole number (not a fraction) between −2,147,483,648 and 2,147,483,647.|";
+                                        break;
+                                    case "short":
+                                    case "int16":
+                                        row[messageField] = "Must be a whole number (not a fraction) between -32768 and 32767.|";
+                                        break;
+                                    case "long":
+                                    case "int64":
+                                        row[messageField] = "Must be a whole number (not a fraction) between -9,223,372,036,854,775,808 and 9,223,372,036,854,775,807.|";
+                                        break;
+                                    case "double":
+                                        row[messageField] = "Must be a number no more than 15 digits and between between 3.4E-38 and 3.4E+38.|";
+                                        break;
+                                    case "float":
+                                    case "single":
+                                        row[messageField] = "Must be a number no more than 7 digits and between between 1.7E-308 and 1.7E+308.|";
+                                        break;
+                                    default:
+                                        row[messageField] = $"Can not convert {p.Value} to a {field.Type}.|";
+                                        break;
+                                }
+
                             }
                         }
 

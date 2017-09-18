@@ -136,7 +136,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         Name = "any",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "value" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "operator", Value="equal" }
+                            new Cfg.Net.Shorthand.Parameter { Name = "operator", Value="equals" }
                         }
                     });
                     root.Signatures.Add(new Signature {
@@ -245,6 +245,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                     root.Methods.Add(new Method { Name = "add", Signature = "none" });
                     root.Methods.Add(new Method { Name = "abs", Signature = "none" });
+                    root.Methods.Add(new Method { Name = "all", Signature = "value" });
                     root.Methods.Add(new Method { Name = "any", Signature = "any" });
                     root.Methods.Add(new Method { Name = "ceiling", Signature = "none" });
                     root.Methods.Add(new Method { Name = "concat", Signature = "none" });
@@ -258,7 +259,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "datepart", Signature = "timecomponent" });
                     root.Methods.Add(new Method { Name = "decompress", Signature = "none" });
                     root.Methods.Add(new Method { Name = "compress", Signature = "none" });
-                    root.Methods.Add(new Method { Name = "equal", Signature = "value" });
                     root.Methods.Add(new Method { Name = "equals", Signature = "value" });
                     root.Methods.Add(new Method { Name = "fileext", Signature = "none" });
                     root.Methods.Add(new Method { Name = "filename", Signature = "file" });

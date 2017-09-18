@@ -62,8 +62,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
                     });
                     root.Signatures.Add(Simple("domain"));
-
-                    root.Methods.Add(new Method { Name = "required", Signature = "none" });
+                    root.Signatures.Add(Simple("map"));
+                   
                     root.Methods.Add(new Method { Name = "maxlength", Signature = "length" });
                     root.Methods.Add(new Method { Name = "minlength", Signature = "length" });
                     root.Methods.Add(new Method { Name = "range", Signature = "range" });
@@ -81,6 +81,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
                     root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
                     root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
+                    root.Methods.Add(new Method() { Name = "map", Signature = "map"});
                     root.Check();
                 }
 
