@@ -445,7 +445,7 @@ namespace Transformalize.Configuration {
 
                 foreach (var p in parameters) {
                     var parameter = new Parameter();
-                    var modified = p.TrimEnd(')');
+                    var modified = p.EndsWith(")") ? p.Substring(0, p.Length - 1) : p;
                     if (modified.Contains(":")) {
                         //named values
                         var named = modified.Split(':');

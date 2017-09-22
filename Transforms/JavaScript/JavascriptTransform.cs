@@ -27,12 +27,12 @@ namespace Transformalize.Transforms.JavaScript {
 
     public class JavascriptTransform : BaseTransform {
 
-        readonly Field[] _input;
-        readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
+        private readonly Field[] _input;
+        private readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly IJsEngine _engine;
         private readonly IContext _context;
 
-        public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, null) {
+        public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, "object") {
 
             if (IsMissing(context.Operation.Script)) {
                 return;
@@ -61,7 +61,7 @@ namespace Transformalize.Transforms.JavaScript {
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
-        void ProcessScript(IContext context, IReader reader, Script script) {
+        private void ProcessScript(IContext context, IReader reader, Script script) {
             script.Content = ReadScript(context, reader, script);
             _engine.Execute(script.Content);
         }
@@ -74,7 +74,7 @@ namespace Transformalize.Transforms.JavaScript {
         /// <param name="reader"></param>
         /// <param name="script"></param>
         /// <returns></returns>
-        static string ReadScript(IContext context, IReader reader, Script script) {
+        private static string ReadScript(IContext context, IReader reader, Script script) {
             var content = string.Empty;
 
             if (script.Content != string.Empty)

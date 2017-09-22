@@ -34,7 +34,7 @@ namespace Transformalize.Transforms.Jint {
         readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly ParserOptions _parserOptions = new ParserOptions { Tolerant = true };
 
-        public JintTransform(IContext context, IReader reader) : base(context, null) {
+        public JintTransform(IContext context, IReader reader) : base(context, "object") {
 
             if (IsMissing(context.Operation.Script)) {
                 return;
@@ -42,7 +42,10 @@ namespace Transformalize.Transforms.Jint {
 
             // automatic parameter binding
             if (!context.Operation.Parameters.Any()) {
-                var parameters = _parser.Parse(context.Operation.Script, new global::Jint.Parser.ParserOptions { Tokens = true }).Tokens
+
+                var parsed = _parser.Parse(context.Operation.Script, new global::Jint.Parser.ParserOptions { Tokens = true });
+
+                var parameters = parsed.Tokens
                     .Where(o => o.Type == global::Jint.Parser.Tokens.Identifier)
                     .Select(o => o.Value.ToString())
                     .Intersect(context.GetAllEntityFields().Select(f => f.Alias))

@@ -26,7 +26,6 @@ namespace Transformalize.Transforms.LamdaParser {
     public class LamdaParserEvalTransform : BaseTransform {
 
         private readonly Func<IRow, object> _transform;
-        private readonly List<Field> _input;
         private readonly Dictionary<string, object> _typeDefaults = Constants.TypeDefaults();
 
         public LamdaParserEvalTransform(IContext context) : base(context, "object") {
@@ -35,7 +34,7 @@ namespace Transformalize.Transforms.LamdaParser {
             }
 
             try {
-                _input = new List<Field>(MultipleInput());
+                var input = new List<Field>(MultipleInput());
 
                 var lambdaParser = new NReco.Linq.LambdaParser { UseCache = true };
                 var exp = lambdaParser.Parse(context.Operation.Expression);
@@ -43,8 +42,8 @@ namespace Transformalize.Transforms.LamdaParser {
                 var matches = context.Entity.FieldMatcher.Matches(exp.ToString());
                 foreach (Match match in matches) {
                     Field field;
-                    if (context.Entity.TryGetField(match.Value, out field) && _input.All(f => f.Alias != field.Alias)) {
-                        _input.Add(field);
+                    if (context.Entity.TryGetField(match.Value, out field) && input.All(f => f.Alias != field.Alias)) {
+                        input.Add(field);
                     }
                 }
 
@@ -52,7 +51,7 @@ namespace Transformalize.Transforms.LamdaParser {
                     exp = exp.Reduce();
                     context.Debug(() => $"The expression {context.Operation.Expression} can be reduced to {exp}");
                 }
-                _transform = row => context.Field.Convert(lambdaParser.Eval(context.Operation.Expression, _input.ToDictionary(k => k.Alias, v => row[v])));
+                _transform = row => context.Field.Convert(lambdaParser.Eval(context.Operation.Expression, input.ToDictionary(k => k.Alias, v => row[v])));
             } catch (NReco.Linq.LambdaParserException ex) {
                 context.Error($"The expression {context.Operation.Expression} in field {context.Field.Alias} can not be parsed. {ex.Message}");
                 _transform = row => _typeDefaults[context.Field.Type];

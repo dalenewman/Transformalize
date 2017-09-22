@@ -31,14 +31,14 @@ namespace Transformalize {
         private static Dictionary<string, Type> _typeSystem;
         private static Dictionary<string, Func<string, bool>> _canConvert;
 
-        public const string ApplicationName = "Pipeline.Net";
+        public const string ApplicationName = "Transformalize";
         public const string DefaultSetting = "[default]";
 
         public const string ProviderDomain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,directory,geojson,kml,text,ssas,rethinkdb,word,razor,velocity,access";
         public const string AdoProviderDomain = "sqlserver,mysql,postgresql,sqlite,sqlce,access";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
-        public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
+        public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,object,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
 
         public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=";
         public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;

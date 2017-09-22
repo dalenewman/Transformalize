@@ -21,10 +21,9 @@ using Common.Logging.Simple;
 
 namespace Transformalize.Scheduler.Quartz {
     public class QuartzLogger : AbstractSimpleLogger {
+        private readonly Contracts.IContext _context;
 
-        readonly Contracts.IContext _context;
-
-        public QuartzLogger(Contracts.IContext context, LogLevel level, bool showLevel, bool showDateTime, bool showLogName, string dateTimeFormat) : base("Pipeline.Net", level, showLevel, showDateTime, showLogName, "o") {
+        public QuartzLogger(Contracts.IContext context, LogLevel level, bool showLevel, bool showDateTime, bool showLogName, string dateTimeFormat) : base("Transformalize", level, showLevel, showDateTime, showLogName, "o") {
             _context = context;
         }
         protected override void WriteInternal(LogLevel level, object message, Exception exception) {

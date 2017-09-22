@@ -1,12 +1,8 @@
 # Transformalize
 
 Transformalize is an extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
-tool. It expedites the process of transforming, and [de-normalizing](https://en.wikipedia.org/wiki/Denormalization) relational data. 
-It automates the incremental movement of data into value-adding 
-services like data warehouses, search engines, and web-based reporting. 
-
-Unlike other ETL tools, it's not [doodle-ware](http://www.urbandictionary.com/define.php?term=doodleware) 
-.  It runs entirely off of run-time configurations called *arrangements*.
+tool controlled by run-time configurations called *arrangements*. It automates incremental 
+movement of data into value-adding services like data warehouses, search engines, and reporting. 
 
 It works with many data sources:
 
@@ -109,6 +105,11 @@ It works with many data sources:
                             <td style="color:green">BETA</td>
                         </tr>
                         <tr>
+                            <td title="Humans">Humans</td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green"></td>
+                        </tr>
+                        <tr>
                             <td title="RethinkDB">RethinkDB</td>
                             <td style="color:green"></td>
                             <td style="color:green">WIP</td>
@@ -128,37 +129,31 @@ an [Orchard CMS](http://www.orchardproject.net/) module.
 
 ---
 
-### Transformalizing Northwind
-
-The Northwind database is a sample relational database. I use it 
-here to demonstrate how Transformalize works.  If you want to follow along, 
-here are the prerequisites:
-
-* the [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) database
-* an editor (e.g. [Visual Studio Code](https://code.visualstudio.com/), or [Notepad++](https://notepad-plus-plus.org/)) 
-* a local instance of SQL Server
-* a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
-* the [latest release](https://github.com/dalenewman/Transformalize/releases) of Tranformalize
-  * add it's `PATH` to your [environment variables](https://en.wikipedia.org/wiki/PATH_(variable)).
 
 ### Getting Started
 
-> Introducing 
-> * The **`<connections/>`** section
+> * Introducing The **`<connections/>`** section
 > * The **`<entities/>`** section
-> * Using the **`tfl.exe`** CLI
+> * Using the **`tfl.exe`** command line interface
 
-The first step is to get familiar with your input. Take a 
-glance at part of the Northwind schema below.
+I use the Northwind relational database for demonstration. If you want 
+to follow along, you need:
 
-<img src="http://www.codeproject.com/KB/database/658971/NorthWindOrderDetails.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
+* the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
+* [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) on a local instance of SQL Server
+* an editor (e.g. [Visual Studio Code](https://code.visualstudio.com/)) 
+* a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
+
+First, get familiar with your input. I've provided a Northwind partial schema below.
+
+<img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
 The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables.  *Order Details* is our choice to de-normalize because:
+tables.  Let's focus on *Order Details* because:
 
-1. It contains sales transactions.
-2. It's related to everything.
-3. It's a [fact table](https://en.wikipedia.org/wiki/Fact_table) (in data-warehousing terms).
+1. It contains sales transactions (money).
+2. It's related to everything else.
+3. In data-warehousing terms, it's a [fact table](https://en.wikipedia.org/wiki/Fact_table).
 
 Let's write our first arrangment that defines 
 the *input* as Northwind's `Order Details` table. 
@@ -192,13 +187,12 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 ...
 </pre>
 
-> Introducing
-> * **`<fields/>`** within **`<entities/>`**
+> * Introducing **`<fields/>`** within **`<entities/>`**
 > * Specifying modes with the **`-m`** flag
 > * **`check`** mode
 
-Transformalize detected *Order Details* fields and read 
-the data. This is handy, but if you want to modify or 
+Transformalize detected the fields and read the data. 
+This is handy, but if you want to modify or 
 create new fields, you must define your input fields. 
 You could hand-write them, or run `tfl` in `check` mode like this:
 
@@ -216,7 +210,7 @@ You could hand-write them, or run `tfl` in `check` mode like this:
 </pre>
 
 Instead of getting order details (the records), `check` mode 
-returns the detected fields.  Copy them into the arrangement 
+returns the detected fields. Copy them into the arrangement 
 like this:
 
 ```xml
@@ -239,20 +233,20 @@ like this:
 </cfg>
 ```
 
-> Introducing 
-> * The **`<calculated-fields/>`** section within **`<entities/>`**
+> * Introducing The **`<calculated-fields/>`** section within **`<entities/>`**
 > * The **`t`** attribute (short for **t**ransformation)
 > * The **`C#`** transformation
 
-Now you may create a *calculated field*. Define a *Revenue* field 
-like so:
+Now you may calculate a new field. To do so, place a 
+**`<calculated-fields/>`** section right after **`<fields/>`** and 
+add *Revenue* like this:
 
 ```xml
 <calculated-fields>
   <add name="Revenue" 
        type="decimal" 
        scale="2" 
-       t="cs(Math.Round((UnitPrice*(1-Discount))*Quantity,2))" />
+       t="cs(Math.Round((UnitPrice*(1-Convert.ToDecimal(Discount)))*Quantity,2))" />
 </calculated-fields>
 ```
 Now run `tfl`:
@@ -562,7 +556,7 @@ from a relational model to a [star-schema](https://en.wikipedia.org/wiki/Star_sc
 
 Check out the diagram below:
 
-![Relational to Star](Files/er-to-star.png)
+![Relational to Star](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/er-to-star.png)
 
 Relational is on the left, and star-schema is on the right.  To create a star-schema, all the 
 foreign keys in the relational model are moved to the center (the fact table).  Once this is 
@@ -714,8 +708,7 @@ want to run Transformalize as a service, I recommend using [NSSM](https://nssm.c
 
 ### Transformations to Make Life Easier
 
-> Introducing
-> * the **`copy`** transform
+> * Introducing the **`copy`** transform
 > * the **`datePart`** transform
 > * the **`format`** transform
 > * the **`toUpper`** transform
@@ -766,8 +759,7 @@ NorthWind data in the SQLite database is flat and easy to consume.
 
 ## Post De-Normalization
 
-> Introducing:
-> * system fields in output
+> * Introducing system fields in output
 > * the **`read-only`** attribute
 
 In order to de-normalize, we had to use a relational 
@@ -868,7 +860,7 @@ A quick query in your browser can confirm records loaded:
 Kibana offers interactive dashboards based on Elasticsearch 
 indexes. Here's a quick 30 second video:
 
-[![NorthWind in Kibana](Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
+[![NorthWind in Kibana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
 
 ### Leveraging SOLR & Banana
 
@@ -958,12 +950,11 @@ A quick query in your browser can confirm the records loaded:
 Similar to Kibana, Banana offers interactive dashboards.  However, it's 
 works against SOLR indexes instead of Elasticsearch. Here's a quick 20 second video:
 
-[![NorthWind in Banana](Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
+[![NorthWind in Banana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
 
 ### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel
 
-> Introducing
-> * the **sqlserver** provider
+> * Introducing the **sqlserver** provider
 > * the **ssas** provider
 > * the `measure` and `dimension` attributes on `fields`
 
@@ -1040,14 +1031,14 @@ This example marks some fields as [measures](https://en.wikipedia.org/wiki/Measu
 and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.  This 
 is needed to accurately describe the cube.  Here is a short video showing Excel browse the resulting cube.
 
-[![NorthWind in Excel](Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
+[![NorthWind in Excel](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
 
 Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
 ### Leveraging the Orchard CMS Module
 
 > Introducing:
-> * the **Orchard CMS** module
+> * Introducing  the **Orchard CMS** module
 > * the **`parameters`** section
 > * the **`filter`** section within an `entity`
 > * the **`page`**, **`page-size`**, and **`sortable`** attributes for an `entity`
@@ -1065,7 +1056,7 @@ complexity, it still makes sense since reporting is just ETL.
 Here's a quick video of a Northwind report using the Elasticsearch 
 provider we loaded earlier:
 
-[![NorthWind in Orchard CMS](Files/northwind-in-orchard-cms-youtube.png)](https://youtu.be/CCTvjsrUtHk "Northwind in Orchard CMS")
+[![NorthWind in Orchard CMS](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-orchard-cms-youtube.png)](https://youtu.be/CCTvjsrUtHk "Northwind in Orchard CMS")
 
 The arrangement for this is:
 
@@ -1140,5 +1131,5 @@ but SOLR and Elasticsearch do it the best.
 **TODO**: list open source projects
 
 <a href="https://www.jetbrains.com/resharper">
-    <img src="Files/resharper-logo.png" alt="Resharper" width="100px" style="width: 100;"/>
+    <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/resharper-logo.png" alt="Resharper" width="100px" style="width: 100;"/>
 </a>
