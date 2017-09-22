@@ -56,7 +56,7 @@ namespace Transformalize.Validators {
             var valid = _map.Contains(row[_input]);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, "Is invalid.");
+                AppendMessage(row, $"Not found in {_map.Count} items.");
             }
             Increment();
             return row;

@@ -43,7 +43,7 @@
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushSql.min.js");
         if (hasActions) {
-            Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js");
+            Script.Require("BlockUI");
         }
     }
 
@@ -532,6 +532,7 @@ td.sorter {
         var length = $('.bulk-action:checked').length;
         if (length > 0) {
             $.blockUI({
+                message: null,
                 css: {
                     border: 'none',
                     padding: '15px',

@@ -2,30 +2,24 @@
 @using Orchard.Core.Contents
 @using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
+@model FormViewModel
 
-@model PipelineConfigurationPart
 @{
-    AppendMeta("description", Model.Title(), ",");
-    Layout.Title = Model.Title();
+    AppendMeta("description", Model.Part.Title(), ",");
+    Layout.Title = Model.Part.Title();
     Script.Require("jQuery").AtHead();
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery-autotab/1.9.2/js/jquery.autotab.min.js").AtHead();
+    Script.Require("BlockUI");
     var orchard = WorkContext.Resolve<IOrchardServices>();
 }
 
 <style type="text/css">
-
-    .btn-xs, .btn-group-xs > .btn {
-        border-radius: 3px;
-        font-size: 9px;
-        line-height: 1.5;
-    }
 
     #id_busy {
         position: fixed;
         left: 46%;
         top: 40%;
         display: none;
-        background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+        background: transparent url(@Url.Content("~/Modules/"+Common.ModuleName+"/Styles/busy.gif"));
         background-size: 149px 149px;
         background-repeat:no-repeat;
         z-index: 1020;
@@ -38,11 +32,15 @@
         width: 100%;
         height: 100%;
     }
+
+    .form-control:focus {
+        border-color: #66AFE9;
+    }
 </style>
 
 @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
     <div class="btn-group pull-right">
-        <button title="edit this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+        <button title="edit this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
             <span class="glyphicon glyphicon-edit"></span>
         </button>
     </div>
@@ -59,46 +57,49 @@
     //<!--
     $(document).ready(function () {
 
-        var ajaxUrl = "@(Url.Action("FormContent", new { Model.Id}))" + window.location.search;
-        var saveUrl = "@(Url.Action("Form", new { Model.Id}))" + window.location.search;
-
         $(document).bind("ajaxSend", function () {
-            $('#id_busy').show();
+            block();
         }).bind("ajaxComplete", function () {
             $("#id_busy").hide();
+            $.unblockUI();
         });
 
+        var ajaxUrl = "@(Url.Action("FormContent", new { Model.Part.Id }))" + window.location.search;
+        var saveUrl = "@(Url.Action("Form", new { Model.Part.Id }))" + window.location.search;
+
         function bind(html) {
+
             $("#id_content").html(html);
             $("#id_form").attr("action", saveUrl);
 
-            $("select,input:not(input[type='hidden'])").autotab();
+            setFocus();
 
-            var focus = $('#id_focus').val();
-            console.log('setting focus to ' + focus);
-            $('#id_' + focus).focus().select();
-
-            $("select,input:not(input[type='submit']):not(input[type='file']):not(input[type='date'])").change(function () {
+            $("select,input:not(input[type='submit']):not(input[type='file'])").change(function () {
                 console.log("checking data...");
                 post();
             });
 
-            $("input[type='date']").focusout(function () {
-                console.log("checking data...");
-                post();
-            });
-
-            $("select,input:not(input[name='submit'])").keypress(function (event) {
-                if (event.which === 13) {
-                    event.preventDefault();
+            // block automatic form submit on enter
+            $("select,input:not(input[type='submit'])").keydown(function (e) {
+                var code = e.keyCode || e.which;
+                if (code === 13) {
+                    e.preventDefault();
+                    // move to next field
                     var inputs = $(this).closest('form').find(':input');
                     inputs.eq(inputs.index(this) + 1).focus();
+                    return false;
                 }
+                return true;
             });
 
-            $("select,input:not(input[name='submit'])").focusin(function () {
+            // track focus for back-end
+            $("select,input").focusin(function () {
                 $("#id_focus").val($(this).attr("name"));
                 console.log($(this).attr("name") + " has focus");
+            });
+
+            $("#id_form").submit(function (e) {
+                block();
             });
 
         }
@@ -119,6 +120,38 @@
                     bind(html);
                 }
             }, "html");
+        }
+
+        function setFocus() {
+
+            var name = $('#id_focus').val();
+            console.log('setting focus to ' + name);
+            var $target = $('#id_' + name);
+
+            $target.focus().select();
+
+            if (navigator.userAgent.match(/(ip(hone|od|ad))/i)) {
+                if ($target.is("select") && $target.closest("div").prev().has("select").length > 0) {
+                    $target.blur();
+                }
+            }
+        }
+
+        function block() {
+            $('#id_busy').show();
+            $.blockUI({
+                message: null,
+                css: {
+                    border: 'none',
+                    padding: '15px',
+                    backgroundColor: '#000',
+                    '-webkit-border-radius': '10px',
+                    '-moz-border-radius': '10px',
+                    opacity: .5,
+                    color: '#fff',
+                    baseZ: 1021
+                }
+            });
         }
 
         function removeMessages() {

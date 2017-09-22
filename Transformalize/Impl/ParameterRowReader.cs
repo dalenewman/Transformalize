@@ -117,6 +117,9 @@ namespace Transformalize.Impl {
                                     case "single":
                                         row[messageField] = "Must be a number no more than 7 digits and between between 1.7E-308 and 1.7E+308.|";
                                         break;
+                                    case "decimal":
+                                        row[messageField] = $"Must be a number no more than {field.Precision} total digits, with {field.Scale} digits to the right of the decimal point.|";
+                                        break;
                                     default:
                                         row[messageField] = $"Can not convert {p.Value} to a {field.Type}.|";
                                         break;

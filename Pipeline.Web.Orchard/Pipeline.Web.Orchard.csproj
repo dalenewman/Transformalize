@@ -311,6 +311,7 @@
     <Compile Include="Impl\ValidateFactory.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
+    <Compile Include="Models\FormViewModel.cs" />
     <Compile Include="Models\ReportViewModel.cs" />
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />

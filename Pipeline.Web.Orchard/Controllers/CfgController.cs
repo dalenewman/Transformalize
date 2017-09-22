@@ -116,7 +116,15 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         [Themed(true)]
         public ActionResult Form(int id) {
+            return FormLogic(id);
+        }
 
+        [Themed(false)]
+        public ActionResult Formless(int id) {
+            return FormLogic(id);
+        }
+
+        private ActionResult FormLogic(int id) {
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
                 return new HttpNotFoundResult("Form not found.");
@@ -125,25 +133,22 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
+                var process = _processService.Resolve(part);
+                var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                process.Load(part.Configuration, parameters);
+
+                if (process.Errors().Any() || process.Warnings().Any()) {
+                    return View(new FormViewModel(part, process));
+                }
 
                 if (Request.HttpMethod.Equals("POST")) {
-
                     var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
-                    var process = _processService.Resolve(part);
-                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
-                    process.Load(part.Configuration, parameters);
-
-                    if (process.Errors().Any() || process.Warnings().Any()) {
-                        return View(part);
-                    }
-
                     var entity = process.Entities.First();
 
                     try {
                         runner.Execute(process);
 
-                        if (entity.Rows.Count == 1 && (bool) entity.Rows[0][entity.ValidField]) {
-
+                        if (entity.Rows.Count == 1 && (bool)entity.Rows[0][entity.ValidField]) {
                             // reset, modify for actual insert, and execute again
                             process = _processService.Resolve(part);
                             process.Load(part.Configuration, parameters);
@@ -170,18 +175,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                             } catch (Exception ex) {
                                 _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
                             }
-
                         }
                     } catch (Exception ex) {
                         _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
-                        return View(part);
+                        return View(new FormViewModel(part, process));
                     }
-
-                    
-
                 }
-                return View(part);
-
+                return View(new FormViewModel(part, process));
             }
 
             _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Anonymous users do not have permission to view this form. You may need to login.") : T("Sorry {0}. You do not have permission to view this form.", user));
