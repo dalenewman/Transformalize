@@ -235,53 +235,40 @@ like this:
 
 > * Introducing The **`<calculated-fields/>`** section within **`<entities/>`**
 > * The **`t`** attribute (short for **t**ransformation)
-> * The **`C#`** transformation
+> * The **`js`** and **`round`** transformations
 
-Now you may calculate a new field. To do so, place a 
-**`<calculated-fields/>`** section right after **`<fields/>`** and 
-add *Revenue* like this:
+Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** 
+and add *Revenue* like this:
 
 ```xml
 <calculated-fields>
-  <add name="Revenue" 
-       type="decimal" 
-       scale="2" 
-       t="cs(Math.Round((UnitPrice*(1-Convert.ToDecimal(Discount)))*Quantity,2))" />
+  <add name="Revenue" type="decimal" engine="jint" t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```
 Now run `tfl`:
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
 OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
-10248,11,14.0000,12,0,<strong>168.00</strong>
-10248,42,9.8000,10,0,<strong>98.00</strong>
-10248,72,34.8000,5,0,<strong>174.00</strong>
-10249,14,18.6000,9,0,<strong>167.40</strong>
-10249,51,42.4000,40,0,<strong>1696.00</strong>
+10248,11,14.0000,12,0,<strong>168</strong>
+10248,42,9.8000,10,0,<strong>98</strong>
+10248,72,34.8000,5,0,<strong>174</strong>
+10249,14,18.6000,9,0,<strong>167.4</strong>
+10249,51,42.4000,40,0,<strong>1696</strong>
 ...
 </pre>
 
-*Revenue* is created by a [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) transformation 
-defined in the **`t`** property.  The C# transformation is one of [many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
+*Revenue* is created by a js (JavaScript) transformation defined in **`t`**.  It is one of 
+[many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
 injected into `tfl`.
 
-The `t` attribute is for *short-hand* transformations. To understand 
-why it's shorter, take a look at the verbose way to describe 
-the transformation:
+The `t` attribute accepts *short-hand* **t**ransformations. Why is it shorter?  Take a 
+look at the verbose way to describe this transformation:
 
 ```xml
-<add name="Revenue" 
-     type="decimal" 
-     scale="2">
+<add name="Revenue" type="decimal" engine="jint">
   <transforms>
-    <add method="cs"
-         script="Math.Round((UnitPrice*(1-Discount))*Quantity,2)">
-      <parameters>
-        <add field="UnitPrice" />
-        <add field="Discount" />
-        <add field="Quantity" />
-      </parameters>
-    </add>
+    <add method="js" script="Quantity * ((1-Discount) * UnitPrice)" />
+    <add method="round" decimals="2" />
   </transforms>
 </add>
 ```
@@ -290,9 +277,9 @@ the transformation:
 
 > Introducing **`init`** mode
 
-Without an explicit output, `tfl` writes to the console. Let's send output 
-to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. 
-Add an **output** in `<connections/>`:
+Without defining an output, `tfl` writes to your console. To save your work, let's send 
+the output to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. 
+Add an output in `<connections/>`:
 
 ```xml
 <connections>
@@ -303,21 +290,18 @@ Add an **output** in `<connections/>`:
 ```
 
 ### Initialization
-Now that *Order Details* goes into a persistent output, 
-we need to initialize it.  Run **`tfl`** in `init` mode 
-using the **`-m`** flag like this:
+To persist *Order Details* into an output, we need to initialize the output first. 
+So, run **`tfl`** in `init` mode using the **`-m`** flag like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m init</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1044231.
 <strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output Order Details
-info  | NorthWind | Order Details | Ending 00:00:00.1715532
+info  | NorthWind | Order Details | Ending 00:00:00.67
 </pre>
 
-Now *Order Details* is written to SQLite, which frees up the console 
-to display logging.
+Now *Order Details* is written to SQLite, which frees up the console for logging.
 
 Initializing does three things:
 
@@ -325,54 +309,49 @@ Initializing does three things:
 2. creates output structures
 3. bulk inserts data.
 
-Initializing is required with a new arrangement, 
-or anytime you change an arrangement in a way that changes 
-the output structure.
+Initializing is required anytime you create or change an arrangement in a way 
+that changes the structure of the output.
 
 You may have noticed that Transformalize doesn't let you *map* 
 input to pre-existing output.  Instead, it creates it's own 
 consistent output structure optimized for incremental updates. 
 You decide:
 
-* what new calculated fields to add
+* what new fields to calculate
 * the order of fields
 * the name of fields (using `alias`)
-* how fields are transformed
-* whether or not to output a field (using `output`)
+* the transformations run on fields
+* and whether or not to output a field (using `output`)
 
 ### Incrementals (by Default)
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild which can be time-consuming 
-against large data sets. Instead of rebuilding every time, 
-Transformalize incrementally updates the output by default.
+An *initialization* is a full rebuild and may be time-consuming. So, in default mode, 
+Transformalize performs and incremental update.
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1384721.
 <strong>info  | NorthWind | Order Details | 2155 from input</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.5755261
+info  | NorthWind |               | Time elapsed: 00:00:00.57
 </pre>
 
-To determine if an update is necessary, `tfl` reads input 
-and compares it with output.  If a row is new or different, 
-it is inserted or updated. While Transformalize uses keys and hashes 
-to perform comparisons, it is unnecessary when the input 
-provider is capable of tracking and returning new data.
+To determine if an update is necessary, `tfl` compares input with output. 
+If a row is new, it is inserted.  If a row is different, it is updated. 
+While keys and hashes are used to compare, it is unnecessary when an input's 
+provider is capable of detecting and returning new data.
 
-Providers are capable when they are queryable, 
-and each record stores a version that increments on 
-an insert or an update. SQL Server includes a `ROWVERSION` type 
-that provides a version automatically. So, let's add a 
-`RowVersion` column to `Order Details` like this:
+Providers are capable when they are queryable, and can store a version in each record. 
+A version increments anytime data is inserted or updated.  SQL Server includes 
+a `ROWVERSION` type that provides automatic versioning. So, let's add one to `Order Details` 
+like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
 ```
 
-Now let `tfl` know about it by adding the new `RowVersion` 
-field to *Order Details* and marking it as the `version` in the entity:
+Now let `tfl` know about `RowVersion` like this:
 
 ```xml
 <entities>
@@ -391,53 +370,51 @@ field to *Order Details* and marking it as the `version` in the entity:
   </add>
 </entities>
 ```
-When adding an output field to an entity, it changes the output structure. 
-So, it must be re-initialized like so:
+Since we added a field and changed the output structure, we must re-initialize like so:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1161231.
 warn  | NorthWind | Order Details | Initializing
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
-info  | NorthWind |               | Time elapsed: 00:00:00.8981349
+info  | NorthWind |               | Time elapsed: 00:00:00.70
 
 <strong>>tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1064016.
 <strong>info  | NorthWind | Order Details | Change Detected: No.</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.3498366
+info  | NorthWind |               | Time elapsed: 00:00:00.20
 </pre>
 
 With a `version` in place, the second run doesn't read and compare 
-un-changed data.  This makes an incremental update more efficient.
+un-changed data.  Therefore, it is more efficient.
 
-### Denormalization
+### [Denormalization](https://en.wikipedia.org/wiki/Denormalization)
 
-Related data in NorthWind is stored in many tables. It's normalized. 
-In other words, it's optimized for efficient storage and integrity. 
-It may be retrieved (queried), but not without the overhead of 
-combining (aka joining) busy tables at run-time. This makes retrieval slower.
+Relational data is stored in many tables. It's normalized. 
+It's optimized for efficient storage and integrity. 
+It may be retrieved (queried), but not without an overhead of 
+combining (aka joining) busy tables. This makes retrieval slower.
 
-De-normalization is the process of bringing related data 
-back together.  Data is duplicated to remove the need for joining 
-tables at run-time.  This makes retrieval faster.
+De-normalization is the process of joining related data back together. 
+The data is pre-joined (and duplicated) to avoid joining tables 
+at run-time. Retrieval of de-normalized data is faster.
 
 The output of *Order Details* (above) is numeric. Some numbers 
 are keys (aka [foreign keys](https://en.wikipedia.org/wiki/Foreign_key)) 
-(e.g. `ProductID`, `OrderID`). These refer to more descriptive information in related entities. 
-Others are [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) used in calculations 
-(i.e. `Quantity`, `UnitPrice`).
+(e.g. `ProductID`, `OrderID`). Keys refer to more descriptive 
+information in related entities. The others are 
+[measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) (i.e. `Quantity`, `UnitPrice`).
 
-To denormalize *Order Details*, we need to use `OrderID` and `ProductID` to bring 
-information from *Orders* and *Products* along side the numbers.  This means we have 
+To denormalize *Order Details*, we need to use `OrderID` and `ProductID` to 
+retrieve the related information from *Orders* and *Products* (see diagram).  This means we have 
 to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
 
-Here is the process for adding an entity:
+Here is the process for adding entities:
 
 1. Identify or add a version field to the source records if possible (optional)
-1. Add the entity in the `<entities/>` section.
+1. Add the entity to the `<entities/>` section.
 1. Run `tfl` in `check` mode to get the field definitions.  
 1. Add the fields to your new entity (in the arrangement)
 1. Set the version attribute on the entity (optional)
@@ -488,24 +465,23 @@ and run Transformalize:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1272141.
 warn  | NorthWind | Order Details | Initializing
 warn  | NorthWind | Orders        | Initializing
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
 <strong>info  | NorthWind | Orders        | 830 from input
 info  | NorthWind | Orders        | 830 inserts into output</strong>
-info  | NorthWind |               | Time elapsed: 00:00:01.0855408
+info  | NorthWind |               | Time elapsed: 00:00:01.02
 
 <strong>tfl -a NorthWind.xml</strong>
 info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1124897.
 info  | NorthWind | Order Details | Change Detected: No.
 <strong>info  | NorthWind | Orders        | Change Detected: No.</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.3670649
+info  | NorthWind |               | Time elapsed: 00:00:00.25
 </pre>
 
 Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
-a view called `NorthWindStar` is created.  *NorthWindStar* pulls together Transformalize's 
+a view called `NorthWindStar` is created.  *NorthWindStar* joins Transformalize's 
 [star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a 
 single entity.
 
@@ -562,11 +538,11 @@ Relational is on the left, and star-schema is on the right.  To create a star-sc
 foreign keys in the relational model are moved to the center (the fact table).  Once this is 
 accomplished, fact table data retrieval is faster because every entity is directly related.
 
-Additionally, Transformalize can move data from the star-schema to a 
+Additionally, Transformalize can move data from the star-schema into a 
 completely denormalized (flat) output.  In a flattened output, 
 all of the keys, *plus all the descriptive information* is moved 
-to one "flat" output. In this case, data retrieval is even faster 
-because related data has already been retrieved.
+to one place. In this case, data retrieval is as fast as possible because 
+there's no need to join anything.
 
 To completely de-normalize, set `flatten` to `true` 
 in the main `<cfg/>` like this:
@@ -582,11 +558,10 @@ You may query it just as you queried *NorthWindStar*.
 
 ### More Relationships
 
-To incorporate all the entities from NorthWind database (diagramed above), we need to follow 
-the *Add an Entity* process for *Products*, *Customers*, *Employees*, *Shippers*, 
-*Suppliers*, and *Categories*.
+To add all the entities from NorthWind database (diagramed above), follow the *Add an Entity* 
+process (above) for *Products*, *Customers*, *Employees*, *Shippers*, *Suppliers*, and *Categories*.
 
-In the end, our relationships should look like this:
+In the end, the relationships should look like this:
 
 ```xml
 <relationships>
@@ -603,14 +578,12 @@ In the end, our relationships should look like this:
 </relationships>
 ```
 
-If you're following along and want to check your progress 
-you can use this [arrangement](./Files/NorthWindEntitiesRelated.xml).
+If you'd rather not do all that work, you can use this pre-created [arrangement](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/NorthWindEntitiesRelated.xml).
 
 Now when you initialize and run Transformalize, there's a lot going on:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -a "c:\Temp\NorthWind.xml" -m init</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1017755.
 <span style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing
 warn  | NorthWind | Orders        | Initializing
 warn  | NorthWind | Products      | Initializing
@@ -636,10 +609,9 @@ info  | NorthWind | Suppliers     | 29 inserts into output
 info  | NorthWind | Categories    | 8 from input
 info  | NorthWind | Categories    | 8 inserts into output
 info  | NorthWind |               | 2155 records inserted into flat
-info  | NorthWind |               | Time elapsed: 00:00:03.3745704
+info  | NorthWind |               | Time elapsed: 00:00:02.66
 
 <strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1055892.
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -648,7 +620,7 @@ info  | NorthWind | Employees     | Change Detected: No.
 info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
-info  | NorthWind |               | Time elapsed: 00:00:00.7259168
+info  | NorthWind |               | Time elapsed: 00:00:00.59
 </pre>
 
 ### Incrementals (Part 2)
@@ -666,7 +638,6 @@ Now run Transformalize again:
 
 <pre style="font-size:smaller;">
 <strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1242668.
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -679,7 +650,7 @@ info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
 <strong>info  | NorthWind |               | 35 records updated in flat</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.9643939
+info  | NorthWind |               | Time elapsed: 00:00:00.74
 </pre>
 
 Using the version, Transformalize picked up the one change in *Customers*.  Since this 
@@ -689,8 +660,8 @@ customer has purchased 35 items (in *Order Details*), the flat table is updated 
 
 > Intrucing the **`-s`** (schedule) flag
 
-Most likely, you'll want to schedule incremantals so that the de-normalized data is current. Transformalize 
-uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Using 
+Most likely, you'll want to schedule incremantals so that the de-normalized data is current. 
+Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Using 
 the **`-s`** schedule flag, pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
 like this:
 
@@ -732,8 +703,8 @@ Modify the *Orders* entity to include a `<calculated-fields/>` section like this
 
 **Note**: The **`copy`** short-hand transform is mainly used to copy 
 other fields into your transformation.  Generally speaking, when a 
-transform uses field names in it's expression (e.g. **`cs`** and **`format`**), 
-you don't need preceed it with a **`copy`** method.
+transform uses field names in it's expression (e.g. **`js`**, **`cs`**, and **`format`**), 
+you don't need to preceed it with a **`copy`** method.
 
 After re-initializing, *NorthWindFlat* has some helpful time related fields that allow you 
 to run queries like:
@@ -753,9 +724,7 @@ Wednesday   266546.72
 </pre>
 
 Note that the query isn't dealing with joins or parsing dates. This is 
-because we de-normalized it and pre-calculated some useful fields. The 
-NorthWind data in the SQLite database is flat and easy to consume.
-
+because we de-normalized it and pre-calculated useful fields.
 
 ## Post De-Normalization
 

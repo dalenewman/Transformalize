@@ -14,7 +14,7 @@
 				<add name="RowVersion" type="byte[]" length="8" />
 			</fields>
 			<calculated-fields>
-				<add name="ExtendedPrice" type="decimal" scale="2" t="cs(Math.Round(UnitPrice*Quantity,2))" />
+			  <add name="Revenue" type="decimal" engine="jint" t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 			</calculated-fields>
 		</add>
 		<add name="Orders" version="RowVersion">
