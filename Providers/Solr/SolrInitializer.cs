@@ -45,7 +45,9 @@ namespace Transformalize.Providers.Solr {
         }
         public ActionResponse Execute() {
 
-            var cores = new List<CoreResult>();
+            _context.Warn("Initializing");
+
+            List<CoreResult> cores = null;
             try {
                 cores = _admin.Status();
             } catch (Exception ex) {
@@ -68,14 +70,14 @@ namespace Transformalize.Providers.Solr {
 
             File.WriteAllText(Path.Combine(Path.Combine(coreFolder.FullName, "conf"), "schema.xml"), _engine.Render());
 
-            // todo: get status of cores, if core exists, can't "create" it, have to reload it, etc.
             if (cores.Any(c => c.Name == _context.Connection.Core)) {
                 _admin.Reload(_context.Connection.Core);
             } else {
                 _admin.Create(_context.Connection.Core, _context.Connection.Core);
             }
 
-            _solr.Delete(SolrQuery.All);  // note: commit happens in writer
+            _solr.Delete(SolrQuery.All);
+            _solr.Commit();
 
             return new ActionResponse();
         }

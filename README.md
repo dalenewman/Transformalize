@@ -132,9 +132,9 @@ an [Orchard CMS](http://www.orchardproject.net/) module.
 
 ### Getting Started
 
-> * Introducing The **`<connections/>`** section
+> * Introducing the **`<connections/>`** section
 > * The **`<entities/>`** section
-> * Using the **`tfl.exe`** command line interface
+> * and using the **`tfl.exe`** command line interface
 
 I use the Northwind relational database for demonstration. If you want 
 to follow along, you need:
@@ -235,14 +235,17 @@ like this:
 
 > * Introducing The **`<calculated-fields/>`** section within **`<entities/>`**
 > * The **`t`** attribute (short for **t**ransformation)
-> * The **`js`** and **`round`** transformations
+> * and th **`js`** and **`round`** transformations
 
 Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** 
 and add *Revenue* like this:
 
 ```xml
 <calculated-fields>
-  <add name="Revenue" type="decimal" engine="jint" t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
+  <add name="Revenue" 
+       type="decimal" 
+       engine="jint" 
+       t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```
 Now run `tfl`:
@@ -257,21 +260,9 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 ...
 </pre>
 
-*Revenue* is created by a js (JavaScript) transformation defined in **`t`**.  It is one of 
-[many transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs) 
-injected into `tfl`.
+*Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
+may chain transformations as long as the output of one is compatible with the input of another.
 
-The `t` attribute accepts *short-hand* **t**ransformations. Why is it shorter?  Take a 
-look at the verbose way to describe this transformation:
-
-```xml
-<add name="Revenue" type="decimal" engine="jint">
-  <transforms>
-    <add method="js" script="Quantity * ((1-Discount) * UnitPrice)" />
-    <add method="round" decimals="2" />
-  </transforms>
-</add>
-```
 
 ### Output
 
@@ -290,8 +281,17 @@ Add an output in `<connections/>`:
 ```
 
 ### Initialization
-To persist *Order Details* into an output, we need to initialize the output first. 
-So, run **`tfl`** in `init` mode using the **`-m`** flag like this:
+
+Initializing does three things:
+
+1. destroys pre-existing output structures
+2. creates output structures
+3. bulk inserts data.
+
+Initializing is required anytime you create or change an arrangement in a way 
+that changes the output's structure.
+
+To initialize, run **`tfl`** in `init` mode using the **`-m`** flag like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m init</strong>
@@ -301,51 +301,36 @@ info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.67
 </pre>
 
-Now *Order Details* is written to SQLite, which frees up the console for logging.
+Writing *Order Details* into SQLite frees up the console for logging.
 
-Initializing does three things:
-
-1. destroys pre-existing output structures
-2. creates output structures
-3. bulk inserts data.
-
-Initializing is required anytime you create or change an arrangement in a way 
-that changes the structure of the output.
+#### Mapping
 
 You may have noticed that Transformalize doesn't let you *map* 
-input to pre-existing output.  Instead, it creates it's own 
-consistent output structure optimized for incremental updates. 
+input to pre-existing output.  Instead, it creates a consistent 
+output structure that is optimized for incremental updates.
+
 You decide:
 
 * what new fields to calculate
 * the order of fields
 * the name of fields (using `alias`)
-* the transformations run on fields
-* and whether or not to output a field (using `output`)
+* the transformation of fields
+* and the output of field (using `output="true|false"`)
 
 ### Incrementals (by Default)
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild and may be time-consuming. So, in default mode, 
-Transformalize performs and incremental update.
+An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize 
+performs incrementals.  That is, it updates only new or updated rows.  To determine if an update 
+is necessary, `tfl` compares input with output. If a row is new, it is inserted. If a row is different, 
+it is updated. 
 
-<pre style="font-size:smaller;">
-<strong>> tfl -a NorthWind.xml</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1384721.
-<strong>info  | NorthWind | Order Details | 2155 from input</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.57
-</pre>
-
-To determine if an update is necessary, `tfl` compares input with output. 
-If a row is new, it is inserted.  If a row is different, it is updated. 
-While keys and hashes are used to compare, it is unnecessary when an input's 
-provider is capable of detecting and returning new data.
-
-Providers are capable when they are queryable, and can store a version in each record. 
-A version increments anytime data is inserted or updated.  SQL Server includes 
-a `ROWVERSION` type that provides automatic versioning. So, let's add one to `Order Details` 
-like this:
+While keys and hashes are used to compare, comparison is unnecessary when an input's 
+provider is queryable and stores a version with each record.  A version is a value in a 
+row that increments anytime it's row is updated.   Many tables have these by design.  If not, 
+SQL Server includes a `ROWVERSION` type that may be added to provide automatic versioning. 
+So, let's add one to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -370,7 +355,7 @@ Now let `tfl` know about `RowVersion` like this:
   </add>
 </entities>
 ```
-Since we added a field and changed the output structure, we must re-initialize like so:
+Adding a field changes the output's structure, so we must re-initialize like so:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
@@ -386,26 +371,24 @@ info  | NorthWind |               | Time elapsed: 00:00:00.20
 </pre>
 
 With a `version` in place, the second run doesn't read and compare 
-un-changed data.  Therefore, it is more efficient.
+un-changed data.
 
-### [Denormalization](https://en.wikipedia.org/wiki/Denormalization)
+### Denormalization
 
-Relational data is stored in many tables. It's normalized. 
-It's optimized for efficient storage and integrity. 
-It may be retrieved (queried), but not without an overhead of 
-combining (aka joining) busy tables. This makes retrieval slower.
+Relational data is [normalized](https://en.wikipedia.org/wiki/Database_normalization) and 
+stored in many tables. It's optimized for efficient storage and integrity. It may be 
+queried, but not without an overhead of joining busy tables. This makes retrieval slower.
 
-De-normalization is the process of joining related data back together. 
-The data is pre-joined (and duplicated) to avoid joining tables 
-at run-time. Retrieval of de-normalized data is faster.
+[De-normalization](https://en.wikipedia.org/wiki/Denormalization) is the process of 
+joining related data back together. The data is pre-joined (and duplicated) to 
+avoid joining tables at run-time. Retrieval of de-normalized data is faster.
 
 The output of *Order Details* (above) is numeric. Some numbers 
-are keys (aka [foreign keys](https://en.wikipedia.org/wiki/Foreign_key)) 
-(e.g. `ProductID`, `OrderID`). Keys refer to more descriptive 
-information in related entities. The others are 
+are [foreign keys](https://en.wikipedia.org/wiki/Foreign_key) (e.g. `ProductID`, `OrderID`). 
+These refer to more descriptive information in related entities. Others are 
 [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) (i.e. `Quantity`, `UnitPrice`).
 
-To denormalize *Order Details*, we need to use `OrderID` and `ProductID` to 
+To denormalize *Order Details*, we need to the foreign keys `OrderID` and `ProductID` to 
 retrieve the related information from *Orders* and *Products* (see diagram).  This means we have 
 to add the *Orders* and *Products* entities to our arrangement.
 
@@ -413,9 +396,9 @@ to add the *Orders* and *Products* entities to our arrangement.
 
 Here is the process for adding entities:
 
-1. Identify or add a version field to the source records if possible (optional)
+1. Identify or add a version field to the source if possible (optional)
 1. Add the entity to the `<entities/>` section.
-1. Run `tfl` in `check` mode to get the field definitions.  
+1. Run `tfl` in `check` mode to get field definitions (optional).  
 1. Add the fields to your new entity (in the arrangement)
 1. Set the version attribute on the entity (optional)
 1. Relate the new entity to the first entity
@@ -444,7 +427,7 @@ the arrangement should have a new entity like this:
   </fields>
 </add>
 ```
-Next, we need to tell Transformalize how to relate *Order Details* to *Orders*.
+Next, tell Transformalize how to relate *Order Details* to *Orders*.
 
 #### Relationships
 
@@ -455,8 +438,10 @@ follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your 
 
 ```xml
   <relationships>
-    <add left-entity="Order Details" left-field="OrderID" 
-         right-entity="Orders" right-field="OrderID"/>
+    <add left-entity="Order Details" 
+         left-field="OrderID" 
+         right-entity="Orders" 
+         right-field="OrderID"/>
   </relationships>
 ```
 
@@ -530,8 +515,6 @@ LIMIT 10;
 Transformalize de-normalizes in two phases.  First, it moves data 
 from a relational model to a [star-schema](https://en.wikipedia.org/wiki/Star_schema). 
 
-Check out the diagram below:
-
 ![Relational to Star](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/er-to-star.png)
 
 Relational is on the left, and star-schema is on the right.  To create a star-schema, all the 
@@ -539,10 +522,10 @@ foreign keys in the relational model are moved to the center (the fact table).  
 accomplished, fact table data retrieval is faster because every entity is directly related.
 
 Additionally, Transformalize can move data from the star-schema into a 
-completely denormalized (flat) output.  In a flattened output, 
+completely de-normalized (flat) output.  In a flattened output, 
 all of the keys, *plus all the descriptive information* is moved 
 to one place. In this case, data retrieval is as fast as possible because 
-there's no need to join anything.
+there's no need for joins.
 
 To completely de-normalize, set `flatten` to `true` 
 in the main `<cfg/>` like this:
@@ -683,11 +666,9 @@ want to run Transformalize as a service, I recommend using [NSSM](https://nssm.c
 > * the **`datePart`** transform
 > * the **`format`** transform
 > * the **`toUpper`** transform
-> * the concept of chaining transforms
 
-De-normalizing and your data is nice, but most often, you'll need 
-to transform some of it too.  Transformalize de-normalizes and 
-transforms at the same time (thus, the name).
+Most often, in addition to de-normalization, you'll need to transform records too. 
+Transformalize de-normalizes and transforms at the same time (thus, the name).
 
 Let's add some time [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) fields. 
 Modify the *Orders* entity to include a `<calculated-fields/>` section like this:
@@ -701,7 +682,7 @@ Modify the *Orders* entity to include a `<calculated-fields/>` section like this
 </calculated-fields>		
 ```
 
-**Note**: The **`copy`** short-hand transform is mainly used to copy 
+**Note**: The **`copy`** method is mainly used to copy 
 other fields into your transformation.  Generally speaking, when a 
 transform uses field names in it's expression (e.g. **`js`**, **`cs`**, and **`format`**), 
 you don't need to preceed it with a **`copy`** method.
@@ -731,9 +712,8 @@ because we de-normalized it and pre-calculated useful fields.
 > * Introducing system fields in output
 > * the **`read-only`** attribute
 
-In order to de-normalize, we had to use a relational 
-output (i.e. SQLite), but now that it's flat, we can leverage it 
-in non-relational providers as well.
+Transformalize must use a relation output to de-normalize (i.e. SQLite).  However, now that it's flat, 
+we can leverage the non-relational providers as well.
 
 Transformalize records four *system* fields that may 
 be used by additional `tfl` arrangements and/or other systems:
@@ -787,20 +767,19 @@ Start a new arrangement with this in your XML editor:
 </cfg>
 ```
 
-This arrangement uses an elasticsearch output.  Save as 
-*NorthWindToES.xml* and run in it:
+This arrangement uses an elasticsearch output.  Save as *NorthWindToES.xml* and run in it:
+
 <pre style="font-size:smaller;">
 <strong>>tfl -a c:\temp\NorthWindToES.xml -m init</strong>
 warn  | NorthWind | NorthWindFlat | Initializing
 info  | NorthWind | NorthWindFlat | 2155 from input
 info  | NorthWind | NorthWindFlat | 2155 to output
-info  | NorthWind |               | Time elapsed: 00:00:02.7229006
+info  | NorthWind |               | Time elapsed: 00:00:02.40
 
 <strong>>tfl -a c:\temp\NorthWindToES.xml</strong>
 info  | NorthWind | NorthWindFlat | Starting
 info  | NorthWind | NorthWindFlat | Change Detected: No.
-info  | NorthWind | NorthWindFlat | Ending 00:00:00
-info  | NorthWind |               | Time elapsed: 00:00:00.3594499
+info  | NorthWind |               | Time elapsed: 00:00:00.30
 </pre>
 
 A quick query in your browser can confirm records loaded:
@@ -881,13 +860,12 @@ info  | NorthWind | NorthWindFlat | Starting
 info  | NorthWind | NorthWindFlat | 2155 from input
 info  | NorthWind | NorthWindFlat | 2155 to output
 info  | NorthWind | NorthWindFlat | Ending
-info  | NorthWind |               | Time elapsed: 00:00:03.074
+info  | NorthWind |               | Time elapsed: 00:00:06
 
 <strong>>tfl -ac:\Temp\NorthWindToSOLR.xml</strong>
 info  | NorthWind | NorthWindFlat | Starting
 info  | NorthWind | NorthWindFlat | Change Detected: No.
-info  | NorthWind | NorthWindFlat | Ending
-info  | NorthWind |               | Time elapsed: 00:00:00.345
+info  | NorthWind |               | Time elapsed: 00:00:00.285
 </pre>
 
 A quick query in your browser can confirm the records loaded:
@@ -987,13 +965,11 @@ info  | NorthWind | Properties | Creating new data source view: NorthWind
 info  | NorthWind | Properties | Creating new dimension: Properties
 info  | NorthWind | Properties | Creating new cube: NorthWind
 info  | NorthWind | Properties | Processing OLAP database NorthWind
-info  | NorthWind |            | Time elapsed: 00:00:02.1823176
+info  | NorthWind |            | Time elapsed: 00:00:03.52
 
 <strong>>tfl -a c:\Temp\NorthWindToSSAS.xml</strong>
-info  | NorthWind | Properties | Starting
 info  | NorthWind | Properties | Change Detected: No.
-info  | NorthWind | Properties | Ending
-info  | NorthWind |            | Time elapsed: 00:00:00.7742750
+info  | NorthWind |            | Time elapsed: 00:00:00.58
 </pre>
 
 This example marks some fields as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
@@ -1006,11 +982,11 @@ Note: The SSAS output is still under development and only tested on SQL Server 2
 
 ### Leveraging the Orchard CMS Module
 
-> Introducing:
-> * Introducing  the **Orchard CMS** module
+> * Introducing the **Orchard CMS** module
 > * the **`parameters`** section
 > * the **`filter`** section within an `entity`
 > * the **`page`**, **`page-size`**, and **`sortable`** attributes for an `entity`
+> * and the label attribute for a`field`
 
 The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows you to:
 
@@ -1020,7 +996,8 @@ The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows yo
 * export search results (to csv, and xlsx) in *report mode*
 
 Although arranging a report in Transformalize can add some 
-complexity, it still makes sense since reporting is just ETL.
+complexity, it still makes sense since reporting is just a 
+form of ETL.
 
 Here's a quick video of a Northwind report using the Elasticsearch 
 provider we loaded earlier:
@@ -1061,12 +1038,11 @@ The arrangement for this is:
 
 #### Parameters
 
-> Introducing the **`name`**, **`label`**, **`value`**, **`prompt`**, 
-> and **`multiple`** attributes for **`parameters`**
+> Introducing the **`name`**, **`label`**, **`value`**, **`prompt`**, and **`multiple`** attributes for **`parameters`**
 
-Parameters allow you to pass in arguments that manipulate 
-attribute values in the arrangement. The parameter 
-place-holders (e.g. `@[orderyear]`) are replaced with 
+Parameters allow you to pass in data from outside your arrangement. 
+They may be used to manipulate attribute values in the arrangement. 
+The parameter place-holders (e.g. `@[orderyear]`) are replaced with 
 a provided or default value before validation.
 
 Parameters are visible in report mode 
@@ -1093,7 +1069,6 @@ care of mapping the facet values to a parameter's choices.
 Without paging, web-based reporting gets too big for 
 the browser.  All providers are capable of paging, 
 but SOLR and Elasticsearch do it the best.
-
 
 #### Credits &amp; Thanks
 

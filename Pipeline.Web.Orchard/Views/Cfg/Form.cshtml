@@ -130,6 +130,7 @@
 
             $target.focus().select();
 
+            // ios doesn't refresh dropdowns when ajax re-populates 
             if (navigator.userAgent.match(/(ip(hone|od|ad))/i)) {
                 if ($target.is("select") && $target.closest("div").prev().has("select").length > 0) {
                     $target.blur();
