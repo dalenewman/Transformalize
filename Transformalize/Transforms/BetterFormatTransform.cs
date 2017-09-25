@@ -66,7 +66,7 @@ namespace Transformalize.Transforms {
             }
 
             if (numeric) {
-                _input = MultipleInput();  // receiving fields from parameters (or copu(x,y,etc))
+                _input = MultipleInput();  // receiving fields from parameters (or copy(x,y,etc))
             } else {
                 var fields = new List<Field>();
                 var count = 0;

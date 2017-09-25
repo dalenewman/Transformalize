@@ -210,10 +210,6 @@
       <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>
       <Name>Razor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
-      <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
-      <Name>Rethink</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Solr\Solr.csproj">
       <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
       <Name>Solr</Name>
@@ -250,9 +246,9 @@
       <Project>{803baf79-7028-4f09-b2f6-bc89b3ad11e3}</Project>
       <Name>MySql</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\RethinkDB\RethinkDB.csproj">
+    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
-      <Name>RethinkDB</Name>
+      <Name>Rethink</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>

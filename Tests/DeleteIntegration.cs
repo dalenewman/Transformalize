@@ -165,10 +165,6 @@ namespace Tests {
 
         }
 
-        private static Dictionary<string, string> InitMode() {
-            return new Dictionary<string, string> { { "Mode", "init" } };
-        }
-
         private static Dictionary<string, string> DefaultMode() {
             return new Dictionary<string, string> { { "Mode", "default" } };
         }
