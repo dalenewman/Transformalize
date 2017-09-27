@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Elastic</id>
-    <version>0.2.6-beta</version>
+    <version>0.2.7-beta</version>
     <title>Transformalize Provider Elastic</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,12 +10,12 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Elastic(search) provider for Transformalize</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
     <copyright>Copyright 2013-2016</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.6-beta" />
+        <dependency id="Transformalize" version="0.2.7-beta" />
         <dependency id="Elasticsearch.Net" version="5.5.0" />
         <dependency id="Newtonsoft.Json" version="7.0.1" />
       </group>

@@ -204,7 +204,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Files\solr\schema.cshtml">
+    <None Include="files\solr\schema.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="job_scheduling_data_2_0.xsd">
@@ -225,136 +225,136 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Files\access\empty.mdb">
+    <Content Include="files\access\empty.mdb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\currency.xml">
+    <Content Include="files\solr\conf\currency.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\contractions_ca.txt">
+    <Content Include="files\solr\conf\lang\contractions_ca.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\contractions_fr.txt">
+    <Content Include="files\solr\conf\lang\contractions_fr.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\contractions_ga.txt">
+    <Content Include="files\solr\conf\lang\contractions_ga.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\contractions_it.txt">
+    <Content Include="files\solr\conf\lang\contractions_it.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\hyphenations_ga.txt">
+    <Content Include="files\solr\conf\lang\hyphenations_ga.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stemdict_nl.txt">
+    <Content Include="files\solr\conf\lang\stemdict_nl.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stoptags_ja.txt">
+    <Content Include="files\solr\conf\lang\stoptags_ja.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ar.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ar.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_bg.txt">
+    <Content Include="files\solr\conf\lang\stopwords_bg.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ca.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ca.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_cz.txt">
+    <Content Include="files\solr\conf\lang\stopwords_cz.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_da.txt">
+    <Content Include="files\solr\conf\lang\stopwords_da.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_de.txt">
+    <Content Include="files\solr\conf\lang\stopwords_de.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_el.txt">
+    <Content Include="files\solr\conf\lang\stopwords_el.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_en.txt">
+    <Content Include="files\solr\conf\lang\stopwords_en.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_es.txt">
+    <Content Include="files\solr\conf\lang\stopwords_es.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_eu.txt">
+    <Content Include="files\solr\conf\lang\stopwords_eu.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_fa.txt">
+    <Content Include="files\solr\conf\lang\stopwords_fa.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_fi.txt">
+    <Content Include="files\solr\conf\lang\stopwords_fi.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_fr.txt">
+    <Content Include="files\solr\conf\lang\stopwords_fr.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ga.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ga.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_gl.txt">
+    <Content Include="files\solr\conf\lang\stopwords_gl.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_hi.txt">
+    <Content Include="files\solr\conf\lang\stopwords_hi.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_hu.txt">
+    <Content Include="files\solr\conf\lang\stopwords_hu.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_hy.txt">
+    <Content Include="files\solr\conf\lang\stopwords_hy.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_id.txt">
+    <Content Include="files\solr\conf\lang\stopwords_id.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_it.txt">
+    <Content Include="files\solr\conf\lang\stopwords_it.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ja.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ja.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_lv.txt">
+    <Content Include="files\solr\conf\lang\stopwords_lv.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_nl.txt">
+    <Content Include="files\solr\conf\lang\stopwords_nl.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_no.txt">
+    <Content Include="files\solr\conf\lang\stopwords_no.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_pt.txt">
+    <Content Include="files\solr\conf\lang\stopwords_pt.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ro.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ro.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_ru.txt">
+    <Content Include="files\solr\conf\lang\stopwords_ru.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_sv.txt">
+    <Content Include="files\solr\conf\lang\stopwords_sv.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_th.txt">
+    <Content Include="files\solr\conf\lang\stopwords_th.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\stopwords_tr.txt">
+    <Content Include="files\solr\conf\lang\stopwords_tr.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\lang\userdict_ja.txt">
+    <Content Include="files\solr\conf\lang\userdict_ja.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\protwords.txt">
+    <Content Include="files\solr\conf\protwords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\stopwords.txt">
+    <Content Include="files\solr\conf\stopwords.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\synonyms.txt">
+    <Content Include="files\solr\conf\synonyms.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\solr\conf\solrconfig.xml">
+    <Content Include="files\solr\conf\solrconfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\msvcp120.dll">
@@ -376,7 +376,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Files\solr\data\" />
+    <Folder Include="files\solr\data\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

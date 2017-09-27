@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.2.6-beta</version>
+    <version>0.2.7-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>update cfg-net library</releaseNotes>
+    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
     <copyright>Copyright 2013-2017</copyright>
     <tags>etl</tags>
     <dependencies>

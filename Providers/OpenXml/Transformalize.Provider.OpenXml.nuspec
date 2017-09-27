@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.2.6-beta</version>
+    <version>0.2.7-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,12 +10,12 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>used to write excel</description>
-    <releaseNotes></releaseNotes>
+    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
     <copyright>Copyright 2013-2017</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.6-beta" />
+        <dependency id="Transformalize" version="0.2.7-beta" />
         <dependency id="OpenXmlPowerTools" version="4.5.3.1" />
       </group>
     </dependencies>

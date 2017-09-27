@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.SSAS</id>
-    <version>0.2.6-beta</version>
+    <version>0.2.7-beta</version>
     <title>Transformalize Provider SSAS</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,12 +10,12 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>SQL Server Analysis Services (SSAS) Provider for Transformalize</description>
-    <releaseNotes>Initial beta release</releaseNotes>
+    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
     <copyright>Copyright 2017</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize.Provider.Ado" version="0.2.6-beta" />
+        <dependency id="Transformalize.Provider.Ado" version="0.2.7-beta" />
         <dependency id="Humanizer.Core" version="2.2.0" />
         <dependency id="Microsoft.AnalysisServices" version="11.0.2100.60" />
         <dependency id="Microsoft.AnalysisServices.AdomdClient" version="12.0.2000.8" />

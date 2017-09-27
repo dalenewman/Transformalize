@@ -173,7 +173,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                         output,
                                         ctx.ResolveNamed<ISolrCoreAdmin>(output.Connection.Key),
                                         ctx.ResolveNamed<ISolrOperations<Dictionary<string, object>>>(output.Connection.Key),
-                                        new RazorTemplateEngine(ctx.ResolveNamed<IContext>(entity.Key), new Template { Name = output.Connection.Key, File = "Files\\solr\\schema.cshtml" }, ctx.Resolve<IReader>())
+                                        new RazorTemplateEngine(ctx.ResolveNamed<IContext>(entity.Key), new Template { Name = output.Connection.Key, File = "files\\solr\\schema.cshtml" }, ctx.Resolve<IReader>())
                                     ) : new NullInitializer();
 
                                 return new SolrOutputController(

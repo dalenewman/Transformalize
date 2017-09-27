@@ -40,7 +40,7 @@ namespace Transformalize.Providers.Access {
                 if (fileInfo.Exists)
                     return _adoInitializer.Execute();
 
-                var sourceFile = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Files\\access", "empty.mdb"));
+                var sourceFile = new FileInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files\\access", "empty.mdb"));
                 File.Copy(sourceFile.FullName, fileInfo.FullName, true);
 
                 return _adoInitializer.Execute();
