@@ -72,7 +72,7 @@ namespace Transformalize.Contracts {
         /// <summary>
         /// Given the input (or most likely a batch of input)
         /// Find the matching primary keys, along with TflDeleted, and TflHashCode (system fields every output has)
-        /// TODO: make ITakeAndReturnRows, and IReadInputKeysAndHashcodes obsolete
+        /// TODO: make IBatchReader, and IReadInputKeysAndHashcodes obsolete
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>

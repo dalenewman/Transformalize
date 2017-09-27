@@ -552,7 +552,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Src { get; set; }
 
-        [Cfg(value = "chakra", domain = "chakra,jint", toLower = true)]
+        [Cfg(value = "auto", domain = "auto,chakra,jint", toLower = true)]
         public string Engine { get; set; }
 
         [Cfg(value = "", toLower = true)]

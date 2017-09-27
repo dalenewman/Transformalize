@@ -17,13 +17,14 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Ado {
-    public class AdoEntityMatchingKeysReader : ITakeAndReturnRows {
+    public class AdoEntityMatchingKeysReader : IBatchReader {
 
         private readonly IConnectionContext _context;
         private readonly Field[] _keys;
@@ -53,7 +54,7 @@ namespace Transformalize.Providers.Ado {
         }
 
         private string SqlCreateKeysTable(string tempTable) {
-            var columnsAndDefinitions = string.Join(",", _context.Entity.GetPrimaryKey().Select(f => _cf.Enclose(f.FieldName()) + " " + _cf.SqlDataType(f) + " NOT NULL"));
+            var columnsAndDefinitions = string.Join(",", _context.Entity.GetPrimaryKey().Select(f => _cf.Enclose(f.FieldName()) + " " + _cf.SqlDataType(f) + " NOT NULL")) + ", TflIndex INT NOT NULL";
             var sql = $"CREATE {(_cf.AdoProvider == AdoProvider.SqlServer || _cf.AdoProvider == AdoProvider.SqlCe || _cf.AdoProvider == AdoProvider.Access ? string.Empty : "TEMPORARY ")}TABLE {_cf.Enclose(tempTable)}({columnsAndDefinitions})";
             _context.Debug(() => sql);
             return sql;
@@ -63,20 +64,24 @@ namespace Transformalize.Providers.Ado {
             var names = string.Join(",", _keys.Select(f => "k." + _cf.Enclose(f.FieldName())));
             var table = _context.Entity.OutputTableName(_context.Process.Name);
             var joins = string.Join(" AND ", _keys.Select(f => "o." + _cf.Enclose(f.FieldName()) + " = k." + _cf.Enclose(f.FieldName())));
-            var sql = $"SELECT {names},o.{_cf.Enclose(_hashCode.FieldName())},o.{_cf.Enclose(_deleted.FieldName())} FROM {_cf.Enclose(_tempTable)} k INNER JOIN {_cf.Enclose(table)} o ON ({joins})";
+            var sql = $"SELECT {names},o.{_cf.Enclose(_hashCode.FieldName())},o.{_cf.Enclose(_deleted.FieldName())},k.TflIndex FROM {_cf.Enclose(_tempTable)} k INNER JOIN {_cf.Enclose(table)} o ON ({joins})";
             _context.Debug(() => sql);
             return sql;
         }
 
         private string SqlInsertTemplate(IContext context, string tempTable, Field[] keys) {
-            var values = _cf.AdoProvider == AdoProvider.Access ? string.Join(",", keys.Select(k => "?")) : string.Join(",", keys.Select(k => "@" + k.FieldName()));
-            var sql = $"INSERT INTO {_cf.Enclose(tempTable)} VALUES ({values});";
+            var prefix = _cf.AdoProvider == AdoProvider.Access ? "?" : "@";
+            var tflIndex = _cf.AdoProvider == AdoProvider.Access ? "" : "TflIndex";
+            var parameters = _cf.AdoProvider == AdoProvider.Access ? string.Join(",", keys.Select(k => prefix)) : string.Join(",", keys.Select(k => prefix + k.FieldName()));
+            var sql = $"INSERT INTO {_cf.Enclose(tempTable)} VALUES ({parameters},{prefix}{tflIndex});";
             context.Debug(() => sql);
             return sql;
         }
 
-        public IEnumerable<IRow> Read(IEnumerable<IRow> input) {
-            var results = new List<IRow>();
+        public Batch Read(IEnumerable<IRow> input) {
+
+            var batch = new Batch();
+
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 _context.Debug(() => "begin transaction");
@@ -86,14 +91,22 @@ namespace Transformalize.Providers.Ado {
                     var createSql = SqlCreateKeysTable(_tempTable);
                     cn.Execute(createSql, null, trans);
 
-                    var keys = input.Select(r => r.ToExpandoObject(_keys));
+                    var index = 0;
+                    var keys = new List<ExpandoObject>();
+                    foreach (var row in input) {
+                        var obj = row.ToExpandoObject(_keys);
+                        ((IDictionary<string, object>)obj)["TflIndex"] = index;
+                        keys.Add(obj);
+                        ++index;
+                    }
+
                     var insertSql = SqlInsertTemplate(_context, _tempTable, _keys);
                     cn.Execute(insertSql, keys, trans, 0, System.Data.CommandType.Text);
+                    var i = _fields.Length;
 
                     using (var reader = cn.ExecuteReader(SqlQuery(), null, trans, 0, System.Data.CommandType.Text)) {
                         while (reader.Read()) {
-                            var row = _rowCreator.Create(reader, _fields);
-                            results.Add(row);
+                            batch[reader.GetInt32(i)] = _rowCreator.Create(reader, _fields);
                         }
                     }
 
@@ -109,7 +122,7 @@ namespace Transformalize.Providers.Ado {
                     trans.Rollback();
                 }
             }
-            return results;
+            return batch;
         }
 
     }

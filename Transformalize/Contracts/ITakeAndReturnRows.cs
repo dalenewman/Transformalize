@@ -18,8 +18,8 @@
 using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
-    public interface ITakeAndReturnRows {
-        IEnumerable<IRow> Read(IEnumerable<IRow> input);
+    public interface IBatchReader {
+        Batch Read(IEnumerable<IRow> input);
     }
 
 }

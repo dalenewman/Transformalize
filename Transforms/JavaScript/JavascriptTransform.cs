@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Cfg.Net.Contracts;
 using JavaScriptEngineSwitcher.Core;
 using Transformalize.Configuration;
@@ -41,16 +40,7 @@ namespace Transformalize.Transforms.JavaScript {
 
             _context = context;
             _engine = factory.CreateEngine();
-
-            // for js, always add the input parameter
-            var matches = context.Entity.FieldMatcher.Matches(context.Operation.Script);
-            var input = new List<Field>();
-            foreach (Match match in matches) {
-                if (context.Entity.TryGetField(match.Value, out var field) && input.All(f => f.Alias != field.Alias)) {
-                    input.Add(field);
-                }
-            }
-            _input = input.Union(new[] { context.Field }).Distinct().ToArray();
+            _input = context.Entity.GetFieldMatches(context.Operation.Script).ToArray();
 
             // load any global scripts
             foreach (var sc in context.Process.Scripts.Where(s => s.Global)) {
@@ -64,8 +54,6 @@ namespace Transformalize.Transforms.JavaScript {
                 }
             }
 
-            // make this reference the host field
-            context.Operation.Script = $"var self = {context.Field.Alias};\r\n{context.Operation.Script}";
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 

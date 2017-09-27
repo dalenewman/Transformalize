@@ -34,18 +34,10 @@ namespace Transformalize.Transforms.LamdaParser {
             }
 
             try {
-                var input = new List<Field>(MultipleInput());
 
                 var lambdaParser = new NReco.Linq.LambdaParser { UseCache = true };
                 var exp = lambdaParser.Parse(context.Operation.Expression);
-
-                var matches = context.Entity.FieldMatcher.Matches(exp.ToString());
-                foreach (Match match in matches) {
-                    Field field;
-                    if (context.Entity.TryGetField(match.Value, out field) && input.All(f => f.Alias != field.Alias)) {
-                        input.Add(field);
-                    }
-                }
+                var input = context.Entity.GetFieldMatches(exp.ToString()).ToArray();
 
                 while (exp.CanReduce) {
                     exp = exp.Reduce();

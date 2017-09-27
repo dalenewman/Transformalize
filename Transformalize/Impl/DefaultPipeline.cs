@@ -57,15 +57,23 @@ namespace Transformalize.Impl {
         }
 
         public void Register(IRead reader) {
-            Context.Debug(() => $"Registering {reader.GetType().Name}.");
+            if (reader != null) {
+                Context.Debug(() => $"Registering {reader.GetType().Name}.");
+            }
             Reader = reader;
         }
 
         public void Register(IOutputProvider output) {
+            if (output != null) {
+                Context.Debug(() => $"Registering {output.GetType().Name}.");
+            }
             OutputProvider = output;
         }
 
         public void Register(IInputProvider input) {
+            if (input != null) {
+                Context.Debug(() => $"Registering {input.GetType().Name}.");
+            }
             InputProvider = input;
         }
 
@@ -86,7 +94,9 @@ namespace Transformalize.Impl {
             }
         }
         public void Register(IWrite writer) {
-            Context.Debug(() => $"Registering {writer.GetType().Name}.");
+            if (writer != null) {
+                Context.Debug(() => $"Registering {writer.GetType().Name}.");
+            }
             Writer = writer;
         }
 

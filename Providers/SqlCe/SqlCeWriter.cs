@@ -16,13 +16,10 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlServerCe;
 using System.Linq;
-using System.Threading.Tasks;
-using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -31,23 +28,19 @@ using Transformalize.Providers.Ado;
 namespace Transformalize.Providers.SqlCe {
 
     public class SqlCeWriter : IWrite {
-
-        readonly OutputContext _output;
+        private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
-        readonly ITakeAndReturnRows _outputKeysReader;
-        readonly IWrite _sqlUpdater;
-        readonly Field[] _keys;
+        private readonly IBatchReader _outputKeysReader;
+        private readonly IWrite _sqlUpdater;
 
         public SqlCeWriter(
             OutputContext output,
             IConnectionFactory cf,
-            ITakeAndReturnRows matcher,
+            IBatchReader matcher,
             IWrite updater
         ) {
             _output = output;
             _cf = cf;
-
-            _keys = output.Entity.GetPrimaryKey();
             _outputKeysReader = matcher;
             _sqlUpdater = updater;
         }
@@ -68,28 +61,24 @@ namespace Transformalize.Providers.SqlCe {
                         inserts.AddRange(batch);
                         Insert(inserts, cn, table);
                     } else {
-                        var inserts = new ConcurrentBag<IRow>();
-                        var updates = new ConcurrentBag<IRow>();
+                        var inserts = new List<IRow>();
+                        var updates = new List<IRow>();
                         var tflHashCode = _output.Entity.TflHashCode();
                         var tflDeleted = _output.Entity.TflDeleted();
-                        var matching = _outputKeysReader.Read(batch).AsParallel().ToArray();
 
-                        Parallel.ForEach(batch, (row) => {
-                            var match = matching.FirstOrDefault(f => f.Match(_keys, row));
-                            if (match == null) {
-                                inserts.Add(row);
-                            } else {
-                                if (match[tflDeleted].Equals(true)) {
+                        var matching = _outputKeysReader.Read(batch);
+
+                        for (int i = 0, batchLength = batch.Length; i < batchLength; i++) {
+                            var row = batch[i];
+                            if (matching.Contains(i)) {
+                                if (matching[i][tflDeleted].Equals(true) || !matching[i][tflHashCode].Equals(row[tflHashCode])) {
                                     updates.Add(row);
-                                } else {
-                                    var destination = (int)match[tflHashCode];
-                                    var source = (int)row[tflHashCode];
-                                    if (source != destination) {
-                                        updates.Add(row);
-                                    }
                                 }
+                            } else {
+                                inserts.Add(row);
                             }
-                        });
+                        }
+
 
                         Insert(inserts, cn, table);
 

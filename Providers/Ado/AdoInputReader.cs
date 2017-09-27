@@ -24,7 +24,6 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
-using Transformalize.Transforms.System;
 
 namespace Transformalize.Providers.Ado {
     /// <summary>
@@ -37,14 +36,12 @@ namespace Transformalize.Providers.Ado {
         private readonly AdoRowCreator _rowCreator;
         private readonly Field[] _fields;
         private readonly IConnectionFactory _factory;
-        private readonly TypeTransform _typeTransform;
 
         public AdoInputReader(InputContext input, Field[] fields, IConnectionFactory factory, IRowFactory rowFactory) {
             _input = input;
             _fields = fields;
             _factory = factory;
             _rowCreator = new AdoRowCreator(input, rowFactory);
-            _typeTransform = new TypeTransform(input, fields);
         }
 
         public IEnumerable<IRow> Read() {
@@ -86,7 +83,7 @@ namespace Transformalize.Providers.Ado {
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 0;
 
-                IDataReader reader = null;
+                IDataReader reader;
                 try {
                     reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
                 } catch (Exception ex) {
@@ -100,44 +97,18 @@ namespace Transformalize.Providers.Ado {
                         _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
                     }
 
-                    // transform types if sqlite
-                    if (_factory.AdoProvider == AdoProvider.SqLite) {
-                        while (reader.Read()) {
-                            _rowCount++;
-                            _input.Increment();
-                            var row = _rowCreator.Create(reader, _fields);
-                            _typeTransform.Operate(row);
-                            yield return row;
-                        }
-                    } else {
-                        // check the first one's types
-                        if (reader.Read()) {
-                            var row = _rowCreator.Create(reader, _fields);
-                            foreach (var field in _fields) {
-                                var expected = Constants.TypeSystem()[field.Type];
-                                var actual = row[field] == null ? expected : row[field].GetType();
-                                if (expected != actual) {
-                                    _input.Warn($"The {field.Alias} field in {_input.Entity.Alias} expects a {expected}, but is reading a {actual}.");
-                                }
-                            }
-                            _rowCount++;
-                            _input.Increment();
-                            yield return row;
-                        }
-
-                        // just read
-                        while (reader.Read()) {
-                            _rowCount++;
-                            _input.Increment();
-                            yield return _rowCreator.Create(reader, _fields);
-                        }
-
+                    // just read
+                    while (reader.Read()) {
+                        _rowCount++;
+                        _input.Increment();
+                        yield return _rowCreator.Create(reader, _fields);
                     }
+
                 }
-
-                _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
             }
-        }
 
+            _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
+        }
     }
+
 }

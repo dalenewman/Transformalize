@@ -350,7 +350,7 @@ namespace Transformalize.Configuration {
 
             // create entity field's matcher
             foreach (var entity in Entities) {
-                var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).Select(f => f.Alias));
+                var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f=>f.Alias.Length).Select(f => f.Alias));
 #if NETS10
                 entity.FieldMatcher = new Regex(pattern);
 #else
@@ -496,8 +496,7 @@ namespace Transformalize.Configuration {
             calc.CalculatedFields.Clear();
             calc.Relationships.Clear();
 
-            var entity = new Entity();
-            entity.Name = "Calculated";
+            var entity = new Entity {Name = "Calculated"};
             entity.Alias = entity.Name;
             entity.Key = calc.Name + entity.Alias;
             entity.Connection = "output";
@@ -553,7 +552,7 @@ namespace Transformalize.Configuration {
             calc.ModifyIndexes();
 
             // create entity field's matcher
-            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).Select(f => f.Alias));
+            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
 #if NETS10
             entity.FieldMatcher = new Regex(pattern);
 #else

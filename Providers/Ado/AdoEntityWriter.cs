@@ -17,22 +17,20 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityWriter : IWrite {
+
         private readonly OutputContext _output;
-        private readonly Field[] _keys;
-        private readonly ITakeAndReturnRows _matcher;
+        private readonly IBatchReader _matcher;
         private readonly IWrite _updater;
         private readonly IWrite _inserter;
 
-        public AdoEntityWriter(OutputContext output, ITakeAndReturnRows matcher, IWrite inserter, IWrite updater) {
+        public AdoEntityWriter(OutputContext output, IBatchReader matcher, IWrite inserter, IWrite updater) {
             _output = output;
-            _keys = output.Entity.GetPrimaryKey();
             _matcher = matcher;
             _inserter = inserter;
             _updater = updater;
@@ -54,17 +52,16 @@ namespace Transformalize.Providers.Ado {
                         batchCount++;
                     }
                 } else {
-                    var batch = part.ToArray();
-                    var matching = _matcher.Read(batch).ToArray();
-                    for (int i = 0, batchLength = batch.Length; i < batchLength; i++) {
-                        var row = batch[i];
-                        var match = matching.FirstOrDefault(f => f.Match(_keys, row));
-                        if (match == null) {
-                            inserts.Add(row);
-                        } else {
-                            if (match[tflDeleted].Equals(true) || !match[tflHashCode].Equals(row[tflHashCode])) {
+                    var newRows = part.ToArray();
+                    var oldRows = _matcher.Read(newRows);
+                    for (int i = 0, batchLength = newRows.Length; i < batchLength; i++) {
+                        var row = newRows[i];
+                        if (oldRows.Contains(i)) {
+                            if (oldRows[i][tflDeleted].Equals(true) || !oldRows[i][tflHashCode].Equals(row[tflHashCode])) {
                                 updates.Add(row);
                             }
+                        } else {
+                            inserts.Add(row);
                         }
                         batchCount++;
                     }

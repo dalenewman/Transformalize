@@ -19,6 +19,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using Transformalize.Contracts;
 
@@ -61,13 +62,15 @@ namespace Transformalize.Transforms.CSharp {
             parameters.ReferencedAssemblies.Add("mscorlib.dll");
             parameters.ReferencedAssemblies.Add(Assembly.GetExecutingAssembly().Location);
 
+            var code = _codeWriter.Write(_className);
             try {
-                var result = codeProvider.CompileAssemblyFromSource(parameters, _codeWriter.Write(_className));
+                var result = codeProvider.CompileAssemblyFromSource(parameters, code);
                 if (result.Errors.Count > 0) {
-                    _context.Error("CSharp Compiler Error!");
-                    foreach (var error in result.Errors) {
-                        _context.Error(error.ToString());
+                    foreach (CompilerError error in result.Errors) {
+                        _context.Error($"C# error on line {error.Line}, column {error.Column}.");
+                        _context.Error(error.ErrorText);
                     }
+                    CodeToError(code);
                 } else {
                     timer.Stop();
                     _context.Info($"Compiled {_context.Process.Name} user code in {timer.Elapsed}.");
@@ -79,11 +82,23 @@ namespace Transformalize.Transforms.CSharp {
                 }
 
             } catch (Exception ex) {
-                _context.Error("CSharp Compiler Exception!");
+                _context.Error("C# Compiler Exception!");
                 _context.Error(ex.Message);
+                CodeToError(code);
                 return false;
             }
             return true;
+        }
+
+        private void CodeToError(string code) {
+            var lineNo = 1;
+            using (var sr = new StringReader(code)) {
+                string line;
+                while ((line = sr.ReadLine()) != null) {
+                    _context.Error($"{lineNo:0000} {line}");
+                }
+                ++lineNo;
+            }
         }
 
         public void Dispose() {

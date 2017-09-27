@@ -19,9 +19,9 @@ using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
-    public class NullTakeAndReturnRows : ITakeAndReturnRows {
-        public IEnumerable<IRow> Read(IEnumerable<IRow> input) {
-            return input;
+    public class NullBatchReader : IBatchReader {
+        public Batch Read(IEnumerable<IRow> input) {
+            return new Batch();
         }
     }
 }

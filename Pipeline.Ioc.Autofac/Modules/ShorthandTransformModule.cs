@@ -155,7 +155,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Signatures.Add(new Signature {
                         Name = "xpath",
                         Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "xpath" },
+                            new Cfg.Net.Shorthand.Parameter { Name = "expression" },
                             new Cfg.Net.Shorthand.Parameter { Name = "name-space", Value="" },
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" }
                         }

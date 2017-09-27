@@ -22,53 +22,49 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Ado {
+
     public class AdoRowCreator {
-        readonly IContext _context;
+
+        private readonly IContext _context;
         private readonly IRowFactory _rowFactory;
-        readonly HashSet<int> _errors;
+        private bool[] _errors;
+        private readonly Dictionary<string, Type> _typeMap;
 
         public AdoRowCreator(IContext context, IRowFactory rowFactory) {
-            _errors = new HashSet<int>();
+            _errors = null;
             _context = context;
             _rowFactory = rowFactory;
+            _typeMap = Constants.TypeSystem();
         }
 
         public IRow Create(IDataReader reader, Field[] fields) {
 
             var fieldCount = Math.Min(reader.FieldCount, fields.Length);
             var row = _rowFactory.Create();
-            for (var i = 0; i < fieldCount; i++) {
-                var field = fields[i];
-                if (field.Type == "string") {
-                    if (reader.GetFieldType(i) == typeof(string)) {
-                        row[field] = reader.IsDBNull(i) ? null : reader.GetString(i);
-                    } else {
-                        TypeMismatch(field, reader, i);
-                        var value = reader.GetValue(i);
-                        row[field] = value == DBNull.Value ? null : value;
+
+            if (_errors == null) {  // check types
+                _errors = new bool[fields.Length];
+                for (var i = 0; i < fieldCount; i++) {
+                    _errors[i] = reader.GetFieldType(i) != _typeMap[fields[i].Type];
+                    if (!_errors[i])
+                        continue;
+
+                    if (fields[i].Type != "char"){
+                        _context.Error("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
                     }
+                }
+            }
+
+            for (var i = 0; i < fieldCount; i++) {
+                if (reader.IsDBNull(i))
+                    continue;
+                if (_errors[i]) {
+                    row[fields[i]] = fields[i].Convert(reader.GetValue(i));
                 } else {
-                    var value = reader.GetValue(i);
-                    row[field] = value == DBNull.Value ? null : value;
+                    row[fields[i]] = reader.GetValue(i);
                 }
             }
             return row;
-        }
-
-        public void TypeMismatch(Field field, IDataReader reader, int index) {
-            var key = GetHashCode(field.Name, field.Type);
-            if (_errors.Add(key)) {
-                _context.Error("Type mismatch for {0}. Expected {1}, but read {2}.", field.Name, field.Type, reader.GetFieldType(index));
-            }
-        }
-
-        static int GetHashCode<T>(T a, T b) {
-            unchecked {
-                var hash = (int)2166136261;
-                hash = hash * 16777619 ^ a.GetHashCode();
-                hash = hash * 16777619 ^ b.GetHashCode();
-                return hash;
-            }
         }
 
     }

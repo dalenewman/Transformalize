@@ -28,10 +28,10 @@ namespace Transformalize.Transforms.Jint {
 
     public class JintTransform : BaseTransform {
 
-        readonly Field[] _input;
-        readonly Engine _jint = new Engine();
-        readonly JavaScriptParser _parser = new JavaScriptParser();
-        readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
+        private readonly Field[] _input;
+        private readonly Engine _jint = new Engine();
+        private readonly JavaScriptParser _parser = new JavaScriptParser();
+        private readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly ParserOptions _parserOptions = new ParserOptions { Tolerant = true };
 
         public JintTransform(IContext context, IReader reader) : base(context, "object") {
@@ -73,12 +73,10 @@ namespace Transformalize.Transforms.Jint {
                 }
             }
 
-            // make this reference the host field
-            context.Operation.Script = $"var self = {context.Field.Alias};\r\n{context.Operation.Script}";
             context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
-        void ProcessScript(IContext context, IReader reader, Script script) {
+        private void ProcessScript(IContext context, IReader reader, Script script) {
             script.Content = ReadScript(context, reader, script);
 
             try {
@@ -105,7 +103,7 @@ namespace Transformalize.Transforms.Jint {
         /// <param name="reader"></param>
         /// <param name="script"></param>
         /// <returns></returns>
-        static string ReadScript(IContext context, IReader reader, Script script) {
+        private static string ReadScript(IContext context, IReader reader, Script script) {
             var content = string.Empty;
 
             if (script.Content != string.Empty)

@@ -656,7 +656,26 @@ namespace Transformalize.Configuration {
         }
 
         public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, PageSize));
-        public Regex FieldMatcher { get; set; }
+
+        internal Regex FieldMatcher { get; set; }
+        public IEnumerable<Field> GetFieldMatches(string content) {
+            var matches = FieldMatcher.Matches(content);
+
+            var names = new HashSet<string>();
+            foreach (Match match in matches) {
+                names.Add(match.Value);
+            }
+
+            var fields = new List<Field>();
+
+            foreach (var name in names) {
+                if (TryGetField(name, out var newField)) {
+                    fields.Add(newField);
+                }
+
+            }
+            return fields;
+        }
 
         [Cfg(value = false)]
         public bool IgnoreDuplicateKey { get; set; }

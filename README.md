@@ -141,7 +141,7 @@ to follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
 * [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) on a local instance of SQL Server
-* an editor (e.g. [Visual Studio Code](https://code.visualstudio.com/)) 
+* an editor (recommended: [Visual Studio Code](https://code.visualstudio.com/) with [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize)) 
 * a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
 
 First, get familiar with your input. I've provided a Northwind partial schema below.
@@ -244,7 +244,6 @@ and add *Revenue* like this:
 <calculated-fields>
   <add name="Revenue" 
        type="decimal" 
-       engine="jint" 
        t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```

@@ -125,6 +125,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\Incrementer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParallelDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParallelPipeline.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Batch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
@@ -172,7 +173,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullSchemaReader.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTakeAndReturnRows.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullBatchReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTemplateEngine.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullUpdater.cs" />
@@ -236,7 +237,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetSystemFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\ShouldRunTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\StringTruncateTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\TypeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TagTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToLowerTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToStringTransform.cs" />
@@ -247,7 +247,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TrimStartTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TrimTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\UtcNowTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\TypedEntityMatchingKeysReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Utility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AnyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\ContainsValidate.cs" />

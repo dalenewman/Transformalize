@@ -82,18 +82,7 @@ namespace Transformalize.Transforms.CSharp {
         /// <param name="logger"></param>
         private static void WriteMethods(Process process, Entity entity, Field field, StringBuilder sb, IPipelineLogger logger) {
             foreach (var transform in field.Transforms.Where(t => t.Method == "cs" || t.Method == "csharp")) {
-                var tc = new PipelineContext(logger, process, entity, field, transform);
-                var input = process.ParametersToFields(transform.Parameters, field).ToList();
-
-                var matches = entity.FieldMatcher.Matches(transform.Script);
-                foreach (Match match in matches) {
-                    Field newField;
-                    if (entity.TryGetField(match.Value, out newField) && input.All(f => f.Alias != newField.Alias)) {
-                        input.Add(newField);
-                    }
-                }
-
-                WriteMethod(tc, input, sb);
+                WriteMethod(new PipelineContext(logger, process, entity, field, transform), entity.GetFieldMatches(transform.Script), sb);
             }
         }
 
@@ -130,8 +119,17 @@ namespace Transformalize.Transforms.CSharp {
             }
 
             sb.Append("        ");
-            // handles csharp body or an expression
-            sb.AppendLine(tc.Operation.Script.Contains("return ") ? tc.Operation.Script : "return " + (tc.Operation.Script.EndsWith(";") ? tc.Operation.Script : tc.Operation.Script + ";"));
+
+            // handle csharp body or an expression
+            if (!tc.Operation.Script.Contains("return ")) {
+                tc.Operation.Script = "return " + tc.Operation.Script;
+            }
+
+            if (!tc.Operation.Script.EndsWith(";")) {
+                tc.Operation.Script += ";";
+            }
+
+            sb.AppendLine(tc.Operation.Script);
             sb.AppendLine("    }");
 
         }

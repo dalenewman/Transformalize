@@ -16,13 +16,10 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading.Tasks;
-using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -33,17 +30,16 @@ namespace Transformalize.Providers.SqlServer {
 
     public class SqlServerWriter : IWrite {
 
-        SqlBulkCopyOptions _bulkCopyOptions;
-        readonly OutputContext _output;
+        private SqlBulkCopyOptions _bulkCopyOptions;
+        private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
-        readonly ITakeAndReturnRows _outputKeysReader;
-        readonly IWrite _sqlUpdater;
-        readonly Field[] _keys;
+        private readonly IBatchReader _outputKeysReader;
+        private readonly IWrite _sqlUpdater;
 
         public SqlServerWriter(
             OutputContext output,
             IConnectionFactory cf,
-            ITakeAndReturnRows matcher,
+            IBatchReader matcher,
             IWrite updater
         ) {
             _output = output;
@@ -56,19 +52,19 @@ namespace Transformalize.Providers.SqlServer {
             TurnOptionOff(SqlBulkCopyOptions.FireTriggers);
             TurnOptionOn(SqlBulkCopyOptions.KeepNulls);
 
-            _keys = output.Entity.GetPrimaryKey();
             _outputKeysReader = matcher;
             _sqlUpdater = updater;
         }
 
-        void TurnOptionOn(SqlBulkCopyOptions option) {
+        private void TurnOptionOn(SqlBulkCopyOptions option) {
             _bulkCopyOptions |= option;
         }
-        bool IsOptionOn(SqlBulkCopyOptions option) {
+
+        private bool IsOptionOn(SqlBulkCopyOptions option) {
             return (_bulkCopyOptions & option) == option;
         }
 
-        void TurnOptionOff(SqlBulkCopyOptions option) {
+        private void TurnOptionOff(SqlBulkCopyOptions option) {
             if (IsOptionOn(option))
                 _bulkCopyOptions ^= option;
         }
@@ -103,28 +99,22 @@ namespace Transformalize.Providers.SqlServer {
                         inserts.AddRange(batch);
                         Insert(bulkCopy, dt, inserts);
                     } else {
-                        var inserts = new ConcurrentBag<IRow>();
-                        var updates = new ConcurrentBag<IRow>();
+                        var inserts = new List<IRow>();
+                        var updates = new List<IRow>();
                         var tflHashCode = _output.Entity.TflHashCode();
                         var tflDeleted = _output.Entity.TflDeleted();
-                        var matching = _outputKeysReader.Read(batch).AsParallel().ToArray();
+                        var matching = _outputKeysReader.Read(batch);
 
-                        Parallel.ForEach(batch, (row) => {
-                            var match = matching.FirstOrDefault(f => f.Match(_keys, row));
-                            if (match == null) {
-                                inserts.Add(row);
-                            } else {
-                                if (match[tflDeleted].Equals(true)) {
+                        for (int i = 0, batchLength = batch.Length; i < batchLength; i++) {
+                            var row = batch[i];
+                            if (matching.Contains(i)) {
+                                if (matching[i][tflDeleted].Equals(true) || !matching[i][tflHashCode].Equals(row[tflHashCode])) {
                                     updates.Add(row);
-                                } else {
-                                    var destination = (int)match[tflHashCode];
-                                    var source = (int)row[tflHashCode];
-                                    if (source != destination) {
-                                        updates.Add(row);
-                                    }
                                 }
+                            } else {
+                                inserts.Add(row);
                             }
-                        });
+                        }
 
                         Insert(bulkCopy, dt, inserts);
 

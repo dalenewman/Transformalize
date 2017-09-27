@@ -89,7 +89,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // IInputVersionDetector
             // IRead (Input, per Entity)
             // IOutputController
-            // -- ITakeAndReturnRows (for matching)
+            // -- IBatchReader (for matching)
             // -- IWriteMasterUpdateQuery (for updating)
             // IUpdate
             // IWrite
@@ -210,19 +210,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
 
                         // matcher determines what's an update vs. and insert
-                        ITakeAndReturnRows matcher;
-                        if (entity.Update) {
-                            switch (output.Connection.Provider) {
-                                case "sqlite":
-                                    matcher = new TypedEntityMatchingKeysReader(new AdoEntityMatchingKeysReader(output, cf, rowFactory), output);
-                                    break;
-                                default:
-                                    matcher = new AdoEntityMatchingKeysReader(output, cf, rowFactory);
-                                    break;
-                            }
-                        } else {
-                            matcher = new NullTakeAndReturnRows();
-                        }
+                        var matcher = entity.Update ? (IBatchReader) new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
 
                         switch (output.Connection.Provider) {
                             case "sqlserver":

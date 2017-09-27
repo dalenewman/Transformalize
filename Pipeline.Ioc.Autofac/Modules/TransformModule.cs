@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
@@ -215,7 +217,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register<ITransform>((c, p) => {
                 var context = p.Positional<IContext>(0);
+                var strict = new HashSet<string>(new[] { "int", "int32", "string", "bool", "boolean", "double" });
                 switch (context.Field.Engine) {
+                    case "auto":
+                        var fields = context.Entity.GetFieldMatches(context.Operation.Script);
+                        return fields.All(f => strict.Contains(f.Type)) ?
+                            (ITransform)new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>()) :
+                            new JintTransform(context, c.Resolve<IReader>());
                     case "jint":
                         return new JintTransform(context, c.Resolve<IReader>());
                     default:
