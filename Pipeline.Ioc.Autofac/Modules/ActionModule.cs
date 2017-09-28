@@ -46,6 +46,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
     /// * print
     /// * log
     /// * exit
+    /// * archive
     /// 
     /// </summary>
     public class ActionModule : Module {
@@ -78,6 +79,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         new FileCopyAction(context, action);
                 case "move":
                     return new FileMoveAction(context, action);
+                case "archive":
+                    return new FileArchiveAction(context, action);
                 case "replace":
                     return new FileReplaceAction(context, action);
                 case "print":

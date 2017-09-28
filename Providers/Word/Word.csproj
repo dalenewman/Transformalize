@@ -33,32 +33,41 @@
     <Reference Include="CfgNet, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Cfg-NET.0.10.2\lib\net452\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.CommonTranslatorLib">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.CommonTranslatorLib.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.CommonTranslatorLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.CommonTranslatorLib.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.DocFileFormat">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.DocFileFormat.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.DocFileFormat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.DocFileFormat.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.OfficeDrawing">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.OfficeDrawing.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.OfficeDrawing, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.OfficeDrawing.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.OpenXmlLib">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.OpenXmlLib.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.OpenXmlLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.OpenXmlLib.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.Shell">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.Shell.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.Shell, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.StructuredStorage">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.StructuredStorage.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.StructuredStorage, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.StructuredStorage.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.Tools">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.Tools.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.Tools, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.Tools.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.WordprocessingMLMapping">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.WordprocessingMLMapping.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.WordprocessingMLMapping, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.WordprocessingMLMapping.dll</HintPath>
     </Reference>
-    <Reference Include="DIaLOGIKa.b2xtranslator.ZipUtils">
-      <HintPath>..\..\packages\doc2x_r649\DIaLOGIKa.b2xtranslator.ZipUtils.dll</HintPath>
+    <Reference Include="DIaLOGIKa.b2xtranslator.ZipUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=14be2f57e5013040, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dependencies\doc2x_r649\DIaLOGIKa.b2xtranslator.ZipUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -15,9 +15,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.CSharp {
@@ -27,16 +24,13 @@ namespace Transformalize.Transforms.CSharp {
         public CsharpTransform(IContext context) : base(context, null) {
             var name = Utility.GetMethodName(context);
 
-            ConcurrentDictionary<string, CSharpHost.UserCodeInvoker> userCodes;
-
-            if (CSharpHost.Cache.TryGetValue(context.Process.Name, out userCodes)) {
+            if (CSharpHost.Cache.TryGetValue(context.Process.Name, out var userCodes)) {
                 if (userCodes.TryGetValue(name, out _userCode))
                     return;
             }
 
             context.Error($"Could not find {name} method in user's code");
-            var dv = Constants.TypeDefaults()[context.Field.Type];
-            _userCode = objects => dv;
+            Run = false;
         }
 
         public override IRow Operate(IRow row) {
@@ -45,8 +39,5 @@ namespace Transformalize.Transforms.CSharp {
             return row;
         }
 
-        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-            return rows.Select(Operate);
-        }
     }
 }

@@ -37,6 +37,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             // return true or false, validators
             builder.Register((c, p) => new AnyValidator(p.Positional<IContext>(0))).Named<IValidate>("any");
+            builder.Register((c, p) => new AllValidator(p.Positional<IContext>(0))).Named<IValidate>("all");
             builder.Register((c, p) => new StartsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("startswith");
             builder.Register((c, p) => new EndsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("endswith");
             builder.Register((c, p) => new InValidator(p.Positional<IContext>(0))).Named<IValidate>("in");

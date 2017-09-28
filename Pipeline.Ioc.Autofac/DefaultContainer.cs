@@ -33,6 +33,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
             builder.RegisterCallback(new ShorthandTransformModule().Configure);
+            builder.RegisterCallback(new ShorthandValidateModule().Configure);
             builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 

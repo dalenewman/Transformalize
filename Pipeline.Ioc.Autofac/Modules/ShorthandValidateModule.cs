@@ -63,7 +63,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     });
                     root.Signatures.Add(Simple("domain"));
                     root.Signatures.Add(Simple("map"));
-                   
+
+                    root.Methods.Add(new Method { Name = "required", Signature = "none" });
                     root.Methods.Add(new Method { Name = "maxlength", Signature = "length" });
                     root.Methods.Add(new Method { Name = "minlength", Signature = "length" });
                     root.Methods.Add(new Method { Name = "range", Signature = "range" });

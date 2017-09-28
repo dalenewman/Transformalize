@@ -95,9 +95,9 @@ namespace Transformalize.Transforms.CSharp {
             using (var sr = new StringReader(code)) {
                 string line;
                 while ((line = sr.ReadLine()) != null) {
-                    _context.Error($"{lineNo:0000} {line}");
+                    _context.Error($"{lineNo:0000} {line.Replace("{","{{").Replace("}","}}")}");
+                    ++lineNo;
                 }
-                ++lineNo;
             }
         }
 

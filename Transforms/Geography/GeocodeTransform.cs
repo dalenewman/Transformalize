@@ -38,9 +38,6 @@ namespace Transformalize.Transforms.Geography {
         private readonly ComponentFilter _componentFilter;
 
         public GeocodeTransform(IContext context) : base(context, "object") {
-            if (IsNotReceiving("string")) {
-                return;
-            }
 
             if (context.Operation.Parameters.Any()) {
 

@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
-namespace Transformalize.Providers.File {
+namespace Transformalize.Providers.File.Actions {
 
     public class OpenAction : IAction {
         private readonly Action _action;
