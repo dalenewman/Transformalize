@@ -21,9 +21,8 @@
     var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
-    Field bv;
     if (hasActions) {
-        bv = allFields.FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
+        var bv = allFields.FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
         if (bv == null) {
             hasActions = false;
         } else {

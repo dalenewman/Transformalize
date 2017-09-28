@@ -92,7 +92,7 @@ namespace Pipeline.Web.Orchard.Modules {
             // IInputVersionDetector
             // IRead (Input, per Entity)
             // IOutputController
-            // -- ITakeAndReturnRows (for matching)
+            // -- IBatchReader (for matching)
             // -- IWriteMasterUpdateQuery (for updating)
             // IUpdate
             // IWrite
@@ -224,14 +224,14 @@ namespace Pipeline.Web.Orchard.Modules {
                                 return new SqlServerWriter(
                                     output,
                                     cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    ctx.ResolveNamed<IBatchReader>(entity.Key),
                                     new AdoEntityUpdater(output, cf)
                                 );
                             case "sqlce":
                                 return new SqlCeWriter(
                                     output,
                                     cf,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    ctx.ResolveNamed<IBatchReader>(entity.Key),
                                     new AdoEntityUpdater(output, cf)
                                 );
                             case "mysql":
@@ -239,7 +239,7 @@ namespace Pipeline.Web.Orchard.Modules {
                             case "sqlite":
                                 return new AdoEntityWriter(
                                     output,
-                                    ctx.ResolveNamed<ITakeAndReturnRows>(entity.Key),
+                                    ctx.ResolveNamed<IBatchReader>(entity.Key),
                                     new AdoEntityInserter(output, cf),
                                     entity.Update ? (IWrite)new AdoEntityUpdater(output, cf) : new NullWriter(output)
                                 );
@@ -279,20 +279,14 @@ namespace Pipeline.Web.Orchard.Modules {
                     }).Named<IOutputController>(entity.Key);
 
                     // OUTPUT ROW MATCHER
-                    builder.Register(ctx => {
+                    builder.Register<IBatchReader>(ctx => {
                         if (!entity.Update)
-                            return new NullTakeAndReturnRows();
-
+                            return new NullBatchReader();
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
                         var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                        switch (output.Connection.Provider) {
-                            case "sqlite":
-                                return new TypedEntityMatchingKeysReader(new AdoEntityMatchingKeysReader(output, cf, rowFactory), output);
-                            default:
-                                return (ITakeAndReturnRows)new AdoEntityMatchingKeysReader(output, cf, rowFactory);
-                        }
-                    }).Named<ITakeAndReturnRows>(entity.Key);
+                        return new AdoEntityMatchingKeysReader(output, cf, rowFactory);
+                    }).Named<IBatchReader>(entity.Key);
 
                     // MASTER UPDATE QUERY
                     builder.Register<IWriteMasterUpdateQuery>(ctx => {

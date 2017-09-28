@@ -195,7 +195,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     new Transformalize.Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 
-
             // javascript implementation is jint only in Orchard CMS
             builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("js");
             builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("javascript");

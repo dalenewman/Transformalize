@@ -217,7 +217,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Signatures.Add(new Signature {
                 Name = "xpath",
                 Parameters = new List<Parameter> {
-                    new Parameter {Name = "xpath"},
+                    new Parameter {Name = "expression"},
                     new Parameter {Name = "name-space", Value = ""},
                     new Parameter {Name = "url", Value = ""}
                 }

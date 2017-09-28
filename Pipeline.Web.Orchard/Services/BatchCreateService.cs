@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
-using Orchard.Core.Contents;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.UI.Notify;
