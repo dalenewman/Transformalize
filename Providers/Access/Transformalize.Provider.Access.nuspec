@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Provider.Access</id>
+    <version>0.2.7-beta</version>
+    <title>Transformalize Provider for 32-bit Access</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Provider for 32-bit Access</description>
+    <releaseNotes>beta</releaseNotes>
+    <copyright>Copyright 2013-2017</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="net452">
+        <dependency id="Transformalize.Provider.Ado" version="0.2.7-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="bin\Release\Transformalize.Provider.Access.dll" target="lib\net452\Transformalize.Provider.Access.dll" />
+  </files>
+</package>
