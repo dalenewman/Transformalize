@@ -22,7 +22,7 @@
 
   <connections>
     <add name="input" connection-string="Server=@(SqlServer);Database=NorthWind;Trusted_Connection=True;" />
-    <add name="output" database="NorthWindStar" port="1433" />
+    <add name="output" database="TflNorthwind" port="1433" />
   </connections>
 
   <maps>

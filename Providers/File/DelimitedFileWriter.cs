@@ -41,8 +41,10 @@ namespace Transformalize.Providers.File {
 
             using (engine.BeginWriteFile(file)) {
                 foreach (var row in rows) {
-                    for (var i = 0; i < _context.OutputFields.Length; i++) {
-                        var field = _context.OutputFields[i];
+
+                    var i = 0;
+                    foreach (var field in _context.OutputFields) {
+                        
                         switch (field.Type) {
                             case "byte[]":
                                 engine[i] = Convert.ToBase64String((byte[])row[field]);
@@ -53,13 +55,15 @@ namespace Transformalize.Providers.File {
                                 engine[i] = row[field];
                                 break;
                             case "datetime":
-                                engine[i] = ((DateTime)row[field]).ToString("o");
+                                engine[i] = field.Format == string.Empty ? ((DateTime)row[field]).ToString("o") : ((DateTime)row[field]).ToString(field.Format);
                                 break;
                             default:
                                 engine[i] = row[field].ToString();
                                 break;
                         }
+                        ++i;
                     }
+
                     engine.WriteNextValues();
                 }
                 if (engine.ErrorManager.HasErrors) {

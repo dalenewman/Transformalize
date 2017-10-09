@@ -144,7 +144,7 @@ to follow along, you need:
 * an editor (recommended: [Visual Studio Code](https://code.visualstudio.com/) with [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize)) 
 * a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
 
-First, get familiar with your input. I've provided a Northwind partial schema below.
+First, get familiar with Northwind:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
@@ -174,7 +174,7 @@ Open your editor and paste this in:
 ```
 
 Save the arrangement as *NorthWind.xml* and 
-use the **`tfl.exe`** CLI to run it:
+use **`tfl.exe`** to run it:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>

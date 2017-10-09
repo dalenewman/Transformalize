@@ -18,12 +18,14 @@
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class ContainsValidator : StringValidate {
         private readonly Field[] _input;
         private readonly Field _valueField;
         private readonly bool _valueIsField;
+        private readonly BetterFormat _betterFormat;
 
         public ContainsValidator(IContext context) : base(context) {
 
@@ -36,6 +38,16 @@ namespace Transformalize.Validators {
             _input = MultipleInput();
             _valueIsField = context.Entity.TryGetField(context.Operation.Value, out _valueField);
 
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                if (_valueIsField) {
+                    help = $"{context.Field.Label} must contain {{{_valueField.Alias}}}.";
+                } else {
+                    help = $"{context.Field.Label} must contain {context.Operation.Value}.";
+                }
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+
         }
 
         public override IRow Operate(IRow row) {
@@ -43,7 +55,7 @@ namespace Transformalize.Validators {
             var valid = _input.Any(f => GetString(row, f).Contains(valueItMustContain));
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, $"Must contain {valueItMustContain}.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

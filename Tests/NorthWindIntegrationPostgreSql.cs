@@ -41,7 +41,7 @@ namespace Tests {
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "postgresql",
-            ConnectionString = "Server=localhost;Port=5432;Database=NorthWindStar;User Id=postgres;Password=devdev1!;"
+            ConnectionString = "Server=localhost;Port=5432;Database=TflNorthWind;User Id=postgres;Password=devdev1!;"
         };
 
         [TestMethod]

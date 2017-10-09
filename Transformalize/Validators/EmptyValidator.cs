@@ -17,11 +17,13 @@
 #endregion
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class EmptyValidator : StringValidate {
 
         private readonly Field _input;
+        private readonly BetterFormat _betterFormat;
 
         public EmptyValidator(IContext context) : base(context) {
             if (!Run)
@@ -31,13 +33,18 @@ namespace Transformalize.Validators {
                 return;
             }
             _input = SingleInput();
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{context.Field.Label} must be empty.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
             var valid = GetString(row, _input) == string.Empty;
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, "Must be empty.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

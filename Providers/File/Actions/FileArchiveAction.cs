@@ -40,13 +40,12 @@ namespace Transformalize.Providers.File.Actions {
             if (!Path.HasExtension(to.FullName)) {
                 // give it same name as from file name
                 var date = DateTime.UtcNow;
-                var fromName = $"{Path.GetFileNameWithoutExtension(from.Name)}-{date:HH-mm-ss-fff}{Path.GetExtension(from.Name)}";
+                var fromName = $"{Path.GetFileNameWithoutExtension(from.Name)}-{date:yyyy-MM-dd-HH-mm-ss-fff}{Path.GetExtension(from.Name)}";
 
                 var year = date.Year.ToString();
                 var month = $"{date:MM-MMM}".ToUpper();
-                var day = $"{date:dd}";
 
-                to = new FileInfo(Path.Combine(to.FullName, year, month, day, fromName));
+                to = new FileInfo(Path.Combine(to.FullName, year, month, fromName));
             }
 
             _context.Info("Archiving {0} from {1} to {2}", from.Name, from.DirectoryName, to.DirectoryName);

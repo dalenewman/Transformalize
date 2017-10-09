@@ -17,12 +17,14 @@
 #endregion
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class RequiredValidator : StringValidate {
 
         private readonly Field _input;
         private readonly object _default;
+        private readonly BetterFormat _betterFormat;
 
         public RequiredValidator(IContext context) : base(context) {
             if (!Run) {
@@ -31,13 +33,19 @@ namespace Transformalize.Validators {
             var defaults = Constants.TypeDefaults();
             _input = SingleInput();
             _default = _input.Default == Constants.DefaultSetting ? defaults[_input.Type] : _input.Convert(_input.Default);
+
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{context.Field.Label} is required.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
             var valid = !row[_input].Equals(_default);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, "Is required.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

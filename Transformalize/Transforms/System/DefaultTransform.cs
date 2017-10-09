@@ -35,9 +35,9 @@ namespace Transformalize.Transforms.System {
             public object Value { private get; set; }
             public string StringValue { private get; set; }
             public bool DefaultWhiteSpace { get; set; }
+            public bool DefaultEmpty { get; set; }
 
-            public FieldDefault(string name, string alias, short index, short masterIndex, short keyIndex, string type)
-            {
+            public FieldDefault(string name, string alias, short index, short masterIndex, short keyIndex, string type) {
                 Name = name;
                 Alias = alias;
                 Index = index;
@@ -69,7 +69,8 @@ namespace Transformalize.Transforms.System {
                 var fieldDefault = new FieldDefault(field.Name, field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
                     Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
                     StringValue = hasDefault ? field.Default : string.Empty,
-                    DefaultWhiteSpace = field.DefaultWhiteSpace
+                    DefaultWhiteSpace = field.DefaultWhiteSpace,
+                    DefaultEmpty = field.DefaultEmpty
                 };
 
                 if (field.IsCalculated) {
@@ -81,15 +82,34 @@ namespace Transformalize.Transforms.System {
         }
 
         public override IRow Operate(IRow row) {
-            foreach (var field in CalculatedFieldDefaults.Where(f=>row[f] == null)) {
-                field.Setter(row);
-            }
-            foreach (var field in FieldDefaults.Where(f => row[f] == null || f.DefaultWhiteSpace && f.Type == "string" && string.IsNullOrWhiteSpace((string)row[f]))) {
-                field.Setter(row);
-            }
-            // Increment();
             return row;
         }
 
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            foreach (var row in rows) {
+                foreach (var field in CalculatedFieldDefaults.Where(f => row[f] == null)) {
+                    field.Setter(row);
+                }
+                foreach (var field in FieldDefaults) {
+                    if (row[field] == null) {
+                        field.Setter(row);
+                        continue;
+                    }
+                    if (field.Type != "string")
+                        continue;
+
+                    if (field.DefaultWhiteSpace) {
+                        if (((string)row[field]).Trim() == string.Empty) {
+                            field.Setter(row);
+                        }
+                    } else if (field.DefaultEmpty) {
+                        if ((string)row[field] == string.Empty) {
+                            field.Setter(row);
+                        }
+                    }
+                }
+                yield return row;
+            }
+        }
     }
 }

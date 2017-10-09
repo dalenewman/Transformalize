@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
@@ -27,6 +28,7 @@ namespace Transformalize.Validators {
 
         private readonly Field _input;
         private readonly HashSet<object> _map = new HashSet<object>();
+        private readonly BetterFormat _betterFormat;
 
         public MapValidator(IContext context) : base(context) {
 
@@ -40,6 +42,12 @@ namespace Transformalize.Validators {
             }
 
             _input = SingleInput();
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{context.Field.Label}'s value {{{context.Field.Alias}}} is not found in {_map.Count} items.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
@@ -56,7 +64,7 @@ namespace Transformalize.Validators {
             var valid = _map.Contains(row[_input]);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, $"Not found in {_map.Count} items.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

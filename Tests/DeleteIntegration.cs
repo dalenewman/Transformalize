@@ -37,7 +37,7 @@ namespace Tests {
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "sqlserver",
-            ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
+            ConnectionString = "Server=localhost;Database=TflNorthwind;trusted_connection=true;"
         };
 
         [TestMethod]

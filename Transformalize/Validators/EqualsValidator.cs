@@ -19,11 +19,13 @@ using System;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class EqualsValidator : BaseValidate {
         private readonly object _value;
         private readonly Func<IRow, bool> _validator;
+        private readonly BetterFormat _betterFormat;
 
         public EqualsValidator(IContext context) : base(context) {
             if (!Run)
@@ -52,6 +54,16 @@ namespace Transformalize.Validators {
             } else {
                 _validator = row => false;
             }
+
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                if (_value == null) {
+                    help = $"{context.Field.Label} must equal {{{first.Alias}}} in {first.Label}.";
+                } else {
+                    help = $"{context.Field.Label} must equal {_value}.";
+                }
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {

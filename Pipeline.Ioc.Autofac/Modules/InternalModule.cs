@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
@@ -25,6 +27,7 @@ using Transformalize.Nulls;
 using Transformalize.Writers;
 using System.Collections.Generic;
 using Transformalize.Provider.Internal;
+using Transformalize.Providers.File;
 using Transformalize.Providers.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -92,7 +95,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             case "internal":
                                 return new InternalWriter(output);
                             case "text":
-                                return new StringWriter(output);
+                                return new FileStreamWriter(output, Console.OpenStandardOutput());
                             case "log":
                                 return new NLogWriter(output);
                             default:

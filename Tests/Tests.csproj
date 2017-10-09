@@ -91,6 +91,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ReadOnlyNoPrimaryKey.cs" />
     <Compile Include="NorthWindIntegrationAccess.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestAppend.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="TestReader.cs" />
     <Compile Include="TestFormat.cs" />
     <Compile Include="TrimThenStartsWith.cs" />
+    <Compile Include="ValidationMessages.cs" />
     <Compile Include="Validate.cs" />
     <Compile Include="GeoJsonProvider.cs" />
     <Compile Include="VelocityTransform.cs" />

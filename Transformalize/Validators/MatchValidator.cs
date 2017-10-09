@@ -18,6 +18,7 @@
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
@@ -27,6 +28,7 @@ namespace Transformalize.Validators {
     public class MatchValidator : StringValidate {
         private readonly Regex _regex;
         private readonly Field _input;
+        private readonly BetterFormat _betterFormat;
 
         public MatchValidator(IContext context) : base(context) {
 
@@ -39,6 +41,12 @@ namespace Transformalize.Validators {
 #else
             _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
 #endif
+
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{context.Field.Label} must match the regular expression pattern: {Context.Operation.Pattern}.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -47,7 +55,7 @@ namespace Transformalize.Validators {
             row[ValidField] = match.Success;
 
             if (!match.Success) {
-                AppendMessage(row, $"Must match pattern {Context.Operation.Pattern}.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
 
             Increment();

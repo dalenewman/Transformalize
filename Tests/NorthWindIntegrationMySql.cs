@@ -41,7 +41,7 @@ namespace Tests {
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "mysql",
-            ConnectionString = "Server=localhost;Database=northwindstar;Uid=root;Pwd=devdev1!;"
+            ConnectionString = "Server=localhost;Database=TflNorthWind;Uid=root;Pwd=devdev1!;"
         };
 
         [TestMethod]

@@ -36,7 +36,7 @@ namespace Tests {
             const string xml = @"
 <add name='p1' mode='meta'>
     <connections>
-        <add name='input' provider='sqlserver' server='localhost' database='NorthWindStar' />
+        <add name='input' provider='sqlserver' server='localhost' database='TflNorthWind' />
     </connections>
     <entities>
         <add name='e1' query='select OrderDetailsDiscount, OrderDetailsOrderID from NorthWindStar;' />

@@ -46,7 +46,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new EqualsValidator(p.Positional<IContext>(0))).Named<IValidate>("equals");
             builder.Register((c, p) => new EmptyValidator(p.Positional<IContext>(0))).Named<IValidate>("empty");
             builder.Register((c, p) => new DefaultValidator(p.Positional<IContext>(0))).Named<IValidate>("default");
-            builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("numeric");
+            builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("isnumeric");
             builder.Register((c, p) => new MatchValidator(p.Positional<IContext>(0))).Named<IValidate>("matches");
             builder.Register((c, p) => new RequiredValidator(p.Positional<IContext>(0))).Named<IValidate>("required");
             builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0))).Named<IValidate>("map");

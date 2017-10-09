@@ -12,7 +12,7 @@
   </environments>
 
   <connections>
-    <add name="input" connection-string="Server=localhost;Database=NorthWindStar;Trusted_Connection=True;" />
+    <add name="input" connection-string="Server=localhost;Database=TflNorthWind;Trusted_Connection=True;" />
     <add name="output" provider="elasticsearch" server="localhost" port="9200" index="northwind" />
   </connections>
 

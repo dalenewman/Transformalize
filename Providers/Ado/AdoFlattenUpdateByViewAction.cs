@@ -55,7 +55,7 @@ WHERE m.{_model.Batch} > @Threshold;";
 
                 try {
                     _output.Debug(() => command);
-                    var count = _model.Threshold > 0 ? cn.Execute(command, new { _model.Threshold }, commandTimeout: 0, transaction: trans) : cn.Execute(command, commandTimeout: 0, transaction: trans);
+                    var count = cn.Execute(command, new { _model.Threshold }, commandTimeout: 0, transaction: trans);
                     _output.Info($"{count} record{count.Plural()} updated in flat");
                     trans.Commit();
                 } catch (DbException ex) {

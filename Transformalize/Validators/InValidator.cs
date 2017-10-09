@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
@@ -27,6 +28,7 @@ namespace Transformalize.Validators {
         private readonly Field _input;
         private readonly HashSet<object> _set = new HashSet<object>();
         private readonly string _readableDomain;
+        private readonly BetterFormat _betterFormat;
 
         public InValidator(IContext context) : base(context) {
 
@@ -48,13 +50,18 @@ namespace Transformalize.Validators {
             }
 
             _readableDomain = Utility.ReadableDomain(items);
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{context.Field.Label} must be in {_readableDomain}.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
             var valid = _set.Contains(row[_input]);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, $"Must be {_readableDomain}.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

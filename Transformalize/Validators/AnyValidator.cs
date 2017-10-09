@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
@@ -31,6 +32,7 @@ namespace Transformalize.Validators {
 
         private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
         private readonly Func<IRow, bool> _func;
+        private readonly BetterFormat _betterFormat;
 
         public AnyValidator(IContext context) : base(context) {
 
@@ -52,6 +54,11 @@ namespace Transformalize.Validators {
             }
 
             _func = GetFunc(Context.Operation.Operator);
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"At least one of the field(s): {Utility.ReadableDomain(_input.Select(f => f.Field.Alias))} must be {context.Operation.Operator.TrimEnd('s')} to {context.Operation.Value}.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         /// <summary>
@@ -83,7 +90,7 @@ namespace Transformalize.Validators {
             var valid = _func(row);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, $"Must equal {Context.Operation.Value}.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

@@ -116,26 +116,6 @@ namespace Transformalize.Configuration {
         public string InputCapture { get; set; }
 
         /// <summary>
-        /// Optional.  Default is `false`
-        /// 
-        /// Usually a field is set to a default if it is NULL.  If set to true, the default will overwrite blank values as well.
-        /// 
-        ///     <add name="Name" default="None" default-blank="true" />
-        /// </summary>
-        [Cfg(value = false)]
-        public bool DefaultBlank { get; set; }
-
-        /// <summary>
-        /// Optional. Default to `false`
-        /// 
-        /// Usually a field is set to a default if it is NULL.  If this is set to true, the default will overwrite empty values as well (same as DefaultBlank).
-        /// 
-        ///     <add name="Name" default="None" default-empty="true" />
-        /// </summary>
-        [Cfg(value = false)]
-        public bool DefaultEmpty { get; set; }
-
-        /// <summary>
         /// Optional. Default to `false`
         /// 
         /// Usually a field is set to a default if it is NULL.  If this is set to true, the default will overwrite white-space values as well.
@@ -144,6 +124,9 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = false)]
         public bool DefaultWhiteSpace { get; set; }
+
+        [Cfg(value = false)]
+        public bool DefaultEmpty { get; set; }
 
         /// <summary>
         /// Optional. Default is `false`
@@ -601,5 +584,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = 0)]
         public int Height { get; set; }
+
+        [Cfg(value="")]
+        public string Help { get; set; }
     }
 }

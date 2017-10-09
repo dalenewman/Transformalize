@@ -17,10 +17,12 @@
 #endregion
 using System;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class NumericValidator : StringValidate {
         private readonly Func<IRow, bool> _transform;
+        private readonly BetterFormat _betterFormat;
 
         public NumericValidator(IContext context) : base(context) {
             if (!Run)
@@ -35,6 +37,11 @@ namespace Transformalize.Validators {
                     return double.TryParse(GetString(row, input), out val);
                 };
             }
+            var help = context.Field.Help;
+            if (help == string.Empty) {
+                help = $"The value {{{context.Field.Alias}}} in {context.Field.Label} must be numeric.";
+            }
+            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {

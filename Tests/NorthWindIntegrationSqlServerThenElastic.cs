@@ -50,7 +50,7 @@ namespace Tests {
         public Connection OutputConnection { get; set; } = new Connection {
             Name = "output",
             Provider = "sqlserver",
-            ConnectionString = "Server=localhost;Database=NorthWindStar;trusted_connection=true;"
+            ConnectionString = "Server=localhost;Database=TflNorthWind;trusted_connection=true;"
         };
 
         public Connection ElasticConnection { get; set; } = new Connection {
