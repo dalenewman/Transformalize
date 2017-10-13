@@ -59,7 +59,9 @@ namespace Pipeline.Web.Orchard.Services {
                 url = string.Format(url, args.ToArray());
             }
 
-            var flurl = new Flurl.Url(VirtualPathUtility.ToAbsolute(url));
+            url = url.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? url : VirtualPathUtility.ToAbsolute(url);
+
+            var flurl = new Flurl.Url(url);
             foreach (var p in parameters) {
                 flurl.QueryParams.Add(p.Key, p.Value);
             }

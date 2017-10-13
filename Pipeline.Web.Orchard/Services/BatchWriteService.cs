@@ -37,7 +37,7 @@ namespace Pipeline.Web.Orchard.Services {
 
             var batchWrite = process.Actions.FirstOrDefault(a => a.Description.Equals(BatchWriteIndicator, StringComparison.OrdinalIgnoreCase));
 
-            if (!(batchWrite?.Id > 0)) {
+            if (!(batchWrite != null && batchWrite.Id > 0)) {
                 const string message = "Could not find BatchWrite action.  You need to have an action with description 'BatchWrite' that is responsible for writing your batch somewhere.";
                 Logger.Error(message);
                 _orchardServices.Notifier.Error(T(message));
@@ -72,10 +72,9 @@ namespace Pipeline.Web.Orchard.Services {
                     var values = request.Form.GetValues("row") ?? request.QueryString.GetValues("row"); // from the request
                     if (values != null) {
                         foreach (var value in values) {
-                            var row = new CfgRow(new[] { "BatchId", "BatchValue" }) {
-                                ["BatchId"] = batchId,
-                                ["BatchValue"] = value
-                            };
+                            var row = new CfgRow(new[] { "BatchId", "BatchValue" });
+                            row["BatchId"] = batchId;
+                            row["BatchValue"] = value;
                             rows.Add(row);
                         }
                     }

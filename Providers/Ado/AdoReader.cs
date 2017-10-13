@@ -37,7 +37,7 @@ namespace Transformalize.Providers.Ado {
         private readonly string _filter;
         private readonly string _schemaPrefix;
 
-        public AdoReader(IContext context, Field[] fields, IConnectionFactory cf, IRowFactory rowFactory, ReadFrom readFrom) {
+        public AdoReader(IConnectionContext context, Field[] fields, IConnectionFactory cf, IRowFactory rowFactory, ReadFrom readFrom) {
             _context = context;
             _cf = cf;
             _connection = readFrom == ReadFrom.Output

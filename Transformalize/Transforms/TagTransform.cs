@@ -122,13 +122,6 @@ namespace Transformalize.Transforms {
                 Context.Field.Raw = true;
             }
 
-            if (Context.Field.Length != "max") {
-                var calculatedLength = _attributes.Sum(a => a.Length()) + Context.Operation.Tag.Length + 5;  // 5 = <></>
-                if (calculatedLength > Convert.ToInt32(Context.Field.Length)) {
-                    Context.Warn($"The calculated length of {Context.Field.Alias} is {calculatedLength}, but it's length is set to {Context.Field.Length}.  Truncation may occur.  You need to set the length so it can accomadate tag characters, tag name, attributes, and the field's content.");
-                }
-            }
-
             _encode = (row) => Context.Operation.Encode ? Encode(row[body].ToString()) : row[body];
         }
 

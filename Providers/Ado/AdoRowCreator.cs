@@ -25,12 +25,12 @@ namespace Transformalize.Providers.Ado {
 
     public class AdoRowCreator {
 
-        private readonly IContext _context;
+        private readonly IConnectionContext _context;
         private readonly IRowFactory _rowFactory;
         private bool[] _errors;
         private readonly Dictionary<string, Type> _typeMap;
 
-        public AdoRowCreator(IContext context, IRowFactory rowFactory) {
+        public AdoRowCreator(IConnectionContext context, IRowFactory rowFactory) {
             _errors = null;
             _context = context;
             _rowFactory = rowFactory;
@@ -49,8 +49,10 @@ namespace Transformalize.Providers.Ado {
                     if (!_errors[i])
                         continue;
 
-                    if (fields[i].Type != "char"){
-                        _context.Error("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
+                    if (fields[i].Type != "char") {
+                        if (_context.Connection.Provider != "sqlite") {
+                            _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
+                        }
                     }
                 }
             }

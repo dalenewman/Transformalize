@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Linq;
 using System.Text;
 using Transformalize.Configuration;
@@ -45,6 +47,16 @@ namespace Transformalize.Impl {
                 switch (field.Type) {
                     case "byte[]":
                         builder.Append("0x" + string.Format("{0:X}", Utility.BytesToHexString(value as byte[]).TrimStart(new[] { '0' })));
+                        break;
+                    case "date":
+                    case "datetime":
+                        if (field.Format != string.Empty) {
+                            var date = (DateTime)value;
+                            var formatted = date.ToString(field.Format);
+                            builder.Append(Escape(formatted));
+                        } else {
+                            builder.Append(Escape(value.ToString()));
+                        }
                         break;
                     default:
                         builder.Append(Escape(value.ToString()));

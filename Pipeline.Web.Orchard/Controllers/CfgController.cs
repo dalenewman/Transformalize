@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
@@ -275,6 +276,8 @@ namespace Pipeline.Web.Orchard.Controllers {
                                         parameters["entity"] = process.Entities.First().Alias;
                                         var batchParameters = _batchCreateService.Create(process, parameters);
 
+                                        Common.AddOrchardVariables(batchParameters, _orchardServices, Request);
+
                                         batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
                                         var count = _batchWriteService.Write(Request, process, batchParameters);
 
@@ -283,14 +286,23 @@ namespace Pipeline.Web.Orchard.Controllers {
                                             if (_batchRunService.Run(action, batchParameters)) {
                                                 if (action.Url == string.Empty) {
                                                     if (batchParameters.ContainsKey("BatchId")) {
-                                                        _orchardServices.Notifier.Information(T($"Processed {count} records in batch {batchParameters["BatchId"]}."));
+                                                        _orchardServices.Notifier.Information(T(string.Format("Processed {0} records in batch {1}.", count, batchParameters["BatchId"])));
                                                     } else {
-                                                        _orchardServices.Notifier.Information(T($"Processed {count} records."));
+                                                        _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
                                                     }
-                                                } else {
-                                                    return _batchRedirectService.Redirect(action.Url, batchParameters);
+                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Report", new { Id = id}) : HttpContext.Request.UrlReferrer.ToString();
+                                                    return _batchRedirectService.Redirect(referrer, batchParameters);
                                                 }
+                                                return _batchRedirectService.Redirect(action.Url, batchParameters);
                                             }
+
+                                            var message = batchParameters.ContainsKey("BatchId") ? string.Format("Batch {0} failed.", batchParameters["BatchId"]) : "Batch failed.";
+                                            Logger.Error(message);
+                                            _orchardServices.Notifier.Error(T(message));
+                                            foreach (var key in batchParameters.Keys) {
+                                                Logger.Error("Batch Parameter {0} = {1}.", key, batchParameters[key]);
+                                            }
+                                            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, message);
                                         }
                                     } else {
                                         return new HttpUnauthorizedResult("You do not have access to this bulk action.");

@@ -126,7 +126,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     }
 
                     // if key filter exists
-                    if (entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
+                    if (entity.GetPrimaryKey().Any() && entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
                         if (entity.GetPrimaryKey().All(pk => entity.Filter.First(i => i.Field == pk.Alias || i.Field == pk.Name).Value == (pk.Default == Constants.DefaultSetting ? Constants.StringDefaults()[pk.Type] : pk.Default))) {
                             // this is a form insert, create a new default row and apply parameters
                             return new ParameterRowReader(input, new DefaultRowReader(input, rowFactory));
@@ -137,7 +137,7 @@ namespace Pipeline.Web.Orchard.Modules {
                             return new ParameterRowReader(input, dataReader);
                         }
                     }
-
+                     
                     return dataReader;
                 }).Named<IRead>(entity.Key);
 

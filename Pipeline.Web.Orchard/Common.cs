@@ -39,10 +39,10 @@ namespace Pipeline.Web.Orchard {
         }
 
         public static string GetSafeFileName(string user, string name, string ext) {
-            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{name}.{ext.TrimStart('.')}";
+            return string.Format("{0}-{1:yyyy-MM-dd-HH-mm-ss}-{2}.{3}", user, DateTime.UtcNow, name, ext.TrimStart('.'));
         }
         public static string GetSafeFileName(string user, string name) {
-            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{name}";
+            return string.Format("{0}-{1:yyyy-MM-dd-HH-mm-ss}-{2}", user, DateTime.UtcNow, name);
         }
 
         public static string GetAppFolder() {
@@ -61,7 +61,7 @@ namespace Pipeline.Web.Orchard {
 
                 foreach (var key in entity.GetPrimaryKey()) {
                     if (entity.Filter.All(f => f.Field != key.Alias)) {
-                        entity.Filter.Add(new Filter { Field = key.Alias, Value = string.Concat(part.PlaceHolderStyle[0], part.PlaceHolderStyle[1], key.Alias, part.PlaceHolderStyle[2])});
+                        entity.Filter.Add(new Filter { Field = key.Alias, Value = string.Concat(part.PlaceHolderStyle[0], part.PlaceHolderStyle[1], key.Alias, part.PlaceHolderStyle[2]) });
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace Pipeline.Web.Orchard {
             var active = process.GetActiveParameters();
             if (active.Count == 0) {
                 process.Environments.Clear();
-                process.Environments.Add(new Transformalize.Configuration.Environment { Name = "One", Parameters = new List<Parameter>()});
+                process.Environments.Add(new Transformalize.Configuration.Environment { Name = "One", Parameters = new List<Parameter>() });
                 active = process.Environments.First().Parameters;
             }
             foreach (var field in process.GetAllFields().Where(f => f.Input)) {
@@ -113,18 +113,6 @@ namespace Pipeline.Web.Orchard {
                     }
                 }
             }
-            if (!parameters.ContainsKey("user")) {
-                var defaultUser = ConfigurationManager.AppSettings["default-user"];
-                if (!string.IsNullOrEmpty(defaultUser)) {
-                    parameters["user"] = defaultUser;
-                }
-            }
-            if (!parameters.ContainsKey("password")) {
-                var defaultPassword = ConfigurationManager.AppSettings["default-password"];
-                if (!string.IsNullOrEmpty(defaultPassword)) {
-                    parameters["password"] = defaultPassword;
-                }
-            }
 
             // handle input file
             int inputFileId;
@@ -143,12 +131,21 @@ namespace Pipeline.Web.Orchard {
                 parameters[Common.InputFileIdName] = "0";
             }
 
+            AddOrchardVariables(parameters, orchard, request);
+            return parameters;
+        }
+
+        public static void AddOrchardVariables(IDictionary<string,string> parameters, IOrchardServices orchard, HttpRequestBase request) {
             parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
             parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
             parameters["Orchard.Url"] = HttpContext.Current.Request.Url.PathAndQuery;
-            parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : request?.UrlReferrer?.ToString() ?? orchard.WorkContext.CurrentSite.HomePage;
-
-            return parameters;
+            string returnUrl;
+            if (request != null && request.UrlReferrer != null) {
+                returnUrl = request.UrlReferrer.ToString();
+            } else {
+                returnUrl = orchard.WorkContext.CurrentSite.HomePage;
+            }
+            parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : returnUrl;
         }
 
         public static void TranslatePageParametersToEntities(Process process, IDictionary<string, string> parameters, string defaultOutput) {

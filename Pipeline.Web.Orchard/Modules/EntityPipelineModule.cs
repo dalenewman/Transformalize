@@ -45,7 +45,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(ctx => {
                 var context = ctx.ResolveNamed<IContext>(entity.Key);
                 IPipeline pipeline;
-                context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
+                context.Debug(() => string.Format("Registering {0} for entity {1}.", type, entity.Alias));
                 var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":

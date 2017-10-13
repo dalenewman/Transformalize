@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -58,7 +59,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 // add conversion if necessary
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {
-                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
+                    context.Warn(string.Format("The output field {0} is not setup to receive a {1} type. It expects a {2}.  Adding conversion.", field.Alias, lastType, field.Type));
                     transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
             }
@@ -85,7 +86,7 @@ namespace Pipeline.Web.Orchard.Impl {
                     transform = t;
                 }
             } else {
-                context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
+                context.Error(string.Format("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias));
                 success = false;
             }
             return success;

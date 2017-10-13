@@ -18,7 +18,10 @@ namespace Pipeline.Web.Orchard.Impl {
         private readonly IRazorCompiler _compiler;
         private readonly HttpContextBase _httpContextBase;
         private readonly IOrchardServices _orchardServices;
-        public override string Type => "RazorReport";
+        public override string Type
+        {
+            get { return "RazorReport"; }
+        }
 
         public RazorReportTemplateProcessor(
             IRazorCompiler compiler, 
@@ -42,10 +45,10 @@ namespace Pipeline.Web.Orchard.Impl {
 
             var compiledTemplate = _compiler.CompileRazor(template, name, new Dictionary<string, object>());
             if (model != null) {
-                model.OrchardUrl = (_httpContextBase.Request.Url?.PathAndQuery ?? string.Empty);
-                model.OrchardUser = (_orchardServices.WorkContext.CurrentUser?.UserName ?? string.Empty);
-                model.OrchardEmail = (_orchardServices.WorkContext.CurrentUser?.Email ?? string.Empty);
-                model.OrchardTimeZone = (_orchardServices.WorkContext.CurrentSite?.SiteTimeZone ?? string.Empty);
+                model.OrchardUrl = (_httpContextBase.Request.Url == null ? string.Empty: _httpContextBase.Request.Url.PathAndQuery);
+                model.OrchardUser = (_orchardServices.WorkContext.CurrentUser == null ? string.Empty: _orchardServices.WorkContext.CurrentUser.UserName);
+                model.OrchardEmail = (_orchardServices.WorkContext.CurrentUser == null ? string.Empty: _orchardServices.WorkContext.CurrentUser.Email);
+                model.OrchardTimeZone = (_orchardServices.WorkContext.CurrentSite == null ? string.Empty : _orchardServices.WorkContext.CurrentSite.SiteTimeZone);
             }
             var result = ActivateAndRenderTemplate(compiledTemplate, model);
             return result;
@@ -109,7 +112,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 if (name == "CurrentCulture") return (T)((object)CultureName);
                 if (name == "CurrentCalendar") return (T)((object)CalendarName);
                 if (name == "CurrentTimeZone") return (T)((object)TimeZone);
-                throw new NotImplementedException($"Property '{name}' is not implemented.");
+                throw new NotImplementedException(string.Format("Property '{0}' is not implemented.", name));
             }
 
             public override void SetState<T>(string name, T value) {

@@ -50,6 +50,7 @@ namespace Transformalize.Transforms.DateMath {
 
             _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
             _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
+
         }
 
         public override IRow Operate(IRow row) {

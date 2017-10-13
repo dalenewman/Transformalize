@@ -41,6 +41,7 @@ namespace Pipeline.Web.Orchard.Services {
 
             if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
                 _orchardServices.Notifier.Warning(T("You do not have permission to run this bulk action."));
+                return false;
             }
 
             var actionProcess = _processService.Resolve(part);

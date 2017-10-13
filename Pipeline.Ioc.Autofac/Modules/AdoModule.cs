@@ -348,7 +348,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                         // register output keys and hash code reader if necessary
                         builder.Register((ctx => {
-                            var context = ctx.ResolveNamed<IContext>(entity.Key);
+                            var context = ctx.ResolveNamed<OutputContext>(entity.Key);
                             var rowCapacity = context.Entity.GetPrimaryKey().Count();
                             var rowFactory = new RowFactory(rowCapacity, false, true);
 

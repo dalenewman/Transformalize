@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -48,7 +49,7 @@ namespace Pipeline.Web.Orchard.Impl {
                     validator = v;
                 }
             } else {
-                context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
+                context.Error(string.Format("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias));
                 result = false;
             }
             return result;

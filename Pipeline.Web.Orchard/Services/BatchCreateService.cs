@@ -30,10 +30,9 @@ namespace Pipeline.Web.Orchard.Services {
         public IDictionary<string, string> Create(Process process, IDictionary<string, string> parameters) {
 
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
             var batchCreate = process.Actions.FirstOrDefault(a => a.Description.Equals(BatchCreateIndicator, StringComparison.OrdinalIgnoreCase));
 
-            if (!(batchCreate?.Id > 0)) {
+            if (!(batchCreate != null && batchCreate.Id > 0)) {
                 return result;
             }
 
