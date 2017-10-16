@@ -23,7 +23,9 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.File {
+
     public class FileReader : IRead {
+
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
         private readonly Field _field;
@@ -37,12 +39,18 @@ namespace Transformalize.Providers.File {
         public IEnumerable<IRow> Read() {
             var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
             var lineNo = 0;
-            foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
-                ++lineNo;
-                if (lineNo < _context.Connection.Start) continue;
+            if (System.IO.Path.GetExtension(_context.Connection.File) == ".xml") {
                 var row = _rowFactory.Create();
-                row[_field] = line;
+                row[_field] = System.IO.File.ReadAllText(_context.Connection.File, encoding);
                 yield return row;
+            } else {
+                foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
+                    ++lineNo;
+                    if (lineNo < _context.Connection.Start) continue;
+                    var row = _rowFactory.Create();
+                    row[_field] = line;
+                    yield return row;
+                }
             }
         }
     }

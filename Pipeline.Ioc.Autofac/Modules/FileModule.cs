@@ -82,8 +82,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                     switch (input.Connection.Provider) {
                         case "file":
-                            if (input.Connection.Delimiter == string.Empty &&
-                                input.Entity.Fields.Count(f => f.Input) == 1) {
+                            if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
                                 return new FileReader(input, rowFactory);
                             }
                             return new DelimitedFileReader(input, rowFactory);

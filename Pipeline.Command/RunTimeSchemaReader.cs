@@ -63,7 +63,7 @@ namespace Transformalize.Command {
             container.RegisterCallback(new WebModule(Process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
-                var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First(c => c.Provider != "internal").Key);
+                var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First(c => c.Provider != Constants.DefaultSetting).Key);
                 return reader.Read(entity);
             }
         }

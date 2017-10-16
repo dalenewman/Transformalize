@@ -22,8 +22,8 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
     public class ConsoleOutputProvider : IOutputProvider {
+
         private readonly OutputContext _outputContext;
-        private readonly ISerialize _serializer;
         private readonly IWrite _writer;
 
         public ConsoleOutputProvider(OutputContext context, IWrite writer) {

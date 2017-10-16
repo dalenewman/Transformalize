@@ -87,7 +87,7 @@ namespace Transformalize.Configuration.Ext {
             var output = p.Output();
 
             // force primary key to output if not internal
-            if (output.IsNotInternal()) {
+            if (output.Provider != "internal") {
                 foreach (var field in p.Entities.SelectMany(entity => p.GetAllFields().Where(field => field.PrimaryKey && !field.Output))) {
                     warn($"Primary Keys must be output. Overriding output to true for {field.Alias}.");
                     field.Output = true;
@@ -190,10 +190,7 @@ namespace Transformalize.Configuration.Ext {
 
         private static void DefaultOutput(Process p) {
             if (p.Connections.All(c => c.Name != "output"))
-                p.Connections.Add(new Connection {
-                    Name = "output",
-                    Provider = "internal"
-                });
+                p.Connections.Add(new Connection { Name = "output" });
         }
 
         private static void DefaultSearchTypes(Process p) {

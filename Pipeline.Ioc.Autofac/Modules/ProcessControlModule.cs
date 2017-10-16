@@ -102,7 +102,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // templates
                 foreach (var template in _process.Templates.Where(t => t.Enabled).Where(t => t.Actions.Any(a => a.GetModes().Any(m => m == _process.Mode)))) {
-                    controller.PreActions.Add(new RenderTemplateAction(template, ctx.ResolveNamed<ITemplateEngine>(template.Key)));
+                    controller.PostActions.Add(new RenderTemplateAction(template, ctx.ResolveNamed<ITemplateEngine>(template.Key)));
                     foreach (var action in template.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
                         if (action.Before) {
                             controller.PreActions.Add(ctx.ResolveNamed<IAction>(action.Key));

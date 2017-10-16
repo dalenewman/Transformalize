@@ -35,8 +35,7 @@ namespace Transformalize.Transforms {
         private readonly bool _searchAttributes;
         private readonly int _total;
 
-        public FromXmlTransform(IContext context)
-            : base(context, null) {
+        public FromXmlTransform(IContext context) : base(context, null) {
 
             if (!context.Operation.Parameters.Any()) {
                 Error($"The {context.Operation.Method} transform requires a collection of output fields.");

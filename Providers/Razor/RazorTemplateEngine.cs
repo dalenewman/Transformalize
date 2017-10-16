@@ -84,9 +84,13 @@ namespace Transformalize.Providers.Razor {
                     _context.Process,
                     Parameters = parameters
                 });
-            } catch (Exception ex) {
+            } catch (TemplateCompilationException ex) {
                 _context.Error($"Error parsing template {_template.Name}.");
-                _context.Error(ex, ex.Message.Replace("{", "{{").Replace("}", "}}"));
+                _context.Error($"There are {ex.CompilerErrors.Count} errors.");
+                foreach(var error in ex.CompilerErrors) {
+                    _context.Error(error.ErrorText);
+                }
+                Utility.CodeToError(_context, ex.SourceCode);
                 return string.Empty;
             }
         }

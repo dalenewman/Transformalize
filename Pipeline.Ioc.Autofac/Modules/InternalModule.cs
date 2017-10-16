@@ -34,7 +34,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
     public class InternalModule : Module {
         private readonly Process _process;
-        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text" });
+        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
 
         public InternalModule() { }
 
@@ -48,7 +48,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 return;
 
             // Connections
-            foreach (var connection in _process.Connections.Where(c => c.IsInternal())) {
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "internal")) {
                 builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
             }
 
@@ -63,6 +63,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
                     switch (input.Connection.Provider) {
+                        case Constants.DefaultSetting:
                         case "internal":
                             return new InternalReader(input, rowFactory);
                         default:
@@ -78,7 +79,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
-
                 foreach (var entity in _process.Entities) {
 
                     builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
@@ -92,6 +92,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         switch (output.Connection.Provider) {
                             case "trace":
                                 return new TraceWriter(new JsonNetSerializer(output));
+                            case Constants.DefaultSetting:
                             case "internal":
                                 return new InternalWriter(output);
                             case "text":

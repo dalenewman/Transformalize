@@ -42,7 +42,6 @@ using Transformalize.Transforms.LamdaParser;
 using Transformalize.Transforms.Vehicle;
 using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
-using FromXmlTransform = Transformalize.Transforms.Xml.FromXmlTransform;
 using Transformalize.Transforms.Globalization;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -199,8 +198,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
-                return context.Operation.XmlMode == "all" ?
-                    new FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
+                return context.Operation.XmlMode == "all" || context.Field.Engine != "auto" ?
+                    new Transforms.Xml.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 

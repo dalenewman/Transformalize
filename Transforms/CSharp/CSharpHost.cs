@@ -70,7 +70,7 @@ namespace Transformalize.Transforms.CSharp {
                         _context.Error($"C# error on line {error.Line}, column {error.Column}.");
                         _context.Error(error.ErrorText);
                     }
-                    CodeToError(code);
+                    Utility.CodeToError(_context, code);
                 } else {
                     timer.Stop();
                     _context.Info($"Compiled {_context.Process.Name} user code in {timer.Elapsed}.");
@@ -84,21 +84,10 @@ namespace Transformalize.Transforms.CSharp {
             } catch (Exception ex) {
                 _context.Error("C# Compiler Exception!");
                 _context.Error(ex.Message);
-                CodeToError(code);
+                Utility.CodeToError(_context, code);
                 return false;
             }
             return true;
-        }
-
-        private void CodeToError(string code) {
-            var lineNo = 1;
-            using (var sr = new StringReader(code)) {
-                string line;
-                while ((line = sr.ReadLine()) != null) {
-                    _context.Error($"{lineNo:0000} {line.Replace("{","{{").Replace("}","}}")}");
-                    ++lineNo;
-                }
-            }
         }
 
         public void Dispose() {

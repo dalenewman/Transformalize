@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -150,6 +151,17 @@ namespace Transformalize {
                 hex.AppendFormat("{0:x2}", b);
             }
             return hex.ToString();
+        }
+
+        public static void CodeToError(IContext context, string code) {
+            var lineNo = 1;
+            using (var sr = new StringReader(code)) {
+                string line;
+                while ((line = sr.ReadLine()) != null) {
+                    context.Error($"{lineNo:0000} {line.Replace("{", "{{").Replace("}", "}}")}");
+                    ++lineNo;
+                }
+            }
         }
 
         public static char FindDelimiter(IEnumerable<string> strings, List<Delimiter> delimiters, bool quoted) {

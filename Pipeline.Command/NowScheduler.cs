@@ -52,7 +52,7 @@ namespace Transformalize.Command {
                     new NamedParameter("cfg", _options.Arrangement)
                 );
 
-                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != "internal" && !e.Fields.Any(f => f.Input))) {
+                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != Constants.DefaultSetting && !e.Fields.Any(f => f.Input))) {
                     context.Debug(() => "Detecting schema...");
                     if (_schemaHelper.Help(process)) {
                         process.Check();

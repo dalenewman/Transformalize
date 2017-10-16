@@ -103,7 +103,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-                if (process.Output().IsInternal()) {
+                if (process.Output().Provider == Constants.DefaultSetting) {
                     try {
                         Console.WindowHeight = Console.WindowHeight + 1 - 1;
                         Console.Title = process.Name;

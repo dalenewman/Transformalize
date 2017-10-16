@@ -32,8 +32,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string ContentType { get; set; }
 
-        [Cfg(value = Constants.DefaultSetting)]
-        public string Data { get; set; }
         [Cfg(value = "")]
         public string Database { get; set; }
 
@@ -49,57 +47,61 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Delimiter { get; set; }
 
-        [Cfg]
-        public bool Stream { get; set; }
-
-        [Cfg(value = false)]
-        public bool Direct { get; set; }
-        [Cfg(value = true)]
-        public bool Enabled { get; set; }
-        [Cfg(value = false)]
-        public bool EnableSsl { get; set; }
-
         // "ASCII,BigEndianUnicode,Default,UTF32,UTF7,UTF8,Unicode"
         [Cfg(value = "utf-8", domain = "UTF-16LE,utf-16,ucs-2,unicode,ISO-10646-UCS-2,UTF-16BE,unicodeFFFE,windows-1252,utf-7,csUnicode11UTF7,unicode-1-1-utf-7,unicode-2-0-utf-7,x-unicode-1-1-utf-7,x-unicode-2-0-utf-7,utf-8,unicode-1-1-utf-8,unicode-2-0-utf-8,x-unicode-1-1-utf-8,x-unicode-2-0-utf-8,us-ascii,us,ascii,ANSI_X3.4-1968,ANSI_X3.4-1986,cp367,csASCII,IBM367,iso-ir-6,ISO646-US,ISO_646.irv:1991,GB18030")]
         public string Encoding { get; set; }
 
         [Cfg(value = 0)]
         public int End { get; set; }
+
         [Cfg(value = "SaveAndContinue", domain = "ThrowException,SaveAndContinue,IgnoreAndContinue", ignoreCase = true)]
         public string ErrorMode { get; set; }
+
         [Cfg(value = "")]
         public string Folder { get; set; }
+
         [Cfg(value = "")]
         public string File { get; set; }
+
         [Cfg(value = "")]
         public string Footer { get; set; }
+
         [Cfg(value = Constants.DefaultSetting)]
         public string Header { get; set; }
+
         [Cfg(value = "")]
         public string Password { get; set; }
+
         [Cfg(value = "")]
         public string Path { get; set; }
 
         [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
-        [Cfg(value = "internal", domain = Constants.ProviderDomain, toLower = true)]
+        [Cfg(value = Constants.DefaultSetting, domain = Constants.ProviderDomain, toLower = true)]
         public string Provider { get; set; }
 
         [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
         public string SearchOption { get; set; }
+
         [Cfg(value = "*.*")]
         public string SearchPattern { get; set; }
+
         [Cfg(value = "localhost")]
         public string Server { get; set; }
+
         [Cfg(value = 1)]
         public int Start { get; set; }
+
         [Cfg(value = "")]
         public string Url { get; set; }
+
         [Cfg(value = "")]
         public string User { get; set; }
+
         [Cfg(value = Constants.DefaultSetting)]
         public string Version { get; set; }
+
         [Cfg(value = "GET")]
         public string WebMethod { get; set; }
 
@@ -166,7 +168,7 @@ namespace Transformalize.Configuration {
 
         void ModifyProvider() {
             //backwards compatibility, default provider used to be sqlserver
-            if (Provider == "internal" && (Database != string.Empty || ConnectionString != string.Empty)) {
+            if (Provider == Constants.DefaultSetting && (Database != string.Empty || ConnectionString != string.Empty)) {
                 Provider = "sqlserver";
             }
             if (Provider == "elasticsearch" && Port == 0) {
@@ -286,14 +288,6 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "")]
         public string OpenWith { get; set; }
-
-        public bool IsInternal() {
-            return Provider == "internal";
-        }
-
-        public bool IsNotInternal() {
-            return Provider != "internal";
-        }
 
         [Cfg(value = "csv", domain = "csv,json")]
         public string Format { get; set; }

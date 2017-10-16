@@ -22,6 +22,7 @@ using System.Linq;
 using System.Xml;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Transforms.System;
 
 namespace Transformalize.Transforms.Xml {
 
@@ -33,6 +34,8 @@ namespace Transformalize.Transforms.Xml {
 
         private readonly string _root;
         private readonly bool _findRoot;
+        private readonly IOperation _setSystemFields;
+        private readonly Field _hashCode;
 
         private const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
         private readonly bool _searchAttributes;
@@ -44,7 +47,8 @@ namespace Transformalize.Transforms.Xml {
 
         private readonly Field _input;
         private readonly Field[] _fields;
-        private readonly Field[] _outerFields;
+        private readonly Field[] _fieldsToHash;
+        private readonly List<Field> _outerFields;
         private readonly Dictionary<string, object> _typeDefaults;
 
         public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, "object") {
@@ -53,7 +57,10 @@ namespace Transformalize.Transforms.Xml {
             _input = SingleInputForMultipleOutput();
             var output = MultipleOutput();
             _fields = context.GetAllEntityFields().ToArray();
-            _outerFields = _fields.Except(output).ToArray();
+            _outerFields = _fields.Except(output).Where(f=>!f.System).ToList();
+            if (!_input.Output) {
+                _outerFields.Remove(_input);
+            }
             _typeDefaults = Constants.TypeDefaults();
 
             _root = context.Operation.Root;
@@ -65,6 +72,10 @@ namespace Transformalize.Transforms.Xml {
                 }
                 _nameMap[field.Name] = field;
             }
+
+            _setSystemFields = new SetSystemFields(context);
+            _hashCode = context.Entity.TflHashCode();
+            _fieldsToHash = _fields.Where(f => !f.System).ToArray();
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
@@ -153,6 +164,11 @@ namespace Transformalize.Transforms.Xml {
 
             foreach (var field in _outerFields) {
                 r[field] = outerRow[field];
+            }
+
+            if (!Context.Process.ReadOnly) {
+                r = _setSystemFields.Operate(r);
+                r[_hashCode] = HashcodeTransform.GetHashCode(_fieldsToHash.Select(f => r[f]));
             }
 
             innerRows.Add(r);
