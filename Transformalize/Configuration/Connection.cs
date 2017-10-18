@@ -115,8 +115,8 @@ namespace Transformalize.Configuration {
         [Cfg(value = 30)]
         public int Timeout { get; set; }
 
-        [Cfg(value = '\"')]
-        public char TextQualifier { get; set; }
+        [Cfg(value = "\"", maxLength = 1)]
+        public string TextQualifier { get; set; }
 
         [Cfg(value = Constants.DefaultSetting)]
         public string Schema { get; set; }

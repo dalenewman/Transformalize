@@ -1,4 +1,3 @@
-cd c:\code\Transformalize
 nuget pack Compatibility\Transformalize\Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"

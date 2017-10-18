@@ -79,7 +79,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Transforms", "Transforms", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenXml", "Providers\OpenXml\OpenXml.csproj", "{C2800256-5DE1-4BC9-9D5E-8BDE3CC8353D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compatability", "Compatability", "{0A44435F-A0BC-418F-BA9C-B5FFC27D5589}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Compatibility", "Compatibility", "{0A44435F-A0BC-418F-BA9C-B5FFC27D5589}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoJson", "Providers\GeoJson\GeoJson.csproj", "{1AFB3C21-CB24-49ED-BCF1-99A577D86F28}"
 EndProject

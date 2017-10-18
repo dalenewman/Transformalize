@@ -34,16 +34,23 @@ namespace Transformalize.Providers.File {
                 IgnoreFirstLines = 0
             };
 
-            foreach (var field in context.OutputFields) {
-                var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
-                fieldBuilder.FieldQuoted = true;
-                fieldBuilder.QuoteChar = context.Connection.TextQualifier;
-                fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
-                fieldBuilder.FieldOptional = field.Optional;
+            if (context.Connection.TextQualifier == string.Empty) {
+                foreach (var field in context.OutputFields) {
+                    var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
+                    fieldBuilder.FieldQuoted = false;
+                    fieldBuilder.FieldOptional = field.Optional;
+                }
+            } else {
+                foreach (var field in context.OutputFields) {
+                    var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
+                    fieldBuilder.FieldQuoted = true;
+                    fieldBuilder.QuoteChar = context.Connection.TextQualifier[0];
+                    fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
+                    fieldBuilder.FieldOptional = field.Optional;
+                }
             }
 
-            FileHelpers.ErrorMode errorMode;
-            Enum.TryParse(context.Connection.ErrorMode, true, out errorMode);
+            Enum.TryParse(context.Connection.ErrorMode, true, out FileHelpers.ErrorMode errorMode);
 
             FileHelperAsyncEngine engine;
 
@@ -79,16 +86,23 @@ namespace Transformalize.Providers.File {
                 IgnoreFirstLines = context.Connection.Start
             };
 
-            foreach (var field in context.InputFields) {
-                var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
-                fieldBuilder.FieldQuoted = true;
-                fieldBuilder.QuoteChar = context.Connection.TextQualifier;
-                fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
-                fieldBuilder.FieldOptional = field.Optional;
+            if (context.Connection.TextQualifier == string.Empty) {
+                foreach (var field in context.InputFields) {
+                    var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
+                    fieldBuilder.FieldQuoted = false;
+                    fieldBuilder.FieldOptional = field.Optional;
+                }
+            } else {
+                foreach (var field in context.InputFields) {
+                    var fieldBuilder = builder.AddField(field.FieldName(), typeof(string));
+                    fieldBuilder.FieldQuoted = true;
+                    fieldBuilder.QuoteChar = context.Connection.TextQualifier[0];
+                    fieldBuilder.QuoteMode = QuoteMode.OptionalForBoth;
+                    fieldBuilder.FieldOptional = field.Optional;
+                }
             }
 
-            FileHelpers.ErrorMode errorMode;
-            Enum.TryParse(context.Connection.ErrorMode, true, out errorMode);
+            Enum.TryParse(context.Connection.ErrorMode, true, out FileHelpers.ErrorMode errorMode);
 
             var engine = new FileHelperAsyncEngine(builder.CreateRecordClass());
             engine.ErrorManager.ErrorMode = errorMode;

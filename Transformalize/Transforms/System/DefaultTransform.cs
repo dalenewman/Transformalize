@@ -59,13 +59,23 @@ namespace Transformalize.Transforms.System {
         private List<FieldDefault> FieldDefaults { get; } = new List<FieldDefault>();
         private List<FieldDefault> CalculatedFieldDefaults { get; } = new List<FieldDefault>();
 
-        public DefaultTransform(IContext context, IEnumerable<Field> fields)
-            : base(context, null) {
+        public DefaultTransform(IContext context, IEnumerable<Field> fields) : base(context, null) {
+
             var expanded = fields.ToArray();
             var defaults = Constants.TypeDefaults();
 
             foreach (var field in expanded) {
                 var hasDefault = field.Default != Constants.DefaultSetting;
+                if (hasDefault) {
+                    switch (field.Type) {
+                        case "char" when field.Default.Length > 1:
+                            field.Default = field.Default[0].ToString();
+                            break;
+                        case "string" when field.Length != "max" && int.TryParse(field.Length, out var length):
+                            field.Default = field.Default.Substring(0, Math.Min(field.Default.Length, length));
+                            break;
+                    }
+                }
                 var fieldDefault = new FieldDefault(field.Name, field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
                     Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
                     StringValue = hasDefault ? field.Default : string.Empty,

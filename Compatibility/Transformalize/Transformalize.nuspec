@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.2.7-beta</version>
+    <version>0.2.8-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -33,10 +33,10 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="C:\Code\Transformalize\Compatibility\Transformalize\bin\Release\Transformalize.dll" target="lib\netstandard1.0\Transformalize.dll" />
-    <file src="C:\Code\Transformalize\Compatibility\Transformalize\bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
-    <file src="C:\Code\Transformalize\Compatibility\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
-    <file src="C:\Code\Transformalize\Compatibility\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
-    <file src="C:\Code\Transformalize\Compatibility\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
+    <file src="..\Transformalize\bin\Release\Transformalize.dll" target="lib\netstandard1.0\Transformalize.dll" />
+    <file src="..\Transformalize\bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
+    <file src="..\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
+    <file src="..\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
+    <file src="..\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
   </files>
 </package>
