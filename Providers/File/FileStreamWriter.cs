@@ -25,32 +25,40 @@ namespace Transformalize.Providers.File {
     public class FileStreamWriter : IWrite {
 
         private readonly OutputContext _context;
-        private readonly Stream _stream;
+        private readonly StreamWriter _writer;
+
+        public FileStreamWriter(OutputContext context) {
+            _context = context;
+            _writer = new StreamWriter(context.Connection.File);
+        }
+
         public FileStreamWriter(OutputContext context, Stream stream) {
             _context = context;
-            _stream = stream;
+            _writer = new StreamWriter(stream);
         }
+
         public void Write(IEnumerable<IRow> rows) {
             var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
-            var writer = new StreamWriter(_stream);
 
-            if (!string.IsNullOrEmpty(_context.Connection.Header)) {
-                writer.WriteLine(_context.Connection.Header);
-            }
+            using(_writer){
 
-            foreach (var row in rows) {
-                foreach(var field in fields) {
-                    writer.Write(row[field]);
+                if (!string.IsNullOrEmpty(_context.Connection.Header)){
+                    _writer.WriteLine(_context.Connection.Header);
                 }
-                writer.WriteLine();
-                _context.Increment();
-            }
 
-            if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
-                writer.Write(_context.Connection.Footer);
-            }
+                foreach (var row in rows) {
+                    foreach (var field in fields) {
+                        _writer.Write(row[field]);
+                    }
+                    _writer.WriteLine();
+                    _context.Increment();
+                }
 
-            writer.Flush();
+                if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
+                    _writer.Write(_context.Connection.Footer);
+                }
+                _writer.Flush();
+            }
         }
     }
 }

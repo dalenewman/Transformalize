@@ -110,7 +110,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "file":
-                                return new DelimitedFileWriter(output, output.Connection.File);
+                                if(output.Connection.Delimiter == string.Empty){
+                                    return new FileStreamWriter(output);
+                                } else {
+                                    return new DelimitedFileWriter(output);
+                                }
                             default:
                                 return new NullWriter(output);
                         }

@@ -26,17 +26,15 @@ namespace Transformalize.Providers.File {
 
     public class DelimitedFileWriter : IWrite {
         private readonly OutputContext _context;
-        private readonly string _fileName;
 
-        public DelimitedFileWriter(OutputContext context, string fileName = null) {
+        public DelimitedFileWriter(OutputContext context) {
             _context = context;
-            _fileName = fileName;
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
             var engine = FileHelpersEngineFactory.Create(_context);
-            var file = Path.Combine(_context.Connection.Folder, _fileName ?? _context.Entity.OutputTableName(_context.Process.Name));
+            var file = Path.Combine(_context.Connection.Folder, _context.Connection.File ?? _context.Entity.OutputTableName(_context.Process.Name));
             _context.Debug(() => $"Writing {file}.");
 
             using (engine.BeginWriteFile(file)) {
@@ -67,7 +65,7 @@ namespace Transformalize.Providers.File {
                     engine.WriteNextValues();
                 }
                 if (engine.ErrorManager.HasErrors) {
-                    var errorFile = Path.Combine(Path.GetDirectoryName(_fileName) ?? string.Empty, Path.GetFileNameWithoutExtension(_fileName) + ".errors.txt");
+                    var errorFile = Path.Combine(Path.GetDirectoryName(_context.Connection.File) ?? string.Empty, Path.GetFileNameWithoutExtension(_context.Connection.File) + ".errors.txt");
                     _context.Error($"File writer had {engine.ErrorManager.ErrorCount} error{engine.ErrorManager.ErrorCount.Plural()}. See {errorFile}.");
                     engine.ErrorManager.SaveErrors(errorFile);
                 }
