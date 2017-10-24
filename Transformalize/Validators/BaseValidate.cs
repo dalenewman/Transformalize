@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Validators {
 
@@ -151,7 +152,13 @@ namespace Transformalize.Validators {
 
         public IField MessageField => _messageField;
 
+
+
         public virtual void Dispose() {
+        }
+
+        public virtual OperationSignature GetSignature() {
+            return new OperationSignature();
         }
     }
 }

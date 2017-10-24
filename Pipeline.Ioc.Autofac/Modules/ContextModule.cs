@@ -67,13 +67,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     return new OutputContext(context, new Incrementer(context));
                 }).Named<OutputContext>(connection.Key);
 
+                //TODO, move JsonNetSerializer to JSON Provider, and Csv Serializer to Console or File Provider
                 if (connection.Provider == "console") {
                     builder.Register(ctx => new ConsoleWriter(connection.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(connection.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(connection.Key)) as ISerialize)).As<ConsoleWriter>();
                 }
-
             }
-
-            var output = _process.Output();
 
             // Entity Context and RowFactory
             foreach (var entity in _process.Entities) {

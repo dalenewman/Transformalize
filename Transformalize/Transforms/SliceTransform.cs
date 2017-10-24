@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
 
@@ -137,6 +138,16 @@ namespace Transformalize.Transforms {
             foreach (var index in SliceIndices(list.Length, start, stop, step)) {
                 yield return list[index];
             }
+        }
+
+        public static OperationSignature GetSignature() {
+            return new OperationSignature("slice") {
+                NamedParameterIndicator = string.Empty,
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter {Name = "expression"},
+                    new OperationParameter {Name = "separator", Value = string.Empty},
+                }
+            };
         }
 
     }

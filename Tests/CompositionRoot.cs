@@ -33,8 +33,12 @@ namespace Tests {
 
         public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
 
+            var logger = new TraceLogger(logLevel);
             var builder = new ContainerBuilder();
+            builder.Register<IPipelineLogger>(c => logger).As<IPipelineLogger>();
+            builder.RegisterModule(new TransformModule());
             builder.RegisterModule(new ShorthandTransformModule());
+            builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
@@ -54,7 +58,7 @@ namespace Tests {
                 }
             }
 
-            return DefaultContainer.Create(Process, new TraceLogger(logLevel), placeHolderStyle).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
+            return DefaultContainer.Create(Process, logger, placeHolderStyle).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
         }
 
     }

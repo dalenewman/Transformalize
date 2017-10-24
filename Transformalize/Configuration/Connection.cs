@@ -303,5 +303,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value="")]
         public string Template { get; set; }
+
+        [Cfg(value=false)]
+        public bool Stream { get; set; }
     }
 }

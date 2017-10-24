@@ -117,6 +117,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CsvSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\IllegalCharacterValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperationParameter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)OperationSignature.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParameterRowReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\RelationshipSummary.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\SchemaReader.cs" />
@@ -191,7 +193,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StringValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Writers\StringWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormatTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixesTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CommonPrefixTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DistinctTransform.cs" />
@@ -209,7 +211,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DecodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FilterTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FloorTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatXmlTransfrom.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromLengthsTranform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromSplitTransform.cs" />

@@ -96,8 +96,12 @@ namespace Transformalize.Transforms {
         public Field SingleInputForMultipleOutput() {
             if (Context.Operation.Parameter != string.Empty) {
                 return Context.Entity == null
-                    ? Context.Process.GetAllFields().First(f => f.Alias.Equals(Context.Operation.Parameter, Sc) || f.Name.Equals(Context.Operation.Parameter, Sc))
-                    : Context.Entity.GetAllFields().First(f => f.Alias.Equals(Context.Operation.Parameter, Sc) || f.Name.Equals(Context.Operation.Parameter, Sc));
+                    ? Context.Process.GetAllFields().First(f =>
+                        f.Alias.Equals(Context.Operation.Parameter, Sc) ||
+                        f.Name.Equals(Context.Operation.Parameter, Sc))
+                    : Context.Entity.GetAllFields().First(f =>
+                        f.Alias.Equals(Context.Operation.Parameter, Sc) ||
+                        f.Name.Equals(Context.Operation.Parameter, Sc));
             }
             return Context.Field;
         }
@@ -136,7 +140,8 @@ namespace Transformalize.Transforms {
         protected bool IsNotReceivingNumber() {
             if (!Constants.IsNumericType(Received())) {
                 Run = false;
-                Error($"The {Context.Operation.Method} method expects a numeric input, but is receiving a {Received()} type.");
+                Error(
+                    $"The {Context.Operation.Method} method expects a numeric input, but is receiving a {Received()} type.");
                 return true;
             }
 
@@ -147,7 +152,8 @@ namespace Transformalize.Transforms {
             foreach (var field in MultipleInput()) {
                 if (!field.IsNumeric()) {
                     Run = false;
-                    Error($"The {Context.Operation.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
+                    Error(
+                        $"The {Context.Operation.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
                     return true;
                 }
             }
@@ -177,5 +183,6 @@ namespace Transformalize.Transforms {
 
         public virtual void Dispose() {
         }
+
     }
 }

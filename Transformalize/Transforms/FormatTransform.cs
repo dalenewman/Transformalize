@@ -15,45 +15,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Linq;
-using Transformalize.Configuration;
+
+using System.Collections.Generic;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
     public class FormatTransform : BaseTransform {
-        private readonly Field[] _input;
+        private readonly BetterFormat _betterFormat;
 
-        public FormatTransform(IContext context)
-            : base(context, "string") {
-            if (IsNotReceiving("string")) {
-                return;
-            }
-
-            if (context.Operation.Format == string.Empty) {
-                Error($"The format transform in field {context.Field.Alias} requires a format parameter.");
-                Run = false;
-                return;
-            }
-
-            if (context.Operation.Format.IndexOf('{') == -1) {
-                Error("The format transform's format must contain a curly braced place-holder.");
-                Run = false;
-                return;
-            }
-
-            if (context.Operation.Format.IndexOf('}') == -1) {
-                Error("The format transform's format must contain a curly braced place-holder.");
-                Run = false;
-                return;
-            }
-
-            _input = MultipleInput();
+        public FormatTransform(IContext context) : base(context, "string") {
+            _betterFormat = new BetterFormat(context, context.Operation.Format, MultipleInput);
+            Run = _betterFormat.Valid;
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = string.Format(Context.Operation.Format, _input.Select(f => row[f]).ToArray());
+            row[Context.Field] = _betterFormat.Format(row);
             Increment();
             return row;
+        }
+
+        public static OperationSignature GetSignature() {
+            return new OperationSignature("format") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("format")
+                }
+            };
         }
 
     }

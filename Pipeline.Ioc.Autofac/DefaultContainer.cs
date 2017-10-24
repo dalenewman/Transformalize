@@ -32,7 +32,9 @@ namespace Transformalize.Ioc.Autofac {
             var builder = new ContainerBuilder();
             builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
+            builder.RegisterCallback(new TransformModule().Configure);
             builder.RegisterCallback(new ShorthandTransformModule().Configure);
+            builder.RegisterCallback(new ValidateModule().Configure);
             builder.RegisterCallback(new ShorthandValidateModule().Configure);
             builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
@@ -62,8 +64,6 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new MapModule(process).Configure);
             builder.RegisterCallback(new TemplateModule(process).Configure);
             builder.RegisterCallback(new ActionModule(process).Configure);
-            builder.RegisterCallback(new TransformModule(process).Configure);
-            builder.RegisterCallback(new ValidateModule(process).Configure);
 
             builder.RegisterCallback(new EntityPipelineModule(process).Configure);
             builder.RegisterCallback(new ProcessPipelineModule(process).Configure);

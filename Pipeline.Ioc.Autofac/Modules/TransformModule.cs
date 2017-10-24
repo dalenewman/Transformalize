@@ -16,13 +16,14 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
+using Cfg.Net.Shorthand;
 using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Transformalize.Providers.File.Transforms;
@@ -43,23 +44,22 @@ using Transformalize.Transforms.Vehicle;
 using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
 using Transformalize.Transforms.Globalization;
+using Parameter = Cfg.Net.Shorthand.Parameter;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {
-        private readonly Process _process;
 
-        public TransformModule() { }
-
-        public TransformModule(Process process) {
-            _process = process;
-        }
+        public const string Name = "shorthand-t";
+        private readonly HashSet<string> _methodNames = new HashSet<string>();
+        private readonly ShorthandRoot _shortHandRoot = new ShorthandRoot();
 
         protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+            // new strategy to let transform author define shorthand
+            RegisterTransform(builder, (context) => new AbsTransform(context), AbsTransform.GetSignature());
+            RegisterTransform(builder, (context) => new SliceTransform(context), SliceTransform.GetSignature());
+            RegisterTransform(builder, (context) => new FormatTransform(context), FormatTransform.GetSignature());
 
-            builder.Register((c, p) => new AbsTransform(p.Positional<IContext>(0))).Named<ITransform>("abs");
             builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("add");
             builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("all");
             builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("sum");
@@ -77,7 +77,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new FileNameTransform(p.Positional<IContext>(0))).Named<ITransform>("filename");
             builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");
             builder.Register((c, p) => new FloorTransform(p.Positional<IContext>(0))).Named<ITransform>("floor");
-            builder.Register((c, p) => new BetterFormatTransform(p.Positional<IContext>(0))).Named<ITransform>("format");
             builder.Register((c, p) => new FormatXmlTransfrom(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
             builder.Register((c, p) => new FormatPhoneTransform(p.Positional<IContext>(0))).Named<ITransform>("formatphone");
             builder.Register((c, p) => new HashcodeTransform(p.Positional<IContext>(0))).Named<ITransform>("hashcode");
@@ -192,7 +191,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
-            builder.Register((c, p) => new SliceTransform(p.Positional<IContext>(0))).Named<ITransform>("slice");
+
+
+
             builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("append");
             builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prepend");
 
@@ -214,7 +215,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => c.ResolveNamed<ITransform>("cs", p)).Named<ITransform>("csharp");
 
 
-            builder.Register<ITransform>((c, p) => {
+            builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
                 var strict = new HashSet<string>(new[] { "int", "int32", "string", "bool", "boolean", "double" });
                 switch (context.Field.Engine) {
@@ -233,5 +234,32 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         }
 
+        private void RegisterTransform(ContainerBuilder builder, Func<IContext, ITransform> getTransform, OperationSignature sig) {
+
+            if (_methodNames.Add(sig.Method)) {
+
+                var method = new Method { Name = sig.Method, Signature = sig.Method };
+                _shortHandRoot.Methods.Add(method);
+
+                var signature = new Signature {
+                    Name = sig.Method,
+                    NamedParameterIndicator = sig.NamedParameterIndicator
+                };
+
+                foreach (var parameter in sig.Parameters) {
+                    signature.Parameters.Add(new Parameter {
+                        Name = parameter.Name,
+                        Value = parameter.Value
+                    });
+                }
+                _shortHandRoot.Signatures.Add(signature);
+            }
+
+            // register the short hand
+            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name);
+
+            builder.Register((c, p) => getTransform(p.Positional<IContext>(0))).Named<ITransform>(sig.Method);
+
+        }
     }
 }

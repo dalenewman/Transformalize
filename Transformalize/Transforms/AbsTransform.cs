@@ -17,6 +17,7 @@
 #endregion
 using System;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
 
@@ -61,14 +62,16 @@ namespace Transformalize.Transforms {
                     _transform = row => Context.Field.Convert(Math.Abs(Convert.ToDecimal(row[input])));
                     break;
             }
-
-
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
+        }
+
+        public static OperationSignature GetSignature() {
+            return new OperationSignature("abs");
         }
     }
 }

@@ -17,18 +17,57 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using Transformalize.Impl;
 
 namespace Transformalize.Contracts {
+
     public interface IOperation : IDisposable {
+
+        /// <summary>
+        /// Gives the operation access to it's place in the pipeline (Process, Entity, Field, Operation)
+        /// </summary>
         IContext Context { get; }
+
+        /// <summary>
+        /// Whether or not this operation should run.  It can be set to false in operation's constructor.
+        /// </summary>
         bool Run { get; set; }
+
+        /// <summary>
+        /// Allows the operation author to add errors to the pipeline's error log
+        /// </summary>
+        /// <param name="error"></param>
         void Error(string error);
-        void Warn(string warning);
         IEnumerable<string> Errors();
+
+        /// <summary>
+        /// Allows the operation author to add warnings to the pipeline's warning log
+        /// </summary>
+        /// <param name="warning"></param>
+        void Warn(string warning);
         IEnumerable<string> Warnings();
+
+        /// <summary>
+        /// Author can code the operation, taking a row, returning a modified row
+        /// </summary>
+        /// <param name="row"></param>
+        /// <returns></returns>
         IRow Operate(IRow row);
+
+        /// <summary>
+        /// Author can code around the row enumeration if desired, to add and remove rows, or whatever
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
         IEnumerable<IRow> Operate(IEnumerable<IRow> rows);
+
+
         uint RowCount { get; set; }
+
+        /// <summary>
+        /// Used to increment a counter used in the logging
+        /// </summary>
         void Increment();
+
     }
 }

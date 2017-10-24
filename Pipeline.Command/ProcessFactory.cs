@@ -31,7 +31,9 @@ namespace Transformalize.Command {
         public static bool TryCreate(string cfg, Dictionary<string,string> parameters, out Process process) {
 
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new TransformModule());
             builder.RegisterModule(new ShorthandTransformModule());
+            builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
             builder.RegisterModule(new RootModule());
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();

@@ -40,7 +40,9 @@ namespace Transformalize.Command {
 
             var builder = new ContainerBuilder();
             builder.Register(c => _logger).As<IPipelineLogger>().SingleInstance();
+            builder.RegisterModule(new TransformModule());
             builder.RegisterModule(new ShorthandTransformModule());
+            builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
             builder.RegisterModule(new RootModule());
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
