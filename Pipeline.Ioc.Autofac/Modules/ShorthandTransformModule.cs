@@ -40,7 +40,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root = ctx.ResolveNamed<ShorthandRoot>(Name);
                 } else {
                     root = new ShorthandRoot();
-                    builder.Register(c => root).Named<ShorthandRoot>(Name).SingleInstance();
+                    builder.Register(c => root).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
                 }
 
                 root.Signatures.Add(new Signature { Name = "none" });
@@ -377,7 +377,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 return new NullCustomizer();
-            }).Named<IDependency>(Name);
+            }).Named<IDependency>(Name).InstancePerLifetimeScope();
         }
 
         private static Signature Simple(string name, string value = null) {

@@ -256,7 +256,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             }
 
             // register the short hand
-            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name);
+            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             builder.Register((c, p) => getTransform(p.Positional<IContext>(0))).Named<ITransform>(sig.Method);
 

@@ -325,6 +325,7 @@ namespace Transformalize.Configuration {
             var fields = parameters
                 .Where(p => p.IsField(this))
                 .Select(p => p.AsField(this))
+                .Distinct()
                 .ToList();
 
             if (!fields.Any()) {
