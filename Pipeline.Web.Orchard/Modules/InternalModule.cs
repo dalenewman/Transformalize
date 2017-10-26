@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2016 Dale Newman
+// Copyright 2013-2017 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,27 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Autofac;
+using Pipeline.Web.Orchard.Impl;
+using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 using Transformalize.Nulls;
-using Pipeline.Web.Orchard.Impl;
-using Transformalize;
-using Transformalize.Writers;
-using Transformalize.Providers.File;
-using System.Web;
-using System.Collections.Generic;
 using Transformalize.Provider.Internal;
+using Transformalize.Providers.File;
 
 namespace Pipeline.Web.Orchard.Modules {
 
     public class InternalModule : Module {
-
         private readonly Process _process;
-        private readonly HashSet<string> _internal = new HashSet<string>(new string[] { "internal", "console", "trace", "log", "text" });
+        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
 
         public InternalModule() { }
 
@@ -49,24 +48,22 @@ namespace Pipeline.Web.Orchard.Modules {
                 return;
 
             // Connections
-            foreach (var connection in _process.Connections.Where(c => c.IsInternal())) {
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "internal")) {
                 builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
             }
 
             // Entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).IsInternal())) {
+            foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
-                var e = entity;
-
-                // input version detector
                 builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
                 // READER
                 builder.Register<IRead>(ctx => {
-                    var input = ctx.ResolveNamed<InputContext>(e.Key);
-                    var rowFactory = ctx.ResolveNamed<IRowFactory>(e.Key, new NamedParameter("capacity", input.RowCapacity));
+                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
+                    var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
                     switch (input.Connection.Provider) {
+                        case Constants.DefaultSetting:
                         case "internal":
                             return new InternalReader(input, rowFactory);
                         default:
@@ -86,18 +83,20 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     var e = entity;
 
-                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), new InternalWriter(ctx.ResolveNamed<OutputContext>(entity.Key)))).Named<IOutputProvider>(entity.Key);
-                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(e.Key);
+                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(e.Key), ctx.ResolveNamed<IWrite>(e.Key))).Named<IOutputProvider>(e.Key);
 
                     // WRITER
                     builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(e.Key);
 
                         switch (output.Connection.Provider) {
+                            case Constants.DefaultSetting:
                             case "internal":
                                 return new InternalWriter(output);
                             case "text":
                                 return new FileStreamWriter(output, HttpContext.Current.Response.OutputStream);
+                            case "trace":
                             case "log":
                                 return new OrchardLogWriter(output);
                             default:

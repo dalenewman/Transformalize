@@ -20,7 +20,6 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-
     public class DefaultValidator : BaseValidate {
         private readonly Field _input;
         private readonly object _default;

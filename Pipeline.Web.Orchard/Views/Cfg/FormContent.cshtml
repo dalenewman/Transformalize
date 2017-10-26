@@ -1,5 +1,7 @@
 ﻿@using Transformalize
 @using System.Linq
+@using Orchard.ContentManagement
+@using Pipeline.Web.Orchard.Models
 @using Transformalize.Configuration
 @using Transformalize.Impl
 @model Transformalize.Configuration.Process
@@ -75,8 +77,8 @@
             if (field.PrimaryKey) {
                 <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
             } else {
-                // currently maps are used if they have the same name as the field
-                var map = Model.Maps.FirstOrDefault(m => m.Name.Equals(field.Name, StringComparison.OrdinalIgnoreCase));
+                // currently maps are used if the field has a map (or the field's name is the same as a map's name for backwards compatibility)
+                var map = Model.Maps.FirstOrDefault(m => m.Name == field.Map || m.Name == field.Name.ToLower());
                 if (map != null) {
                     <div class="form-group @(Status(row,field))">
                         <label for="@field.Alias">@field.Label</label>
@@ -97,6 +99,19 @@
                     var type = field.InputType == "defer" ? field.Type : field.InputType;
                     switch (type) {
                         case "file":
+                            PipelineFilePart filePart = null;
+                            if (value != null) {
+                                var str = value.ToString();
+                                if (str != string.Empty) {
+                                    var id = str.Split(new[] {'/'}, StringSplitOptions.None).LastOrDefault();
+                                    if (id != null) {
+                                        int cid;
+                                        if (int.TryParse(id, out cid)) {
+                                            filePart = WorkContext.Resolve<IContentManager>().Get(cid).As<PipelineFilePart>();
+                                        }
+                                    }
+                                }
+                            }
                             <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
                                 <input class="form-control @field.Class"
@@ -105,6 +120,9 @@
                                        type="file"
                                        accept="@field.InputAccept"
                                        capture="@field.InputCapture" />
+                                @if (filePart != null) {
+                                    <span class="text-muted"><strong>Caution</strong>: File <strong>@filePart.FileName()</strong> is saved here.</span>
+                                }
                                 @if (!IsValid(row, field)) {
                                     <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
                                 }
@@ -119,9 +137,9 @@
                                                id="id_@field.Alias"
                                                type="checkbox"
                                                checked="@((bool)value)" /> @field.Label
-                                        </label>
-                                    </div>
+                                    </label>
                                 </div>
+                            </div>
                             break;
                         default:
                             <div class="form-group @(Status(row,field))">
@@ -133,6 +151,9 @@
                                        id="id_@field.Alias"
                                        placeholder="@field.Label"
                                        value="@value" />
+                                @if (field.Hint != string.Empty) {
+                                    <span class="text-muted">@field.Hint</span>
+                                }
                                 @if (!IsValid(row, field)) {
                                     <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
                                 }

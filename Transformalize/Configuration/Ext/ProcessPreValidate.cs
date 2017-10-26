@@ -149,7 +149,7 @@ namespace Transformalize.Configuration.Ext {
             }
 
             var parameters = p.GetActiveParameters();
-            if (parameters.Any(pr=>!pr.Prompt)) {
+            if (parameters.Any(pr => !pr.Prompt)) {
                 return;
             }
 

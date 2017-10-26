@@ -23,15 +23,12 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 using Transformalize.Nulls;
 using Transformalize.Providers.Ado;
 using Transformalize.Providers.MySql;
 using Transformalize.Providers.PostgreSql;
 using Transformalize.Providers.SqlServer;
 using Transformalize.Providers.SQLite;
-using Transformalize.Transforms.System;
-using Pipeline.Web.Orchard.Impl;
 using Transformalize;
 using Transformalize.Providers.SqlCe;
 using Transformalize.Impl;
@@ -324,58 +321,8 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     // DELETE HANDLER
                     if (entity.Delete) {
-                        builder.Register<IEntityDeleteHandler>(ctx => {
-                            var context = ctx.ResolveNamed<IContext>(entity.Key);
-                            var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
-                            var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
-                            var rowFactory = new RowFactory(rowCapacity, false, true);
-                            IRead input = new NullReader(context);
-                            var primaryKey = entity.GetPrimaryKey();
-
-                            switch (inputContext.Connection.Provider) {
-                                case "mysql":
-                                case "postgresql":
-                                case "sqlce":
-                                case "sqlite":
-                                case "sqlserver":
-                                    input = new AdoReader(
-                                        inputContext,
-                                        primaryKey,
-                                        ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
-                                        rowFactory,
-                                        ReadFrom.Input
-                                    );
-                                    break;
-                            }
-
-                            IRead output = new NullReader(context);
-                            IDelete deleter = new NullDeleter(context);
-                            var outputConnection = _process.Output();
-                            var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
-
-                            switch (outputConnection.Provider) {
-                                case "mysql":
-                                case "postgresql":
-                                case "sqlite":
-                                case "sqlserver":
-                                    var ocf = ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key);
-                                    output = new AdoReader(context, entity.GetPrimaryKey(), ocf, rowFactory, ReadFrom.Output);
-                                    deleter = new AdoDeleter(outputContext, ocf);
-                                    break;
-                            }
-
-                            var handler = new DefaultDeleteHandler(context, input, output, deleter);
-
-                            // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
-                            // feels a lot like entity pipeline on just the primary keys... may look at consolidating
-                            handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
-                            handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
-                            handler.Register(new StringTruncateTransfom(context, primaryKey));
-
-                            return new ParallelDeleteHandler(handler);
-                        }).Named<IEntityDeleteHandler>(entity.Key);
+                        builder.Register<IEntityDeleteHandler>(ctx => new NullDeleteHandler()).Named<IEntityDeleteHandler>(entity.Key);
                     }
-
 
                 }
             }

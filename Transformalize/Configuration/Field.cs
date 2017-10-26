@@ -585,7 +585,36 @@ namespace Transformalize.Configuration {
         [Cfg(value = 0)]
         public int Height { get; set; }
 
-        [Cfg(value="")]
+        /// <summary>
+        /// Used for validation messages
+        /// </summary>
+        [Cfg(value = "")]
         public string Help { get; set; }
+
+        /// <summary>
+        /// Used for form mode sections
+        /// </summary>
+        [Cfg(value = "")]
+        public string Section { get; set; }
+
+        /// <summary>
+        /// Used for form mode sections
+        /// </summary>
+        [Cfg(value = "")]
+        public string Hint { get; set; }
+
+        /// <summary>
+        /// Used to in form mode to populate drop downs
+        /// </summary>
+        [Cfg(value="", toLower = true, trim = true)]
+        public string Map { get; set; }
+
+        public Parameter ToFormParameter() {
+            return new Parameter {
+                Name = Name,
+                Type = PrimaryKey ? Type : "string",
+                Value = Default == Constants.DefaultSetting ? Constants.StringDefaults()[Type] : Default
+            };
+        }
     }
 }

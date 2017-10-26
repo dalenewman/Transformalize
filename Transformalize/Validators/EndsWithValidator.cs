@@ -20,6 +20,7 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
+
     public class EndsWithValidator : StringValidate {
         private readonly Field _input;
         private readonly BetterFormat _betterFormat;

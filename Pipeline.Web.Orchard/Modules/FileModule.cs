@@ -132,7 +132,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                 }
                                 return output.Connection.Stream ?
                                     (IWrite)new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream) :
-                                    new DelimitedFileWriter(output, output.Connection.File);
+                                    new DelimitedFileWriter(output);
                             default:
                                 return new NullWriter(output);
                         }

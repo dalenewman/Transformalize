@@ -15,10 +15,12 @@ nuget pack Providers\SqlServer\Transformalize.Provider.SqlServer.nuspec -OutputD
 nuget pack Providers\Access\Transformalize.Provider.Access.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\SqlCe\Transformalize.Provider.SqlCe.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Web\Transformalize.Provider.Web.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Providers\Console\Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Providers\Trace\Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transforms\Jint\Transformalize.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Providers\Console\Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Providers\Trace\Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transforms\Globalization\Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\temp\modules"
+
 

@@ -50,45 +50,6 @@ namespace Pipeline.Web.Orchard {
             return Path.Combine(FileFolder, now.Year.ToString(), now.ToString("MM-MMM").ToUpper(), now.ToString("dd"));
         }
 
-        public static Process FormConversion(PipelineConfigurationPart part, Process process, IDictionary<string, string> parameters) {
-            // convert for form
-            process.Buffer = false; // no buffering for forms
-            process.ReadOnly = true;  // force forms to omit system fields
-
-            foreach (var entity in process.Entities) {
-                // remove system fields if they exist
-                entity.Fields.RemoveAll(f => f.System);
-
-                foreach (var key in entity.GetPrimaryKey()) {
-                    if (entity.Filter.All(f => f.Field != key.Alias)) {
-                        entity.Filter.Add(new Filter { Field = key.Alias, Value = string.Concat(part.PlaceHolderStyle[0], part.PlaceHolderStyle[1], key.Alias, part.PlaceHolderStyle[2]) });
-                    }
-                }
-            }
-
-            // create parameters based off fields and attach maps if exist
-            var active = process.GetActiveParameters();
-            if (active.Count == 0) {
-                process.Environments.Clear();
-                process.Environments.Add(new Transformalize.Configuration.Environment { Name = "One", Parameters = new List<Parameter>() });
-                active = process.Environments.First().Parameters;
-            }
-            foreach (var field in process.GetAllFields().Where(f => f.Input)) {
-                var par = active.FirstOrDefault(p => p.Name.Equals(field.Alias, StringComparison.OrdinalIgnoreCase));
-
-                if (par == null) {
-                    par = new Parameter { Name = field.Alias, Type = field.Type, Value = field.Default };
-                    active.Add(par);
-                }
-
-                if (string.IsNullOrEmpty(par.Map) && process.Maps.Any(m => m.Name.Equals(par.Name.ToLower()))) {
-                    par.Map = par.Name.ToLower();
-                }
-            }
-            process.Load(process.Serialize(), parameters);
-            return process;
-        }
-
         public static IDictionary<string, string> GetParameters(
             HttpRequestBase request,
             ISecureFileService secureFileService,

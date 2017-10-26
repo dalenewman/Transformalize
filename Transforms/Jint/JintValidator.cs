@@ -28,14 +28,12 @@ namespace Transformalize.Transforms.Jint {
         readonly JavaScriptParser _jint = new JavaScriptParser();
         readonly ParserOptions _options;
         public string Name { get; set; }
-        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger)
-        {
+        public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {
 
             if (parent != "transform")
                 return;
 
-            IAttribute scriptAttr;
-            if (!node.TryAttribute("script", out scriptAttr))
+            if (!node.TryAttribute("script", out var scriptAttr))
                 return;
 
             var value = scriptAttr.Value.ToString();
@@ -58,7 +56,7 @@ namespace Transformalize.Transforms.Jint {
             }
         }
 
-        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger){}
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) { }
 
         public JintValidator() {
             _options = new ParserOptions { Tolerant = true };

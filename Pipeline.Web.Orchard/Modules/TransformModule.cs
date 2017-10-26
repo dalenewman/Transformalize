@@ -79,7 +79,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new FileNameTransform(p.Positional<IContext>(0))).Named<ITransform>("filename");
             builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");
             builder.Register((c, p) => new FloorTransform(p.Positional<IContext>(0))).Named<ITransform>("floor");
-            builder.Register((c, p) => new BetterFormatTransform(p.Positional<IContext>(0))).Named<ITransform>("format");
+            builder.Register((c, p) => new FormatTransform(p.Positional<IContext>(0))).Named<ITransform>("format");
             builder.Register((c, p) => new FormatXmlTransfrom(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
             builder.Register((c, p) => new FormatPhoneTransform(p.Positional<IContext>(0))).Named<ITransform>("formatphone");
             builder.Register((c, p) => new HashcodeTransform(p.Positional<IContext>(0))).Named<ITransform>("hashcode");

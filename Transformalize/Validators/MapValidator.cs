@@ -28,7 +28,7 @@ namespace Transformalize.Validators {
 
         private readonly Field _input;
         private readonly HashSet<object> _map = new HashSet<object>();
-        private readonly BetterFormat _betterFormat;
+        private BetterFormat _betterFormat;
 
         public MapValidator(IContext context) : base(context) {
 
@@ -42,11 +42,6 @@ namespace Transformalize.Validators {
             }
 
             _input = SingleInput();
-            var help = context.Field.Help;
-            if (help == string.Empty) {
-                help = $"{context.Field.Label}'s value {{{context.Field.Alias}}} is not found in {_map.Count} items.";
-            }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
 
         }
 
@@ -56,6 +51,12 @@ namespace Transformalize.Validators {
             foreach (var item in map.Items) {
                 _map.Add(_input.Convert(item.From));
             }
+
+            var help = Context.Field.Help;
+            if (help == string.Empty) {
+                help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} is not found in {_map.Count} items.";
+            }
+            _betterFormat = new BetterFormat(Context, help, Context.Entity.GetAllFields);
 
             return base.Operate(rows);
         }

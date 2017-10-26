@@ -106,6 +106,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Providers\Trace\Transformalize.Provider.Trace.nuspec = Providers\Trace\Transformalize.Provider.Trace.nuspec
 		Providers\Web\Transformalize.Provider.Web.nuspec = Providers\Web\Transformalize.Provider.Web.nuspec
 		Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec = Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec
+		Transforms\Globalization\Transformalize.Transform.Globalization.nuspec = Transforms\Globalization\Transformalize.Transform.Globalization.nuspec
 		Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec = Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec
 		Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec = Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec
 		Transforms\Jint\Transformalize.Transform.Jint.nuspec = Transforms\Jint\Transformalize.Transform.Jint.nuspec

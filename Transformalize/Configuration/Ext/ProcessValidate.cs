@@ -42,6 +42,7 @@ namespace Transformalize.Configuration.Ext {
             ValidateEntityInvalidFields(p, error);
             ValidateEntityMeetsProviderExpectations(p, error);
             ValidateEntityFilterMaps(p, error);
+            ValidateEntityFieldMaps(p, error);
             ValidateActionConnections(p, error);
             ValidateTemplateActionConnections(p, error);
             ValidateTransformConnections(p, error);
@@ -240,6 +241,14 @@ namespace Transformalize.Configuration.Ext {
                 }
             }
 
+        }
+
+        private static void ValidateEntityFieldMaps(Process p, Action<string> error) {
+            foreach (var entity in p.Entities) {
+                foreach (var field in entity.Fields.Where(f => !string.IsNullOrEmpty(f.Map)).Where(f => p.Maps.All(m => m.Name != f.Map))) {
+                    error($"The field {field.Alias} in entity {entity.Alias} refers to invalid map: {field.Map}");
+                }
+            }
         }
 
         private static void ValidateRelationships(Process p, Action<string> error, Action<string> warn) {

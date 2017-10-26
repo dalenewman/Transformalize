@@ -44,7 +44,7 @@ namespace Transformalize.Validators {
 
             var help = context.Field.Help;
             if (help == string.Empty) {
-                help = $"{context.Field.Label} must match the regular expression pattern: {Context.Operation.Pattern}.";
+                help = $"{context.Field.Label} must match the regular expression pattern: {Context.Operation.Pattern.Replace("{","{{").Replace("}","}}")}.";
             }
             _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }

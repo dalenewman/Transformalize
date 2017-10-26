@@ -24,7 +24,6 @@ using Cfg.Net.Environment;
 using Cfg.Net.Reader;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms.Jint;
 using Orchard.Localization;
 using Transformalize;
 using Transformalize.Impl;
@@ -44,7 +43,6 @@ namespace Pipeline.Web.Orchard.Modules {
         protected override void Load(ContainerBuilder builder) {
 
             builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
-            builder.Register(ctx => new JintValidator()).Named<ICustomizer>("js");
 
             // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
             builder.RegisterType<FileReader>().Named<IReader>("file");
@@ -61,7 +59,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     ctx.Resolve<ISerializer>(),
                     new DateMathModifier(),
                     new EnvironmentModifier(),
-                    ctx.ResolveNamed<ICustomizer>("js"),
                     new IllegalCharacterValidator()
                 };
 

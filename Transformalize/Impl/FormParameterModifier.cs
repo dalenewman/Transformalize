@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Cfg.Net.Contracts;
+using Cfg.Net.Parsers;
+
+namespace Transformalize.Impl {
+
+    public class FormParameterNode : INode {
+
+        private Dictionary<string, IAttribute> _attributes;
+
+        public FormParameterNode(string name) {
+            Name = name;
+            Attributes = new List<IAttribute>();
+            SubNodes = new List<INode>();
+        }
+
+        public string Name { get; }
+        public List<IAttribute> Attributes { get; }
+        public List<INode> SubNodes { get; }
+
+        public bool TryAttribute(string name, out IAttribute attr) {
+            if (_attributes == null) {
+                _attributes = new Dictionary<string, IAttribute>();
+                for (int i = 0; i < Attributes.Count; i++) {
+                    _attributes[Attributes[i].Name] = Attributes[i];
+                }
+            }
+            if (_attributes.ContainsKey(name)) {
+                attr = _attributes[name];
+                return true;
+            }
+            attr = null;
+            return false;
+        }
+    }
+
+    public class FormParameterModifier : ICustomizer {
+        private readonly ICustomizer _after;
+
+        public FormParameterModifier(ICustomizer after) {
+            _after = after;
+        }
+
+        public void Customize(string collection, INode node, IDictionary<string, string> parameters, ILogger logger) {
+            _after.Customize(collection, node, parameters, logger);
+        }
+
+        public void Customize(INode root, IDictionary<string, string> parameters, ILogger logger) {
+
+            if (root.TryAttribute("mode", out var mode)) {
+                if (mode.Value.Equals("form")) {
+
+                    var parameterCollection = root.SubNodes.FirstOrDefault(n => n.Name.Equals("parameters", StringComparison.OrdinalIgnoreCase));
+
+                    if (parameterCollection != null) {
+
+                        var parameterNames = new HashSet<string>();
+
+                        foreach (var node in parameterCollection.SubNodes) {
+                            if (node.TryAttribute("name", out var name)) {
+                                parameterNames.Add(name.Value.ToString());
+                            }
+                        }
+
+                        var entityCollection = root.SubNodes.FirstOrDefault(n => n.Name.Equals("entities", StringComparison.OrdinalIgnoreCase));
+                        if (entityCollection != null) {
+                            foreach (var entity in entityCollection.SubNodes) {
+                                var fieldCollection = entity.SubNodes.FirstOrDefault(n => n.Name.Equals("fields", StringComparison.OrdinalIgnoreCase));
+                                if (fieldCollection != null) {
+                                    foreach (var field in fieldCollection.SubNodes) {
+                                        if (field.TryAttribute("name", out var name)) {
+
+                                            var add = false;
+                                            if (field.TryAttribute("input", out var input)) {
+                                                if (input.Value.ToString().ToLower() == "true") {
+                                                    add = true;
+                                                }
+                                            } else {
+                                                add = true;
+                                            }
+
+                                            if (!parameterNames.Contains(name.Value) && add) {
+
+                                                var node = new FormParameterNode("add");
+                                                node.Attributes.Add(new NodeAttribute("name", name.Value));
+                                                if (field.TryAttribute("default", out var def)) {
+                                                    NodeAttribute n = new NodeAttribute("value", null);
+                                                    if (def.Value.ToString() == Constants.DefaultSetting) {
+                                                        n.Value = string.Empty;
+                                                    } else {
+                                                        n.Value = def.Value;
+                                                    }
+                                                    node.Attributes.Add(n);
+                                                } else {
+                                                    node.Attributes.Add(new NodeAttribute("value", string.Empty));
+                                                }
+                                                node.Attributes.Add(new NodeAttribute("label", "n/a"));
+
+                                                parameterCollection.SubNodes.Add(node);
+
+                                            }
+                                        }
+
+
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+
+            _after.Customize(root, parameters, logger);
+        }
+    }
+}

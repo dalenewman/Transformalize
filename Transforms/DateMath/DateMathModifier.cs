@@ -25,19 +25,18 @@ namespace Transformalize.Transforms.DateMath {
         private const string DefaultFormat = "yyyy-MM-dd";
 
         private static void ApplyDateMath(INode node, string name) {
-            IAttribute valueAttribute;
-            if (!node.TryAttribute(name, out valueAttribute) || valueAttribute.Value == null)
+            if (!node.TryAttribute(name, out var valueAttribute) || valueAttribute.Value == null)
                 return;
 
             var value = valueAttribute.Value.ToString();
 
-            IAttribute formatAttribute;
-            if (node.TryAttribute("format", out formatAttribute) && formatAttribute.Value != null) {
+            if (node.TryAttribute("format", out var formatAttribute) && formatAttribute.Value != null) {
                 var format = formatAttribute.Value.ToString();
                 valueAttribute.Value = string.IsNullOrEmpty(format) ? DaleNewman.DateMath.Parse(value, DefaultFormat) : DaleNewman.DateMath.Parse(value, format);
             } else {
                 valueAttribute.Value = DaleNewman.DateMath.Parse(value, DefaultFormat);
             }
+
         }
 
         public void Customize(string parent, INode node, IDictionary<string, string> parameters, ILogger logger) {

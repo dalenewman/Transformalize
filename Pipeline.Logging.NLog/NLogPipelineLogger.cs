@@ -45,10 +45,11 @@ namespace Transformalize.Logging.NLog {
         }
 
         private void ReConfiguredLogLevel(string name) {
+            var reconfigured = false;
 
-            FileTarget file = null;
             var target = LogManager.Configuration.FindTargetByName("file");
             if (target != null) {
+                FileTarget file;
                 if (target is AsyncTargetWrapper) {
                     file = (FileTarget)((AsyncTargetWrapper)target).WrappedTarget;
                 } else {
@@ -59,6 +60,7 @@ namespace Transformalize.Logging.NLog {
                     if (!info.Name.Contains(name)) {
                         file.FileName = Path.Combine(info.DirectoryName ?? string.Empty, name + "-" + info.Name);
                     }
+                    reconfigured = true;
                 } catch (Exception) {
                     // eat it
                 }
@@ -76,10 +78,14 @@ namespace Transformalize.Logging.NLog {
                 var subject = mail.Subject.Render(new LogEventInfo { TimeStamp = DateTime.Now });
                 if (!subject.Contains(name)) {
                     mail.Subject = subject + ": " + name;
+                    reconfigured = true;
                 }
             }
 
-            LogManager.ReconfigExistingLoggers();
+            if (reconfigured) {
+                LogManager.ReconfigExistingLoggers();
+            }
+
         }
 
         public void SuppressConsole() {
@@ -96,10 +102,8 @@ namespace Transformalize.Logging.NLog {
             return string.Format(Context, context.ForLog);
         }
 
-        public LogLevel LogLevel
-        {
-            get
-            {
+        public LogLevel LogLevel {
+            get {
                 var cfg = LogManager.Configuration;
                 if (cfg == null) {
                     return LogLevel.None;

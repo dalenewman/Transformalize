@@ -355,14 +355,14 @@ namespace Transformalize.Configuration {
                     }
 
                     if (!calculatedKeys.Contains(field.MessageField)) {
-                        CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true });
+                        CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true, Input = false });
                     }
                 }
                 // create an entity-wide valid field if necessary
                 if (ValidField == string.Empty) {
                     var valid = Alias + "Valid";
                     if (!CalculatedFields.Any(f => f.Name.Equals(valid))) {
-                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid };
+                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true};
                         add.Validators.Add(new Operation {
                             Method = "all",
                             Operator = "equals",

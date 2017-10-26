@@ -57,6 +57,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
         private readonly IFileService _fileService;
+        private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting};
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -254,7 +255,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     var output = process.Output();
 
-                    if (output.Provider.In("internal", "file")) {
+                    if (_reportOutputs.Contains(output.Provider)) {
 
                         Common.TranslatePageParametersToEntities(process, parameters, "page");
 

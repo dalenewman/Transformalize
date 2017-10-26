@@ -5,19 +5,20 @@ using Cfg.Net.Shorthand;
 using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Models;
 using Transformalize.Transforms.DateMath;
-using Transformalize.Transforms.Jint;
+
 using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
 using Orchard.Logging;
+using Transformalize.Impl;
 using Transformalize.Nulls;
-using IDependency = Orchard.IDependency;
 using ILogger = Orchard.Logging.ILogger;
 using Parameter = Cfg.Net.Shorthand.Parameter;
+using OrchardDependency = Orchard.IDependency;
 
 namespace Pipeline.Web.Orchard.Services {
 
-    public interface IProcessService : IDependency {
+    public interface IProcessService : OrchardDependency {
         Process Resolve(PipelineConfigurationPart part, string input, string output);
         Process Resolve(PipelineConfigurationPart part);
     }
@@ -26,8 +27,8 @@ namespace Pipeline.Web.Orchard.Services {
 
         public ILogger Logger { get; set; }
         private readonly object _lock = new object();
-        public static Cfg.Net.Contracts.IDependency _shortHandCustomizerT;
-        public static Cfg.Net.Contracts.IDependency _shortHandCustomizerV;
+        public static IDependency _shortHandCustomizerT;
+        public static IDependency _shortHandCustomizerV;
 
         public ProcessService() {
             Logger = NullLogger.Instance;
@@ -52,20 +53,18 @@ namespace Pipeline.Web.Orchard.Services {
                     switch (output) {
                         case "json":
                             return new Process(
-                                new DateMathModifier(),
+                                new FormParameterModifier(new DateMathModifier()),
                                 new FastJsonParser(),
                                 new JsonSerializer(),
-                                new JintValidator(),
                                 _shortHandCustomizerT,
                                 _shortHandCustomizerV,
                                 modifier
                             );
                         default:  // xml
                             return new Process(
-                                new DateMathModifier(),
+                                new FormParameterModifier(new DateMathModifier()),
                                 new FastJsonParser(),
                                 new XmlSerializer(),
-                                new JintValidator(),
                                 _shortHandCustomizerT,
                                 _shortHandCustomizerV,
                                 modifier
@@ -75,20 +74,18 @@ namespace Pipeline.Web.Orchard.Services {
                     switch (output) {
                         case "json":
                             return new Process(
-                                new DateMathModifier(),
+                                new FormParameterModifier(new DateMathModifier()),
                                 new NanoXmlParser(),
                                 new JsonSerializer(),
-                                new JintValidator(),
                                 _shortHandCustomizerT,
                                 _shortHandCustomizerV,
                                 modifier
                             );
                         default: // xml
                             return new Process(
-                                new DateMathModifier(),
+                                new FormParameterModifier(new DateMathModifier()),
                                 new NanoXmlParser(),
                                 new XmlSerializer(),
-                                new JintValidator(),
                                 _shortHandCustomizerT,
                                 _shortHandCustomizerV,
                                 modifier
@@ -492,6 +489,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
             root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
             root.Methods.Add(new Method { Name = "map", Signature = "map" });
+            root.Methods.Add(new Method {Name = "length", Signature = "length"});
 
             root.Check();
 
