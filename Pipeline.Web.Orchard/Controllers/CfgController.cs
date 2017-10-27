@@ -155,13 +155,24 @@ namespace Pipeline.Web.Orchard.Controllers {
                             process = _processService.Resolve(part);
                             process.Load(part.Configuration, parameters);
                             var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
-                            process.Actions.Add(new Transformalize.Configuration.Action { After = true, Before = false, Type = "run", Connection = entity.Connection, Command = insert ? entity.InsertCommand : entity.UpdateCommand, Key = Guid.NewGuid().ToString() });
+                            process.Actions.Add(new Transformalize.Configuration.Action {
+                                After = true,
+                                Before = false,
+                                Type = "run",
+                                Connection = entity.Connection,
+                                Command = insert ? entity.InsertCommand : entity.UpdateCommand,
+                                Key = Guid.NewGuid().ToString(),
+                                ErrorMode = "exception"
+                            });
 
-                            foreach (var field in entity.Fields.Where(f => f.Input && f.InputType == "file")) {
-                                if (Request.Files != null && Request.Files.Count > 0) {
+                            if (Request.Files != null && Request.Files.Count > 0) {
+                                var files = entity.Fields.Where(f => f.Input && f.InputType == "file").ToArray();
+                                for (var i = 0; i < files.Length; i++) {
+                                    var field = files[i];
                                     var input = Request.Files.Get(field.Alias);
+                                    
                                     if (input != null && input.ContentLength > 0) {
-                                        var filePart = _fileService.Upload(input, "Authenticated", "Forms");
+                                        var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
                                         var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
                                         if (parameter != null) {
                                             parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
@@ -169,6 +180,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     }
                                 }
                             }
+
 
                             try {
                                 runner.Execute(process);

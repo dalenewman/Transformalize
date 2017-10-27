@@ -40,7 +40,7 @@ namespace Transformalize.Providers.Ado.Actions {
         }
 
         public ActionResponse Execute() {
-            var response = new ActionResponse();
+            var response = new ActionResponse { Action = _node };
             using (var cn = _cf.GetConnection()) {
                 cn.Open();
                 try {

@@ -49,7 +49,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (Request.Files != null && Request.Files.Count > 0) {
                 var input = Request.Files.Get(0);
                 if (input != null && input.ContentLength > 0) {
-                    var filePart = _fileService.Upload(input, Request.Form["Role"], Request.Form["Tag"]);
+                    var filePart = _fileService.Upload(input, Request.Form["Role"], Request.Form["Tag"], 1);
                     return RedirectToAction("List", new { id = filePart.Id });
                 }
                 _orchardServices.Notifier.Error(T("Please choose a file."));

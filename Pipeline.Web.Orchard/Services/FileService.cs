@@ -24,20 +24,15 @@ namespace Pipeline.Web.Orchard.Services {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IAppDataFolder _appDataFolder;
-        private readonly IClock _clock;
         private readonly ITagService _tagService;
-
-        const string FileTimestamp = "yyyy-MM-dd-HH-mm-ss";
 
         public FileService(
             IOrchardServices orchardServices,
             IAppDataFolder appDataFolder,
-            ITagService tagService,
-            IClock clock) {
+            ITagService tagService) {
             _orchardServices = orchardServices;
             _appDataFolder = appDataFolder;
             _tagService = tagService;
-            _clock = clock;
             Logger = NullLogger.Instance;
             T = NullLocalizer.Instance;
         }
@@ -45,7 +40,7 @@ namespace Pipeline.Web.Orchard.Services {
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
-        public PipelineFilePart Upload(HttpPostedFileBase input, string role, string tag) {
+        public PipelineFilePart Upload(HttpPostedFileBase input, string role, string tag, int number) {
 
             var part = _orchardServices.ContentManager.New<PipelineFilePart>(Common.PipelineFileName);
             var permissions = part.As<ContentPermissionsPart>();
@@ -72,7 +67,7 @@ namespace Pipeline.Web.Orchard.Services {
                 }
             }
 
-            var exportFile = Common.GetSafeFileName(_orchardServices.WorkContext.CurrentUser.UserName, Path.GetFileName(input.FileName));
+            var exportFile = Common.GetSafeFileName(_orchardServices.WorkContext.CurrentUser.UserName, Path.GetFileName(input.FileName), number);
 
             var path = Common.GetAppFolder();
             if (!_appDataFolder.DirectoryExists(path)) {

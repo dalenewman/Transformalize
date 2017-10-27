@@ -53,11 +53,11 @@
 }
 
 @foreach (var error in Model.Errors()) {
-<div class="alert alert-danger" role="alert">@error</div>
+    <div class="alert alert-danger" role="alert">@error</div>
 }
 
 @foreach (var warning in Model.Warnings()) {
-<div class="alert alert-warning" role="alert">@warning</div>
+    <div class="alert alert-warning" role="alert">@warning</div>
 }
 
 @using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
@@ -68,10 +68,10 @@
 
         foreach (var field in fields) {
 
-            var value = row[field.Alias];
+            var value = row[field.Alias] ?? string.Empty;
 
             if (field.Type.StartsWith("date") && field.Format != string.Empty) {
-                value = ((DateTime) value).ToString(field.Format);
+                value = ((DateTime)value).ToString(field.Format);
             }
 
             if (field.PrimaryKey) {
@@ -82,36 +82,55 @@
                 if (map != null) {
                     <div class="form-group @(Status(row,field))">
                         <label for="@field.Alias">@field.Label</label>
-                        <select class="form-control @field.Class" name="@field.Alias" id="id_@field.Alias">
-                            @if (map.Items.Any()) {
-                                    if (map.Items.All(i => !i.To.Equals(value))) {
-                                        value = map.Items.First().To;
-                                    }
-                                    foreach (var item in map.Items) {
-                                    <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
-                                }
-                            } else {
-                                <option value="" selected="selected"> </option>
+                        @if (map.Items.Any()) {
+                            if (map.Items.All(i => !i.To.Equals(value))) {
+                                value = map.Items.First().To;
                             }
-                        </select>
+                            if (map.Items.Count > 3) {
+                                <select class="form-control @field.Class" name="@field.Alias" id="id_@field.Alias">
+                                    @foreach (var item in map.Items) {
+                                        <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
+                                    }
+                                </select>
+                            } else {
+                                if (map.Items.Count > 2) {
+                                    foreach (var item in map.Items) {
+                                        <div class="radio">
+                                            <label>
+                                                <input class="@field.Class" type="radio" name="@field.Alias" id="id_@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" />@item.From
+                                            </label>
+                                        </div>
+                                    }
+                                } else {
+                                    <br />
+                                    foreach (var item in map.Items) {
+                                        <label class="radio-inline">
+                                            <input class="@field.Class" type="radio" name="@field.Alias" id="id_@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" /> &nbsp;@item.From
+                                        </label>
+                                    }
+                                }
+                            }
+                        } else {
+                            <p class="text-warning">@field.Label doesn't have any items!</p>
+                        }
                     </div>
                 } else {
                     var type = field.InputType == "defer" ? field.Type : field.InputType;
                     switch (type) {
                         case "file":
                             PipelineFilePart filePart = null;
-                            if (value != null) {
-                                var str = value.ToString();
-                                if (str != string.Empty) {
-                                    var id = str.Split(new[] {'/'}, StringSplitOptions.None).LastOrDefault();
-                                    if (id != null) {
-                                        int cid;
-                                        if (int.TryParse(id, out cid)) {
-                                            filePart = WorkContext.Resolve<IContentManager>().Get(cid).As<PipelineFilePart>();
-                                        }
+
+                            var str = value.ToString();
+                            if (str != string.Empty) {
+                                var id = str.Split(new[] { '/' }, StringSplitOptions.None).LastOrDefault();
+                                if (id != null) {
+                                    int cid;
+                                    if (int.TryParse(id, out cid)) {
+                                        filePart = WorkContext.Resolve<IContentManager>().Get(cid).As<PipelineFilePart>();
                                     }
                                 }
                             }
+
                             <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
                                 <input class="form-control @field.Class"
@@ -121,7 +140,7 @@
                                        accept="@field.InputAccept"
                                        capture="@field.InputCapture" />
                                 @if (filePart != null) {
-                                    <span class="text-muted"><strong>Caution</strong>: File <strong>@filePart.FileName()</strong> is saved here.</span>
+                                    <span class="text-muted"><strong>Caution</strong>: File <strong>@filePart.FileName()</strong> is saved in @field.Label.</span>
                                 }
                                 @if (!IsValid(row, field)) {
                                     <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
@@ -137,20 +156,39 @@
                                                id="id_@field.Alias"
                                                type="checkbox"
                                                checked="@((bool)value)" /> @field.Label
-                                    </label>
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
                             break;
                         default:
                             <div class="form-group @(Status(row,field))">
                                 <label for="@field.Alias">@field.Label</label>
-                                <input type="text"
-                                       class="form-control @field.Class"
-                                       maxlength="@field.Length"
-                                       name="@field.Alias"
-                                       id="id_@field.Alias"
-                                       placeholder="@field.Label"
-                                       value="@value" />
+                                @{
+                                    var useTextArea = field.Length == "max";
+                                    int length = 4000;
+                                    if (!useTextArea) {
+                                        if (int.TryParse(field.Length, out length)) {
+                                            useTextArea = length >= 255;
+                                        }
+                                    }
+                                }
+                                @if (useTextArea) {
+                                    <textarea class="form-control @field.Class"
+                                              name="@field.Alias"
+                                              id="id_@field.Alias"
+                                              rows="3"
+                                              placeholder="@field.Label"
+                                              maxlength="@length">@value.ToString().Trim()</textarea>
+                                } else {
+                                    <input type="text"
+                                           class="form-control @field.Class"
+                                           maxlength="@field.Length"
+                                           name="@field.Alias"
+                                           id="id_@field.Alias"
+                                           placeholder="@field.Label"
+                                           value="@value" />
+                                }
+
                                 @if (field.Hint != string.Empty) {
                                     <span class="text-muted">@field.Hint</span>
                                 }
@@ -159,16 +197,15 @@
                                 }
                             </div>
                             break;
+                        }
                     }
                 }
             }
         }
-    }
 
-    <input name="submit" 
-           type="submit" 
-           value="Submit" 
-           disabled="@(!valid)"
-           class="btn @(valid ? "btn-primary" : "btn-warning")" />
+        <input name="submit"
+                type="submit"
+                value="Submit"
+                disabled="@(!valid)"
+                class="btn @(valid ? "btn-primary" : "btn-warning")" />
 }
-

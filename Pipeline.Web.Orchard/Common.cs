@@ -39,10 +39,10 @@ namespace Pipeline.Web.Orchard {
         }
 
         public static string GetSafeFileName(string user, string name, string ext) {
-            return string.Format("{0}-{1:yyyy-MM-dd-HH-mm-ss}-{2}.{3}", user, DateTime.UtcNow, name, ext.TrimStart('.'));
+            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{name}.{ext.TrimStart('.')}";
         }
-        public static string GetSafeFileName(string user, string name) {
-            return string.Format("{0}-{1:yyyy-MM-dd-HH-mm-ss}-{2}", user, DateTime.UtcNow, name);
+        public static string GetSafeFileName(string user, string name, int number = 0) {
+            return $"{user}-{DateTime.UtcNow:yyyy-MM-dd-HH-mm-ss}-{number}-{name}";
         }
 
         public static string GetAppFolder() {
