@@ -510,20 +510,18 @@ LIMIT 10;
 
 > Introducing the **`flatten`** attribute
 
+
 Transformalize de-normalizes in two phases.  First, it moves data 
-from a relational model to a [star-schema](https://en.wikipedia.org/wiki/Star_schema). 
+from a relational model into a [star-schema](https://en.wikipedia.org/wiki/Star_schema).
+Secondly, it moves data into a completely de-normalized (flat) output. 
 
-![Relational to Star](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/er-to-star.png)
+![Relational to Star](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/transformalize-diagram.jpg)
 
-Relational is on the left, and star-schema is on the right.  To create a star-schema, all the 
-foreign keys in the relational model are moved to the center (the fact table).  Once this is 
-accomplished, fact table data retrieval is faster because every entity is directly related.
+To create a star-schema, it moves the foreign keys to the center.  Data retrieval is 
+faster because everything is directly related.
 
-Additionally, Transformalize can move data from the star-schema into a 
-completely de-normalized (flat) output.  In a flattened output, 
-all of the keys, *plus all the descriptive information* is moved 
-to one place. In this case, data retrieval is as fast as possible because 
-there's no need for joins.
+To create a flat output, it moves *everything* to the center.  Data retrieval is 
+even faster because there aren't any relations.
 
 To completely de-normalize, set `flatten` to `true` 
 in the main `<cfg/>` like this:
