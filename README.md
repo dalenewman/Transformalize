@@ -1,8 +1,8 @@
 # Transformalize
 
-Transformalize is an extract, transform, and load ([ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)) 
-tool controlled by run-time configurations called *arrangements*. It automates incremental 
-movement of data into value-adding services like data warehouses, search engines, and reporting. 
+Transformalize is an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) tool 
+that automates the incremental movement of relational data into data warehouses, 
+search engines, and other value-adding systems.
 
 It works with many data sources:
 
@@ -129,12 +129,11 @@ an [Orchard CMS](http://www.orchardproject.net/) module.
 
 ---
 
-
 ### Getting Started
 
-> * Introducing the **`<connections/>`** section
-> * The **`<entities/>`** section
-> * and using the **`tfl.exe`** command line interface
+> * Introducing **`<connections/>`**
+> * **`<entities/>`**
+> * and the **`tfl.exe`** command line interface
 
 I use the Northwind relational database for demonstration. If you want 
 to follow along, you need:
