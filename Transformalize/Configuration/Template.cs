@@ -43,6 +43,9 @@ namespace Transformalize.Configuration {
 
         public string Key { get; set; }
 
+        [Cfg(value="")]
+        public string Content { get; set; }
+
         protected override void PostValidate() {
             var index = 0;
             foreach (var action in Actions) {

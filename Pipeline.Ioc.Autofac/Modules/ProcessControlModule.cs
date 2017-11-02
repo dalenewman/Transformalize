@@ -101,15 +101,21 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 // templates
-                foreach (var template in _process.Templates.Where(t => t.Enabled).Where(t => t.Actions.Any(a => a.GetModes().Any(m => m == _process.Mode)))) {
-                    controller.PostActions.Add(new RenderTemplateAction(template, ctx.ResolveNamed<ITemplateEngine>(template.Key)));
-                    foreach (var action in template.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
-                        if (action.Before) {
-                            controller.PreActions.Add(ctx.ResolveNamed<IAction>(action.Key));
+                foreach (var template in _process.Templates.Where(t => t.Enabled)) {
+                    if (template.Actions.Any()) {
+                        if (template.Actions.Any(a => a.GetModes().Any(m => m == _process.Mode))) {
+                            controller.PostActions.Add(new RenderTemplateAction(template, ctx.ResolveNamed<ITemplateEngine>(template.Key)));
+                            foreach (var action in template.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+                                if (action.Before) {
+                                    controller.PreActions.Add(ctx.ResolveNamed<IAction>(action.Key));
+                                }
+                                if (action.After) {
+                                    controller.PostActions.Add(ctx.ResolveNamed<IAction>(action.Key));
+                                }
+                            }
                         }
-                        if (action.After) {
-                            controller.PostActions.Add(ctx.ResolveNamed<IAction>(action.Key));
-                        }
+                    } else {
+                        controller.PreActions.Add(new TemplateLoaderAction(context, ctx.Resolve<IReader>()));
                     }
                 }
 

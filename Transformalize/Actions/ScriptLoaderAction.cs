@@ -22,7 +22,6 @@ using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Actions {
-
     public class ScriptLoaderAction : IAction {
 
         readonly IContext _context;

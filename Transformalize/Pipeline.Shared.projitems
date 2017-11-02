@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Actions\NullAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\RenderTemplateAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ScriptLoaderAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Actions\TemplateLoaderAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\WaitAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\BaseOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BaseRow.cs" />

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using RazorEngine;
 using RazorEngine.Configuration;
 using RazorEngine.Templating;
@@ -31,8 +32,8 @@ namespace Transformalize.Providers.Razor {
 
     public class RazorTransform : BaseTransform {
 
-        private readonly IRazorEngineService _service;
-        private readonly Field[] _input;
+        private IRazorEngineService _service;
+        private Field[] _input;
         private static readonly ConcurrentDictionary<int, IRazorEngineService> Cache = new ConcurrentDictionary<int, IRazorEngineService>();
 
         public RazorTransform(IContext context) : base(context, context.Field.Type) {
@@ -45,9 +46,24 @@ namespace Transformalize.Providers.Razor {
                 context.Operation.ContentType = "raw"; //other would be html
             }
 
-            _input = MultipleInput();
+        }
 
-            var key = GetHashCode(context.Operation.Template, _input);
+        public override IRow Operate(IRow row) {
+            var output = _service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input));
+            row[Context.Field] = Context.Field.Convert(output.Trim(' ', '\n', '\r'));
+            Increment();
+            return row;
+        }
+
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            var fileBasedTemplate = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Template);
+
+            if (fileBasedTemplate != null) {
+                Context.Operation.Template = fileBasedTemplate.Content;
+            }
+
+            _input = Context.Entity.GetFieldMatches(Context.Operation.Template).ToArray();
+            var key = GetHashCode(Context.Operation.Template, _input);
 
             if (!Cache.TryGetValue(key, out _service)) {
                 var config = new TemplateServiceConfiguration {
@@ -62,20 +78,15 @@ namespace Transformalize.Providers.Razor {
             }
 
             try {
-                RazorEngineServiceExtensions.Compile(_service, (string) Context.Operation.Template, (string) Context.Key, typeof(ExpandoObject));
+                RazorEngineServiceExtensions.Compile(_service, (string)Context.Operation.Template, (string)Context.Key, typeof(ExpandoObject));
                 Cache[key] = _service;
             } catch (Exception ex) {
-                Context.Warn(Context.Operation.Template.Replace("{", "{{").Replace("}", "}}"));
-                Context.Warn(ex.Message);
-                throw;
+                Context.Error(Context.Operation.Template.Replace("{", "{{").Replace("}", "}}"));
+                Context.Error(ex.Message);
+                Run = false;
             }
-        }
 
-        public override IRow Operate(IRow row) {
-            var output = _service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input));
-            row[Context.Field] = Context.Field.Convert(output.Trim(' ', '\n', '\r'));
-            Increment();
-            return row;
+            return base.Operate(rows);
         }
 
         /// <summary>

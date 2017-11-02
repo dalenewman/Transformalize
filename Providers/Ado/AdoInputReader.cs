@@ -77,6 +77,12 @@ namespace Transformalize.Providers.Ado {
                     }
                     _input.Entity.Query = cmd.CommandText;
                 } else {
+                    if (_input.Entity.Query.Length <= 128 && _input.Process.Scripts.Any(s => s.Name == _input.Entity.Query)) {
+                        var script = _input.Process.Scripts.First(s => s.Name == _input.Entity.Query);
+                        if (script.Content != string.Empty) {
+                            _input.Entity.Query = script.Content;
+                        }
+                    }
                     cmd.CommandText = _input.Entity.Query;
                 }
 
