@@ -24,7 +24,11 @@ namespace Transformalize.Transforms {
     public class AddTransform : BaseTransform {
         private readonly Func<IRow, object> _transform;
 
-        public AddTransform(IContext context) : base(context, "decimal") {
+        public AddTransform(IContext context = null) : base(context, "decimal") {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceivingNumbers()) {
                 return;
@@ -70,6 +74,11 @@ namespace Transformalize.Transforms {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
+        }
+
+        public new IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("add");
+            yield return new OperationSignature("sum");
         }
 
     }

@@ -15,6 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -30,6 +36,7 @@ namespace Transformalize.Ioc.Autofac {
             }
 
             var builder = new ContainerBuilder();
+
             builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
             builder.RegisterCallback(new TransformModule().Configure);
@@ -56,6 +63,18 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new SSASModule(process).Configure);
             builder.RegisterCallback(new RethinkDBModule(process).Configure);
 
+            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
+            if (Directory.Exists(pluginsFolder)) {
+
+                builder.Properties["Process"] = process;
+                var assemblies = new List<Assembly>();
+                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+                    var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                    assemblies.Add(assembly);
+                }
+                builder.RegisterAssemblyModules(assemblies.ToArray());
+            }
+
             // template providers
             builder.RegisterCallback(new WordModule(process).Configure);
             builder.RegisterCallback(new RazorModule(process).Configure);
@@ -72,5 +91,16 @@ namespace Transformalize.Ioc.Autofac {
             return builder.Build().BeginLifetimeScope();
 
         }
+
+        public static string AssemblyDirectory {
+            get {
+                var codeBase = typeof(Process).Assembly.CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+
+
     }
 }

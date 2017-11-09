@@ -18,13 +18,17 @@
 
 using System.Collections.Generic;
 using Transformalize.Contracts;
-using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
+
     public class FormatTransform : BaseTransform {
+
         private readonly BetterFormat _betterFormat;
 
-        public FormatTransform(IContext context) : base(context, "string") {
+        public FormatTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _betterFormat = new BetterFormat(context, context.Operation.Format, MultipleInput);
             Run = _betterFormat.Valid;
         }
@@ -35,8 +39,8 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-        public static OperationSignature GetSignature() {
-            return new OperationSignature("format") {
+        public new IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("format") {
                 Parameters = new List<OperationParameter> {
                     new OperationParameter("format")
                 }

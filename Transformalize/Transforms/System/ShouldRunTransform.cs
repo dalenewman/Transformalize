@@ -30,6 +30,11 @@ namespace Transformalize.Transforms.System {
             return Context.Operation.ShouldRun(row) ? _transform.Operate(row) : row;
         }
 
+        public new OperationSignature GetSignature()
+        {
+            throw new global::System.NotImplementedException();
+        }
+
         public new IEnumerable<string> Errors() {
             return _transform.Errors();
         }

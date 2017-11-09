@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -28,7 +30,11 @@ namespace Transformalize.Transforms {
 
         private readonly FieldWithDefault[] _input;
 
-        public CoalesceTransform(IContext context) : base(context, null) {
+        public CoalesceTransform(IContext context = null) : base(context, null) {
+            if (IsMissingContext()) {
+                return;
+            }
+            
             _input = MultipleInput().Select(f => new FieldWithDefault { Field = f, Default = f.Convert(f.Default) }).ToArray();
 
         }
@@ -40,6 +46,11 @@ namespace Transformalize.Transforms {
             }
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures()
+        {
+            yield return new OperationSignature("coalesce");
         }
     }
 }

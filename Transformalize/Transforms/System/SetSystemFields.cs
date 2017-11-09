@@ -40,5 +40,10 @@ namespace Transformalize.Transforms.System {
             row[_tflHashCode] = 0;
             return row;
         }
+
+        public new OperationSignature GetSignature()
+        {
+            throw new global::System.NotImplementedException();
+        }
     }
 }

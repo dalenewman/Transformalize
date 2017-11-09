@@ -16,16 +16,23 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class EqualsTransform : BaseTransform {
+
         private readonly object _value;
         private readonly Action<IRow> _validator;
 
-        public EqualsTransform(IContext context) : base(context, "bool") {
+        public EqualsTransform(IContext context = null) : base(context, "bool") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             Field[] rest;
             bool sameTypes;
             var input = MultipleInput();
@@ -55,6 +62,21 @@ namespace Transformalize.Transforms {
             _validator(row);
             Increment();
             return row;
+        }
+
+        public new IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature {
+                Method = "all",
+                Parameters = new List<OperationParameter>{
+                    new OperationParameter("value", "[default]")
+                }
+            };
+            yield return new OperationSignature {
+                Method = "equals",
+                Parameters = new List<OperationParameter>{
+                    new OperationParameter("value", "[default]")
+                }
+            };
         }
     }
 }

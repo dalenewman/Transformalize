@@ -33,6 +33,11 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public new OperationSignature GetSignature()
+        {
+            throw new global::System.NotImplementedException();
+        }
+
         public static string Get(string[] input) {
 
             switch (input.Length) {

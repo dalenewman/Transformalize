@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
 
@@ -31,7 +30,11 @@ namespace Transformalize.Transforms {
         private readonly int? _end;
         private readonly int? _step;
 
-        public SliceTransform(IContext context) : base(context, "string") {
+        public SliceTransform(IContext context = null) : base(context, "string") {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             _input = SingleInput();
             _separator = context.Operation.Separator.ToCharArray();
@@ -140,8 +143,8 @@ namespace Transformalize.Transforms {
             }
         }
 
-        public static OperationSignature GetSignature() {
-            return new OperationSignature("slice") {
+        public new IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("slice") {
                 NamedParameterIndicator = string.Empty,
                 Parameters = new List<OperationParameter> {
                     new OperationParameter {Name = "expression"},

@@ -15,12 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class ReplaceTransform : StringTransform {
         private readonly Field _input;
+        private readonly Func<IRow, string> _getOldValue;
+        private readonly Func<IRow, string> _getNewValue;
 
         public ReplaceTransform(IContext context) : base(context, "string") {
             if (IsMissing(context.Operation.OldValue)) {
@@ -31,10 +35,34 @@ namespace Transformalize.Transforms {
 
             context.Operation.OldValue = context.Operation.OldValue.Replace("\\r", "\r");
             context.Operation.OldValue = context.Operation.OldValue.Replace("\\n", "\n");
+
+            var oldIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.OldValue);
+            if (oldIsField) {
+                var field = context.Entity.GetField(context.Operation.OldValue);
+                _getOldValue = row => GetString(row, field);
+                context.Debug(() => $"replace transform's old value comes from the field: {field.Alias}");
+            } else {
+                _getOldValue = row => context.Operation.OldValue;
+                context.Debug(() => $"replace transform's old value is literal: {context.Operation.OldValue}");
+            }
+
+            var newIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.NewValue);
+            if (newIsField) {
+                var field = context.Entity.GetField(context.Operation.NewValue);
+                _getNewValue = row => GetString(row, field);
+                context.Debug(() => $"replace transform's new value comes from the field: {field.Alias}");
+            } else {
+                _getNewValue = row => context.Operation.NewValue;
+                context.Debug(() => $"replace transform's new value is literal: {context.Operation.NewValue}");
+            }
+
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = GetString(row,_input).Replace(Context.Operation.OldValue, Context.Operation.NewValue);
+            var oldValue = _getOldValue(row);
+            if (oldValue != string.Empty) {
+                row[Context.Field] = GetString(row, _input).Replace(oldValue, _getNewValue(row));
+            }
             Increment();
             return row;
         }

@@ -65,7 +65,11 @@ namespace Transformalize.Transforms.DateMath {
 
         private readonly Action<IRow> _transform;
 
-        public DateDiffTransform(IContext context) : base(context, PartReturns[context.Operation.TimeComponent]) {
+        public DateDiffTransform(IContext context = null) : base(context, context == null ? "object" : PartReturns[context.Operation.TimeComponent]) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("date")) {
                 return;
             }
@@ -79,8 +83,7 @@ namespace Transformalize.Transforms.DateMath {
             }
 
             if (PartReturns.ContainsKey(context.Operation.TimeComponent)) {
-                if (input.Count() > 1)
-                {
+                if (input.Count() > 1) {
                     // comparing between two dates in pipeline
                     var end = input[1];
                     _transform = row => row[context.Field] = Parts[context.Operation.TimeComponent]((DateTime)row[start], (DateTime)row[end]);
@@ -103,6 +106,15 @@ namespace Transformalize.Transforms.DateMath {
             _transform(row);
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("datediff") {
+                Parameters = new List<OperationParameter>(2) {
+                    new OperationParameter("time-component"),
+                    new OperationParameter("from-time-zone", "UTC")
+                }
+            };
         }
     }
 }

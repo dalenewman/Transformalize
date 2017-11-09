@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -23,7 +25,10 @@ namespace Transformalize.Transforms {
     public class ConcatTransform : BaseTransform {
         private readonly Field[] _input;
 
-        public ConcatTransform(IContext context) : base(context, "string") {
+        public ConcatTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = MultipleInput();
         }
 
@@ -33,5 +38,8 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("concat");
+        }
     }
 }

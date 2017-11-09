@@ -16,33 +16,35 @@
 // limitations under the License.
 #endregion
 using System;
-using Transformalize.Configuration;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class CeilingTransform : BaseTransform {
-        private readonly Field _input;
         private readonly Func<IRow, object> _transform;
 
-        public CeilingTransform(IContext context) : base(context, "decimal") {
+        public CeilingTransform(IContext context = null) : base(context, "decimal") {
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceivingNumber()) {
                 return;
             }
 
-            _input = SingleInput();
-            switch (_input.Type) {
+            var input = SingleInput();
+            switch (input.Type) {
                 case "decimal":
                     Returns = "decimal";
-                    _transform = row => Math.Ceiling((decimal)row[_input]);
+                    _transform = row => Math.Ceiling((decimal)row[input]);
                     break;
                 case "double":
                     Returns = "double";
-                    _transform = row => Math.Ceiling((double)row[_input]);
+                    _transform = row => Math.Ceiling((double)row[input]);
                     break;
                 default:
                     Returns = "decimal";
-                    _transform = row => Math.Floor(Convert.ToDecimal(row[_input]));
+                    _transform = row => Math.Floor(Convert.ToDecimal(row[input]));
                     break;
 
             }
@@ -52,6 +54,11 @@ namespace Transformalize.Transforms {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
+        }
+
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("ceiling");
         }
     }
 }

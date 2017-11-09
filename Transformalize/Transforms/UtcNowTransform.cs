@@ -26,5 +26,10 @@ namespace Transformalize.Transforms {
             row[Context.Field] = DateTime.UtcNow;
             return row;
         }
+
+        public new OperationSignature GetSignature()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

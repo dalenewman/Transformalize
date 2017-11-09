@@ -24,5 +24,10 @@ namespace Transformalize.Nulls {
         public override IRow Operate(IRow row) {
             return row;
         }
+
+        public new OperationSignature GetSignature()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

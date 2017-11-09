@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -25,7 +27,10 @@ namespace Transformalize.Providers.File.Transforms {
     public class FilePathTransform : BaseTransform {
         private readonly Field _input;
 
-        public FilePathTransform(IContext context) : base(context, "string") {
+        public FilePathTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -45,6 +50,10 @@ namespace Transformalize.Providers.File.Transforms {
             }
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("filepath") { Parameters = new List<OperationParameter>(1) { new OperationParameter("extension", "true") } };
         }
     }
 }

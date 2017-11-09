@@ -42,5 +42,9 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public new OperationSignature GetSignature()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

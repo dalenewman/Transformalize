@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,7 +24,10 @@ namespace Transformalize.Transforms {
     public class ConvertTransform : BaseTransform {
         private readonly Field _input;
 
-        public ConvertTransform(IContext context) : base(context, context.Field.Type) {
+        public ConvertTransform(IContext context = null) : base(context, context?.Field.Type ?? "object") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
         }
 
@@ -30,6 +35,14 @@ namespace Transformalize.Transforms {
             row[Context.Field] = Context.Field.Convert(row[_input]);
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("convert") {
+                Parameters = new List<OperationParameter>(1){
+                    new OperationParameter("type", Constants.DefaultSetting)
+                }
+            };
         }
     }
 }

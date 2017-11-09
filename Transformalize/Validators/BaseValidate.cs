@@ -157,8 +157,8 @@ namespace Transformalize.Validators {
         public virtual void Dispose() {
         }
 
-        public virtual OperationSignature GetSignature() {
-            return new OperationSignature();
+        public virtual IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature();
         }
     }
 }

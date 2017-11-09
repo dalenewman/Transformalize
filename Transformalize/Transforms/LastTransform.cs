@@ -47,5 +47,10 @@ namespace Transformalize.Transforms
             Increment();
             return row;
         }
+
+        public new OperationSignature GetSignature()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

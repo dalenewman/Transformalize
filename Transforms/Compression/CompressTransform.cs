@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -25,23 +26,26 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms.Compression {
     public class CompressTransform : BaseTransform {
 
-        readonly Field _input;
+        private readonly Field _input;
 
-        public CompressTransform(IContext context) : base(context, "string"){
+        public CompressTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
         }
 
-        public override IRow Operate(IRow row){
+        public override IRow Operate(IRow row) {
             row[Context.Field] = Compress(row[_input] as string);
             Increment();
             return row;
         }
 
-        static string Compress(string compressedText) {
+        public static string Compress(string text) {
 
-            byte[] buffer = Encoding.UTF8.GetBytes(compressedText);
+            var buffer = Encoding.UTF8.GetBytes(text);
             var memoryStream = new MemoryStream();
-            using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true)){
+            using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress, true)) {
                 gZipStream.Write(buffer, 0, buffer.Length);
             }
 
@@ -54,6 +58,10 @@ namespace Transformalize.Transforms.Compression {
             Buffer.BlockCopy(compressedData, 0, gZipBuffer, 4, compressedData.Length);
             Buffer.BlockCopy(BitConverter.GetBytes(buffer.Length), 0, gZipBuffer, 0, 4);
             return Convert.ToBase64String(gZipBuffer);
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("compress");
         }
     }
 }

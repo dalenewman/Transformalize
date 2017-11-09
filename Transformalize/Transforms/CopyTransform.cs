@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -23,8 +25,11 @@ namespace Transformalize.Transforms {
 
     public class CopyTransform : BaseTransform {
         private readonly Field _input;
-        public CopyTransform(IContext context)
-            : base(context, null) {
+        public CopyTransform(IContext context = null) : base(context, null) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (context.Operation.Parameter == string.Empty && !context.Operation.Parameters.Any()) {
                 Error("The copy transform requires at least one parameter.");
                 Run = false;
@@ -40,5 +45,8 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("copy") { Ignore = true };
+        }
     }
 }

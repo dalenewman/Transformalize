@@ -17,7 +17,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using Transformalize.Impl;
 
 namespace Transformalize.Contracts {
 
@@ -68,6 +67,12 @@ namespace Transformalize.Contracts {
         /// Used to increment a counter used in the logging
         /// </summary>
         void Increment();
+
+        /// <summary>
+        /// registers short-hand signature
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<OperationSignature> GetSignatures();
 
     }
 }

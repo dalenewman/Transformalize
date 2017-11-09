@@ -48,6 +48,11 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public new OperationSignature GetSignature()
+        {
+            throw new NotImplementedException();
+        }
+
         public static string Decode(string input) {
             if (input.IndexOf(EntityStart) == -1) {
                 return input;

@@ -25,6 +25,7 @@ namespace Transformalize.Transforms {
 
     public abstract class BaseTransform : ITransform {
 
+        private string _returns;
         private const StringComparison Sc = StringComparison.OrdinalIgnoreCase;
         private Field _singleInput;
         private string _received;
@@ -48,8 +49,13 @@ namespace Transformalize.Transforms {
         }
 
         public string Returns {
-            get => Context.Operation.Returns;
-            set => Context.Operation.Returns = value;
+            get => Context == null ? _returns : Context.Operation.Returns;
+            set {
+                _returns = value;
+                if (Context != null) {
+                    Context.Operation.Returns = value;
+                }
+            }
         }
 
         public void Error(string error) {
@@ -148,6 +154,14 @@ namespace Transformalize.Transforms {
             return false;
         }
 
+        protected bool IsMissingContext() {
+            if (Context == null) {
+                Run = false;
+                return true;
+            }
+            return false;
+        }
+
         protected bool IsNotReceivingNumbers() {
             foreach (var field in MultipleInput()) {
                 if (!field.IsNumeric()) {
@@ -179,6 +193,10 @@ namespace Transformalize.Transforms {
             }
 
             return false;
+        }
+
+        public virtual IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature();
         }
 
         public virtual void Dispose() {

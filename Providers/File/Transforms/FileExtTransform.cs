@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -24,7 +26,11 @@ namespace Transformalize.Providers.File.Transforms {
     public class FileExtTransform : StringTransform {
         private readonly Field _input;
 
-        public FileExtTransform(IContext context) : base(context, "string") {
+        public FileExtTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -36,6 +42,10 @@ namespace Transformalize.Providers.File.Transforms {
             row[Context.Field] = Path.HasExtension(value) ? Path.GetExtension(value) : string.Empty;
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("fileext");
         }
     }
 }

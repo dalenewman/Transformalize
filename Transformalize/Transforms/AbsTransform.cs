@@ -16,8 +16,8 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
-using Transformalize.Impl;
 
 namespace Transformalize.Transforms {
 
@@ -25,7 +25,12 @@ namespace Transformalize.Transforms {
 
         private readonly Func<IRow, object> _transform;
 
-        public AbsTransform(IContext context) : base(context, "decimal") {
+        public AbsTransform(IContext context = null) : base(context, "decimal") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceivingNumber()) {
                 return;
             }
@@ -70,8 +75,8 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-        public static OperationSignature GetSignature() {
-            return new OperationSignature("abs");
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("abs");
         }
     }
 }

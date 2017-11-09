@@ -4,7 +4,7 @@ namespace Transformalize {
     public class OperationSignature {
 
         public OperationSignature() {
-            Parameters = new List<OperationParameter>();
+            Method = string.Empty;
             Parameters = new List<OperationParameter>();
         }
 
@@ -14,6 +14,8 @@ namespace Transformalize {
         }
 
         public string Method { get; set; }
+
+        public bool Ignore { get; set; }
 
         public string NamedParameterIndicator { get; set; } = ":";
 

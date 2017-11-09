@@ -55,27 +55,30 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            // new strategy to let transform author define shorthand
-            RegisterTransform(builder, (context) => new AbsTransform(context), AbsTransform.GetSignature());
-            RegisterTransform(builder, (context) => new SliceTransform(context), SliceTransform.GetSignature());
-            RegisterTransform(builder, (context) => new FormatTransform(context), FormatTransform.GetSignature());
+            // new method so transform author can define shorthand signature(s)
+            RegisterTransform(builder, c => new AbsTransform(c), new AbsTransform().GetSignatures());
+            RegisterTransform(builder, c => new SliceTransform(c), new SliceTransform().GetSignatures());
+            RegisterTransform(builder, c => new FormatTransform(c), new FormatTransform().GetSignatures());
+            RegisterTransform(builder, c => new AddTransform(c), new AddTransform().GetSignatures());
+            RegisterTransform(builder, c => new EqualsTransform(c), new EqualsTransform().GetSignatures());
+            RegisterTransform(builder, c => new CeilingTransform(c), new CeilingTransform().GetSignatures());
+            RegisterTransform(builder, c => new CoalesceTransform(c), new CoalesceTransform().GetSignatures());
+            RegisterTransform(builder, c => new ConcatTransform(c), new ConcatTransform().GetSignatures());
+            RegisterTransform(builder, c => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());
+            RegisterTransform(builder, c => new ConvertTransform(c), new ConvertTransform().GetSignatures());
+            RegisterTransform(builder, c => new CopyTransform(c), new CopyTransform().GetSignatures());
+            RegisterTransform(builder, c => new DateDiffTransform(c), new DateDiffTransform().GetSignatures());
+            RegisterTransform(builder, c => new DatePartTransform(c), new DatePartTransform().GetSignatures());
+            RegisterTransform(builder, c => new DecompressTransform(c), new DecompressTransform().GetSignatures());
+            RegisterTransform(builder, c => new CompressTransform(c), new CompressTransform().GetSignatures());
+            RegisterTransform(builder, c => new FileExtTransform(c), new FileExtTransform().GetSignatures());
+            RegisterTransform(builder, c => new FileNameTransform(c), new FileNameTransform().GetSignatures());
+            RegisterTransform(builder, c => new FilePathTransform(c), new FilePathTransform().GetSignatures());
 
-            builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("add");
-            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("all");
-            builder.Register((c, p) => new AddTransform(p.Positional<IContext>(0))).Named<ITransform>("sum");
-            builder.Register((c, p) => new CeilingTransform(p.Positional<IContext>(0))).Named<ITransform>("ceiling");
-            builder.Register((c, p) => new CoalesceTransform(p.Positional<IContext>(0))).Named<ITransform>("coalesce");
-            builder.Register((c, p) => new ConcatTransform(p.Positional<IContext>(0))).Named<ITransform>("concat");
-            builder.Register((c, p) => new ConnectionTransform(p.Positional<IContext>(0))).Named<ITransform>("connection");
-            builder.Register((c, p) => new ConvertTransform(p.Positional<IContext>(0))).Named<ITransform>("convert");
-            builder.Register((c, p) => new CopyTransform(p.Positional<IContext>(0))).Named<ITransform>("copy");
-            builder.Register((c, p) => new DateDiffTransform(p.Positional<IContext>(0))).Named<ITransform>("datediff");
-            builder.Register((c, p) => new DatePartTransform(p.Positional<IContext>(0))).Named<ITransform>("datepart");
-            builder.Register((c, p) => new DecompressTransform(p.Positional<IContext>(0))).Named<ITransform>("decompress");
-            builder.Register((c, p) => new CompressTransform(p.Positional<IContext>(0))).Named<ITransform>("compress");
-            builder.Register((c, p) => new FileExtTransform(p.Positional<IContext>(0))).Named<ITransform>("fileext");
-            builder.Register((c, p) => new FileNameTransform(p.Positional<IContext>(0))).Named<ITransform>("filename");
-            builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");
+            // register the short hand
+            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
+
+            // old method
             builder.Register((c, p) => new FloorTransform(p.Positional<IContext>(0))).Named<ITransform>("floor");
             builder.Register((c, p) => new FormatXmlTransfrom(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
             builder.Register((c, p) => new FormatPhoneTransform(p.Positional<IContext>(0))).Named<ITransform>("formatphone");
@@ -156,6 +159,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new ByteSizeTransform(p.Positional<IContext>(0))).Named<ITransform>("bytesize");
             builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0))).Named<ITransform>("dateadd");
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
+            builder.Register((c, p) => new FromRegexTransform(p.Positional<IContext>(0))).Named<ITransform>("fromregex");
             builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
 
             // return true or false, validators
@@ -234,31 +238,30 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         }
 
-        private void RegisterTransform(ContainerBuilder builder, Func<IContext, ITransform> getTransform, OperationSignature sig) {
+        private void RegisterTransform(ContainerBuilder builder, Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
 
-            if (_methodNames.Add(sig.Method)) {
+            foreach (var s in signatures) {
+                if (_methodNames.Add(s.Method)) {
 
-                var method = new Method { Name = sig.Method, Signature = sig.Method };
-                _shortHandRoot.Methods.Add(method);
+                    var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
+                    _shortHandRoot.Methods.Add(method);
 
-                var signature = new Signature {
-                    Name = sig.Method,
-                    NamedParameterIndicator = sig.NamedParameterIndicator
-                };
+                    var signature = new Signature {
+                        Name = s.Method,
+                        NamedParameterIndicator = s.NamedParameterIndicator
+                    };
 
-                foreach (var parameter in sig.Parameters) {
-                    signature.Parameters.Add(new Parameter {
-                        Name = parameter.Name,
-                        Value = parameter.Value
-                    });
+                    foreach (var parameter in s.Parameters) {
+                        signature.Parameters.Add(new Parameter {
+                            Name = parameter.Name,
+                            Value = parameter.Value
+                        });
+                    }
+                    _shortHandRoot.Signatures.Add(signature);
                 }
-                _shortHandRoot.Signatures.Add(signature);
+
+                builder.Register((c, p) => getTransform(p.Positional<IContext>(0))).Named<ITransform>(s.Method);
             }
-
-            // register the short hand
-            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
-
-            builder.Register((c, p) => getTransform(p.Positional<IContext>(0))).Named<ITransform>(sig.Method);
 
         }
     }

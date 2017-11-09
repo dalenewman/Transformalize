@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
@@ -26,7 +28,10 @@ namespace Transformalize.Transforms {
     public class ConnectionTransform : BaseTransform {
 
         private readonly object _value;
-        public ConnectionTransform(IContext context) : base(context, "string") {
+        public ConnectionTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsMissing(context.Operation.Name)) {
                 return;
@@ -58,6 +63,15 @@ namespace Transformalize.Transforms {
             row[Context.Field] = _value;
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("connection") {
+                Parameters = new List<OperationParameter>(2){
+                    new OperationParameter("name"),
+                    new OperationParameter("property")
+                }
+            };
         }
     }
 }

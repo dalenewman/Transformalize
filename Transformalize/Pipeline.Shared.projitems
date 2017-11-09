@@ -137,6 +137,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CompositeValidate.cs" />

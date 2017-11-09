@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -26,7 +27,11 @@ namespace Transformalize.Transforms.Compression {
     public class DecompressTransform : BaseTransform {
         private readonly Field _input;
 
-        public DecompressTransform(IContext context) : base(context, "string") {
+        public DecompressTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -55,6 +60,11 @@ namespace Transformalize.Transforms.Compression {
 
                 return Encoding.UTF8.GetString(buffer);
             }
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures()
+        {
+            yield return new OperationSignature("decompress");
         }
     }
 }

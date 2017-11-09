@@ -71,6 +71,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("value", "[default]"));
+
+
                 root.Signatures.Add(Simple("type", "[default]"));
                 root.Signatures.Add(new Signature {
                     Name = "trim",
@@ -141,32 +143,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "operator", Value="equals" }
                         }
                 });
-                root.Signatures.Add(new Signature {
-                    Name = "property",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "name" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "property" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
-                    Name = "file",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "extension", Value="true" }
-                        }
-                });
+
                 root.Signatures.Add(new Signature {
                     Name = "xpath",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "expression" },
                             new Cfg.Net.Shorthand.Parameter { Name = "name-space", Value="" },
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
-                    Name = "datediff",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "time-component" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone", Value= "UTC" }
                         }
                 });
                 root.Signatures.Add(Simple("domain"));
@@ -237,25 +220,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("key"));
                 root.Signatures.Add(Simple("units"));
 
-                root.Methods.Add(new Method { Name = "add", Signature = "none" });
-                root.Methods.Add(new Method { Name = "all", Signature = "value" });
                 root.Methods.Add(new Method { Name = "any", Signature = "any" });
-                root.Methods.Add(new Method { Name = "ceiling", Signature = "none" });
-                root.Methods.Add(new Method { Name = "concat", Signature = "none" });
-                root.Methods.Add(new Method { Name = "connection", Signature = "property" });
+
                 root.Methods.Add(new Method { Name = "contains", Signature = "value" });
-                root.Methods.Add(new Method { Name = "convert", Signature = "type" });
-                root.Methods.Add(new Method { Name = "copy", Signature = "none", Ignore = true });
+
+                
                 root.Methods.Add(new Method { Name = "cs", Signature = "script" });
                 root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
-                root.Methods.Add(new Method { Name = "datediff", Signature = "datediff" });
-                root.Methods.Add(new Method { Name = "datepart", Signature = "timecomponent" });
-                root.Methods.Add(new Method { Name = "decompress", Signature = "none" });
-                root.Methods.Add(new Method { Name = "compress", Signature = "none" });
-                root.Methods.Add(new Method { Name = "equals", Signature = "value" });
-                root.Methods.Add(new Method { Name = "fileext", Signature = "none" });
-                root.Methods.Add(new Method { Name = "filename", Signature = "file" });
-                root.Methods.Add(new Method { Name = "filepath", Signature = "file" });
                 root.Methods.Add(new Method { Name = "floor", Signature = "none" });
                 root.Methods.Add(new Method { Name = "formatphone", Signature = "none" });
                 root.Methods.Add(new Method { Name = "formatxml", Signature = "none" });
@@ -286,7 +257,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "rounddownto", Signature = "value" });
                 root.Methods.Add(new Method { Name = "splitlength", Signature = "separator" });
                 root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
-                root.Methods.Add(new Method { Name = "sum", Signature = "none" });
                 root.Methods.Add(new Method { Name = "timeago", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timeahead", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timezone", Signature = "timezone" });
@@ -305,7 +275,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
                 root.Methods.Add(new Method { Name = "in", Signature = "domain" });
                 root.Methods.Add(new Method { Name = "match", Signature = "pattern" });
-                root.Methods.Add(new Method { Name = "coalesce", Signature = "none" });
                 root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "invert", Signature = "none" });

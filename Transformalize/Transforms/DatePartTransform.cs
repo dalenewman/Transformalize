@@ -55,7 +55,11 @@ namespace Transformalize.Transforms {
 
         private readonly Func<IRow, object> _transform;
 
-        public DatePartTransform(IContext context) : base(context, PartReturns[context.Operation.TimeComponent]) {
+        public DatePartTransform(IContext context = null) : base(context, context == null ? "object" : PartReturns[context.Operation.TimeComponent]) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("date")) {
                 return;
             }
@@ -68,6 +72,14 @@ namespace Transformalize.Transforms {
             row[Context.Field] = _transform(row);
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("datepart") {
+                Parameters = new List<OperationParameter>(1) {
+                    new OperationParameter("time-component")
+                }
+            };
         }
     }
 }
