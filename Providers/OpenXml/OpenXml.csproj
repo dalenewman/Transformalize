@@ -50,7 +50,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WordWriter.cs" />
     <Compile Include="ExcelWriter.cs" />
     <Compile Include="OpenXmlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

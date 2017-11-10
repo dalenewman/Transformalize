@@ -134,7 +134,6 @@
     <Compile Include="Modules\RazorModule.cs" />
     <Compile Include="Modules\ShorthandValidateModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
-    <Compile Include="Modules\WordModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\SsasModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
@@ -264,10 +263,6 @@
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Word\Word.csproj">
-      <Project>{77f6f1c8-1b5b-4e65-8af9-544008db2d52}</Project>
-      <Name>Word</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Compression\Compression.csproj">
       <Project>{36724dd4-0a61-494b-abcb-4fe845306eb8}</Project>

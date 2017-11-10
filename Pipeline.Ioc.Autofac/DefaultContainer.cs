@@ -76,7 +76,6 @@ namespace Transformalize.Ioc.Autofac {
             }
 
             // template providers
-            builder.RegisterCallback(new WordModule(process).Configure);
             builder.RegisterCallback(new RazorModule(process).Configure);
 
             // etc

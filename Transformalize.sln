@@ -175,8 +175,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Access", "Providers\Access\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oracle", "Providers\Oracle\Oracle.csproj", "{B56EAE93-42DA-4116-8487-745910730CCC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Word", "Providers\Word\Word.csproj", "{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}"
-EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Transformalize\Pipeline.Shared.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
@@ -735,18 +733,6 @@ Global
 		{B56EAE93-42DA-4116-8487-745910730CCC}.Release|x64.Build.0 = Release|Any CPU
 		{B56EAE93-42DA-4116-8487-745910730CCC}.Release|x86.ActiveCfg = Release|Any CPU
 		{B56EAE93-42DA-4116-8487-745910730CCC}.Release|x86.Build.0 = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|x64.Build.0 = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Debug|x86.Build.0 = Debug|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|Any CPU.Build.0 = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|x64.ActiveCfg = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|x64.Build.0 = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|x86.ActiveCfg = Release|Any CPU
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -795,7 +781,6 @@ Global
 		{730DCD3B-2B96-4E4A-8E11-E33AB56F62A6} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{CA54BC84-F8C1-4248-A794-42635427A714} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{B56EAE93-42DA-4116-8487-745910730CCC} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
-		{77F6F1C8-1B5B-4E65-8AF9-544008DB2D52} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
