@@ -225,10 +225,6 @@
       <Project>{16042794-2e30-42d8-a6f9-f5d8020f9ef3}</Project>
       <Name>SqlServer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\SSAS\SSAS.csproj">
-      <Project>{dc45d0b0-bd89-4334-9fcf-bec7ad1fd540}</Project>
-      <Name>SSAS</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Web</Name>

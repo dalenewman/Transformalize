@@ -135,7 +135,6 @@
     <Compile Include="Modules\ShorthandValidateModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
-    <Compile Include="Modules\SsasModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\DirectoryModule.cs" />
     <Compile Include="Modules\ShorthandTransformModule.cs" />
@@ -255,10 +254,6 @@
     <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
       <Name>SqlCe</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\SSAS\SSAS.csproj">
-      <Project>{dc45d0b0-bd89-4334-9fcf-bec7ad1fd540}</Project>
-      <Name>SSAS</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>

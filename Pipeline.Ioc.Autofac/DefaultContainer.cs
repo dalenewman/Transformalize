@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using Autofac;
 using Transformalize.Configuration;
@@ -60,7 +59,6 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new DirectoryModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);
             builder.RegisterCallback(new WebModule(process).Configure);
-            builder.RegisterCallback(new SSASModule(process).Configure);
             builder.RegisterCallback(new RethinkDBModule(process).Configure);
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
