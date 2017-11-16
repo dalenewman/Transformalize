@@ -604,10 +604,16 @@ namespace Transformalize.Configuration {
         public string Hint { get; set; }
 
         /// <summary>
-        /// Used to in form mode to populate drop downs
+        /// Used in form mode to populate drop downs
         /// </summary>
         [Cfg(value="", toLower = true, trim = true)]
         public string Map { get; set; }
+
+        /// <summary>
+        /// Used in form mode to control whether a change causes a post back (server-side validation)
+        /// </summary>
+        [Cfg(value="auto",domain="auto,true,false", ignoreCase = true, toLower = true, trim = true)]
+        public string PostBack { get; set; }
 
         public Parameter ToFormParameter() {
             return new Parameter {

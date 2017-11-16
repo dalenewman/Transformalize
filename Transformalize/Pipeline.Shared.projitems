@@ -119,6 +119,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\CsvSerializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\IllegalCharacterValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\ParameterFinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OperationParameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OperationSignature.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParameterRowReader.cs" />

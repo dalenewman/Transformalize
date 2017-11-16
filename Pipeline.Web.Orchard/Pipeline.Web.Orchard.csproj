@@ -228,9 +228,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SSAS">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SSAS.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Provider.Trace">
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Trace.dll</HintPath>
     </Reference>

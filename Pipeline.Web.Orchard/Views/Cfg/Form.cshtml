@@ -38,13 +38,16 @@
     }
 </style>
 
-@if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-    <div class="btn-group pull-right">
-        <button title="edit this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+<div class="btn-group pull-right">
+    @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+        <button title="change this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
             <span class="glyphicon glyphicon-edit"></span>
         </button>
-    </div>
-}
+    }
+    <button id="id_validate_button" title="validate this form" type="button" class="btn btn-info btn-sm">
+        <span class="glyphicon glyphicon-check"></span>
+    </button>
+</div>
 
 <div id="id_content">
 </div>
@@ -67,6 +70,10 @@
         var ajaxUrl = "@(Url.Action("FormContent", new { Model.Part.Id }))" + window.location.search;
         var saveUrl = "@(Url.Action("Form", new { Model.Part.Id }))" + window.location.search;
 
+        $('#id_validate_button').bind('click', function() {
+            post();
+        });
+
         function bind(html) {
 
             $("#id_content").html(html);
@@ -74,7 +81,7 @@
 
             setFocus();
 
-            $("select,input:not(input[type='submit']):not(input[type='file'])").change(function () {
+            $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
                 console.log("checking data...");
                 post();
             });
@@ -130,7 +137,7 @@
 
             $target.focus().select();
 
-            // ios doesn't refresh dropdowns when ajax re-populates 
+            // ios doesn't refresh dropdowns when ajax re-populates
             if (navigator.userAgent.match(/(ip(hone|od|ad))/i)) {
                 if ($target.is("select") && $target.closest("div").prev().has("select").length > 0) {
                     $target.blur();

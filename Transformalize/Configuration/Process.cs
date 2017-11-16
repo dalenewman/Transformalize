@@ -351,14 +351,49 @@ namespace Transformalize.Configuration {
 
             // create entity field's matcher
             foreach (var entity in Entities) {
-                var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f=>f.Alias.Length).Select(f => f.Alias));
+                var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
 #if NETS10
                 entity.FieldMatcher = new Regex(pattern);
 #else
                 entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
 #endif
-            }
 
+                // more efficient post-back strategy for form validation
+                if (Mode == "form") {
+
+                    var fields = entity.Fields.Where(f => f.Input).ToArray();
+                    var lastField = fields.Last(f => f.InputType != "file");
+
+                    foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
+
+                        field.PostBack = field.InputType == "file" || field.V == string.Empty ? "false" : "true";
+
+                        if (field.Map == string.Empty)
+                            continue;
+
+                        var map = Maps.FirstOrDefault(m => m.Name == field.Map);
+                        if (map == null)
+                            continue;
+
+                        if (!map.Query.Contains("@"))
+                            continue;
+
+                        // it is possible for this map to affect other field's post-back setting
+                        foreach (var p in new ParameterFinder().Find(map.Query).Distinct()) {
+                            var parameterField = fields.FirstOrDefault(f => f.Name == p || f.Alias == p);
+                            if (parameterField != null) {
+                                parameterField.PostBack = "true";
+                            }
+                        }
+                    }
+
+                    foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
+                        field.PostBack = "false";
+                    }
+
+                    lastField.PostBack = "true";
+                }
+            }
         }
 
         public void ModifyIndexes() {
@@ -497,7 +532,7 @@ namespace Transformalize.Configuration {
             calc.CalculatedFields.Clear();
             calc.Relationships.Clear();
 
-            var entity = new Entity {Name = "Calculated"};
+            var entity = new Entity { Name = "Calculated" };
             entity.Alias = entity.Name;
             entity.Key = calc.Name + entity.Alias;
             entity.Connection = "output";
@@ -598,7 +633,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// An optional Id (used in Orchard CMS module)
         /// </summary>
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Id { get; set; }
 
         public List<Parameter> GetActiveParameters() {

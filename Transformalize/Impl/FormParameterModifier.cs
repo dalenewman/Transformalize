@@ -5,7 +5,6 @@ using Cfg.Net.Contracts;
 using Cfg.Net.Parsers;
 
 namespace Transformalize.Impl {
-
     public class FormParameterNode : INode {
 
         private Dictionary<string, IAttribute> _attributes;
