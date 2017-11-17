@@ -61,9 +61,12 @@ namespace Transformalize.Command {
                 try {
                     scope.Resolve<IProcessController>().Execute();
                 } catch (Exception ex) {
+
                     var context = scope.Resolve<IContext>();
                     context.Error(ex.Message);
                     context.Logger.Clear();
+
+                    new LibaryVersionChecker(context).Check();
                 }
             }
         }
@@ -91,8 +94,7 @@ namespace Transformalize.Command {
         }
 
         public void Execute(string cfg, Dictionary<string, string> parameters) {
-            Process process;
-            if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
+            if (ProcessFactory.TryCreate(cfg, parameters, out var process)) {
                 process.Mode = Options.Mode;
                 Execute(process);
             }

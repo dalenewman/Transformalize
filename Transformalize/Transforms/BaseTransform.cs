@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
 
@@ -143,6 +144,11 @@ namespace Transformalize.Transforms {
             return index == count - 1;
         }
 
+        public string LastMethod() {
+            var index = Context.Field.Transforms.IndexOf(Context.Operation);
+            return index <= 0 ? "none" : Context.Field.Transforms[index - 1].Method;
+        }
+
         protected bool IsNotReceivingNumber() {
             if (!Constants.IsNumericType(Received())) {
                 Run = false;
@@ -179,6 +185,18 @@ namespace Transformalize.Transforms {
                 if (f.Type.StartsWith(type))
                     continue;
                 Error($"The {Context.Operation.Method} method expects {type} input, but {f.Alias} is {f.Type}.");
+                Run = false;
+                return true;
+            }
+            return false;
+        }
+
+        protected bool LastMethodIsNot(params string[] args)
+        {
+            var lastMethod = LastMethod();
+            if (!lastMethod.In(args))
+            {
+                Error($"The {Context.Operation.Method} method expects an input from: {Utility.ReadableDomain(args)}, but it's last method was {lastMethod} instead.");
                 Run = false;
                 return true;
             }

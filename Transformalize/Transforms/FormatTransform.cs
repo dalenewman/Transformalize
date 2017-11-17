@@ -17,26 +17,40 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
     public class FormatTransform : BaseTransform {
 
-        private readonly BetterFormat _betterFormat;
+        private BetterFormat _betterFormat;
 
         public FormatTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext()) {
-                return;
-            }
-            _betterFormat = new BetterFormat(context, context.Operation.Format, MultipleInput);
-            Run = _betterFormat.Valid;
+            IsMissingContext();
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _betterFormat.Format(row);
             Increment();
             return row;
+        }
+
+        /// <summary>
+        /// format initializes at this point because templates are not loaded when transforms register
+        /// </summary>
+        /// <param name="rows"></param>
+        /// <returns></returns>
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            var fileBasedTemplate = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Format);
+            if (fileBasedTemplate != null) {
+                Context.Operation.Format = fileBasedTemplate.Content;
+            }
+
+            _betterFormat = new BetterFormat(Context, Context.Operation.Format, MultipleInput);
+            Run = _betterFormat.Valid;
+
+            return base.Operate(rows);
         }
 
         public new IEnumerable<OperationSignature> GetSignatures() {

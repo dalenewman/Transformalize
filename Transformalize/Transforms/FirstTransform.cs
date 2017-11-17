@@ -4,10 +4,10 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class LastTransform : BaseTransform {
+    public class FirstTransform : BaseTransform {
         private readonly Field _input;
 
-        public LastTransform(IContext context = null) : base(context, "string") {
+        public FirstTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext() || context == null) {
                 return;
             }
@@ -20,13 +20,13 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = ((string[])row[_input]).Last();
+            row[Context.Field] = ((string[])row[_input]).First();
             Increment();
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("last");
+            yield return new OperationSignature("first");
         }
     }
 }

@@ -74,6 +74,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new FileExtTransform(c), new FileExtTransform().GetSignatures());
             RegisterTransform(builder, c => new FileNameTransform(c), new FileNameTransform().GetSignatures());
             RegisterTransform(builder, c => new FilePathTransform(c), new FilePathTransform().GetSignatures());
+            RegisterTransform(builder, c => new SplitTransform(c), new SplitTransform().GetSignatures());
+            RegisterTransform(builder, c => new LastDayTransform(c), new LastDayTransform().GetSignatures());
+            RegisterTransform(builder, c => new LastTransform(c), new LastTransform().GetSignatures());
+            RegisterTransform(builder, c => new FirstTransform(c), new FirstTransform().GetSignatures());
 
             // register the short hand
             builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
@@ -88,7 +92,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new InsertTransform(p.Positional<IContext>(0))).Named<ITransform>("insert");
             builder.Register((c, p) => new InvertTransform(p.Positional<IContext>(0))).Named<ITransform>("invert");
             builder.Register((c, p) => new JoinTransform(p.Positional<IContext>(0))).Named<ITransform>("join");
-            builder.Register((c, p) => new LastTransform(p.Positional<IContext>(0))).Named<ITransform>("last");
+            
             builder.Register((c, p) => new LeftTransform(p.Positional<IContext>(0))).Named<ITransform>("left");
             builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("lower");
             builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("tolower");

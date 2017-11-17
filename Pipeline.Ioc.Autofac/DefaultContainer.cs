@@ -21,9 +21,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Autofac;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
+using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Ioc.Autofac {
     public static class DefaultContainer {
@@ -38,10 +38,14 @@ namespace Transformalize.Ioc.Autofac {
 
             builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
+
+            /* this stuff is loaded (again) because tfl actions can create processes, which will need short-hand to expand configuration in advance */
             builder.RegisterCallback(new TransformModule().Configure);
             builder.RegisterCallback(new ShorthandTransformModule().Configure);
             builder.RegisterCallback(new ValidateModule().Configure);
             builder.RegisterCallback(new ShorthandValidateModule().Configure);
+
+
             builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 
@@ -66,11 +70,13 @@ namespace Transformalize.Ioc.Autofac {
 
                 builder.Properties["Process"] = process;
                 var assemblies = new List<Assembly>();
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.AllDirectories)) {
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
                 builder.RegisterAssemblyModules(assemblies.ToArray());
+
+
             }
 
             // template providers

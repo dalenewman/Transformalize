@@ -29,10 +29,7 @@ namespace Transformalize.Command {
         public NowExecutor(IPipelineLogger logger, Options options) : base(logger, options, false) {
         }
 
-        /// <summary>
-        /// This is the method Quartz.NET will use
-        /// </summary>
-        /// <param name="context"></param>
+        /// <inheritdoc />
         public void Execute(IJobExecutionContext context) {
             Execute(Cfg, Parameters);
         }

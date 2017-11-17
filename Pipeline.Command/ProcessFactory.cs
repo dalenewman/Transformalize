@@ -31,10 +31,14 @@ namespace Transformalize.Command {
         public static bool TryCreate(string cfg, Dictionary<string,string> parameters, out Process process) {
 
             var builder = new ContainerBuilder();
+
+            /* this stuff is registered because it manipulates short-hand which expands configuration - start */
             builder.RegisterModule(new TransformModule());
             builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
+            /* this stuff is registered because it manipulates short-hand which expands configuration - end */
+
             builder.RegisterModule(new RootModule());
             builder.Register<IPipelineLogger>(c => new NLogPipelineLogger(SlugifyTransform.Slugify(cfg))).As<IPipelineLogger>().SingleInstance();
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
@@ -61,8 +65,7 @@ namespace Transformalize.Command {
         }
 
         public static Process Create(string cfg, Dictionary<string,string> parameters) {
-            Process process;
-            TryCreate(cfg, parameters, out process);
+            TryCreate(cfg, parameters, out var process);
             return process;
         }
     }

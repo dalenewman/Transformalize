@@ -138,7 +138,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\SplitTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CompositeValidate.cs" />
@@ -225,7 +228,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\InsertTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\InvertTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\JoinTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastDayTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LeftTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\MapTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\MultiplyTransform.cs" />
