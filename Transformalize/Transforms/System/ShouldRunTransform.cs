@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
@@ -30,9 +31,8 @@ namespace Transformalize.Transforms.System {
             return Context.Operation.ShouldRun(row) ? _transform.Operate(row) : row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new global::System.NotImplementedException();
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            return Run ? rows.Select(Operate) : rows;
         }
 
         public new IEnumerable<string> Errors() {

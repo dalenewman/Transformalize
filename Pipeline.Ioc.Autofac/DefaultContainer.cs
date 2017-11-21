@@ -70,7 +70,7 @@ namespace Transformalize.Ioc.Autofac {
 
                 builder.Properties["Process"] = process;
                 var assemblies = new List<Assembly>();
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.AllDirectories)) {
+                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }

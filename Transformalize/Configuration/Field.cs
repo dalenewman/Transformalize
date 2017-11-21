@@ -606,14 +606,20 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Used in form mode to populate drop downs
         /// </summary>
-        [Cfg(value="", toLower = true, trim = true)]
+        [Cfg(value = "", toLower = true, trim = true)]
         public string Map { get; set; }
 
         /// <summary>
         /// Used in form mode to control whether a change causes a post back (server-side validation)
         /// </summary>
-        [Cfg(value="auto",domain="auto,true,false", ignoreCase = true, toLower = true, trim = true)]
+        [Cfg(value = "auto", domain = "auto,true,false", ignoreCase = true, toLower = true, trim = true)]
         public string PostBack { get; set; }
+
+        [Cfg(value = null)]
+        public object Min { get; set; }
+
+        [Cfg(value = null)]
+        public object Max { get; set; }
 
         public Parameter ToFormParameter() {
             return new Parameter {

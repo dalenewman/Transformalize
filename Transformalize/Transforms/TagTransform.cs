@@ -154,11 +154,6 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new NotImplementedException();
-        }
-
         private static string Encode(string value) {
             var builder = new StringBuilder();
             for (var i = 0; i < value.Length; i++) {

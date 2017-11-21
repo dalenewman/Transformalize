@@ -18,6 +18,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
@@ -25,9 +26,20 @@ namespace Transformalize.Transforms {
     public class FormatTransform : BaseTransform {
 
         private BetterFormat _betterFormat;
+        private readonly Field[] _input;
+        private readonly Template _template;
 
         public FormatTransform(IContext context = null) : base(context, "string") {
-            IsMissingContext();
+            if (IsMissingContext() || context == null) {
+                return;
+            }
+
+            _input = MultipleInput();
+            _template = context.Process.Templates.FirstOrDefault(t => t.Name == context.Operation.Format);
+
+            if (_template == null) {
+                _betterFormat = new BetterFormat(Context, Context.Operation.Format, ()=>_input);
+            }
         }
 
         public override IRow Operate(IRow row) {
@@ -42,12 +54,11 @@ namespace Transformalize.Transforms {
         /// <param name="rows"></param>
         /// <returns></returns>
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-            var fileBasedTemplate = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Format);
-            if (fileBasedTemplate != null) {
-                Context.Operation.Format = fileBasedTemplate.Content;
+            if (_template != null) {
+                Context.Operation.Format = _template.Content;
             }
 
-            _betterFormat = new BetterFormat(Context, Context.Operation.Format, MultipleInput);
+            _betterFormat = new BetterFormat(Context, Context.Operation.Format, () => _input);
             Run = _betterFormat.Valid;
 
             return base.Operate(rows);

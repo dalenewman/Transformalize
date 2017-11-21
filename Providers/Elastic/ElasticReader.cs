@@ -289,8 +289,8 @@ namespace Transformalize.Providers.Elastic {
             var size = 10;
             string body;
             if (_context.Entity.IsPageRequest()) {
-                from = (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
-                body = WriteQuery(_fields, _readFrom, _context, from, _context.Entity.PageSize);
+                from = (_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size;
+                body = WriteQuery(_fields, _readFrom, _context, from, _context.Entity.Size);
             } else {
                 body = WriteQuery(_fields, _readFrom, _context, 0, 0);
                 response = _client.Search<DynamicResponse>(_context.Connection.Index, _typeName, body);

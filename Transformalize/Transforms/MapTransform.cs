@@ -66,11 +66,6 @@ namespace Transformalize.Transforms {
             return base.Operate(rows);
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new NotImplementedException();
-        }
-
         public override IRow Operate(IRow row) {
 
             Func<IRow, object> objects;

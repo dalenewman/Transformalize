@@ -103,8 +103,8 @@ namespace Transformalize.Providers.Solr {
             int rows;
             StartOrCursor startOrCursor;
             if (_context.Entity.IsPageRequest()) {
-                rows = _context.Entity.PageSize;
-                startOrCursor = new StartOrCursor.Start((_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize);
+                rows = _context.Entity.Size;
+                startOrCursor = new StartOrCursor.Start((_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size);
             } else {
                 rows = _context.Entity.ReadSize > 0 ? _context.Entity.ReadSize : _solr.Query(query, new QueryOptions { StartOrCursor = new StartOrCursor.Start(0), Rows = 0 }).NumFound;
                 startOrCursor = _context.Entity.ReadSize == 0 ? (StartOrCursor)new StartOrCursor.Start(0) : StartOrCursor.Cursor.Start;

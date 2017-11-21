@@ -122,9 +122,5 @@ namespace Transformalize.Transforms.System {
             }
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

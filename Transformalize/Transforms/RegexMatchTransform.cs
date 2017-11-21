@@ -56,9 +56,5 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new global::System.NotImplementedException();
-        }
     }
 }

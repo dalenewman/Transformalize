@@ -54,8 +54,8 @@ namespace Transformalize.Providers.Web {
             var isPageRequest = _context.Entity.IsPageRequest();
 
             if (isPageRequest) {
-                start += ((_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize);
-                end = start + _context.Entity.PageSize;
+                start += ((_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size);
+                end = start + _context.Entity.Size;
             }
 
             using (var reader = new StreamReader(stream)) {

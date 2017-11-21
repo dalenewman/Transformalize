@@ -33,16 +33,11 @@ namespace Transformalize.Transforms {
             _isCompatible = Received() == context.Operation.Type || _input.IsNumeric() && context.Operation.Type == "double";
             _canConvert = v => Constants.CanConvert()[context.Operation.Type](v);
         }
-
         public override IRow Operate(IRow row) {
             row[Context.Field] = _isCompatible ? true : _canConvert(GetString(row, _input));
             Increment();
             return row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

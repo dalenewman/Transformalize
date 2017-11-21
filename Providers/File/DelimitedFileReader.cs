@@ -42,8 +42,8 @@ namespace Transformalize.Providers.File {
             var start = _context.Connection.Start;
             var end = 0;
             if (_context.Entity.IsPageRequest()) {
-                start += (_context.Entity.Page * _context.Entity.PageSize) - _context.Entity.PageSize;
-                end = start + _context.Entity.PageSize;
+                start += (_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size;
+                end = start + _context.Entity.Size;
             }
 
             var current = _context.Connection.Start;

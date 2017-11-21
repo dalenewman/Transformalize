@@ -304,7 +304,7 @@ namespace Tests {
                 Name = "rows",
                 Alias = "rows",
                 Page = 2,
-                PageSize = 20
+                Size = 20
             }), connection);
             var code = new Field { Name = "code", Index = 0 };
             var total = new Field { Name = "total", Type = "int", Index = 1 };

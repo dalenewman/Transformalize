@@ -54,6 +54,18 @@ namespace Transformalize.Configuration.Ext {
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
             ValidateFlatten(p, error, warn);
+            ValidateTransformParameters(p, warn);
+        }
+
+        private static void ValidateTransformParameters(Process process, Action<string> warn) {
+            var fields = new HashSet<string>(process.GetAllFields().Select(f => f.Alias)); ;
+            foreach (var transform in process.GetAllTransforms()) {
+                foreach (var parameter in transform.Parameters) {
+                    if (fields.Contains(parameter.Name)) {
+                        warn($"A parameter name attribute is the same as a field name: {parameter.Name}.  Perhaps you meant to use use the field attribute.");
+                    }
+                }
+            }
         }
 
         private static void ValidateEntityInvalidFields(Process p, Action<string> error) {

@@ -93,8 +93,8 @@ namespace Transformalize.Providers.Ado.Ext {
             if (!c.Entity.IsPageRequest())
                 return $"SELECT {fieldList} FROM {SqlInputName(c, cf)} {filter} {orderBy}";
 
-            var start = (c.Entity.Page * c.Entity.PageSize) - c.Entity.PageSize;
-            var end = start + c.Entity.PageSize;
+            var start = (c.Entity.Page * c.Entity.Size) - c.Entity.Size;
+            var end = start + c.Entity.Size;
 
             switch (cf.AdoProvider) {
                 case AdoProvider.SqlServer:
@@ -107,7 +107,7 @@ namespace Transformalize.Providers.Ado.Ext {
                     if (string.IsNullOrWhiteSpace(orderBy)) {
                         orderBy = GetRequiredOrderBy(fields, cf);
                     }
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.PageSize} ROWS ONLY";
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.Size} ROWS ONLY";
                 case AdoProvider.Access:
                     // todo: make sure primary key is always include in sort to avoid wierd access top n behavior, see: https://stackoverflow.com/questions/887787/access-sql-using-top-5-returning-more-than-5-results
                     if (string.IsNullOrWhiteSpace(orderBy)) {
@@ -119,7 +119,7 @@ namespace Transformalize.Providers.Ado.Ext {
 
                     return $@"SELECT {yFieldList}
 FROM (
-    SELECT TOP {c.Entity.PageSize} {xFieldList}
+    SELECT TOP {c.Entity.Size} {xFieldList}
     FROM (
         SELECT TOP {end} {fieldList} FROM {table} {filter} {orderBy}
     ) x
@@ -127,10 +127,10 @@ FROM (
 ) y
 {orderBy}";
                 case AdoProvider.PostgreSql:
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.PageSize} OFFSET {start}";
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.Size} OFFSET {start}";
                 case AdoProvider.MySql:
                 case AdoProvider.SqLite:
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {start},{c.Entity.PageSize}";
+                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {start},{c.Entity.Size}";
                 case AdoProvider.None:
                     return string.Empty;
                 default:

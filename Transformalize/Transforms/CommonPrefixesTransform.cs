@@ -36,11 +36,6 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new global::System.NotImplementedException();
-        }
-
         public static IEnumerable<string> Get(string[] input) {
 
             var prefix = CommonPrefixTransform.Get(input);

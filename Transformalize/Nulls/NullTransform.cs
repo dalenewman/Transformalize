@@ -25,9 +25,5 @@ namespace Transformalize.Nulls {
             return row;
         }
 
-        public new OperationSignature GetSignature()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 }

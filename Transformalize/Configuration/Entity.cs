@@ -315,7 +315,7 @@ namespace Transformalize.Configuration {
         }
 
         public bool IsPageRequest() {
-            return Page > 0 && PageSize >= 0;
+            return Page > 0 && Size >= 0;
         }
 
         /// <summary>
@@ -386,32 +386,6 @@ namespace Transformalize.Configuration {
             foreach (var field in GetAllOutputFields().Where(f => f.Sortable == "true" && !string.IsNullOrEmpty(f.SortField))) {
                 if (GetField(field.SortField) == null) {
                     Error($"Can't find sort field {field.SortField} defined in field {field.Alias}.");
-                }
-            }
-
-            // Paging Madness
-            if (Page > 0) {
-                if (PageSizes.Any()) {
-                    if (PageSizes.All(ps => ps.Size != PageSize)) {
-                        var first = PageSizes.First().Size;
-                        Warn($"The entity {Name} has an invalid PageSize of {PageSize}. Set to {first}.");
-                        PageSize = first;
-                    }
-                } else {
-                    if (PageSize > 0) {
-                        PageSizes.Add(new PageSize { Size = PageSize });
-                    } else {
-                        PageSizes.Add(new PageSize { Size = 25 });
-                        PageSizes.Add(new PageSize { Size = 50 });
-                        PageSizes.Add(new PageSize { Size = 100 });
-                        if (PageSize != 25 && PageSize != 50 && PageSize != 100) {
-                            PageSize = 25;
-                        }
-                    }
-                }
-            } else {
-                if (PageSize > 0) {
-                    PageSize = 0;
                 }
             }
 
@@ -622,7 +596,7 @@ namespace Transformalize.Configuration {
         public int Page { get; set; }
 
         [Cfg(value = 0)]
-        public int PageSize { get; set; }
+        public int Size { get; set; }
 
         [Cfg(value = "all", domain = "all,none,some", toLower = true, ignoreCase = true)]
         public string OrderBy { get; set; }
@@ -645,9 +619,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = Constants.DefaultSetting, toLower = true)]
         public string SearchType { get; set; }
 
-        [Cfg]
-        public List<PageSize> PageSizes { get; set; }
-
         [Cfg(value = Constants.DefaultSetting, domain = "true,false," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
         public string Sortable { get; set; }
 
@@ -655,7 +626,7 @@ namespace Transformalize.Configuration {
             return Fields.Any(f => f.Input);
         }
 
-        public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, PageSize));
+        public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, Size));
 
         internal Regex FieldMatcher { get; set; }
         public IEnumerable<Field> GetFieldMatches(string content) {
@@ -679,5 +650,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = false)]
         public bool IgnoreDuplicateKey { get; set; }
+
+        [Cfg(value="en", domain = "az,cz,de,de_AT,de_CH,el,en,en_AU,en_au_ocker,en_BORK,en_CA,en_GB,en_IE,en_IND,en_US,es,es_MX,fa,fr,fr_CA,ge,id_ID,it,ja,ko,lv,nb_NO,nep,nl,nl_BE,pl,nl_BE,pl,pt_BR,pt_PT,ro,ru,sk,sv,tr,uk,vi,zh_CN,zh_TW")]
+        public string Locale { get; set; }
     }
 }
