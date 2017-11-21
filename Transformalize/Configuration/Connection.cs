@@ -306,5 +306,11 @@ namespace Transformalize.Configuration {
 
         [Cfg(value=false)]
         public bool Stream { get; set; }
+
+        /// <summary>
+        /// Seed for bogus provider
+        /// </summary>
+        [Cfg(value=0)]
+        public int Seed { get; set; }
     }
 }
