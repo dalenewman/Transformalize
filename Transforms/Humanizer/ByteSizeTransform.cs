@@ -19,8 +19,7 @@ using Humanizer.Bytes;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.Humanizer
-{
+namespace Transformalize.Transforms.Humanizer {
     public class ByteSizeTransform : BaseTransform {
         private readonly Field _input;
         public ByteSizeTransform(IContext context) : base(context, "double") {

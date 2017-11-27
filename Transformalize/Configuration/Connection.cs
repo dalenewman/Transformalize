@@ -257,7 +257,7 @@ namespace Transformalize.Configuration {
                     return $"{Name} {Provider}:{Server}.{Database}";
                 case "lucene":
                 case "folder":
-                case "directory":
+                case "filesystem":
                     return $"{Name} {Provider}:{Folder}";
                 case "elasticsearch":
                 case "solr":

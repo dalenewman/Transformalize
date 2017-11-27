@@ -58,7 +58,7 @@
     <Compile Include="FileLineReader.cs" />
     <Compile Include="Actions\FileMoveAction.cs" />
     <Compile Include="FileReader.cs" />
-    <Compile Include="DirectoryReader.cs" />
+    <Compile Include="FileSystemReader.cs" />
     <Compile Include="Actions\FileReplaceAction.cs" />
     <Compile Include="FileStreamWriter.cs" />
     <Compile Include="Actions\OpenAction.cs" />

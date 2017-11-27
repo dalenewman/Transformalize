@@ -136,9 +136,9 @@
                                        id="id_@(field.Alias)"
                                        name="@(field.Alias)"
                                        type="file"
-                                       accept="@field.InputAccept"
-                                       capture="@field.InputCapture"
-                                       data-tfl-post-back="@field.PostBack" />
+                                       data-tfl-post-back="@field.PostBack"
+                                       @(field.InputAccept == "" ? string.Empty : "accept=\""+field.InputAccept+"\"")
+                                       @(field.InputCapture == "" ? string.Empty : "capture=\""+field.InputCapture+"\"") />
                                 @if (filePart != null) {
                                     <span class="text-muted"><strong>Caution</strong>: File <strong>@filePart.FileName()</strong> is saved in @field.Label.</span>
                                 }

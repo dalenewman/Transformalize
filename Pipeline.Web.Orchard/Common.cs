@@ -33,6 +33,7 @@ namespace Pipeline.Web.Orchard {
         public const string AllTag = "All";
         public const string TagFilterName = "tagFilter";
         public const string BatchValueFieldName = "BatchValue";
+        public const int DefaultPageSize = 15;
 
         public static string CacheKey(int id, string feature) {
             return ModuleName + "." + feature + "." + id;
@@ -77,19 +78,19 @@ namespace Pipeline.Web.Orchard {
 
             // handle input file
             int inputFileId;
-            if (parameters.ContainsKey(Common.InputFileIdName) && int.TryParse(parameters[Common.InputFileIdName], out inputFileId)) {
+            if (parameters.ContainsKey(InputFileIdName) && int.TryParse(parameters[InputFileIdName], out inputFileId)) {
                 var response = secureFileService.Get(inputFileId);
                 if (response.Status == 200) {
-                    parameters[Common.InputFilePath] = response.Part.FullPath;
-                    parameters[Common.InputFileName] = response.Part.FileName();
-                    parameters[Common.InputFileTitleName] = response.Part.Title();
+                    parameters[InputFilePath] = response.Part.FullPath;
+                    parameters[InputFileName] = response.Part.FileName();
+                    parameters[InputFileTitleName] = response.Part.Title();
                 } else {
-                    parameters[Common.InputFilePath] = response.Message;
-                    parameters[Common.InputFileName] = response.Message;
-                    parameters[Common.InputFileTitleName] = response.Message;
+                    parameters[InputFilePath] = response.Message;
+                    parameters[InputFileName] = response.Message;
+                    parameters[InputFileTitleName] = response.Message;
                 }
             } else {
-                parameters[Common.InputFileIdName] = "0";
+                parameters[InputFileIdName] = "0";
             }
 
             AddOrchardVariables(parameters, orchard, request);
@@ -120,7 +121,7 @@ namespace Pipeline.Web.Orchard {
                 if (isMode) {
                     if (output == "map") {
                         entity.Page = 1;
-                        entity.PageSize = 0;
+                        entity.Size = 0;
                     } else {
                         if (entity.Page > 0) {
                             int page;
@@ -140,9 +141,10 @@ namespace Pipeline.Web.Orchard {
                             }
 
                             if (size > 0 || output == "page") {
-                                entity.PageSize = size > 0 && entity.PageSizes.Any(s => s.Size == size) ? size : entity.PageSizes.First().Size;
-                            } else {
-                                entity.PageSize = size;
+                                if (size == 0) {
+                                    size = DefaultPageSize;
+                                }
+                                entity.Size = size > 100 ? 100 : size;
                             }
                         }
 
@@ -150,10 +152,10 @@ namespace Pipeline.Web.Orchard {
                 } else {
                     if (isOutput) {
                         entity.Page = 0;
-                        entity.PageSize = 0;
+                        entity.Size = 0;
                     } else {  // unknown output request
                         entity.Page = 1;
-                        entity.PageSize = 0;
+                        entity.Size = 0;
                     }
                 }
             }

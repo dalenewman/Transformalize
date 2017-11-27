@@ -105,15 +105,15 @@ namespace Transformalize.Configuration.Ext {
                 {"Name","string"}
             };
 
-            if (process.Connections.All(c => c.Provider != "directory"))
+            if (process.Connections.All(c => c.Provider != "filesystem"))
                 return;
 
-            foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "directory").Where(entity => !entity.Fields.Where(f => f.Input).Any(f => fieldNames.ContainsKey(f.Name)))) {
+            foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "filesystem").Where(entity => !entity.Fields.Where(f => f.Input).Any(f => fieldNames.ContainsKey(f.Name)))) {
                 error($"The {entity.Alias} entity reads a directory listing. It needs at least one of these valid fields: {(string.Join(", ", fieldNames).Replace(", Name", ", or Name"))}.");
             }
 
             foreach (
-                var field in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "directory").SelectMany(e => e.Fields.Where(f => f.Input && fieldNames.ContainsKey(f.Name)))) {
+                var field in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "filesystem").SelectMany(e => e.Fields.Where(f => f.Input && fieldNames.ContainsKey(f.Name)))) {
                 var type = fieldNames[field.Name];
                 if (field.Type.StartsWith(type, StringComparison.OrdinalIgnoreCase)) {
                     continue;

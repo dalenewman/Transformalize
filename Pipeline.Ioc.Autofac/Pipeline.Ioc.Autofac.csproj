@@ -137,7 +137,7 @@
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
-    <Compile Include="Modules\DirectoryModule.cs" />
+    <Compile Include="Modules\FileSystemModule.cs" />
     <Compile Include="Modules\ShorthandTransformModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />

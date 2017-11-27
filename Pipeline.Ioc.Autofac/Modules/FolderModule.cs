@@ -37,12 +37,17 @@ namespace Transformalize.Ioc.Autofac.Modules {
             if (_process == null)
                 return;
 
+            foreach (var connection in _process.Connections.Where(c => c.Provider == "folder")) {
+                builder.Register<ISchemaReader>(ctx => new NullSchemaReader()).Named<ISchemaReader>(connection.Key);
+            }
+
+
             // enitity input
             foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "folder")) {
 
                 // input version detector
                 builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
-
+                
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));

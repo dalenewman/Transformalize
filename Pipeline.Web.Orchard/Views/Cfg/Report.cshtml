@@ -18,7 +18,7 @@
     var sortService = WorkContext.Resolve<ISortService>();
     var linkService = WorkContext.Resolve<IExportLinkService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
-    var pageSizes = entity.PageSizes.Select(s => s.Size).ToArray();
+    var pageSizes = new [] {5, 10, 15, 25, 50, 100};
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     if (hasActions) {
@@ -139,7 +139,7 @@ td.sorter {
         <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
     }
     <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
-    <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.PageSize)" />
+    <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
     <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
 
     @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
@@ -298,7 +298,7 @@ td.sorter {
                     </ul>
                 </div>
 
-                @if (output == "page" && entity.Page > 0 && pageSizes.Any()) {
+                @if (output == "page" && entity.Page > 0) {
                     <div class="btn-group btn-group-sm">
                         <button class="btn btn-sm">Size</button>
                         <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
@@ -306,7 +306,7 @@ td.sorter {
                         </button>
                         <ul class="dropdown-menu">
                             @foreach (var pageSize in pageSizes) {
-                                <li class="@(entity.PageSize.Equals(pageSize) ? "active" : string.Empty)">
+                                <li class="@(entity.Size.Equals(pageSize) ? "active" : string.Empty)">
                                     <a href="javascript:controls.setSize(@pageSize);">@pageSize</a>
                                 </li>
                             }
@@ -633,14 +633,9 @@ td.sorter {
 
             // the rest of this just cleans up the URL (bookmark)
             var page = parseInt($('#id_page').val());
-            var size = parseInt($('#id_size').val());
 
             if (page <= 1) {
                 $('#id_page').attr('disabled', true);
-            }
-
-            if (size === 0 || size === defaultSize) {
-                $('#id_size').attr('disabled', true);
             }
 
             $('#id_report input').filter(function() {

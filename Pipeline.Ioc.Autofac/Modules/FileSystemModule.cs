@@ -24,12 +24,13 @@ using Transformalize.Nulls;
 using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac.Modules {
-    public class DirectoryModule : Module {
+    public class FileSystemModule : Module {
+        private const string PROVIDER = "filesystem";
         private readonly Process _process;
 
-        public DirectoryModule() { }
+        public FileSystemModule() { }
 
-        public DirectoryModule(Process process) {
+        public FileSystemModule(Process process) {
             _process = process;
         }
 
@@ -39,7 +40,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 return;
 
             // enitity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "directory")) {
+            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == PROVIDER)) {
 
                 // no input version detector for now
                 builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
@@ -47,20 +48,20 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                    return new DirectoryReader(input, rowFactory);
+                    return new FileSystemReader(input, rowFactory);
                 }).Named<IRead>(entity.Key);
 
                 if (entity.Delete) {
                     builder.Register<IReadInputKeysAndHashCodes>((ctx) => {
                         var input = ctx.ResolveNamed<InputContext>(entity.Key);
                         var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                        return new DirectoryReader(input, rowFactory);
+                        return new FileSystemReader(input, rowFactory);
                     }).Named<IReadInputKeysAndHashCodes>(entity.Key);
                 }
 
             }
 
-            if (_process.Output().Provider == "directory") {
+            if (_process.Output().Provider == PROVIDER) {
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 

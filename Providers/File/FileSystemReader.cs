@@ -23,12 +23,12 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.File {
-    public class DirectoryReader : IReadInputKeysAndHashCodes {
+    public class FileSystemReader : IReadInputKeysAndHashCodes {
 
         private readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
 
-        public DirectoryReader(InputContext input, IRowFactory rowFactory) {
+        public FileSystemReader(InputContext input, IRowFactory rowFactory) {
             _input = input;
             _rowFactory = rowFactory;
         }

@@ -60,7 +60,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new GeoJsonModule(process).Configure);
             builder.RegisterCallback(new KmlModule(process).Configure);
             builder.RegisterCallback(new FolderModule(process).Configure);
-            builder.RegisterCallback(new DirectoryModule(process).Configure);
+            builder.RegisterCallback(new FileSystemModule(process).Configure);
             builder.RegisterCallback(new ExcelModule(process).Configure);
             builder.RegisterCallback(new WebModule(process).Configure);
             builder.RegisterCallback(new RethinkDBModule(process).Configure);
