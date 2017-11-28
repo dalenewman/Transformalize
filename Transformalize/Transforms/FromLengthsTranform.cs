@@ -74,7 +74,8 @@ namespace Transformalize.Transforms {
 
             var index = 0;
             for (var i = 0; i < _lengths.Length; i++) {
-                values[i] = line.Substring(index, _lengths[i]);
+                var tooShort = line.Length < index + _lengths[i];
+                values[i] = tooShort ? line.Substring(index) : line.Substring(index, _lengths[i]);
                 index += _lengths[i];
             }
 

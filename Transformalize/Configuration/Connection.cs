@@ -166,7 +166,7 @@ namespace Transformalize.Configuration {
 
         }
 
-        void ModifyProvider() {
+        private void ModifyProvider() {
             //backwards compatibility, default provider used to be sqlserver
             if (Provider == Constants.DefaultSetting && (Database != string.Empty || ConnectionString != string.Empty)) {
                 Provider = "sqlserver";
@@ -242,7 +242,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        void ValidateUrl() {
+        private void ValidateUrl() {
             Uri uriResult;
             if (!Uri.TryCreate(Url, UriKind.Absolute, out uriResult)) {
                 Error($"The url {Url} is invalid for the {Name} connection.");
@@ -298,19 +298,30 @@ namespace Transformalize.Configuration {
         [Cfg(value = Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
         public string ModelType { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Command { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
+        public string Arguments { get; set; }
+
+        [Cfg(value = "")]
         public string Template { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Stream { get; set; }
 
         /// <summary>
         /// Seed for bogus provider
         /// </summary>
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Seed { get; set; }
+
+        protected override void PostValidate() {
+            if (Command.Contains(" ")) {
+                if (!Command.Contains("\"")) {
+                    Command = string.Concat("\"", Command, "\"");
+                }
+            }
+        }
     }
 }

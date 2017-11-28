@@ -46,7 +46,8 @@ namespace Transformalize.Providers.Console {
                 StartInfo = {
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
-                    FileName = _input.Connection.Command
+                    FileName = _input.Connection.Command,
+                    Arguments = _input.Connection.Arguments
                 }
             };
 
