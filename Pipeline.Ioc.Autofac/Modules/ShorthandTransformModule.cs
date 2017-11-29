@@ -219,12 +219,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("expression"));
                 root.Signatures.Add(Simple("key"));
                 root.Signatures.Add(Simple("units"));
+                root.Signatures.Add(new Signature() {
+                    Name = "tostring",
+                    Parameters = new List<Cfg.Net.Shorthand.Parameter>
+                    {
+                        new Cfg.Net.Shorthand.Parameter { Name = "format"}
+                    }
+                });
 
                 root.Methods.Add(new Method { Name = "any", Signature = "any" });
 
                 root.Methods.Add(new Method { Name = "contains", Signature = "value" });
 
-                
+
                 root.Methods.Add(new Method { Name = "cs", Signature = "script" });
                 root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
                 root.Methods.Add(new Method { Name = "floor", Signature = "none" });
@@ -260,7 +267,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "timeahead", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timezone", Signature = "timezone" });
                 root.Methods.Add(new Method { Name = "tolower", Signature = "none" });
-                root.Methods.Add(new Method { Name = "tostring", Signature = "format" });
+                root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });
                 root.Methods.Add(new Method { Name = "totime", Signature = "timecomponent" });
                 root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
                 root.Methods.Add(new Method { Name = "toyesno", Signature = "none" });

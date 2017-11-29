@@ -19,8 +19,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Autofac;
+using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
 using Process = Transformalize.Configuration.Process;
@@ -29,6 +31,8 @@ namespace Transformalize.Ioc.Autofac {
     public static class DefaultContainer {
 
         public static ILifetimeScope Create(Process process, IPipelineLogger logger, string placeHolderStyle) {
+
+            var loadContext = new PipelineContext(logger, process);
 
             if (process.OutputIsConsole()) {
                 logger.SuppressConsole();
@@ -45,25 +49,27 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new ValidateModule().Configure);
             builder.RegisterCallback(new ShorthandValidateModule().Configure);
 
-
             builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 
-            // providers
-            builder.RegisterCallback(new AdoModule(process).Configure);
-            builder.RegisterCallback(new LuceneModule(process).Configure);
-            builder.RegisterCallback(new SolrModule(process).Configure);
-            builder.RegisterCallback(new ElasticModule(process).Configure);
+            // provider loading section
+            var providers = new HashSet<string>(process.Connections.Select(c => c.Provider).Distinct(), StringComparer.OrdinalIgnoreCase);
+
             builder.RegisterCallback(new InternalModule(process).Configure);
-            builder.RegisterCallback(new ConsoleModule(process).Configure);
-            builder.RegisterCallback(new FileModule(process).Configure);
-            builder.RegisterCallback(new GeoJsonModule(process).Configure);
-            builder.RegisterCallback(new KmlModule(process).Configure);
-            builder.RegisterCallback(new FolderModule(process).Configure);
-            builder.RegisterCallback(new FileSystemModule(process).Configure);
-            builder.RegisterCallback(new ExcelModule(process).Configure);
-            builder.RegisterCallback(new WebModule(process).Configure);
-            builder.RegisterCallback(new RethinkDBModule(process).Configure);
+            builder.RegisterCallback(new AdoModule(process).Configure);
+
+            if (providers.Contains("lucene")) { builder.RegisterCallback(new LuceneModule(process).Configure); }
+            if (providers.Contains("solr")) { builder.RegisterCallback(new SolrModule(process).Configure); }
+            if (providers.Contains("elasticsearch")) { builder.RegisterCallback(new ElasticModule(process).Configure); }
+            if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
+            if (providers.Contains("file")) { builder.RegisterCallback(new FileModule(process).Configure); }
+            if (providers.Contains("geojson")) { builder.RegisterCallback(new GeoJsonModule(process).Configure); }
+            if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
+            if (providers.Contains("folder")) { builder.RegisterCallback(new FolderModule(process).Configure); }
+            if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
+            if (providers.Contains("excel")) { builder.RegisterCallback(new ExcelModule(process).Configure); }
+            if (providers.Contains("web")) { builder.RegisterCallback(new WebModule(process).Configure); }
+            if (providers.Contains("rethinkdb")) { builder.RegisterCallback(new RethinkDBModule(process).Configure); }
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -71,12 +77,16 @@ namespace Transformalize.Ioc.Autofac {
                 builder.Properties["Process"] = process;
                 var assemblies = new List<Assembly>();
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+                    var name = file.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
+                    if (!providers.Contains(name))
+                        continue;
+                    loadContext.Info($"Loading {name} provider");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
-                builder.RegisterAssemblyModules(assemblies.ToArray());
-
-
+                if (assemblies.Any()) {
+                    builder.RegisterAssemblyModules(assemblies.ToArray());
+                }
             }
 
             // template providers

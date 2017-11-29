@@ -53,12 +53,14 @@ namespace Transformalize.Ioc.Autofac {
                         }
                     }
                 }
-                
+
                 // add conversion if necessary
-                var lastType = transforms.Last().Returns;
-                if (lastType != null &&  lastType != "object" && field.Type != lastType) {
-                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
+                if (transforms.Any()) {
+                    var lastType = transforms.Last().Returns;
+                    if (lastType != null && lastType != "object" && field.Type != lastType) {
+                        context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
+                        transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
+                    }
                 }
 
             }

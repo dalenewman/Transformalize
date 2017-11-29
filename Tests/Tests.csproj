@@ -96,7 +96,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />
-    <Compile Include="NorthWindIntegrationAccess.cs" />
     <Compile Include="TestFromRegex.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestAppend.cs" />
@@ -168,10 +167,6 @@
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Access\Access.csproj">
-      <Project>{ca54bc84-f8c1-4248-a794-42635427a714}</Project>
-      <Name>Access</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Ado\Ado.csproj">
       <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
@@ -310,10 +305,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\MetadataForFile.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\NorthWindSqlServerToAccess.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -12,7 +12,6 @@ nuget pack Providers\PostgreSql\Transformalize.Provider.PostgreSql.nuspec -Outpu
 nuget pack Providers\Solr\Transformalize.Provider.Solr.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\SQLite\Transformalize.Provider.SQLite.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\SqlServer\Transformalize.Provider.SqlServer.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Providers\Access\Transformalize.Provider.Access.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\SqlCe\Transformalize.Provider.SqlCe.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Web\Transformalize.Provider.Web.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Console\Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
