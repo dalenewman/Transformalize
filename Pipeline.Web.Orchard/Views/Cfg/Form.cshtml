@@ -10,6 +10,7 @@
     Script.Require("jQuery").AtHead();
     Script.Require("BlockUI");
     var orchard = WorkContext.Resolve<IOrchardServices>();
+    var geo = Model.Process.GetActiveParameters().Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
 }
 
 <style type="text/css">
@@ -79,6 +80,11 @@
             $("#id_content").html(html);
             $("#id_form").attr("action", saveUrl);
 
+            @if (geo) {
+                <text>
+                getLocation();
+                </text>
+            }
             setFocus();
 
             $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
@@ -142,6 +148,45 @@
                 if ($target.is("select") && $target.closest("div").prev().has("select").length > 0) {
                     $target.blur();
                 }
+            }
+        }
+
+        function getLocation() {
+            if ("geolocation" in navigator) {
+
+                if ($('#id_geo_latitude').val() === "") {
+                    navigator.geolocation.getCurrentPosition(
+                        function(location) {
+                            console.log(location.coords);
+                            $('#id_geo_latitude').val(location.coords.latitude);
+                            $('#id_geo_longitude').val(location.coords.longitude);
+                            $('#id_geo_accuracy').val(location.coords.accuracy);
+                        },
+                        function(error) {
+                            console.log(error);
+                        }
+                    );                    
+                }
+
+                navigator.geolocation.getCurrentPosition(
+                    function(location) {
+                        console.log(location.coords);
+                        $('#id_geo_latitude').val(location.coords.latitude);
+                        $('#id_geo_longitude').val(location.coords.longitude);
+                        $('#id_geo_accuracy').val(location.coords.accuracy);
+                    },
+                    function(error) {
+                        console.log(error);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge        : 15000,
+                        timeout           : Infinity
+                    }
+                );
+
+            } else {
+                console.log("geolocation IS NOT available");
             }
         }
 

@@ -6,14 +6,24 @@
 @using Transformalize.Impl
 @model Transformalize.Configuration.Process
 @{
-    string focus = string.Empty;
+    var focus = string.Empty;
     CfgRow row = null;
     Field[] fields = null;
-    bool valid = false;
+    var valid = false;
+    var latitude = "";
+    var longitude = "";
+    var accuracy = "";
 
     var request = WorkContext.HttpContext.Request;
     var method = request.HttpMethod;
     var entity = Model.Entities.FirstOrDefault();
+    var parameters = Model.GetActiveParameters();
+    var geo = parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
+    if (geo) {
+        latitude = request.Form["Orchard.Latitude"] ?? string.Empty;
+        longitude = request.Form["Orchard.Longitude"] ?? string.Empty;
+        accuracy = request.Form["Orchard.Accuracy"] ?? string.Empty;        
+    }
 
     if (entity != null) {
         row = entity.Rows.FirstOrDefault();
@@ -63,6 +73,11 @@
 @using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
 
     <input type="hidden" id="id_focus" name="form_focus" value="@focus" />
+    if(geo) {
+        <input type="hidden" id="id_geo_latitude" name="Orchard.Latitude" value="@latitude" />
+        <input type="hidden" id="id_geo_longitude" name="Orchard.Longitude" value="@longitude" />
+        <input type="hidden" id="id_geo_accuracy" name="Orchard.Accuracy" value="@accuracy" />
+    }
 
     if (row != null) {
 

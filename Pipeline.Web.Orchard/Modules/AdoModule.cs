@@ -26,11 +26,8 @@ using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Transformalize.Providers.Ado;
 using Transformalize.Providers.MySql;
-using Transformalize.Providers.PostgreSql;
 using Transformalize.Providers.SqlServer;
-using Transformalize.Providers.SQLite;
 using Transformalize;
-using Transformalize.Providers.SqlCe;
 using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -60,12 +57,6 @@ namespace Pipeline.Web.Orchard.Modules {
                             return new SqlServerConnectionFactory(cn);
                         case "mysql":
                             return new MySqlConnectionFactory(cn);
-                        case "postgresql":
-                            return new PostgreSqlConnectionFactory(cn);
-                        case "sqlite":
-                            return new SqLiteConnectionFactory(cn);
-                        case "sqlce":
-                            return new SqlCeConnectionFactory(cn);
                         default:
                             return new NullConnectionFactory();
                     }
@@ -106,9 +97,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     IRead dataReader;
                     switch (input.Connection.Provider) {
                         case "mysql":
-                        case "postgresql":
-                        case "sqlite":
-                        case "sqlce":
                         case "sqlserver":
                             dataReader = new AdoInputReader(
                                 input,
@@ -143,9 +131,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "mysql":
-                        case "postgresql":
-                        case "sqlite":
-                        case "sqlce":
                         case "sqlserver":
                             return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
                         default:
@@ -168,9 +153,6 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     switch (output.Connection.Provider) {
                         case "mysql":
-                        case "postgresql":
-                        case "sqlite":
-                        case "sqlce":
                         case "sqlserver":
                             var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
                             if (_process.Flatten) {
@@ -224,16 +206,7 @@ namespace Pipeline.Web.Orchard.Modules {
                                     ctx.ResolveNamed<IBatchReader>(entity.Key),
                                     new AdoEntityUpdater(output, cf)
                                 );
-                            case "sqlce":
-                                return new SqlCeWriter(
-                                    output,
-                                    cf,
-                                    ctx.ResolveNamed<IBatchReader>(entity.Key),
-                                    new AdoEntityUpdater(output, cf)
-                                );
                             case "mysql":
-                            case "postgresql":
-                            case "sqlite":
                                 return new AdoEntityWriter(
                                     output,
                                     ctx.ResolveNamed<IBatchReader>(entity.Key),
@@ -257,9 +230,6 @@ namespace Pipeline.Web.Orchard.Modules {
 
                         switch (output.Connection.Provider) {
                             case "mysql":
-                            case "postgresql":
-                            case "sqlite":
-                            case "sqlce":
                             case "sqlserver":
                                 var initializer = _process.Mode == "init" ? (IAction)new AdoEntityInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) : new NullInitializer();
                                 return new AdoOutputController(
@@ -292,8 +262,6 @@ namespace Pipeline.Web.Orchard.Modules {
                         switch (output.Connection.Provider) {
                             case "mysql":
                                 return new MySqlUpdateMasterKeysQueryWriter(output, factory);
-                            case "postgresql":
-                                return new PostgreSqlUpdateMasterKeysQueryWriter(output, factory);
                             default:
                                 return new SqlServerUpdateMasterKeysQueryWriter(output, factory);
                         }

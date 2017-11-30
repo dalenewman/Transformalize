@@ -195,9 +195,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Lucene">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Lucene.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Provider.MySql, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
@@ -206,23 +203,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.PostgreSql, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.PostgreSql.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.RethinkDB">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.RethinkDB.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Provider.Solr, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Solr.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.SqlCe">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SqlCe.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.SQLite, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.SqlServer, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
