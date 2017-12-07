@@ -32,6 +32,9 @@ namespace Transformalize.Configuration {
         [Cfg(required = false, unique = true, value = null)]
         public string Alias { get; set; }
 
+        [Cfg(value="")]
+        public string Label { get; set; }
+
         [Cfg(value = "input", toLower = true)]
         public string Connection { get; set; }
 

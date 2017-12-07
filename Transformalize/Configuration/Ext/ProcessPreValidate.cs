@@ -144,6 +144,18 @@ namespace Transformalize.Configuration.Ext {
         /// </summary>
         /// <param name="p"></param>
         private static void AutomaticMaps(Process p) {
+
+            foreach (var field in p.GetAllFields().Where(f => f.Map.Contains(","))) {
+                if (p.Maps.All(m => m.Name != field.Map)) {
+                    var map = new Map { Name = field.Map };
+                    var split = field.Map.Split(',');
+                    foreach (var item in split) {
+                        map.Items.Add(new MapItem { From = item, To = item });
+                    }
+                    p.Maps.Add(map);
+                }
+            }
+
             if (!p.Connections.Any(c => c.Provider.In("elasticsearch", "solr"))) {
                 return;
             }

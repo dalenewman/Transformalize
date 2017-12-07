@@ -58,7 +58,7 @@ namespace Transformalize.Impl {
 
         public IEnumerable<IRow> Read() {
             foreach (var row in _parentReader.Read()) {
-                foreach (var field in _context.Entity.GetAllFields()) {
+                foreach (var field in _context.Entity.GetAllFields().Where(f=>!f.System)) {
                     Parameter p = null;
                     if (_parameters.ContainsKey(field.Alias)) {
                         p = _parameters[field.Alias];

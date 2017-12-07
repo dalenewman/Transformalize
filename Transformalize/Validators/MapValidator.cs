@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
@@ -47,7 +48,7 @@ namespace Transformalize.Validators {
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
 
-            var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
+            var map = CreateMap();
             foreach (var item in map.Items) {
                 _map.Add(_input.Convert(item.From));
             }
@@ -59,6 +60,24 @@ namespace Transformalize.Validators {
             _betterFormat = new BetterFormat(Context, help, Context.Entity.GetAllFields);
 
             return base.Operate(rows);
+        }
+
+        private Map CreateMap() {
+
+            var map = Context.Process.Maps.FirstOrDefault(m => m.Name == Context.Operation.Map);
+
+            if (map != null)
+                return map;
+
+            // auto map
+            map = new Map { Name = Context.Operation.Map };
+            var split = Context.Operation.Map.Split(',');
+            foreach (var item in split) {
+                map.Items.Add(new MapItem { From = item, To = item });
+            }
+            Context.Process.Maps.Add(map);
+
+            return map;
         }
 
         public override IRow Operate(IRow row) {

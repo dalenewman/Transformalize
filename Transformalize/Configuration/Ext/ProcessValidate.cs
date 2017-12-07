@@ -58,8 +58,8 @@ namespace Transformalize.Configuration.Ext {
         }
 
         private static void ValidateTransformParameters(Process process, Action<string> warn) {
-            var fields = new HashSet<string>(process.GetAllFields().Select(f => f.Alias)); ;
-            foreach (var transform in process.GetAllTransforms()) {
+            var fields = new HashSet<string>(process.GetAllFields().Select(f => f.Alias)); 
+            foreach (var transform in process.GetAllTransforms().Where(t=>!Operation.ProducerSet().Contains(t.Method))) {
                 foreach (var parameter in transform.Parameters) {
                     if (fields.Contains(parameter.Name)) {
                         warn($"A parameter name attribute is the same as a field name: {parameter.Name}.  Perhaps you meant to use use the field attribute.");
