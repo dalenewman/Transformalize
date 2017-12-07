@@ -7,7 +7,6 @@ nuget pack Providers\OpenXml\Transformalize.Provider.OpenXml.nuspec -OutputDirec
 nuget pack Providers\File\Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Lucene\Transformalize.Provider.Lucene.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\MySql\Transformalize.Provider.MySql.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Providers\SSAS\Transformalize.Provider.SSAS.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\PostgreSql\Transformalize.Provider.PostgreSql.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Solr\Transformalize.Provider.Solr.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\SQLite\Transformalize.Provider.SQLite.nuspec -OutputDirectory "c:\temp\modules"
