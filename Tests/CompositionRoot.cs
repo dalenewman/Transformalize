@@ -22,38 +22,38 @@ using System.Linq;
 using Autofac;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac;
-using Transformalize.Ioc.Autofac.Modules;
 using Transformalize.Providers.Trace;
 using Process = Transformalize.Configuration.Process;
 
-namespace Tests {
-    public class CompositionRoot {
+namespace Tests
+{
+
+    public class CompositionRoot
+    {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()")
+        {
 
             var logger = new TraceLogger(logLevel);
-            var builder = new ContainerBuilder();
-            builder.Register<IPipelineLogger>(c => logger).As<IPipelineLogger>();
-            builder.RegisterModule(new TransformModule());
-            builder.RegisterModule(new ShorthandTransformModule());
-            builder.RegisterModule(new ValidateModule());
-            builder.RegisterModule(new ShorthandValidateModule());
-            builder.RegisterModule(new RootModule());
-            var container = builder.Build();
+            var container = ConfigurationContainer.Create(cfg, logger, parameters, placeHolderStyle);
 
             Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
-            if (Process.Errors().Any()) {
-                foreach (var error in Process.Errors()) {
+            if (Process.Errors().Any())
+            {
+                foreach (var error in Process.Errors())
+                {
                     Trace.WriteLine(error);
                 }
                 throw new Exception("Configuration Error(s)");
             }
 
-            if (Process.Warnings().Any()) {
-                foreach (var warning in Process.Warnings()) {
+            if (Process.Warnings().Any())
+            {
+                foreach (var warning in Process.Warnings())
+                {
                     Trace.WriteLine(warning);
                 }
             }

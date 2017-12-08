@@ -84,6 +84,14 @@ namespace Transformalize.Providers.Ado.Ext {
             return c.Entity.Schema == string.Empty ? string.Empty : f.Enclose(c.Entity.Schema) + ".";
         }
 
+        public static string SqlSelectInputFromOutput(this InputContext c, Field[] fields, IConnectionFactory cf)
+        {
+            var fieldList = string.Join(",", fields.Select(f => f.Alias == f.Name ? cf.Enclose(f.Alias) : cf.Enclose(f.Alias) + " AS " + cf.Enclose(f.Name)));
+            var filter = c.Entity.Filter.Any() ? " WHERE " + c.ResolveFilter(cf) : string.Empty;
+            var orderBy = c.ResolveOrder(cf);
+            return $"SELECT {fieldList} FROM {cf.Enclose(c.Entity.OutputViewName(c.Process.Name))} {filter} {orderBy}";
+        }
+
         public static string SqlSelectInput(this InputContext c, Field[] fields, IConnectionFactory cf) {
             var fieldList = string.Join(",", fields.Select(f => cf.Enclose(f.Name)));
             var table = SqlInputName(c, cf);

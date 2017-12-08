@@ -95,6 +95,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigurationContainer.cs" />
+    <Compile Include="Forms.cs" />
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />
     <Compile Include="TestFromRegex.cs" />
     <Compile Include="TestBase.cs" />

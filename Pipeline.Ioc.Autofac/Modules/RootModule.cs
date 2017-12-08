@@ -29,6 +29,7 @@ using System.IO;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Jint;
+using Transformalize.Impl;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -56,9 +57,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
-                    new DateMathModifier(),
-                    new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2])),
-                    new JintValidator()
+                    new FormParameterModifier(new DateMathModifier()),
+                    new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
                 };
 
                 if (ctx.IsRegisteredWithName<IDependency>("shorthand-t")) {
@@ -68,6 +68,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 if (ctx.IsRegisteredWithName<IDependency>("shorthand-v")) {
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
+
 
                 var process = new Process(dependencies.ToArray());
 
