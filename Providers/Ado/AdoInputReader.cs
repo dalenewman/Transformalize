@@ -59,18 +59,7 @@ namespace Transformalize.Providers.Ado
                 if (string.IsNullOrEmpty(_input.Entity.Query))
                 {
                     if (_input.Entity.MinVersion == null){
-
-                        if (_input.Process.Mode == "form") {
-                            var input = _input.Connection;
-                            var output = _input.Process.Output();
-                            if (input.Provider == output.Provider && input.Server == output.Server && input.Database == output.Database) {
-                                cmd.CommandText = _input.SqlSelectInputFromOutput(_fields, _factory);
-                            } else {
-                                cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
-                            }
-                        } else {
-                            cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
-                        }
+                        cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
                         _input.Debug(() => cmd.CommandText);
                     } else {
                         cmd.CommandText = _input.SqlSelectInputWithMinVersion(_fields, _factory);

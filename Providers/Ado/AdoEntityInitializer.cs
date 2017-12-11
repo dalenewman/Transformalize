@@ -23,7 +23,6 @@ using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
-
     public class AdoEntityInitializer : IAction {
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
@@ -68,6 +67,7 @@ namespace Transformalize.Providers.Ado {
                 _context.Warn($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
                 _context.Debug(() => ex.Message);
             }
+
         }
 
         void Create(IDbConnection cn) {

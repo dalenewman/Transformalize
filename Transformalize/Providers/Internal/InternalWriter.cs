@@ -24,15 +24,15 @@ namespace Transformalize.Provider.Internal {
 
     public class InternalWriter : IWrite {
         private readonly OutputContext _context;
-
+        private readonly IField[] _fields;
         public InternalWriter(OutputContext context) {
             _context = context;
+            _fields = context.Entity.GetAllOutputFields().ToArray();
         }
 
         public void Write(IEnumerable<IRow> rows) {
 
-            var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
-            var keys = fields.Select(f => f.Alias).ToArray();
+            var keys = _fields.Select(f => f.Alias).ToArray();
             var cleared = false;
 
             foreach (var row in rows) {
@@ -43,7 +43,7 @@ namespace Transformalize.Provider.Internal {
                     cleared = true;
                 }
 
-                _context.Entity.Rows.Add(row.ToCfgRow(fields, keys));
+                _context.Entity.Rows.Add(row.ToCfgRow(_fields, keys));
                 _context.Increment();
             }
 

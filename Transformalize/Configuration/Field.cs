@@ -389,6 +389,9 @@ namespace Transformalize.Configuration {
                     MessageField = Alias + "Message";
                 }
             }
+            if (!Map.Contains(",")) {
+                Map = Map.ToLower();
+            }
         }
 
         protected override void PreValidate() {
@@ -606,7 +609,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Used in form mode to populate drop downs
         /// </summary>
-        [Cfg(value = "", toLower = true, trim = true)]
+        [Cfg(value = "", trim = true)]
         public string Map { get; set; }
 
         /// <summary>
@@ -628,5 +631,6 @@ namespace Transformalize.Configuration {
                 Value = Default == Constants.DefaultSetting ? Constants.StringDefaults()[Type] : Default
             };
         }
+
     }
 }

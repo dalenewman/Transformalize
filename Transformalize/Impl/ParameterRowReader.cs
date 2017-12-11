@@ -22,45 +22,35 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
 
-namespace Transformalize.Impl
-{
+namespace Transformalize.Impl {
 
-    public class ParameterRowReader : IRead
-    {
+    public class ParameterRowReader : IRead {
 
         private readonly IContext _context;
         private readonly IRead _parentReader;
         private readonly IDictionary<string, Parameter> _parameters = new Dictionary<string, Parameter>(StringComparer.OrdinalIgnoreCase);
         private readonly IRead _defaultRowReader;
 
-        public ParameterRowReader(IContext context, IRead parentReader, IRowFactory rowFactory = null)
-        {
+        public ParameterRowReader(IContext context, IRead parentReader, IRowFactory rowFactory = null) {
             _defaultRowReader = rowFactory == null ? (IRead)new NullReader(context) : new DefaultRowReader(context, rowFactory);
             _context = context;
             _parentReader = parentReader;
 
-            foreach (var p in context.Process.GetActiveParameters())
-            {
+            foreach (var p in context.Process.GetActiveParameters()) {
                 _parameters[p.Name] = p;
             }
 
             // attempt to disable validation if parameter can't be converted to field's type
-            foreach (var field in _context.Entity.GetAllFields())
-            {
+            foreach (var field in _context.Entity.GetAllFields()) {
                 Parameter p = null;
-                if (_parameters.ContainsKey(field.Alias))
-                {
+                if (_parameters.ContainsKey(field.Alias)) {
                     p = _parameters[field.Alias];
-                }
-                else if (_parameters.ContainsKey(field.Name))
-                {
+                } else if (_parameters.ContainsKey(field.Name)) {
                     p = _parameters[field.Name];
                 }
 
-                if (p != null)
-                {
-                    if (!Constants.CanConvert()[field.Type](p.Value))
-                    {
+                if (p != null) {
+                    if (!Constants.CanConvert()[field.Type](p.Value)) {
                         field.Validators.Clear();
                     }
                 }
@@ -69,62 +59,53 @@ namespace Transformalize.Impl
 
         }
 
-        public IEnumerable<IRow> Read()
-        {
+        public IEnumerable<IRow> Read() {
 
             IRow row;
             var rows = _parentReader.Read().ToArray();  // 1 or 0 records
 
-            if (rows.Length == 0){
+            if (rows.Length == 0) {
                 rows = _defaultRowReader.Read().ToArray();
-                if (rows.Length == 0){
+                if (rows.Length == 0) {
                     yield break;
                 }
             }
 
             row = rows[0];
 
-            foreach (var field in _context.Entity.GetAllFields().Where(f => !f.System)){
+            foreach (var field in _context.Entity.GetAllFields()) {
 
                 Parameter p = null;
-                if (_parameters.ContainsKey(field.Alias)){
+                if (_parameters.ContainsKey(field.Alias)) {
                     p = _parameters[field.Alias];
-                } else if (_parameters.ContainsKey(field.Name)){
+                } else if (_parameters.ContainsKey(field.Name)) {
                     p = _parameters[field.Name];
                 }
 
-                if (p != null){
+                if (p != null) {
 
                     if (Constants.CanConvert()[field.Type](p.Value)) {
 
                         row[field] = field.Convert(p.Value);
                         var len = field.Length.Equals("max", StringComparison.OrdinalIgnoreCase) ? int.MaxValue : Convert.ToInt32(field.Length);
-                        if (p.Value != null && p.Value.Length > len)
-                        {
-                            if (field.ValidField != string.Empty)
-                            {
+                        if (p.Value != null && p.Value.Length > len) {
+                            if (field.ValidField != string.Empty) {
                                 var validField = _context.Entity.CalculatedFields.First(f => f.Alias == field.ValidField);
                                 row[validField] = false;
                             }
-                            if (field.MessageField != string.Empty)
-                            {
+                            if (field.MessageField != string.Empty) {
                                 var messageField = _context.Entity.CalculatedFields.First(f => f.Alias == field.MessageField);
                                 row[messageField] = $"This field is limited to {len} characters.  Anything more than that is truncated.|";
                             }
                         }
-                    }
-                    else
-                    {
-                        if (field.ValidField != string.Empty)
-                        {
+                    } else {
+                        if (field.ValidField != string.Empty) {
                             var validField = _context.Entity.CalculatedFields.First(f => f.Alias == field.ValidField);
                             row[validField] = false;
                         }
-                        if (field.MessageField != string.Empty)
-                        {
+                        if (field.MessageField != string.Empty) {
                             var messageField = _context.Entity.CalculatedFields.First(f => f.Alias == field.MessageField);
-                            switch (field.Type)
-                            {
+                            switch (field.Type) {
                                 case "char":
                                     row[messageField] = "Must be a single chracter.|";
                                     break;

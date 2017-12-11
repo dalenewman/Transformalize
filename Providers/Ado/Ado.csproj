@@ -54,6 +54,7 @@
     <Compile Include="AdoCalculatedFieldUpdater.cs" />
     <Compile Include="AdoConstants.cs" />
     <Compile Include="AdoDeleter.cs" />
+    <Compile Include="AdoEntityFormCommands.cs" />
     <Compile Include="AdoEntityInitializer.cs" />
     <Compile Include="AdoEntityInserter.cs" />
     <Compile Include="AdoEntityMatchingFieldsReader.cs" />

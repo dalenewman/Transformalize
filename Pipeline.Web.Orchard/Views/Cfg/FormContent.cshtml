@@ -1,5 +1,6 @@
 ﻿@using Transformalize
 @using System.Linq
+@using System.Collections.Generic
 @using Orchard.ContentManagement
 @using Pipeline.Web.Orchard.Models
 @using Transformalize.Configuration
@@ -22,8 +23,9 @@
     if (geo) {
         latitude = request.Form["Orchard.Latitude"] ?? string.Empty;
         longitude = request.Form["Orchard.Longitude"] ?? string.Empty;
-        accuracy = request.Form["Orchard.Accuracy"] ?? string.Empty;        
+        accuracy = request.Form["Orchard.Accuracy"] ?? string.Empty;
     }
+    var sectionsDisplayed = new HashSet<string>();
 
     if (entity != null) {
         row = entity.Rows.FirstOrDefault();
@@ -70,6 +72,10 @@
     <div class="alert alert-warning" role="alert">@warning</div>
 }
 
+@if (entity != null && entity.Label != string.Empty) {
+    <h2>@entity.Label</h2>
+}
+
 @using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
 
     <input type="hidden" id="id_focus" name="form_focus" value="@focus" />
@@ -81,6 +87,7 @@
 
     if (row != null) {
 
+
         foreach (var field in fields) {
 
             var value = row[field.Alias] ?? string.Empty;
@@ -89,11 +96,16 @@
                 value = ((DateTime)value).ToString(field.Format);
             }
 
+            if (sectionsDisplayed.Add(field.Section)) {
+                <h3>@field.Section</h3>
+            }
+
             if (field.PrimaryKey) {
                 <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
             } else {
                 var map = Model.Maps.FirstOrDefault(m => m.Name == field.Map);
                 if (map != null) {
+                    
                     <div class="form-group @(Status(row,field))">
                         <label for="@field.Alias">@field.Label</label>
                         @if (map.Items.Any()) {

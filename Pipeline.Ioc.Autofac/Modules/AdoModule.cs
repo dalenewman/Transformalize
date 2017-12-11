@@ -32,35 +32,28 @@ using Transformalize.Providers.SQLite;
 using Transformalize.Transforms.System;
 using System.Web;
 
-namespace Transformalize.Ioc.Autofac.Modules
-{
-    public class AdoModule : Module
-    {
+namespace Transformalize.Ioc.Autofac.Modules {
+    public class AdoModule : Module {
         private readonly Process _process;
         private readonly HashSet<string> _ado = Constants.AdoProviderSet();
 
         public AdoModule() { }
 
-        public AdoModule(Process process)
-        {
+        public AdoModule(Process process) {
             _process = process;
         }
 
-        protected override void Load(ContainerBuilder builder)
-        {
+        protected override void Load(ContainerBuilder builder) {
 
             if (_process == null)
                 return;
 
             // connections
-            foreach (var connection in _process.Connections.Where(c => _ado.Contains(c.Provider)))
-            {
+            foreach (var connection in _process.Connections.Where(c => _ado.Contains(c.Provider))) {
 
                 // Connection Factory
-                builder.Register<IConnectionFactory>(ctx =>
-                {
-                    switch (connection.Provider)
-                    {
+                builder.Register<IConnectionFactory>(ctx => {
+                    switch (connection.Provider) {
                         case "sqlserver":
                             return new SqlServerConnectionFactory(connection);
                         case "mysql":
@@ -77,8 +70,7 @@ namespace Transformalize.Ioc.Autofac.Modules
                 }).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
 
                 // Schema Reader
-                builder.Register<ISchemaReader>(ctx =>
-                {
+                builder.Register<ISchemaReader>(ctx => {
                     var factory = ctx.ResolveNamed<IConnectionFactory>(connection.Key);
                     return new AdoSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), factory);
                 }).Named<ISchemaReader>(connection.Key);
@@ -102,12 +94,10 @@ namespace Transformalize.Ioc.Autofac.Modules
             // IEntityDeleteHandler
 
             // entitiy input
-            foreach (var entity in _process.Entities.Where(e => _ado.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider)))
-            {
+            foreach (var entity in _process.Entities.Where(e => _ado.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
                 // INPUT READER
-                builder.Register<IRead>(ctx =>
-                {
+                builder.Register<IRead>(ctx => {
 
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
@@ -118,28 +108,14 @@ namespace Transformalize.Ioc.Autofac.Modules
                         rowFactory
                     );
 
-                    // "form" mode support if filter on primary key exists
-                    if (_process.Mode == "form" && entity.GetPrimaryKey().Any() && entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
-
-                        if (entity.GetPrimaryKey().All(pk => entity.Filter.First(i => i.Field == pk.Alias || i.Field == pk.Name).Value == (pk.Default == Constants.DefaultSetting ? Constants.StringDefaults()[pk.Type] : pk.Default))){
-                            // primary key is default, don't read from database
-                            return new ParameterRowReader(input, new DefaultRowReader(input, rowFactory));
-                        }
-
-                        // read from database and update with parameters
-                        return new ParameterRowReader(input, dataReader, rowFactory);
-                    }
-
                     return dataReader;
 
                 }).Named<IRead>(entity.Key);
 
                 // INPUT VERSION DETECTOR
-                builder.Register<IInputProvider>(ctx =>
-                {
+                builder.Register<IInputProvider>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    switch (input.Connection.Provider)
-                    {
+                    switch (input.Connection.Provider) {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
@@ -154,28 +130,24 @@ namespace Transformalize.Ioc.Autofac.Modules
             }
 
             // entity output
-            if (_ado.Contains(_process.Output().Provider))
-            {
+            if (_ado.Contains(_process.Output().Provider)) {
 
                 var calc = _process.ToCalculatedFieldsProcess();
 
                 // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx =>
-                {
+                builder.Register<IOutputController>(ctx => {
                     var output = ctx.Resolve<OutputContext>();
                     if (_process.Mode != "init")
                         return new NullOutputController();
 
-                    switch (output.Connection.Provider)
-                    {
+                    switch (output.Connection.Provider) {
                         case "mysql":
                         case "postgresql":
                         case "sqlite":
                         case "sqlce":
                         case "sqlserver":
                             var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
-                            if (_process.Flatten)
-                            {
+                            if (_process.Flatten) {
                                 actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
                             }
                             return new AdoStarController(output, actions);
@@ -185,8 +157,7 @@ namespace Transformalize.Ioc.Autofac.Modules
                 }).As<IOutputController>();
 
                 // PROCESS CALCULATED READER
-                builder.Register<IRead>(ctx =>
-                {
+                builder.Register<IRead>(ctx => {
                     var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
                     var outputContext = new OutputContext(calcContext, new Incrementer(calcContext));
                     var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
@@ -196,8 +167,7 @@ namespace Transformalize.Ioc.Autofac.Modules
                 }).As<IRead>();
 
                 // PROCESS CALCULATED FIELD WRITER
-                builder.Register<IWrite>(ctx =>
-                {
+                builder.Register<IWrite>(ctx => {
                     var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
                     var outputContext = new OutputContext(calcContext, new Incrementer(calcContext));
                     var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
@@ -205,18 +175,15 @@ namespace Transformalize.Ioc.Autofac.Modules
                 }).As<IWrite>();
 
                 // PROCESS INITIALIZER
-                builder.Register<IInitializer>(ctx =>
-                {
+                builder.Register<IInitializer>(ctx => {
                     var output = ctx.Resolve<OutputContext>();
                     return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
                 }).As<IInitializer>();
 
                 // ENTITIES
-                foreach (var entity in _process.Entities)
-                {
+                foreach (var entity in _process.Entities) {
 
-                    builder.Register<IOutputProvider>(ctx =>
-                    {
+                    builder.Register<IOutputProvider>(ctx => {
 
                         IWrite writer;
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
@@ -226,8 +193,7 @@ namespace Transformalize.Ioc.Autofac.Modules
                         // matcher determines what's an update vs. and insert
                         var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
 
-                        switch (output.Connection.Provider)
-                        {
+                        switch (output.Connection.Provider) {
                             case "sqlserver":
                                 writer = new SqlServerWriter(
                                     output,
@@ -263,14 +229,12 @@ namespace Transformalize.Ioc.Autofac.Modules
                     }).Named<IOutputProvider>(entity.Key);
 
                     // ENTITY OUTPUT CONTROLLER
-                    builder.Register<IOutputController>(ctx =>
-                    {
+                    builder.Register<IOutputController>(ctx => {
 
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var initializer = _process.Mode == "init" ? (IAction)new AdoEntityInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) : new NullInitializer();
 
-                        switch (output.Connection.Provider)
-                        {
+                        switch (output.Connection.Provider) {
                             case "mysql":
                             case "postgresql":
                             case "sqlite":
@@ -290,12 +254,10 @@ namespace Transformalize.Ioc.Autofac.Modules
                     }).Named<IOutputController>(entity.Key);
 
                     // MASTER UPDATE QUERY
-                    builder.Register<IWriteMasterUpdateQuery>(ctx =>
-                    {
+                    builder.Register<IWriteMasterUpdateQuery>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                         var factory = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                        switch (output.Connection.Provider)
-                        {
+                        switch (output.Connection.Provider) {
                             case "mysql":
                                 return new MySqlUpdateMasterKeysQueryWriter(output, factory);
                             case "postgresql":
@@ -306,11 +268,9 @@ namespace Transformalize.Ioc.Autofac.Modules
                     }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
 
                     // MASTER UPDATER
-                    builder.Register<IUpdate>(ctx =>
-                    {
+                    builder.Register<IUpdate>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        switch (output.Connection.Provider)
-                        {
+                        switch (output.Connection.Provider) {
                             case "mysql":
                             case "postgresql":
                             case "sqlserver":
@@ -328,18 +288,15 @@ namespace Transformalize.Ioc.Autofac.Modules
                     }).Named<IUpdate>(entity.Key);
 
                     // DELETE HANDLER
-                    if (entity.Delete)
-                    {
+                    if (entity.Delete) {
 
                         // register input keys and hashcode reader if necessary
-                        builder.Register(ctx =>
-                        {
+                        builder.Register(ctx => {
                             var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
                             var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
                             var rowFactory = new RowFactory(rowCapacity, false, true);
 
-                            switch (inputContext.Connection.Provider)
-                            {
+                            switch (inputContext.Connection.Provider) {
                                 case "mysql":
                                 case "postgresql":
                                 case "sqlce":
@@ -358,15 +315,13 @@ namespace Transformalize.Ioc.Autofac.Modules
                         }).Named<IReadInputKeysAndHashCodes>(entity.Key);
 
                         // register output keys and hash code reader if necessary
-                        builder.Register((ctx =>
-                        {
+                        builder.Register((ctx => {
                             var context = ctx.ResolveNamed<OutputContext>(entity.Key);
                             var rowCapacity = context.Entity.GetPrimaryKey().Count();
                             var rowFactory = new RowFactory(rowCapacity, false, true);
 
                             var outputConnection = _process.Output();
-                            switch (outputConnection.Provider)
-                            {
+                            switch (outputConnection.Provider) {
                                 case "mysql":
                                 case "postgresql":
                                 case "sqlce":
@@ -380,13 +335,11 @@ namespace Transformalize.Ioc.Autofac.Modules
 
                         })).Named<IReadOutputKeysAndHashCodes>(entity.Key);
 
-                        builder.Register((ctx) =>
-                        {
+                        builder.Register((ctx) => {
                             var outputConnection = _process.Output();
                             var outputContext = ctx.ResolveNamed<OutputContext>(entity.Key);
 
-                            switch (outputConnection.Provider)
-                            {
+                            switch (outputConnection.Provider) {
                                 case "mysql":
                                 case "postgresql":
                                 case "sqlce":
@@ -399,8 +352,7 @@ namespace Transformalize.Ioc.Autofac.Modules
                             }
                         }).Named<IDelete>(entity.Key);
 
-                        builder.Register<IEntityDeleteHandler>(ctx =>
-                        {
+                        builder.Register<IEntityDeleteHandler>(ctx => {
                             var context = ctx.ResolveNamed<IContext>(entity.Key);
                             var primaryKey = entity.GetPrimaryKey();
 

@@ -71,6 +71,7 @@ namespace Pipeline.Web.Orchard.Modules {
         }
 
         private static IAction SwitchAction(IComponentContext ctx, Process process, Action action) {
+            Connection connection;
             var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process);
             switch (action.Type) {
                 case "copy":
@@ -87,6 +88,9 @@ namespace Pipeline.Web.Orchard.Modules {
                     return new LogAction(context, action);
                 case "web":
                     return new WebAction(context, action);
+                case "form-commands":
+                    connection = process.Connections.First(c => c.Name == action.Connection);
+                    return new AdoEntityFormCommands(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
                 case "wait":
                 case "sleep":
                     return new WaitAction(action);
@@ -140,7 +144,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                     return new PipelineAction(builder.Build(), root);
                 case "run":
-                    var connection = process.Connections.First(c => c.Name == action.Connection);
+                    connection = process.Connections.First(c => c.Name == action.Connection);
                     switch (connection.Provider) {
                         case "mysql":
                         case "postgresql":

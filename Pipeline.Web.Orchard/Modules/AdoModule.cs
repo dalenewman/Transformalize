@@ -110,19 +110,21 @@ namespace Pipeline.Web.Orchard.Modules {
                             break;
                     }
 
-                    // if key filter exists
-                    if (entity.GetPrimaryKey().Any() && entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
+                    // "form" mode support if filter on primary key exists
+                    if (_process.Mode == "form" && entity.GetPrimaryKey().Any() && entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
+
                         if (entity.GetPrimaryKey().All(pk => entity.Filter.First(i => i.Field == pk.Alias || i.Field == pk.Name).Value == (pk.Default == Constants.DefaultSetting ? Constants.StringDefaults()[pk.Type] : pk.Default))) {
-                            // this is a form insert, create a new default row and apply parameters
+                            // primary key is default, don't read from database
                             return new ParameterRowReader(input, new DefaultRowReader(input, rowFactory));
                         }
 
-                        // this is a form update, read the row and apply parameters if it's post
+                        // read from database and update with parameters, otherwise just return the data reader
                         if (HttpContext.Current.Request.HttpMethod == "POST") {
-                            return new ParameterRowReader(input, dataReader);
+                            return new ParameterRowReader(input, dataReader, rowFactory);
                         }
+                        
                     }
-                     
+
                     return dataReader;
                 }).Named<IRead>(entity.Key);
 

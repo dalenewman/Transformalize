@@ -75,6 +75,8 @@ namespace Transformalize.Providers.Ado {
                     _updater.Write(updates);
                 }
 
+
+
                 _output.Increment(batchCount);
             }
 
