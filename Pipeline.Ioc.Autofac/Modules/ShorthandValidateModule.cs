@@ -80,9 +80,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
                     root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
                     root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
-                    root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
+                    root.Methods.Add(new Method { Name = "numeric", Signature = "none" });
                     root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
                     root.Methods.Add(new Method() { Name = "map", Signature = "map"});
+                    root.Methods.Add(new Method { Name = "alphanum", Signature = "none" });
                     root.Check();
                 }
 

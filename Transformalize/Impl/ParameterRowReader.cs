@@ -86,7 +86,7 @@ namespace Transformalize.Impl {
 
                     if (Constants.CanConvert()[field.Type](p.Value)) {
 
-                        row[field] = field.Convert(p.Value);
+                        row[field] = field.InputType == "file" && p.Value == string.Empty ?  row[field] : field.Convert(p.Value);
                         var len = field.Length.Equals("max", StringComparison.OrdinalIgnoreCase) ? int.MaxValue : Convert.ToInt32(field.Length);
                         if (p.Value != null && p.Value.Length > len) {
                             if (field.ValidField != string.Empty) {

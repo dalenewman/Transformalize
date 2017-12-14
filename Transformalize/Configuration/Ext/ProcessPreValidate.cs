@@ -190,7 +190,7 @@ namespace Transformalize.Configuration.Ext {
 
         private static void DefaultConnection(Process p, string name) {
             if (p.Connections.All(c => c.Name != name)) {
-                p.Connections.Add(new Connection { Name = name });
+                p.Connections.Add(new Connection { Name = name, Provider = "internal"});
             }
         }
 
@@ -202,7 +202,7 @@ namespace Transformalize.Configuration.Ext {
 
         private static void DefaultOutput(Process p) {
             if (p.Connections.All(c => c.Name != "output"))
-                p.Connections.Add(new Connection { Name = "output" });
+                p.Connections.Add(new Connection { Name = "output", Provider = "internal" });
         }
 
         private static void DefaultSearchTypes(Process p) {

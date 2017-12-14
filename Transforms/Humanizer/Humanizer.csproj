@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\HumanizeLabels.cs" />
     <Compile Include="ByteSizeTransform.cs" />
     <Compile Include="BytesTransform.cs" />
     <Compile Include="DehumanizeTransform.cs" />

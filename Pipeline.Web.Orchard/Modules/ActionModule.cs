@@ -34,6 +34,7 @@ using Transformalize.Providers.Console;
 using Transformalize.Providers.File;
 using Transformalize.Providers.File.Actions;
 using Transformalize.Providers.Web;
+using Transformalize.Transforms.Humanizer.Actions;
 using FileReader = Cfg.Net.Reader.FileReader;
 using OpenAction = Pipeline.Web.Orchard.Impl.OpenAction;
 using WebReader = Cfg.Net.Reader.WebReader;
@@ -91,6 +92,8 @@ namespace Pipeline.Web.Orchard.Modules {
                 case "form-commands":
                     connection = process.Connections.First(c => c.Name == action.Connection);
                     return new AdoEntityFormCommands(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
+                case "humanize-labels":
+                    return new HumanizeLabels(context, action);
                 case "wait":
                 case "sleep":
                     return new WaitAction(action);

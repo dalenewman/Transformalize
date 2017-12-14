@@ -42,7 +42,6 @@ namespace Pipeline.Web.Orchard {
 
                 RouteDescriptorWithId("Cfg", "Report"),
                 RouteDescriptorWithId("Cfg","Form"),
-                RouteDescriptorWithId("Cfg","Formless"),
                 RouteDescriptorWithId("Cfg","FormContent"),
                 RouteDescriptorWithId("Cfg", "Download"),
                 RouteDescriptorWithTagFilter("Cfg", "List"),

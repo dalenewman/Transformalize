@@ -24,6 +24,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
+
             // return true or false, validators
             builder.Register((c, p) => new AnyValidator(p.Positional<IContext>(0))).Named<IValidate>("any");
             builder.Register((c, p) => new AllValidator(p.Positional<IContext>(0))).Named<IValidate>("all");
@@ -35,12 +36,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new EqualsValidator(p.Positional<IContext>(0))).Named<IValidate>("equals");
             builder.Register((c, p) => new EmptyValidator(p.Positional<IContext>(0))).Named<IValidate>("empty");
             builder.Register((c, p) => new DefaultValidator(p.Positional<IContext>(0))).Named<IValidate>("default");
-            builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("isnumeric");
+            builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("numeric");
             builder.Register((c, p) => new MatchValidator(p.Positional<IContext>(0))).Named<IValidate>("matches");
             builder.Register((c, p) => new RequiredValidator(p.Positional<IContext>(0))).Named<IValidate>("required");
             builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0))).Named<IValidate>("map");
             builder.Register((c, p) => new LengthValidator(p.Positional<IContext>(0))).Named<IValidate>("length");
-
+            builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0),"min")).Named<IValidate>("min");
+            builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0), "max")).Named<IValidate>("max");
+            builder.Register((c, p) => new RegularExpressionValidator(p.Positional<IContext>(0), "^[a-zA-Z0-9]*$","must be alphanumeric")).Named<IValidate>("alphanum");
+            
 
         }
 

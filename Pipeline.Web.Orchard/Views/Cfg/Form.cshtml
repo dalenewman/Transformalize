@@ -8,7 +8,12 @@
     AppendMeta("description", Model.Part.Title(), ",");
     Layout.Title = Model.Part.Title();
     Script.Require("jQuery").AtHead();
+    Script.Include("parsley.min.js").AtHead();
+    Script.Include("moment.min.js").AtHead();
     Script.Require("BlockUI");
+
+    var request = WorkContext.HttpContext.Request;
+    var method = request.HttpMethod;
     var orchard = WorkContext.Resolve<IOrchardServices>();
     var geo = Model.Process.GetActiveParameters().Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
 }
@@ -50,8 +55,9 @@
     </button>
 </div>
 
-<div id="id_content">
-</div>
+<div id="id_content">@{
+    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Cfg/FormContent.cshtml", Model);    
+}</div>
 
 <div id="busy_holder">
     <div id="id_busy"></div>
@@ -59,7 +65,26 @@
 
 <script type="text/javascript" language="javascript">
     //<!--
+    var method = '@method';
+
     $(document).ready(function () {
+
+        window.Parsley.on('field:error', function() {
+            this.$element.parent().addClass("has-error");
+        });
+        window.Parsley.on('field:success', function() {
+            this.$element.parent().removeClass("has-error");
+        });
+        window.Parsley
+            .addValidator('string', {
+                requirementType: 'date',
+                validateString: function(value, requirement) {
+                    return moment(value).isValid();
+                },
+                messages: {
+                    en: 'This value should be a date'
+                }
+            });
 
         $(document).bind("ajaxSend", function () {
             block();
@@ -79,6 +104,13 @@
 
             $("#id_content").html(html);
             $("#id_form").attr("action", saveUrl);
+            $("#id_form").parsley({
+                errorsContainer: function(e) {
+                    return e.$element.siblings('.help-container');
+                },
+                errorsWrapper: '<span class="help-container"></span>',
+                errorTemplate: '<span class="help-block"></span> '
+            });
 
             @if (geo) {
                 <text>
@@ -88,8 +120,11 @@
             setFocus();
 
             $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
-                console.log("checking data...");
-                post();
+                if ($(this).parsley().isValid()) {
+                    post();
+                } else {
+                    $(this).parsley().validate();
+                }
             });
 
             // block automatic form submit on enter
@@ -106,7 +141,7 @@
             });
 
             // track focus for back-end
-            $("select,input").focusin(function () {
+            $("select,input,textarea").focusin(function () {
                 $("#id_focus").val($(this).attr("name"));
                 console.log($(this).attr("name") + " has focus");
             });
@@ -116,10 +151,6 @@
             });
 
         }
-
-        $.get(ajaxUrl, function (html) {
-            bind(html);
-        }, "html");
 
         function post() {
             $.ajax({
@@ -165,7 +196,7 @@
                         function(error) {
                             console.log(error);
                         }
-                    );                    
+                    );
                 }
 
                 navigator.geolocation.getCurrentPosition(
@@ -207,10 +238,9 @@
             });
         }
 
-        function removeMessages() {
-            $(".zone-messages").fadeOut();
-        }
-        setTimeout(removeMessages, 5000);
+        setTimeout(function () { $(".zone-messages").fadeOut(); }, 5000);
+
+        bind();
 
     });
     //-->

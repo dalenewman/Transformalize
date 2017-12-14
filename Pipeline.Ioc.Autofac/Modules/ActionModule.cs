@@ -29,6 +29,7 @@ using Transformalize.Providers.Console;
 using Transformalize.Providers.File;
 using Transformalize.Providers.File.Actions;
 using Transformalize.Providers.Web;
+using Transformalize.Transforms.Humanizer.Actions;
 using FileReader = Cfg.Net.Reader.FileReader;
 using WebReader = Cfg.Net.Reader.WebReader;
 
@@ -47,6 +48,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
     /// * log
     /// * exit
     /// * archive
+    /// * form-commands
+    /// * humanize-labels
     /// 
     /// </summary>
     public class ActionModule : Module {
@@ -93,6 +96,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 case "form-commands":
                     connection = process.Connections.First(c => c.Name == action.Connection);
                     return new AdoEntityFormCommands(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
+                case "humanize-labels":
+                    return new HumanizeLabels(context, action);
                 case "wait":
                 case "sleep":
                     return new WaitAction(action);

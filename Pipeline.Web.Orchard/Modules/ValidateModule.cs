@@ -20,6 +20,8 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Validators;
+using CompareValidator = Transformalize.Validators.CompareValidator;
+using RegularExpressionValidator = Transformalize.Validators.RegularExpressionValidator;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ValidateModule : Module {
@@ -52,28 +54,10 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new RequiredValidator(p.Positional<IContext>(0))).Named<IValidate>("required");
             builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0))).Named<IValidate>("map");
             builder.Register((c, p) => new LengthValidator(p.Positional<IContext>(0))).Named<IValidate>("length");
+            builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0), "min")).Named<IValidate>("min");
+            builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0), "max")).Named<IValidate>("max");
+            builder.Register((c, p) => new RegularExpressionValidator(p.Positional<IContext>(0), "^[a-zA-Z0-9]*$", "must be alphanumeric")).Named<IValidate>("alphanum");
 
-            //builder.Register<IValidate>((c, p) => {
-            //    var context = p.Positional<IContext>(0);
-            //    if (c.ResolveNamed<IHost>("cs").Start()) {
-            //        return new CsharpTransform(context);
-            //    }
-            //    context.Error("Unable to register csharp transform");
-            //    return new NullTransform(context);
-            //}).Named<IValidate>("cs");
-            //builder.Register((c, p) => c.ResolveNamed<IValidate>("cs", p)).Named<IValidate>("csharp");
-
-
-            //builder.Register<IValidate((c, p) => {
-            //    var context = p.Positional<IContext>(0);
-            //    switch (context.Field.Engine) {
-            //        case "jint":
-            //            return new JintTransform(context, c.Resolve<IReader>());
-            //        default:
-            //            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
-            //    }
-            //}).Named<IValidate>("js");
-            //builder.Register((c, p) => c.ResolveNamed<IValidate>("js", p)).Named<IValidate>("javascript");
 
         }
 

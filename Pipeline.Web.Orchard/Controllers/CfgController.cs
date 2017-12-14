@@ -36,7 +36,6 @@ using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 using Process = Transformalize.Configuration.Process;
-using Transformalize.Extensions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -57,7 +56,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
         private readonly IFileService _fileService;
-        private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting};
+        private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting };
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -114,19 +113,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             return View(viewModel);
         }
 
-
-
         [Themed(true)]
         public ActionResult Form(int id) {
-            return FormLogic(id);
-        }
-
-        [Themed(false)]
-        public ActionResult Formless(int id) {
-            return FormLogic(id);
-        }
-
-        private ActionResult FormLogic(int id) {
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
                 return new HttpNotFoundResult("Form not found.");
@@ -143,57 +131,57 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return View(new FormViewModel(part, process));
                 }
 
+                var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
+                var entity = process.Entities.First();
+                runner.Execute(process);
+
                 if (Request.HttpMethod.Equals("POST")) {
-                    var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
-                    var entity = process.Entities.First();
 
-                    try {
-                        runner.Execute(process);
+                    if (entity.Rows.Count == 1 && (bool)entity.Rows[0][entity.ValidField]) {
+                        // reset, modify for actual insert, and execute again
+                        process = _processService.Resolve(part);
+                        process.Load(part.Configuration, parameters);
+                        var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
+                        process.Actions.Add(new Transformalize.Configuration.Action {
+                            After = true,
+                            Before = false,
+                            Type = "run",
+                            Connection = entity.Connection,
+                            Command = insert ? entity.InsertCommand : entity.UpdateCommand,
+                            Key = Guid.NewGuid().ToString(),
+                            ErrorMode = "exception"
+                        });
 
-                        if (entity.Rows.Count == 1 && (bool)entity.Rows[0][entity.ValidField]) {
-                            // reset, modify for actual insert, and execute again
-                            process = _processService.Resolve(part);
-                            process.Load(part.Configuration, parameters);
-                            var insert = entity.GetPrimaryKey().All(k => parameters.ContainsKey(k.Alias) && k.Default == parameters[k.Alias]);
-                            process.Actions.Add(new Transformalize.Configuration.Action {
-                                After = true,
-                                Before = false,
-                                Type = "run",
-                                Connection = entity.Connection,
-                                Command = insert ? entity.InsertCommand : entity.UpdateCommand,
-                                Key = Guid.NewGuid().ToString(),
-                                ErrorMode = "exception"
-                            });
-
-                            if (Request.Files != null && Request.Files.Count > 0) {
-                                var files = entity.Fields.Where(f => f.Input && f.InputType == "file").ToArray();
-                                for (var i = 0; i < files.Length; i++) {
-                                    var field = files[i];
-                                    var input = Request.Files.Get(field.Alias);
-                                    
-                                    if (input != null && input.ContentLength > 0) {
-                                        var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
-                                        var parameter = process.GetActiveParameters().FirstOrDefault(p => p.Name == field.Alias);
-                                        if (parameter != null) {
-                                            parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
-                                        }
+                        // files
+                        if (Request.Files != null && Request.Files.Count > 0) {
+                            var activeParameters = process.GetActiveParameters();
+                            var files = entity.Fields.Where(f => f.Input && f.InputType == "file").ToArray();
+                            for (var i = 0; i < files.Length; i++) {
+                                var field = files[i];
+                                var input = Request.Files.Get(field.Alias);
+                                var parameter = activeParameters.FirstOrDefault(p => p.Name == field.Alias);
+                                if (input != null && input.ContentLength > 0) {
+                                    var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
+                                    if (parameter != null) {
+                                        parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
+                                    }
+                                } else {
+                                    if (parameter != null && parameters.ContainsKey(field.Alias + "_Old")) {
+                                        parameter.Value = parameters[field.Alias + "_Old"];
                                     }
                                 }
                             }
-
-
-                            try {
-                                runner.Execute(process);
-                                _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
-                                return Redirect(parameters["Orchard.ReturnUrl"]);
-                            } catch (Exception ex) {
-                                _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
-                            }
                         }
-                    } catch (Exception ex) {
-                        _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
-                        return View(new FormViewModel(part, process));
+
+                        try {
+                            runner.Execute(process);
+                            _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
+                            return Redirect(parameters["Orchard.ReturnUrl"]);
+                        } catch (Exception ex) {
+                            _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                        }
                     }
+
                 }
                 return View(new FormViewModel(part, process));
             }
@@ -224,7 +212,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Status = 401;
                 }
             }
-            return View(process);
+            return View(new FormViewModel(part, process));
         }
 
         [Themed(true)]
@@ -303,7 +291,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                                     } else {
                                                         _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
                                                     }
-                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Report", new { Id = id}) : HttpContext.Request.UrlReferrer.ToString();
+                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Report", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
                                                     return _batchRedirectService.Redirect(referrer, batchParameters);
                                                 }
                                                 return _batchRedirectService.Redirect(action.Url, batchParameters);

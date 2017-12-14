@@ -98,9 +98,17 @@ namespace Transformalize.Providers.Ado {
                 }
             }
 
-            var sets = string.Join(",", fields.Where(f => !f.PrimaryKey).Select(f => cf.Enclose(f.Name) + (cf.AdoProvider == AdoProvider.Access ? " = ?" : " = @" + f.Name)));
-            var criteria = string.Join(" AND ", fields.Where(f => f.PrimaryKey).OrderBy(f => f.Index).Select(f => f.Name).Select(n => cf.Enclose(n) + (cf.AdoProvider == AdoProvider.Access ? " = ?" : " = @" + n)));
-            return $"UPDATE {cf.Enclose(c.Entity.Name)} SET {sets} WHERE {criteria}{cf.Terminator}";
+            var sets = fields.Where(f => !f.PrimaryKey && f.InputType != "file").Select(f => $"{cf.Enclose(f.Name)} = {GetParameter(cf, f)}");
+            var fileSets = fields.Where(f => !f.PrimaryKey && f.InputType == "file").Select(f => $"{cf.Enclose(f.Name)} = CASE WHEN {GetParameter(cf, f)} = '' THEN {cf.Enclose(f.Name)} ELSE {GetParameter(cf, f)} END"); // for now
+            var combinedSets = string.Join(",", sets.Union(fileSets));
+
+            var criteria = string.Join(" AND ", fields.Where(f => f.PrimaryKey).OrderBy(f => f.Index).Select(f => $"{cf.Enclose(f.Name)} = {GetParameter(cf, f)}"));
+            return $"UPDATE {cf.Enclose(c.Entity.Name)} SET {combinedSets} WHERE {criteria}{cf.Terminator}";
+        }
+
+        private static string GetParameter(IConnectionFactory cf, Field f)
+        {
+            return (cf.AdoProvider == AdoProvider.Access ? "?" : "@" + f.Name);
         }
 
         private static string SqlDeleteFormTable(IContext c, IConnectionFactory cf) {

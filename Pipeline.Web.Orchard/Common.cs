@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -8,7 +7,6 @@ using Orchard;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Records;
 using Orchard.Tags.Models;
-using Pipeline.Web.Orchard.Models;
 using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Services.Contracts;
 

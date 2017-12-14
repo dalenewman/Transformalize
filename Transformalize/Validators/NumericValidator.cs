@@ -48,7 +48,7 @@ namespace Transformalize.Validators {
             var valid = _transform(row);
             row[ValidField] = valid;
             if (!valid) {
-                AppendMessage(row, "Must be numeric.");
+                AppendMessage(row, _betterFormat.Format(row));
             }
             Increment();
             return row;

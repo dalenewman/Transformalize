@@ -142,6 +142,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SplitTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\AlphanumValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CompositeValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ContainsTransform.cs" />
@@ -195,6 +196,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\SchemaHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\StringTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\CompareValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\RequiredValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\ShouldRunValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StringValidate.cs" />

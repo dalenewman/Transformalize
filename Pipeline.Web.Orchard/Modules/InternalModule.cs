@@ -26,6 +26,7 @@ using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Provider.Internal;
 using Transformalize.Providers.File;
@@ -61,6 +62,16 @@ namespace Pipeline.Web.Orchard.Modules {
                 builder.Register<IRead>(ctx => {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+
+                    if (_process.Mode == "form") {
+                        // if key filter exists
+                        if (entity.GetPrimaryKey().Any() && entity.GetPrimaryKey().All(f => entity.Filter.Any(i => i.Field == f.Alias || i.Field == f.Name))) {
+                            if (entity.GetPrimaryKey().All(pk => entity.Filter.First(i => i.Field == pk.Alias || i.Field == pk.Name).Value == (pk.Default == Constants.DefaultSetting ? Constants.StringDefaults()[pk.Type] : pk.Default))) {
+                                // this is a form insert, create a new default row and apply parameters
+                                return new ParameterRowReader(input, new DefaultRowReader(input, rowFactory));
+                            }
+                        }
+                    }
 
                     switch (input.Connection.Provider) {
                         case Constants.DefaultSetting:

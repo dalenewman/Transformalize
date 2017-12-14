@@ -1,5 +1,4 @@
 ﻿namespace Pipeline.Web.Orchard.Models {
-
     public class Editor {
         public string Library { get; set; }
         public string TextAreaId { get; set; }
