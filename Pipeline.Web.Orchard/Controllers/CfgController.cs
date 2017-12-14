@@ -125,6 +125,15 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 var process = _processService.Resolve(part);
                 var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+
+                if (Request.Files != null && Request.Files.Count > 0) {
+                    foreach (var key in Request.Files.AllKeys) {
+                        if (Request.Files[key]!= null && Request.Files[key].ContentLength > 0) {
+                            parameters[key] = "file.tmp";
+                        }
+                    }
+                }
+
                 process.Load(part.Configuration, parameters);
 
                 if (process.Errors().Any() || process.Warnings().Any()) {
