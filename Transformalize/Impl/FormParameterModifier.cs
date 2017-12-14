@@ -96,6 +96,7 @@ namespace Transformalize.Impl {
                                                     node.Attributes.Add(new NodeAttribute("value", string.Empty));
                                                 }
                                                 node.Attributes.Add(new NodeAttribute("label", "n/a"));
+                                                node.Attributes.Add(new NodeAttribute("invalid-characters", string.Empty));
 
                                                 parameterCollection.SubNodes.Add(node);
 
