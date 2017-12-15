@@ -126,6 +126,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 var process = _processService.Resolve(part);
                 var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
 
+                // so file required() validator is fooled
                 if (Request.Files != null && Request.Files.Count > 0) {
                     foreach (var key in Request.Files.AllKeys) {
                         if (Request.Files[key]!= null && Request.Files[key].ContentLength > 0) {
@@ -146,7 +147,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 if (Request.HttpMethod.Equals("POST")) {
 
-                    if (entity.Rows.Count == 1 && (bool)entity.Rows[0][entity.ValidField]) {
+                    if (entity.Rows.Count == 1 && (bool) entity.Rows[0][entity.ValidField]) {
                         // reset, modify for actual insert, and execute again
                         process = _processService.Resolve(part);
                         process.Load(part.Configuration, parameters);
@@ -172,9 +173,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                                 if (input != null && input.ContentLength > 0) {
                                     var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
                                     if (parameter != null) {
-                                        parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
+                                        parameter.Value = Url.Action("View", "File", new {id = filePart.Id}) ?? string.Empty;
                                     }
-                                } else {
+                                }
+                                else {
                                     if (parameter != null && parameters.ContainsKey(field.Alias + "_Old")) {
                                         parameter.Value = parameters[field.Alias + "_Old"];
                                     }
@@ -186,9 +188,12 @@ namespace Pipeline.Web.Orchard.Controllers {
                             runner.Execute(process);
                             _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
                             return Redirect(parameters["Orchard.ReturnUrl"]);
-                        } catch (Exception ex) {
+                        }
+                        catch (Exception ex) {
                             _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
                         }
+                    } else {
+                        _orchardServices.Notifier.Error(T("The form did not pass validation.  Please correct it and re-submit."));
                     }
 
                 }

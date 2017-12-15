@@ -73,7 +73,7 @@ namespace Transformalize.Providers.Ado {
             foreach (var parameter in c.Process.GetActiveParameters().Where(p => !string.IsNullOrEmpty(p.Name) && p.Input && p.Scope != "update")) {
                 var name = parameter.Name.Replace(".", "_");
                 if (!keys.Contains(name) && added.Add(name)) {
-                    fields.Add(new Field { Name = name, Type = parameter.Type });
+                    fields.Add(new Field { Name = name, Type = parameter.Type, Alias = name });
                 }
             }
 
