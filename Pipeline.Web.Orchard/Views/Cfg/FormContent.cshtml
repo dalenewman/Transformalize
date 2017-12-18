@@ -229,7 +229,7 @@
                                                   @Html.Raw(field.ToParsley())>@value.ToString().Trim()</textarea>
                                     } else {
                                         <input type="text"
-                                               class="form-control @field.Class"
+                                               class="form-control @(field.InputType == "date" ? "pickadate " + field.Class : field.Class)"
                                                maxlength="@field.Length"
                                                name="@field.Alias"
                                                id="id_@field.Alias"

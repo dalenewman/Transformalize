@@ -270,10 +270,21 @@
     <Content Include="Scripts\jquery.tablesorter.min.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\parsley.min.js" />
+    <Content Include="Scripts\pickadate\legacy.js" />
+    <Content Include="Scripts\pickadate\picker.date.js" />
+    <Content Include="Scripts\pickadate\picker.js" />
+    <Content Include="Scripts\pickadate\picker.time.js" />
     <Content Include="Styles\asc.gif" />
     <Content Include="Styles\bg.gif" />
     <Content Include="Styles\busy.gif" />
     <Content Include="Styles\desc.gif" />
+    <Content Include="Styles\pickadate\themes\classic.css" />
+    <Content Include="Styles\pickadate\themes\classic.date.css" />
+    <Content Include="Styles\pickadate\themes\classic.time.css" />
+    <Content Include="Styles\pickadate\themes\default.css" />
+    <Content Include="Styles\pickadate\themes\default.date.css" />
+    <Content Include="Styles\pickadate\themes\default.time.css" />
+    <Content Include="Styles\pickadate\themes\rtl.css" />
     <Content Include="Styles\tablesorter.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

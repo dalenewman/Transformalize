@@ -7,10 +7,17 @@
 @{
     AppendMeta("description", Model.Part.Title(), ",");
     Layout.Title = Model.Part.Title();
+
     Script.Require("jQuery").AtHead();
+    Script.Require("Moment").AtHead();
+    Script.Require("BlockUI").AtHead();
+
     Script.Include("parsley.min.js").AtHead();
-    Script.Include("moment.min.js").AtHead();
-    Script.Require("BlockUI");
+    Script.Include(@"pickadate\picker.js").AtHead();
+    Script.Include(@"pickadate\picker.date.js").AtHead();
+
+    Style.Include(@"pickadate\themes\default.css").AtHead();
+    Style.Include(@"pickadate\themes\default.date.css").AtHead();
 
     var request = WorkContext.HttpContext.Request;
     var method = request.HttpMethod;
@@ -118,6 +125,8 @@
                 </text>
             }
             setFocus();
+
+            $(".pickadate").pickadate({ format: 'yyyy-mm-dd'});
 
             $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
                 if ($(this).parsley().isValid()) {
