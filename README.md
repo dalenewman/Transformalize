@@ -1,8 +1,6 @@
 # Transformalize
 
-Transformalize is an [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) tool 
-that automates the incremental movement of relational data into data warehouses, 
-search engines, and other value-adding systems.
+Transformalize automates the movement of data into data warehouses, search engines, and other value-adding systems.
 
 It works with many data sources:
 
@@ -135,8 +133,7 @@ an [Orchard CMS](http://www.orchardproject.net/) module.
 > * **`<entities/>`**
 > * and the **`tfl.exe`** command line interface
 
-I use the Northwind relational database for demonstration. If you want 
-to follow along, you need:
+I use the Northwind relational database for demonstration. To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
 * [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) on a local instance of SQL Server
@@ -148,14 +145,12 @@ First, get familiar with Northwind:
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
 The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables.  Let's focus on *Order Details* because:
+tables.  Focus on *Order Details* because:
 
 1. It contains sales transactions (money).
-2. It's related to everything else.
+2. It's related to everything.
 3. In data-warehousing terms, it's a [fact table](https://en.wikipedia.org/wiki/Fact_table).
 
-Let's write our first arrangment that defines 
-the *input* as Northwind's `Order Details` table. 
 Open your editor and paste this in:
 
 ```xml
@@ -172,8 +167,7 @@ Open your editor and paste this in:
 </cfg>
 ```
 
-Save the arrangement as *NorthWind.xml* and 
-use **`tfl.exe`** to run it:
+The arrangment above defines the *input* as Northwind's `Order Details` table. Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -236,8 +230,7 @@ like this:
 > * The **`t`** attribute (short for **t**ransformation)
 > * and th **`js`** and **`round`** transformations
 
-Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** 
-and add *Revenue* like this:
+Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
 
 ```xml
 <calculated-fields>
@@ -261,14 +254,11 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 *Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
 may chain transformations as long as the output of one is compatible with the input of another.
 
-
 ### Output
 
 > Introducing **`init`** mode
 
-Without defining an output, `tfl` writes to your console. To save your work, let's send 
-the output to a [SQLite](https://en.wikipedia.org/wiki/SQLite) database instead. 
-Add an output in `<connections/>`:
+Without defining an output, `tfl` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. Add an output in `<connections/>`:
 
 ```xml
 <connections>
@@ -286,8 +276,7 @@ Initializing does three things:
 2. creates output structures
 3. bulk inserts data.
 
-Initializing is required anytime you create or change an arrangement in a way 
-that changes the output's structure.
+Initializing is required anytime you create or change an arrangement's output structure.
 
 To initialize, run **`tfl`** in `init` mode using the **`-m`** flag like this:
 
@@ -303,32 +292,24 @@ Writing *Order Details* into SQLite frees up the console for logging.
 
 #### Mapping
 
-You may have noticed that Transformalize doesn't let you *map* 
-input to pre-existing output.  Instead, it creates a consistent 
-output structure that is optimized for incremental updates.
+Transformalize *map* input to pre-existing output.  Instead, it creates a consistent output structure that is optimized for incremental updates.
 
 You decide:
 
 * what new fields to calculate
 * the order of fields
 * the name of fields (using `alias`)
-* the transformation of fields
+* the transformation and/or validation of fields
 * and the output of field (using `output="true|false"`)
 
 ### Incrementals (by Default)
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize 
-performs incrementals.  That is, it updates only new or updated rows.  To determine if an update 
-is necessary, `tfl` compares input with output. If a row is new, it is inserted. If a row is different, 
-it is updated. 
+An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize performs incrementals.  To determine if an update or 
+insert is necessary, `tfl` compares input with output.
 
-While keys and hashes are used to compare, comparison is unnecessary when an input's 
-provider is queryable and stores a version with each record.  A version is a value in a 
-row that increments anytime it's row is updated.   Many tables have these by design.  If not, 
-SQL Server includes a `ROWVERSION` type that may be added to provide automatic versioning. 
-So, let's add one to `Order Details` like this:
+While keys and hashes are used to compare, comparison is unnecessary when an input's provider is queryable and stores a record version.  A version is a value in a row that increments anytime the row's data is updated.  Many tables have these by design.  If not, SQL Server includes a `ROWVERSION` type that may be added to provide automatic versioning. Add one to `Order Details` like this:
 
 ```sql
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
@@ -353,7 +334,7 @@ Now let `tfl` know about `RowVersion` like this:
   </add>
 </entities>
 ```
-Adding a field changes the output's structure, so we must re-initialize like so:
+Adding a field changes output structure, so re-initialize like so:
 
 <pre style="font-size:smaller;">
 <strong>tfl -a NorthWind.xml -m init</strong>
