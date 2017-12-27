@@ -144,6 +144,14 @@ namespace Transformalize.Transforms {
             return index == count - 1;
         }
 
+        public bool IsFirst() {
+            var count = Context.Field.Transforms.Count;
+            if (count == 1)
+                return true;
+            var index = Context.Field.Transforms.IndexOf(Context.Operation);
+            return index == 0;
+        }
+
         public string LastMethod() {
             var index = Context.Field.Transforms.IndexOf(Context.Operation);
             return index <= 0 ? "none" : Context.Field.Transforms[index - 1].Method;

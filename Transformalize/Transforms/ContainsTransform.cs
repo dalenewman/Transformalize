@@ -21,7 +21,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class ContainsTransform : StringTransform {
-        private readonly Field[] _input;
+        private readonly Field _input;
         private readonly Field _valueField;
         private readonly bool _valueIsField;
 
@@ -29,13 +29,13 @@ namespace Transformalize.Transforms {
             if (IsMissing(context.Operation.Value)) {
                 return;
             }
-            _input = MultipleInput();
+            _input = SingleInput();
             _valueIsField = context.Entity.TryGetField(context.Operation.Value, out _valueField);
         }
 
         public override IRow Operate(IRow row) {
             var value = _valueIsField ? GetString(row, _valueField) : Context.Operation.Value;
-            row[Context.Field] = _input.Any(f => GetString(row, f).Contains(value));
+            row[Context.Field] = GetString(row, _input).Contains(value);
             Increment();
             return row;
         }

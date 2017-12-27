@@ -35,22 +35,10 @@ namespace Transformalize.Ioc.Autofac {
             foreach (var f in fields.Where(f => f.Transforms.Any() || f.Validators.Any())) {
                 var field = f;
 
-                if (field.RequiresCompositeValidator()) {
-                    var composite = new List<ITransform>();
-                    foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        if (TryTransform(ctx, transformContext, out var add)) {
-                            composite.Add(add);
-                        }
-                    }
-                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field);
-                    transforms.Add(new CompositeValidator(entityContext, composite));
-                } else {
-                    foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        if (TryTransform(ctx, transformContext, out var add)) {
-                            transforms.Add(add);
-                        }
+                foreach (var t in field.Transforms) {
+                    var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
+                    if (TryTransform(ctx, transformContext, out var add)) {
+                        transforms.Add(add);
                     }
                 }
 

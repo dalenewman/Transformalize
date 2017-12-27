@@ -18,13 +18,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
     public class MapTransform : BaseTransform {
-        private readonly Field _input;
+
+        private readonly IField _input;
         private readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
         private object _catchAll;
         private const string CatchAll = "*";
@@ -37,7 +37,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            _input = SingleInput();
+            _input = IsFirst() ? SingleInput() : Context.Field;
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
@@ -50,7 +50,7 @@ namespace Transformalize.Transforms {
                     _catchAll = Context.Field.Convert(item.To);
                     continue;
                 }
-                var from = _input.Convert(item.From);
+                var from = Constants.ObjectConversionMap[Received()](item.From);
                 if (item.To == null || item.To.Equals(string.Empty)) {
                     var field = Context.Entity.GetField(item.Parameter);
                     _map[from] = (r) => r[field];
@@ -67,9 +67,7 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-
-            Func<IRow, object> objects;
-            if (_map.TryGetValue(row[_input], out objects)) {
+            if (_map.TryGetValue(row[_input], out var objects)) {
                 row[Context.Field] = objects(row);
             } else {
                 row[Context.Field] = _catchAll;

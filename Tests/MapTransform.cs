@@ -49,7 +49,6 @@ namespace Tests {
             </rows>
             <fields>
                 <add name='Field1' />
-                <add name='Field2' />
                 <add name='Field3' />
             </fields>
             <calculated-fields>
