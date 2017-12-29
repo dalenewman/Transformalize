@@ -77,7 +77,8 @@ namespace Transformalize.Ioc.Autofac {
                 builder.Properties["Process"] = process;
                 var assemblies = new List<Assembly>();
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
-                    var name = file.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
+                    var info = new FileInfo(file);
+                    var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
                     if (!providers.Contains(name))
                         continue;
                     loadContext.Info($"Loading {name} provider");

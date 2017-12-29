@@ -24,44 +24,6 @@ namespace Tests {
     public class Validate {
 
         [TestMethod]
-        public void ContainsValidator() {
-            var xml = @"
-    <add name='TestProcess'>
-      <entities>
-        <add name='TestData'>
-          <rows>
-            <add Field1='11' Field2='12' Field3='13' />
-          </rows>
-          <fields>
-            <add name='Field1' />
-            <add name='Field2' />
-            <add name='Field3' />
-          </fields>
-          <calculated-fields>
-            <add name='c1' type='bool' t='copy(Field1).contains(1)' />
-            <add name='c3' type='bool' t='copy(Field2).contains(1).contains(2)' />
-            <add name='c4' type='bool' t='copy(Field2).contains(1).contains(3)' />
-          </calculated-fields>
-        </add>
-      </entities>
-    </add>
-            ".Replace('\'', '"');
-
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-
-            var output = controller.Read().ToArray();
-            var process = composer.Process;
-
-            Assert.AreEqual(true, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c1")]);
-
-            Assert.AreEqual(true, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c3")]);
-            Assert.AreEqual(false, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "c4")]);
-
-
-        }
-
-        [TestMethod]
         public void EqualsValidator() {
             var xml = @"
     <add name='TestProcess'>

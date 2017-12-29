@@ -457,14 +457,6 @@ namespace Transformalize.Configuration {
                 }
             }
 
-            // e.g. t="copy(x).is(int).between(3,5), both is() and between() should refer to x.
-            if (RequiresCompositeValidator()) {
-                var first = Transforms.First();
-                foreach (var transform in Transforms.Skip(1)) {
-                    transform.Parameter = transform.Parameter == string.Empty ? first.Parameter : transform.Parameter;
-                    transform.Parameters = transform.Parameters.Count == 0 ? first.Parameters : transform.Parameters;
-                }
-            }
         }
 
         private bool RequiresCopyParameters() {
@@ -473,10 +465,6 @@ namespace Transformalize.Configuration {
 
         internal bool Is(string type) {
             return type == Type;
-        }
-
-        public bool RequiresCompositeValidator() {
-            return Transforms.Count > 1 && Transforms.All(t => t.IsValidator());
         }
 
         public string FieldName() {
