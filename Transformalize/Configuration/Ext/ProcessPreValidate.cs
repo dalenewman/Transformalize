@@ -161,9 +161,9 @@ namespace Transformalize.Configuration.Ext {
             }
 
             var parameters = p.GetActiveParameters();
-            if (parameters.Any(pr => !pr.Prompt)) {
-                return;
-            }
+            //if (parameters.Any(pr => !pr.Prompt)) {
+            //    return;
+            //}
 
             foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
                 var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));

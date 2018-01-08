@@ -396,6 +396,11 @@ namespace Transformalize.Configuration {
 
         protected override void PreValidate() {
 
+            if (Name == null) {
+                Error("Name in field is null. Name is required.");
+                Name = "Error";
+            }
+
             if (string.IsNullOrEmpty(Alias)) { Alias = Name; }
 
             if (Label == string.Empty) { Label = Alias; }

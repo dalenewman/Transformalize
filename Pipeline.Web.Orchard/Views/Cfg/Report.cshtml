@@ -70,49 +70,49 @@
     Layout.Title = entity.Alias;
 }
 
-<style type="text/css">
-.btn-sort {
-    background-color: #dbdbdb;
-    border-color: #d2d1d1;
-    color: #727272;
-}
+<style>
+    .btn-sort {
+        background-color: #dbdbdb;
+        border-color: #d2d1d1;
+        color: #727272;
+    }
 
-.btn-xs, .btn-group-xs > .btn {
-    border-radius: 3px;
-    font-size: 9px;
-    line-height: 1.5;
-}
+    .btn-xs, .btn-group-xs > .btn {
+        border-radius: 3px;
+        font-size: 9px;
+        line-height: 1.5;
+    }
 
-td.sorter .btn-xs {
-    font-size: 7px !important;
-}
+    td.sorter .btn-xs {
+        font-size: 7px !important;
+    }
 
-td.sorter {
-    padding: 0 3px 3px 4px !important;
-}
+    td.sorter {
+        padding: 0 3px 3px 4px !important;
+    }
 
-#busy {
-    position: fixed;
-    left: 46%;
-    top: 40%;
-    display: none;
-    background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
-    background-size: 149px 149px;
-    background-repeat:no-repeat;
-    z-index: 1020;
-    height: 150px;
-    width: 150px;
-}
+    #busy {
+        position: fixed;
+        left: 46%;
+        top: 40%;
+        display: none;
+        background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+        background-size: 149px 149px;
+        background-repeat:no-repeat;
+        z-index: 1020;
+        height: 150px;
+        width: 150px;
+    }
 
-#busy-holder {
-    background: transparent;
-    width: 100%;
-    height: 100%;
-}
+    #busy-holder {
+        background: transparent;
+        width: 100%;
+        height: 100%;
+    }
 
-.form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
-    padding: 0px 20px 0px 40px;
-}
+    .form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
+        padding: 0px 20px 0px 40px;
+    }
 </style>
 
 <div class="row">
@@ -202,13 +202,13 @@ td.sorter {
                                                 }
                                             }
                                         </select>
-                                                    }
-                                                    break;
-                                                }
+                                    }
+                                    break;
+                                }
                         </div>
                     </div>
-                                                    }
-                                                }
+                    }
+                }
 
             <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
@@ -299,7 +299,7 @@ td.sorter {
                 </div>
 
                 @if (output == "page" && entity.Page > 0) {
-                    <div class="btn-group btn-group-sm">
+                    <div class="btn-group">
                         <button class="btn btn-sm">Size</button>
                         <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
                             <span class="caret"></span>
@@ -324,16 +324,16 @@ td.sorter {
                     <thead>
                         <tr>
                             @if (hasActions) {
-                                <th>
+                                <td>
                                     <div class="checkbox">
                                         <label>
                                             <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
                                         </label>
                                     </div>
-                                </th>
+                                </td>
                             }
                             @foreach (var field in fields) {
-                                <th title="@field.Name">@field.Label</th>
+                                <td title="@field.Name">@field.Label</td>
                             }
                         </tr>
                         @if (isSortable) {
@@ -347,7 +347,7 @@ td.sorter {
                                     var number = i + 1;
                                     if (field.Sortable == "true") {
                                         <td class="sorter" data-order-by="@(number)">
-                                            <div aclass="btn-group btn-group-xs">
+                                            <div class="btn-group btn-group-xs" style="width: 37px;">
                                                 <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
                                                     <span class="glyphicon glyphicon-chevron-up"></span>
                                                 </a>
@@ -596,14 +596,14 @@ td.sorter {
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
-            onChange: function() {
+            onChange: function () {
                 controls.setPage(1);
                 if (!this.$select[0].multiple) {
                     controls.submit(1);
                 }
             },
             maxHeight: 400,
-            nonSelectedText: 'All',
+            nonSelectedText: 'ALL',
             nSelectedText: 'Selected',
             allSelectedText: 'Selected',
             buttonContainer: '<div class="btn-group btn-group-sm" />',
@@ -611,6 +611,8 @@ td.sorter {
                 filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
             }
         });
+        $('span.multiselect-selected-text').parent().removeClass('btn-default');
+        $('span.multiselect-selected-text').not('span.multiselect-selected-text:contains("ALL")').parent().addClass('btn-info');
 
         // enable client side sorting if server side support is off
         if (!isSortable) {

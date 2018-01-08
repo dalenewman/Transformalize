@@ -302,7 +302,7 @@ namespace Transformalize.Configuration {
                     Transforms = new List<Operation> {
                         new Operation {
                             Method = "hashcode",
-                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Field = f.Alias}).ToList()
+                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Entity = Alias, Field = f.Alias}).ToList()
                         }
                     }
                 },

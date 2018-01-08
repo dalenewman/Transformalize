@@ -27,7 +27,7 @@ using Transformalize.Transforms;
 using Transformalize.Transforms.System;
 
 namespace Pipeline.Web.Orchard.Impl {
-    
+
     public static class TransformFactory {
 
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
@@ -36,30 +36,16 @@ namespace Pipeline.Web.Orchard.Impl {
             foreach (var f in fields.Where(f => f.Transforms.Any())) {
                 var field = f;
 
-                if (field.RequiresCompositeValidator()) {
-                    var composite = new List<ITransform>();
-                    foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        ITransform add;
-                        if (TryTransform(ctx, transformContext, out add)) {
-                            composite.Add(add);
-                        }
-                    }
-                    var entityContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field);
-                    transforms.Add(new CompositeValidator(entityContext, composite));
-                } else {
-                    foreach (var t in field.Transforms) {
-                        var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                        ITransform add;
-                        if (TryTransform(ctx, transformContext, out add)) {
-                            transforms.Add(add);
-                        }
+                foreach (var t in field.Transforms) {
+                    var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
+                    if (TryTransform(ctx, transformContext, out var add)) {
+                        transforms.Add(add);
                     }
                 }
                 // add conversion if necessary
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {
-                    context.Warn(string.Format("The output field {0} is not setup to receive a {1} type. It expects a {2}.  Adding conversion.", field.Alias, lastType, field.Type));
+                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
                     transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
             }
