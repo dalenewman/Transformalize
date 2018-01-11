@@ -28,7 +28,7 @@ using NLogLevel = global::NLog.LogLevel;
 namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
 
-        const string Context = "{0} | {1} | {2} | {3}";
+        private const string Context = "{0} | {1} | {2} | {3}";
         private readonly Logger _log;
 
         /// <summary>
@@ -44,8 +44,13 @@ namespace Transformalize.Logging.NLog {
             ReConfiguredLogLevel(fileName);
         }
 
-        private void ReConfiguredLogLevel(string name) {
+        private static void ReConfiguredLogLevel(string name) {
             var reconfigured = false;
+
+            if (LogManager.Configuration == null) {
+                System.Diagnostics.Trace.WriteLine("You need an NLog configuration file.");
+                return;
+            }
 
             var target = LogManager.Configuration.FindTargetByName("file");
             if (target != null) {

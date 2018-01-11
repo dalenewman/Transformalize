@@ -1,5 +1,8 @@
 nuget pack Compatibility\Transformalize\Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+
 nuget pack Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
+
 nuget pack Providers\Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Elastic\Transformalize.Provider.Elastic.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Excel\Transformalize.Provider.Excel.nuspec -OutputDirectory "c:\temp\modules"
@@ -15,7 +18,7 @@ nuget pack Providers\SqlCe\Transformalize.Provider.SqlCe.nuspec -OutputDirectory
 nuget pack Providers\Web\Transformalize.Provider.Web.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Console\Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Providers\Trace\Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
+
 nuget pack Transforms\Humanizer\Transformalize.Transform.Humanizer.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transforms\Jint\Transformalize.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transforms\JavaScript\Transformalize.Transform.JavaScript.nuspec -OutputDirectory "c:\temp\modules"

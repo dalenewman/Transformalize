@@ -17,6 +17,7 @@
 #endregion
 using Cfg.Net;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
 namespace Transformalize.Configuration {
     public class Filter : CfgNode, IHasField {
@@ -32,7 +33,7 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "And", domain = "And,Or", ignoreCase = true)]
         public string Continuation {
-            get { return _continuation; }
+            get => _continuation;
             set {
                 if (value != null)
                     _continuation = value.ToUpper();
@@ -76,7 +77,7 @@ namespace Transformalize.Configuration {
         public Field LeftField { get; set; }
         public Field ValueField { get; set; }
 
-        [Cfg(value = "search", domain = "search,facet,range,filter", ignoreCase = true, toLower = true)]
+        [Cfg(value = Constants.DefaultSetting, domain = "search,facet,range,filter," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
         public string Type { get; set; }
 
         [Cfg(value = 100)]

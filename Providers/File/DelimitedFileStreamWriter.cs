@@ -48,7 +48,7 @@ namespace Transformalize.Providers.File {
                                 engine[i] = Convert.ToBase64String((byte[])row[field]);
                                 break;
                             case "string":
-                                engine[i] = row[field];
+                                engine[i] = row[field] is string ? row[field] : row[field].ToString();
                                 break;
                             case "datetime":
                                 var format = field.Format == string.Empty ? "o" : field.Format.Replace("AM/PM", "tt");
