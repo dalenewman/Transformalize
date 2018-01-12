@@ -16,16 +16,20 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Transforms.Geography {
     public class DistanceTransform : BaseTransform {
+
         private readonly Field[] _fields;
         private readonly Func<IRow, double> _getDistance;
+        private int _emptyStringCount;
+        private int _nonNumericCount;
+        private readonly HashSet<string> _nonNumericValues = new HashSet<string>();
 
         public DistanceTransform(IContext context) : base(context, "double") {
 
@@ -49,10 +53,23 @@ namespace Transformalize.Transforms.Geography {
                 var fromLon = ValueGetter(context.Operation.FromLon)(r);
                 var toLat = ValueGetter(context.Operation.ToLat)(r);
                 var toLon = ValueGetter(context.Operation.ToLon)(r);
-                if (Math.Abs(fromLat) > 90 || Math.Abs(toLat) > 90 || Math.Abs(fromLon) > 180 || Math.Abs(toLon) > 180) {
-                    Context.Warn($"You are passing an invalid latitude or longitude into distance transform in {Context.Field}");
+                if (Math.Abs(fromLat) > 90) {
+                    Context.Warn($"You are passing an invalid from latitude of {fromLat} into a distance transform in {Context.Field.Alias}");
                     return -1;
                 }
+                if (Math.Abs(toLat) > 90) {
+                    Context.Warn($"You are passing an invalid to latitude of {toLat} into a distance transform in {Context.Field.Alias}");
+                    return -1;
+                }
+                if (Math.Abs(fromLon) > 180) {
+                    Context.Warn($"You are passing an invalid from longitude of {fromLon} into a distance transform in {Context.Field.Alias}");
+                    return -1;
+                }
+                if (Math.Abs(toLon) > 180) {
+                    Context.Warn($"You are passing an invalid to longitude of {toLon} into a distance transform in {Context.Field.Alias}");
+                    return -1;
+                }
+
                 return Get(fromLat, fromLon, toLat, toLon);
             };
         }
@@ -77,13 +94,16 @@ namespace Transformalize.Transforms.Geography {
                 case "string":
                     var stringValue = value as string;
                     if (string.IsNullOrEmpty(stringValue)) {
-                        Context.Warn($"You are passing empty string into distance transform in {Context.Field}");
+                        _emptyStringCount++;
                         return default(double);
                     } else {
-                        if (stringValue.IsNumeric()) {
-                            return Convert.ToDouble(value);
+                        if (double.TryParse(stringValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out var retNum)) {
+                            return retNum;
                         }
-                        Context.Warn($"You are passing a non numeric value of {stringValue} into distance transform in {Context.Field}");
+                        _nonNumericCount++;
+                        if (_nonNumericValues.Count < 5) {
+                            _nonNumericValues.Add(stringValue);
+                        }
                         return default(double);
                     }
                 default:
@@ -108,6 +128,18 @@ namespace Transformalize.Transforms.Geography {
             return false;
         }
 
+        public override void Dispose() {
+            if (_emptyStringCount > 0) {
+                Context.Warn($"You are passing {_emptyStringCount} empty strings into a distance transform in {Context.Field.Alias}");
+            }
+            if (_nonNumericCount > 0) {
+                Context.Warn($"You are passing {_nonNumericCount} non numeric values into a distance transform in {Context.Field.Alias}");
+                foreach (var value in _nonNumericValues) {
+                    Context.Warn($"Non numeric values include: {value}");
+                }
+            }
+            base.Dispose();
 
+        }
     }
 }
