@@ -30,8 +30,7 @@ namespace Transformalize.Extensions {
         }
 
         public static bool IsNumeric(this string value) {
-            double retNum;
-            return double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out retNum);
+            return double.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.NumberFormatInfo.InvariantInfo, out double retNum);
         }
 
         public static bool In(this string value, params string[] args) {

@@ -17,8 +17,10 @@
 #endregion
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Transforms.Geography {
     public class DistanceTransform : BaseTransform {
@@ -42,12 +44,17 @@ namespace Transformalize.Transforms.Geography {
                 return;
             }
 
-            _getDistance = r => Get(
-                ValueGetter(context.Operation.FromLat)(r),
-                ValueGetter(context.Operation.FromLon)(r),
-                ValueGetter(context.Operation.ToLat)(r),
-                ValueGetter(context.Operation.ToLon)(r)
-            );
+            _getDistance = r => {
+                var fromLat = ValueGetter(context.Operation.FromLat)(r);
+                var fromLon = ValueGetter(context.Operation.FromLon)(r);
+                var toLat = ValueGetter(context.Operation.ToLat)(r);
+                var toLon = ValueGetter(context.Operation.ToLon)(r);
+                if (Math.Abs(fromLat) > 90 || Math.Abs(toLat) > 90 || Math.Abs(fromLon) > 180 || Math.Abs(toLon) > 180) {
+                    Context.Warn($"You are passing an invalid latitude or longitude into distance transform in {Context.Field}");
+                    return -1;
+                }
+                return Get(fromLat, fromLon, toLat, toLon);
+            };
         }
 
         public override IRow Operate(IRow row) {
@@ -57,12 +64,32 @@ namespace Transformalize.Transforms.Geography {
         }
 
         private Func<IRow, double> ValueGetter(string aliasOrValue) {
-            double fromLat;
-            if (double.TryParse(aliasOrValue, out fromLat)) {
+            if (double.TryParse(aliasOrValue, out var fromLat)) {
                 return row => fromLat;
             }
-            var latFromField = _fields.First(f => f.Alias == aliasOrValue);
-            return row => latFromField.Type == "double" ? (double)row[latFromField] : Convert.ToDouble(row[latFromField]);
+            var field = _fields.First(f => f.Alias == aliasOrValue);
+
+            return row => field.Type == "double" ? (double)row[field] : ConvertValue(field, row[field]);
+        }
+
+        private double ConvertValue(IField field, object value) {
+            switch (field.Type) {
+                case "string":
+                    var stringValue = value as string;
+                    if (string.IsNullOrEmpty(stringValue)) {
+                        Context.Warn($"You are passing empty string into distance transform in {Context.Field}");
+                        return default(double);
+                    } else {
+                        if (stringValue.IsNumeric()) {
+                            return Convert.ToDouble(value);
+                        }
+                        Context.Warn($"You are passing a non numeric value of {stringValue} into distance transform in {Context.Field}");
+                        return default(double);
+                    }
+                default:
+                    return Convert.ToDouble(value);
+            }
+
         }
 
         public static double Get(double fromLat, double fromLon, double toLat, double toLon) {
@@ -72,13 +99,15 @@ namespace Transformalize.Transforms.Geography {
         }
 
         private bool HasInvalidCoordinate(Field[] fields, Operation t, string valueOrField, string name) {
-            double doubleValue;
-            if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out doubleValue)) {
+
+            if (fields.All(f => f.Alias != valueOrField) && !double.TryParse(valueOrField, out var doubleValue)) {
                 Error($"The {t.Method} method's {name} parameter: {valueOrField}, is not a valid field or numeric value.");
                 Run = false;
                 return true;
             }
             return false;
         }
+
+
     }
 }
