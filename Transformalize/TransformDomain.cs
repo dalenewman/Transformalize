@@ -48,6 +48,7 @@ namespace Transformalize {
             "datepart",
             "decompress",
             "dehumanize",
+            "distance",
             "distinct",
             "endswith",
             "eval",

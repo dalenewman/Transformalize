@@ -1,5 +1,5 @@
 cd c:\code\Transformalize
-nuget push "c:\temp\modules\Transformalize.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.2.11-beta.nupkg" -source https://api.nuget.org/v3/index.json
 nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 nuget push "c:\temp\modules\Transformalize.Provider.Ado.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 nuget push "c:\temp\modules\Transformalize.Provider.Elastic.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json

@@ -243,8 +243,7 @@ namespace Transformalize.Configuration {
         }
 
         private void ValidateUrl() {
-            Uri uriResult;
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out uriResult)) {
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uriResult)) {
                 Error($"The url {Url} is invalid for the {Name} connection.");
             }
         }
@@ -315,6 +314,12 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = 0)]
         public int Seed { get; set; }
+
+        /// <summary>
+        /// Added for mail provider
+        /// </summary>
+        [Cfg(value=false)]
+        public bool UseSsl { get; set; }
 
         protected override void PostValidate() {
             if (Command.Contains(" ")) {
