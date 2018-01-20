@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -24,24 +26,28 @@ namespace Transformalize.Transforms {
     /// <summary>
     /// Pulls just the matched part out of any of the time (first hit)
     /// </summary>
-    public class RegexMatchTransform : BaseTransform {
+    public class RegexMatchTransform : StringTransform {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexMatchTransform(IContext context) : base(context, "string") {
+        public RegexMatchTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+            
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Pattern)) {
+            if (IsMissing(Context.Operation.Pattern)) {
                 return;
             }
 
             _input = MultipleInput();
 #if NETS10
-            _regex = new Regex(context.Operation.Pattern);
+            _regex = new Regex(Context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
 #endif
         }
 
@@ -56,5 +62,10 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("match") {Parameters =  new List<OperationParameter>{ new OperationParameter("pattern")}}
+            };
+        }
     }
 }

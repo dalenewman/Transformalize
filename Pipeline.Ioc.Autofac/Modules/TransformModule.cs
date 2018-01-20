@@ -78,26 +78,25 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new LastDayTransform(c), new LastDayTransform().GetSignatures());
             RegisterTransform(builder, c => new LastTransform(c), new LastTransform().GetSignatures());
             RegisterTransform(builder, c => new FirstTransform(c), new FirstTransform().GetSignatures());
+            RegisterTransform(builder, c => new FloorTransform(c), new FloorTransform().GetSignatures());
+            RegisterTransform(builder, c => new FormatXmlTransform(c), new FormatXmlTransform().GetSignatures());
+            RegisterTransform(builder, c => new FormatPhoneTransform(c), new FormatPhoneTransform().GetSignatures());
+            RegisterTransform(builder, c => new HashcodeTransform(c), new HashcodeTransform().GetSignatures());
+            RegisterTransform(builder, c => new DecodeTransform(c), new DecodeTransform().GetSignatures());
+            RegisterTransform(builder, c => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
+            RegisterTransform(builder, c => new InsertTransform(c), new InsertTransform().GetSignatures());
+            RegisterTransform(builder, c => new InvertTransform(c), new InvertTransform().GetSignatures());
+            RegisterTransform(builder, c => new JoinTransform(c), new JoinTransform().GetSignatures());
+            RegisterTransform(builder, c => new LeftTransform(c), new LeftTransform().GetSignatures());
+            RegisterTransform(builder, c => new RightTransform(c), new RightTransform().GetSignatures());
+            RegisterTransform(builder, c => new ToLowerTransform(c), new ToLowerTransform().GetSignatures());
+            RegisterTransform(builder, c => new MapTransform(c), new MapTransform().GetSignatures());
+            RegisterTransform(builder, c => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
 
             // register the short hand
             builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
-            builder.Register((c, p) => new FloorTransform(p.Positional<IContext>(0))).Named<ITransform>("floor");
-            builder.Register((c, p) => new FormatXmlTransfrom(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
-            builder.Register((c, p) => new FormatPhoneTransform(p.Positional<IContext>(0))).Named<ITransform>("formatphone");
-            builder.Register((c, p) => new HashcodeTransform(p.Positional<IContext>(0))).Named<ITransform>("hashcode");
-            builder.Register((c, p) => new DecodeTransform(p.Positional<IContext>(0))).Named<ITransform>("htmldecode");
-            builder.Register((c, p) => new HtmlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("htmlencode");
-            builder.Register((c, p) => new InsertTransform(p.Positional<IContext>(0))).Named<ITransform>("insert");
-            builder.Register((c, p) => new InvertTransform(p.Positional<IContext>(0))).Named<ITransform>("invert");
-            builder.Register((c, p) => new JoinTransform(p.Positional<IContext>(0))).Named<ITransform>("join");
-            
-            builder.Register((c, p) => new LeftTransform(p.Positional<IContext>(0))).Named<ITransform>("left");
-            builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("lower");
-            builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("tolower");
-            builder.Register((c, p) => new MapTransform(p.Positional<IContext>(0))).Named<ITransform>("map");
-            builder.Register((c, p) => new RegexMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("match");
             builder.Register((c, p) => new MultiplyTransform(p.Positional<IContext>(0))).Named<ITransform>("multiply");
             builder.Register((c, p) => new NextTransform(p.Positional<IContext>(0))).Named<ITransform>("next");
             builder.Register((c, p) => new UtcNowTransform(p.Positional<IContext>(0))).Named<ITransform>("now");
@@ -109,7 +108,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new RegexReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("regexreplace");
             builder.Register((c, p) => new RemoveTransform(p.Positional<IContext>(0))).Named<ITransform>("remove");
             builder.Register((c, p) => new ReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("replace");
-            builder.Register((c, p) => new RightTransform(p.Positional<IContext>(0))).Named<ITransform>("right");
             builder.Register((c, p) => new RoundTransform(p.Positional<IContext>(0))).Named<ITransform>("round");
             builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Nearest)).Named<ITransform>("roundto");
             builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Up)).Named<ITransform>("roundupto");
@@ -129,7 +127,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("upper");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("toupper");
 
-            builder.Register((c, p) => new DecodeTransform(p.Positional<IContext>(0))).Named<ITransform>("xmldecode");
             builder.Register((c, p) => new XPathTransform(p.Positional<IContext>(0))).Named<ITransform>("xpath");
             builder.Register((c, p) => new IIfTransform(p.Positional<IContext>(0))).Named<ITransform>("iif");
             builder.Register((c, p) => new GeohashEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("geohashencode");

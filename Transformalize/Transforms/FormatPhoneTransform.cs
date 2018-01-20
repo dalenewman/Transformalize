@@ -15,12 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class FormatPhoneTransform : BaseTransform {
+    public class FormatPhoneTransform : StringTransform {
+
         private readonly Field _input;
 #if NETS10
         private readonly Regex _clean = new Regex("[^0-9]");
@@ -28,12 +31,15 @@ namespace Transformalize.Transforms {
         private readonly Regex _clean = new Regex("[^0-9]", RegexOptions.Compiled);
 #endif
 
-        public FormatPhoneTransform(IContext context) : base(context, "string") {
+        public FormatPhoneTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
         }
 
         public override IRow Operate(IRow row) {
-            var clean = _clean.Replace(row[_input].ToString(), string.Empty);
+            var clean = _clean.Replace(GetString(row, _input), string.Empty);
             if (clean.Length == 10) {
                 row[Context.Field] = $"({clean.Substring(0, 3)}) {clean.Substring(3, 3)}-{clean.Substring(6, 4)}";
             } else {
@@ -41,6 +47,10 @@ namespace Transformalize.Transforms {
             }
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("formatphone") };
         }
     }
 }

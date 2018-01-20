@@ -29,9 +29,12 @@ namespace Transformalize.Transforms {
         private object _catchAll;
         private const string CatchAll = "*";
 
-        public MapTransform(IContext context) : base(context, null) {
+        public MapTransform(IContext context = null) : base(context, null) {
+            if (IsMissingContext()) {
+                return;
+            }
 
-            if (context.Operation.Map == string.Empty) {
+            if (Context.Operation.Map == string.Empty) {
                 Error("The map method requires a map");
                 Run = false;
                 return;
@@ -74,6 +77,14 @@ namespace Transformalize.Transforms {
             }
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[]{
+                new OperationSignature("map"){
+                    Parameters = new List<OperationParameter> {new OperationParameter("map")}
+                }
+            };
         }
     }
 

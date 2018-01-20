@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
@@ -23,19 +25,21 @@ namespace Transformalize.Transforms {
         private readonly int _length;
         private readonly IField _input;
 
-        public LeftTransform(IContext context): base(context, "string") {
-
+        public LeftTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (context.Operation.Length == 0) {
+            if (Context.Operation.Length == 0) {
                 Error("The left transform requires a length parameter.");
                 Run = false;
                 return;
             }
 
-            _length = context.Operation.Length;
+            _length = Context.Operation.Length;
             _input = SingleInput();
         }
 
@@ -45,5 +49,12 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[]{
+                new OperationSignature("left"){
+                    Parameters = new List<OperationParameter> {new OperationParameter("length")}
+                }
+            };
+        }
     }
 }

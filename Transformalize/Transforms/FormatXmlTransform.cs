@@ -15,15 +15,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Xml.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class FormatXmlTransfrom : BaseTransform {
+
+    /// <summary>
+    /// Returns indented XML
+    /// </summary>
+    public class FormatXmlTransform : StringTransform {
         private readonly Field _input;
 
-        public FormatXmlTransfrom(IContext context) : base(context, "string") {
+        public FormatXmlTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
         }
 
@@ -32,6 +41,10 @@ namespace Transformalize.Transforms {
             row[Context.Field] = string.IsNullOrEmpty(xml) ? string.Empty : XDocument.Parse(xml).ToString();
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("formatxml") };
         }
     }
 }

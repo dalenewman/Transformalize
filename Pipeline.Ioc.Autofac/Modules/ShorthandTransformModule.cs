@@ -44,7 +44,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 root.Signatures.Add(new Signature { Name = "none" });
-                root.Signatures.Add(Simple("length"));
                 root.Signatures.Add(Simple("separator", ","));
                 root.Signatures.Add(new Signature {
                     Name = "separator-space",
@@ -81,7 +80,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("script"));
-                root.Signatures.Add(Simple("map"));
                 root.Signatures.Add(Simple("dayofweek"));
                 root.Signatures.Add(new Signature {
                     Name = "substring",
@@ -115,13 +113,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("pattern"));
-                root.Signatures.Add(new Signature {
-                    Name = "insert",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "value" }
-                        }
-                });
+
                 root.Signatures.Add(new Signature {
                     Name = "remove",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -234,19 +226,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 root.Methods.Add(new Method { Name = "cs", Signature = "script" });
                 root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
-                root.Methods.Add(new Method { Name = "floor", Signature = "none" });
-                root.Methods.Add(new Method { Name = "formatphone", Signature = "none" });
-                root.Methods.Add(new Method { Name = "formatxml", Signature = "none" });
-                root.Methods.Add(new Method { Name = "hashcode", Signature = "none" });
-                root.Methods.Add(new Method { Name = "htmldecode", Signature = "none" });
-                root.Methods.Add(new Method { Name = "insert", Signature = "insert" });
                 root.Methods.Add(new Method { Name = "is", Signature = "type" });
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
-                root.Methods.Add(new Method { Name = "join", Signature = "separator" });
+
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "left", Signature = "length" });
-                root.Methods.Add(new Method { Name = "lower", Signature = "none" });
-                root.Methods.Add(new Method { Name = "map", Signature = "map" });
                 root.Methods.Add(new Method { Name = "multiply", Signature = "none" });
                 root.Methods.Add(new Method { Name = "next", Signature = "dayofweek" });
                 root.Methods.Add(new Method { Name = "now", Signature = "none" });
@@ -256,7 +239,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "regexreplace", Signature = "regexreplace" });
                 root.Methods.Add(new Method { Name = "remove", Signature = "remove" });
                 root.Methods.Add(new Method { Name = "replace", Signature = "replace" });
-                root.Methods.Add(new Method { Name = "right", Signature = "length" });
                 root.Methods.Add(new Method { Name = "round", Signature = "decimals" });
                 root.Methods.Add(new Method { Name = "roundto", Signature = "value" });
                 root.Methods.Add(new Method { Name = "roundupto", Signature = "value" });
@@ -266,7 +248,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "timeago", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timeahead", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timezone", Signature = "timezone" });
-                root.Methods.Add(new Method { Name = "tolower", Signature = "none" });
                 root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });
                 root.Methods.Add(new Method { Name = "totime", Signature = "timecomponent" });
                 root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
@@ -277,13 +258,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "upper", Signature = "none" });
                 root.Methods.Add(new Method { Name = "utcnow", Signature = "none" });
                 root.Methods.Add(new Method { Name = "velocity", Signature = "template" });
-                root.Methods.Add(new Method { Name = "xmldecode", Signature = "none" });
                 root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
                 root.Methods.Add(new Method { Name = "in", Signature = "domain" });
-                root.Methods.Add(new Method { Name = "match", Signature = "pattern" });
                 root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
-                root.Methods.Add(new Method { Name = "invert", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
                 root.Methods.Add(new Method { Name = "tag", Signature = "tag" });
@@ -330,7 +308,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "vingetmodelyear", Signature = "none" });
 
                 root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
-                root.Methods.Add(new Method { Name = "htmlencode", Signature = "none" });
                 root.Methods.Add(new Method { Name = "fromaddress", Signature = "key" });
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
                 root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });

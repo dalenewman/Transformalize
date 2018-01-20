@@ -26,8 +26,10 @@ namespace Transformalize.Transforms {
     public class HashcodeTransform : BaseTransform {
         private readonly Field[] _input;
         private readonly StringBuilder _builder;
-        public HashcodeTransform(IContext context)
-              : base(context, "int") {
+        public HashcodeTransform(IContext context = null) : base(context, "int") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = MultipleInput();
             _builder = new StringBuilder();
         }
@@ -58,5 +60,8 @@ namespace Transformalize.Transforms {
             return _builder.ToString().GetHashCode();
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("hashcode") };
+        }
     }
 }

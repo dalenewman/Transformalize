@@ -51,7 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Server.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Template.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\TflType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Transform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Operation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IConvertFile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IOperation.cs" />
@@ -219,7 +219,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\DecodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FilterTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FloorTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatXmlTransfrom.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatXmlTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromLengthsTranform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromSplitTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromXmlTransform.cs" />

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,7 +24,11 @@ namespace Transformalize.Transforms {
     public class InvertTransform : BaseTransform {
         private readonly Field _input;
 
-        public InvertTransform(IContext context) : base(context, "bool") {
+        public InvertTransform(IContext context = null) : base(context, "bool") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("bool")) {
                 return;
             }
@@ -35,5 +41,8 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("invert") };
+        }
     }
 }

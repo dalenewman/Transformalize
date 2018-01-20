@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -23,17 +25,27 @@ namespace Transformalize.Transforms {
     public class JoinTransform : BaseTransform {
         private readonly Field[] _input;
 
-        public JoinTransform(IContext context) : base(context, "string") {
-            if (IsMissing(context.Operation.Separator)) {
+        public JoinTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+            if (IsMissing(Context.Operation.Separator)) {
                 return;
             }
             _input = MultipleInput();
         }
         public override IRow Operate(IRow row) {
-            row[Context.Field] = string.Join(Context.Operation.Separator, _input.Select(f=>row[f]));
+            row[Context.Field] = string.Join(Context.Operation.Separator, _input.Select(f => row[f]));
             Increment();
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("join") {
+                    Parameters = new List<OperationParameter> {new OperationParameter("separator", ",")}
+                }
+            };
+        }
     }
 }

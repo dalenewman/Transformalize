@@ -15,24 +15,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class InsertTransform : BaseTransform {
+    public class InsertTransform : StringTransform {
         private readonly Field _input;
 
-        public InsertTransform(IContext context) : base(context, "string") {
+        public InsertTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (context.Operation.StartIndex == 0) {
+            if (Context.Operation.StartIndex == 0) {
                 Error("The insert transform requires a start-index greater than 0.");
                 Run = false;
                 return;
             }
-            if (context.Operation.Value == string.Empty) {
+            if (Context.Operation.Value == string.Empty) {
                 Warn("The insert transform should have a value to insert.");
             }
 
@@ -40,10 +45,20 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = row[_input].ToString().Insert(Context.Operation.StartIndex, Context.Operation.Value);
+            row[Context.Field] = GetString(row, _input).Insert(Context.Operation.StartIndex, Context.Operation.Value);
             Increment();
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("insert") {
+                    Parameters = new List<OperationParameter> {
+                        new OperationParameter("start-index"),
+                        new OperationParameter("value")
+                    }
+                }
+            };
+        }
     }
 }

@@ -15,16 +15,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Web;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.Html {
 
-    public class HtmlEncodeTransform : BaseTransform {
+    public class HtmlEncodeTransform : StringTransform {
         private readonly Field _input;
 
-        public HtmlEncodeTransform(IContext context) : base(context, "string") {
+        public HtmlEncodeTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -32,9 +37,16 @@ namespace Transformalize.Transforms.Html {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = HttpUtility.HtmlEncode(row[_input]);
+            row[Context.Field] = HttpUtility.HtmlEncode(GetString(row, _input));
             Increment();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("htmlencode"),
+                new OperationSignature("xmlencode")
+            };
         }
     }
 }

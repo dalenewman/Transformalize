@@ -35,7 +35,10 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         private static Dictionary<string, char> _entities;
 
-        public DecodeTransform(IContext context) : base(context, "string") {
+        public DecodeTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -99,15 +102,14 @@ namespace Transformalize.Transforms {
                             }
                         } else {
                             i = index;
-                            char entityChar;
-                            Entities.TryGetValue(entity, out entityChar);
+                            Entities.TryGetValue(entity, out var entityChar);
 
                             if (entityChar != (char)0) {
                                 c = entityChar;
                             } else {
-                                builder.Append((char)EntityStart);
+                                builder.Append(EntityStart);
                                 builder.Append(entity);
-                                builder.Append((char)EntityEnd);
+                                builder.Append(EntityEnd);
                                 continue;
                             }
                         }
@@ -373,6 +375,13 @@ namespace Transformalize.Transforms {
             {"zwj", "\x200d"[0]},
             {"zwnj", "\x200c"[0]}
         });
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("htmldecode"),
+                new OperationSignature("xmldecode") 
+            };
+        }
     }
 
 }

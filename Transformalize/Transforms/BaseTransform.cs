@@ -101,14 +101,24 @@ namespace Transformalize.Transforms {
         /// </summary>
         /// <returns></returns>
         public Field SingleInputForMultipleOutput() {
-            if (Context.Operation.Parameter != string.Empty) {
+
+            var name = string.Empty;
+            if (Context.Operation.Parameter == string.Empty) {
+                if (Context.Operation.Parameters.Where(p=>p.Input).Any()) {
+                    name = Context.Operation.Parameters.First(p => p.Input).Field;
+                }
+            } else {
+                name = Context.Operation.Parameter;
+            }
+
+            if (name != string.Empty) {
                 return Context.Entity == null
                     ? Context.Process.GetAllFields().First(f =>
-                        f.Alias.Equals(Context.Operation.Parameter, Sc) ||
-                        f.Name.Equals(Context.Operation.Parameter, Sc))
+                        f.Alias.Equals(name, Sc) ||
+                        f.Name.Equals(name, Sc))
                     : Context.Entity.GetAllFields().First(f =>
-                        f.Alias.Equals(Context.Operation.Parameter, Sc) ||
-                        f.Name.Equals(Context.Operation.Parameter, Sc));
+                        f.Alias.Equals(name, Sc) ||
+                        f.Name.Equals(name, Sc));
             }
             return Context.Field;
         }
@@ -199,11 +209,9 @@ namespace Transformalize.Transforms {
             return false;
         }
 
-        protected bool LastMethodIsNot(params string[] args)
-        {
+        protected bool LastMethodIsNot(params string[] args) {
             var lastMethod = LastMethod();
-            if (!lastMethod.In(args))
-            {
+            if (!lastMethod.In(args)) {
                 Error($"The {Context.Operation.Method} method expects an input from: {Utility.ReadableDomain(args)}, but it's last method was {lastMethod} instead.");
                 Run = false;
                 return true;

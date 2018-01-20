@@ -15,22 +15,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
 
-    public class RightTransform : BaseTransform {
+    public class RightTransform : StringTransform {
         private readonly Field _input;
 
-        public RightTransform(IContext context) : base(context, "string") {
+        public RightTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (context.Operation.Length == 0) {
+            if (Context.Operation.Length == 0) {
                 Error("The right transform requires a length parameter.");
                 Run = false;
                 return;
@@ -40,10 +45,17 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = row[_input].ToString().Right(Context.Operation.Length);
+            row[Context.Field] = GetString(row, _input).Right(Context.Operation.Length);
             Increment();
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[]{
+                new OperationSignature("right"){
+                    Parameters = new List<OperationParameter> {new OperationParameter("length")}
+                }
+            };
+        }
     }
 }

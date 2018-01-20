@@ -15,24 +15,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class ToLowerTransform : BaseTransform {
+
+    public class ToLowerTransform : StringTransform {
+
         private readonly Field _input;
 
-        public ToLowerTransform(IContext context) : base(context,"string") {
+        public ToLowerTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             if (IsNotReceiving("string")) {
                 return;
             }
             _input = SingleInput();
         }
         public override IRow Operate(IRow row) {
-            row[Context.Field] = row[_input].ToString().ToLowerInvariant();
+            row[Context.Field] = GetString(row, _input).ToLowerInvariant();
             Increment();
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("lower"), new OperationSignature("tolower") };
+        }
     }
 }
