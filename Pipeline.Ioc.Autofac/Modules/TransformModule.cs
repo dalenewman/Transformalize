@@ -18,7 +18,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Shorthand;
@@ -45,15 +47,28 @@ using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
 using Transformalize.Transforms.Globalization;
 using Parameter = Cfg.Net.Shorthand.Parameter;
+using Transformalize.Configuration;
+using Transformalize.Context;
+using Module = Autofac.Module;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {
 
         public const string Name = "shorthand-t";
-        private readonly HashSet<string> _methodNames = new HashSet<string>();
-        private readonly ShorthandRoot _shortHandRoot = new ShorthandRoot();
+        private readonly HashSet<string> _methods = new HashSet<string>();
+        private readonly ShorthandRoot _shortHand = new ShorthandRoot();
+        private readonly Process _process;
+        private readonly IPipelineLogger _logger;
+
+        public TransformModule(Process process, IPipelineLogger logger) {
+            _process = process;
+            _logger = logger;
+        }
 
         protected override void Load(ContainerBuilder builder) {
+
+            var loadContext = new PipelineContext(_logger, _process); builder.Properties["ShortHand"] = _shortHand;
+            builder.Properties["Methods"] = _methods;
 
             // new method so transform author can define shorthand signature(s)
             RegisterTransform(builder, c => new AbsTransform(c), new AbsTransform().GetSignatures());
@@ -93,8 +108,24 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new MapTransform(c), new MapTransform().GetSignatures());
             RegisterTransform(builder, c => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
 
+            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
+            if (Directory.Exists(pluginsFolder)) {
+
+                var assemblies = new List<Assembly>();
+                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+                    var info = new FileInfo(file);
+                    var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
+                    loadContext.Info($"Loading {name} transform");
+                    var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                    assemblies.Add(assembly);
+                }
+                if (assemblies.Any()) {
+                    builder.RegisterAssemblyModules(assemblies.ToArray());
+                }
+            }
+
             // register the short hand
-            builder.Register((c, p) => _shortHandRoot).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
+            builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
             builder.Register((c, p) => new MultiplyTransform(p.Positional<IContext>(0))).Named<ITransform>("multiply");
@@ -228,9 +259,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         var fields = context.Entity.GetFieldMatches(context.Operation.Script);
                         return fields.All(f => strict.Contains(f.Type)) ?
                             (ITransform)new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>()) :
-                            new JintTransform(context, c.Resolve<IReader>());
+                            new JintTransform(c.Resolve<IReader>(), context);
                     case "jint":
-                        return new JintTransform(context, c.Resolve<IReader>());
+                        return new JintTransform(c.Resolve<IReader>(), context);
                     default:
                         return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
                 }
@@ -242,10 +273,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
         private void RegisterTransform(ContainerBuilder builder, Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
 
             foreach (var s in signatures) {
-                if (_methodNames.Add(s.Method)) {
+                if (_methods.Add(s.Method)) {
 
                     var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
-                    _shortHandRoot.Methods.Add(method);
+                    _shortHand.Methods.Add(method);
 
                     var signature = new Signature {
                         Name = s.Method,
@@ -258,12 +289,21 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             Value = parameter.Value
                         });
                     }
-                    _shortHandRoot.Signatures.Add(signature);
+                    _shortHand.Signatures.Add(signature);
                 }
 
                 builder.Register((c, p) => getTransform(p.Positional<IContext>(0))).Named<ITransform>(s.Method);
             }
 
+        }
+
+        public static string AssemblyDirectory {
+            get {
+                var codeBase = typeof(Process).Assembly.CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                return Path.GetDirectoryName(path);
+            }
         }
     }
 }

@@ -34,46 +34,50 @@ namespace Transformalize.Transforms.Jint {
         private readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly ParserOptions _parserOptions = new ParserOptions { Tolerant = true };
 
-        public JintTransform(IContext context, IReader reader) : base(context, "object") {
+        public JintTransform(IReader reader, IContext context = null) : base(context, "object") {
 
-            if (IsMissing(context.Operation.Script)) {
+            if (IsMissingContext()) {
+                return;
+            }
+
+            if (IsMissing(Context.Operation.Script)) {
                 return;
             }
 
             // automatic parameter binding
-            if (!context.Operation.Parameters.Any()) {
+            if (!Context.Operation.Parameters.Any()) {
 
-                var parsed = _parser.Parse(context.Operation.Script, new global::Jint.Parser.ParserOptions { Tokens = true });
+                var parsed = _parser.Parse(Context.Operation.Script, new global::Jint.Parser.ParserOptions { Tokens = true });
 
                 var parameters = parsed.Tokens
                     .Where(o => o.Type == global::Jint.Parser.Tokens.Identifier)
                     .Select(o => o.Value.ToString())
-                    .Intersect(context.GetAllEntityFields().Select(f => f.Alias))
+                    .Intersect(Context.GetAllEntityFields().Select(f => f.Alias))
                     .Distinct()
                     .ToArray();
                 if (parameters.Any()) {
                     foreach (var parameter in parameters) {
-                        context.Operation.Parameters.Add(new Parameter { Field = parameter });
+                        Context.Operation.Parameters.Add(new Parameter { Field = parameter });
                     }
                 }
             }
 
             // for js, always add the input parameter
-            _input = MultipleInput().Union(new[] { context.Field }).Distinct().ToArray();
+            _input = MultipleInput().Union(new[] { Context.Field }).Distinct().ToArray();
 
             // load any global scripts
-            foreach (var sc in context.Process.Scripts.Where(s => s.Global)) {
-                ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
+            foreach (var sc in Context.Process.Scripts.Where(s => s.Global)) {
+                ProcessScript(context, reader, Context.Process.Scripts.First(s => s.Name == sc.Name));
             }
 
             // load any specified scripts
-            if (context.Operation.Scripts.Any()) {
-                foreach (var sc in context.Operation.Scripts) {
-                    ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
+            if (Context.Operation.Scripts.Any()) {
+                foreach (var sc in Context.Operation.Scripts) {
+                    ProcessScript(context, reader, Context.Process.Scripts.First(s => s.Name == sc.Name));
                 }
             }
 
-            context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
+            Context.Debug(() => $"Script in {Context.Field.Alias} : {Context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
         private void ProcessScript(IContext context, IReader reader, Script script) {

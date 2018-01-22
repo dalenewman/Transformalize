@@ -39,12 +39,13 @@ namespace Transformalize.Ioc.Autofac {
             }
 
             var builder = new ContainerBuilder();
+            builder.Properties["Process"] = process;
 
             builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
 
             /* this stuff is loaded (again) because tfl actions can create processes, which will need short-hand to expand configuration in advance */
-            builder.RegisterCallback(new TransformModule().Configure);
+            builder.RegisterCallback(new TransformModule(process, logger).Configure);
             builder.RegisterCallback(new ShorthandTransformModule().Configure);
             builder.RegisterCallback(new ValidateModule().Configure);
             builder.RegisterCallback(new ShorthandValidateModule().Configure);
@@ -73,8 +74,7 @@ namespace Transformalize.Ioc.Autofac {
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
-
-                builder.Properties["Process"] = process;
+                
                 var assemblies = new List<Assembly>();
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);

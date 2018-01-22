@@ -17,17 +17,17 @@
 #endregion
 using System.Collections.Generic;
 using Autofac;
+using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
 
-namespace Tests
-{
+namespace Tests {
     public static class ConfigurationContainer {
-        public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()"){
+        public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
             var builder = new ContainerBuilder();
             builder.Register(c => logger).As<IPipelineLogger>();
-            builder.Register(c=>placeHolderStyle).Named<string>("placeHolderStyle");
-            builder.RegisterModule(new TransformModule());
+            builder.Register(c => placeHolderStyle).Named<string>("placeHolderStyle");
+            builder.RegisterModule(new TransformModule(new Process { Name = "ConfigurationContainer" }, logger));
             builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());

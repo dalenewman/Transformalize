@@ -46,7 +46,7 @@ namespace Transformalize.Transforms {
 
         // this *may* be implemented
         public virtual IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-            return Run ? rows.Select(Operate) : rows;
+            return Run && Context != null ? rows.Select(Operate) : rows;
         }
 
         public string Returns {

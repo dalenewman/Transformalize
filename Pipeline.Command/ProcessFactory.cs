@@ -28,12 +28,12 @@ using Transformalize.Transforms.Globalization;
 namespace Transformalize.Command {
     public static class ProcessFactory {
 
-        public static bool TryCreate(string cfg, Dictionary<string,string> parameters, out Process process) {
+        public static bool TryCreate(string cfg, Dictionary<string, string> parameters, out Process process) {
 
             var builder = new ContainerBuilder();
 
             /* this stuff is registered because it manipulates short-hand which expands configuration - start */
-            builder.RegisterModule(new TransformModule());
+            builder.RegisterModule(new TransformModule(new Process { Name = "ProcessFactory" }, new NLogPipelineLogger("ProcessFactory")));
             builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
@@ -64,7 +64,7 @@ namespace Transformalize.Command {
             return process.Errors().Length == 0;
         }
 
-        public static Process Create(string cfg, Dictionary<string,string> parameters) {
+        public static Process Create(string cfg, Dictionary<string, string> parameters) {
             TryCreate(cfg, parameters, out var process);
             return process;
         }

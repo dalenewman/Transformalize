@@ -40,13 +40,13 @@ namespace Transformalize.Command {
 
             var builder = new ContainerBuilder();
             builder.Register(c => _logger).As<IPipelineLogger>().SingleInstance();
-            builder.RegisterModule(new TransformModule());
+            builder.RegisterModule(new TransformModule(new Process { Name = "Scheduler" }, _logger));
             builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new ValidateModule());
             builder.RegisterModule(new ShorthandValidateModule());
             builder.RegisterModule(new RootModule());
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
-            builder.Register(c => new NowExecutor(c.Resolve<IPipelineLogger>() ,_options)).As<IRunTimeExecute>();
+            builder.Register(c => new NowExecutor(c.Resolve<IPipelineLogger>(), _options)).As<IRunTimeExecute>();
 
             using (var scope = builder.Build().BeginLifetimeScope()) {
                 var context = scope.Resolve<IContext>();
@@ -82,8 +82,8 @@ namespace Transformalize.Command {
 
                 if (_options.Mode != "default") {
                     process.Mode = _options.Mode;
-                } 
-                
+                }
+
                 scope.Resolve<IRunTimeExecute>().Execute(process);
             }
 
@@ -107,7 +107,7 @@ namespace Transformalize.Command {
                 if (field.Name == field.Alias) {
                     field.Alias = null;
                 } else {
-                    if(field.Alias != null && field.Alias == field.Label) {
+                    if (field.Alias != null && field.Alias == field.Label) {
                         field.Label = null;
                     }
                 }
@@ -119,6 +119,6 @@ namespace Transformalize.Command {
             }
         }
 
-        public void Stop() {}
+        public void Stop() { }
     }
 }
