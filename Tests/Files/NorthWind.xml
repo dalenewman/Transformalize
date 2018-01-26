@@ -32,6 +32,7 @@
   <entities>
 
     <add name="Order Details"
+         log-interval="500"
          version="RowVersion"
          prefix="OrderDetails">
       <fields>

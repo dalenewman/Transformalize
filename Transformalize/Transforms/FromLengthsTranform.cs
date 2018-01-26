@@ -55,11 +55,11 @@ namespace Transformalize.Transforms {
             foreach (var row in rows) {
                 var line = row[_input] as string;
                 if (line == null) {
-                    Increment();
+                    
                 } else {
                     line = line.TrimEnd();
                     if (line.Length == 0) {
-                        Increment();
+                        
                     } else {
                         yield return Operate(row);
                     }
@@ -84,7 +84,7 @@ namespace Transformalize.Transforms {
                 row[field] = field.Transforms.Any() ? values[i] : field.Convert(values[i]);
             }
 
-            Increment();
+            
             return row;
         }
     }

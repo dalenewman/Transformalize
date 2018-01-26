@@ -44,7 +44,6 @@ namespace Transformalize.Providers.Elastic {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 _client.Update<VoidResponse>(_index, _type, id, row.ToExpandoObject(_fields));
-                _context.Increment();
             }
         }
 
@@ -52,7 +51,6 @@ namespace Transformalize.Providers.Elastic {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 _client.Update<VoidResponse>(_index, _type, id, row.ToExpandoObject(_fields));
-                _context.Increment();
             }
         }
     }

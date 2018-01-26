@@ -31,7 +31,7 @@ namespace Transformalize.Transforms.Globalization {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Slugify(GetString(row, _input));
-            Increment();
+            
             return row;
         }
 

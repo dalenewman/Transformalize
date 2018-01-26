@@ -88,7 +88,6 @@ namespace Transformalize.Providers.SqlCe {
 
                     }
 
-                    _output.Increment(Convert.ToUInt32(batch.Length));
                 }
 
                 if (_output.Entity.Inserts > 0) {

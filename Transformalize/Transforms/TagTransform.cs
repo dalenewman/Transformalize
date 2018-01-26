@@ -150,7 +150,7 @@ namespace Transformalize.Transforms {
             }
 
             row[Context.Field] = sb.ToString();
-            Increment();
+            
             return row;
         }
 

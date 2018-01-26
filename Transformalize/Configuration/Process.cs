@@ -261,7 +261,6 @@ namespace Transformalize.Configuration {
             LogLimit = Name.Length;
             EntityLogLimit = entitiesAny ? Entities.Select(e => e.Alias.Length).Max() : 10;
             FieldLogLimit = fieldsAny ? GetAllFields().Where(f => f.Transforms.Any()).Select(f => f.Alias.Length).Max() : 10;
-            TransformLogLimit = transformsAny ? GetAllTransforms().Select(t => t.Method.Length).Max() : 10;
         }
 
         public void ModifyKeys() {
@@ -310,7 +309,6 @@ namespace Transformalize.Configuration {
         public int LogLimit { get; set; }
         public int EntityLogLimit { get; set; }
         public int FieldLogLimit { get; set; }
-        public int TransformLogLimit { get; set; }
 
         protected override void Validate() {
             this.Validate(e => Error(e), w => Warn(w));
@@ -526,7 +524,6 @@ namespace Transformalize.Configuration {
             calc.LogLimit = LogLimit;
             calc.EntityLogLimit = EntityLogLimit;
             calc.FieldLogLimit = FieldLogLimit;
-            calc.TransformLogLimit = TransformLogLimit;
 
             calc.Entities.Clear();
             calc.CalculatedFields.Clear();

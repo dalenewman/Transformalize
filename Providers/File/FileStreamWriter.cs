@@ -51,7 +51,6 @@ namespace Transformalize.Providers.File {
                         _writer.Write(row[field]);
                     }
                     _writer.WriteLine();
-                    _context.Increment();
                 }
 
                 if (!string.IsNullOrEmpty(_context.Connection.Footer)) {

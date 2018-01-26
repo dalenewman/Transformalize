@@ -31,7 +31,7 @@ namespace Transformalize.Transforms.Vehicle {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = DaleNewman.Vin.GetWorldManufacturer(row[_input] as string);
-            Increment();
+            
             return row;
         }
     }

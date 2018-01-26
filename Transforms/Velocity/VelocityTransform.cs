@@ -72,7 +72,7 @@ namespace Transformalize.Transforms.Velocity {
             sb.Trim(' ', '\n', '\r');
             row[Context.Field] = Context.Field.Convert(sb.ToString());
 
-            Increment();
+            
             return row;
         }
 

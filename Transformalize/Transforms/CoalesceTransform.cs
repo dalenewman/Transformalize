@@ -44,7 +44,6 @@ namespace Transformalize.Transforms {
             if (first != null) {
                 row[Context.Field] = Context.Field.Type == first.Field.Type ? row[first.Field] : Context.Field.Convert(row[first.Field]);
             }
-            Increment();
             return row;
         }
 

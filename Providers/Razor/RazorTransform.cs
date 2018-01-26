@@ -51,7 +51,7 @@ namespace Transformalize.Providers.Razor {
         public override IRow Operate(IRow row) {
             var output = _service.Run(Context.Key, typeof(ExpandoObject), row.ToFriendlyExpandoObject(_input));
             row[Context.Field] = Context.Field.Convert(output.Trim(' ', '\n', '\r'));
-            Increment();
+            
             return row;
         }
 

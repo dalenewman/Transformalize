@@ -43,7 +43,7 @@ namespace Transformalize.Context {
             Field field = null,
             Operation operation = null
         ) {
-            ForLog = new object[4];
+            ForLog = new object[3];
             Logger = logger;
             Process = process ?? new Process { Name = "Process" };
             Entity = entity ?? new Entity { Name = string.Empty, Alias = string.Empty };
@@ -53,7 +53,7 @@ namespace Transformalize.Context {
             ForLog[0] = Process.Name.PadRight(Process.LogLimit, ' ').Left(Process.LogLimit);
             ForLog[1] = Entity.Alias.PadRight(Process.EntityLogLimit, ' ').Left(Process.EntityLogLimit);
             ForLog[2] = Field.Alias.PadRight(Process.FieldLogLimit, ' ').Left(Process.FieldLogLimit);
-            ForLog[3] = Operation.Method.PadRight(Process.TransformLogLimit, ' ').Left(Process.TransformLogLimit);
+            
         }
 
         public void Info(string message, params object[] args) {

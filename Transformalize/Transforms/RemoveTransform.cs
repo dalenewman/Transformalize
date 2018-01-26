@@ -40,7 +40,7 @@ namespace Transformalize.Transforms {
             row[Context.Field] = Context.Operation.Count > 0
                 ? row[_input].ToString().Remove(Context.Operation.StartIndex, Context.Operation.Count)
                 : row[_input].ToString().Remove(Context.Operation.StartIndex);
-            Increment();
+            
             return row;
         }
     }

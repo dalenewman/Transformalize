@@ -76,7 +76,6 @@ namespace Transformalize.Providers.Elastic {
                 var response = _client.Bulk<DynamicResponse>(builder.ToString(), nv => nv
                     .AddQueryString("refresh", @"true")
                 );
-                _context.Increment(@by: batchCount);
                 if (response.Success) {
                     _context.Debug(() => $"{batchCount} to output");
                 } else {

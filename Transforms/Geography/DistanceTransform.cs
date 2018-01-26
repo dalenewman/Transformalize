@@ -76,7 +76,7 @@ namespace Transformalize.Transforms.Geography {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _getDistance(row);
-            Increment();
+            
             return row;
         }
 

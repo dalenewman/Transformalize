@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -24,7 +25,11 @@ namespace Transformalize.Transforms {
     public class MultiplyTransform : BaseTransform {
         private readonly Field[] _input;
 
-        public MultiplyTransform(IContext context) : base(context, "decimal") {
+        public MultiplyTransform(IContext context = null) : base(context, "decimal") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceivingNumbers()) {
                 return;
             }
@@ -34,9 +39,12 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Context.Field.Convert(_input.Aggregate<Field, decimal>(1, (current, field) => current * (field.Type == "decimal" ? (decimal)row[field] : Convert.ToDecimal(row[field]))));
-            Increment();
+            
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("multiply") };
+        }
     }
 }

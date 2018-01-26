@@ -48,7 +48,7 @@ namespace Transformalize.Transforms {
                 count += matches.Count;
             }
             row[Context.Field] = count;
-            Increment();
+            
             return row;
         }
 

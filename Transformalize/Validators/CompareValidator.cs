@@ -62,7 +62,7 @@ namespace Transformalize.Validators {
             if (!valid) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            Increment();
+            
             return row;
         }
     }

@@ -127,7 +127,7 @@ namespace Transformalize.Configuration {
         public List<Order> Order { get; set; }
 
         [Cfg(value = 10000)]
-        public uint LogInterval { get; set; }
+        public int LogInterval { get; set; }
 
 
         /// <summary>
@@ -616,6 +616,8 @@ namespace Transformalize.Configuration {
 
         // state, aagghhh!!!
         public int Identity;
+
+        public int RowNumber;
 
         [Cfg]
         public int Hits { get; set; }

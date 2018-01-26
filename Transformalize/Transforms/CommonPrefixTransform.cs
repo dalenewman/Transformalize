@@ -29,7 +29,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Get(_input.Select(f => f.Type == "string" ? (string)row[f] : row[f].ToString()).ToArray());
-            Increment();
+            
             return row;
         }
 

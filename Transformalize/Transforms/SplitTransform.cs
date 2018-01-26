@@ -25,7 +25,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = GetString(row, _input).Split(_separator, StringSplitOptions.None);
-            Increment();
+            
             return row;
         }
 

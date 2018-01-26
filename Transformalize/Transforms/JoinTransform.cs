@@ -36,7 +36,7 @@ namespace Transformalize.Transforms {
         }
         public override IRow Operate(IRow row) {
             row[Context.Field] = string.Join(Context.Operation.Separator, _input.Select(f => row[f]));
-            Increment();
+            
             return row;
         }
 

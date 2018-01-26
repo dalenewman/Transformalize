@@ -52,7 +52,7 @@ namespace Transformalize.Transforms.Humanizer {
                     row[Context.Field] = Convert.ToDouble(row[_input]).Bytes();
                     break;
             }
-            Increment();
+            
             return row;
         }
     }

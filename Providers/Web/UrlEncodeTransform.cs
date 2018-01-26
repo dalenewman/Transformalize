@@ -30,7 +30,7 @@ namespace Transformalize.Providers.Web {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Uri.EscapeDataString((string)row[_input]);
-            Increment();
+            
             return row;
         }
     }

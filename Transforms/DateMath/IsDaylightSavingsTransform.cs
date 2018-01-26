@@ -35,7 +35,7 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = ((DateTime)row[_input]).IsDaylightSavingTime();
-            Increment();
+            
             return row;
         }
     }

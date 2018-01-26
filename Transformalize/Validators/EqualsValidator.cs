@@ -72,7 +72,7 @@ namespace Transformalize.Validators {
             if (!valid) {
                 AppendMessage(row, $"Must equal {_value}");
             }
-            Increment();
+            
             return row;
         }
     }

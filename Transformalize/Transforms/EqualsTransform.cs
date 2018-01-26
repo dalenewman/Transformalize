@@ -60,7 +60,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             _validator(row);
-            Increment();
+            
             return row;
         }
 

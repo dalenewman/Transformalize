@@ -18,7 +18,7 @@
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
-    public interface IConnectionContext : IContext, IIncrement {
+    public interface IConnectionContext : IContext {
         Connection Connection { get; }
         int RowCapacity { get; }
     }

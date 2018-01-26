@@ -148,7 +148,6 @@ namespace Transformalize.Providers.Solr {
             _context.Entity.Hits = result.NumFound;
 
             foreach (var row in result.Select(x => DocToRow(_rowFactory.Create(), _fields, x))) {
-                _context.Increment();
                 ++_localCount;
                 yield return row;
             }
@@ -168,7 +167,6 @@ namespace Transformalize.Providers.Solr {
                 );
 
                 foreach (var row in result.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
-                    _context.Increment();
                     ++_localCount;
                     yield return row;
                 }
@@ -194,7 +192,6 @@ namespace Transformalize.Providers.Solr {
 
                 foreach (var row in result.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
                     ++_localCount;
-                    _context.Increment();
                     yield return row;
                 }
             }

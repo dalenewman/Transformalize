@@ -360,7 +360,6 @@ namespace Transformalize.Providers.Elastic {
                 for (var i = 0; i < _fields.Length; i++) {
                     row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
                 }
-                _context.Increment();
                 yield return row;
             }
             count += docs.Count;
@@ -406,7 +405,6 @@ namespace Transformalize.Providers.Elastic {
                         for (var i = 0; i < _fields.Length; i++) {
                             row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
                         }
-                        _context.Increment();
                         yield return row;
                     }
                     count += docs.Count;

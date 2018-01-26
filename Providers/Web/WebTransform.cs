@@ -58,7 +58,7 @@ namespace Transformalize.Providers.Web {
 
         public override IRow Operate(IRow row) {
             var response = _getResponse(_getAction(row));
-            Increment();
+            
             row[Context.Field] = response.Message;
             return row;
         }

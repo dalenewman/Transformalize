@@ -35,7 +35,7 @@ namespace Transformalize.Transforms {
         }
         public override IRow Operate(IRow row) {
             row[Context.Field] = _isCompatible ? true : _canConvert(GetString(row, _input));
-            Increment();
+            
             return row;
         }
 

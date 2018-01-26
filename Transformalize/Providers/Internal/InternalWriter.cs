@@ -44,7 +44,6 @@ namespace Transformalize.Provider.Internal {
                 }
 
                 _context.Entity.Rows.Add(row.ToCfgRow(_fields, keys));
-                _context.Increment();
             }
 
             if (_context.Entity.Inserts > 0) {

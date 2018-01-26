@@ -65,7 +65,7 @@ namespace Transformalize.Transforms {
                     row[Context.Field] = TimeSpan.FromHours(value).ToString(Context.Operation.Format);
                     break;
             }
-            Increment();
+            
             return row;
         }
 

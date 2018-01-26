@@ -50,7 +50,6 @@ namespace Transformalize.Providers.Solr {
                 }
                 var response = _solr.AddRange(docs);
 
-                _context.Increment(@by: batchCount);
                 if (response.Status == 0) {
                     _context.Debug(() => $"{batchCount} to output");
                 } else {

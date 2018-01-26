@@ -34,7 +34,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = string.Concat(_input.Select(f => row[f]));
-            Increment();
+            
             return row;
         }
 

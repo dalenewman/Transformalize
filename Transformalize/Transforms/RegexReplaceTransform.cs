@@ -48,7 +48,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             _transform(row);
-            Increment();
+            
             return row;
         }
     }

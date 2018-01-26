@@ -118,7 +118,7 @@ namespace Transformalize.Transforms.JavaScript {
                 }
             }
 
-            Increment();
+            
             return row;
         }
 

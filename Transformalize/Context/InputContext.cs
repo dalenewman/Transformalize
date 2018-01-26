@@ -24,8 +24,6 @@ using Transformalize.Contracts;
 namespace Transformalize.Context {
     public class InputContext : IConnectionContext {
         readonly IContext _context;
-        readonly IIncrement _incrementer;
-
         public Connection Connection { get; set; }
         public LogLevel LogLevel => _context.Logger.LogLevel;
         public int RowCapacity { get; set; }
@@ -43,17 +41,12 @@ namespace Transformalize.Context {
         public IPipelineLogger Logger => _context.Logger;
         public object[] ForLog => _context.ForLog;
 
-        public InputContext(IContext context, IIncrement incrementer) {
-            _incrementer = incrementer;
+        public InputContext(IContext context) {
             _context = context;
             RowCapacity = context.GetAllEntityFields().Count();
             InputFields = context.Entity.Fields.Where(f => f.Input).ToArray();
             Connection = context.Process.Connections.First(c => c.Name == context.Entity.Connection);
             Key = context.Key;
-        }
-
-        public void Increment(uint by = 1) {
-            _incrementer.Increment(by);
         }
 
         public void Debug(Func<string> lamda) {

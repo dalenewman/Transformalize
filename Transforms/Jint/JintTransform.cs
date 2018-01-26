@@ -154,7 +154,7 @@ namespace Transformalize.Transforms.Jint {
                 }
             }
 
-            Increment();
+            
             return row;
         }
     }

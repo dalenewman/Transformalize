@@ -47,7 +47,7 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks, _past);
-            Increment();
+            
             return row;
         }
 

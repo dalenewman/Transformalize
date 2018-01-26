@@ -50,7 +50,7 @@ namespace Transformalize.Transforms {
                     row[_output[i]] = _output[i].Convert(@group.Captures[0].Value);
                 }
             }
-            Increment();
+            
             return row;
 
         }

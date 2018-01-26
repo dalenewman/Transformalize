@@ -58,7 +58,7 @@ namespace Transformalize.Validators {
                 AppendMessage(row, _betterFormat.Format(row));
             }
 
-            Increment();
+            
             return row;
         }
     }

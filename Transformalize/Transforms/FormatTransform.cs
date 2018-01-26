@@ -44,7 +44,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _betterFormat.Format(row);
-            Increment();
+            
             return row;
         }
 

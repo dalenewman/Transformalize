@@ -45,7 +45,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = string.Join(Context.Operation.Separator, ((string)row[_input]).Split(_sep, StringSplitOptions.RemoveEmptyEntries).Distinct());
-            Increment();
+            
             return row;
         }
 

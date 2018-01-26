@@ -77,7 +77,7 @@ namespace Transformalize.Transforms.Json {
                 }
             }
 
-            Increment();
+            
             return row;
 
         }

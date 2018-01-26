@@ -60,14 +60,6 @@ namespace Transformalize.Contracts {
         /// <returns></returns>
         IEnumerable<IRow> Operate(IEnumerable<IRow> rows);
 
-
-        uint RowCount { get; set; }
-
-        /// <summary>
-        /// Used to increment a counter used in the logging
-        /// </summary>
-        void Increment();
-
         /// <summary>
         /// registers short-hand signature
         /// </summary>

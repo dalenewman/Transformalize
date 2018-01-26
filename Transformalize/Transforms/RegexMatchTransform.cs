@@ -58,7 +58,7 @@ namespace Transformalize.Transforms {
                 row[Context.Field] = match.Value;
                 break;
             }
-            Increment();
+            
             return row;
         }
 

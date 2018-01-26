@@ -24,13 +24,13 @@ using Transformalize.Contracts;
 namespace Transformalize.Writers {
     public class StringWriter : IWrite {
         private readonly OutputContext _context;
-        private readonly StringBuilder _builder;
+
         public StringWriter(OutputContext context, StringBuilder builder = null) {
             _context = context;
-            _builder = builder ?? new StringBuilder();
+            Builder = builder ?? new StringBuilder();
         }
 
-        public StringBuilder Builder => _builder;
+        public StringBuilder Builder { get; }
 
         public void Write(IEnumerable<IRow> rows) {
             if (!string.IsNullOrEmpty(_context.Connection.Header)) {
@@ -42,7 +42,6 @@ namespace Transformalize.Writers {
                     Builder.Append(row[field]);
                 }
                 Builder.AppendLine();
-                _context.Increment();
             }
             if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
                 Builder.Append(_context.Connection.Footer);

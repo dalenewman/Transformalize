@@ -77,7 +77,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IHasField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IHost.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IIncrement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IInputValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IMapReader.cs" />
@@ -126,7 +125,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\SchemaReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsMoveAdapter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\TransformFieldsToParametersAdapter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Impl\Incrementer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParallelDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParallelPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Batch.cs" />
@@ -139,8 +137,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\RowNumberTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\IncrementTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SplitTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\LogTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AlphanumValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />

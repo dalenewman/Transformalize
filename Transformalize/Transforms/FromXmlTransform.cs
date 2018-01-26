@@ -62,7 +62,7 @@ namespace Transformalize.Transforms {
         public override IRow Operate(IRow row) {
             var xml = row[_input] as string;
             if (string.IsNullOrEmpty(xml)) {
-                Increment();
+                
                 return row;
             }
 
@@ -106,7 +106,7 @@ namespace Transformalize.Transforms {
                 }
                 subNodes = nextNodes.ToArray();
             }
-            Increment();
+            
             return row;
         }
 

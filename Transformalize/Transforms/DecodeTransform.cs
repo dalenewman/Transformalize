@@ -47,7 +47,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Decode(row[_input] as string);
-            Increment();
+            
             return row;
         }
 

@@ -42,18 +42,18 @@ namespace Transformalize.Transforms {
 
             if (len <= Context.Operation.StartIndex) {
                 row[Context.Field] = string.Empty;
-                Increment();
+                
                 return row;
             }
 
             if (Context.Operation.Length == 0 || Context.Operation.StartIndex + Context.Operation.Length > len) {
                 row[Context.Field] = value.Substring(Context.Operation.StartIndex);
-                Increment();
+                
                 return row;
             }
 
             row[Context.Field] = value.Substring(Context.Operation.StartIndex, Context.Operation.Length);
-            Increment();
+            
             return row;
         }
 

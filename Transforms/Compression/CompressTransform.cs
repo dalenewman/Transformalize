@@ -37,7 +37,7 @@ namespace Transformalize.Transforms.Compression {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Compress(row[_input] as string);
-            Increment();
+            
             return row;
         }
 

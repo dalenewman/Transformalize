@@ -48,7 +48,7 @@ namespace Transformalize.Providers.File.Transforms {
                     row[Context.Field] = path.Remove(value.Length - ext.Length);
                 }
             }
-            Increment();
+            
             return row;
         }
 

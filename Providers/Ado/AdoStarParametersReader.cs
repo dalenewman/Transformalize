@@ -100,7 +100,6 @@ namespace Transformalize.Providers.Ado {
                 var fieldArray = _output.Entity.Fields.ToArray();
                 while (reader.Read()) {
                     rowCount++;
-                    _output.Increment();
                     yield return _rowCreator.Create(reader, fieldArray);
                 }
                 _output.Info("{0} from {1}", rowCount, _output.Connection.Name);

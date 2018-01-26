@@ -48,7 +48,7 @@ namespace Transformalize.Transforms.Humanizer {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
-            Increment();
+            
             return row;
         }
     }

@@ -19,23 +19,28 @@ using System;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Transforms {
-
-    public enum RoundTo {
+namespace Transformalize.Transforms
+{
+    public enum RoundTo
+    {
         Down,
         Nearest,
         Up
     }
 
-    public class RoundToTransform : BaseTransform {
+    public class RoundToTransform : BaseTransform
+    {
         private readonly Func<IRow, object> _transform;
-        public RoundToTransform(IContext context, RoundTo roundTo) : base(context, "object") {
+        public RoundToTransform(IContext context, RoundTo roundTo) : base(context, "object")
+        {
 
-            if (IsNotReceivingNumber()) {
+            if (IsNotReceivingNumber())
+            {
                 return;
             }
 
-            if (!context.Operation.Value.IsNumeric()) {
+            if (!context.Operation.Value.IsNumeric())
+            {
                 Error($"The {context.Operation.Method} transform requires a numeric value.");
                 Run = false;
                 return;
@@ -43,55 +48,63 @@ namespace Transformalize.Transforms {
 
             var input = SingleInput();
 
-            if (Received() == "double") {
+            if (Received() == "double")
+            {
                 var by = Convert.ToDouble(context.Operation.Value);
-                switch (roundTo) {
+                switch (roundTo)
+                {
                     case RoundTo.Up:
-                        _transform = (r) => Math.Ceiling((double)r[input] / by) * by;
-                        break;
+                    _transform = (r) => Math.Ceiling((double)r[input] / by) * by;
+                    break;
                     case RoundTo.Down:
-                        _transform = (r) => Math.Floor((double)r[input] / by) * by;
-                        break;
+                    _transform = (r) => Math.Floor((double)r[input] / by) * by;
+                    break;
                     default:
-                        _transform = (r) => Math.Round((double)r[input] / by) * by;
-                        break;
+                    _transform = (r) => Math.Round((double)r[input] / by) * by;
+                    break;
                 }
                 Returns = "double";
-            } else {
+            } else
+            {
                 var by = Convert.ToDecimal(context.Operation.Value);
-                if(Received() == "decimal") {
-                    switch (roundTo) {
+                if (Received() == "decimal")
+                {
+                    switch (roundTo)
+                    {
                         case RoundTo.Up:
-                            _transform = (r) => Math.Ceiling((decimal)r[input] / by) * by;
-                            break;
+                        _transform = (r) => Math.Ceiling((decimal)r[input] / by) * by;
+                        break;
                         case RoundTo.Down:
-                            _transform = (r) => Math.Floor((decimal)r[input] / by) * by;
-                            break;
+                        _transform = (r) => Math.Floor((decimal)r[input] / by) * by;
+                        break;
                         default:
-                            _transform = (r) => Math.Round((decimal)r[input] / by) * by;
-                            break;
+                        _transform = (r) => Math.Round((decimal)r[input] / by) * by;
+                        break;
                     }
                     Returns = "decimal";
-                } else {
-                    switch (roundTo) {
+                } else
+                {
+                    switch (roundTo)
+                    {
                         case RoundTo.Up:
-                            _transform = (r) => context.Field.Convert(Math.Ceiling(Convert.ToDecimal(r[input]) / by) * by);
-                            break;
+                        _transform = (r) => context.Field.Convert(Math.Ceiling(Convert.ToDecimal(r[input]) / by) * by);
+                        break;
                         case RoundTo.Down:
-                            _transform = (r) => context.Field.Convert(Math.Floor(Convert.ToDecimal(r[input]) / by) * by);
-                            break;
+                        _transform = (r) => context.Field.Convert(Math.Floor(Convert.ToDecimal(r[input]) / by) * by);
+                        break;
                         default:
-                            _transform = (r) => context.Field.Convert(Math.Round(Convert.ToDecimal(r[input]) / by) * by);
-                            Returns = context.Field.Type;
-                            break;
+                        _transform = (r) => context.Field.Convert(Math.Round(Convert.ToDecimal(r[input]) / by) * by);
+                        Returns = context.Field.Type;
+                        break;
                     }
                 }
             }
         }
 
-        public override IRow Operate(IRow row) {
+        public override IRow Operate(IRow row)
+        {
             row[Context.Field] = _transform(row);
-            Increment();
+            
             return row;
         }
 

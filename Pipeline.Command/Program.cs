@@ -18,11 +18,13 @@
 using System;
 using System.Threading;
 using Autofac;
+using Quartz.Util;
 using Transformalize.Contracts;
 
 namespace Transformalize.Command {
-    class Program {
-        static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
+    internal class Program {
+
+        private static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
 
         private static void Main(string[] args) {
 
@@ -44,6 +46,7 @@ namespace Transformalize.Command {
 
                     if (scheduler is NowScheduler)
                         return;
+
                     QuitEvent.WaitOne();
                     Console.WriteLine("Stopping...");
                     scheduler.Stop();

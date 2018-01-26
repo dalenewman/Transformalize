@@ -54,7 +54,7 @@ namespace Transformalize.Transforms.DateMath {
         }
 
         public override IRow Operate(IRow row) {
-            Increment();
+            
             var date = (DateTime)row[_input];
             if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {
                 row[_output] = date.Add(_daylightAdjustment);

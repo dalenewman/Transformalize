@@ -104,7 +104,7 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             _transform(row);
-            Increment();
+            
             return row;
         }
 

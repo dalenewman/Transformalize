@@ -38,7 +38,7 @@ namespace Transformalize.Transforms.Html {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = HttpUtility.HtmlEncode(GetString(row, _input));
-            Increment();
+            
             return row;
         }
 

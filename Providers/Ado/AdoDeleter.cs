@@ -57,7 +57,6 @@ namespace Transformalize.Providers.Ado {
                         ));
                     trans.Commit();
                     count += batchCount;
-                    _output.Increment(batchCount);
                 }
                 _output.Entity.Deletes += count;
 

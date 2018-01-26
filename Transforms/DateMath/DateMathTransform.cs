@@ -37,7 +37,7 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = DaleNewman.DateMath.Apply((DateTime)row[_input], Context.Operation.Expression);
-            Increment();
+            
             return row;
         }
     }

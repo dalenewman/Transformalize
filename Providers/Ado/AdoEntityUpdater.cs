@@ -52,7 +52,6 @@ namespace Transformalize.Providers.Ado {
                             CommandType.Text
                         ));
                         count += batchCount;
-                        _output.Increment(batchCount);
                     }
                     _output.Debug(() => "commit transaction");
                     trans.Commit();

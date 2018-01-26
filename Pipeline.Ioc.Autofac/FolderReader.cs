@@ -48,7 +48,7 @@ namespace Transformalize.Ioc.Autofac {
                 fileConnection.Provider = "file";
                 fileConnection.File = file.FullName;
 
-                var fileInput = new InputContext(context, new Incrementer(context)) { Connection = fileConnection };
+                var fileInput = new InputContext(context) { Connection = fileConnection };
 
                 if (file.Extension.ToLower().Contains("xls")) {
                     readers.Add(new ExcelReader(fileInput, rowFactory));

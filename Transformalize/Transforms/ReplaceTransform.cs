@@ -63,7 +63,7 @@ namespace Transformalize.Transforms {
             if (oldValue != string.Empty) {
                 row[Context.Field] = GetString(row, _input).Replace(oldValue, _getNewValue(row));
             }
-            Increment();
+            
             return row;
         }
 

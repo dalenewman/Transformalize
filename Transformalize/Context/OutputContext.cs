@@ -22,21 +22,15 @@ using Transformalize.Contracts;
 namespace Transformalize.Context {
 
     public class OutputContext : PipelineContext, IConnectionContext {
-        readonly IIncrement _incrementer;
 
         public Connection Connection { get; set; }
         public Field[] OutputFields { get; set; }
 
         public int RowCapacity => 0;
 
-        public OutputContext(IContext context, IIncrement incrementer) : base(context.Logger, context.Process, context.Entity, context.Field, context.Operation) {
-            _incrementer = incrementer;
+        public OutputContext(IContext context) : base(context.Logger, context.Process, context.Entity, context.Field, context.Operation) {
             OutputFields = context.GetAllEntityOutputFields().ToArray();
             Connection = context.Process.Output();
-        }
-
-        public void Increment(uint by = 1) {
-            _incrementer.Increment(by);
         }
 
         public EntityStatus GetEntityStatus() {

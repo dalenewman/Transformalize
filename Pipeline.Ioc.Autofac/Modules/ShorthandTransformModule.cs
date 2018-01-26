@@ -80,7 +80,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("script"));
-                root.Signatures.Add(Simple("dayofweek"));
                 root.Signatures.Add(new Signature {
                     Name = "substring",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -230,9 +229,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "multiply", Signature = "none" });
-                root.Methods.Add(new Method { Name = "next", Signature = "dayofweek" });
-                root.Methods.Add(new Method { Name = "now", Signature = "none" });
                 root.Methods.Add(new Method { Name = "padleft", Signature = "padding" });
                 root.Methods.Add(new Method { Name = "padright", Signature = "padding" });
                 root.Methods.Add(new Method { Name = "razor", Signature = "template" });
@@ -256,7 +252,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "trimend", Signature = "trim" });
                 root.Methods.Add(new Method { Name = "trimstart", Signature = "trim" });
                 root.Methods.Add(new Method { Name = "upper", Signature = "none" });
-                root.Methods.Add(new Method { Name = "utcnow", Signature = "none" });
                 root.Methods.Add(new Method { Name = "velocity", Signature = "template" });
                 root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
                 root.Methods.Add(new Method { Name = "in", Signature = "domain" });

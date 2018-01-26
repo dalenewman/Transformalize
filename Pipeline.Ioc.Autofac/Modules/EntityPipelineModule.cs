@@ -46,11 +46,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                        break;
+                    pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
+                    break;
                     default:
-                        pipeline = new DefaultPipeline(outputController, context);
-                        break;
+                    pipeline = new DefaultPipeline(outputController, context);
+                    break;
                 }
 
                 var provider = process.Output().Provider;
@@ -59,14 +59,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
-                // transform
+                // transforms
                 if (!process.ReadOnly) {
                     pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
                 }
 
-                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f=>!f.System)));
+                pipeline.Register(new CancelTransform(context));
+                pipeline.Register(new IncrementTransform(context));
+                pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
-                pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f=>f.Validators.Any())));
+                pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
                 if (!process.ReadOnly) {
                     pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
@@ -74,6 +76,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
                     }
                 }
+
+                pipeline.Register(new LogTransform(context));
 
                 // writer, TODO: rely on IOutputProvider instead
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);

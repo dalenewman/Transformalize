@@ -56,7 +56,7 @@ namespace Transformalize.Transforms {
                     row[output] = output.Convert(values[i]);
                 }
             }
-            Increment();
+            
             return row;
         }
 

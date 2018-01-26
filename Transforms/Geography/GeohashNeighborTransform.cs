@@ -47,7 +47,7 @@ namespace Transformalize.Transforms.Geography {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = NGeoHash.Portable.GeoHash.Neighbor((string)row[_input], _direction);
-            Increment();
+            
             return row;
         }
     }

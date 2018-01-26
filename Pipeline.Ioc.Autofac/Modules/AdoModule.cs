@@ -159,7 +159,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // PROCESS CALCULATED READER
                 builder.Register<IRead>(ctx => {
                     var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
-                    var outputContext = new OutputContext(calcContext, new Incrementer(calcContext));
+                    var outputContext = new OutputContext(calcContext);
                     var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
                     var capacity = outputContext.Entity.Fields.Count + outputContext.Entity.CalculatedFields.Count;
                     var rowFactory = new RowFactory(capacity, false, false);
@@ -169,7 +169,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // PROCESS CALCULATED FIELD WRITER
                 builder.Register<IWrite>(ctx => {
                     var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
-                    var outputContext = new OutputContext(calcContext, new Incrementer(calcContext));
+                    var outputContext = new OutputContext(calcContext);
                     var cf = ctx.ResolveNamed<IConnectionFactory>(outputContext.Connection.Key);
                     return new AdoCalculatedFieldUpdater(outputContext, _process, cf);
                 }).As<IWrite>();

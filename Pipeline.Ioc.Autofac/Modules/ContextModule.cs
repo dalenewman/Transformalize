@@ -50,7 +50,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // Process Output Context
             builder.Register(ctx => {
                 var context = ctx.Resolve<IContext>();
-                return new OutputContext(context, new Incrementer(context));
+                return new OutputContext(context);
             }).As<OutputContext>();
 
             // Connection and Process Level Output Context
@@ -64,7 +64,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // register output for connection
                 builder.Register(ctx => {
                     var context = ctx.ResolveNamed<IConnectionContext>(connection.Key);
-                    return new OutputContext(context, new Incrementer(context));
+                    return new OutputContext(context);
                 }).Named<OutputContext>(connection.Key);
 
                 //TODO, move JsonNetSerializer to JSON Provider, and Csv Serializer to Console or File Provider
@@ -77,18 +77,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
             foreach (var entity in _process.Entities) {
                 builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process, entity)).Named<IContext>(entity.Key);
 
-                builder.Register<IIncrement>(ctx => new Incrementer(ctx.ResolveNamed<IContext>(entity.Key))).Named<IIncrement>(entity.Key).InstancePerDependency();
-
                 builder.Register(ctx => {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
-                    return new InputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
+                    return new InputContext(context);
                 }).Named<InputContext>(entity.Key);
 
                 builder.Register<IRowFactory>((ctx, p) => new RowFactory(p.Named<int>("capacity"), entity.IsMaster, false)).Named<IRowFactory>(entity.Key);
 
                 builder.Register(ctx => {
                     var context = ctx.ResolveNamed<IContext>(entity.Key);
-                    return new OutputContext(context, ctx.ResolveNamed<IIncrement>(entity.Key));
+                    return new OutputContext(context);
                 }).Named<OutputContext>(entity.Key);
 
                 var connection = _process.Connections.First(c => c.Name == entity.Connection);

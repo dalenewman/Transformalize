@@ -75,15 +75,6 @@ namespace Transformalize.Transforms {
             return _warnings;
         }
 
-        public uint RowCount { get; set; }
-
-        public virtual void Increment() {
-            RowCount++;
-            if (RowCount % Context.Entity.LogInterval == 0) {
-                Context.Info(RowCount.ToString());
-            }
-        }
-
         /// <summary>
         /// A transformer's input can be entity fields, process fields, or the field the transform is in.
         /// </summary>
@@ -104,7 +95,7 @@ namespace Transformalize.Transforms {
 
             var name = string.Empty;
             if (Context.Operation.Parameter == string.Empty) {
-                if (Context.Operation.Parameters.Where(p=>p.Input).Any()) {
+                if (Context.Operation.Parameters.Where(p => p.Input).Any()) {
                     name = Context.Operation.Parameters.First(p => p.Input).Field;
                 }
             } else {

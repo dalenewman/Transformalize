@@ -79,7 +79,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = ((DateTime)row[_input]).Add(_amount);
-            Increment();
+            
             return row;
         }
 

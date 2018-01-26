@@ -39,7 +39,7 @@ namespace Transformalize.Providers.File.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Context.Operation.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
-            Increment();
+            
             return row;
         }
 

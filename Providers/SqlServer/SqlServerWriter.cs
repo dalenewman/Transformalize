@@ -124,7 +124,6 @@ namespace Transformalize.Providers.SqlServer {
 
                     }
 
-                    _output.Increment(Convert.ToUInt32(batch.Length));
                 }
 
                 if (_output.Entity.Inserts > 0) {

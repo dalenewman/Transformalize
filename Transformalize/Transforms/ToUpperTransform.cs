@@ -30,7 +30,7 @@ namespace Transformalize.Transforms {
         }
         public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].ToString().ToUpperInvariant();
-            Increment();
+            
             return row;
         }
 

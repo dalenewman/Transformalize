@@ -107,6 +107,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new ToLowerTransform(c), new ToLowerTransform().GetSignatures());
             RegisterTransform(builder, c => new MapTransform(c), new MapTransform().GetSignatures());
             RegisterTransform(builder, c => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
+            RegisterTransform(builder, c => new MultiplyTransform(c), new MultiplyTransform().GetSignatures());
+            RegisterTransform(builder, c => new NextTransform(c), new NextTransform().GetSignatures());
+            RegisterTransform(builder, c => new UtcNowTransform(c), new UtcNowTransform().GetSignatures());
+            RegisterTransform(builder, c => new RowNumberTransform(c), new RowNumberTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -115,7 +119,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-                    loadContext.Info($"Loading {name} transform");
+                    loadContext.Debug(()=>$"Loading {name} transform");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
@@ -128,9 +132,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
-            builder.Register((c, p) => new MultiplyTransform(p.Positional<IContext>(0))).Named<ITransform>("multiply");
-            builder.Register((c, p) => new NextTransform(p.Positional<IContext>(0))).Named<ITransform>("next");
-            builder.Register((c, p) => new UtcNowTransform(p.Positional<IContext>(0))).Named<ITransform>("now");
             builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
             builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
             builder.Register((c, p) => new RazorTransform(p.Positional<IContext>(0))).Named<ITransform>("razor");

@@ -61,7 +61,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _value;
-            Increment();
+            
             return row;
         }
 

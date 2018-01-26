@@ -21,7 +21,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = ((string[])row[_input]).Last();
-            Increment();
+            
             return row;
         }
 

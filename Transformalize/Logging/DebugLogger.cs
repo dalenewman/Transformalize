@@ -23,47 +23,47 @@ namespace Transformalize.Logging {
 
     public class DebugLogger : BaseLogger, IPipelineLogger {
 
-        const string FORMAT = "{0:u} | {1} | {2} | {3}";
-        const string CONTEXT = "{0} | {1} | {2} | {3}";
+        private const string Format = "{0:u} | {1} | {2} | {3}";
+        private const string Context = "{0} | {1} | {2}";
         public DebugLogger(LogLevel level = LogLevel.Info)
             : base(level) {
         }
 
         static string ForLog(IContext context) {
-            return string.Format(CONTEXT, context.ForLog);
+            return string.Format(Context, context.ForLog);
         }
 
         public void Debug(IContext context, Func<string> lamda) {
             if (DebugEnabled) {
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "debug", lamda());
+                System.Diagnostics.Debug.WriteLine(Format, DateTime.UtcNow, ForLog(context), "debug", lamda());
             }
         }
 
         public void Info(IContext context, string message, params object[] args) {
             if (InfoEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "info ", custom);
+                System.Diagnostics.Debug.WriteLine(Format, DateTime.UtcNow, ForLog(context), "info ", custom);
             }
         }
 
         public void Warn(IContext context, string message, params object[] args) {
             if (WarnEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "warn ", custom);
+                System.Diagnostics.Debug.WriteLine(Format, DateTime.UtcNow, ForLog(context), "warn ", custom);
             }
         }
 
         public void Error(IContext context, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "error", custom);
+                System.Diagnostics.Debug.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
             }
         }
 
         public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (ErrorEnabled) {
                 var custom = string.Format(message, args);
-                System.Diagnostics.Debug.WriteLine(FORMAT, DateTime.UtcNow, ForLog(context), "error", custom);
+                System.Diagnostics.Debug.WriteLine(Format, DateTime.UtcNow, ForLog(context), "error", custom);
                 System.Diagnostics.Debug.WriteLine(exception.Message);
                 System.Diagnostics.Debug.WriteLine(exception.StackTrace);
             }

@@ -31,7 +31,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].Equals(_default);
-            Increment();
+            
             return row;
         }
 

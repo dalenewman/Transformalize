@@ -56,7 +56,7 @@ namespace Transformalize.Transforms.Humanizer {
                     row[Context.Field] = 0.0d;
                     break;
             }
-            Increment();
+            
             return row;
         }
     }

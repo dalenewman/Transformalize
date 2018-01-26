@@ -16,16 +16,22 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class UtcNowTransform : BaseTransform {
-        public UtcNowTransform(IContext context) : base(context, "datetime") {}
+        public UtcNowTransform(IContext context = null) : base(context, "datetime") {
+            IsMissingContext();
+        }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = DateTime.UtcNow;
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("now") };
+        }
     }
 }

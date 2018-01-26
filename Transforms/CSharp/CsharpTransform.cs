@@ -35,7 +35,7 @@ namespace Transformalize.Transforms.CSharp {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _userCode(row.ToArray());
-            Increment();
+            
             return row;
         }
 

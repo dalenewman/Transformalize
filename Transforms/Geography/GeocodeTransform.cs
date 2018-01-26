@@ -94,7 +94,7 @@ namespace Transformalize.Transforms.Geography {
                 Parallel.ForEach(enumerated, (row) => {
                     _rateGate.WaitToProceed();
                     collected.Add(Operate(row));
-                    Increment();
+                    
                 });
                 foreach (var row in collected) {
                     yield return row;
@@ -143,7 +143,7 @@ namespace Transformalize.Transforms.Geography {
             } catch (Exception ex) {
                 Context.Error(ex.Message);
             }
-            Increment();
+            
             return row;
         }
 

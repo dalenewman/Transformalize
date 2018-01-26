@@ -48,7 +48,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register(ctx => {
 
                 var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
-                var outputContext = new OutputContext(context, new Incrementer(context));
+                var outputContext = new OutputContext(context);
 
                 IPipeline pipeline;
                 context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
@@ -72,6 +72,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 // register transforms
+                pipeline.Register(new IncrementTransform(context));
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
                 pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
                 pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));

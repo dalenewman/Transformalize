@@ -81,7 +81,7 @@ namespace Transformalize.Ioc.Autofac {
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
                     if (!providers.Contains(name))
                         continue;
-                    loadContext.Info($"Loading {name} provider");
+                    loadContext.Debug(()=>$"Loading {name} provider");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }

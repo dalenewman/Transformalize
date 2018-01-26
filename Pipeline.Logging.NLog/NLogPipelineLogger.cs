@@ -28,7 +28,7 @@ using NLogLevel = global::NLog.LogLevel;
 namespace Transformalize.Logging.NLog {
     public class NLogPipelineLogger : IPipelineLogger {
 
-        private const string Context = "{0} | {1} | {2} | {3}";
+        private const string Context = "{0} | {1} | {2}";
         private readonly Logger _log;
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Transformalize.Logging.NLog {
             LogManager.ReconfigExistingLoggers();
         }
 
-        static string ForLog(IContext context) {
+        private static string ForLog(IContext context) {
             return string.Format(Context, context.ForLog);
         }
 

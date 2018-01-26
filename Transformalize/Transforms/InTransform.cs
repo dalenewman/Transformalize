@@ -44,7 +44,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _set.Contains(row[_input]);
-            Increment();
+            
             return row;
         }
 

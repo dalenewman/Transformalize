@@ -40,7 +40,7 @@ namespace Transformalize.Providers.File.Transforms {
         public override IRow Operate(IRow row) {
             var value = (string)row[_input];
             row[Context.Field] = Path.HasExtension(value) ? Path.GetExtension(value) : string.Empty;
-            Increment();
+            
             return row;
         }
 

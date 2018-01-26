@@ -22,7 +22,6 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
     public enum FilterType {
         Exclude,
         Include

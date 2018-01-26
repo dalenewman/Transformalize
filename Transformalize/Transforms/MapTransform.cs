@@ -75,7 +75,7 @@ namespace Transformalize.Transforms {
             } else {
                 row[Context.Field] = _catchAll;
             }
-            Increment();
+            
             return row;
         }
 

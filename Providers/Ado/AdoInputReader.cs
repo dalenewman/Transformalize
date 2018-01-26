@@ -121,7 +121,6 @@ namespace Transformalize.Providers.Ado {
                     // just read
                     while (reader.Read()) {
                         _rowCount++;
-                        _input.Increment();
                         yield return _rowCreator.Create(reader, _fields);
                     }
 

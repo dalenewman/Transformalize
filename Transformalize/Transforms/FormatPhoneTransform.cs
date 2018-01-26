@@ -45,7 +45,7 @@ namespace Transformalize.Transforms {
             } else {
                 row[Context.Field] = clean;
             }
-            Increment();
+            
             return row;
         }
 

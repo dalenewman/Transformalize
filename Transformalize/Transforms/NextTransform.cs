@@ -16,36 +16,50 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class NextTransform : BaseTransform {
         private readonly DateTime _next;
 
-        public NextTransform(IContext context) : base(context,"datetime") {
+        public NextTransform(IContext context = null) : base(context, "datetime") {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("date")) {
                 return;
             }
 
-            if (IsMissing(context.Operation.DayOfWeek)) {
+            if (IsMissing(Context.Operation.DayOfWeek)) {
                 return;
             }
 
             var from = DateTime.Today;
-            var to = Enum.Parse(typeof(DayOfWeek), context.Operation.DayOfWeek, true);
+            var to = Enum.Parse(typeof(DayOfWeek), Context.Operation.DayOfWeek, true);
             var start = (int)from.DayOfWeek;
             var target = (int)to;
-            if (target <= start)
+            if (target <= start) {
                 target += 7;
+            }
+
             _next = from.AddDays(target - start);
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _next;
-            Increment();
+            
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("next") {
+                    Parameters = new List<OperationParameter> {new OperationParameter("dayofweek")}
+                }
+            };
+        }
     }
 }

@@ -157,7 +157,11 @@ namespace Transformalize.Impl {
             foreach (var transform in Transforms) {
                 transform.Dispose();
             }
+            foreach (var validator in Validators) {
+                validator.Dispose();
+            }
             Transforms.Clear();
+            Validators.Clear();
             Reader = null;
             Writer = null;
             Updater = null;

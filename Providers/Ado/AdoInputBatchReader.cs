@@ -52,7 +52,6 @@ namespace Transformalize.Providers.Ado {
                 foreach (var batch in _reader.Read().Partition(_input.Entity.ReadSize)) {
                     foreach(var row in _fieldsReader.Read(batch)) {
                         _rowCount++;
-                        _input.Increment();
                         yield return row;
                     }
                 }

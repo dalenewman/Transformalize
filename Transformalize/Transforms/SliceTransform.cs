@@ -74,7 +74,7 @@ namespace Transformalize.Transforms {
                 var split = value.Split(_separator);
                 row[Context.Field] = string.Join(Context.Operation.Separator, Slice(split, _start, _end, _step));
             }
-            Increment();
+            
             return row;
         }
 

@@ -22,9 +22,8 @@ using Transformalize.Logging;
 namespace Transformalize.Providers.Trace {
 
     public class TraceLogger : BaseLogger, IPipelineLogger {
-
-        const string Format = "{0:u} | {1} | {2} | {3}";
-        const string Context = "{0} | {1} | {2} | {3}";
+        private const string Format = "{0:u} | {1} | {2} | {3}";
+        private const string Context = "{0} | {1} | {2}";
         public TraceLogger(LogLevel level = LogLevel.Info)
             : base(level) {
         }
