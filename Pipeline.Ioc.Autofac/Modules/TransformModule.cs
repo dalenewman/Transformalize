@@ -37,7 +37,6 @@ using Transformalize.Transforms.CSharp;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Html;
-using Transformalize.Transforms.Humanizer;
 using Transformalize.Transforms.JavaScript;
 using Transformalize.Transforms.Jint;
 using Transformalize.Transforms.Json;
@@ -67,7 +66,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            var loadContext = new PipelineContext(_logger, _process); builder.Properties["ShortHand"] = _shortHand;
+            var loadContext = new PipelineContext(_logger, _process);
+            builder.Properties["ShortHand"] = _shortHand;
             builder.Properties["Methods"] = _methods;
 
             // new method so transform author can define shorthand signature(s)
@@ -170,26 +170,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Include)).Named<ITransform>("include");
             builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Exclude)).Named<ITransform>("exclude");
 
-            // Humanizer
-            builder.Register((c, p) => new CamelizeTransform(p.Positional<IContext>(0))).Named<ITransform>("camelize");
-            builder.Register((c, p) => new FromMetricTransform(p.Positional<IContext>(0))).Named<ITransform>("frommetric");
-            builder.Register((c, p) => new FromRomanTransform(p.Positional<IContext>(0))).Named<ITransform>("fromroman");
-            builder.Register((c, p) => new HumanizeTransform(p.Positional<IContext>(0))).Named<ITransform>("humanize");
-            builder.Register((c, p) => new DehumanizeTransform(p.Positional<IContext>(0))).Named<ITransform>("dehumanize");
-            builder.Register((c, p) => new HyphenateTransform(p.Positional<IContext>(0))).Named<ITransform>("hyphenate");
-            builder.Register((c, p) => new HyphenateTransform(p.Positional<IContext>(0))).Named<ITransform>("dasherize");
-            builder.Register((c, p) => new OrdinalizeTransform(p.Positional<IContext>(0))).Named<ITransform>("ordinalize");
-            builder.Register((c, p) => new PascalizeTransform(p.Positional<IContext>(0))).Named<ITransform>("pascalize");
-            builder.Register((c, p) => new PluralizeTransform(p.Positional<IContext>(0))).Named<ITransform>("pluralize");
-            builder.Register((c, p) => new SingularizeTransform(p.Positional<IContext>(0))).Named<ITransform>("singularize");
-            builder.Register((c, p) => new TitleizeTransform(p.Positional<IContext>(0))).Named<ITransform>("titleize");
-            builder.Register((c, p) => new ToMetricTransform(p.Positional<IContext>(0))).Named<ITransform>("tometric");
-            builder.Register((c, p) => new ToOrdinalWordsTransform(p.Positional<IContext>(0))).Named<ITransform>("toordinalwords");
-            builder.Register((c, p) => new ToRomanTransform(p.Positional<IContext>(0))).Named<ITransform>("toroman");
-            builder.Register((c, p) => new ToWordsTransform(p.Positional<IContext>(0))).Named<ITransform>("towords");
-            builder.Register((c, p) => new UnderscoreTransform(p.Positional<IContext>(0))).Named<ITransform>("underscore");
-            builder.Register((c, p) => new BytesTransform(p.Positional<IContext>(0))).Named<ITransform>("bytes");
-            builder.Register((c, p) => new ByteSizeTransform(p.Positional<IContext>(0))).Named<ITransform>("bytesize");
             builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0))).Named<ITransform>("dateadd");
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
             builder.Register((c, p) => new FromRegexTransform(p.Positional<IContext>(0))).Named<ITransform>("fromregex");

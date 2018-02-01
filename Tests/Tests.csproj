@@ -124,7 +124,6 @@
     <Compile Include="FormatXmlTransform.cs" />
     <Compile Include="FromLengthsTransform.cs" />
     <Compile Include="FromXmlTransform.cs" />
-    <Compile Include="Humanize.cs" />
     <Compile Include="IIfTransform.cs" />
     <Compile Include="InTransform.cs" />
     <Compile Include="Inventory.cs" />
@@ -257,10 +256,6 @@
     <ProjectReference Include="..\Transforms\Html\Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Html</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\Humanizer\Humanizer.csproj">
-      <Project>{73c145b3-6dc2-4424-958d-f5ec989b3eb7}</Project>
-      <Name>Humanizer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\JavaScript\JavaScript.csproj">
       <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>

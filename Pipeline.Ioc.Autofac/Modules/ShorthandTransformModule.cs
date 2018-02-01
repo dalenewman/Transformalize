@@ -194,12 +194,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(new Signature {
-                    Name = "humanize",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "format", Value="[default]" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
                     Name = "web",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" },
@@ -263,24 +257,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "include", Signature = "any" });
                 root.Methods.Add(new Method { Name = "exclude", Signature = "any" });
                 root.Methods.Add(new Method { Name = "slugify", Signature = "none" });
-                root.Methods.Add(new Method { Name = "camelize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "dasherize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "hyphenate", Signature = "none" });
-                root.Methods.Add(new Method { Name = "frommetric", Signature = "none" });
-                root.Methods.Add(new Method { Name = "fromroman", Signature = "none" });
-                root.Methods.Add(new Method { Name = "humanize", Signature = "humanize" });
-                root.Methods.Add(new Method { Name = "dehumanize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "ordinalize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "pascalize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "pluralize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "singularize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "titleize", Signature = "none" });
-                root.Methods.Add(new Method { Name = "tometric", Signature = "none" });
-                root.Methods.Add(new Method { Name = "toordinalwords", Signature = "none" });
-                root.Methods.Add(new Method { Name = "toroman", Signature = "none" });
-                root.Methods.Add(new Method { Name = "towords", Signature = "none" });
-                root.Methods.Add(new Method { Name = "underscore", Signature = "none" });
-                root.Methods.Add(new Method { Name = "bytes", Signature = "none" });
                 root.Methods.Add(new Method { Name = "dateadd", Signature = "dateadd" });
                 root.Methods.Add(new Method { Name = "iif", Signature = "iif" });
                 root.Methods.Add(new Method { Name = "geohashencode", Signature = "geohash" });
@@ -307,7 +283,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
                 root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
                 root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
-                root.Methods.Add(new Method { Name = "bytesize", Signature = "units" });
                 root.Methods.Add(new Method { Name = "append", Signature = "value" });
                 root.Methods.Add(new Method { Name = "prepend", Signature = "value" });
                 root.Check();

@@ -28,7 +28,6 @@ using Transformalize.Contracts;
 using System.IO;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
-using Transformalize.Transforms.Jint;
 using Transformalize.Impl;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -104,7 +103,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-                if (process.Output().Provider == Constants.DefaultSetting) {
+                if (process.Output().Provider == Constants.DefaultSetting || process.Output().Provider == "internal") {
                     try {
                         Console.WindowHeight = Console.WindowHeight + 1 - 1;
                         Console.Title = process.Name;

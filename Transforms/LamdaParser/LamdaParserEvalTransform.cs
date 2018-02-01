@@ -18,8 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.LamdaParser {
