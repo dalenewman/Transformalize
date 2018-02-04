@@ -263,10 +263,6 @@
       <Project>{36724dd4-0a61-494b-abcb-4fe845306eb8}</Project>
       <Name>Compression</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\CSharp\CSharp.csproj">
-      <Project>{91e95639-0ea2-42f6-9109-faf3daec08ca}</Project>
-      <Name>CSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\DateMath\DateMath.csproj">
       <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
       <Name>DateMath</Name>

@@ -152,10 +152,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Src { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Width { get; set; }
 
-        [Cfg(value=0)]
+        [Cfg(value = 0)]
         public int Height { get; set; }
 
         [Cfg(value = "")]
@@ -274,6 +274,11 @@ namespace Transformalize.Configuration {
         [Cfg(value = 1000)]
         public int Time { get; set; }
 
+        /// <summary>
+        /// Run c# code in remote app domain (inherited from field level).
+        /// </summary>
+        [Cfg(value = false)]
+        public bool Remote { get; set; }
 
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));

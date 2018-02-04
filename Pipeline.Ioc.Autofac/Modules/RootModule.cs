@@ -107,7 +107,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     try {
                         Console.WindowHeight = Console.WindowHeight + 1 - 1;
                         Console.Title = process.Name;
-                        if (!System.Environment.CommandLine.Contains("TESTWINDOW")) {
+                        if (!System.Environment.CommandLine.Contains("TESTWINDOW") && !System.Environment.CommandLine.Contains("TESTPLATFORM")) {
                             process.Output().Provider = "console";
                         }
                     } catch (Exception) {

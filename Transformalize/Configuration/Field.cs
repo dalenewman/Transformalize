@@ -617,6 +617,12 @@ namespace Transformalize.Configuration {
         [Cfg(value = null)]
         public object Max { get; set; }
 
+        /// <summary>
+        /// Run c# transforms in remote app domain? (to avoid memory leak).  It's slower, but shouldn't leak.
+        /// </summary>
+        [Cfg(value = false)]
+        public bool Remote { get; set; }
+
         public Parameter ToFormParameter() {
             return new Parameter {
                 Name = Name,

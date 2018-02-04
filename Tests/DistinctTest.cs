@@ -28,6 +28,10 @@ namespace Tests {
         public void TryDistinct() {
             const string xml = @"
     <add name='TestDistinct'>
+      <connections>
+        <add name='input' provider='internal' />
+        <add name='output' provider='internal' />
+      </connections>
       <entities>
         <add name='Dates'>
           <rows>

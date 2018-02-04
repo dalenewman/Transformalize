@@ -22,7 +22,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Providers.Console;
-using Transformalize.Transforms.CSharp;
+// using Transformalize.Transforms.CSharp;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
@@ -45,7 +45,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).As<IContext>();
 
             // Register CSharp Host
-            builder.Register((ctx, p) => new CSharpHost(ctx.Resolve<IContext>(), new CSharpCodeWriter(ctx.Resolve<IContext>()))).Named<IHost>("cs");
+            // builder.Register((ctx, p) => new CSharpHost(ctx.Resolve<IContext>(), new CSharpCodeWriter(ctx.Resolve<IContext>()))).Named<IHost>("cs");
 
             // Process Output Context
             builder.Register(ctx => {

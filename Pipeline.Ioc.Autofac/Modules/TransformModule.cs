@@ -33,7 +33,7 @@ using Transformalize.Providers.Razor;
 using Transformalize.Providers.Web;
 using Transformalize.Transforms;
 using Transformalize.Transforms.Compression;
-using Transformalize.Transforms.CSharp;
+// using Transformalize.Transforms.CSharp;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Html;
@@ -221,15 +221,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 
-            builder.Register<ITransform>((c, p) => {
-                var context = p.Positional<IContext>(0);
-                if (c.ResolveNamed<IHost>("cs").Start()) {
-                    return new CsharpTransform(context);
-                }
-                context.Error("Unable to register csharp transform");
-                return new NullTransform(context);
-            }).Named<ITransform>("cs");
-            builder.Register((c, p) => c.ResolveNamed<ITransform>("cs", p)).Named<ITransform>("csharp");
+            //builder.Register<ITransform>((c, p) => {
+            //    var context = p.Positional<IContext>(0);
+            //    if (c.ResolveNamed<IHost>("cs").Start()) {
+            //        return new CsharpTransform(context);
+            //    }
+            //    context.Error("Unable to register csharp transform");
+            //    return new NullTransform(context);
+            //}).Named<ITransform>("cs");
+            //builder.Register((c, p) => c.ResolveNamed<ITransform>("cs", p)).Named<ITransform>("csharp");
 
 
             builder.Register((c, p) => {
