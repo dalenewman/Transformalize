@@ -29,15 +29,7 @@ namespace Transformalize.Configuration {
 
         private string _type;
         private string _length;
-        private int _precision;
-        private int _scale;
         private string _runOperator;
-
-        public string PrecisionFormat { get; private set; } = "000000000";
-
-        public string ScaleFormat { get; private set; } = "000000000";
-
-        public string DecimalFormat { get; private set; } = "0000000000.000000000;-000000000.000000000";
 
         /// <summary>
         /// **Required**
@@ -196,32 +188,13 @@ namespace Transformalize.Configuration {
         /// Optional. Default is `18`
         /// </summary>
         [Cfg(value = 18)]
-        public int Precision {
-            get { return _precision; }
-            set {
-                _precision = value;
-                var count = _precision - _scale;
-                if (count <= 0) return;
-                PrecisionFormat = new string('0', count);
-                DecimalFormat = "0" + PrecisionFormat + "." + ScaleFormat + ";-" + PrecisionFormat + "." + ScaleFormat;
-            }
-        }
+        public int Precision { get; set; }
 
         /// <summary>
         /// Optional. Default is `9`
         /// </summary>
         [Cfg(value = 9)]
-        public int Scale {
-            get { return _scale; }
-            set {
-                _scale = value;
-                var count = _precision - _scale;
-                if (count <= 0) return;
-                PrecisionFormat = new string('0', _precision - _scale);
-                ScaleFormat = new string('0', _scale);
-                DecimalFormat = "0" + PrecisionFormat + "." + ScaleFormat + ";-" + PrecisionFormat + "." + ScaleFormat;
-            }
-        }
+        public int Scale { get; set; }
 
         /// <summary>
         /// Optional.
@@ -620,7 +593,7 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Run c# transforms in remote app domain? (to avoid memory leak).  It's slower, but shouldn't leak.
         /// </summary>
-        [Cfg(value = false)]
+        [Cfg(value = true)]
         public bool Remote { get; set; }
 
         public Parameter ToFormParameter() {

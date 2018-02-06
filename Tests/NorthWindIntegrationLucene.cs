@@ -25,10 +25,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
-using Transformalize.Context;
-using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging;
 using Transformalize.Providers.SqlServer;
 
 namespace Tests {
@@ -49,7 +46,7 @@ namespace Tests {
             Provider = "lucene",
             Folder = @"c:\temp\lucene_northwind"
         };
-        
+
         [TestMethod]
         [Ignore]
         public void Lucene_Integration() {
@@ -74,7 +71,7 @@ namespace Tests {
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
 
-            using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder,"Order Details"))), true)) {
+            using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "NorthWindStar"))), true)) {
                 Assert.AreEqual(2155, reader.NumDocs());
             }
 
@@ -85,7 +82,7 @@ namespace Tests {
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
 
-            using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "Order Details"))), true)) {
+            using (var reader = IndexReader.Open(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "NorthWindStar"))), true)) {
                 Assert.AreEqual(2155, reader.NumDocs());
             }
 
@@ -102,8 +99,14 @@ namespace Tests {
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
 
-            using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder,"Order Details"))), true)) {
-                var hits = searcher.Search(new TermQuery(new Term("TflId", "1025339")),null, 1);
+            using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "NorthWindStar"))), true)) {
+                var booleanQuery = new BooleanQuery
+                {
+                    {new TermQuery(new Term("OrderDetailsOrderID", NumericUtils.IntToPrefixCoded(10253))), Occur.MUST},
+                    {new TermQuery(new Term("OrderDetailsProductID", NumericUtils.IntToPrefixCoded(39))), Occur.MUST}
+                };
+
+                var hits = searcher.Search(booleanQuery, null, 1);
                 Assert.AreEqual(1, hits.TotalHits);
                 var hit = searcher.Doc(hits.ScoreDocs[0].Doc);
                 Assert.AreEqual(15.0M, Convert.ToDecimal(hit.Get("OrderDetailsUnitPrice")));
@@ -123,9 +126,9 @@ namespace Tests {
             Assert.AreEqual(200, response.Code);
             Assert.AreEqual(string.Empty, response.Message);
 
-            using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "Orders"))), true)) {
-                var hits = searcher.Search(new TermQuery(new Term("OrdersOrderID", NumericUtils.IntToPrefixCoded(10254))), 1);
-                Assert.AreEqual(1, hits.TotalHits);
+            using (var searcher = new IndexSearcher(FSDirectory.Open(new DirectoryInfo(Path.Combine(OutputConnection.Folder, "NorthWindStar"))), true)) {
+                var hits = searcher.Search(new TermQuery(new Term("OrderDetailsOrderID", NumericUtils.IntToPrefixCoded(10254))), 1);
+                Assert.AreNotEqual(0, hits.TotalHits);
                 var hit = searcher.Doc(hits.ScoreDocs[0].Doc);
                 Assert.AreEqual("VICTE", hit.Get("OrdersCustomerID"));
                 Assert.AreEqual(20.11M, Convert.ToDecimal(hit.Get("OrdersFreight")));

@@ -274,12 +274,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = 1000)]
         public int Time { get; set; }
 
-        /// <summary>
-        /// Run c# code in remote app domain (inherited from field level).
-        /// </summary>
-        [Cfg(value = false)]
-        public bool Remote { get; set; }
-
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }

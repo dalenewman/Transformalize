@@ -67,7 +67,7 @@ namespace Transformalize.Providers.Lucene {
                     abstractField = new NumericField(field.Alias, s, field.SearchType.Index).SetDoubleValue((double)value);
                     break;
                 case "decimal":
-                    abstractField = new LuceneField(field.Alias, ((decimal)value).ToString(field.Field.DecimalFormat), s, field.SearchType.Index ? LuceneField.Index.NOT_ANALYZED_NO_NORMS : LuceneField.Index.NO, LuceneField.TermVector.NO);
+                    abstractField = new LuceneField(field.Alias, ((decimal)value).ToString(LuceneConversion.CalculateDecimalFormat(field.Field.Precision, field.Field.Scale)), s, field.SearchType.Index ? LuceneField.Index.NOT_ANALYZED_NO_NORMS : LuceneField.Index.NO, LuceneField.TermVector.NO);
                     break;
                 case "float":
                 case "single":

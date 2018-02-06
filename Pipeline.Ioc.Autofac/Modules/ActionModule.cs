@@ -18,6 +18,7 @@
 using System.Linq;
 using Autofac;
 using Cfg.Net.Reader;
+using Quartz.Collection;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -35,24 +36,12 @@ using WebReader = Cfg.Net.Reader.WebReader;
 namespace Transformalize.Ioc.Autofac.Modules {
 
     /// <summary>
-    /// The `ActionModule` is only for actions embedded in a host process:
-    /// 
-    /// * copy
-    /// * move
-    /// * web
-    /// * tfl
-    /// * run
-    /// * open
-    /// * print
-    /// * log
-    /// * exit
-    /// * archive
-    /// * form-commands
-    /// * humanize-labels
-    /// 
+    /// Register native actions
     /// </summary>
     public class ActionModule : Module {
-        readonly Process _process;
+
+        private readonly Process _process;
+        private readonly HashSet<string> _types = new HashSet<string> { "copy", "move", "archive", "replace", "print", "log", "web", "wait", "form-commands", "tfl", "run", "open", "exit" };
 
         public ActionModule() { }
 
@@ -65,10 +54,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 return;
 
             foreach (var action in _process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
-                builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+                if (_types.Contains(action.Type)) {
+                    builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+                }
             }
             foreach (var action in _process.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
-                builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+                if (_types.Contains(action.Type)) {
+                    builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+                }
             }
         }
 

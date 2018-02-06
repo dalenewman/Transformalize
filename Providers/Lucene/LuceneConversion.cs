@@ -26,6 +26,16 @@ namespace Transformalize.Providers.Lucene {
 
     public static class LuceneConversion {
 
+        public static string DefaultDecimalFormat { get; } = "0000000000.000000000;-000000000.000000000";
+
+        public static string CalculateDecimalFormat(int precision, int scale) {
+            var count = precision - scale;
+            if (count <= 0)
+                return DefaultDecimalFormat;
+
+            return "0" + new string('0', count) + "." + new string('0', scale) + ";-" + new string('0', count) + "." + new string('0', scale);
+        }
+
         private static readonly Dictionary<string, int> _typeSort = new Dictionary<string, int> {
             {"bool", SortField.STRING},
             {"boolean",SortField.STRING},
@@ -53,7 +63,7 @@ namespace Transformalize.Providers.Lucene {
             {"uint64",SortField.INT}
         };
 
-        private static readonly Dictionary<string, Func<Field, string, object, Query>> _typeSearch = new Dictionary<string, Func<Configuration.Field,string, object, Query>> {
+        private static readonly Dictionary<string, Func<Field, string, object, Query>> _typeSearch = new Dictionary<string, Func<Configuration.Field, string, object, Query>> {
             {"bool", (f,n,v)=>new TermQuery(new Term(n,(bool)v?"1":"0"))},
             {"boolean",(f,n,v)=>new TermQuery(new Term(n,(bool)v?"1":"0"))},
             {"byte",(f,n,v)=>NumericRangeQuery.NewIntRange(n,Convert.ToInt32(v),Convert.ToInt32(v),true,true)},
@@ -61,7 +71,7 @@ namespace Transformalize.Providers.Lucene {
             {"char",(f,n,v)=>new TermQuery(new Term(n,v.ToString()))},
             {"date",(f,n,v)=>new TermQuery(new Term(n,DateTools.DateToString((DateTime)v,DateTools.Resolution.MILLISECOND)))},
             {"datetime",(f,n,v)=>new TermQuery(new Term(n,DateTools.DateToString((DateTime)v,DateTools.Resolution.MILLISECOND)))},
-            {"decimal",(f,n,v)=>new TermQuery(new Term(n,((decimal)v).ToString(f.DecimalFormat)))},
+            {"decimal",(f,n,v)=>new TermQuery(new Term(n,((decimal)v).ToString(CalculateDecimalFormat(f.Precision, f.Scale))))},
             {"double",(f,n,v)=>NumericRangeQuery.NewDoubleRange(n,Convert.ToDouble(v),Convert.ToDouble(v),true,true)},
             {"float",(f,n,v)=>NumericRangeQuery.NewFloatRange(n,Convert.ToSingle(v),Convert.ToSingle(v),true,true)},
             {"guid", (f,n,v)=>new TermQuery(new Term(n,v.ToString()))},
