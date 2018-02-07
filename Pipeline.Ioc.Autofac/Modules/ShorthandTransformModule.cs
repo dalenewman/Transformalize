@@ -216,9 +216,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 root.Methods.Add(new Method { Name = "contains", Signature = "value" });
 
-
-                //root.Methods.Add(new Method { Name = "cs", Signature = "script" });
-                //root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
                 root.Methods.Add(new Method { Name = "is", Signature = "type" });
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 

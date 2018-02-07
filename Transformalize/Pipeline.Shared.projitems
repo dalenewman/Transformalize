@@ -76,7 +76,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IExecute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IHasField.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Contracts\IHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IInitializer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IInputValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IMapReader.cs" />
@@ -178,7 +177,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullDeleter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullEntityInitializer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullHost.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullMasterUpdater.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullParser.cs" />
