@@ -22,7 +22,6 @@ REM nuget push "c:\temp\modules\Transformalize.Provider.SqlServer.0.2.10-beta.nu
 REM nuget push "c:\temp\modules\Transformalize.Provider.SqlCe.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Web.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Scheduler.Quartz.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
-REM nuget push "c:\temp\modules\Transformalize.Transform.Jint.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Transform.JavaScript.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 
 REM nuget push "c:\temp\modules\Transformalize.Transform.Humanizer.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json

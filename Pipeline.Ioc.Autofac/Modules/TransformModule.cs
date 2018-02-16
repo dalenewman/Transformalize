@@ -36,9 +36,7 @@ using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Html;
 using Transformalize.Transforms.JavaScript;
-using Transformalize.Transforms.Jint;
 using Transformalize.Transforms.Json;
-using Transformalize.Transforms.LamdaParser;
 using Transformalize.Transforms.Vehicle;
 using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
@@ -117,7 +115,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-                    loadContext.Debug(()=>$"Loading {name} transform");
+                    loadContext.Debug(() => $"Loading {name} transform");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
@@ -203,7 +201,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
             builder.Register((c, p) => new FromJsonTransform(p.Positional<IContext>(0), o => JsonConvert.SerializeObject(o, Formatting.None))).Named<ITransform>("fromjson");
 
-            builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
 
@@ -224,12 +221,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 var strict = new HashSet<string>(new[] { "int", "int32", "string", "bool", "boolean", "double" });
                 switch (context.Field.Engine) {
                     case "auto":
-                        var fields = context.Entity.GetFieldMatches(context.Operation.Script);
-                        return fields.All(f => strict.Contains(f.Type)) ?
-                            (ITransform)new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>()) :
-                            new JintTransform(c.Resolve<IReader>(), context);
+                        if (c.IsRegisteredWithName<ITransform>("jint")) {
+                            var fields = context.Entity.GetFieldMatches(context.Operation.Script);
+                            return fields.All(f => strict.Contains(f.Type)) ? (ITransform)new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>()) : c.ResolveNamed<ITransform>("jint");
+                        } else {
+                            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
+                        }
+
                     case "jint":
-                        return new JintTransform(c.Resolve<IReader>(), context);
+                        if (c.IsRegisteredWithName<ITransform>("jint")) {
+                            return c.ResolveNamed<ITransform>("jint");
+                        } else {
+                            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
+                        }
                     default:
                         return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
                 }

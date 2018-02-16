@@ -17,7 +17,6 @@
 #endregion
 using Cfg.Net;
 using Transformalize.Contracts;
-using Transformalize.Transforms;
 
 namespace Transformalize.Configuration {
     public class Filter : CfgNode, IHasField {

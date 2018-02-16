@@ -145,6 +145,7 @@ namespace Transformalize.Configuration.Ext {
         /// <param name="p"></param>
         private static void AutomaticMaps(Process p) {
 
+            // create map from comma delimited list
             foreach (var field in p.GetAllFields().Where(f => f.Map.Contains(","))) {
                 if (p.Maps.All(m => m.Name != field.Map)) {
                     var map = new Map { Name = field.Map };

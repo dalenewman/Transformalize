@@ -283,17 +283,9 @@
       <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
       <Name>JavaScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Jint\Jint.csproj">
-      <Project>{22a96c5b-e0a3-449b-9f90-71c3db2504e7}</Project>
-      <Name>Jint</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Json\Json.csproj">
       <Project>{98f2bf35-376a-4dfa-baef-cc491410219f}</Project>
       <Name>Json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\LamdaParser\LamdaParser.csproj">
-      <Project>{1776297e-5b89-4d60-9597-8c793299bcfd}</Project>
-      <Name>LamdaParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
       <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
