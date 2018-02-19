@@ -255,10 +255,6 @@
       <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
       <Name>JavaScript</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Vehicle\Vehicle.csproj">
-      <Project>{3e9b5d05-5d7c-4b08-9310-1e3c0a196239}</Project>
-      <Name>Vehicle</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
       <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
       <Name>Velocity</Name>

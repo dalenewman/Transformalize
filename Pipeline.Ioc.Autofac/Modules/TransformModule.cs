@@ -37,7 +37,6 @@ using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Html;
 using Transformalize.Transforms.JavaScript;
 using Transformalize.Transforms.Json;
-using Transformalize.Transforms.Vehicle;
 using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
 using Transformalize.Transforms.Globalization;
@@ -189,12 +188,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
             builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
             builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
-
-            /* VIN, Vehicle Identification Number, note: you get red intellisense here because vin library is portable */
-            builder.Register((c, p) => new VinValidateTransform(p.Positional<IContext>(0))).Named<ITransform>("isvin");
-            builder.Register((c, p) => new VinValidateTransform(p.Positional<IContext>(0))).Named<ITransform>("vinisvalid");
-            builder.Register((c, p) => new VinGetWorldManufacturerTransform(p.Positional<IContext>(0))).Named<ITransform>("vingetworldmanufacturer");
-            builder.Register((c, p) => new VinGetModelYearTransform(p.Positional<IContext>(0))).Named<ITransform>("vingetmodelyear");
 
             // wip
             builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");

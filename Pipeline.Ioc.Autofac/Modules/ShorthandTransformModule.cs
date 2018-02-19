@@ -269,12 +269,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "datemath", Signature = "expression" });
                 root.Methods.Add(new Method { Name = "eval", Signature = "expression" });
 
-                // VIN, Vehicle Identification Number
-                root.Methods.Add(new Method { Name = "isvin", Signature = "none" });
-                root.Methods.Add(new Method { Name = "vinisvalid", Signature = "none" });
-                root.Methods.Add(new Method { Name = "vingetworldmanufacturer", Signature = "none" });
-                root.Methods.Add(new Method { Name = "vingetmodelyear", Signature = "none" });
-
                 root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
                 root.Methods.Add(new Method { Name = "fromaddress", Signature = "key" });
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
