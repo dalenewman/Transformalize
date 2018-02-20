@@ -64,6 +64,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             var loadContext = new PipelineContext(_logger, _process);
             builder.Properties["ShortHand"] = _shortHand;
             builder.Properties["Methods"] = _methods;
+            builder.Properties["Process"] = _process;
 
             // new method so transform author can define shorthand signature(s)
             RegisterTransform(builder, c => new AbsTransform(c), new AbsTransform().GetSignatures());
@@ -209,29 +210,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");
 
-            builder.Register((c, p) => {
-                var context = p.Positional<IContext>(0);
-                var strict = new HashSet<string>(new[] { "int", "int32", "string", "bool", "boolean", "double" });
-                switch (context.Field.Engine) {
-                    case "auto":
-                        if (c.IsRegisteredWithName<ITransform>("jint")) {
-                            var fields = context.Entity.GetFieldMatches(context.Operation.Script);
-                            return fields.All(f => strict.Contains(f.Type)) ? (ITransform)new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>()) : c.ResolveNamed<ITransform>("jint");
-                        } else {
-                            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
-                        }
-
-                    case "jint":
-                        if (c.IsRegisteredWithName<ITransform>("jint")) {
-                            return c.ResolveNamed<ITransform>("jint");
-                        } else {
-                            return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
-                        }
-                    default:
-                        return new JavascriptTransform(new ChakraCoreJsEngineFactory(), context, c.Resolve<IReader>());
-                }
-            }).Named<ITransform>("js");
-            builder.Register((c, p) => c.ResolveNamed<ITransform>("js", p)).Named<ITransform>("javascript");
+            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("js");
+            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("javascript");
+            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("chakra");
 
         }
 

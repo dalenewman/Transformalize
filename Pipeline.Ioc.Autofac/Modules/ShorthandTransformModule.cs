@@ -267,7 +267,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
                 root.Methods.Add(new Method { Name = "fromjson", Signature = "none" });
                 root.Methods.Add(new Method { Name = "datemath", Signature = "expression" });
-                root.Methods.Add(new Method { Name = "eval", Signature = "expression" });
 
                 root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
                 root.Methods.Add(new Method { Name = "fromaddress", Signature = "key" });

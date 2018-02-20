@@ -50,7 +50,7 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td>Access (32-bit)</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access (32-bit)</a></td>
                             <td style="color:green">BETA</td>
                             <td style="color:green">BETA</td>
                         </tr>
@@ -73,7 +73,7 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td>Lucene</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Lucene">Lucene</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
@@ -103,14 +103,19 @@ It works with many data sources:
                             <td style="color:green">BETA</td>
                         </tr>
                         <tr>
-                            <td title="Humans">Humans</td>
+                            <td>Humans</td>
                             <td style="color:green">BETA</td>
                             <td style="color:green"></td>
                         </tr>
                         <tr>
-                            <td title="RethinkDB">RethinkDB</td>
+                            <td>RethinkDB</td>
                             <td style="color:green"></td>
                             <td style="color:green">WIP</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green"></td>
                         </tr>
                     </tbody>
                 </table>

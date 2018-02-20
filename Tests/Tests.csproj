@@ -52,14 +52,6 @@
       <HintPath>..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -129,7 +121,6 @@
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="MathTransforms.cs" />
-    <Compile Include="NorthWindIntegrationLucene.cs" />
     <Compile Include="NorthWindIntegrationMySql.cs" />
     <Compile Include="NorthWindIntegrationPostgreSql.cs" />
     <Compile Include="NorthWindIntegrationSqlite.cs" />
@@ -190,10 +181,6 @@
     <ProjectReference Include="..\Providers\Kml\Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
       <Name>Kml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Lucene\Lucene.csproj">
-      <Project>{e84d0cb1-8de6-413b-b2f1-2a8e6f7a994c}</Project>
-      <Name>Lucene</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
@@ -296,10 +283,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\NorthWindSqlServerToElastic.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\NorthWindSqlServerToLucene.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

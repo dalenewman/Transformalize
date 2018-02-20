@@ -79,6 +79,7 @@ namespace Transformalize {
             "isempty",
             "ismatch",
             "javascript",
+            "jint",
             "join",
             "js",
             "last",

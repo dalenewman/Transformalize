@@ -19,7 +19,9 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
+using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
+using Transformalize.Providers.Console;
 using Transformalize.Providers.SqlServer;
 
 namespace Tests {
@@ -46,6 +48,7 @@ namespace Tests {
         public void SqlServer_Integration() {
 
             var builder = new ContainerBuilder();
+            builder.RegisterModule(new TransformModule(new Process { Name = "Scheduler" }, new ConsoleLogger(LogLevel.Debug)));
             builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();

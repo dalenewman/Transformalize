@@ -26,8 +26,11 @@ using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac {
 
-
     public static class TransformFactory {
+
+        public static HashSet<string> JsStrictTypeSet = new HashSet<string>(new[] { "int", "int32", "string", "bool", "boolean", "double" });
+        public static HashSet<string> JsMethods = new HashSet<string>(new[] { "js", "javascript" });
+        public static HashSet<string> JsEngines = new HashSet<string>(new[] { "auto", "jint" });
 
         public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
             var transforms = new List<ITransform>();
@@ -36,6 +39,20 @@ namespace Transformalize.Ioc.Autofac {
                 var field = f;
 
                 foreach (var t in field.Transforms) {
+
+                    // Javascript Switcher supports limited types, use Jint if unsupported types and jint is registered (it's a plugin)
+                    if (JsMethods.Contains(t.Method) && JsEngines.Contains(field.Engine)) {
+
+                        if (ctx.IsRegisteredWithName<ITransform>("jint")) {
+                            var types = context.Entity.GetFieldMatches(t.Script).Select(mf => mf.Type).Distinct();
+                            if (types.Any(type => !JsStrictTypeSet.Contains(type))) {
+                                t.Method = "jint";
+                                context.Warn($"Un-supported types found. Switching javascript engine to jint for field {field.Alias}");
+                            }
+                        }
+
+                    }
+
                     var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                     if (TryTransform(ctx, transformContext, out var add)) {
                         transforms.Add(add);
@@ -59,7 +76,9 @@ namespace Transformalize.Ioc.Autofac {
         public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
             transform = null;
             var success = true;
+
             if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
+
                 var t = ShouldRunTransform(ctx, context);
 
                 foreach (var warning in t.Warnings()) {

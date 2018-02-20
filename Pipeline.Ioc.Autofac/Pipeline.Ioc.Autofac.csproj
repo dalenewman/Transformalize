@@ -63,20 +63,12 @@
       <HintPath>..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="JavaScriptEngineSwitcher.ChakraCore, Version=2.0.3.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
       <HintPath>..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\lib\net451\JavaScriptEngineSwitcher.ChakraCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="JavaScriptEngineSwitcher.Core, Version=2.1.2.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
       <HintPath>..\packages\JavaScriptEngineSwitcher.Core.2.1.2\lib\net451\JavaScriptEngineSwitcher.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -153,7 +145,6 @@
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
-    <Compile Include="Modules\LuceneModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
     <Compile Include="Modules\EntityModule.cs" />
     <Compile Include="Modules\EntityPipelineModule.cs" />
@@ -194,10 +185,6 @@
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
       <Name>File</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Lucene\Lucene.csproj">
-      <Project>{E84D0CB1-8DE6-413B-B2F1-2A8E6F7A994C}</Project>
-      <Name>Lucene</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
