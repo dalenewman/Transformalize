@@ -35,12 +35,12 @@ namespace Transformalize.Ioc.Autofac {
             var readers = new List<IRead>();
             var searchOption = (SearchOption)Enum.Parse(typeof(SearchOption), input.Connection.SearchOption, true);
 
-            input.Debug(() => $"Searching folder: {input.Connection.Folder}");
+            input.Info($"Searching folder: {input.Connection.Folder}");
             var files = new DirectoryInfo(input.Connection.Folder).GetFiles(input.Connection.SearchPattern, searchOption).OrderBy(f => f.CreationTime).ToArray();
 
-            input.Debug(() => $"Found {files.Length} files.");
+            input.Info($"Found {files.Length} files.");
             foreach (var file in files) {
-                input.Debug(() => $"Found file: {file.Name}");
+                input.Info($"Found file: {file.Name}");
 
                 var context = new PipelineContext(input.Logger, input.Process, input.Entity, input.Field, input.Operation);
 

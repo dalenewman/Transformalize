@@ -127,8 +127,15 @@ namespace Transformalize.Transforms {
                 return _received;
 
             var index = Context.Field.Transforms.IndexOf(Context.Operation);
-            if (index <= 0)
-                return SingleInput().Type;
+            if (index <= 0) {
+                if (Context.Field.IsCalculated && Context.Operation.Parameters.Any()) {
+                    _received = Context.Operation.Parameters.First().AsField(Context.Process).Type;
+                    return _received;
+                }
+
+                _received = SingleInput().Type;
+                return _received;
+            }
 
             var previous = Context.Field.Transforms[index - 1];
 

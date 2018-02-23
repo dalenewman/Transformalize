@@ -15,38 +15,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Transformalize.Configuration;
+
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class AppendTransform : BaseTransform {
 
-        private readonly Field _input;
-        private readonly bool _isField;
-        private readonly Field _field;
-
-        public AppendTransform(IContext context) : base(context, "string") {
-            _input = SingleInput();
-            _isField = context.Entity.FieldMatcher.IsMatch(context.Operation.Value);
-            if (_isField) {
-                _field = context.Entity.GetField(context.Operation.Value);
+    public class AppendTransform : StringTransform {
+        private readonly StringTransform _internal;
+        public AppendTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
             }
-            Run = context.Operation.Value != Constants.DefaultSetting;
 
-            if (Run) {
-                if (Received() != "string") {
-                    Warn($"Appending to a {Received()} type in {context.Field.Alias} converts it to a string.");
-                }
-            } else {
-                Warn($"Appending nothing in {context.Field.Alias}.");
-            }
+            Context.Entity.TryGetField(Context.Operation.Value, out var field);
+            _internal = field == null ? (StringTransform)new AppendValueTransform(Context) : new AppendFieldTransform(Context, field);
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = row[_input] + (_isField ? row[_field].ToString() : Context.Operation.Value);
-            return row;
+            return _internal.Operate(row);
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("append") {
+                    Parameters = new List<OperationParameter> {new OperationParameter("value")}
+                }
+            };
+        }
     }
-
 }

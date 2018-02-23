@@ -133,6 +133,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendFieldTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />

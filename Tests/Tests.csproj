@@ -194,10 +194,6 @@
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
       <Name>Rethink</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\Solr\Solr.csproj">
-      <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
-      <Name>Solr</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\SQLite\SQLite.csproj">
       <Project>{33af802d-7061-4bba-8619-d08790de5364}</Project>
       <Name>SQLite</Name>

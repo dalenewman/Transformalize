@@ -568,7 +568,7 @@ namespace Transformalize.Configuration {
         }
 
         public bool TryGetField(string aliasOrName, out Field field) {
-            if (string.IsNullOrEmpty(aliasOrName)) {
+            if (string.IsNullOrEmpty(aliasOrName) || aliasOrName == Constants.DefaultSetting) {
                 field = null;
                 return false;
             }

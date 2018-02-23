@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F97BFD9-DB95-483F-BF26-6ADA42D2D334}"
 	ProjectSection(SolutionItems) = preProject
@@ -38,8 +38,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File", "Providers\File\File.csproj", "{93B94D0E-4287-46D3-82EF-F81C636574DD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excel", "Providers\Excel\Excel.csproj", "{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Solr", "Providers\Solr\Solr.csproj", "{0B7C9925-B90C-4E40-974A-EF1862D8728C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elastic", "Providers\Elastic\Elastic.csproj", "{2B364BAE-3D5B-467D-AA19-20EC929D14EA}"
 EndProject
@@ -92,11 +90,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Providers\Elastic\Transformalize.Provider.Elastic.nuspec = Providers\Elastic\Transformalize.Provider.Elastic.nuspec
 		Providers\Excel\Transformalize.Provider.Excel.nuspec = Providers\Excel\Transformalize.Provider.Excel.nuspec
 		Providers\File\Transformalize.Provider.File.nuspec = Providers\File\Transformalize.Provider.File.nuspec
-		Providers\Lucene\Transformalize.Provider.Lucene.nuspec = Providers\Lucene\Transformalize.Provider.Lucene.nuspec
 		Providers\MySql\Transformalize.Provider.MySql.nuspec = Providers\MySql\Transformalize.Provider.MySql.nuspec
 		Providers\OpenXml\Transformalize.Provider.OpenXml.nuspec = Providers\OpenXml\Transformalize.Provider.OpenXml.nuspec
 		Providers\PostgreSql\Transformalize.Provider.PostgreSql.nuspec = Providers\PostgreSql\Transformalize.Provider.PostgreSql.nuspec
-		Providers\Solr\Transformalize.Provider.Solr.nuspec = Providers\Solr\Transformalize.Provider.Solr.nuspec
 		Providers\SqlCe\Transformalize.Provider.SqlCe.nuspec = Providers\SqlCe\Transformalize.Provider.SqlCe.nuspec
 		Providers\SQLite\Transformalize.Provider.SQLite.nuspec = Providers\SQLite\Transformalize.Provider.SQLite.nuspec
 		Providers\SqlServer\Transformalize.Provider.SqlServer.nuspec = Providers\SqlServer\Transformalize.Provider.SqlServer.nuspec
@@ -246,18 +242,6 @@ Global
 		{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16}.Release|x64.Build.0 = Release|Any CPU
 		{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16}.Release|x86.ActiveCfg = Release|Any CPU
 		{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16}.Release|x86.Build.0 = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|x64.Build.0 = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Debug|x86.Build.0 = Debug|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|x64.ActiveCfg = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|x64.Build.0 = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|x86.ActiveCfg = Release|Any CPU
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C}.Release|x86.Build.0 = Release|Any CPU
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -628,7 +612,6 @@ Global
 		{D0E681F8-9694-4D89-B2D9-2D94862467A8} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{C0CE8961-4137-4CA6-AD0E-0D69A55A3B16} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
-		{0B7C9925-B90C-4E40-974A-EF1862D8728C} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{2B364BAE-3D5B-467D-AA19-20EC929D14EA} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{16042794-2E30-42D8-A6F9-F5D8020F9EF3} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}

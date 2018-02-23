@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -29,11 +31,13 @@ namespace Transformalize.Providers.File {
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
         private readonly FileInfo _fileInfo;
+        private Field _fileField;
 
         public DelimitedFileReader(InputContext context, IRowFactory rowFactory) {
             _context = context;
             _rowFactory = rowFactory;
             _fileInfo = new FileInfo(_context.Connection.File);
+            context.Entity.TryGetField("TflFile", out _fileField);
         }
 
         public IEnumerable<IRow> Read() {
@@ -70,6 +74,10 @@ namespace Transformalize.Providers.File {
                                 row[field] = field.Convert(values[i]);
                             }
                         }
+
+                        if (_fileField != null) {
+                            row[_fileField] = _context.Connection.File;
+                        }
                         yield return row;
                     }
                     ++current;
@@ -82,6 +90,8 @@ namespace Transformalize.Providers.File {
             if (engine.ErrorManager.HasErrors) {
                 foreach (var error in engine.ErrorManager.Errors) {
                     _context.Error(error.ExceptionInfo.Message);
+                    _context.Error($"Error processing line {error.LineNumber} in {_context.Connection.File}.");
+                    _context.Warn(error.RecordString.Replace("{","{{").Replace("}","}}"));
                 }
             }
 

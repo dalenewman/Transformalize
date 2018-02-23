@@ -1,7 +1,6 @@
 cd c:\code\Transformalize
 nuget push "c:\temp\modules\Transformalize.0.3.3-beta.nupkg" -source https://api.nuget.org/v3/index.json
 
-REM nuget push "c:\temp\modules\Transformalize.Provider.Lucene.0.3.2-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Trace.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
@@ -16,7 +15,6 @@ REM nuget push "c:\temp\modules\Transformalize.Provider.File.0.2.10-beta.nupkg" 
 REM nuget push "c:\temp\modules\Transformalize.Provider.MySql.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.SSAS.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.PostgreSql.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
-REM nuget push "c:\temp\modules\Transformalize.Provider.Solr.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.SQLite.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.SqlServer.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.SqlCe.0.2.10-beta.nupkg" -source https://api.nuget.org/v3/index.json

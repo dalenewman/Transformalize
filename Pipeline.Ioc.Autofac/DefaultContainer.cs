@@ -59,7 +59,6 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new InternalModule(process).Configure);
             builder.RegisterCallback(new AdoModule(process).Configure);
 
-            if (providers.Contains("solr")) { builder.RegisterCallback(new SolrModule(process).Configure); }
             if (providers.Contains("elasticsearch")) { builder.RegisterCallback(new ElasticModule(process).Configure); }
             if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
             if (providers.Contains("file")) { builder.RegisterCallback(new FileModule(process).Configure); }

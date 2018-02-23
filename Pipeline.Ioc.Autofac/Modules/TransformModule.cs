@@ -198,8 +198,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
 
-
-
             builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("append");
             builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prepend");
 

@@ -92,10 +92,6 @@
     <Reference Include="RethinkDb">
       <HintPath>..\packages\rethinkdb-net.0.12.1.0\lib\net45\RethinkDb.dll</HintPath>
     </Reference>
-    <Reference Include="SolrNet, Version=0.5.0.1001, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SolrNet.0.5.0.1001\lib\SolrNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -141,7 +137,6 @@
     <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\FolderModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
-    <Compile Include="Modules\SolrModule.cs" />
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
@@ -197,10 +192,6 @@
     <ProjectReference Include="..\Providers\Razor\Razor.csproj">
       <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>
       <Name>Razor</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Solr\Solr.csproj">
-      <Project>{0b7c9925-b90c-4e40-974a-ef1862d8728c}</Project>
-      <Name>Solr</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\SQLite\SQLite.csproj">
       <Project>{33af802d-7061-4bba-8619-d08790de5364}</Project>

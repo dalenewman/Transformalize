@@ -15,40 +15,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
-    public class PrependTransform : BaseTransform {
+    public class PrependTransform : StringTransform {
 
         private readonly Field _input;
-        private readonly bool _isField;
         private readonly Field _field;
 
-        public PrependTransform(IContext context) : base(context, "string") {
-            _input = SingleInput();
-            _isField = context.Entity.FieldMatcher.IsMatch(context.Operation.Value);
-            if (_isField) {
-                _field = context.Entity.GetField(context.Operation.Value);
+        public PrependTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
             }
-            Run = context.Operation.Value != Constants.DefaultSetting;
 
-            if (Run) {
-                if (Received() != "string") {
-                    Warn($"Prepending to a {Received()} type in {context.Field.Alias} converts it to a string.");
-                }
-            } else {
-                Warn($"Prepending nothing in {context.Field.Alias}.");
+            _input = SingleInput();
+
+            Context.Entity.TryGetField(Context.Operation.Value, out _field);
+
+            if (Received() != "string") {
+                Warn($"Prepending to a {Received()} type in {Context.Field.Alias} converts it to a string.");
             }
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = (_isField ? row[_field].ToString() : Context.Operation.Value) + row[_input];
-            
+            row[Context.Field] = (_field == null ? Context.Operation.Value : GetString(row, _field)) + row[_input];
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("prepend") {
+                    Parameters = new List<OperationParameter> {new OperationParameter("value")}
+                }
+            };
+        }
     }
 
 }
