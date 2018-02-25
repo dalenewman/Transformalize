@@ -318,8 +318,12 @@ namespace Transformalize.Configuration {
         /// <summary>
         /// Added for mail provider
         /// </summary>
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool UseSsl { get; set; }
+
+        // how long to maintain a consistent view of data for scrolling
+        [Cfg(value = 60)]
+        public double ScrollWindow { get; set; }
 
         protected override void PostValidate() {
             if (Command.Contains(" ")) {

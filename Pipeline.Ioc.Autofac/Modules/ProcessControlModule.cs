@@ -69,24 +69,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 var controller = new ProcessController(pipelines, context);
 
                 // output initialization
-                if (_process.Mode == "init") {
-                    var output = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
-                    switch (outputConnection.Provider) {
-                        case "mysql":
-                        case "postgresql":
-                        case "sqlite":
-                        case "access":
-                        case "sqlce":
-                        case "sqlserver":
-                        case "elasticsearch":
-                        case "lucene":
-                            controller.PreActions.Add(ctx.Resolve<IInitializer>());
-                            break;
-                        default:
-                            output.Debug(() => $"The {outputConnection.Provider} provider does not support initialization.");
-                            break;
-                    }
-
+                if (_process.Mode == "init" && ctx.IsRegistered<IInitializer>()) {
+                    controller.PreActions.Add(ctx.Resolve<IInitializer>());
                 }
 
                 // flatten, should be the first post-action

@@ -54,7 +54,6 @@ namespace Transformalize.Ioc.Autofac {
             container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new ConsoleModule(Process).Configure);
-            container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new WebModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);
@@ -77,7 +76,6 @@ namespace Transformalize.Ioc.Autofac {
             container.RegisterCallback(new ContextModule(Process).Configure);
 
             container.RegisterCallback(new AdoModule(Process).Configure);
-            container.RegisterCallback(new ElasticModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
             container.RegisterCallback(new ExcelModule(Process).Configure);
 

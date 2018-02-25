@@ -68,7 +68,7 @@ It works with many data sources:
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Elasticsearch</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Elasticsearch">Elasticsearch</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>

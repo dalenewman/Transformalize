@@ -59,10 +59,6 @@
       <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="JavaScriptEngineSwitcher.ChakraCore, Version=2.0.3.0, Culture=neutral, PublicKeyToken=c608b2a8cc9e4472, processorArchitecture=MSIL">
       <HintPath>..\packages\JavaScriptEngineSwitcher.ChakraCore.2.0.3\lib\net451\JavaScriptEngineSwitcher.ChakraCore.dll</HintPath>
       <Private>True</Private>
@@ -137,7 +133,6 @@
     <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\FolderModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
-    <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\AdoModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
@@ -168,10 +163,6 @@
     <ProjectReference Include="..\Providers\Ado\Ado.csproj">
       <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
       <Name>Ado</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Elastic\Elastic.csproj">
-      <Project>{2b364bae-3d5b-467d-aa19-20ec929d14ea}</Project>
-      <Name>Elastic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Excel\Excel.csproj">
       <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>

@@ -48,10 +48,6 @@
       <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -125,7 +121,6 @@
     <Compile Include="NorthWindIntegrationPostgreSql.cs" />
     <Compile Include="NorthWindIntegrationSqlite.cs" />
     <Compile Include="NorthWindIntegrationSqlServer.cs" />
-    <Compile Include="NorthWindIntegrationSqlServerThenElastic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RazorTransform.cs" />
     <Compile Include="ShouldRun.cs" />
@@ -165,10 +160,6 @@
     <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
       <Name>Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Elastic\Elastic.csproj">
-      <Project>{2b364bae-3d5b-467d-aa19-20ec929d14ea}</Project>
-      <Name>Elastic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Excel\Excel.csproj">
       <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>
