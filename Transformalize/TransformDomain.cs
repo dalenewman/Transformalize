@@ -88,6 +88,7 @@ namespace Transformalize {
             "lower",
             "map",
             "match",
+            "matching",
             "matchcount",
             "multiply",
             "next",

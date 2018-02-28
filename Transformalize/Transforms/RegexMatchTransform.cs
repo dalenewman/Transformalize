@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
@@ -27,14 +28,14 @@ namespace Transformalize.Transforms {
     /// Pulls just the matched part out of any of the time (first hit)
     /// </summary>
     public class RegexMatchTransform : StringTransform {
-        private readonly Regex _regex;
         private readonly Field[] _input;
+        private readonly Regex _regex;
 
         public RegexMatchTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
                 return;
             }
-            
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -44,27 +45,35 @@ namespace Transformalize.Transforms {
             }
 
             _input = MultipleInput();
+
 #if NETS10
             _regex = new Regex(Context.Operation.Pattern);
 #else
             _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
 #endif
+
         }
 
         public override IRow Operate(IRow row) {
             foreach (var field in _input) {
-                var match = _regex.Match(row[field].ToString());
-                if (!match.Success) continue;
+                var match = _regex.Match(GetString(row, field));
+                if (!match.Success)
+                    continue;
                 row[Context.Field] = match.Value;
-                break;
+                return row;
             }
-            
+
+            row[Context.Field] = Context.Field.Convert(Context.Field.Default);
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             return new[] {
-                new OperationSignature("match") {Parameters =  new List<OperationParameter>{ new OperationParameter("pattern")}}
+                new OperationSignature("match") {
+                    Parameters =  new List<OperationParameter> {
+                        new OperationParameter("pattern")
+                    }
+                }
             };
         }
     }

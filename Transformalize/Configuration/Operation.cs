@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using Cfg.Net;
+using Cfg.Net.Parsers;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
@@ -195,6 +196,10 @@ namespace Transformalize.Configuration {
         public string WebMethod { get; set; }
 
         [Cfg(value = "first", domain = "first,all", ignoreCase = true, toLower = true)]
+        public string Mode { get; set; }
+
+        [Obsolete("Use Mode instead.")]
+        [Cfg(value = "first", domain = "first,all", ignoreCase = true, toLower = true)]
         public string XmlMode { get; set; }
 
         [Cfg]
@@ -293,6 +298,14 @@ namespace Transformalize.Configuration {
         protected override void Validate() {
             if (!TransformDomain.HashSet.Contains(Method) && !ProducerSet().Contains(Method) && !ValidatorSet().Contains(Method)) {
                 Warn($"The {Method} method is unknown.");
+            }
+        }
+
+        protected override void PreValidate() {
+            // while XmlMode is still available
+            if (XmlMode == "all" && Mode == "first") {
+                Mode = "all";
+                Warn("XmlMode is being phased out.  Please use Mode instead.");
             }
         }
     }

@@ -103,6 +103,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new ToLowerTransform(c), new ToLowerTransform().GetSignatures());
             RegisterTransform(builder, c => new MapTransform(c), new MapTransform().GetSignatures());
             RegisterTransform(builder, c => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
+            RegisterTransform(builder, c => new RegexMatchingTransform(c), new RegexMatchingTransform().GetSignatures());
             RegisterTransform(builder, c => new MultiplyTransform(c), new MultiplyTransform().GetSignatures());
             RegisterTransform(builder, c => new NextTransform(c), new NextTransform().GetSignatures());
             RegisterTransform(builder, c => new UtcNowTransform(c), new UtcNowTransform().GetSignatures());
@@ -203,7 +204,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
-                return context.Operation.XmlMode == "all" || context.Field.Engine != "auto" ?
+                return context.Operation.Mode == "all" || context.Field.Engine != "auto" ?
                     new Transforms.Xml.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
                     new Transforms.FromXmlTransform(context) as ITransform;
             }).Named<ITransform>("fromxml");

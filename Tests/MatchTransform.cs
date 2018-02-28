@@ -41,6 +41,7 @@ namespace Tests {
             <add name='MatchField1' t='copy(Field1).match(3[0-9]{3}(?=@))' default='None' />
             <add name='MatchAnyField' t='copy(Field1,Field2).match(3[0-9]{3}(?=@))' default='None' />
             <add name='MatchCount' type='int' t='copy(Field1).matchCount(Vitel)' />
+            <add name='Matching' t='copy(Field1).matching([0-9a-zA-Z])' />
           </calculated-fields>
         </add>
       </entities>
@@ -55,7 +56,9 @@ namespace Tests {
             Assert.AreEqual("3114", output[0][cf[1]]);
             Assert.AreEqual("None", output[1][cf[0]]);
             Assert.AreEqual("None", output[1][cf[1]]);
+            
             Assert.AreEqual(1, output[1][cf[2]]);
+            Assert.AreEqual("Local3114tolocalextfc5d1", output[0][cf[3]]);
 
         }
     }
