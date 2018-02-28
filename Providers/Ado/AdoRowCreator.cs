@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -52,7 +53,11 @@ namespace Transformalize.Providers.Ado {
                     _errors[i] = reader.GetFieldType(i) != _typeMap[fields[i].Type];
 
                     if (_errors[i]) {
-                        _conversions[i] = fields[i].Convert;
+                        if (fields[i].Transforms.Any() && fields[i].Transforms.First().Method == "convert") {
+                            _conversions[i] = o => o;  // the user has set a conversion
+                        } else {
+                            _conversions[i] = fields[i].Convert;
+                        }
                         if (fields[i].Type != "char") {
                             if (_context.Connection.Provider != "sqlite") {
                                 _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
