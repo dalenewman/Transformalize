@@ -86,7 +86,7 @@ namespace Transformalize.Providers.Web {
                         var row = _rowFactory.Create();
                         for (var i = 0; i < _context.InputFields.Length && i < tokens.Length; i++) {
                             var field = _context.InputFields[i];
-                            row[field] = field.Convert(tokens[i]);
+                            row[field] = tokens[i];
                         }
                         yield return row;
                     }

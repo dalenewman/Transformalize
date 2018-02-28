@@ -16,31 +16,60 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
-using Transformalize.Configuration;
+using System.Globalization;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class ConvertTransform : BaseTransform {
-        private readonly Field _input;
+        private readonly Func<object, object> _convert;
+        private readonly string _type;
 
-        public ConvertTransform(IContext context = null) : base(context, context?.Field.Type ?? "object") {
+        public ConvertTransform(IContext context = null) : base(context, (context == null ? "object" : (context.Operation.Type == Constants.DefaultSetting ? context.Field.Type : context.Operation.Type))) {
             if (IsMissingContext()) {
                 return;
             }
-            _input = SingleInput();
+
+            _type = Constants.TypeSet().Contains(Context.Operation.Type) ? Context.Operation.Type : Context.Field.Type;
+
+            if (_type.StartsWith("date") && Context.Operation.Format != string.Empty) {
+                _convert = (v) => DateTime.ParseExact(v.ToString(), Context.Operation.Format, CultureInfo.InvariantCulture);
+            } else {
+                _convert = (v) => Constants.ObjectConversionMap[_type](v);
+            }
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = Context.Field.Convert(row[_input]);
-            
-            return row;
+            throw new NotImplementedException("This shouldn't be called directly.");
+        }
+
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            var tried = false;
+            var input = SingleInput();
+            foreach (var row in rows) {
+                if (tried) {
+                    row[Context.Field] = _convert(row[input]);
+                } else {
+                    try {
+                        row[Context.Field] = _convert(row[input]);
+                        tried = true;
+                    } catch (Exception) {
+                        Context.Error($"Couldn't convert {row[input]} to {_type}.");
+                        yield break;
+                    }
+                }
+
+                yield return row;
+            }
+
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             yield return new OperationSignature("convert") {
-                Parameters = new List<OperationParameter>(1){
-                    new OperationParameter("type", Constants.DefaultSetting)
+                Parameters = new List<OperationParameter>(2){
+                    new OperationParameter("type", Constants.DefaultSetting),
+                    new OperationParameter("format", "")
                 }
             };
         }

@@ -39,17 +39,17 @@ namespace Transformalize.Provider.Internal {
             var rows = new List<IRow>();
             foreach (var row in _input.Entity.Rows) {
 
-                var typed = _rowFactory.Create();
+                var stringRow = _rowFactory.Create();
                 foreach (var field in fields) {
                     if (row.Map.ContainsKey(field.Name)) {
-                        typed[field] = field.Convert(row[field.Name]);
+                        stringRow[field] = row[field.Name];
                     } else {
                         if (_missing.Add(field.Name)) {
                             _input.Warn($"An internal row in {_input.Entity.Alias} is missing the field {field.Name}.");
                         }
                     }
                 }
-                rows.Add(typed);
+                rows.Add(stringRow);
             }
             _input.Entity.Hits = rows.Count;
             return rows;

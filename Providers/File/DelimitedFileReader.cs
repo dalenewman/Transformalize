@@ -68,11 +68,7 @@ namespace Transformalize.Providers.File {
                         var row = _rowFactory.Create();
                         for (var i = 0; i < _context.InputFields.Length; i++) {
                             var field = _context.InputFields[i];
-                            if (field.Type == "string") {
-                                row[field] = values[i] as string;
-                            } else {
-                                row[field] = field.Convert(values[i]);
-                            }
+                            row[field] = values[i];
                         }
 
                         if (_fileField != null) {

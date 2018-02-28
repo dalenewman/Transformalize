@@ -21,8 +21,10 @@ using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 using Transformalize.Impl;
 using Transformalize.Nulls;
+using Transformalize.Transforms;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -46,14 +48,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":
-                    pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                    break;
+                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
+                        break;
                     default:
-                    pipeline = new DefaultPipeline(outputController, context);
-                    break;
+                        pipeline = new DefaultPipeline(outputController, context);
+                        break;
                 }
 
-                var provider = process.Output().Provider;
+                var output = process.Output();
 
                 // TODO: rely on IInputProvider's Read method instead (after every provider has one)
                 pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
@@ -67,12 +69,20 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 pipeline.Register(new CancelTransform(context));
                 pipeline.Register(new IncrementTransform(context));
                 pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
+
+                if (output.Provider.In("internal", "file", Constants.DefaultSetting)) {
+                    foreach (var field in entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
+                        context.Debug(() => "Automatically adding convert transform");
+                        pipeline.Register(new ConvertTransform(new PipelineContext(context.Logger, context.Process, entity, field, new Operation { Method = "convert" })));
+                    }
+                }
+
                 pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
                 pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
                 if (!process.ReadOnly) {
                     pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                    if (provider == "sqlserver") {
+                    if (output.Provider == "sqlserver") {
                         pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
                     }
                 }
