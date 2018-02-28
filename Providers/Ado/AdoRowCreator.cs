@@ -29,6 +29,7 @@ namespace Transformalize.Providers.Ado {
         private readonly IRowFactory _rowFactory;
         private bool[] _errors;
         private readonly Dictionary<string, Type> _typeMap;
+        private readonly List<Func<object, object>> _conversions = new List<Func<object, object>>();
 
         public AdoRowCreator(IConnectionContext context, IRowFactory rowFactory) {
             _errors = null;
@@ -41,31 +42,55 @@ namespace Transformalize.Providers.Ado {
 
             var fieldCount = Math.Min(reader.FieldCount, fields.Length);
             var row = _rowFactory.Create();
+            for (var i = 0; i < fieldCount; i++) {
+                _conversions.Add(null);
+            }
 
             if (_errors == null) {  // check types
                 _errors = new bool[fields.Length];
                 for (var i = 0; i < fieldCount; i++) {
                     _errors[i] = reader.GetFieldType(i) != _typeMap[fields[i].Type];
-                    if (!_errors[i])
-                        continue;
 
-                    if (fields[i].Type != "char") {
-                        if (_context.Connection.Provider != "sqlite") {
-                            _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
+                    if (_errors[i]) {
+                        _conversions[i] = fields[i].Convert;
+                        if (fields[i].Type != "char") {
+                            if (_context.Connection.Provider != "sqlite") {
+                                _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
+                            }
                         }
+                    } else {
+                        _conversions[i] = o => o;
+                    }
+
+                }
+                for (var i = 0; i < fieldCount; i++) {
+                    if (reader.IsDBNull(i))
+                        continue;
+                    if (_errors[i]) {
+                        var value = reader.GetValue(i);
+                        try {
+                            row[fields[i]] = _conversions[i](value);
+                        } catch (FormatException) {
+                            _context.Error($"Could not convert value {value} in field {fields[i].Alias} to {fields[i].Type}");
+                        }
+
+                    } else {
+                        row[fields[i]] = reader.GetValue(i);
+                    }
+                }
+            } else {
+                for (var i = 0; i < fieldCount; i++) {
+                    if (reader.IsDBNull(i))
+                        continue;
+                    if (_errors[i]) {
+                        row[fields[i]] = _conversions[i](reader.GetValue(i));
+                    } else {
+                        row[fields[i]] = reader.GetValue(i);
                     }
                 }
             }
 
-            for (var i = 0; i < fieldCount; i++) {
-                if (reader.IsDBNull(i))
-                    continue;
-                if (_errors[i]) {
-                    row[fields[i]] = fields[i].Convert(reader.GetValue(i));
-                } else {
-                    row[fields[i]] = reader.GetValue(i);
-                }
-            }
+
             return row;
         }
 
