@@ -47,27 +47,33 @@ namespace Transformalize.Providers.Ado {
                 _conversions.Add(null);
             }
 
+            var warned = false;
+
             if (_errors == null) {  // check types
                 _errors = new bool[fields.Length];
                 for (var i = 0; i < fieldCount; i++) {
-                    _errors[i] = reader.GetFieldType(i) != _typeMap[fields[i].Type];
+                    var inputType = reader.GetFieldType(i);
+                    _errors[i] = inputType != _typeMap[fields[i].Type];
 
                     if (_errors[i]) {
                         if (fields[i].Transforms.Any() && fields[i].Transforms.First().Method == "convert") {
                             _conversions[i] = o => o;  // the user has set a conversion
                         } else {
                             _conversions[i] = fields[i].Convert;
+                            _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, inputType);
+                            warned = true;
                         }
-                        if (fields[i].Type != "char") {
-                            if (_context.Connection.Provider != "sqlite") {
-                                _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, reader.GetFieldType(i));
-                            }
-                        }
+
                     } else {
                         _conversions[i] = o => o;
                     }
 
                 }
+
+                if (warned) {
+                    _context.Warn("Remove warnings with convert transforms ( e.g. t='convert(datetime,YYYYmmdd)' )");
+                }
+
                 for (var i = 0; i < fieldCount; i++) {
                     if (reader.IsDBNull(i))
                         continue;
