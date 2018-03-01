@@ -65,9 +65,8 @@
       <HintPath>..\..\..\packages\Cfg-NET.Reader.0.3.3\lib\net45\Cfg.Net.Reader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.2.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.9\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.11\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
     <Reference Include="CfgNet, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.0.10.2\lib\net452\CfgNet.dll</HintPath>
@@ -82,8 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Elasticsearch.Net.5.5.0\lib\net45\Elasticsearch.Net.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\packages\Elasticsearch.Net.5.6.0\lib\net45\Elasticsearch.Net.dll</HintPath>
     </Reference>
     <Reference Include="ExcelDataReader, Version=3.1.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\ExcelDataReader.3.1.0\lib\net45\ExcelDataReader.dll</HintPath>
@@ -92,6 +90,9 @@
     <Reference Include="Flurl, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Flurl.2.5.0\lib\net40\Flurl.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Humanizer">
+      <HintPath>..\..\..\..\..\Transformalize.Transform.Humanizer\src\Transformalize.Transform.Humanizer\bin\$(Configuration)\Humanizer.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -165,105 +166,98 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize, Version=0.3.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Ado.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Console">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.Elastic, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.Ado, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Elastic.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Excel, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.Elasticsearch">
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Provider.Elasticsearch\src\Transformalize.Provider.Elasticsearch\bin\$(Configuration)\Transformalize.Provider.Elasticsearch.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.Excel, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Excel.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Excel.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.File, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.File, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.File.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.File.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.GeoJson, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.GeoJson, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Kml, Version=0.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.Kml, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.MySql, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.MySql, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.OpenXml, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.OpenXml, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Solr, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.Solr">
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Provider.Solr\src\Transformalize.Provider.Solr\bin\$(Configuration)\Transformalize.Provider.Solr.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Provider.SqlServer, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Solr.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.Web, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Trace">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Trace.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.Web, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.Compression, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.Web.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Compression.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Compression">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Compression.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.CSharp">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.DateMath, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.DateMath.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.DateMath.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Geography">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Geography.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.Globalization">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Globalization.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.Html, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.Geography, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Html.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Geography.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Humanizer, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.Globalization, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Humanizer.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Globalization.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.JavaScript">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.JavaScript.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.Jint, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.Html, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Html.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Json">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Transform.LamdaParser, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Transform.Humanizer, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.LamdaParser.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Transform.Humanizer\src\Transformalize.Transform.Humanizer\bin\$(Configuration)\Transformalize.Transform.Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Vehicle">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Vehicle.dll</HintPath>
+    <Reference Include="Transformalize.Transform.JavaScript, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.JavaScript.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Velocity">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Velocity.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Jint">
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Transform.Jint\src\Transformalize.Transform.Jint\bin\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Xml">
-      <HintPath>..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Xml.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Json, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.LambdaParser, Version=0.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Transform.LambdaParser\src\Transformalize.Transform.LambdaParser\bin\$(Configuration)\Transformalize.Transform.LambdaParser.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Velocity, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Velocity.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Transform.Xml, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -389,6 +383,9 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PrecompiledApp.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\Cfg\Report.cshtml" />

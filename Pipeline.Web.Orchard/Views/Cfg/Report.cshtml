@@ -91,6 +91,13 @@
         padding: 0 3px 3px 4px !important;
     }
 
+    button.multiselect {
+        -ms-border-bottom-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+        -ms-border-top-left-radius: 0 !important;
+        border-top-left-radius: 0 !important;
+    }
+
     #busy {
         position: fixed;
         left: 46%;
@@ -113,6 +120,7 @@
     .form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
         padding: 0px 20px 0px 40px;
     }
+
 </style>
 
 <div class="row">
@@ -159,8 +167,8 @@
                 foreach (var parameter in parameters) {
                     <div class="form-group form-group-sm">
                         <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
-                        <div class="input-group input-group-sm">
-                            <div class="input-group-addon">@parameter.Label</div>
+                        <div class="input-group input-group-sm" style="padding-top: 2px;">
+                            <span class="input-group-addon">@parameter.Label</span>
                             @switch (parameter.Type) {
                                 case "date":
                                 case "datetime":
@@ -322,7 +330,7 @@
             <div class="table-responsive col-sm-12">
                 <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
                     <thead>
-                        <tr>
+                        <tr style="font-size: smaller; font-weight: bolder;">
                             @if (hasActions) {
                                 <td>
                                     <div class="checkbox">

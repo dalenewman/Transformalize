@@ -373,6 +373,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
             root.Methods.Add(new Method { Name = "in", Signature = "domain" });
             root.Methods.Add(new Method { Name = "match", Signature = "pattern" });
+            root.Methods.Add(new Method { Name = "matching", Signature = "pattern"});
             root.Methods.Add(new Method { Name = "coalesce", Signature = "none" });
             root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
             root.Methods.Add(new Method { Name = "endswith", Signature = "value" });

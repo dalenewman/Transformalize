@@ -30,7 +30,6 @@ using Transformalize.Extensions;
 using Transformalize.Providers.Ado;
 using Transformalize.Providers.Ado.Actions;
 using Pipeline.Web.Orchard.Impl;
-using Transformalize.Providers.Console;
 using Transformalize.Providers.File;
 using Transformalize.Providers.File.Actions;
 using Transformalize.Providers.Web;
@@ -83,8 +82,6 @@ namespace Pipeline.Web.Orchard.Modules {
                     return new FileMoveAction(context, action);
                 case "replace":
                     return new FileReplaceAction(context, action);
-                case "print":
-                    return new PrintAction(action);
                 case "log":
                     return new LogAction(context, action);
                 case "web":

@@ -31,14 +31,13 @@ using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Html;
 using Transformalize.Transforms.Humanizer;
 using Transformalize.Transforms.Jint;
-using Transformalize.Transforms.LamdaParser;
 using Transformalize.Transforms;
-using Transformalize.Validators;
 using Transformalize.Providers.File.Transforms;
 using Transformalize.Providers.Web;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Json;
+using Transformalize.Transforms.LambdaParser;
 using Transformalize.Transforms.Xml;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -80,7 +79,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new FilePathTransform(p.Positional<IContext>(0))).Named<ITransform>("filepath");
             builder.Register((c, p) => new FloorTransform(p.Positional<IContext>(0))).Named<ITransform>("floor");
             builder.Register((c, p) => new FormatTransform(p.Positional<IContext>(0))).Named<ITransform>("format");
-            builder.Register((c, p) => new FormatXmlTransfrom(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
+            builder.Register((c, p) => new FormatXmlTransform(p.Positional<IContext>(0))).Named<ITransform>("formatxml");
             builder.Register((c, p) => new FormatPhoneTransform(p.Positional<IContext>(0))).Named<ITransform>("formatphone");
             builder.Register((c, p) => new HashcodeTransform(p.Positional<IContext>(0))).Named<ITransform>("hashcode");
             builder.Register((c, p) => new DecodeTransform(p.Positional<IContext>(0))).Named<ITransform>("htmldecode");
@@ -94,6 +93,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("tolower");
             builder.Register((c, p) => new MapTransform(p.Positional<IContext>(0))).Named<ITransform>("map");
             builder.Register((c, p) => new RegexMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("match");
+            builder.Register((c, p) => new RegexMatchingTransform(p.Positional<IContext>(0))).Named<ITransform>("matching");
             builder.Register((c, p) => new MultiplyTransform(p.Positional<IContext>(0))).Named<ITransform>("multiply");
             builder.Register((c, p) => new NextTransform(p.Positional<IContext>(0))).Named<ITransform>("next");
             builder.Register((c, p) => new UtcNowTransform(p.Positional<IContext>(0))).Named<ITransform>("now");
@@ -182,7 +182,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
             builder.Register((c, p) => new FromJsonTransform(p.Positional<IContext>(0), o => JsonConvert.SerializeObject(o, Formatting.None))).Named<ITransform>("fromjson");
 
-            builder.Register((c, p) => new LamdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
+            builder.Register((c, p) => new LambdaParserEvalTransform(p.Positional<IContext>(0))).Named<ITransform>("eval");
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
             builder.Register((c, p) => new SliceTransform(p.Positional<IContext>(0))).Named<ITransform>("slice");
@@ -196,8 +196,8 @@ namespace Pipeline.Web.Orchard.Modules {
             }).Named<ITransform>("fromxml");
 
             // javascript implementation is jint only in Orchard CMS
-            builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("js");
-            builder.Register<ITransform>((ctx, p) => new JintTransform(p.Positional<IContext>(0), ctx.Resolve<IReader>())).Named<ITransform>("javascript");
+            builder.Register<ITransform>((ctx, p) => new JintTransform(ctx.Resolve<IReader>(), p.Positional<IContext>(0))).Named<ITransform>("js");
+            builder.Register<ITransform>((ctx, p) => new JintTransform(ctx.Resolve<IReader>(), p.Positional<IContext>(0))).Named<ITransform>("javascript");
 
             // razor implementation uses Orchard CMS implementation
             builder.Register<ITransform>((ctx, p) => {

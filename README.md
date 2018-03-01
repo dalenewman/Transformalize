@@ -125,6 +125,8 @@ It works with many data sources:
 </table>
 </div>
 
+**Note**: The providers are being moved into plug-ins.
+
 Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
 or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
 with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface) or 
@@ -259,6 +261,8 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 *Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
 may chain transformations as long as the output of one is compatible with the input of another.
 
+**Note**: Transforms are being moved into plug-ins (e.g. [Jint](https://github.com/dalenewman/Transformalize.Transform.Jint), [C#](https://github.com/dalenewman/Transformalize.Transform.CSharp), [Humanizer](https://github.com/dalenewman/Transformalize.Transform.Humanizer), [LambdaParser](https://github.com/dalenewman/Transformalize.Transform.LambdaParser), etc.).
+
 ### Output
 
 > Introducing **`init`** mode
@@ -297,7 +301,7 @@ Writing *Order Details* into SQLite frees up the console for logging.
 
 #### Mapping
 
-Transformalize *map* input to pre-existing output.  Instead, it creates a consistent output structure that is optimized for incremental updates.
+Transformalize doesn't *map* input to pre-existing output.  Instead, it creates a consistent output structure that is optimized for incremental updates.
 
 You decide:
 

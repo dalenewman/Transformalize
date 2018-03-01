@@ -26,12 +26,12 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Nulls;
-using Transformalize.Providers.Elastic;
-using Transformalize.Providers.Elastic.Ext;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
 using Transformalize.Impl;
+using Transformalize.Providers.Elasticsearch;
+using Transformalize.Providers.Elasticsearch.Ext;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ElasticModule : Module {

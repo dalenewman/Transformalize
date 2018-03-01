@@ -50,10 +50,10 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(ctx => {
 
                 var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
-                var outputContext = new OutputContext(context, new Incrementer(context));
+                var outputContext = new OutputContext(context);
 
                 IPipeline pipeline;
-                context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
+                context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
                 var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
                 switch (_process.Pipeline) {
                     case "parallel.linq":

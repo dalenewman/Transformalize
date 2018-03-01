@@ -26,7 +26,9 @@ using Transformalize.Nulls;
 using Transformalize.Transforms.System;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
+using Transformalize.Extensions;
 using Transformalize.Impl;
+using Transformalize.Transforms;
 
 namespace Pipeline.Web.Orchard.Modules {
 
@@ -45,7 +47,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register(ctx => {
                 var context = ctx.ResolveNamed<IContext>(entity.Key);
                 IPipeline pipeline;
-                context.Debug(() => string.Format("Registering {0} for entity {1}.", type, entity.Alias));
+                context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
                 var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                 switch (type) {
                     case "parallel.linq":
@@ -56,7 +58,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         break;
                 }
 
-                var provider = process.Output().Provider;
+                var output = process.Output();
 
                 // extract
                 pipeline.Register(ctx.ResolveNamed<IRead>(entity.Key));
@@ -67,12 +69,19 @@ namespace Pipeline.Web.Orchard.Modules {
                 }
 
                 pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), context.GetAllEntityFields().Where(f => !f.System)));
+
+                if (output.Provider.In("internal", "file", Constants.DefaultSetting)) {
+                    foreach (var field in entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
+                        context.Debug(() => "Automatically adding convert transform");
+                        pipeline.Register(new ConvertTransform(new PipelineContext(context.Logger, context.Process, entity, field, new Operation { Method = "convert" })));
+                    }
+                }
                 pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
                 pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
                 if (!process.ReadOnly) {
                     pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                    if (provider == "sqlserver") {
+                    if (output.Provider == "sqlserver") {
                         pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
                     }
                 }
