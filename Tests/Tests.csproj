@@ -44,9 +44,8 @@
     <Reference Include="CfgNet, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.0.10.2\lib\net452\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.4\lib\net451\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -118,7 +117,6 @@
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="MathTransforms.cs" />
-    <Compile Include="NorthWindIntegrationMySql.cs" />
     <Compile Include="NorthWindIntegrationPostgreSql.cs" />
     <Compile Include="NorthWindIntegrationSqlite.cs" />
     <Compile Include="NorthWindIntegrationSqlServer.cs" />
@@ -202,10 +200,6 @@
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
       <Name>GeoJson</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\MySql\MySql.csproj">
-      <Project>{803baf79-7028-4f09-b2f6-bc89b3ad11e3}</Project>
-      <Name>MySql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
       <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
       <Name>SqlCe</Name>
@@ -267,14 +261,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\NorthWind.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\NorthWindSqlServerToElastic.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\NorthWindSqlServerToMySql.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

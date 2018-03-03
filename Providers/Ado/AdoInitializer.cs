@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Data;
 using System.Data.Common;
 using Dapper;
@@ -56,7 +58,13 @@ namespace Transformalize.Providers.Ado {
 
         public ActionResponse Execute() {
             using (var cn = _cf.GetConnection()) {
-                cn.Open();
+                try {
+                    cn.Open();
+                } catch (DbException ex) {
+                    _context.Error(ex.Message);
+                    return new ActionResponse(500, $"Could not open {_context.Connection.Name} connection.");
+                }
+
                 Destroy(cn);
                 Create(cn);
             }

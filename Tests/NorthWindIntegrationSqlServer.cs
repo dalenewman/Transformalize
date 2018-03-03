@@ -44,7 +44,7 @@ namespace Tests {
         };
 
         [TestMethod]
-        [Ignore]
+        //[Ignore]
         public void SqlServer_Integration() {
 
             var builder = new ContainerBuilder();

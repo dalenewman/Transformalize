@@ -212,10 +212,6 @@
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
       <Name>Kml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\MySql\MySql.csproj">
-      <Project>{803baf79-7028-4f09-b2f6-bc89b3ad11e3}</Project>
-      <Name>MySql</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
       <Name>Rethink</Name>
