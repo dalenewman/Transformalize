@@ -65,7 +65,7 @@ namespace Transformalize.Transforms {
             }
 
             var input = SingleInput();
-            _transform = row => Parts[context.Operation.TimeComponent]((DateTime)row[input]);
+            _transform = row => Parts[Context.Operation.TimeComponent]((DateTime)row[input]);
         }
 
         public override IRow Operate(IRow row) {

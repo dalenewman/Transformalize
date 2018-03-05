@@ -42,18 +42,24 @@ namespace Transformalize.Providers.File.Transforms {
                 row[Context.Field] = Path.GetFullPath((string)row[_input]);
             } else {
                 var value = (string)row[_input];
+                var path = Path.GetFullPath(value);
                 if (Path.HasExtension(value)) {
-                    var path = Path.GetFullPath(value);
                     var ext = Path.GetExtension(value);
                     row[Context.Field] = path.Remove(value.Length - ext.Length);
+                } else {
+                    row[Context.Field] = path;
                 }
             }
-            
+
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("filepath") { Parameters = new List<OperationParameter>(1) { new OperationParameter("extension", "true") } };
+            yield return new OperationSignature("filepath") {
+                Parameters = new List<OperationParameter>(1){
+                    new OperationParameter("extension", "true")
+                }
+            };
         }
     }
 }

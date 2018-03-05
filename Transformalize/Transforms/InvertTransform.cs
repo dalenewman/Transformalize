@@ -37,7 +37,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = !(bool)row[_input];
-            
+
             return row;
         }
 

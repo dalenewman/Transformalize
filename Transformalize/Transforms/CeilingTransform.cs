@@ -43,8 +43,9 @@ namespace Transformalize.Transforms {
                     _transform = row => Math.Ceiling((double)row[input]);
                     break;
                 default:
+                    // @ojw713 pointed out bug here (used to be Math.Floor)
                     Returns = "decimal";
-                    _transform = row => Math.Floor(Convert.ToDecimal(row[input]));
+                    _transform = row => Math.Ceiling(Convert.ToDecimal(row[input]));
                     break;
 
             }

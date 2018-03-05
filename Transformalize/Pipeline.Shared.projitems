@@ -138,6 +138,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\OppositeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchingTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RowNumberTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\IncrementTransform.cs" />

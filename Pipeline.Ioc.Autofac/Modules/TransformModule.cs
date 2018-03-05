@@ -108,6 +108,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new NextTransform(c), new NextTransform().GetSignatures());
             RegisterTransform(builder, c => new UtcNowTransform(c), new UtcNowTransform().GetSignatures());
             RegisterTransform(builder, c => new RowNumberTransform(c), new RowNumberTransform().GetSignatures());
+            RegisterTransform(builder, c => new TimeZoneTransform(c), new TimeZoneTransform().GetSignatures());
+            RegisterTransform(builder, c => new TimeZoneOffsetTransform(c), new TimeZoneOffsetTransform().GetSignatures());
+            RegisterTransform(builder, c => new OppositeTransform(c), new OppositeTransform().GetSignatures());
+            RegisterTransform(builder, c => new DateAddTransform(c), new DateAddTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -132,7 +136,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
             builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
             builder.Register((c, p) => new RazorTransform(p.Positional<IContext>(0))).Named<ITransform>("razor");
-            builder.Register((c, p) => new TimeZoneTransform(p.Positional<IContext>(0))).Named<ITransform>("timezone");
 
             builder.Register((c, p) => new RegexReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("regexreplace");
             builder.Register((c, p) => new RemoveTransform(p.Positional<IContext>(0))).Named<ITransform>("remove");
@@ -167,7 +170,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Include)).Named<ITransform>("include");
             builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Exclude)).Named<ITransform>("exclude");
 
-            builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0))).Named<ITransform>("dateadd");
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
             builder.Register((c, p) => new FromRegexTransform(p.Positional<IContext>(0))).Named<ITransform>("fromregex");
             builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");

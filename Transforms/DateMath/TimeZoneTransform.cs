@@ -16,34 +16,36 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.DateMath {
-
     public class TimeZoneTransform : BaseTransform {
         private readonly Field _input;
-        private readonly Field _output;
         private readonly TimeZoneInfo _toTimeZoneInfo;
         private readonly TimeSpan _adjustment;
         private readonly TimeSpan _daylightAdjustment;
 
-        public TimeZoneTransform(IContext context) : base(context, "datetime") {
+        public TimeZoneTransform(IContext context = null) : base(context, "datetime") {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("date")) {
                 return;
             }
 
-            if (IsMissing(context.Operation.FromTimeZone)) {
+            if (IsMissing(Context.Operation.FromTimeZone)) {
                 return;
             }
 
-            if (IsMissing(context.Operation.ToTimeZone)) {
+            if (IsMissing(Context.Operation.ToTimeZone)) {
                 return;
             }
 
             _input = SingleInput();
-            _output = context.Field;
 
             var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.FromTimeZone);
             _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.ToTimeZone);
@@ -54,14 +56,23 @@ namespace Transformalize.Transforms.DateMath {
         }
 
         public override IRow Operate(IRow row) {
-            
+
             var date = (DateTime)row[_input];
             if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {
-                row[_output] = date.Add(_daylightAdjustment);
+                row[Context.Field] = date.Add(_daylightAdjustment);
             } else {
-                row[_output] = date.Add(_adjustment);
+                row[Context.Field] = date.Add(_adjustment);
             }
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[]{ new OperationSignature("timezone") {
+                Parameters = new List<OperationParameter>(2) {
+                    new OperationParameter("from-time-zone"),
+                    new OperationParameter("to-time-zone")
+                }
+            }};
         }
     }
 }

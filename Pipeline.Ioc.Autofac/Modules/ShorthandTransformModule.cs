@@ -57,13 +57,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(new Signature {
-                    Name = "timezone",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "to-time-zone" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
                     Name = "fromtimezone",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone", Value= "UTC" }
@@ -88,14 +81,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("timecomponent"));
-                root.Signatures.Add(new Signature {
-                    Name = "dateadd",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter>
-                    {
-                            new Cfg.Net.Shorthand.Parameter { Name = "value" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "timecomponent", Value="days" }
-                        }
-                });
                 root.Signatures.Add(new Signature {
                     Name = "replace",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -234,7 +219,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
                 root.Methods.Add(new Method { Name = "timeago", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "timeahead", Signature = "fromtimezone" });
-                root.Methods.Add(new Method { Name = "timezone", Signature = "timezone" });
                 root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });
                 root.Methods.Add(new Method { Name = "totime", Signature = "timecomponent" });
                 root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
@@ -254,7 +238,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "include", Signature = "any" });
                 root.Methods.Add(new Method { Name = "exclude", Signature = "any" });
                 root.Methods.Add(new Method { Name = "slugify", Signature = "none" });
-                root.Methods.Add(new Method { Name = "dateadd", Signature = "dateadd" });
                 root.Methods.Add(new Method { Name = "iif", Signature = "iif" });
                 root.Methods.Add(new Method { Name = "geohashencode", Signature = "geohash" });
                 root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });

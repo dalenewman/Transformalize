@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,65 +24,94 @@ namespace Transformalize.Transforms {
 
     public class DateAddTransform : BaseTransform {
 
-        private readonly Field _input;
-        private readonly TimeSpan _amount;
+        private readonly Field _referencedField;
+        private readonly Func<IRow, object> _transform;
 
-        public DateAddTransform(IContext context) : base(context, "datetime") {
+        public DateAddTransform(IContext context = null) : base(context, "datetime") {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("date")) {
                 return;
             }
 
-            _input = SingleInput();
+            TimeSpan amount;
+            var input = SingleInput();
 
-            if (!double.TryParse(context.Operation.Value, out double value)) {
-                Error($"The {context.Operation.Method} transform requires a double numeric parameter.  {context.Operation.Value} can not be parsed as a double.");
-                Run = false;
-                return;
+            if (!double.TryParse(Context.Operation.Value, out var value)) {
+                if (Context.Entity.TryGetField(Context.Operation.Value, out _referencedField)) {
+
+                } else {
+                    Error($"The {context.Operation.Method} transform requires a double numeric value or field reference containing such a value.  {context.Operation.Value} can not be parsed as a double and is not a field reference.");
+                    Run = false;
+                    return;
+                }
+
             }
 
             switch (context.Operation.TimeComponent.ToLower()) {
                 case "second":
                 case "seconds":
-                    _amount = TimeSpan.FromSeconds(value);
+                    amount = TimeSpan.FromSeconds(value);
+                    _transform = row => ((DateTime)row[input]).Add(TimeSpan.FromSeconds(Convert.ToDouble(row[_referencedField])));
                     break;
                 case "millisecond":
                 case "milliseconds":
-                    _amount = TimeSpan.FromMilliseconds(value);
+                    amount = TimeSpan.FromMilliseconds(value);
+                    _transform = row => ((DateTime)row[input]).Add(TimeSpan.FromMilliseconds(Convert.ToDouble(row[_referencedField])));
                     break;
                 case "day":
                 case "days":
-                    _amount = TimeSpan.FromDays(value);
+                    amount = TimeSpan.FromDays(value);
+                    _transform = row => ((DateTime)row[input]).Add(TimeSpan.FromDays(Convert.ToDouble(row[_referencedField])));
                     break;
                 case "hour":
                 case "hours":
-                    _amount = TimeSpan.FromHours(value);
+                    amount = TimeSpan.FromHours(value);
+                    _transform = row => ((DateTime)row[input]).Add(TimeSpan.FromHours(Convert.ToDouble(row[_referencedField])));
                     break;
                 case "minute":
                 case "minutes":
-                    _amount = TimeSpan.FromMinutes(value);
+                    amount = TimeSpan.FromMinutes(value);
+                    _transform = row => ((DateTime)row[input]).Add(TimeSpan.FromMinutes(Convert.ToDouble(row[_referencedField])));
                     break;
                 case "tick":
                 case "ticks":
-                    _amount = TimeSpan.FromTicks(Convert.ToInt64(context.Operation.Value));
-                    long addTicksLong;
-                    if (!long.TryParse(context.Operation.Value, out addTicksLong)) {
+                    amount = TimeSpan.FromTicks(Convert.ToInt64(context.Operation.Value));
+                    if (!long.TryParse(context.Operation.Value, out _)) {
                         Error($"The dateadd ticks transform requires a long (int64) numeric parameter.  {context.Operation.Value} can not be parsed as a long.");
+                        Run = false;
                     }
                     break;
                 default:
                     context.Warn($"Add time does not support {context.Operation.TimeComponent}. No time being added");
-                    _amount = new TimeSpan();
+                    amount = new TimeSpan();
+                    Run = false;
                     break;
 
+            }
+
+            if (_referencedField == null) {
+                _transform = (row) => ((DateTime)row[input]).Add(amount);
             }
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = ((DateTime)row[_input]).Add(_amount);
-            
+            row[Context.Field] = _transform(row);
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("dateadd") {
+                    Parameters = new List<OperationParameter>(2) {
+                        new OperationParameter("value"),
+                        new OperationParameter("time-component", "days")
+                    }
+                }
+            };
+        }
     }
 }
