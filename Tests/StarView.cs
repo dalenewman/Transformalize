@@ -29,6 +29,7 @@ namespace Tests {
     public class StarView {
 
         [TestMethod]
+        [Ignore]
         public void StarSql() {
             var composer = new CompositionRoot();
             var controller = composer.Compose(@"Files\Northwind.xml");

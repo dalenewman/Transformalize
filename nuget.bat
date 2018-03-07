@@ -1,9 +1,9 @@
-REM nuget pack Compatibility\Transformalize\Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Compatibility\Transformalize\Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 REM nuget pack Pipeline.Logging.NLog\Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Pipeline.Scheduler.Quartz\Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
 
-nuget pack Providers\Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Providers\Ado\Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Providers\Excel\Transformalize.Provider.Excel.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Providers\OpenXml\Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Providers\File\Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"

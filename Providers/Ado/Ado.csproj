@@ -83,6 +83,7 @@
     <Compile Include="AdoStarParametersReader.cs" />
     <Compile Include="AdoStarViewCreator.cs" />
     <Compile Include="AdoEntityWriter.cs" />
+    <Compile Include="AdoUpdateMasterKeysQueryWriter.cs" />
     <Compile Include="ConnectionStringParser.cs" />
     <Compile Include="Ext\AdoExtensions.cs" />
     <Compile Include="Ext\AdoFilterExtensions.cs" />

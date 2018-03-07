@@ -73,6 +73,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "any", Signature = "any" });
                     root.Methods.Add(new Method { Name = "contains", Signature = "value" });
                     root.Methods.Add(new Method { Name = "equals", Signature = "value" });
+                    root.Methods.Add(new Method { Name = "equal", Signature = "value" });
+                    root.Methods.Add(new Method { Name = "notequal", Signature = "value" });
+                    root.Methods.Add(new Method { Name = "unequal", Signature = "value" });
                     root.Methods.Add(new Method { Name = "is", Signature = "type" });
                     root.Methods.Add(new Method { Name = "in", Signature = "domain" });
                     root.Methods.Add(new Method { Name = "matches", Signature = "pattern" });

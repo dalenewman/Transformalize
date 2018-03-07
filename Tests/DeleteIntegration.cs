@@ -52,39 +52,39 @@ namespace Tests {
             using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
                 cn.Open();
                 Assert.AreEqual(3, cn.Execute(@"
-                    IF OBJECT_ID('TestDeletes') IS NOT NULL
-	                    DROP TABLE [TestDeletes];
+                        IF OBJECT_ID('TestDeletes') IS NOT NULL
+    	                    DROP TABLE [TestDeletes];
 
-                    CREATE TABLE [TestDeletes](
-	                    [TextValue] NVARCHAR(64),
-	                    [Id] INT,
-	                    [NumericValue] INT,
-                        [RowVersion] ROWVERSION,
-	                    CONSTRAINT PK_TestDeletes_Id_NumericValue PRIMARY KEY ([Id], [NumericValue])
-                    )
+                        CREATE TABLE [TestDeletes](
+    	                    [TextValue] NVARCHAR(64),
+    	                    [Id] INT,
+    	                    [NumericValue] INT,
+                            [RowVersion] ROWVERSION,
+    	                    CONSTRAINT PK_TestDeletes_Id_NumericValue PRIMARY KEY ([Id], [NumericValue])
+                        )
 
-                    INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('One',1,1);
-                    INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('Two',2,2);
-                    INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('Three',3,3);
-"));
+                        INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('One',1,1);
+                        INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('Two',2,2);
+                        INSERT INTO [TestDeletes]([TextValue],[Id],[NumericValue]) VALUES('Three',3,3);
+    "));
             }
 
             const string cfg = @"<cfg name='TestDeletes' mode='@(Mode)'>
-    <connections>
-        <add name='input' provider='sqlserver' database='NorthWind' />
-        <add name='output' provider='sqlserver' database='NorthWindStar' />
-    </connections>
-<entities>
-    <add name='TestDeletes' alias='Data' delete='true' version='RowVersion'>
-        <fields>
-            <add name='TextValue' />
-            <add name='Id' primary-key='true' type='int' />
-            <add name='NumericValue' primary-key='true' type='int' />
-            <add name='RowVersion' type='byte[]' length='8' />
-        </fields>
-    </add>
-</entities>
-</cfg>";
+        <connections>
+            <add name='input' provider='sqlserver' database='NorthWind' />
+            <add name='output' provider='sqlserver' database='NorthWindStar' />
+        </connections>
+    <entities>
+        <add name='TestDeletes' alias='Data' delete='true' version='RowVersion'>
+            <fields>
+                <add name='TextValue' />
+                <add name='Id' primary-key='true' type='int' />
+                <add name='NumericValue' primary-key='true' type='int' />
+                <add name='RowVersion' type='byte[]' length='8' />
+            </fields>
+        </add>
+    </entities>
+    </cfg>";
 
             // RUN INIT AND TEST
             var root = ResolveRoot(container, cfg, InitMode());

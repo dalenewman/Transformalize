@@ -199,6 +199,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SlaveRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\StringTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\CompareValidator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\NotEqualValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\RequiredValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\ShouldRunValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StringValidate.cs" />

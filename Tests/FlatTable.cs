@@ -29,6 +29,7 @@ namespace Tests {
     public class FlatTable {
 
         [TestMethod]
+        [Ignore]
         public void FlatSql() {
             var composer = new CompositionRoot();
             var controller = composer.Compose(@"Files\Northwind.xml");

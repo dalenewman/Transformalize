@@ -39,6 +39,7 @@ namespace Tests {
             <add name='Field3' v='isnumeric().matches(^[0-9/.]{5}$)' message-field='Message' help='Field3 must be a 5 digit number (including decimal pt.)' />
           </fields>
           <calculated-fields>
+            
             <add name='Message' length='1000' default='' />
           </calculated-fields>
         </add>

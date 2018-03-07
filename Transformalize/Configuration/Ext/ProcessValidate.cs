@@ -88,9 +88,9 @@ namespace Transformalize.Configuration.Ext {
             if (p.Entities.Count < 2) {
                 warn("To flatten, you must have at least 2 entities.");
             }
-            if (p.Output() == null || !Constants.AdoProviderSet().Contains(p.Output().Provider)) {
-                error($"To flatten, you must use an ADO based output provider, e.g. ({Constants.AdoProviderDomain})");
-            }
+            //if (p.Output() == null || !Constants.AdoProviderSet().Contains(p.Output().Provider)) {
+            //    error($"To flatten, you must use an ADO based output provider, e.g. ({Constants.AdoProviderDomain})");
+            //}
         }
 
         private static void ValidateDirectoryReaderHasAtLeastOneValidField(Process process, Action<string> error) {

@@ -35,7 +35,7 @@ namespace Transformalize {
         public const string DefaultSetting = "[default]";
 
         public const string ProviderDomain = "sqlserver,internal,file,folder,elasticsearch,solr,mysql,postgresql,console,trace,sqlce,sqlite,lucene,excel,web,log,filesystem,geojson,kml,text,ssas,rethinkdb,word,razor,velocity,clevest,access,bogus,mail," + Constants.DefaultSetting;
-        public const string AdoProviderDomain = "sqlserver,postgresql,sqlite,sqlce";
+        public const string AdoProviderDomain = "postgresql,sqlite,sqlce,mysql,sqlserver,access";
 
         public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
         public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,object,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";

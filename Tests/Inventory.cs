@@ -70,7 +70,7 @@ ORDER BY [InventoryStatusId] ASC
             var context = new PipelineContext(new TraceLogger(), process, process.Entities[0]);
             var input = new InputContext(context);
             process.Entities[0].Filter.Add(new Filter { Field = "InventoryStatusId", Value = "80" });
-            process.Entities[0].Order.Add(new Order {Field = "InventoryStatusId"});
+            process.Entities[0].Order.Add(new Order { Field = "InventoryStatusId" });
             var cf = new SqlServerConnectionFactory(input.Connection);
             var sql = new SqlFormattingManager().Format(input.SqlSelectInput(process.Entities[0].GetAllFields().Where(f => f.Input).ToArray(), cf));
 

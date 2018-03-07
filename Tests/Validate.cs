@@ -39,7 +39,8 @@ namespace Tests {
             <add name='Field3' />
           </fields>
           <calculated-fields>
-            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field2).equals()' />
+            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field3).equals()' />
+            
           </calculated-fields>
         </add>
       </entities>
@@ -54,6 +55,8 @@ namespace Tests {
 
             Assert.AreEqual(false, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
             Assert.AreEqual(true, output[1][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
+
+            
         }
 
     }
