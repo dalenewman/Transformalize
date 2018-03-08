@@ -25,12 +25,12 @@ It works with many data sources:
                     </thead>
                     <tbody>
                         <tr>
-                            <td>SQL Server</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlServer">SQL Server</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td>MySql</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.MySql">MySql</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
@@ -40,7 +40,7 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td>SQLite</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Sqlite">SQLite</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Ado</id>
-    <version>0.3.5-beta</version>
+    <version>0.3.6-beta</version>
     <title>Transformalize Provider ADO</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.4-beta" />
+        <dependency id="Transformalize" version="0.3.5-beta" />
         <dependency id="Dapper" version="1.50.4" />
       </group>
     </dependencies>

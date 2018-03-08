@@ -184,10 +184,6 @@
       <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>
       <Name>Razor</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\SQLite\SQLite.csproj">
-      <Project>{33af802d-7061-4bba-8619-d08790de5364}</Project>
-      <Name>SQLite</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Web</Name>
