@@ -30,7 +30,8 @@ namespace Transformalize.Providers.Ado {
         private readonly IRowFactory _rowFactory;
         private bool[] _errors;
         private readonly Dictionary<string, Type> _typeMap;
-        private readonly List<Func<object, object>> _conversions = new List<Func<object, object>>();
+        private List<Func<object, object>> _conversions;
+        private int _fieldCount;
 
         public AdoRowCreator(IConnectionContext context, IRowFactory rowFactory) {
             _errors = null;
@@ -41,17 +42,16 @@ namespace Transformalize.Providers.Ado {
 
         public IRow Create(IDataReader reader, Field[] fields) {
 
-            var fieldCount = Math.Min(reader.FieldCount, fields.Length);
             var row = _rowFactory.Create();
-            for (var i = 0; i < fieldCount; i++) {
-                _conversions.Add(null);
-            }
 
-            var warned = false;
-
-            if (_errors == null) {  // check types
+            if (_fieldCount == 0) {
+                _fieldCount = Math.Min(reader.FieldCount, fields.Length);
+                _conversions = new List<Func<object, object>>(_fieldCount);
+                for (var i = 0; i < _fieldCount; i++) {
+                    _conversions.Add(null);
+                }
                 _errors = new bool[fields.Length];
-                for (var i = 0; i < fieldCount; i++) {
+                for (var i = 0; i < _fieldCount; i++) {
                     var inputType = reader.GetFieldType(i);
                     _errors[i] = inputType != _typeMap[fields[i].Type];
 
@@ -60,8 +60,7 @@ namespace Transformalize.Providers.Ado {
                             _conversions[i] = o => o;  // the user has set a conversion
                         } else {
                             _conversions[i] = fields[i].Convert;
-                            _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.", fields[i].Name, fields[i].Type, inputType);
-                            warned = true;
+                            _context.Warn("Type mismatch for {0}. Expected {1}, but read {2}.  Change type or add conversion.", fields[i].Name, fields[i].Type, inputType);
                         }
 
                     } else {
@@ -70,11 +69,7 @@ namespace Transformalize.Providers.Ado {
 
                 }
 
-                if (warned) {
-                    _context.Warn("Remove warnings with convert transforms ( e.g. t='convert(datetime,YYYYmmdd)' )");
-                }
-
-                for (var i = 0; i < fieldCount; i++) {
+                for (var i = 0; i < _fieldCount; i++) {
                     if (reader.IsDBNull(i))
                         continue;
                     if (_errors[i]) {
@@ -90,7 +85,7 @@ namespace Transformalize.Providers.Ado {
                     }
                 }
             } else {
-                for (var i = 0; i < fieldCount; i++) {
+                for (var i = 0; i < _fieldCount; i++) {
                     if (reader.IsDBNull(i))
                         continue;
                     if (_errors[i]) {
@@ -100,7 +95,6 @@ namespace Transformalize.Providers.Ado {
                     }
                 }
             }
-
 
             return row;
         }

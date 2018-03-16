@@ -19,12 +19,14 @@ using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Ioc.Autofac;
 using Transformalize.Ioc.Autofac.Modules;
 
 namespace Transformalize.Command {
 
-    public class RunTimeSchemaReader : IRunTimeSchemaReader {
-
+    public class RunTimeSchemaReader : IRunTimeSchemaReader
+    {
+        private readonly string _placeHolderStyle;
         public Process Process { get; set; }
         public Schema Read(Process process) {
             Process = process;
@@ -33,7 +35,9 @@ namespace Transformalize.Command {
 
         private readonly IContext _host;
 
-        public RunTimeSchemaReader(IContext host) {
+        public RunTimeSchemaReader(IContext host, string placeHolderStyle)
+        {
+            _placeHolderStyle = placeHolderStyle;
             _host = host;
         }
 
@@ -48,19 +52,7 @@ namespace Transformalize.Command {
                 return new Schema();
             }
 
-            var container = new ContainerBuilder();
-            container.RegisterInstance(_host.Logger).SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
-            container.RegisterCallback(new ContextModule(Process).Configure);
-
-            container.RegisterCallback(new AdoModule(Process).Configure);
-            container.RegisterCallback(new InternalModule(Process).Configure);
-            container.RegisterCallback(new ConsoleModule(Process).Configure);
-            container.RegisterCallback(new FileModule(Process).Configure);
-            container.RegisterCallback(new ExcelModule(Process).Configure);
-            container.RegisterCallback(new WebModule(Process).Configure);
-
-            using (var scope = container.Build().BeginLifetimeScope()) {
+            using (var scope = DefaultContainer.Create(Process, _host.Logger, _placeHolderStyle)) {
                 var reader = scope.ResolveNamed<ISchemaReader>(Process.Connections.First(c => c.Provider != Constants.DefaultSetting).Key);
                 return reader.Read(entity);
             }

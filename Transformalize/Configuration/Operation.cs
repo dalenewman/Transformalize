@@ -161,7 +161,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Template { get; set; }
 
-        [Cfg(value = "millisecond", domain = "day,days,date,dayofweek,dayofyear,hour,hours,millisecond,minute,minutes,month,months,second,seconds,tick,ticks,year,years,weekofyear", toLower = true)]
+        [Cfg(value = "millisecond", domain = "day,days,date,dayofweek,dayofyear,hour,hours,millisecond,milliseconds,ms,minute,minutes,month,months,second,seconds,s,tick,ticks,year,years,weekofyear", toLower = true)]
         public string TimeComponent { get; set; }
 
         [Cfg(value = "0.0")]

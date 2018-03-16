@@ -47,7 +47,7 @@ namespace Transformalize.Command {
             builder.Register<IContext>(c => new PipelineContext(c.Resolve<IPipelineLogger>())).As<IContext>();
 
             // for now scheduler
-            builder.Register(c => new RunTimeSchemaReader(c.Resolve<IContext>())).As<IRunTimeSchemaReader>();
+            builder.Register(c => new RunTimeSchemaReader(c.Resolve<IContext>(), _options.PlaceHolderStyle)).As<IRunTimeSchemaReader>();
             builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(), ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
 
             // for quartz scheduler

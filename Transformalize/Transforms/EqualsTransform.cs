@@ -38,11 +38,19 @@ namespace Transformalize.Transforms {
             var input = MultipleInput();
             var first = input.First();
 
-            if (context.Operation.Value == Constants.DefaultSetting) {
+            if (Context.Operation.Value == Constants.DefaultSetting) {
                 rest = input.Skip(1).ToArray();
                 sameTypes = rest.All(f => f.Type == first.Type);
             } else {
-                _value = first.Convert(context.Operation.Value);
+                try {
+                    _value = first.Convert(Context.Operation.Value);
+                } catch (Exception e) {
+                    Context.Error($"Failed to convert {Context.Operation.Value} to {first.Type}.");
+                    Context.Error(e, e.Message);
+                    Run = false;
+                    return;
+                }
+
                 rest = input.ToArray();
                 sameTypes = input.All(f => f.Type == first.Type);
             }
@@ -60,7 +68,7 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             _validator(row);
-            
+
             return row;
         }
 

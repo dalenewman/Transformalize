@@ -168,8 +168,8 @@ namespace Transformalize.Configuration {
             if ((Type == "open" || Type == "tfl") && File == string.Empty && Url == string.Empty && Id == 0) {
                 Error($"The {Type} action requires a file, url, or id.");
             }
-            if (Type == "run" && string.IsNullOrEmpty(Connection)) {
-                Error("A run action requires a connection.");
+            if ((Type == "run" || Type == "form-commands") && string.IsNullOrEmpty(Connection)) {
+                Error($"A {Type} action requires a connection.");
             }
         }
 

@@ -70,7 +70,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 pipeline.Register(new IncrementTransform(context));
                 pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
 
-                if (output.Provider.In("internal", "file", Constants.DefaultSetting)) {
+                if (ctx.ResolveNamed<IConnectionContext>(entity.Key).Connection.Provider.In("internal", "file", Constants.DefaultSetting)) {
                     foreach (var field in entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
                         context.Debug(() => "Automatically adding convert transform");
                         pipeline.Register(new ConvertTransform(new PipelineContext(context.Logger, context.Process, entity, field, new Operation { Method = "convert" })));
