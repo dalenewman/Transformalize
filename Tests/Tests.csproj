@@ -98,7 +98,6 @@
     <Compile Include="SlaveGetsInserts.cs" />
     <Compile Include="SubstringTest.cs" />
     <Compile Include="DistinctTest.cs" />
-    <Compile Include="NorthWindIntegrationSqlCe.cs" />
     <Compile Include="TwoEntitiesFileOutput.cs" />
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
@@ -189,10 +188,6 @@
       <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
       <Name>GeoJson</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
-      <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
-      <Name>SqlCe</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
@@ -242,10 +237,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\MetadataForFile.xml">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Files\NorthWindSqlServerToSqlCe.xml">
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

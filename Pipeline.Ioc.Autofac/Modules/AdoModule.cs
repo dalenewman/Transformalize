@@ -25,7 +25,6 @@ using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Providers.Ado;
 using Transformalize.Providers.PostgreSql;
-using Transformalize.Providers.SqlCe;
 using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -49,6 +48,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             _ado.Remove("sqlserver");
             _ado.Remove("mysql");
             _ado.Remove("sqlite");
+            _ado.Remove("sqlce");
 
             // connections
             foreach (var connection in _process.Connections.Where(c => _ado.Contains(c.Provider))) {
@@ -58,8 +58,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     switch (connection.Provider) {
                         case "postgresql":
                             return new PostgreSqlConnectionFactory(connection);
-                        case "sqlce":
-                            return new SqlCeConnectionFactory(connection);
                         default:
                             return new NullConnectionFactory();
                     }
@@ -113,7 +111,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     switch (input.Connection.Provider) {
                         case "postgresql":
-                        case "sqlce":
                             return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
                         default:
                             return new NullInputProvider();
@@ -135,7 +132,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                     switch (output.Connection.Provider) {
                         case "postgresql":
-                        case "sqlce":
                             var actions = new List<IAction> { new AdoStarViewCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)) };
                             if (_process.Flatten) {
                                 actions.Add(new AdoFlatTableCreator(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key)));
@@ -184,14 +180,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
 
                         switch (output.Connection.Provider) {
-                            case "sqlce":
-                                writer = new SqlCeWriter(
-                                    output,
-                                    cf,
-                                    matcher,
-                                    new AdoEntityUpdater(output, cf)
-                                );
-                                break;
                             case "postgresql":
                                 writer = new AdoEntityWriter(
                                     output,
@@ -216,7 +204,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "postgresql":
-                            case "sqlce":
                                 return new AdoOutputController(
                                     output,
                                     initializer,
@@ -252,8 +239,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                                     ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key),
                                     ctx.ResolveNamed<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys")
                                 );
-                            case "sqlce":
-                                return new AdoTwoPartMasterUpdater(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
                             default:
                                 return new NullMasterUpdater();
                         }
@@ -270,7 +255,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                             switch (inputContext.Connection.Provider) {
                                 case "postgresql":
-                                case "sqlce":
                                     return new AdoReader(
                                         inputContext,
                                         entity.GetPrimaryKey(),
@@ -292,7 +276,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             var outputConnection = _process.Output();
                             switch (outputConnection.Provider) {
                                 case "postgresql":
-                                case "sqlce":
                                     var ocf = ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key);
                                     return new AdoReader(context, entity.GetPrimaryKey(), ocf, rowFactory, ReadFrom.Output);
                                 default:
@@ -307,7 +290,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                             switch (outputConnection.Provider) {
                                 case "postgresql":
-                                case "sqlce":
                                     var ocf = ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key);
                                     return new AdoDeleter(outputContext, ocf);
                                 default:

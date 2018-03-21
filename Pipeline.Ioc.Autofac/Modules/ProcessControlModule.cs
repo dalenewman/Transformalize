@@ -75,7 +75,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 // flatten, should be the first post-action
                 var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
-                if (_process.Flatten && _process.Entities.Count > 1 && Constants.AdoProviderSet().Contains(outputConnection.Provider)) {
+                var isAdo = Constants.AdoProviderSet().Contains(outputConnection.Provider);
+                if (_process.Flatten && isAdo ) {
                     controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
                 }
 

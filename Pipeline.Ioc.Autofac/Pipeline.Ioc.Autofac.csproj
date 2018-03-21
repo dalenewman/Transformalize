@@ -208,10 +208,6 @@
       <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
       <Name>Rethink</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\SqlCe\SqlCe.csproj">
-      <Project>{b2d5705a-14c7-4279-b4c9-16c86c42aa54}</Project>
-      <Name>SqlCe</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
