@@ -81,15 +81,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     var input = ctx.ResolveNamed<InputContext>(entity.Key);
                     var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
-                    switch (input.Connection.Provider) {
-                        case "file":
-                            if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
-                                return new FileReader(input, rowFactory);
-                            }
-                            return new DelimitedFileReader(input, rowFactory);
-                        default:
-                            return new NullReader(input, false);
+                    if (input.Connection.Delimiter == string.Empty && input.Entity.Fields.Count(f => f.Input) == 1) {
+                        return new FileReader(input, rowFactory);
                     }
+                    return new DelimitedFileReader(input, rowFactory);
                 }).Named<IRead>(entity.Key);
 
             }
@@ -111,7 +106,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                         switch (output.Connection.Provider) {
                             case "file":
-                                if(output.Connection.Delimiter == string.Empty){
+                                if (output.Connection.Delimiter == string.Empty) {
                                     return new FileStreamWriter(output);
                                 } else {
                                     return new DelimitedFileWriter(output);

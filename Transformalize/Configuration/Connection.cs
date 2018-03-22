@@ -325,6 +325,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = 60)]
         public double ScrollWindow { get; set; }
 
+        [Cfg(value="")]
+        public string LinePattern { get; set; }
+
         protected override void PostValidate() {
             if (Command.Contains(" ")) {
                 if (!Command.Contains("\"")) {

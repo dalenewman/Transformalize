@@ -21,10 +21,9 @@ namespace Transformalize {
     public class KeyRow : BaseRow, IRow {
         public KeyRow(int capacity) : base(capacity) { }
 
-        public object this[IField field]
-        {
-            get { return Storage[field.KeyIndex]; }
-            set { Storage[field.KeyIndex] = value; }
+        public object this[IField field] {
+            get => Storage[field.KeyIndex];
+            set => Storage[field.KeyIndex] = value;
         }
 
         public override object GetValue(IField field) {

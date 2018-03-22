@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -44,13 +45,49 @@ namespace Transformalize.Providers.File {
                 row[_field] = System.IO.File.ReadAllText(_context.Connection.File, encoding);
                 yield return row;
             } else {
-                foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
-                    ++lineNo;
-                    if (lineNo < _context.Connection.Start) continue;
-                    var row = _rowFactory.Create();
-                    row[_field] = line;
-                    yield return row;
+                if (_context.Connection.LinePattern != string.Empty) {
+
+                    var regex = new Regex(_context.Connection.LinePattern, RegexOptions.Compiled);
+                    var prevLine = string.Empty;
+
+                    foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
+                        ++lineNo;
+                        if (lineNo < _context.Connection.Start) continue;
+
+                        if (regex.IsMatch(line)) {
+                            if (regex.IsMatch(prevLine)) {
+                                var row = _rowFactory.Create();
+                                row[_field] = string.Copy(prevLine);
+                                prevLine = line;
+                                yield return row;
+                            } else {
+                                prevLine = line;
+                            }
+                        } else {
+                            prevLine = prevLine + " " + line;
+                        }
+                    }
+
+                    if (regex.IsMatch(prevLine)) {
+                        var row = _rowFactory.Create();
+                        row[_field] = prevLine;
+                        yield return row;
+                    }
+
+                } else {
+                    foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
+
+                        ++lineNo;
+                        if (lineNo < _context.Connection.Start) continue;
+
+                        var row = _rowFactory.Create();
+                        row[_field] = line;
+                        yield return row;
+
+                    }
                 }
+
+
             }
         }
     }
