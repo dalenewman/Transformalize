@@ -38,7 +38,7 @@ namespace Transformalize.Transforms.Json {
             }
 
             _serializer = serializer;
-            _input = SingleInput();
+            _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
         }
 

@@ -31,7 +31,7 @@ namespace Transformalize.Providers.File {
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
         private readonly FileInfo _fileInfo;
-        private Field _fileField;
+        private readonly Field _fileField;
 
         public DelimitedFileReader(InputContext context, IRowFactory rowFactory) {
             _context = context;

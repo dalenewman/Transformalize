@@ -36,6 +36,7 @@ namespace Transformalize.Transforms.System {
             public string StringValue { private get; set; }
             public bool DefaultWhiteSpace { get; set; }
             public bool DefaultEmpty { get; set; }
+            public bool OnlyDefaultNulls { get; set; }
 
             public FieldDefault(string name, string alias, short index, short masterIndex, short keyIndex, string type) {
                 Name = name;
@@ -80,7 +81,8 @@ namespace Transformalize.Transforms.System {
                     Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
                     StringValue = hasDefault ? field.Default : string.Empty,
                     DefaultWhiteSpace = field.DefaultWhiteSpace,
-                    DefaultEmpty = field.DefaultEmpty
+                    DefaultEmpty = field.DefaultEmpty,
+                    OnlyDefaultNulls = !field.DefaultWhiteSpace && !field.DefaultEmpty
                 };
 
                 if (field.IsCalculated) {
@@ -105,16 +107,29 @@ namespace Transformalize.Transforms.System {
                         field.Setter(row);
                         continue;
                     }
-                    if (field.Type != "string")
+
+                    if (field.OnlyDefaultNulls)
                         continue;
 
-                    if (field.DefaultWhiteSpace) {
-                        if (((string)row[field]).Trim() == string.Empty) {
-                            field.Setter(row);
+                    if (field.Type == "string") {
+                        if (field.DefaultWhiteSpace) {
+                            if (((string)row[field]).Trim() == string.Empty) {
+                                field.Setter(row);
+                            }
+                        } else if (field.DefaultEmpty) {
+                            if ((string)row[field] == string.Empty) {
+                                field.Setter(row);
+                            }
                         }
-                    } else if (field.DefaultEmpty) {
-                        if ((string)row[field] == string.Empty) {
-                            field.Setter(row);
+                    } else {
+                        if (field.DefaultWhiteSpace) {
+                            if (row[field].ToString().Trim() == string.Empty) {
+                                field.Setter(row);
+                            }
+                        } else if (field.DefaultEmpty) {
+                            if (row[field].ToString() == string.Empty) {
+                                field.Setter(row);
+                            }
                         }
                     }
                 }
