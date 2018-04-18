@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Reflection;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -37,20 +38,18 @@ namespace Transformalize.Transforms {
             context.Operation.OldValue = context.Operation.OldValue.Replace("\\n", "\n");
 
             var oldIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.OldValue);
-            if (oldIsField) {
-                var field = context.Entity.GetField(context.Operation.OldValue);
-                _getOldValue = row => GetString(row, field);
-                context.Debug(() => $"replace transform's old value comes from the field: {field.Alias}");
+            if (oldIsField && context.Entity.TryGetField(context.Operation.OldValue, out var oldField)) {
+                _getOldValue = row => GetString(row, oldField);
+                context.Debug(() => $"replace transform's old value comes from the field: {oldField.Alias}");
             } else {
                 _getOldValue = row => context.Operation.OldValue;
                 context.Debug(() => $"replace transform's old value is literal: {context.Operation.OldValue}");
             }
 
             var newIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.NewValue);
-            if (newIsField) {
-                var field = context.Entity.GetField(context.Operation.NewValue);
-                _getNewValue = row => GetString(row, field);
-                context.Debug(() => $"replace transform's new value comes from the field: {field.Alias}");
+            if (newIsField && context.Entity.TryGetField(context.Operation.NewValue, out var newField)) {
+                _getNewValue = row => GetString(row, newField);
+                context.Debug(() => $"replace transform's new value comes from the field: {newField.Alias}");
             } else {
                 _getNewValue = row => context.Operation.NewValue;
                 context.Debug(() => $"replace transform's new value is literal: {context.Operation.NewValue}");
@@ -63,7 +62,7 @@ namespace Transformalize.Transforms {
             if (oldValue != string.Empty) {
                 row[Context.Field] = GetString(row, _input).Replace(oldValue, _getNewValue(row));
             }
-            
+
             return row;
         }
 

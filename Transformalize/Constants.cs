@@ -153,7 +153,7 @@ namespace Transformalize {
             {"double", (x => Convert.ToDouble(x))},
             {"decimal", (x => decimal.Parse(x, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
             {"char", (x => string.IsNullOrEmpty(x) ? ' ' : Convert.ToChar(x))},
-            {"datetime", (x => Convert.ToDateTime(x))},
+            {"datetime", (x => DateTimeOffset.Parse(x).UtcDateTime )},
             {"boolean", (x => Convert.ToBoolean(NormalizeBool(x)))},
             {"bool", (x => Convert.ToBoolean(NormalizeBool(x))) },
             {"single", (x => Convert.ToSingle(x))},

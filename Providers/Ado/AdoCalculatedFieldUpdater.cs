@@ -48,10 +48,14 @@ namespace Transformalize.Providers.Ado {
                 try {
 
                     foreach (var batch in rows.Partition(_context.Entity.UpdateSize)) {
+                        _context.Debug(()=>"got a batch!");
                         var data = batch.Select(r => r.ToExpandoObject(fields));
+                        _context.Debug(()=>"converted to expando object");
                         var batchCount = Convert.ToUInt32(cn.Execute(sql, data, trans, 0, CommandType.Text));
+                        _context.Debug(()=>$"Updated {batchCount} calculated field records!");
                     }
                     trans.Commit();
+                    _context.Debug(()=>"Committed updates.");
 
                 } catch (Exception ex) {
                     _context.Error(ex, ex.Message);

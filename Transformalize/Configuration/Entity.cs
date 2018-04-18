@@ -47,11 +47,11 @@ namespace Transformalize.Configuration {
         public bool Delete { get; set; }
 
         // insert, update, and delete sizes
-        [Cfg(value = 512)]
+        [Cfg(value = 500)]
         public int InsertSize { get; set; }
-        [Cfg(value = 256)]
+        [Cfg(value = 250)]
         public int UpdateSize { get; set; }
-        [Cfg(value = 256)]
+        [Cfg(value = 250)]
         public int DeleteSize { get; set; }
 
         // counts of the actual inserts, updates, and deletes performed
