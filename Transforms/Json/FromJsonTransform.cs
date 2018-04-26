@@ -48,16 +48,21 @@ namespace Transformalize.Transforms.Json {
             try {
                 var dict = JSON.Parse(json) as Dictionary<string, object>;
                 if (dict != null) {
-                    if (_output.Any()  && !_output[0].Equals(_input)) {
+                    if (_output.Any() && !_output[0].Equals(_input)) {
                         foreach (var field in _output) {
                             if (dict.ContainsKey(field.Name)) {
                                 var value = dict[field.Name];
-                                if (value is string || value is int || value is long || value is double) {
+                                if (value is string) {
+                                    if (field.DefaultEmpty && value.Equals(string.Empty)) {
+                                        row[field] = field.Default;
+                                    } else {
+                                        row[field] = value;
+                                    }
+                                } else if (value is int || value is long || value is double) {
                                     row[field] = value;
                                 } else {
                                     row[field] = _serializer(value);
                                 }
-
                             }
                         }
                     } else {
@@ -77,7 +82,7 @@ namespace Transformalize.Transforms.Json {
                 }
             }
 
-            
+
             return row;
 
         }
