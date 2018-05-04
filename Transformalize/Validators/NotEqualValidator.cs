@@ -4,8 +4,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Validators
-{
+namespace Transformalize.Validators {
     public class NotEqualValidator : BaseValidate {
 
         private readonly object _value;
@@ -52,9 +51,7 @@ namespace Transformalize.Validators
         }
 
         public override IRow Operate(IRow row) {
-            var valid = _validator(row);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _validator(row))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
 

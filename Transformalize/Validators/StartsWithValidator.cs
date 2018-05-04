@@ -44,12 +44,10 @@ namespace Transformalize.Validators {
 
         public override IRow Operate(IRow row) {
             var value = GetString(row, _input);
-            var valid = value.StartsWith(Context.Operation.Value);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, value.StartsWith(Context.Operation.Value))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

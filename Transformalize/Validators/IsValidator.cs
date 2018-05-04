@@ -50,12 +50,10 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = _isCompatible || _canConvert(GetString(row, _input));
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _isCompatible || _canConvert(GetString(row, _input)))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
 

@@ -41,12 +41,10 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = row[_input].Equals(_default);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, row[_input].Equals(_default))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

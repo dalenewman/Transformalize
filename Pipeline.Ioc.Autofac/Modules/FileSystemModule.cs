@@ -25,7 +25,7 @@ using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class FileSystemModule : Module {
-        private const string PROVIDER = "filesystem";
+        private const string FileSystem = "filesystem";
         private readonly Process _process;
 
         public FileSystemModule() { }
@@ -40,7 +40,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 return;
 
             // enitity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == PROVIDER)) {
+            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == FileSystem)) {
 
                 // no input version detector for now
                 builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
@@ -61,7 +61,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             }
 
-            if (_process.Output().Provider == PROVIDER) {
+            if (_process.Output().Provider == FileSystem) {
                 // PROCESS OUTPUT CONTROLLER
                 builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 

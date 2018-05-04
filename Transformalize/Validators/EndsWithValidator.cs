@@ -42,11 +42,11 @@ namespace Transformalize.Validators {
 
         public override IRow Operate(IRow row) {
             var valid = GetString(row, _input).EndsWith(Context.Operation.Value);
-            row[ValidField] = valid;
-            if (!valid) {
+
+            if (IsInvalid(row, valid)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

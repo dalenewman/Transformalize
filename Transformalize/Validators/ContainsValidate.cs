@@ -53,11 +53,10 @@ namespace Transformalize.Validators {
         public override IRow Operate(IRow row) {
             var valueItMustContain = _valueIsField ? GetString(row, _valueField) : Context.Operation.Value;
             var valid = _input.Any(f => GetString(row, f).Contains(valueItMustContain));
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, valid)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
 

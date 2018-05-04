@@ -27,12 +27,10 @@ namespace Transformalize.Validators {
             _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
         }
         public override IRow Operate(IRow row) {
-            var valid = _regex.IsMatch(GetString(row, _input));
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _regex.IsMatch(GetString(row, _input)))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

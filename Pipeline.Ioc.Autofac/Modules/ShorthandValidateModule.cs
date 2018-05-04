@@ -50,18 +50,17 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Signatures.Add(new Signature {
                         Name = "any",
                         Parameters = new List<Parameter> {
-                    new Parameter {Name = "value"},
-                    new Parameter {Name = "operator", Value = "equal"}
-                }
+                            new Parameter {Name = "value"},
+                            new Parameter {Name = "operator", Value = "equal"}
+                        }   
                     });
                     root.Signatures.Add(new Signature {
                         Name = "range",
                         Parameters = new List<Parameter> {
-                    new Parameter {Name = "min"},
-                    new Parameter {Name = "max"}
-                }
+                            new Parameter {Name = "min"},
+                            new Parameter {Name = "max"}
+                        }
                     });
-                    root.Signatures.Add(Simple("domain"));
                     root.Signatures.Add(Simple("map"));
 
                     root.Methods.Add(new Method { Name = "required", Signature = "none" });
@@ -77,7 +76,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "notequal", Signature = "value" });
                     root.Methods.Add(new Method { Name = "unequal", Signature = "value" });
                     root.Methods.Add(new Method { Name = "is", Signature = "type" });
-                    root.Methods.Add(new Method { Name = "in", Signature = "domain" });
+                    root.Methods.Add(new Method { Name = "in", Signature = "map" });
+                    root.Methods.Add(new Method { Name = "notin", Signature = "map" });
                     root.Methods.Add(new Method { Name = "matches", Signature = "pattern" });
                     root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
                     root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
@@ -85,7 +85,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
                     root.Methods.Add(new Method { Name = "numeric", Signature = "none" });
                     root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
-                    root.Methods.Add(new Method() { Name = "map", Signature = "map"});
+                    root.Methods.Add(new Method { Name = "map", Signature = "map" });
                     root.Methods.Add(new Method { Name = "alphanum", Signature = "none" });
                     root.Check();
                 }

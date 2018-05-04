@@ -31,13 +31,6 @@ namespace Transformalize.Validators {
                 }
                 return row[field].ToString();  // conversion, assumed to be more expensive
             };
-            if (MessageField == null) {
-                AppendMessage = delegate { };
-            } else {
-                AppendMessage = delegate (IRow row, string message) {
-                    row[MessageField] = GetString(row, MessageField) + message + "|";
-                };
-            }
         }
     }
 }

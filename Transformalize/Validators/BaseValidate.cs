@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Impl;
 
 namespace Transformalize.Validators {
 
@@ -32,6 +31,8 @@ namespace Transformalize.Validators {
         private readonly Field _validField;
         private readonly Field _messageField;
         protected Action<IRow, string> AppendMessage;
+        protected Action<IRow, bool> AppendResult;
+        protected Func<IRow, bool, bool> IsInvalid;
 
         public IContext Context { get; }
         public bool Run { get; set; } = true;
@@ -49,11 +50,22 @@ namespace Transformalize.Validators {
 
             if (MessageField == null) {
                 AppendMessage = delegate { };
+
             } else {
-                AppendMessage = delegate (IRow row, string message) {
-                    row[MessageField] = row[MessageField] + message + "|";
+                AppendMessage = (row, message) => row[MessageField] = row[MessageField] + message + "|";
+            }
+
+            if (ValidField == null) {
+                AppendResult = delegate { };
+                IsInvalid = (row, result) => true;
+            } else {
+                AppendResult = (row, result) => row[ValidField] = (bool)row[ValidField] && result;
+                IsInvalid = delegate (IRow row, bool result) {
+                    AppendResult(row, result);
+                    return result == false;
                 };
             }
+
         }
 
         // this **must** be implemented

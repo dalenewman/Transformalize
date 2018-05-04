@@ -369,7 +369,7 @@ namespace Transformalize.Configuration {
                 if (ValidField == string.Empty) {
                     var valid = Alias + "Valid";
                     if (!CalculatedFields.Any(f => f.Name.Equals(valid))) {
-                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true};
+                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true, Default = "true"};
                         add.Validators.Add(new Operation {
                             Method = "all",
                             Operator = "equals",

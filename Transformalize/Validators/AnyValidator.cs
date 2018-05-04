@@ -87,12 +87,9 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = _func(row);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _func(row))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
             return row;
         }
     }

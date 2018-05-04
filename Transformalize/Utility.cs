@@ -53,20 +53,24 @@ namespace Transformalize {
                     .ToArray();
         }
 
-        public static string ReadableDomain(IEnumerable<object> items) {
+        public static string ReadableDomain(IEnumerable<object> items, string conjuction = "or") {
             if (items == null)
                 return string.Empty;
 
-            var expanded = items.ToList();
+            var expanded = items.Select(s=>(s?.ToString() ?? "(null)") == string.Empty ? "(empty)" : s?.ToString() ?? "(null)").ToList();
 
-            if (expanded.Count == 1) {
-                return expanded[0]?.ToString() ?? string.Empty;
+            switch (expanded.Count) {
+                case 0:
+                    return string.Empty;
+                case 1:
+                    return expanded[0];
+                default:
+                    var last = expanded.Last();
+                    expanded.Remove(last);
+
+                    return string.Join(", ", expanded) + ", " + conjuction + " " + last;
             }
 
-            var last = expanded.Last();
-            expanded.Remove(last);
-
-            return string.Join(", ", expanded) + ", or " + last;
         }
 
         public static string[] Split(string arg, string[] splitter, int skip = 0) {

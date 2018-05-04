@@ -21,7 +21,7 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
     public class NumericValidator : StringValidate {
-        private readonly Func<IRow, bool> _transform;
+        private readonly Func<IRow, bool> _validator;
         private readonly BetterFormat _betterFormat;
 
         public NumericValidator(IContext context) : base(context) {
@@ -30,9 +30,9 @@ namespace Transformalize.Validators {
 
             var input = SingleInput();
             if (input.IsNumeric()) {
-                _transform = row => true;
+                _validator = row => true;
             } else {
-                _transform = row => {
+                _validator = row => {
                     double val;
                     return double.TryParse(GetString(row, input), out val);
                 };
@@ -45,12 +45,10 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = _transform(row);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _validator(row))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

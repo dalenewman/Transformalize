@@ -266,7 +266,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\ContainsValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\EndsWithValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\EqualsValidator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validators\InValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\DefaultValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\EmptyValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\NumericValidator.cs" />

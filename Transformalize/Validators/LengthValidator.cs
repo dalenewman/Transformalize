@@ -2,8 +2,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
-namespace Transformalize.Validators
-{
+namespace Transformalize.Validators {
     public class LengthValidator : StringValidate {
         private readonly Field _input;
         private readonly BetterFormat _betterFormat;
@@ -20,12 +19,10 @@ namespace Transformalize.Validators
         }
 
         public override IRow Operate(IRow row) {
-            var valid = GetString(row, _input).Length == Context.Operation.Length;
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, GetString(row, _input).Length == Context.Operation.Length)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

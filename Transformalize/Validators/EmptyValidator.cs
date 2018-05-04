@@ -41,12 +41,10 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = GetString(row, _input) == string.Empty;
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, GetString(row, _input) == string.Empty)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

@@ -27,22 +27,32 @@ namespace Transformalize.Validators {
 
     public class MapValidator : BaseValidate {
 
+        private readonly bool _inMap;
         private readonly Field _input;
         private readonly HashSet<object> _map = new HashSet<object>();
         private BetterFormat _betterFormat;
+        private readonly Func<object, bool> _isValid;
+        private bool _autoMap;
 
-        public MapValidator(IContext context) : base(context) {
+        public MapValidator(IContext context, bool inMap) : base(context) {
+            _inMap = inMap;
 
             if (!Run)
                 return;
 
             if (context.Operation.Map == string.Empty) {
-                Error("The map method requires a map");
+                Error("The map method requires a map name or comma delimited list of values.");
                 Run = false;
                 return;
             }
 
             _input = SingleInput();
+
+            if (_inMap) {
+                _isValid = o => _map.Contains(o);
+            } else {
+                _isValid = o => !_map.Contains(o);
+            }
 
         }
 
@@ -55,7 +65,17 @@ namespace Transformalize.Validators {
 
             var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} is not found in {_map.Count} items.";
+                if (_autoMap || _map.Count > 5) {
+                    help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} is {(_inMap ? "not one of" : "one of")} {_map.Count} {(_inMap ? "valid" : "invalid")} items.";
+                } else {
+                    var domain = Utility.ReadableDomain(_map);
+                    if (domain == string.Empty) {
+                        help = $"{Context.Field.Label} has an empty map, in, or notIn validator!";
+                    } else {
+                        help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} must {(_inMap ? "be" : "not be")} one of these {_map.Count} items: " + domain + ".";
+                    }
+
+                }
             }
             _betterFormat = new BetterFormat(Context, help, Context.Entity.GetAllFields);
 
@@ -70,6 +90,7 @@ namespace Transformalize.Validators {
                 return map;
 
             // auto map
+            _autoMap = true;
             map = new Map { Name = Context.Operation.Map };
             var split = Context.Operation.Map.Split(',');
             foreach (var item in split) {
@@ -81,12 +102,10 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            var valid = _map.Contains(row[_input]);
-            row[ValidField] = valid;
-            if (!valid) {
+            if (IsInvalid(row, _isValid(row[_input]))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
-            
+
             return row;
         }
     }

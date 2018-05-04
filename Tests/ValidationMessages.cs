@@ -36,7 +36,7 @@ namespace Tests {
           <fields>
             <add name='Field1' v='contains(1)' message-field='Message' />
             <add name='Field2' v='required().is(int)' message-field='Message' />
-            <add name='Field3' v='isnumeric().matches(^[0-9/.]{5}$)' message-field='Message' help='Field3 must be a 5 digit number (including decimal pt.)' />
+            <add name='Field3' v='matches(^[0-9/.]{5}$)' message-field='Message' help='Field3 must be a 5 digit number (including decimal pt.)' />
           </fields>
           <calculated-fields>
             
