@@ -51,10 +51,18 @@ namespace Transformalize.Configuration.Ext {
             }
 
             AddDefaultDelimiters(p);
-            DefaultConnection(p, "input");
-            DefaultConnection(p, "output");
+
+            // add internal input if nothing specified
+            if (!p.Connections.Any()) {
+                p.Connections.Add(new Connection { Name = "input", Provider = "internal" });
+            }
+
+            // add an internal output
+            if (p.Connections.All(c => c.Name != "output")) {
+                p.Connections.Add(new Connection { Name = "output", Provider = "internal" });
+            }
+
             DefaultEntityConnections(p);
-            DefaultOutput(p);
             DefaultSearchTypes(p);
             DefaultFileInspection(p);
 
@@ -189,21 +197,11 @@ namespace Transformalize.Configuration.Ext {
             return f => f.Type == "facet" && !string.IsNullOrEmpty(f.Field) && string.IsNullOrEmpty(f.Map);
         }
 
-        private static void DefaultConnection(Process p, string name) {
-            if (p.Connections.All(c => c.Name != name)) {
-                p.Connections.Add(new Connection { Name = name, Provider = "internal" });
-            }
-        }
-
         private static void DefaultEntityConnections(Process p) {
+            // take a connection named `input` if defined, otherwise take the first connection
             foreach (var entity in p.Entities.Where(entity => !entity.HasConnection())) {
                 entity.Connection = p.Connections.Any(c => c.Name == "input") ? "input" : p.Connections.First().Name;
             }
-        }
-
-        private static void DefaultOutput(Process p) {
-            if (p.Connections.All(c => c.Name != "output"))
-                p.Connections.Add(new Connection { Name = "output", Provider = "internal" });
         }
 
         private static void DefaultSearchTypes(Process p) {

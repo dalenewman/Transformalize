@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;

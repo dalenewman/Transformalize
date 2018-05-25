@@ -16,10 +16,37 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.DateMath {
+
+    public class TimeAgoTransform : RelativeTimeTransform {
+        public TimeAgoTransform(IContext context = null) : base(context, true) {}
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("timeago") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("from-time-zone", "UTC")
+                }
+            };
+        }
+    }
+
+    public class TimeAheadTransform : RelativeTimeTransform {
+        public TimeAheadTransform(IContext context = null) : base(context, false) {
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("timeahead") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("from-time-zone", "UTC")
+                }
+            };
+        }
+    }
+
     public class RelativeTimeTransform : BaseTransform {
 
         private readonly bool _past;
@@ -32,6 +59,10 @@ namespace Transformalize.Transforms.DateMath {
         private const int Month = 30 * Day;
 
         public RelativeTimeTransform(IContext context, bool past) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("date")) {
                 return;
             }
@@ -47,7 +78,7 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks, _past);
-            
+
             return row;
         }
 

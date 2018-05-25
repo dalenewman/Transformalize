@@ -30,7 +30,7 @@ namespace Transformalize.Providers.Ado {
 
         private readonly IConnectionFactory _cf;
 
-        readonly Stopwatch _stopWatch;
+        private readonly Stopwatch _stopWatch;
 
         public AdoOutputController(
             OutputContext context,
@@ -70,6 +70,16 @@ namespace Transformalize.Providers.Ado {
                     entity.DbType = DbType.String;
                     entity.Value = Context.Entity.Alias;
 
+                    var input = cmd.CreateParameter();
+                    input.ParameterName = "Input";
+                    input.DbType = DbType.String;
+                    input.Value = Context.Entity.Connection;
+
+                    var mode = cmd.CreateParameter();
+                    mode.ParameterName = "Mode";
+                    mode.DbType = DbType.String;
+                    mode.Value = Context.Process.Mode;
+
                     var start = cmd.CreateParameter();
                     start.ParameterName = "Start";
                     start.DbType = _cf.AdoProvider == AdoProvider.Access ? DbType.Date : DbType.DateTime;
@@ -77,6 +87,8 @@ namespace Transformalize.Providers.Ado {
 
                     cmd.Parameters.Add(batchId);
                     cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(input);
+                    cmd.Parameters.Add(mode);
                     cmd.Parameters.Add(start);
 
                     cmd.ExecuteNonQuery();
@@ -125,6 +137,11 @@ namespace Transformalize.Providers.Ado {
                     entity.DbType = DbType.String;
                     entity.Value = Context.Entity.Alias;
 
+                    var input = cmd.CreateParameter();
+                    input.ParameterName = "Input";
+                    input.DbType = DbType.String;
+                    input.Value = Context.Entity.Connection;
+
                     var batchId = cmd.CreateParameter();
                     batchId.ParameterName = "BatchId";
                     batchId.DbType = DbType.Int32;
@@ -135,6 +152,7 @@ namespace Transformalize.Providers.Ado {
                     cmd.Parameters.Add(deletes);
                     cmd.Parameters.Add(end);
                     cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(input);
                     cmd.Parameters.Add(batchId);
 
                     cmd.ExecuteNonQuery();
@@ -146,6 +164,7 @@ namespace Transformalize.Providers.Ado {
                         Deletes = Convert.ToInt64(Context.Entity.Deletes),
                         End = DateTime.Now,
                         Entity = Context.Entity.Alias,
+                        Input = Context.Entity.Connection,
                         Context.Entity.BatchId
                     });
                 }

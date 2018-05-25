@@ -6,6 +6,7 @@
 @using Pipeline.Web.Orchard.Services
 @using Pipeline.Web.Orchard.Models
 @using Pipeline.Web.Orchard.Services.Contracts
+@using Transformalize.Contracts
 
 @model ReportViewModel
 @{
@@ -65,9 +66,9 @@
     var fields = entity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
     var isSortable = fields.Any(f => f.Sortable == "true");
     var activeParameters = Model.Process.GetActiveParameters();
-
-    AppendMeta("description", entity.Alias, ",");
-    Layout.Title = entity.Alias;
+    var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
+    AppendMeta("description", title , ",");
+    Layout.Title = title;
 }
 
 <style>
@@ -124,7 +125,7 @@
 </style>
 
 <div class="row">
-    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@entity.Alias</div>
+    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@title</div>
     @if (entity.Hits > 0) {
         <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
     } else {
@@ -132,12 +133,12 @@
     }
 </div>
 
-@foreach (var error in Model.Process.Errors()) {
-    <div class="alert alert-danger" role="alert">@error</div>
+@foreach (var logEntry in Model.Process.Log.Where(le=>le.LogLevel == LogLevel.Error) ) {
+    <div class="alert alert-danger" role="alert">@logEntry.Message</div>
 }
 
-@foreach (var warning in Model.Process.Warnings()) {
-    <div class="alert alert-warning" role="alert">@warning</div>
+@foreach (var logEntry in Model.Process.Log.Where(le=>le.LogLevel == LogLevel.Warn)) {
+    <div class="alert alert-warning" role="alert">@logEntry.Message</div>
 }
 
 <form id="id_report" class="form-inline" role="form" method="GET">

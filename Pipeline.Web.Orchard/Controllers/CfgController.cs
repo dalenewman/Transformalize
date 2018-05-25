@@ -129,7 +129,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 // so file required() validator is fooled
                 if (Request.Files != null && Request.Files.Count > 0) {
                     foreach (var key in Request.Files.AllKeys) {
-                        if (Request.Files[key]!= null && Request.Files[key].ContentLength > 0) {
+                        if (Request.Files[key] != null && Request.Files[key].ContentLength > 0) {
                             parameters[key] = "file.tmp";
                         }
                     }
@@ -147,7 +147,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                 if (Request.HttpMethod.Equals("POST")) {
 
-                    if (entity.Rows.Count == 1 && (bool) entity.Rows[0][entity.ValidField]) {
+                    if (entity.Rows.Count == 1 && (bool)entity.Rows[0][entity.ValidField]) {
                         // reset, modify for actual insert, and execute again
                         process = _processService.Resolve(part);
                         process.Load(part.Configuration, parameters);
@@ -173,10 +173,9 @@ namespace Pipeline.Web.Orchard.Controllers {
                                 if (input != null && input.ContentLength > 0) {
                                     var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
                                     if (parameter != null) {
-                                        parameter.Value = Url.Action("View", "File", new {id = filePart.Id}) ?? string.Empty;
+                                        parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
                                     }
-                                }
-                                else {
+                                } else {
                                     if (parameter != null && parameters.ContainsKey(field.Alias + "_Old")) {
                                         parameter.Value = parameters[field.Alias + "_Old"];
                                     }
@@ -188,9 +187,13 @@ namespace Pipeline.Web.Orchard.Controllers {
                             runner.Execute(process);
                             _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
                             return Redirect(parameters["Orchard.ReturnUrl"]);
-                        }
-                        catch (Exception ex) {
-                            _orchardServices.Notifier.Error(T("The {0} save failed: {2}", process.Name, ex.Message));
+                        } catch (Exception ex) {
+                            if (ex.Message.Contains("duplicate")) {
+                                _orchardServices.Notifier.Error(T("The {0} save failed: {1}", process.Name, "The database has rejected this update due to a unique constraint violation."));
+                            } else {
+                                _orchardServices.Notifier.Error(T("The {0} save failed: {1}", process.Name, ex.Message));
+                            }
+                            Logger.Error(ex, ex.Message);
                         }
                     } else {
                         _orchardServices.Notifier.Error(T("The form did not pass validation.  Please correct it and re-submit."));

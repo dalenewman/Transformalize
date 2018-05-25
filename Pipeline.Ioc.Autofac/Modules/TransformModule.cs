@@ -112,6 +112,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new TimeZoneOffsetTransform(c), new TimeZoneOffsetTransform().GetSignatures());
             RegisterTransform(builder, c => new OppositeTransform(c), new OppositeTransform().GetSignatures());
             RegisterTransform(builder, c => new DateAddTransform(c), new DateAddTransform().GetSignatures());
+            RegisterTransform(builder, c => new TimeAheadTransform(c), new TimeAheadTransform().GetSignatures());
+            RegisterTransform(builder, c => new TimeAgoTransform(c), new TimeAgoTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -147,8 +149,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new SplitLengthTransform(p.Positional<IContext>(0))).Named<ITransform>("splitlength");
             builder.Register((c, p) => new SubStringTransform(p.Positional<IContext>(0))).Named<ITransform>("substring");
             builder.Register((c, p) => new TagTransform(p.Positional<IContext>(0))).Named<ITransform>("tag");
-            builder.Register((c, p) => new RelativeTimeTransform(p.Positional<IContext>(0), true)).Named<ITransform>("timeago");
-            builder.Register((c, p) => new RelativeTimeTransform(p.Positional<IContext>(0), false)).Named<ITransform>("timeahead");
             builder.Register((c, p) => new ToStringTransform(p.Positional<IContext>(0))).Named<ITransform>("tostring");
             builder.Register((c, p) => new ToTimeTransform(p.Positional<IContext>(0))).Named<ITransform>("totime");
             builder.Register((c, p) => new ToYesNoTransform(p.Positional<IContext>(0))).Named<ITransform>("toyesno");
@@ -203,6 +203,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("append");
             builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prepend");
+            builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("prefix");
+            builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("suffix");
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);

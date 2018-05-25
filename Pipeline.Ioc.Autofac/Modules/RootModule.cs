@@ -78,9 +78,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             p.Named<Dictionary<string, string>>("parameters")
                         );
                         break;
-                    default:
+                    case 1:
                         process.Load(p.Named<string>("cfg"));
                         break;
+                    default:
+                        if (ctx.IsRegisteredWithName<string>("cfg")) {
+                            process.Load(ctx.ResolveNamed<string>("cfg"));
+                            break;
+                        }
+                        throw new Exception("Configuration Container could not find the configuration!  Pass in or register a `cfg` string.");
+
                 }
 
                 if (process.Errors().Any()) {
@@ -110,7 +117,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         if (!System.Environment.CommandLine.Contains("TESTWINDOW") && !System.Environment.CommandLine.Contains("TESTPLATFORM")) {
                             process.Output().Provider = "console";
                         }
-                    } catch (Exception) {
+                    } catch (IOException) {
+                        
                         // just a hack to determine if in console
                     }
                 }

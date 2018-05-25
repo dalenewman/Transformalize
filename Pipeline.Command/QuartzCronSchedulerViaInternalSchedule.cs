@@ -76,9 +76,10 @@ namespace Transformalize.Command {
                             ).Build();
 
                         break;
+                    case "fire":
                     case "fireandproceed":
                         trigger = TriggerBuilder.Create()
-                            .WithIdentity(schedule.Name.Titleize() + " Trigger", "TFL")
+                           .WithIdentity(schedule.Name.Titleize() + " Trigger", "TFL")
                             .StartNow()
                             .WithCronSchedule(schedule.Cron, x => x
                                 .WithMisfireHandlingInstructionFireAndProceed()

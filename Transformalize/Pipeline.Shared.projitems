@@ -131,7 +131,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)TransformDomain.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendFieldTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />

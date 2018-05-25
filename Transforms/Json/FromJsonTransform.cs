@@ -31,6 +31,8 @@ namespace Transformalize.Transforms.Json {
         private readonly HashSet<string> _errors = new HashSet<string>();
 
         public FromJsonTransform(IContext context, Func<object, string> serializer) : base(context, "object") {
+            ProducesFields = true;
+
             if (!context.Operation.Parameters.Any()) {
                 Error($"The {context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;

@@ -53,11 +53,13 @@ namespace Transformalize.Transforms.Xml {
 
         public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, "object") {
 
+            ProducesFields = true;
+
             _rowFactory = rowFactory;
             _input = SingleInputForMultipleOutput();
             var output = MultipleOutput();
             _fields = context.GetAllEntityFields().ToArray();
-            _outerFields = _fields.Except(output).Where(f=>!f.System).ToList();
+            _outerFields = _fields.Except(output).Where(f => !f.System).ToList();
             if (!_input.Output) {
                 _outerFields.Remove(_input);
             }

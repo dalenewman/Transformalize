@@ -24,6 +24,7 @@ using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityInitializer : IAction {
+
         private readonly OutputContext _context;
         private readonly IConnectionFactory _cf;
 
@@ -32,7 +33,7 @@ namespace Transformalize.Providers.Ado {
             _cf = cf;
         }
 
-        void Destroy(IDbConnection cn) {
+        private void Destroy(IDbConnection cn) {
 
             _context.Warn("Initializing");
 

@@ -32,7 +32,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Operation.TimeZoneIdDomain)]
         public string TimeZone { get; set; }
 
-        [Cfg(value = "DoNothing", domain = "DoNothing,Ignore,FireAndProceed", ignoreCase = true, toLower = true, trim = true)]
+        [Cfg(value = "nothing", domain = "nothing,donothing,ignore,fire,fireandproceed", ignoreCase = true, toLower = true, trim = true)]
         public string MisFire { get; set; }
     }
 }

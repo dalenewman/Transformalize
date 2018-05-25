@@ -31,7 +31,7 @@ namespace Transformalize.Validators {
         private readonly Field _input;
         private readonly HashSet<object> _map = new HashSet<object>();
         private BetterFormat _betterFormat;
-        private readonly Func<object, bool> _isValid;
+        private Action<IRow> _validate;
         private bool _autoMap;
 
         public MapValidator(IContext context, bool inMap) : base(context) {
@@ -48,18 +48,17 @@ namespace Transformalize.Validators {
 
             _input = SingleInput();
 
-            if (_inMap) {
-                _isValid = o => _map.Contains(o);
-            } else {
-                _isValid = o => !_map.Contains(o);
-            }
+
+
+
 
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
 
-            var map = CreateMap();
-            foreach (var item in map.Items) {
+            /* Over ride Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
+
+            foreach (var item in CreateMap().Items) {
                 _map.Add(_input.Convert(item.From));
             }
 
@@ -70,16 +69,39 @@ namespace Transformalize.Validators {
                 } else {
                     var domain = Utility.ReadableDomain(_map);
                     if (domain == string.Empty) {
-                        help = $"{Context.Field.Label} has an empty map, in, or notIn validator!";
+                        help = $"{Context.Field.Label} has an empty {Context.Operation.Method} validator.";
                     } else {
                         help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} must {(_inMap ? "be" : "not be")} one of these {_map.Count} items: " + domain + ".";
                     }
 
                 }
             }
+
             _betterFormat = new BetterFormat(Context, help, Context.Entity.GetAllFields);
 
-            return base.Operate(rows);
+            Func<object, bool> isValid;
+            if (_inMap) {
+                isValid = o => _map.Contains(o);
+            } else {
+                isValid = o => !_map.Contains(o);
+            }
+
+            /* when you override Operate(IEnumerable<IRow>) you must add your ShouldRun check, if you want it */
+            if (Context.Operation.ShouldRun == null) {
+                _validate = row => {
+                    if (IsInvalid(row, isValid(row[_input]))) {
+                        AppendMessage(row, _betterFormat.Format(row));
+                    }
+                };
+            } else {
+                _validate = row => {
+                    if (Context.Operation.ShouldRun(row) && IsInvalid(row, isValid(row[_input]))) {
+                        AppendMessage(row, _betterFormat.Format(row));
+                    }
+                };
+            }
+
+            return rows.Select(Operate);
         }
 
         private Map CreateMap() {
@@ -102,10 +124,7 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            if (IsInvalid(row, _isValid(row[_input]))) {
-                AppendMessage(row, _betterFormat.Format(row));
-            }
-
+            _validate(row);
             return row;
         }
     }

@@ -27,6 +27,8 @@ namespace Transformalize.Transforms {
 
         public FromSplitTransform(IContext context) : base(context, null) {
 
+            ProducesFields = true;
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -42,7 +44,7 @@ namespace Transformalize.Transforms {
                 Run = false;
                 return;
             }
-            
+
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();
             _separator = context.Operation.Separator.ToCharArray();
@@ -56,7 +58,7 @@ namespace Transformalize.Transforms {
                     row[output] = output.Convert(values[i]);
                 }
             }
-            
+
             return row;
         }
 

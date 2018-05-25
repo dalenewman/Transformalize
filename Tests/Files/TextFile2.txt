@@ -1,0 +1,4 @@
+﻿Id,Name,City,State
+1,Packers,Green Bay,WI
+2,Vikings,Minneapolis,MN
+3,Giants,New York,NY

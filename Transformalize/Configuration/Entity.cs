@@ -32,10 +32,10 @@ namespace Transformalize.Configuration {
         [Cfg(required = false, unique = true, value = null)]
         public string Alias { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Label { get; set; }
 
-        [Cfg(value = "input", toLower = true)]
+        [Cfg(value = Constants.DefaultSetting, toLower = true)]
         public string Connection { get; set; }
 
         // insert, update, and/or delete options (default behavior is insert=true, update=true, delete=false)
@@ -67,7 +67,7 @@ namespace Transformalize.Configuration {
         public string UpdateCommand { get; set; }
         [Cfg(value = "")]
         public string DeleteCommand { get; set; }
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string CreateCommand { get; set; }
 
         public Field[] GetPrimaryKey() {
@@ -108,18 +108,25 @@ namespace Transformalize.Configuration {
         public string Script { get; set; }
         [Cfg(value = "")]
         public string ScriptKeys { get; set; }
+
         [Cfg(value = false)]
         public bool TrimAll { get; set; }
+
         [Cfg(value = true)]
         public bool Unicode { get; set; }
+
         [Cfg(value = true)]
         public bool VariableLength { get; set; }
+
         [Cfg(value = "")]
         public string Version { get; set; }
+
         [Cfg(required = false)]
         public List<Filter> Filter { get; set; }
+
         [Cfg(required = false)]
         public List<Field> Fields { get; set; }
+
         [Cfg(required = false)]
         public List<Field> CalculatedFields { get; set; }
 
@@ -128,7 +135,6 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = 10000)]
         public int LogInterval { get; set; }
-
 
         /// <summary>
         /// Currently only supported for ADO based input.
@@ -208,10 +214,9 @@ namespace Transformalize.Configuration {
             if (!Filter.Any())
                 return;
 
-            for (int i = 0; i < Filter.Count; i++) {
+            for (var i = 0; i < Filter.Count; i++) {
                 var filter = Filter[i];
-                Field field;
-                if (TryGetField(filter.Field, out field)) {
+                if (TryGetField(filter.Field, out var field)) {
                     filter.LeftField = field;
                     filter.IsField = true;
                     filter.Key = field.Name + "_filter_" + i;
@@ -369,7 +374,7 @@ namespace Transformalize.Configuration {
                 if (ValidField == string.Empty) {
                     var valid = Alias + "Valid";
                     if (!CalculatedFields.Any(f => f.Name.Equals(valid))) {
-                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true, Default = "true"};
+                        var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true, Default = "true" };
                         add.Validators.Add(new Operation {
                             Method = "all",
                             Operator = "equals",
@@ -498,16 +503,16 @@ namespace Transformalize.Configuration {
 
         }
 
-        static Parameter GetParameter(string entity, string field, string type) {
+        private static Parameter GetParameter(string entity, string field, string type) {
             return new Parameter { Entity = entity, Field = field, Type = type };
         }
 
-        static Parameter GetParameter(string entity, string field) {
+        private static Parameter GetParameter(string entity, string field) {
             return new Parameter { Entity = entity, Field = field };
         }
 
         public bool HasConnection() {
-            return Connection != string.Empty;
+            return Connection != Constants.DefaultSetting;
         }
 
         public void AdaptFieldsCreatedFromTransforms() {
@@ -660,7 +665,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool IgnoreDuplicateKey { get; set; }
 
-        [Cfg(value="en", domain = "az,cz,de,de_AT,de_CH,el,en,en_AU,en_au_ocker,en_BORK,en_CA,en_GB,en_IE,en_IND,en_US,es,es_MX,fa,fr,fr_CA,ge,id_ID,it,ja,ko,lv,nb_NO,nep,nl,nl_BE,pl,nl_BE,pl,pt_BR,pt_PT,ro,ru,sk,sv,tr,uk,vi,zh_CN,zh_TW")]
+        [Cfg(value = "en", domain = "az,cz,de,de_AT,de_CH,el,en,en_AU,en_au_ocker,en_BORK,en_CA,en_GB,en_IE,en_IND,en_US,es,es_MX,fa,fr,fr_CA,ge,id_ID,it,ja,ko,lv,nb_NO,nep,nl,nl_BE,pl,nl_BE,pl,pt_BR,pt_PT,ro,ru,sk,sv,tr,uk,vi,zh_CN,zh_TW")]
         public string Locale { get; set; }
     }
 }

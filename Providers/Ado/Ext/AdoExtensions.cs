@@ -67,7 +67,10 @@ namespace Transformalize.Providers.Ado.Ext {
         public static string SqlCreateFlatIndex(this OutputContext c, IConnectionFactory cf) {
             var pk = c.Process.Entities.First(e => e.IsMaster).GetAllFields().Where(f => f.PrimaryKey).Select(f => f.Alias).ToArray();
             var indexName = ("UX_" + Utility.Identifier(c.Process.Flat + "_" + SqlKeyName(pk))).Left(128);
-            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))}){cf.Terminator}";
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))})";
+            if (c.Process.Entities.First(e => e.IsMaster).IgnoreDuplicateKey && c.Connection.Provider == "sqlserver") {
+                sql += " WITH (IGNORE_DUP_KEY = ON)";
+            }
             c.Debug(() => sql);
             return sql;
         }
@@ -272,8 +275,8 @@ FROM (
         }
 
         public static string SqlControlStartBatch(this OutputContext c, IConnectionFactory cf) {
-            var values = cf.AdoProvider == AdoProvider.Access ? "?,?,0,0,0,?" : "@BatchId,@Entity,0,0,0,@Start";
-            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")}) VALUES({values}){cf.Terminator}";
+            var values = cf.AdoProvider == AdoProvider.Access ? "?,?,?,?,0,0,0,?" : "@BatchId,@Entity,@Input,@Mode,0,0,0,@Start";
+            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Input")},{cf.Enclose("Mode")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")}) VALUES({values}){cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }
@@ -281,9 +284,9 @@ FROM (
         public static string SqlControlEndBatch(this OutputContext c, IConnectionFactory cf) {
             string sql;
             if (cf.AdoProvider == AdoProvider.Access) {
-                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = ?, {cf.Enclose("Updates")} = ?, {cf.Enclose("Deletes")} = ?, {cf.Enclose("End")} = ? WHERE {cf.Enclose("Entity")} = ? AND {cf.Enclose("BatchId")} = ?";
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = ?, {cf.Enclose("Updates")} = ?, {cf.Enclose("Deletes")} = ?, {cf.Enclose("End")} = ? WHERE {cf.Enclose("Entity")} = ? AND {cf.Enclose("Input")} = ? AND {cf.Enclose("BatchId")} = ?";
             } else {
-                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @End WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("BatchId")} = @BatchId{cf.Terminator}";
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @End WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("Input")} = @Input AND {cf.Enclose("BatchId")} = @BatchId{cf.Terminator}";
             }
             c.Debug(() => sql);
             return sql;
@@ -298,12 +301,14 @@ FROM (
                 CREATE TABLE {cf.Enclose(SqlControlTableName(c))}(
                     {cf.Enclose("BatchId")} INTEGER NOT NULL,
                     {cf.Enclose("Entity")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
+                    {cf.Enclose("Input")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
+                    {cf.Enclose("Mode")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
                     {cf.Enclose("Inserts")} {longType} NOT NULL,
                     {cf.Enclose("Updates")} {longType} NOT NULL,
                     {cf.Enclose("Deletes")} {longType} NOT NULL,
                     {cf.Enclose("Start")} {dateType} NOT NULL,
                     {cf.Enclose("End")} {dateType},
-                    CONSTRAINT PK_{Utility.Identifier(SqlControlTableName(c))}_BatchId PRIMARY KEY ({cf.Enclose("BatchId")}, {cf.Enclose("Entity")})
+                    CONSTRAINT PK_{Utility.Identifier(SqlControlTableName(c))}_BatchId PRIMARY KEY ({cf.Enclose("BatchId")})
                 ){cf.Terminator}";
 
             c.Debug(() => sql);

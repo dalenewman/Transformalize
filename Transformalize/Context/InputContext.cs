@@ -23,7 +23,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Context {
     public class InputContext : IConnectionContext {
-        readonly IContext _context;
+        private readonly IContext _context;
         public Connection Connection { get; set; }
         public LogLevel LogLevel => _context.Logger.LogLevel;
         public int RowCapacity { get; set; }

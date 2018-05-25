@@ -22,7 +22,6 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Providers.Console;
-// using Transformalize.Transforms.CSharp;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
@@ -45,10 +44,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register<IContext>((ctx, p) => new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process)).As<IContext>();
 
             // Process Output Context
-            builder.Register(ctx => {
-                var context = ctx.Resolve<IContext>();
-                return new OutputContext(context);
-            }).As<OutputContext>();
+            builder.Register(ctx => new OutputContext(ctx.Resolve<IContext>())).As<OutputContext>();
 
             // Connection and Process Level Output Context
             foreach (var connection in _process.Connections) {

@@ -13,6 +13,8 @@ namespace Transformalize.Transforms {
 
         public FromRegexTransform(IContext context) : base(context, null) {
 
+            ProducesFields = true;
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -50,7 +52,7 @@ namespace Transformalize.Transforms {
                     row[_output[i]] = _output[i].Convert(@group.Captures[0].Value);
                 }
             }
-            
+
             return row;
 
         }

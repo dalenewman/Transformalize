@@ -43,7 +43,8 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new AllValidator(p.Positional<IContext>(0))).Named<IValidate>("all");
             builder.Register((c, p) => new StartsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("startswith");
             builder.Register((c, p) => new EndsWithValidator(p.Positional<IContext>(0))).Named<IValidate>("endswith");
-            builder.Register((c, p) => new InValidator(p.Positional<IContext>(0))).Named<IValidate>("in");
+            builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0), inMap: true)).Named<IValidate>("in");
+            builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0), inMap: false)).Named<IValidate>("notin");
             builder.Register((c, p) => new ContainsValidator(p.Positional<IContext>(0))).Named<IValidate>("contains");
             builder.Register((c, p) => new IsValidator(p.Positional<IContext>(0))).Named<IValidate>("is");
             builder.Register((c, p) => new EqualsValidator(p.Positional<IContext>(0))).Named<IValidate>("equals");
@@ -52,7 +53,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new NumericValidator(p.Positional<IContext>(0))).Named<IValidate>("numeric");
             builder.Register((c, p) => new MatchValidator(p.Positional<IContext>(0))).Named<IValidate>("matches");
             builder.Register((c, p) => new RequiredValidator(p.Positional<IContext>(0))).Named<IValidate>("required");
-            builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0))).Named<IValidate>("map");
+            builder.Register((c, p) => new MapValidator(p.Positional<IContext>(0), inMap: true)).Named<IValidate>("map");
             builder.Register((c, p) => new LengthValidator(p.Positional<IContext>(0))).Named<IValidate>("length");
             builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0), "min")).Named<IValidate>("min");
             builder.Register((c, p) => new CompareValidator(p.Positional<IContext>(0), "max")).Named<IValidate>("max");

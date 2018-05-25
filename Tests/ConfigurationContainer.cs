@@ -25,6 +25,7 @@ namespace Tests {
     public static class ConfigurationContainer {
         public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
             var builder = new ContainerBuilder();
+            builder.Register(c => cfg).Named<string>("cfg");
             builder.Register(c => logger).As<IPipelineLogger>();
             builder.Register(c => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterModule(new TransformModule(new Process { Name = "ConfigurationContainer" }, logger));

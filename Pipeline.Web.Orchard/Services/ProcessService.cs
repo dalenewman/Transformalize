@@ -468,7 +468,6 @@ namespace Pipeline.Web.Orchard.Services {
                     new Parameter {Name = "max"}
                 }
             });
-            root.Signatures.Add(Simple("domain"));
             root.Signatures.Add(Simple("map"));
 
             root.Methods.Add(new Method { Name = "required", Signature = "none" });
@@ -481,7 +480,8 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "contains", Signature = "value" });
             root.Methods.Add(new Method { Name = "equals", Signature = "value" });
             root.Methods.Add(new Method { Name = "is", Signature = "type" });
-            root.Methods.Add(new Method { Name = "in", Signature = "domain" });
+            root.Methods.Add(new Method { Name = "in", Signature = "map" });
+            root.Methods.Add(new Method { Name = "notin", Signature = "map" });
             root.Methods.Add(new Method { Name = "matches", Signature = "pattern" });
             root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
             root.Methods.Add(new Method { Name = "endswith", Signature = "value" });

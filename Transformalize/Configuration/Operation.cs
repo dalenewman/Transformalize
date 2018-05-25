@@ -26,12 +26,10 @@ namespace Transformalize.Configuration {
 
         public const string ProducerDomain = "fromxml,fromsplit,fromlengths,fromjson,fromaddress,fromregex";
         public const string TransformProducerDomain = "now,next,last,connection";
-        public const string ValidatorDomain = "contains,is,equal,equals,in,notin,startswith,endswith,isempty,empty,isdefault,default,notequal,unequal,numeric,vinisvalid,isdaylightsavings,ismatch,matches,required,map,all,length,min,max,alphanum";
         public const string TimeZoneIdDomain = "Dateline Standard Time,UTC-11,Samoa Standard Time,Hawaiian Standard Time,Alaskan Standard Time,Pacific Standard Time (Mexico),Pacific Standard Time,US Mountain Standard Time,Mountain Standard Time (Mexico),Mountain Standard Time,Central America Standard Time,Central Standard Time,Central Standard Time (Mexico),Canada Central Standard Time,SA Pacific Standard Time,Eastern Standard Time,US Eastern Standard Time,Venezuela Standard Time,Paraguay Standard Time,Atlantic Standard Time,Central Brazilian Standard Time,SA Western Standard Time,Pacific SA Standard Time,Newfoundland Standard Time,E. South America Standard Time,Argentina Standard Time,SA Eastern Standard Time,Greenland Standard Time,Montevideo Standard Time,UTC-02,Mid-Atlantic Standard Time,Azores Standard Time,Cape Verde Standard Time,Morocco Standard Time,UTC,GMT Standard Time,Greenwich Standard Time,W. Europe Standard Time,Central Europe Standard Time,Romance Standard Time,Central European Standard Time,W. Central Africa Standard Time,Namibia Standard Time,Jordan Standard Time,GTB Standard Time,Middle East Standard Time,Egypt Standard Time,Syria Standard Time,South Africa Standard Time,FLE Standard Time,Israel Standard Time,E. Europe Standard Time,Arabic Standard Time,Arab Standard Time,Russian Standard Time,E. Africa Standard Time,Iran Standard Time,Arabian Standard Time,Azerbaijan Standard Time,Mauritius Standard Time,Georgian Standard Time,Caucasus Standard Time,Afghanistan Standard Time,Ekaterinburg Standard Time,Pakistan Standard Time,West Asia Standard Time,India Standard Time,Sri Lanka Standard Time,Nepal Standard Time,Central Asia Standard Time,Bangladesh Standard Time,N. Central Asia Standard Time,Myanmar Standard Time,SE Asia Standard Time,North Asia Standard Time,China Standard Time,North Asia East Standard Time,Singapore Standard Time,W. Australia Standard Time,Taipei Standard Time,Ulaanbaatar Standard Time,Tokyo Standard Time,Korea Standard Time,Yakutsk Standard Time,Cen. Australia Standard Time,AUS Central Standard Time,E. Australia Standard Time,AUS Eastern Standard Time,West Pacific Standard Time,Tasmania Standard Time,Vladivostok Standard Time,Central Pacific Standard Time,New Zealand Standard Time,UTC+12,Fiji Standard Time,Kamchatka Standard Time,Tonga Standard Time";
         public const string DayOfWeekDomain = "sunday,monday,tuesday,wednesday,thursday,friday,saturday";
 
         private static HashSet<string> _transformProducerSet;
-        private static HashSet<string> _validateSet;
         private static HashSet<string> _producerSet;
         private string _runOperator;
 
@@ -210,10 +208,6 @@ namespace Transformalize.Configuration {
         [Cfg]
         public List<Field> Fields { get; set; }
 
-        public bool IsValidator() {
-            return ValidatorSet().Contains(Method);
-        }
-
         [Cfg(value = "firstday", domain = "firstday,firstfourdayweek,firstfullweek", toLower = true)]
         public string CalendarWeekRule { get; set; }
 
@@ -282,9 +276,9 @@ namespace Transformalize.Configuration {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }
 
-        public static HashSet<string> ValidatorSet() {
-            return _validateSet ?? (_validateSet = new HashSet<string>(ValidatorDomain.Split(',')));
-        }
+        //public static HashSet<string> ValidatorSet() {
+        //    return _validateSet ?? (_validateSet = new HashSet<string>(ValidatorDomain.Split(',')));
+        //}
 
         public static HashSet<string> ProducerSet() {
             return _producerSet ?? (_producerSet = new HashSet<string>(ProducerDomain.Split(',')));
@@ -292,12 +286,6 @@ namespace Transformalize.Configuration {
 
         public override string ToString() {
             return Method;
-        }
-
-        protected override void Validate() {
-            if (!TransformDomain.HashSet.Contains(Method) && !ProducerSet().Contains(Method) && !ValidatorSet().Contains(Method)) {
-                Warn($"The {Method} method is unknown.");
-            }
         }
 
         protected override void PreValidate() {

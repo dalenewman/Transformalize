@@ -31,6 +31,10 @@ namespace Transformalize.Validators {
             return Context.Operation.ShouldRun(row) ? _validator.Operate(row) : row;
         }
 
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            return _validator.Operate(rows);
+        }
+
         public new IEnumerable<string> Errors() {
             return _validator.Errors();
         }

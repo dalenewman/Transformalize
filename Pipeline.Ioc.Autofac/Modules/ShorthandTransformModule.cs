@@ -56,15 +56,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "padding-char", Value="0" }
                         }
                 });
-                root.Signatures.Add(new Signature {
-                    Name = "fromtimezone",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "from-time-zone", Value= "UTC" }
-                        }
-                });
                 root.Signatures.Add(Simple("value", "[default]"));
-
-
                 root.Signatures.Add(Simple("type", "[default]"));
                 root.Signatures.Add(new Signature {
                     Name = "trim",
@@ -217,8 +209,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "rounddownto", Signature = "value" });
                 root.Methods.Add(new Method { Name = "splitlength", Signature = "separator" });
                 root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
-                root.Methods.Add(new Method { Name = "timeago", Signature = "fromtimezone" });
-                root.Methods.Add(new Method { Name = "timeahead", Signature = "fromtimezone" });
                 root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });
                 root.Methods.Add(new Method { Name = "totime", Signature = "timecomponent" });
                 root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
@@ -258,6 +248,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
                 root.Methods.Add(new Method { Name = "append", Signature = "value" });
                 root.Methods.Add(new Method { Name = "prepend", Signature = "value" });
+                root.Methods.Add(new Method { Name = "prefix", Signature = "value" });
+                root.Methods.Add(new Method { Name = "suffix", Signature = "value" });
                 root.Check();
 
 

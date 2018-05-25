@@ -25,8 +25,9 @@ using Transformalize.Contracts;
 namespace Transformalize.Providers.Ado {
 
     public class AdoMasterUpdater : IUpdate {
-        readonly Entity _master;
-        readonly OutputContext _output;
+
+        private readonly Entity _master;
+        private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
         private readonly IWriteMasterUpdateQuery _queryWriter;
 

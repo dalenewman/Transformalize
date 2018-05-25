@@ -27,8 +27,7 @@ namespace Transformalize.Scheduler.Quartz {
             if (parent != "schedule")
                 return;
 
-            IAttribute cronAttr;
-            if (!node.TryAttribute("cron", out cronAttr))
+            if (!node.TryAttribute("cron", out var cronAttr))
                 return;
 
             var value = cronAttr.Value.ToString();

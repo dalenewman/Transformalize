@@ -39,6 +39,8 @@ namespace Transformalize.Transforms.Geography {
 
         public GeocodeTransform(IContext context) : base(context, "object") {
 
+            ProducesFields = true;
+
             if (context.Operation.Parameters.Any()) {
 
                 var lat = context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
@@ -94,7 +96,7 @@ namespace Transformalize.Transforms.Geography {
                 Parallel.ForEach(enumerated, (row) => {
                     _rateGate.WaitToProceed();
                     collected.Add(Operate(row));
-                    
+
                 });
                 foreach (var row in collected) {
                     yield return row;
@@ -143,7 +145,7 @@ namespace Transformalize.Transforms.Geography {
             } catch (Exception ex) {
                 Context.Error(ex.Message);
             }
-            
+
             return row;
         }
 

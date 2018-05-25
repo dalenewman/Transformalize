@@ -29,6 +29,8 @@ namespace Transformalize.Transforms {
 
         public FromLengthsTranform(IContext context) : base(context, null) {
 
+            ProducesFields = true;
+
             _input = SingleInputForMultipleOutput();
             Run = _input.Type == "string";
             if (!Run)
@@ -55,11 +57,11 @@ namespace Transformalize.Transforms {
             foreach (var row in rows) {
                 var line = row[_input] as string;
                 if (line == null) {
-                    
+
                 } else {
                     line = line.TrimEnd();
                     if (line.Length == 0) {
-                        
+
                     } else {
                         yield return Operate(row);
                     }
@@ -84,7 +86,7 @@ namespace Transformalize.Transforms {
                 row[field] = field.Transforms.Any() ? values[i] : field.Convert(values[i]);
             }
 
-            
+
             return row;
         }
     }

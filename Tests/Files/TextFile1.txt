@@ -1,0 +1,4 @@
+﻿Id,Name,City,State
+1,Bears,Chicago,IL
+2,Lions,Detroit,MI
+3,Colts,Indianapolis,IN
