@@ -19,7 +19,7 @@
     var sortService = WorkContext.Resolve<ISortService>();
     var linkService = WorkContext.Resolve<IExportLinkService>();
     var hasParameters = Model.Process.Environments.Any(e => e.Parameters.Any(p => p.Prompt));
-    var pageSizes = new [] {5, 10, 15, 25, 50, 100};
+    var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     if (hasActions) {
@@ -56,8 +56,12 @@
     }
 
     if (hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && output == "map") {
-        Script.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js");
-        Style.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css");
+        // Script.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js");
+        // Style.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css");
+        Script.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js").AtHead();
+        Style.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css");
+        Script.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js");
+        Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
     }
 
     var exportCsvLink = linkService.Create(Request, "csv");
@@ -67,7 +71,7 @@
     var isSortable = fields.Any(f => f.Sortable == "true");
     var activeParameters = Model.Process.GetActiveParameters();
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
-    AppendMeta("description", title , ",");
+    AppendMeta("description", title, ",");
     Layout.Title = title;
 }
 
@@ -122,6 +126,14 @@
         padding: 0px 20px 0px 40px;
     }
 
+    .mapboxgl-popup {
+        max-width: 300px;
+    }
+
+    .mapboxgl-popup-content {
+        font-family: 'Open Sans', sans-serif;
+    }
+
 </style>
 
 <div class="row">
@@ -133,11 +145,11 @@
     }
 </div>
 
-@foreach (var logEntry in Model.Process.Log.Where(le=>le.LogLevel == LogLevel.Error) ) {
+@foreach (var logEntry in Model.Process.Log.Where(le => le.LogLevel == LogLevel.Error)) {
     <div class="alert alert-danger" role="alert">@logEntry.Message</div>
 }
 
-@foreach (var logEntry in Model.Process.Log.Where(le=>le.LogLevel == LogLevel.Warn)) {
+@foreach (var logEntry in Model.Process.Log.Where(le => le.LogLevel == LogLevel.Warn)) {
     <div class="alert alert-warning" role="alert">@logEntry.Message</div>
 }
 
@@ -213,11 +225,11 @@
                                         </select>
                                     }
                                     break;
-                                }
+                            }
                         </div>
                     </div>
-                    }
                 }
+            }
 
             <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
                 <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
@@ -454,46 +466,101 @@
                 </table>
             </div>
         </div>
-                            }
+    }
 
     @if (output == "map") {
         if (!string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
             <div id="id_map" style="height: 650px; width: 100%"></div>
             <script>
                 //<!--
+                var url = '@(linkService.Create(Request, "geojson"))';
+                mapboxgl.accessToken = '@(settings.MapBoxToken)';
+
                 $(document).ready(function() {
 
                     $('#id_map').height(Math.round($(window).height() * .7));
 
-                    L.mapbox.accessToken = '@(settings.MapBoxToken)';
-
-                    var map = L.mapbox.map('id_map', null);
-                    var layers = {};
-                    layers["Streets"] = L.mapbox.tileLayer("mapbox.streets-basic");
-                    layers["Streets"].addTo(map);
-                    layers["Satellite"] = L.mapbox.tileLayer("mapbox.streets-satellite");
-
-                    L.control.layers(layers).addTo(map);
-
-                    var url = '@(linkService.Create(Request, "geojson"))';
-
-                    var layer = L.mapbox.featureLayer().loadURL(url).addTo(map);
+                    var map = new mapboxgl.Map({
+                        container: 'id_map',
+                        style: 'mapbox://styles/mapbox/streets-v9',
+                        center: [-86.5230464, 42.0979344],
+                        zoom: 6
+                    });
 
                     $('#busy').show();
 
-                    layer.on('error', function(err) {
-                        $('#busy').hide();
-                        console.log(err);
-                        alert("See console for error(s).");
-                    });
+                    map.on('load', function () {
 
-                    layer.on('ready', function() {
-                        // featureLayer.getBounds() returns the corners of the furthest-out markers,
-                        // and map.fitBounds() makes sure that the map contains these.
-                        map.fitBounds(layer.getBounds());
-                        $('#busy').hide();
-                    });
+                        map.addControl(new mapboxgl.NavigationControl());
+                        
+                        var draw = new MapboxDraw({
+                            displayControlsDefault: false,
+                            controls: {
+                                polygon: true,
+                                trash: true
+                            }
+                        });
+                        map.addControl(draw);
 
+                        map.on('draw.create', function(){ console.log("you created a drawing")});
+                        map.on('draw.delete', function(){ console.log("you deleted a drawing")});
+                        map.on('draw.update', function(){ console.log("you updated a drawing")});
+
+                        $.getJSON(url, function (geojson) {
+                            
+                            map.addSource("orders-data", { type: "geojson", data: geojson });
+
+                            map.addLayer({
+                                id: "circle-layer",
+                                type: "circle",
+                                source: "orders-data",
+                                paint: {
+                                    "circle-color": { "type": "identity", "property": "marker-color" },
+                                    "circle-radius": 8,
+                                    "circle-stroke-width": 1,
+                                    "circle-stroke-color": '#000000',
+                                    "circle-stroke-opacity": 1
+                                }
+                            });
+
+                            var bounds = new mapboxgl.LngLatBounds();
+
+                            geojson.features.forEach(function(feature) {
+                                bounds.extend(feature.geometry.coordinates);
+                            });
+
+                            map.fitBounds(bounds, { padding: 100 });
+
+                            map.on('click', 'circle-layer', function (e) {
+                                var coordinates = e.features[0].geometry.coordinates.slice();
+                                var description = e.features[0].properties.description;
+
+                                // Ensure that if the map is zoomed out such that multiple
+                                // copies of the feature are visible, the popup appears
+                                // over the copy being pointed to.
+                                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                                }
+
+                                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+                            });
+
+                            // Change the cursor to a pointer when the mouse is over the places layer.
+                            map.on('mouseenter', 'circle-layer', function () {
+                                map.getCanvas().style.cursor = 'pointer';
+                            });
+
+                            // Change it back to a pointer when it leaves.
+                            map.on('mouseleave', 'circle-layer', function () {
+                                map.getCanvas().style.cursor = '';
+                            });
+
+                            $('#busy').hide();
+                        });
+                        
+                        
+
+                    });
 
                 });
                 //-->

@@ -70,11 +70,6 @@ namespace Transformalize.Providers.Ado {
                     entity.DbType = DbType.String;
                     entity.Value = Context.Entity.Alias;
 
-                    var input = cmd.CreateParameter();
-                    input.ParameterName = "Input";
-                    input.DbType = DbType.String;
-                    input.Value = Context.Entity.Connection;
-
                     var mode = cmd.CreateParameter();
                     mode.ParameterName = "Mode";
                     mode.DbType = DbType.String;
@@ -87,7 +82,6 @@ namespace Transformalize.Providers.Ado {
 
                     cmd.Parameters.Add(batchId);
                     cmd.Parameters.Add(entity);
-                    cmd.Parameters.Add(input);
                     cmd.Parameters.Add(mode);
                     cmd.Parameters.Add(start);
 
@@ -137,11 +131,6 @@ namespace Transformalize.Providers.Ado {
                     entity.DbType = DbType.String;
                     entity.Value = Context.Entity.Alias;
 
-                    var input = cmd.CreateParameter();
-                    input.ParameterName = "Input";
-                    input.DbType = DbType.String;
-                    input.Value = Context.Entity.Connection;
-
                     var batchId = cmd.CreateParameter();
                     batchId.ParameterName = "BatchId";
                     batchId.DbType = DbType.Int32;
@@ -152,7 +141,6 @@ namespace Transformalize.Providers.Ado {
                     cmd.Parameters.Add(deletes);
                     cmd.Parameters.Add(end);
                     cmd.Parameters.Add(entity);
-                    cmd.Parameters.Add(input);
                     cmd.Parameters.Add(batchId);
 
                     cmd.ExecuteNonQuery();

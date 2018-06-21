@@ -70,7 +70,9 @@ namespace Pipeline.Web.Orchard.Services {
                     rows = process.Entities.First().Rows;
                 } else {
                     var values = request.Form.GetValues("row") ?? request.QueryString.GetValues("row"); // from the request
-                    if (values != null) {
+                    if (values == null) {
+                        _orchardServices.Notifier.Warning(T("No rows submitted to bulk action."));
+                    } else {
                         foreach (var value in values) {
                             var row = new CfgRow(new[] { "BatchId", "BatchValue" });
                             row["BatchId"] = batchId;
@@ -80,8 +82,10 @@ namespace Pipeline.Web.Orchard.Services {
                     }
                 }
 
-                writer.Entities.First().Rows.AddRange(rows);
-                _orchardServices.WorkContext.Resolve<IRunTimeExecute>().Execute(writer);
+                if (rows.Count > 0) {
+                    writer.Entities.First().Rows.AddRange(rows);
+                    _orchardServices.WorkContext.Resolve<IRunTimeExecute>().Execute(writer);
+                }
 
                 return rows.Count;
             } catch (Exception ex) {

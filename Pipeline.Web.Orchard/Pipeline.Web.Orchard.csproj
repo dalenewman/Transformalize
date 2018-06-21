@@ -195,7 +195,7 @@
     </Reference>
     <Reference Include="Transformalize.Provider.MySql, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Provider.MySql\src\Transformalize.Provider.MySql\bin\Debug\Transformalize.Provider.MySql.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.OpenXml, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -206,7 +206,7 @@
     </Reference>
     <Reference Include="Transformalize.Provider.SqlServer, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize.Provider.SqlServer\src\Transformalize.Provider.SqlServer\bin\Debug\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Web, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

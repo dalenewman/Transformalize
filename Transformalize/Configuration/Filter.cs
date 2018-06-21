@@ -76,7 +76,7 @@ namespace Transformalize.Configuration {
         public Field LeftField { get; set; }
         public Field ValueField { get; set; }
 
-        [Cfg(value = Constants.DefaultSetting, domain = "search,facet,range,filter," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
+        [Cfg(value = "filter", domain = "search,facet,range,filter", ignoreCase = true, toLower = true)]
         public string Type { get; set; }
 
         [Cfg(value = 100)]

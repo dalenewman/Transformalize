@@ -288,7 +288,11 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                                     // check security
                                     var actionPart = _orchardServices.ContentManager.Get(action.Id);
-                                    if (actionPart != null && _orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
+                                    if (actionPart == null) {
+                                        return new HttpNotFoundResult($"The action id {action.Id} does not refer to a content item id.");
+                                    }
+
+                                    if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
 
                                         // security okay
                                         parameters["entity"] = process.Entities.First().Alias;

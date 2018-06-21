@@ -275,8 +275,8 @@ FROM (
         }
 
         public static string SqlControlStartBatch(this OutputContext c, IConnectionFactory cf) {
-            var values = cf.AdoProvider == AdoProvider.Access ? "?,?,?,?,0,0,0,?" : "@BatchId,@Entity,@Input,@Mode,0,0,0,@Start";
-            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Input")},{cf.Enclose("Mode")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")}) VALUES({values}){cf.Terminator}";
+            var values = cf.AdoProvider == AdoProvider.Access ? "?,?,?,?,0,0,0,?" : "@BatchId,@Entity,@Mode,0,0,0,@Start";
+            var sql = $@"INSERT INTO {cf.Enclose(SqlControlTableName(c))}({cf.Enclose("BatchId")},{cf.Enclose("Entity")},{cf.Enclose("Mode")},{cf.Enclose("Inserts")},{cf.Enclose("Updates")},{cf.Enclose("Deletes")},{cf.Enclose("Start")}) VALUES({values}){cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }
@@ -284,9 +284,9 @@ FROM (
         public static string SqlControlEndBatch(this OutputContext c, IConnectionFactory cf) {
             string sql;
             if (cf.AdoProvider == AdoProvider.Access) {
-                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = ?, {cf.Enclose("Updates")} = ?, {cf.Enclose("Deletes")} = ?, {cf.Enclose("End")} = ? WHERE {cf.Enclose("Entity")} = ? AND {cf.Enclose("Input")} = ? AND {cf.Enclose("BatchId")} = ?";
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = ?, {cf.Enclose("Updates")} = ?, {cf.Enclose("Deletes")} = ?, {cf.Enclose("End")} = ? WHERE {cf.Enclose("Entity")} = ? AND {cf.Enclose("BatchId")} = ?";
             } else {
-                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @End WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("Input")} = @Input AND {cf.Enclose("BatchId")} = @BatchId{cf.Terminator}";
+                sql = $"UPDATE {cf.Enclose(SqlControlTableName(c))} SET {cf.Enclose("Inserts")} = @Inserts, {cf.Enclose("Updates")} = @Updates, {cf.Enclose("Deletes")} = @Deletes, {cf.Enclose("End")} = @End WHERE {cf.Enclose("Entity")} = @Entity AND {cf.Enclose("BatchId")} = @BatchId{cf.Terminator}";
             }
             c.Debug(() => sql);
             return sql;
@@ -301,7 +301,6 @@ FROM (
                 CREATE TABLE {cf.Enclose(SqlControlTableName(c))}(
                     {cf.Enclose("BatchId")} INTEGER NOT NULL,
                     {cf.Enclose("Entity")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
-                    {cf.Enclose("Input")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
                     {cf.Enclose("Mode")} {stringType}{(cf.AdoProvider == AdoProvider.Access ? "CHAR" : "VARCHAR")}(128) NOT NULL,
                     {cf.Enclose("Inserts")} {longType} NOT NULL,
                     {cf.Enclose("Updates")} {longType} NOT NULL,

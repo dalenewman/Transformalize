@@ -432,6 +432,9 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "slice", Signature = "slice" });
             root.Methods.Add(new Method { Name = "bytesize", Signature = "units" });
             root.Methods.Add(new Method { Name = "append", Signature = "value" });
+            root.Methods.Add(new Method { Name = "suffix", Signature = "value" });
+            root.Methods.Add(new Method { Name = "prepend", Signature = "value" });
+            root.Methods.Add(new Method { Name = "prefix", Signature = "value" });
             root.Check();
 
             if (!root.Errors().Any()) {

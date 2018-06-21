@@ -158,7 +158,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
             builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
 
-            // return true or false, validators
+            // return true or false
             builder.Register((c, p) => new AnyTransform(p.Positional<IContext>(0))).Named<ITransform>("any");
             builder.Register((c, p) => new StartsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("startswith");
             builder.Register((c, p) => new EndsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("endswith");
@@ -172,6 +172,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new IsNumericTransform(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
             builder.Register((c, p) => new RegexIsMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
 
+            // new(er)
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
             builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
@@ -187,6 +188,9 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
             builder.Register((c, p) => new SliceTransform(p.Positional<IContext>(0))).Named<ITransform>("slice");
             builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("append");
+            builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("suffix");
+            builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prepend");
+            builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prefix");
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
