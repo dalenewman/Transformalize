@@ -12,5 +12,9 @@ namespace Pipeline.Web.Orchard.Models {
 
         public virtual int MapBoxLimit { get; set; }
 
+        public virtual double StartingLatitude { get; set; }
+
+        public virtual double StartingLongitude { get; set; }
+
     }
 }

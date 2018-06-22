@@ -36,10 +36,8 @@ namespace Pipeline.Web.Orchard.Models {
             new SelectListItem {Selected = false, Text = "@[parameter]", Value = "@[]"}
         };
 
-        public string Configuration
-        {
-            get
-            {
+        public string Configuration {
+            get {
                 var cfg = this.Retrieve(x => x.Configuration, versioned: true);
                 if (string.IsNullOrEmpty(cfg)) {
                     return @"<cfg name=""name"">
@@ -64,46 +62,37 @@ namespace Pipeline.Web.Orchard.Models {
             return this.As<TagsPart>().CurrentTags;
         }
 
-        public string StartAddress
-        {
+        public string StartAddress {
             get { return this.Retrieve(x => x.StartAddress, versioned: true) ?? string.Empty; }
             set { this.Store(x => x.StartAddress, value, true); }
         }
 
-        public string EndAddress
-        {
+        public string EndAddress {
             get { return this.Retrieve(x => x.EndAddress, versioned: true) ?? string.Empty; }
             set { this.Store(x => x.EndAddress, value, true); }
         }
 
-        public bool Runnable
-        {
+        public bool Runnable {
             get { return this.Retrieve(x => x.Runnable, versioned: true); }
             set { this.Store(x => x.Runnable, value, true); }
         }
 
-        public bool NeedsInputFile
-        {
+        public bool NeedsInputFile {
             get { return this.Retrieve(x => x.NeedsInputFile, versioned: true); }
             set { this.Store(x => x.NeedsInputFile, value, true); }
         }
 
-        public string EditorMode
-        {
+        public string EditorMode {
             get { return this.Retrieve(x => x.EditorMode, versioned: true) ?? "xml"; }
             set { this.Store(x => x.EditorMode, value, true); }
         }
 
-
-
-        public bool Migrated
-        {
+        public bool Migrated {
             get { return this.Retrieve(x => x.Migrated, versioned: false, defaultValue: () => false); }
             set { this.Store(x => x.Migrated, value, versioned: false); }
         }
 
-        public string Modes
-        {
+        public string Modes {
             get { return this.Retrieve(x => x.Modes, versioned: false, defaultValue: () => "init,default*"); }
             set { this.Store(x => x.Modes, value, versioned: false); }
         }
@@ -116,8 +105,7 @@ namespace Pipeline.Web.Orchard.Models {
             return Modes.Split(',').Contains("form", StringComparer.OrdinalIgnoreCase);
         }
 
-        public string PlaceHolderStyle
-        {
+        public string PlaceHolderStyle {
             get { return this.Retrieve(x => x.PlaceHolderStyle, versioned: false, defaultValue: () => "@()"); }
             set { this.Store(x => x.PlaceHolderStyle, value, versioned: false); }
         }

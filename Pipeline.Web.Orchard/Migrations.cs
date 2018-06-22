@@ -166,6 +166,12 @@ namespace Pipeline.Web.Orchard {
             return 12;
         }
 
+        public int UpdateFrom12() {
+            SchemaBuilder.AlterTable(Common.PipelineSettingsName + "PartRecord", table => table.AddColumn("StartingLatitude", DbType.Double));
+            SchemaBuilder.AlterTable(Common.PipelineSettingsName + "PartRecord", table => table.AddColumn("StartingLongitude", DbType.Double));
+            return 13;
+        }
+
     }
 
     public class FileMigrations : DataMigrationImpl {

@@ -1,4 +1,5 @@
-﻿using Orchard.ContentManagement;
+﻿using System;
+using Orchard.ContentManagement;
 using Orchard.ContentManagement.Drivers;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Localization;
@@ -16,10 +17,18 @@ namespace Pipeline.Web.Orchard.Drivers {
 
         protected override void Importing(PipelineSettingsPart part, ImportContentContext context) {
             part.Record.EditorTheme = context.Attribute(part.PartDefinition.Name, "EditorTheme");
+            part.Record.MapBoxLimit = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapBoxLimit"));
+            part.Record.MapBoxToken = context.Attribute(part.PartDefinition.Name, "MapBoxToken");
+            part.Record.StartingLatitude = double.Parse(context.Attribute(part.PartDefinition.Name, "StartingLatitude"));
+            part.Record.StartingLongitude = double.Parse(context.Attribute(part.PartDefinition.Name, "StartingLongitude"));
         }
 
         protected override void Exporting(PipelineSettingsPart part, ExportContentContext context) {
             context.Element(part.PartDefinition.Name).SetAttributeValue("EditorTheme", part.Record.EditorTheme);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapBoxLimit", part.Record.MapBoxLimit);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapBoxToken", part.Record.MapBoxToken);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("StartingLatitude", part.Record.StartingLatitude);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("StartingLongitude", part.Record.StartingLongitude);
         }
 
         protected override string Prefix { get { return Common.PipelineSettingsName; } }

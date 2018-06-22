@@ -53,7 +53,7 @@ namespace Transformalize.Providers.GeoJson {
             _sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "size");
             _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
             _hasStyle = _colorField != null || _sizeField != null || _symbolField != null;
-            _propertyFields = fields.Where(f => f.Output && !f.System && !f.Alias.ToLower().StartsWith("kml-")).Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
+            _propertyFields = fields.Where(f => f.Output && !f.System && !f.Alias.ToLower().StartsWith("kml-") || f.Alias == "BatchValue").Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
 
         }
 
@@ -101,8 +101,8 @@ namespace Transformalize.Providers.GeoJson {
 
                 jsonWriter.WritePropertyName("description");
                 tableBuilder.Clear();
-                tableBuilder.AppendLine("<table class=\"table\">");
-                foreach (var field in _propertyFields) {
+                tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
+                foreach (var field in _propertyFields.Where(f=>f.Alias != "BatchValue")) {
                     tableBuilder.AppendLine("<tr>");
 
                     tableBuilder.AppendLine("<td><strong>");

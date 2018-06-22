@@ -11,7 +11,7 @@
 
 <div class="editor-field">
     @Html.LabelFor(x => x.MapBoxToken, T("Mapbox Token"))
-    @Html.TextBoxFor(x => x.MapBoxToken, new { style = "width:99%;", @class = "text-box single-line"})
+    @Html.TextBoxFor(x => x.MapBoxToken, new { style = "width:99%;", @class = "text-box single-line" })
     @Html.ValidationMessageFor(x => x.MapBoxToken)
 </div>
 <div class="hint">@T("Get a token at <a href=\"https://www.mapbox.com\" target=\"_blank\">https://www.mapbox.com</a>.")</div>
@@ -22,3 +22,17 @@
     @Html.ValidationMessageFor(x => x.MapBoxLimit)
 </div>
 <div class="hint">@T("Sending a large number of points can be slow, so it's best to set a limit (e.g. 2500)")</div>
+
+<div class="editor-field">
+    @Html.LabelFor(x => x.StartingLatitude, T("Starting Latitude"))
+    @Html.TextBoxFor(x => x.StartingLatitude, new { style = "width:99%;", @class = "text-box single-line" })
+    @Html.ValidationMessageFor(x => x.StartingLatitude)
+</div>
+<div class="hint">@T("Have your maps start out at a specific latitude (e.g. -86.5230464).")</div>
+
+<div class="editor-field">
+    @Html.LabelFor(x => x.StartingLongitude, T("Starting Longitude"))
+    @Html.TextBoxFor(x => x.StartingLongitude, new { style = "width:99%;", @class = "text-box single-line" })
+    @Html.ValidationMessageFor(x => x.StartingLongitude)
+</div>
+<div class="hint">@T("Have your maps start out at a specific longitude (e.g. 42.0979344).")</div>

@@ -25,10 +25,7 @@ namespace Pipeline.Web.Orchard.Drivers {
 
     public class ConfigurationPartDriver : ContentPartDriver<PipelineConfigurationPart> {
 
-        protected override string Prefix
-        {
-            get { return Common.PipelineConfigurationName; }
-        }
+        protected override string Prefix => Common.PipelineConfigurationName;
 
         //IMPORT, EXPORT
         protected override void Importing(PipelineConfigurationPart part, ImportContentContext context) {

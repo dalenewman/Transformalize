@@ -31,23 +31,26 @@
         }
     }
 
+    var isMap = hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && output == "map";
+
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
     Script.Include("jquery.tablesorter.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js");
+    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
 
     if (output == "page") {
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
         Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushSql.min.js");
-        if (hasActions) {
-            Script.Require("BlockUI");
-        }
     }
 
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css");
+    if (hasActions) {
+        Script.Require("BlockUI");
+    }
+
+    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css");
 
     if (output == "page") {
         Style.Include("tablesorter.css");
@@ -55,13 +58,12 @@
         Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
     }
 
-    if (hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && output == "map") {
-        // Script.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js");
-        // Style.Include("https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css");
-        Script.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.js").AtHead();
-        Style.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.45.0/mapbox-gl.css");
+    if (isMap) {
+        Script.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js").AtHead();
+        Style.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.css");
         Script.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js");
         Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
+        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js");
     }
 
     var exportCsvLink = linkService.Create(Request, "csv");
@@ -126,24 +128,31 @@
         padding: 0px 20px 0px 40px;
     }
 
-    .mapboxgl-popup {
-        max-width: 300px;
+    .table-condensed > tbody > tr > td {
+        padding: 2px;
     }
-
-    .mapboxgl-popup-content {
-        font-family: 'Open Sans', sans-serif;
-    }
-
 </style>
 
-<div class="row">
-    <div class="col-sm-8" style="text-align: left; font-size: larger; font-weight: bold;">@title</div>
-    @if (entity.Hits > 0) {
-        <div class="col-sm-4 hint" style="text-align: right;">@entity.Hits Hits in @Model.Process.Time ms</div>
-    } else {
-        <div class="col-sm-4 hint" style="text-align: right;">@Model.Process.Time ms</div>
-    }
-</div>
+@if (output == "map") {
+    <style>
+        .mapboxgl-popup {
+            max-width: 350px;
+        }
+
+        .mapboxgl-popup-content {
+            font-family: 'Open Sans', sans-serif;
+        }
+
+            .mapboxgl-popup-content .table {
+                margin-bottom: 0px;
+            }
+
+            .mapboxgl-popup-content .table-condensed > thead > tr > td, .mapboxgl-popup-content .table-condensed > tbody > tr > td, .mapboxgl-popup-content .table-condensed > tfoot > tr > td {
+                padding: 1px;
+            }
+    </style>
+}
+
 
 @foreach (var logEntry in Model.Process.Log.Where(le => le.LogLevel == LogLevel.Error)) {
     <div class="alert alert-danger" role="alert">@logEntry.Message</div>
@@ -169,11 +178,9 @@
 
     <div class="row" style="margin-bottom: 4px;">
 
-        <div class="col-md-@(entity.Pagination.Pages > 0 ? 8 : 10)">
+        <div class="col-md-12">
 
             @if (hasParameters) {
-
-                <button id="id_clear" type="button" class="btn btn-info btn-sm">Clear</button>
 
                 var parameters = activeParameters.Where(p => p.Prompt).ToArray();
 
@@ -230,39 +237,20 @@
                     </div>
                 }
             }
-
-            <button id="id_submit" type="submit" class="btn btn-primary btn-sm">
-                <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
-            </button>
-
         </div>
+        
+    </div>
 
-        <div class="col-md-@(entity.Pagination.Pages > 0 ? 4 : 2)">
+    <div class="row" style="margin-bottom: 4px;">
 
-            @if (entity.Page > 0 && output != "map") {
-                <ul class="pagination pagination-sm" style="display: inline;">
-                    @if (entity.Pagination.HasPrevious) {
-                        <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                        <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    } else {
-                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-                    }
-                    <!-- (@entity.Hits) -->
-                    <li class="disabled"><a href="#">Page <strong>@entity.Page</strong> of @entity.Pagination.Pages</a></li>
-
-                    @if (entity.Pagination.HasNext) {
-                        <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                        <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                    } else {
-                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                        <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-                    }
-                </ul>
-            }
-
-            <div class="btn-group pull-right">
-
+        <div class="col-md-4">
+            <div class="btn-group pull-left">
+                <button id="id_submit" type="submit" title="@(hasParameters ? "Search":"Refresh")" class="btn btn-primary btn-sm">
+                    <span class="glyphicon glyphicon-@(hasParameters ? "search":"refresh")"></span>
+                </button>
+                @if (hasParameters) {
+                    <button id="id_clear" title="Clear the Search Parameters" type="button" class="btn btn-info btn-sm">Clear</button>
+                }
                 @if (hasActions) {
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-danger">Action</button>
@@ -279,6 +267,33 @@
                         </ul>
                     </div>
                 }
+            </div>
+        </div>
+
+        <div class="col-md-4" style="text-align: center;">
+            <ul class="pagination pagination-sm" style="display: inline; white-space:nowrap;">
+                @if (entity.Pagination.HasPrevious) {
+                    <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                } else {
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                }
+                <li class="disabled"><a href="#" style="white-space: nowrap;">Found @entity.Hits, Page <strong>@(entity.Page == 0 ? 1 : entity.Page)</strong> of @(entity.Pagination.Pages == 0 ? 1 : entity.Pagination.Pages)</a></li>
+
+                @if (entity.Pagination.HasNext) {
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                } else {
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                }
+            </ul>
+        </div>
+         
+        <div class="col-md-4">
+
+            <div class="btn-group pull-right">
 
                 @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
                     <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
@@ -369,10 +384,10 @@
                                     if (field.Sortable == "true") {
                                         <td class="sorter" data-order-by="@(number)">
                                             <div class="btn-group btn-group-xs" style="width: 37px;">
-                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                                <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
                                                     <span class="glyphicon glyphicon-chevron-up"></span>
                                                 </a>
-                                                <a href="javascript:void()" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                                <a href="javascript:void()" title="Sort Descending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
                                                     <span class="glyphicon glyphicon-chevron-down"></span>
                                                 </a>
                                             </div>
@@ -474,6 +489,7 @@
             <script>
                 //<!--
                 var url = '@(linkService.Create(Request, "geojson"))';
+                var center = [@settings.StartingLatitude, @settings.StartingLongitude];
                 mapboxgl.accessToken = '@(settings.MapBoxToken)';
 
                 $(document).ready(function() {
@@ -482,8 +498,8 @@
 
                     var map = new mapboxgl.Map({
                         container: 'id_map',
-                        style: 'mapbox://styles/mapbox/streets-v9',
-                        center: [-86.5230464, 42.0979344],
+                        style: 'mapbox://styles/mapbox/streets-v10',
+                        center: center,
                         zoom: 6
                     });
 
@@ -492,22 +508,9 @@
                     map.on('load', function () {
 
                         map.addControl(new mapboxgl.NavigationControl());
-                        
-                        var draw = new MapboxDraw({
-                            displayControlsDefault: false,
-                            controls: {
-                                polygon: true,
-                                trash: true
-                            }
-                        });
-                        map.addControl(draw);
-
-                        map.on('draw.create', function(){ console.log("you created a drawing")});
-                        map.on('draw.delete', function(){ console.log("you deleted a drawing")});
-                        map.on('draw.update', function(){ console.log("you updated a drawing")});
 
                         $.getJSON(url, function (geojson) {
-                            
+
                             map.addSource("orders-data", { type: "geojson", data: geojson });
 
                             map.addLayer({
@@ -523,42 +526,76 @@
                                 }
                             });
 
+                            // fit map
                             var bounds = new mapboxgl.LngLatBounds();
-
                             geojson.features.forEach(function(feature) {
                                 bounds.extend(feature.geometry.coordinates);
                             });
-
                             map.fitBounds(bounds, { padding: 100 });
 
+                            // for drawing polygons and selecting points
+                            var draw = new MapboxDraw({
+                                displayControlsDefault: false,
+                                controls: {
+                                    polygon: true,
+                                    trash: true
+                                }
+                            });
+                            map.addControl(draw);
+
+                            function updateArea(e) {
+                                var data = draw.getAll();
+                                if (data.features.length > 0) {
+                                    var selected = turf.pointsWithinPolygon(geojson, data);
+                                    console.log(selected);
+
+                                    selected.features.forEach(function(feature) {
+                                        $("<input>").attr({
+                                            type: "checkbox",
+                                            checked: "checked",
+                                            class: "bulk-action",
+                                            name: "row",
+                                            value: feature.properties.BatchValue
+                                        }).appendTo("#id_report");
+                                    });
+
+                                    $(".bulk-action-link").each(function () {
+                                        var link = $(this);
+                                        $("input[name=bulk-action-length]").val(selected.features.length);
+                                        link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + selected.features.length + "</span>");
+                                    });
+                                } else {
+                                    $(".bulk-action-link").each(function () {
+                                        var link = $(this);
+                                        $("input[name=bulk-action-length]").val(0);
+                                        link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge"></span>');
+                                    });
+                                }
+                            }
+
+                            map.on('draw.create', updateArea);
+                            map.on('draw.delete', updateArea);
+                            map.on('draw.update', updateArea);
+
+                            // popups
                             map.on('click', 'circle-layer', function (e) {
                                 var coordinates = e.features[0].geometry.coordinates.slice();
-                                var description = e.features[0].properties.description;
-
-                                // Ensure that if the map is zoomed out such that multiple
-                                // copies of the feature are visible, the popup appears
-                                // over the copy being pointed to.
                                 while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
                                     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
                                 }
-
-                                new mapboxgl.Popup().setLngLat(coordinates).setHTML(description).addTo(map);
+                                new mapboxgl.Popup().setLngLat(coordinates).setHTML(e.features[0].properties.description).addTo(map);
                             });
-
-                            // Change the cursor to a pointer when the mouse is over the places layer.
                             map.on('mouseenter', 'circle-layer', function () {
                                 map.getCanvas().style.cursor = 'pointer';
                             });
-
-                            // Change it back to a pointer when it leaves.
                             map.on('mouseleave', 'circle-layer', function () {
                                 map.getCanvas().style.cursor = '';
                             });
 
                             $('#busy').hide();
                         });
-                        
-                        
+
+
 
                     });
 
@@ -603,6 +640,30 @@
         bulkActionLength: 0
     }
 
+    // https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
+    function removeUrlParameter(url, parameter) {
+        //prefer to use l.search if you have a location/link object
+        var urlparts= url.split('?');   
+        if (urlparts.length>=2) {
+
+            var prefix= encodeURIComponent(parameter)+'=';
+            var pars= urlparts[1].split(/[&;]/g);
+
+            //reverse iteration as may be destructive
+            for (var i= pars.length; i-- > 0;) {    
+                //idiom for string.startsWith
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {  
+                    pars.splice(i, 1);
+                }
+            }
+
+            url= urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+            return url;
+        } else {
+            return url;
+        }
+    }
+
     function bulkAction(page,description,id) {
         var length = $('.bulk-action:checked').length;
         if (length > 0) {
@@ -621,6 +682,7 @@
             });
             var $form = $('#id_report');
             $form.attr('method', 'POST');
+            $form.attr('action', removeUrlParameter(window.location.href,"output"));
             $form.append('<input type="hidden" name="__RequestVerificationToken" value="@(@Html.AntiForgeryTokenValueOrchard())" />');
             $form.append('<input type="hidden" name="action" value="'+description+'" />');
             $form.append('<input type="hidden" name="actionId" value="'+id+'" />');

@@ -185,9 +185,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.File.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.GeoJson, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Transformalize.Provider.GeoJson, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Providers\GeoJson\bin\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Kml, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
