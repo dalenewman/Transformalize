@@ -131,6 +131,13 @@ namespace Pipeline.Web.Orchard.Services {
             root.Signatures.Add(Simple("value", "[default]"));
             root.Signatures.Add(Simple("type", "[default]"));
             root.Signatures.Add(new Signature {
+                Name = "convert",
+                Parameters = new List<Parameter> {
+                    new Parameter { Name = "type", Value="[default]"},
+                    new Parameter { Name = "format"}
+                }
+            });
+            root.Signatures.Add(new Signature {
                 Name = "trim",
                 Parameters = new List<Parameter> {
                     new Parameter {Name = "trim-chars", Value = " "}
@@ -310,7 +317,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "concat", Signature = "none" });
             root.Methods.Add(new Method { Name = "connection", Signature = "property" });
             root.Methods.Add(new Method { Name = "contains", Signature = "value" });
-            root.Methods.Add(new Method { Name = "convert", Signature = "type" });
+            root.Methods.Add(new Method { Name = "convert", Signature = "convert" });
             root.Methods.Add(new Method { Name = "copy", Signature = "none", Ignore = true });
             root.Methods.Add(new Method { Name = "cs", Signature = "script" });
             root.Methods.Add(new Method { Name = "csharp", Signature = "script" });
@@ -373,7 +380,7 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
             root.Methods.Add(new Method { Name = "in", Signature = "domain" });
             root.Methods.Add(new Method { Name = "match", Signature = "pattern" });
-            root.Methods.Add(new Method { Name = "matching", Signature = "pattern"});
+            root.Methods.Add(new Method { Name = "matching", Signature = "pattern" });
             root.Methods.Add(new Method { Name = "coalesce", Signature = "none" });
             root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
             root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
@@ -493,8 +500,8 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "numeric", Signature = "none" });
             root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
             root.Methods.Add(new Method { Name = "map", Signature = "map" });
-            root.Methods.Add(new Method {Name = "length", Signature = "length"});
-            root.Methods.Add(new Method {Name = "alphanum", Signature = "none"});
+            root.Methods.Add(new Method { Name = "length", Signature = "length" });
+            root.Methods.Add(new Method { Name = "alphanum", Signature = "none" });
 
             root.Check();
 

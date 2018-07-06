@@ -41,10 +41,15 @@ namespace Pipeline.Web.Orchard {
                 RouteDescriptorWithTagFilter("File", "List"),
 
                 RouteDescriptorWithId("Cfg", "Report"),
-                RouteDescriptorWithId("Cfg","Form"),
-                RouteDescriptorWithId("Cfg","FormContent"),
+                RouteDescriptorWithId("Cfg", "Builder"),
+                RouteDescriptorWithId("Cfg", "Form"),
+                RouteDescriptorWithId("Cfg", "FormContent"),
                 RouteDescriptorWithId("Cfg", "Download"),
                 RouteDescriptorWithTagFilter("Cfg", "List"),
+
+                RouteDescriptorWithId("HandsOnTable", null),
+                RouteDescriptorWithId("HandsOnTable","Load"),
+                RouteDescriptorWithId("HandsOnTable","Save")
             };
         }
 
@@ -52,11 +57,11 @@ namespace Pipeline.Web.Orchard {
             return new RouteDescriptor {
                 Priority = 11,
                 Route = new Route(
-                    "Pipeline/" + (controller == "Cfg" ? string.Empty : controller + "/") + action + "/{id}",
+                    action == null ? "Pipeline/" + controller + "/{id}" : "Pipeline/" + (controller == "Cfg" ? string.Empty : controller + "/") + action + "/{id}",
                     new RouteValueDictionary {
                         {"area", Common.ModuleName },
                         {"controller", controller },
-                        {"action", action},
+                        {"action", action ?? "Index"},
                         {"id", 0}
                     },
                     new RouteValueDictionary(),

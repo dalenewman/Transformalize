@@ -1,0 +1,251 @@
+﻿@model Pipeline.Web.Orchard.Models.BuilderViewModel
+@{
+
+    Script.Require("jQuery").AtHead();
+    Script.Require("BlockUI");
+    Script.Include("https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js");
+
+    Style.Include("https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css");
+
+    AppendMeta("description", "Builder", ",");
+    Layout.Title = "Builder";
+    var entity = Model.Process.Entities.First();
+}
+
+<style>
+    #busy {
+        position: fixed;
+        left: 46%;
+        top: 40%;
+        display: none;
+        background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+        background-size: 149px 149px;
+        background-repeat:no-repeat;
+        z-index: 1020;
+        height: 150px;
+        width: 150px;
+    }
+
+    #busy-holder {
+        background: transparent;
+        width: 100%;
+        height: 100%;
+    }
+
+</style>
+
+<form id="id_report" class="form-inline" role="form" method="POST">
+
+    <div class="row" style="margin-bottom: 4px;">
+        <div class="col-md-12"><h3>@(string.IsNullOrEmpty(entity.Label) ? entity.Alias : entity.Label)</h3></div>
+        <div class="col-md-5">
+            <h3>Parameters</h3>
+            <div id="id_parameters">
+
+            </div>
+        </div>
+        <div class="col-md-7">
+            <h3>Filters</h3>
+            <div id="id_filters">
+
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h3>Fields</h3>
+            <div id="id_fields">
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div id="busy_holder">
+    <div id="busy"></div>
+</div>
+
+<script type="text/javascript">
+    //<!--
+    function isNull(v,d) {
+        return v === undefined ? d : v;
+    }
+
+    function fillParameters(id) {
+        var seq = 0;
+        var parametersContainer = document.getElementById(id);
+        if (cfg.environments !== undefined || cfg.parameters !== undefined) {
+            var p = cfg.environments === undefined ? cfg.parameters : cfg.environments[0].parameters;
+            var parameters = $.map(p, function (f) {
+                return {
+                    "sequence": ++seq,
+                    "name": isNull(f.name),
+                    "label": isNull(f.label,""),
+                    "type": isNull(f.type,"string"),
+                    "value": isNull(f.value,""),
+                    "width": isNull(f.width, ""),
+                    "prompt": isNull(f.prompt,true),
+                    "multiple": isNull(f.multiple,false)
+                };
+            });
+
+            var hot = new Handsontable(parametersContainer, {
+                data: parameters,
+                rowHeaders: true,
+                minSpareRows: 0,
+                manualRowMove: true,
+                colHeaders: [
+                    "Seq.",
+                    "Name",
+                    "Label",
+                    "Type",
+                    "Value",
+                    "Width",
+                    "Prompt",
+                    "Multiple"
+                ],
+                columnSorting: true,
+                contextMenu: true,
+                columns: [
+                    { data: 'sequence', readOnly: true},
+                    { data: 'name'},
+                    { data: 'label'},
+                    { data: 'type'},
+                    { data: 'value'},
+                    { data: 'width'},
+                    { data: 'prompt', type: "checkbox"},
+                    { data: 'multiple', type: "checkbox"}
+                ]
+            });
+        }
+    }
+
+    function fillFilters(id) {
+        var seq = 0;
+        var container = document.getElementById(id);
+        if (cfg.entities[0].filter !== undefined) {
+            var filters = $.map(cfg.entities[0].filter, function (f) {
+                return {
+                    "sequence": ++seq,
+                    "field": isNull(f.field,""),
+                    "operator": isNull(f.operator,""),
+                    "value": isNull(f.value,""),
+                    "expression": isNull(f.expression, ""),
+                    "type": isNull(f.type,"")
+                };
+            });
+
+            var hot = new Handsontable(container, {
+                data: filters,
+                rowHeaders: true,
+                minSpareRows: 0,
+                manualRowMove: true,
+                colHeaders: [
+                    "Seq.",
+                    "Field",
+                    "Operator",
+                    "Value",
+                    "Expression",
+                    "Type"
+                ],
+                columnSorting: true,
+                contextMenu: true,
+                columns: [
+                    { data: 'sequence', readOnly: true},
+                    { data: 'field'},
+                    { data: 'operator'},
+                    { data: 'value'},
+                    { data: 'expression'},
+                    { data: 'type'}
+                ]
+            });
+        }
+    }
+
+    function fillFields(id) {
+        var fieldsContainer = document.getElementById(id);
+        var seq = 0;
+        var data = $.map(cfg.entities[0].fields, function (f) {
+            return {
+                 "sequence": ++seq,
+                 "alias": isNull(f.alias,f.name),
+                 "label": isNull(f.label,""),
+                 "type": isNull(f.type,"string"),
+                 "length": isNull(f.length, "64"),
+                 "default": isNull(f.default,""),
+                 "input": isNull(f.input,true),
+                 "output": isNull(f.output,true),
+                 "export": isNull(f.output,true),
+                 "t": isNull(f.t, ""),
+                 "transformCount": f.transforms === undefined ? 0 : f.transforms.length
+            };
+        });
+        data = data.concat(
+            $.map(cfg.entities[0].calculatedfields, function (f) {
+                return {
+                    "sequence": ++seq,
+                    "alias": isNull(f.alias,f.name),
+                    "label": isNull(f.label,""),
+                    "type": isNull(f.type,"string"),
+                    "length": isNull(f.length, "64"),
+                    "default": isNull(f.default,""),
+                    "input": false,
+                    "output": isNull(f.output,true),
+                    "export": isNull(f.output,true),
+                    "t": isNull(f.t, ""),
+                    "transformCount": f.transforms === undefined ? 0 : f.transforms.length
+                };
+            })
+        );
+
+        var hot = new Handsontable(fieldsContainer, {
+            data: data,
+            rowHeaders: true,
+            minSpareRows: 0,
+            manualRowMove: true,
+            colHeaders: [
+                "Seq.",
+                "Column",
+                "Label",
+                "Type",
+                "Len.",
+                "Default",
+                "Input",
+                "Output",
+                "Export",
+                "Transforms"
+            ],
+            columnSorting: true,
+            contextMenu: true,
+            columns: [
+                { data: 'sequence', readOnly: true},
+                { data: 'alias', readOnly: true},
+                { data: 'label'},
+                { data: 'type'},
+                { data: 'length'},
+                { data: 'default'},
+                { data: 'input', type: "checkbox", readOnly: true},
+                { data: 'output', type: "checkbox"},
+                { data: 'export', type: "checkbox"},
+                { data: 'transformCount', type: "numeric", readOnly: true}
+            ]
+        });
+
+        Handsontable.hooks.add('afterOnCellMouseDown', function(e,xy) { if(xy.col === -1){console.log(data[xy.row].t);}}, hot);
+    }
+
+    var cfg = @Html.Raw(Model.Process.Serialize());
+
+    $( document ).ready(function() {
+        console.log(cfg);
+
+        fillParameters('id_parameters');
+        fillFilters('id_filters');
+        fillFields('id_fields');
+
+    });
+
+    //-->
+</script>
+
+
+

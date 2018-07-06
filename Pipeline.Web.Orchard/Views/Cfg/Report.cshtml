@@ -125,12 +125,13 @@
     }
 
     .form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
-        padding: 0px 20px 0px 40px;
+        padding: 0px 20px 0px 10px;
     }
 
     .table-condensed > tbody > tr > td {
         padding: 2px;
     }
+
 </style>
 
 @if (output == "map") {
@@ -383,7 +384,7 @@
                                     var number = i + 1;
                                     if (field.Sortable == "true") {
                                         <td class="sorter" data-order-by="@(number)">
-                                            <div class="btn-group btn-group-xs" style="width: 37px;">
+                                            <div class="btn-group btn-group-xs" style="width: 41px;">
                                                 <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
                                                     <span class="glyphicon glyphicon-chevron-up"></span>
                                                 </a>
@@ -488,9 +489,8 @@
             <div id="id_map" style="height: 650px; width: 100%"></div>
             <script>
                 //<!--
-                var url = '@(linkService.Create(Request, "geojson"))';
-                var center = [@settings.StartingLatitude, @settings.StartingLongitude];
                 mapboxgl.accessToken = '@(settings.MapBoxToken)';
+                var url = '@(linkService.Create(Request, "geojson"))';
 
                 $(document).ready(function() {
 
@@ -499,7 +499,7 @@
                     var map = new mapboxgl.Map({
                         container: 'id_map',
                         style: 'mapbox://styles/mapbox/streets-v10',
-                        center: center,
+                        center: [@settings.StartingLatitude, @settings.StartingLongitude],
                         zoom: 6
                     });
 
@@ -543,28 +543,53 @@
                             });
                             map.addControl(draw);
 
+
+                            // map style switcher
+                            function StyleSwitchControl() { }
+
+                            StyleSwitchControl.prototype.onAdd = function(map) {
+                                this._map = map;
+                                this._container = document.createElement('div');
+                                this._container.className = 'mapboxgl-ctrl';
+                                // change this next line to include a layer-switching icon
+                                this._container.textContent = '<span>hello</span>';
+                                return this._container;
+                            };
+
+                            StyleSwitchControl.prototype.onRemove = function () {
+                                this._container.parentNode.removeChild(this._container);
+                                this._map = undefined;
+                            };
+
+                            map.addControl(new StyleSwitchControl());
+
                             function updateArea(e) {
+
                                 var data = draw.getAll();
+                                $('input.bulk-action').remove();
+
                                 if (data.features.length > 0) {
                                     var selected = turf.pointsWithinPolygon(geojson, data);
-                                    console.log(selected);
 
                                     selected.features.forEach(function(feature) {
                                         $("<input>").attr({
                                             type: "checkbox",
                                             checked: "checked",
-                                            class: "bulk-action",
+                                            "class": "bulk-action",
+                                            style: "visibility: hidden",
                                             name: "row",
                                             value: feature.properties.BatchValue
                                         }).appendTo("#id_report");
                                     });
 
+                                    // update the little badges
                                     $(".bulk-action-link").each(function () {
                                         var link = $(this);
                                         $("input[name=bulk-action-length]").val(selected.features.length);
                                         link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + selected.features.length + "</span>");
                                     });
                                 } else {
+                                    // update the little badges
                                     $(".bulk-action-link").each(function () {
                                         var link = $(this);
                                         $("input[name=bulk-action-length]").val(0);
@@ -746,11 +771,16 @@
             allSelectedText: 'Selected',
             buttonContainer: '<div class="btn-group btn-group-sm" />',
             templates: {
-                filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span><input class="form-control multiselect-search" type="text"></div></li>',
+                filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><input class="form-control multiselect-search" type="text"></div></li>',
+                filterClearBtn: '<span class="input-group-btn"> <button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button> <button class="btn btn-primary search-button" type="button"><i class="glyphicon glyphicon-search"></i></button> </span>',
             }
         });
         $('span.multiselect-selected-text').parent().removeClass('btn-default');
         $('span.multiselect-selected-text').not('span.multiselect-selected-text:contains("ALL")').parent().addClass('btn-info');
+
+        $('.search-button').bind('click', function(e) {
+            $('#id_report').submit();
+        });
 
         // enable client side sorting if server side support is off
         if (!isSortable) {

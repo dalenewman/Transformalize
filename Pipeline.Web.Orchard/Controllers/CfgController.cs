@@ -233,6 +233,28 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
         [Themed(true)]
+        public ActionResult Builder(int id) {
+            var process = new Process { Name = "Builder" };
+
+            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
+            if (part == null) {
+                process.Name = "Not Found";
+            } else {
+                var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+                if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                    process = _processService.Resolve(part,"xml","json");
+                    process.Load(part.Configuration, new Dictionary<string,string> { {"DisableValidation","true"}});
+                    process.Buffer = false; // no buffering for builder
+                    process.ReadOnly = true;  // force builder to omit system fields
+                } else {
+                    _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to build reports. You have to login.") : T("Sorry {0}. You do not have permission to build this report.", user));
+                }
+            }
+
+            return View(new BuilderViewModel(process));
+        }
+
+        [Themed(true)]
         public ActionResult Report(int id) {
 
             var timer = new Stopwatch();

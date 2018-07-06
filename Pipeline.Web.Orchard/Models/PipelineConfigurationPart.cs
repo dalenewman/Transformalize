@@ -98,11 +98,15 @@ namespace Pipeline.Web.Orchard.Models {
         }
 
         public bool ReportMode() {
-            return Modes.Split(',').Contains("report", StringComparer.OrdinalIgnoreCase);
+            return Modes.Split(',').Contains("report", StringComparer.OrdinalIgnoreCase) || Tags().Contains("REPORT");
         }
 
         public bool FormMode() {
-            return Modes.Split(',').Contains("form", StringComparer.OrdinalIgnoreCase);
+            return Modes.Split(',').Contains("form", StringComparer.OrdinalIgnoreCase) || Tags().Contains("FORM");
+        }
+
+        public bool HandsOnTableMode() {
+            return Modes.Split(',').Contains("table", StringComparer.OrdinalIgnoreCase) || Tags().Contains("TABLE");
         }
 
         public string PlaceHolderStyle {

@@ -68,9 +68,8 @@
     <Reference Include="Cfg.Net.Shorthand, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.11\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
-    <Reference Include="CfgNet, Version=0.10.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.10.2\lib\net452\CfgNet.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CfgNet, Version=0.10.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.10.3\lib\net452\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\DateMath.1.0.0\lib\net45\DateMath.dll</HintPath>
@@ -261,7 +260,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Scripts\common.ajax.js" />
+    <Content Include="Scripts\common.ajax.min.js">
+      <DependentUpon>common.ajax.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.blockUI.js" />
+    <Content Include="Scripts\jquery.blockUI.min.js">
+      <DependentUpon>jquery.blockUI.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\jquery.tablesorter.min.js" />
+    <Content Include="Scripts\jquery.toastmessage.js" />
+    <Content Include="Scripts\jquery.toastmessage.min.js">
+      <DependentUpon>jquery.toastmessage.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\parsley.min.js" />
     <Content Include="Scripts\pickadate\legacy.js" />
@@ -272,6 +283,11 @@
     <Content Include="Styles\bg.gif" />
     <Content Include="Styles\busy.gif" />
     <Content Include="Styles\desc.gif" />
+    <Content Include="Styles\jquery.toastmessage.css" />
+    <Content Include="Styles\jquery.toastmessage.min.css">
+      <DependentUpon>jquery.toastmessage.css</DependentUpon>
+    </Content>
+    <Content Include="Styles\layers.png" />
     <Content Include="Styles\pickadate\themes\classic.css" />
     <Content Include="Styles\pickadate\themes\classic.date.css" />
     <Content Include="Styles\pickadate\themes\classic.time.css" />
@@ -290,6 +306,8 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\HandsOnTableController.cs" />
+    <Compile Include="Controllers\WidgetController.cs" />
     <Compile Include="Drivers\PipelineFilePartDriver.cs" />
     <Compile Include="Ext\FieldExt.cs" />
     <Compile Include="Handlers\PipelineFilePartHandler.cs" />
@@ -298,9 +316,11 @@
     <Compile Include="Impl\RazorReportCompiler.cs" />
     <Compile Include="Impl\RazorReportTemplateProcessor.cs" />
     <Compile Include="Impl\ValidateFactory.cs" />
+    <Compile Include="Models\BuilderViewModel.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
     <Compile Include="Models\FormViewModel.cs" />
+    <Compile Include="Models\HandsOnTableViewModel.cs" />
     <Compile Include="Models\ReportViewModel.cs" />
     <Compile Include="Modules\ElasticModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
@@ -395,6 +415,17 @@
     <Content Include="Views\Parts.PipelineFile_SummaryAdmin.cshtml" />
     <Content Include="Views\Cfg\Form.cshtml" />
     <Content Include="Views\Cfg\FormContent.cshtml" />
+    <Content Include="Views\Cfg\Builder.cshtml" />
+    <Content Include="Views\HandsOnTable\Index.cshtml" />
+    <Content Include="Scripts\common.ajax.min.js.map">
+      <DependentUpon>common.ajax.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.toastmessage.min.js.map">
+      <DependentUpon>jquery.toastmessage.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.blockUI.min.js.map">
+      <DependentUpon>jquery.blockUI.min.js</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">
