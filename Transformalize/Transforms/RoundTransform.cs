@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,7 +24,11 @@ namespace Transformalize.Transforms {
     public class RoundTransform : BaseTransform {
         private readonly Field _input;
 
-        public RoundTransform(IContext context) : base(context, "decimal") {
+        public RoundTransform(IContext context = null) : base(context, "decimal") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceivingNumber()) {
                 return;
             }
@@ -37,5 +42,12 @@ namespace Transformalize.Transforms {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("round") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("decimals","0")
+                }
+            };
+        }
     }
 }

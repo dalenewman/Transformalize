@@ -36,7 +36,13 @@ namespace Transformalize.Providers.Razor {
         private Field[] _input;
         private static readonly ConcurrentDictionary<int, IRazorEngineService> Cache = new ConcurrentDictionary<int, IRazorEngineService>();
 
-        public RazorTransform(IContext context) : base(context, context.Field.Type) {
+        public RazorTransform(IContext context = null) : base(context, "object") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
+            Returns = Context.Field.Type;
 
             if (IsMissing(context.Operation.Template)) {
                 return;
@@ -106,6 +112,15 @@ namespace Transformalize.Providers.Razor {
                 }
                 return hash;
             }
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("razor") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("template"),
+                    new OperationParameter("content-type","raw")
+                }
+            };
         }
     }
 }

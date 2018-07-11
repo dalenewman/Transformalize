@@ -19,17 +19,14 @@ using Autofac;
 using Dapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Ioc.Autofac.Modules;
-using Transformalize.Logging;
 using Transformalize.Providers.PostgreSql;
 using Transformalize.Providers.SqlServer;
 
 namespace Tests {
 
     [TestClass]
-    public class NorthWindIntegrationPostgreSql : TestBase
-    {
+    public class NorthWindIntegrationPostgreSql : TestBase {
 
         public string Cfg { get; set; } = @"Files\NorthWindSqlServerToPostgreSql.xml";
         public Connection InputConnection { get; set; } = new Connection {

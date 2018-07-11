@@ -15,14 +15,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class PadLeftTransform : BaseTransform {
+
         private readonly Field _input;
 
-        public PadLeftTransform(IContext context): base(context, "string") {
+        public PadLeftTransform(IContext context = null): base(context, "string") {
+
+            if (IsMissingContext()){
+                return;
+            }
 
             if (IsNotReceiving("string")) {
                 return;
@@ -45,8 +52,16 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].ToString().PadLeft(Context.Operation.TotalWidth, Context.Operation.PaddingChar);
-            
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("padleft") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("total-width"),
+                    new OperationParameter("padding-char","0")
+                }
+            };
         }
 
     }

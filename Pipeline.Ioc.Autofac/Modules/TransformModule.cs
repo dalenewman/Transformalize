@@ -114,6 +114,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new DateAddTransform(c), new DateAddTransform().GetSignatures());
             RegisterTransform(builder, c => new TimeAheadTransform(c), new TimeAheadTransform().GetSignatures());
             RegisterTransform(builder, c => new TimeAgoTransform(c), new TimeAgoTransform().GetSignatures());
+            RegisterTransform(builder, c => new PadLeftTransform(c), new PadLeftTransform().GetSignatures());
+            RegisterTransform(builder, c => new PadRightTransform(c), new PadRightTransform().GetSignatures());
+            RegisterTransform(builder, c => new RazorTransform(c), new RazorTransform().GetSignatures());
+            RegisterTransform(builder, c => new RegexReplaceTransform(c), new RegexReplaceTransform().GetSignatures());
+            RegisterTransform(builder, c => new RemoveTransform(c), new RemoveTransform().GetSignatures());
+            RegisterTransform(builder, c => new ReplaceTransform(c), new ReplaceTransform().GetSignatures());
+            RegisterTransform(builder, c => new RoundTransform(c), new RoundTransform().GetSignatures());
+            RegisterTransform(builder, c => new RoundToTransform(c), new RoundToTransform().GetSignatures());
+            RegisterTransform(builder, c => new RoundUpToTransform(c), new RoundUpToTransform().GetSignatures());
+            RegisterTransform(builder, c => new RoundDownToTransform(c), new RoundDownToTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -135,17 +145,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
-            builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
-            builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
-            builder.Register((c, p) => new RazorTransform(p.Positional<IContext>(0))).Named<ITransform>("razor");
-
-            builder.Register((c, p) => new RegexReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("regexreplace");
-            builder.Register((c, p) => new RemoveTransform(p.Positional<IContext>(0))).Named<ITransform>("remove");
-            builder.Register((c, p) => new ReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("replace");
-            builder.Register((c, p) => new RoundTransform(p.Positional<IContext>(0))).Named<ITransform>("round");
-            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Nearest)).Named<ITransform>("roundto");
-            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Up)).Named<ITransform>("roundupto");
-            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Down)).Named<ITransform>("rounddownto");
             builder.Register((c, p) => new SplitLengthTransform(p.Positional<IContext>(0))).Named<ITransform>("splitlength");
             builder.Register((c, p) => new SubStringTransform(p.Positional<IContext>(0))).Named<ITransform>("substring");
             builder.Register((c, p) => new TagTransform(p.Positional<IContext>(0))).Named<ITransform>("tag");

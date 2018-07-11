@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,12 +23,16 @@ namespace Transformalize.Transforms {
     public class RemoveTransform : BaseTransform {
         private readonly Field _input;
 
-        public RemoveTransform(IContext context) : base(context, "string") {
+        public RemoveTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (context.Operation.StartIndex == 0) {
+            if (Context.Operation.StartIndex == 0) {
                 Error("The remove transform requires a start-index greater than 0.");
                 Run = false;
                 return;
@@ -42,6 +47,15 @@ namespace Transformalize.Transforms {
                 : row[_input].ToString().Remove(Context.Operation.StartIndex);
             
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("remove") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("start-index"),
+                    new OperationParameter("count","0")
+                }
+            };
         }
     }
 }

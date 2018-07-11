@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -27,7 +28,11 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, string> _getOldValue;
         private readonly Func<IRow, string> _getNewValue;
 
-        public ReplaceTransform(IContext context) : base(context, "string") {
+        public ReplaceTransform(IContext context = null) : base(context, "string") {
+            if(IsMissingContext()) {
+                return;
+            }
+
             if (IsMissing(context.Operation.OldValue)) {
                 return;
             }
@@ -66,6 +71,13 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("replace") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("old-value"),
+                    new OperationParameter("new-value","")
+                }
+            };
+        }
     }
 }

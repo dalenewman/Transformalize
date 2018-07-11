@@ -49,13 +49,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     Name = "separator-space",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> { new Cfg.Net.Shorthand.Parameter { Name = "separator", Value = " " } }
                 });
-                root.Signatures.Add(new Signature {
-                    Name = "padding",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "total-width" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "padding-char", Value="0" }
-                        }
-                });
                 root.Signatures.Add(Simple("value", "[default]"));
                 root.Signatures.Add(Simple("type", "[default]"));
                 root.Signatures.Add(new Signature {
@@ -73,30 +66,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("timecomponent"));
-                root.Signatures.Add(new Signature {
-                    Name = "replace",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "old-value" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "new-value", Value="" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
-                    Name = "regexreplace",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "pattern" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "new-value" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "count", Value="0"}
-                        }
-                });
                 root.Signatures.Add(Simple("pattern"));
 
-                root.Signatures.Add(new Signature {
-                    Name = "remove",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "count", Value="0" }
-                        }
-                });
                 root.Signatures.Add(new Signature {
                     Name = "template",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -136,12 +107,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "src", Value=""},
                             new Cfg.Net.Shorthand.Parameter { Name = "width", Value="0"},
                             new Cfg.Net.Shorthand.Parameter { Name = "height", Value="0"}
-                        }
-                });
-                root.Signatures.Add(new Signature {
-                    Name = "decimals",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "decimals", Value="0" }
                         }
                 });
                 root.Signatures.Add(new Signature {
@@ -197,16 +162,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "padleft", Signature = "padding" });
-                root.Methods.Add(new Method { Name = "padright", Signature = "padding" });
-                root.Methods.Add(new Method { Name = "razor", Signature = "template" });
-                root.Methods.Add(new Method { Name = "regexreplace", Signature = "regexreplace" });
-                root.Methods.Add(new Method { Name = "remove", Signature = "remove" });
-                root.Methods.Add(new Method { Name = "replace", Signature = "replace" });
-                root.Methods.Add(new Method { Name = "round", Signature = "decimals" });
-                root.Methods.Add(new Method { Name = "roundto", Signature = "value" });
-                root.Methods.Add(new Method { Name = "roundupto", Signature = "value" });
-                root.Methods.Add(new Method { Name = "rounddownto", Signature = "value" });
                 root.Methods.Add(new Method { Name = "splitlength", Signature = "separator" });
                 root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
                 root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Contracts;
 
@@ -24,7 +25,12 @@ namespace Transformalize.Transforms {
 
         private readonly Action<IRow> _transform;
 
-        public RegexReplaceTransform(IContext context) : base(context, "string") {
+        public RegexReplaceTransform(IContext context = null) : base(context, "string") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -50,6 +56,16 @@ namespace Transformalize.Transforms {
             _transform(row);
             
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("regexreplace") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("pattern"),
+                    new OperationParameter("new-value"),
+                    new OperationParameter("count","0")
+                }
+            };
         }
     }
 }
