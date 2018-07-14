@@ -51,21 +51,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 });
                 root.Signatures.Add(Simple("value", "[default]"));
                 root.Signatures.Add(Simple("type", "[default]"));
-                root.Signatures.Add(new Signature {
-                    Name = "trim",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "trim-chars", Value= " " }
-                        }
-                });
                 root.Signatures.Add(Simple("script"));
-                root.Signatures.Add(new Signature {
-                    Name = "substring",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "start-index" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "length", Value="0" }
-                        }
-                });
-                root.Signatures.Add(Simple("timecomponent"));
                 root.Signatures.Add(Simple("pattern"));
 
                 root.Signatures.Add(new Signature {
@@ -92,23 +78,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
                 root.Signatures.Add(Simple("domain"));
-                root.Signatures.Add(new Signature {
-                    Name = "tag",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "tag" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "class", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "style", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "title", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "href", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "role", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "target", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "body", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "encode", Value="true" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "src", Value=""},
-                            new Cfg.Net.Shorthand.Parameter { Name = "width", Value="0"},
-                            new Cfg.Net.Shorthand.Parameter { Name = "height", Value="0"}
-                        }
-                });
                 root.Signatures.Add(new Signature {
                     Name = "iif",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -146,13 +115,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("expression"));
                 root.Signatures.Add(Simple("key"));
                 root.Signatures.Add(Simple("units"));
-                root.Signatures.Add(new Signature() {
-                    Name = "tostring",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter>
-                    {
-                        new Cfg.Net.Shorthand.Parameter { Name = "format"}
-                    }
-                });
 
                 root.Methods.Add(new Method { Name = "any", Signature = "any" });
 
@@ -162,15 +124,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "splitlength", Signature = "separator" });
-                root.Methods.Add(new Method { Name = "substring", Signature = "substring" });
-                root.Methods.Add(new Method { Name = "tostring", Signature = "tostring" });
-                root.Methods.Add(new Method { Name = "totime", Signature = "timecomponent" });
                 root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
-                root.Methods.Add(new Method { Name = "toyesno", Signature = "none" });
-                root.Methods.Add(new Method { Name = "trim", Signature = "trim" });
-                root.Methods.Add(new Method { Name = "trimend", Signature = "trim" });
-                root.Methods.Add(new Method { Name = "trimstart", Signature = "trim" });
                 root.Methods.Add(new Method { Name = "upper", Signature = "none" });
                 root.Methods.Add(new Method { Name = "velocity", Signature = "template" });
                 root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
@@ -179,7 +133,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
-                root.Methods.Add(new Method { Name = "tag", Signature = "tag" });
                 root.Methods.Add(new Method { Name = "include", Signature = "any" });
                 root.Methods.Add(new Method { Name = "exclude", Signature = "any" });
                 root.Methods.Add(new Method { Name = "slugify", Signature = "none" });

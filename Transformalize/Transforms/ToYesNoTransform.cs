@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,7 +24,11 @@ namespace Transformalize.Transforms {
     public class ToYesNoTransform : BaseTransform {
         private readonly Field _input;
 
-        public ToYesNoTransform(IContext context) : base(context, "string") {
+        public ToYesNoTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("bool")) {
                 return;
             }
@@ -31,8 +37,14 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = (bool)row[_input] ? "Yes" : "No";
-            
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("toyesno") {
+                Parameters = new List<OperationParameter>()
+            };
         }
 
     }

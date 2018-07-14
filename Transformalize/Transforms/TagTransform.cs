@@ -40,12 +40,12 @@ namespace Transformalize.Transforms {
             public string Name { get; }
             public string Value { get; }
 
-            public void Append(StringBuilder sb, IRow row) {
+            public void Append(StringBuilder sb, IRow row, Func<string, string> encode) {
                 if (!IsSet) return;
                 sb.Append(' ');
                 sb.Append(Name);
                 sb.Append("=\"");
-                sb.Append(IsField ? Encode(row[Field].ToString()) : Encode(Value));
+                sb.Append(IsField ? encode(row[Field].ToString()) : encode(Value));
                 sb.Append("\"");
             }
 
@@ -59,9 +59,15 @@ namespace Transformalize.Transforms {
         private readonly List<TagAttribute> _attributes = new List<TagAttribute>();
         private readonly Func<IRow, object> _encode;
         private readonly bool _selfClosing = false;
+        private readonly StringBuilder _sbOperate = new StringBuilder();
+        private readonly StringBuilder _sbEncode = new StringBuilder();
 
-        public TagTransform(IContext context) : base(context, "string") {
-            if (string.IsNullOrEmpty(context.Operation.Tag)) {
+        public TagTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(Context.Operation.Tag)) {
                 Error("The tag transform requires a tag (e.g. a, span, div, etc).");
                 Run = false;
                 return;
@@ -126,64 +132,85 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            var sb = new StringBuilder();
+            _sbOperate.Clear();
 
             // open
 
-            sb.AppendFormat("<{0}", Context.Operation.Tag);
+            _sbOperate.AppendFormat("<{0}", Context.Operation.Tag);
 
             // attributes
             foreach (var attribute in _attributes) {
-                attribute.Append(sb, row);
+                attribute.Append(_sbOperate, row, Encode);
             }
 
             if (_selfClosing) {
-                sb.Append("/>");
+                _sbOperate.Append("/>");
             } else {
-                sb.Append(">");
+                _sbOperate.Append(">");
 
                 // content
-                sb.Append(_encode(row));
+                _sbOperate.Append(_encode(row));
 
                 // close
-                sb.AppendFormat("</{0}>", Context.Operation.Tag);
+                _sbOperate.AppendFormat("</{0}>", Context.Operation.Tag);
             }
 
-            row[Context.Field] = sb.ToString();
-            
+            row[Context.Field] = _sbOperate.ToString();
+
             return row;
         }
 
-        private static string Encode(string value) {
-            var builder = new StringBuilder();
+        private string Encode(string value) {
+            _sbEncode.Clear();
             for (var i = 0; i < value.Length; i++) {
                 var ch = value[i];
                 if (ch <= '>') {
                     switch (ch) {
                         case '<':
-                            builder.Append("&lt;");
+                            _sbEncode.Append("&lt;");
                             break;
                         case '>':
-                            builder.Append("&gt;");
+                            _sbEncode.Append("&gt;");
                             break;
                         case '"':
-                            builder.Append("&quot;");
+                            _sbEncode.Append("&quot;");
                             break;
                         case '\'':
-                            builder.Append("&#39;");
+                            _sbEncode.Append("&#39;");
                             break;
                         case '&':
-                            builder.Append("&amp;");
+                            _sbEncode.Append("&amp;");
                             break;
                         default:
-                            builder.Append(ch);
+                            _sbEncode.Append(ch);
                             break;
                     }
                 } else {
-                    builder.Append(ch);
+                    _sbEncode.Append(ch);
                 }
             }
-            return builder.ToString();
+            return _sbEncode.ToString();
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+
+            yield return new OperationSignature("tag") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("tag"),
+                    new OperationParameter("class",""),
+                    new OperationParameter("style",""),
+                    new OperationParameter("title",""),
+                    new OperationParameter("href",""),
+                    new OperationParameter("role",""),
+                    new OperationParameter("target",""),
+                    new OperationParameter("body",""),
+                    new OperationParameter("encode","true"),
+                    new OperationParameter("src",""),
+                    new OperationParameter("width","0"),
+                    new OperationParameter("height","0")
+                }
+            };
+
         }
     }
 }

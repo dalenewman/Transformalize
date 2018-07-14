@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,21 +25,34 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         private readonly char[] _trimChars;
 
-        public TrimTransform(IContext context) : base(context, "string") {
-            if (IsMissing(context.Operation.TrimChars)) {
+        public TrimTransform(IContext context = null) : base(context, "string") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
+            if (IsMissing(Context.Operation.TrimChars)) {
                 return;
             }
 
             _input = SingleInput();
-            context.Operation.TrimChars = context.Operation.TrimChars.Replace("\\r", "\r");
-            context.Operation.TrimChars = context.Operation.TrimChars.Replace("\\n", "\n");
+            Context.Operation.TrimChars = Context.Operation.TrimChars.Replace("\\r", "\r");
+            Context.Operation.TrimChars = Context.Operation.TrimChars.Replace("\\n", "\n");
             _trimChars = Context.Operation.TrimChars.ToCharArray();
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = GetString(row,_input).Trim(_trimChars);
-            
+            row[Context.Field] = GetString(row, _input).Trim(_trimChars);
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("trim") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("trim-chars"," ")
+                }
+            };
         }
 
     }

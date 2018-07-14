@@ -124,6 +124,15 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new RoundToTransform(c), new RoundToTransform().GetSignatures());
             RegisterTransform(builder, c => new RoundUpToTransform(c), new RoundUpToTransform().GetSignatures());
             RegisterTransform(builder, c => new RoundDownToTransform(c), new RoundDownToTransform().GetSignatures());
+            RegisterTransform(builder, c => new SplitLengthTransform(c), new SplitLengthTransform().GetSignatures());
+            RegisterTransform(builder, c => new SubStringTransform(c), new SubStringTransform().GetSignatures());
+            RegisterTransform(builder, c => new TagTransform(c), new TagTransform().GetSignatures());
+            RegisterTransform(builder, c => new ToStringTransform(c), new ToStringTransform().GetSignatures());
+            RegisterTransform(builder, c => new ToTimeTransform(c), new ToTimeTransform().GetSignatures());
+            RegisterTransform(builder, c => new ToYesNoTransform(c), new ToYesNoTransform().GetSignatures());
+            RegisterTransform(builder, c => new TrimTransform(c), new TrimTransform().GetSignatures());
+            RegisterTransform(builder, c => new TrimStartTransform(c), new TrimStartTransform().GetSignatures());
+            RegisterTransform(builder, c => new TrimEndTransform(c), new TrimEndTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -145,15 +154,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
-            builder.Register((c, p) => new SplitLengthTransform(p.Positional<IContext>(0))).Named<ITransform>("splitlength");
-            builder.Register((c, p) => new SubStringTransform(p.Positional<IContext>(0))).Named<ITransform>("substring");
-            builder.Register((c, p) => new TagTransform(p.Positional<IContext>(0))).Named<ITransform>("tag");
-            builder.Register((c, p) => new ToStringTransform(p.Positional<IContext>(0))).Named<ITransform>("tostring");
-            builder.Register((c, p) => new ToTimeTransform(p.Positional<IContext>(0))).Named<ITransform>("totime");
-            builder.Register((c, p) => new ToYesNoTransform(p.Positional<IContext>(0))).Named<ITransform>("toyesno");
-            builder.Register((c, p) => new TrimTransform(p.Positional<IContext>(0))).Named<ITransform>("trim");
-            builder.Register((c, p) => new TrimEndTransform(p.Positional<IContext>(0))).Named<ITransform>("trimend");
-            builder.Register((c, p) => new TrimStartTransform(p.Positional<IContext>(0))).Named<ITransform>("trimstart");
             builder.Register((c, p) => new VelocityTransform(p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("velocity");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("upper");
             builder.Register((c, p) => new ToUpperTransform(p.Positional<IContext>(0))).Named<ITransform>("toupper");

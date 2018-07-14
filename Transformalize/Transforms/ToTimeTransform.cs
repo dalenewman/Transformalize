@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -23,8 +24,12 @@ using Transformalize.Extensions;
 namespace Transformalize.Transforms {
     public class ToTimeTransform : BaseTransform {
         private readonly Field _input;
-        public ToTimeTransform(IContext context) : base(context, "string") {
+        public ToTimeTransform(IContext context = null) : base(context, "string") {
 
+            if (IsMissingContext()) {
+                return;
+            }
+            
             if (!Context.Operation.TimeComponent.In("hour", "minute", "second", "millisecond", "day", "tick")) {
                 Error($"The {Context.Operation.Method} expects a time component of day, hour, minute, second, millisecond, or tick.");
                 Run = false;
@@ -65,8 +70,16 @@ namespace Transformalize.Transforms {
                     row[Context.Field] = TimeSpan.FromHours(value).ToString(Context.Operation.Format);
                     break;
             }
-            
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("totime") {
+                Parameters = new List<OperationParameter> {
+                    new OperationParameter("time-component")
+                }
+            };
         }
 
     }
