@@ -129,7 +129,6 @@
     <Compile Include="Modules\FolderModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
-    <Compile Include="Modules\AdoModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
     <Compile Include="Modules\EntityModule.cs" />
     <Compile Include="Modules\EntityPipelineModule.cs" />
@@ -170,10 +169,6 @@
     <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>OpenXml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\PostgreSql\PostgreSql.csproj">
-      <Project>{d0e681f8-9694-4d89-b2d9-2d94862467a8}</Project>
-      <Name>PostgreSql</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Razor\Razor.csproj">
       <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>

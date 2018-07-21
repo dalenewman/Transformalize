@@ -57,7 +57,6 @@ namespace Transformalize.Ioc.Autofac {
             var providers = new HashSet<string>(process.Connections.Select(c => c.Provider).Distinct(), StringComparer.OrdinalIgnoreCase);
 
             builder.RegisterCallback(new InternalModule(process).Configure);
-            builder.RegisterCallback(new AdoModule(process).Configure);
 
             if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
             if (providers.Contains("file")) { builder.RegisterCallback(new FileModule(process).Configure); }

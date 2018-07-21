@@ -35,7 +35,7 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td>PostgreSql</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.PostgreSql">PostgreSql</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
                         </tr>
@@ -418,8 +418,11 @@ the arrangement should have a new entity like this:
 Next, tell Transformalize how to relate *Order Details* to *Orders*.
 
 #### Relationships
+<span style="background-color:#777777">
 
 > Introducing the **`<relationships/>`** section
+
+</span>
 
 All entities must be related to the first entity in the `<relationships/>` section which 
 follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your arrangement:

@@ -70,7 +70,6 @@ namespace Transformalize.Command {
             container.RegisterCallback(new RootModule().Configure);
             container.RegisterCallback(new ContextModule(Process).Configure);
 
-            container.RegisterCallback(new AdoModule(Process).Configure);
             container.RegisterCallback(new InternalModule(Process).Configure);
             container.RegisterCallback(new ConsoleModule(Process).Configure);
             container.RegisterCallback(new FileModule(Process).Configure);
