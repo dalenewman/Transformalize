@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Newtonsoft.Json.Linq;
+using System.Web.SessionState;
 using Orchard;
 using Orchard.ContentManagement;
 using Orchard.Services;
@@ -14,7 +14,7 @@ using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [Themed]
+    [Themed, SessionState(SessionStateBehavior.ReadOnly)]
     public class HandsOnTableController : WidgetController {
 
         private readonly IJsonConverter _jsonConverter;

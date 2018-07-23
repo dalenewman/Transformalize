@@ -160,9 +160,9 @@ namespace Transformalize.Configuration {
                 Provider = "excel";
             }
 
-            if (Delimiter == "" && file.EndsWith(".csv")) {
-                Delimiter = ",";
-            }
+            //if (Delimiter == "" && file.EndsWith(".csv")) {
+            //    Delimiter = ",";
+            //}
 
         }
 
@@ -327,6 +327,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value="")]
         public string LinePattern { get; set; }
+
+        public Dictionary<int,string> Lines { get; set; } = new Dictionary<int, string>();
 
         protected override void PostValidate() {
             if (Command.Contains(" ")) {

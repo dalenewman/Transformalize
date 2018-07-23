@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Orchard;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Pipeline.Web.Orchard.Services;
 using Orchard.Core.Contents;
 using Orchard.Roles.Services;
 using Pipeline.Web.Orchard.Models;
@@ -15,7 +15,7 @@ using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [ValidateInput(false), Themed]
+    [ValidateInput(false), Themed, SessionState(SessionStateBehavior.ReadOnly)]
     public class FileController : Controller {
 
         private readonly IFileService _fileService;

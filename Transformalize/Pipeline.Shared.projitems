@@ -235,7 +235,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LeftTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\MapTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\MultiplyTransform.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\NextTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\NextDayTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\PadLeftTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\PadRightTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexReplaceTransform.cs" />

@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.SessionState;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
@@ -9,7 +10,7 @@ using Transformalize.Configuration;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [Themed]
+    [Themed, SessionState(SessionStateBehavior.ReadOnly)]
     public class WidgetController : Controller {
 
         private readonly Stopwatch _stopwatch = new Stopwatch();

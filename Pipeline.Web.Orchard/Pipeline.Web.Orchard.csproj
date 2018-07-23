@@ -86,9 +86,8 @@
       <HintPath>..\..\..\packages\ExcelDataReader.3.1.0\lib\net45\ExcelDataReader.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Flurl, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Flurl.2.5.0\lib\net40\Flurl.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Flurl, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Flurl.2.7.1\lib\net40\Flurl.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer">
       <HintPath>..\..\..\..\..\Transformalize.Transform.Humanizer\src\Transformalize.Transform.Humanizer\bin\$(Configuration)\Humanizer.dll</HintPath>

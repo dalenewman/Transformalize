@@ -81,7 +81,9 @@ namespace Pipeline.Web.Orchard.Handlers {
         }
 
         protected override void Updated(UpdateContentContext context) {
+
             var part = context.ContentItem.As<PipelineConfigurationPart>();
+
             if (part == null)
                 return;
             try {
@@ -110,12 +112,12 @@ namespace Pipeline.Web.Orchard.Handlers {
             }
         }
 
-        void CheckAddress(string ipAddress) {
+        private void CheckAddress(string ipAddress) {
             if (string.IsNullOrEmpty(ipAddress)) {
                 return;
             }
-            IPAddress start;
-            if (IPAddress.TryParse(ipAddress, out start)) {
+
+            if (IPAddress.TryParse(ipAddress, out _)) {
                 return;
             }
             _notifier.Add(NotifyType.Warning, T("{0} is an invalid address.", ipAddress));

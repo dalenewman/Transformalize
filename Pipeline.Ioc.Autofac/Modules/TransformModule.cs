@@ -105,7 +105,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
             RegisterTransform(builder, c => new RegexMatchingTransform(c), new RegexMatchingTransform().GetSignatures());
             RegisterTransform(builder, c => new MultiplyTransform(c), new MultiplyTransform().GetSignatures());
-            RegisterTransform(builder, c => new NextTransform(c), new NextTransform().GetSignatures());
+            RegisterTransform(builder, c => new NextDayTransform(c), new NextDayTransform().GetSignatures());
             RegisterTransform(builder, c => new UtcNowTransform(c), new UtcNowTransform().GetSignatures());
             RegisterTransform(builder, c => new RowNumberTransform(c), new RowNumberTransform().GetSignatures());
             RegisterTransform(builder, c => new TimeZoneTransform(c), new TimeZoneTransform().GetSignatures());
@@ -133,6 +133,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, c => new TrimTransform(c), new TrimTransform().GetSignatures());
             RegisterTransform(builder, c => new TrimStartTransform(c), new TrimStartTransform().GetSignatures());
             RegisterTransform(builder, c => new TrimEndTransform(c), new TrimEndTransform().GetSignatures());
+            RegisterTransform(builder, c => new LineTransform(c), new LineTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {

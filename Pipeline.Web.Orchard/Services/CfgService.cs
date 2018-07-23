@@ -11,7 +11,6 @@ using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard.Services {
 
-
     public class CfgService : ICfgService {
         private readonly IOrchardServices _orchardServices;
 

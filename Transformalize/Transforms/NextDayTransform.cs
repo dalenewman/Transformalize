@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class NextTransform : BaseTransform {
+    public class NextDayTransform : BaseTransform {
         private readonly DateTime _next;
 
-        public NextTransform(IContext context = null) : base(context, "datetime") {
+        public NextDayTransform(IContext context = null) : base(context, "datetime") {
 
             if (IsMissingContext()) {
                 return;
@@ -56,7 +56,7 @@ namespace Transformalize.Transforms {
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             return new[] {
-                new OperationSignature("next") {
+                new OperationSignature("nextday") {
                     Parameters = new List<OperationParameter> {new OperationParameter("dayofweek")}
                 }
             };

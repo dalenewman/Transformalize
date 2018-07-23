@@ -87,7 +87,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new InsertTransform(p.Positional<IContext>(0))).Named<ITransform>("insert");
             builder.Register((c, p) => new InvertTransform(p.Positional<IContext>(0))).Named<ITransform>("invert");
             builder.Register((c, p) => new JoinTransform(p.Positional<IContext>(0))).Named<ITransform>("join");
-            builder.Register((c, p) => new LastTransform(p.Positional<IContext>(0))).Named<ITransform>("last");
+            builder.Register((c, p) => new LastDayTransform(p.Positional<IContext>(0))).Named<ITransform>("lastday");
             builder.Register((c, p) => new LeftTransform(p.Positional<IContext>(0))).Named<ITransform>("left");
             builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("lower");
             builder.Register((c, p) => new ToLowerTransform(p.Positional<IContext>(0))).Named<ITransform>("tolower");
@@ -95,7 +95,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new RegexMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("match");
             builder.Register((c, p) => new RegexMatchingTransform(p.Positional<IContext>(0))).Named<ITransform>("matching");
             builder.Register((c, p) => new MultiplyTransform(p.Positional<IContext>(0))).Named<ITransform>("multiply");
-            builder.Register((c, p) => new NextTransform(p.Positional<IContext>(0))).Named<ITransform>("next");
+            builder.Register((c, p) => new NextDayTransform(p.Positional<IContext>(0))).Named<ITransform>("nextday");
             builder.Register((c, p) => new UtcNowTransform(p.Positional<IContext>(0))).Named<ITransform>("now");
             builder.Register((c, p) => new PadLeftTransform(p.Positional<IContext>(0))).Named<ITransform>("padleft");
             builder.Register((c, p) => new PadRightTransform(p.Positional<IContext>(0))).Named<ITransform>("padright");
@@ -104,7 +104,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new ReplaceTransform(p.Positional<IContext>(0))).Named<ITransform>("replace");
             builder.Register((c, p) => new RightTransform(p.Positional<IContext>(0))).Named<ITransform>("right");
             builder.Register((c, p) => new RoundTransform(p.Positional<IContext>(0))).Named<ITransform>("round");
-            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0),RoundTo.Nearest)).Named<ITransform>("roundto");
+            builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0))).Named<ITransform>("roundto");
             builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Up)).Named<ITransform>("roundupto");
             builder.Register((c, p) => new RoundToTransform(p.Positional<IContext>(0), RoundTo.Down)).Named<ITransform>("rounddownto");
             builder.Register((c, p) => new SplitLengthTransform(p.Positional<IContext>(0))).Named<ITransform>("splitlength");
@@ -191,6 +191,10 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new AppendTransform(p.Positional<IContext>(0))).Named<ITransform>("suffix");
             builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prepend");
             builder.Register((c, p) => new PrependTransform(p.Positional<IContext>(0))).Named<ITransform>("prefix");
+
+            builder.Register((c, p) => new SplitTransform(p.Positional<IContext>(0))).Named<ITransform>("split");
+            builder.Register((c, p) => new FirstTransform(p.Positional<IContext>(0))).Named<ITransform>("first");
+            builder.Register((c, p) => new LastTransform(p.Positional<IContext>(0))).Named<ITransform>("last");
 
             builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);

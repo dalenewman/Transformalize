@@ -340,7 +340,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                                 return _batchRedirectService.Redirect(action.Url, batchParameters);
                                             }
 
-                                            var message = batchParameters.ContainsKey("BatchId") ? string.Format("Batch {0} failed.", batchParameters["BatchId"]) : "Batch failed.";
+                                            var message = batchParameters.ContainsKey("BatchId") ? $"Batch {batchParameters["BatchId"]} failed." : "Batch failed.";
                                             Logger.Error(message);
                                             _orchardServices.Notifier.Error(T(message));
                                             foreach (var key in batchParameters.Keys) {

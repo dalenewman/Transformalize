@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Configuration;
@@ -25,6 +26,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Providers.File.Transforms {
     public class FileNameTransform : BaseTransform {
         private readonly Field _input;
+        private readonly ConcurrentDictionary<string, string> _cache = new ConcurrentDictionary<string, string>();
 
         public FileNameTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
@@ -38,13 +40,22 @@ namespace Transformalize.Providers.File.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = Context.Operation.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
-            
+            if (_cache.TryGetValue(Context.Operation.Key, out var cache)) {
+                row[Context.Field] = cache;
+            } else {
+                var value = Context.Operation.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
+                _cache.TryAdd(Context.Operation.Key, value);
+                row[Context.Field] = value;
+            }
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("filename") { Parameters = new List<OperationParameter>(1) { new OperationParameter("extension","true") } };
+            yield return new OperationSignature("filename") {
+                Parameters = new List<OperationParameter>(1){
+                    new OperationParameter("extension","true")
+                }
+            };
         }
     }
 }

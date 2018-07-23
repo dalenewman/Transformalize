@@ -30,11 +30,17 @@ namespace Transformalize.Providers.File {
         private readonly InputContext _context;
         private readonly IRowFactory _rowFactory;
         private readonly Field _field;
+        private readonly HashSet<int> _linesToKeep = new HashSet<int>();
 
         public FileReader(InputContext context, IRowFactory rowFactory) {
             _context = context;
             _rowFactory = rowFactory;
             _field = context.Entity.GetAllFields().First(f => f.Input);
+            foreach (var transform in context.Entity.GetAllTransforms().Where(t => t.Method == "line")) {
+                if (int.TryParse(transform.Value, out var lineNo)) {
+                    _linesToKeep.Add(lineNo);
+                }
+            }
         }
 
         public IEnumerable<IRow> Read() {
@@ -52,6 +58,11 @@ namespace Transformalize.Providers.File {
 
                     foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
                         ++lineNo;
+
+                        if (_linesToKeep.Contains(lineNo)) {
+                            _context.Connection.Lines[lineNo] = line;
+                        }
+
                         if (lineNo < _context.Connection.Start) continue;
 
                         if (regex.IsMatch(line)) {
@@ -78,6 +89,11 @@ namespace Transformalize.Providers.File {
                     foreach (var line in System.IO.File.ReadLines(_context.Connection.File, encoding)) {
 
                         ++lineNo;
+
+                        if (_linesToKeep.Contains(lineNo)) {
+                            _context.Connection.Lines[lineNo] = line;
+                        }
+
                         if (lineNo < _context.Connection.Start) continue;
 
                         var row = _rowFactory.Create();

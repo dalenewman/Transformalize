@@ -16,14 +16,12 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Providers.File;
 

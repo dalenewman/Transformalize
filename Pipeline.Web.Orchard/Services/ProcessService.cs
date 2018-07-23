@@ -341,12 +341,12 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
             root.Methods.Add(new Method { Name = "join", Signature = "separator" });
             root.Methods.Add(new Method { Name = "js", Signature = "script" });
-            root.Methods.Add(new Method { Name = "last", Signature = "dayofweek" });
+            root.Methods.Add(new Method { Name = "lastday", Signature = "dayofweek" });
             root.Methods.Add(new Method { Name = "left", Signature = "length" });
             root.Methods.Add(new Method { Name = "lower", Signature = "none" });
             root.Methods.Add(new Method { Name = "map", Signature = "map" });
             root.Methods.Add(new Method { Name = "multiply", Signature = "none" });
-            root.Methods.Add(new Method { Name = "next", Signature = "dayofweek" });
+            root.Methods.Add(new Method { Name = "nextday", Signature = "dayofweek" });
             root.Methods.Add(new Method { Name = "now", Signature = "none" });
             root.Methods.Add(new Method { Name = "padleft", Signature = "padding" });
             root.Methods.Add(new Method { Name = "padright", Signature = "padding" });
@@ -442,6 +442,10 @@ namespace Pipeline.Web.Orchard.Services {
             root.Methods.Add(new Method { Name = "suffix", Signature = "value" });
             root.Methods.Add(new Method { Name = "prepend", Signature = "value" });
             root.Methods.Add(new Method { Name = "prefix", Signature = "value" });
+
+            root.Methods.Add(new Method { Name = "split", Signature = "separator" });
+            root.Methods.Add(new Method { Name = "first", Signature = "none" });
+            root.Methods.Add(new Method { Name = "last", Signature = "none" });
             root.Check();
 
             if (!root.Errors().Any()) {

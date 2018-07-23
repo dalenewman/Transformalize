@@ -16,28 +16,29 @@
 // limitations under the License.
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Cfg.Net;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
     public class ConnectionTransform : BaseTransform {
 
         private readonly object _value;
+
         public ConnectionTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Name)) {
+            if (IsMissing(Context.Operation.Name)) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Property)) {
+            if (IsMissing(Context.Operation.Property)) {
                 return;
             }
 
@@ -49,19 +50,23 @@ namespace Transformalize.Transforms {
             props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
 #endif
 
-            if (!context.Operation.Property.In(props)) {
-                Error($"The connection property {context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
+            var set = new HashSet<string>(props, StringComparer.OrdinalIgnoreCase);
+
+            if (!set.Contains(Context.Operation.Property)) {
+                Error($"The connection property {Context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
                 Run = false;
                 return;
             }
 
-            var connection = context.Process.Connections.First(c => c.Name == context.Operation.Name);
-            _value = Utility.GetPropValue(connection, context.Operation.Property);
+            Context.Operation.Property = set.First(s => s.Equals(Context.Operation.Property, StringComparison.OrdinalIgnoreCase));
+
+            var connection = Context.Process.Connections.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
+            _value = Utility.GetPropValue(connection, Context.Operation.Property);
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _value;
-            
+
             return row;
         }
 

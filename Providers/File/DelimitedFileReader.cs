@@ -49,7 +49,6 @@ namespace Transformalize.Providers.File {
                 end = start + _context.Entity.Size;
             }
 
-            var current = _context.Connection.Start;
             var engine = FileHelpersEngineFactory.Create(_context);
 
             IDisposable reader;
@@ -62,7 +61,9 @@ namespace Transformalize.Providers.File {
 
             using (reader) {
                 foreach (var record in engine) {
-                    if (end == 0 || current.Between(start, end)) {
+                    _context.Info(record.ToString());
+
+                    if (end == 0 || engine.LineNumber.Between(start, end)) {
                         var values = engine.LastRecordValues;
                         var row = _rowFactory.Create();
                         for (var i = 0; i < _context.InputFields.Length; i++) {
@@ -75,8 +76,8 @@ namespace Transformalize.Providers.File {
                         }
                         yield return row;
                     }
-                    ++current;
-                    if (current == end) {
+
+                    if (engine.LineNumber == end) {
                         break;
                     }
                 }

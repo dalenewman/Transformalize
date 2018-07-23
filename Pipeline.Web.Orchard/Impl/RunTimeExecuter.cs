@@ -28,13 +28,14 @@ using Pipeline.Web.Orchard.Modules;
 
 namespace Pipeline.Web.Orchard.Impl {
     public class RunTimeExecuter : IRunTimeExecute {
+
         private readonly IContext _context;
         private readonly IAppDataFolder _appDataFolder;
         private readonly ITemplateProcessor _templateProcessor;
         private readonly INotifier _notifier;
 
         public RunTimeExecuter(
-            IContext context, 
+            IContext context,
             IAppDataFolder appDataFolder,
             ITemplateProcessor templateProcessor,
             INotifier notifier
@@ -96,8 +97,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new ProcessControlModule(process).Configure);
 
             using (var scope = container.Build().BeginLifetimeScope()) {
-                var logger = scope.Resolve<IPipelineLogger>() as OrchardLogger;
-                if (logger != null) {
+                if (scope.Resolve<IPipelineLogger>() is OrchardLogger logger) {
                     logger.Process = process;
                 }
                 scope.Resolve<IProcessController>().Execute();

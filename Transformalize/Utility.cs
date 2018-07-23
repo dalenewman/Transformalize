@@ -210,7 +210,7 @@ namespace Transformalize {
 #if NETS10
             return src.GetType().GetRuntimeProperty(propName).GetValue(src);
 #else
-            return src.GetType().GetProperty(propName).GetValue(src, null);
+            return src.GetType().GetProperty(propName)?.GetValue(src, null);
 #endif
         }
 

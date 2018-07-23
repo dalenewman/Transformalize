@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -32,20 +31,21 @@ using Transformalize.Extensions;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services.Contracts;
+using System.Web.SessionState;
 using LogLevel = Transformalize.Contracts.LogLevel;
 using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    [ValidateInput(false), Themed(false), SessionState(System.Web.SessionState.SessionStateBehavior.ReadOnly)]
+    [ValidateInput(false), Themed(false), SessionState(SessionStateBehavior.ReadOnly)]
     public class ApiController : Controller {
 
         private static readonly HashSet<string> _formats = new
         HashSet<string> { "xml", "json", "yaml" };
 
-        readonly IOrchardServices _orchardServices;
-        readonly IIpRangeService _ipRangeService;
+        private readonly IOrchardServices _orchardServices;
+        private readonly IIpRangeService _ipRangeService;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
@@ -89,18 +89,23 @@ namespace Pipeline.Web.Orchard.Controllers {
             var authorized = false;
 
             if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                Logger.Debug("Authorization granted to {0} for id {1}.", User.Identity.Name, id);
+                Logger.Debug("Authorization granted to {0} for {1}.", User.Identity.Name, part.Title());
                 authorized = true;
             } else {
-                Logger.Warning("Authorization denied to {0} for id {1}.", User.Identity.Name, id);
-            }
-
-            if (!authorized && part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase)) {
-                if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
-                    Logger.Warning("Service authorization granted to {0} for id {1}.", Request.UserHostAddress, id);
-                    authorized = true;
+                // You can "run" a transformalize job it's tagged as SERVICE and has an allowed IP Range
+                if (!string.IsNullOrEmpty(part.StartAddress) && part.Tags().Contains("SERVICE", StringComparer.OrdinalIgnoreCase)) {
+                    if (_ipRangeService.InRange(Request.UserHostAddress, part.StartAddress, part.EndAddress)) {
+                        Logger.Information("Service authorization granted to {0} for {1}.", Request.UserHostAddress, part.Title());
+                        authorized = true;
+                    } else {
+                        Logger.Warning("Service authorization denied to {0} for {1}.", Request.UserHostAddress, part.Title());
+                    }
                 } else {
-                    Logger.Warning("Service authorization denied to {0} for id {1}.", Request.UserHostAddress, id);
+                    if (User.Identity.IsAuthenticated) {
+                        Logger.Warning("Authorization denied to {0} for {1}.", User.Identity.Name, part.Title());
+                    } else {
+                        Logger.Warning("Authorization denied to anonymous user at {0} for {1}.", Request.UserHostAddress, part.Title());
+                    }
                 }
             }
 
@@ -121,6 +126,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {
                         Logger.Error("Configuration from missing fields {0} has errors: {1}", id, string.Join(" ", process.Errors()));
+
                         return Get503(action, process, format, timer.ElapsedMilliseconds);
                     }
                 }
@@ -134,6 +140,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 try {
 
                     var output = process.Output();
+
                     runner.Execute(process);
 
                     if (process.Log.Any()) {
@@ -154,16 +161,18 @@ namespace Pipeline.Web.Orchard.Controllers {
                     //var returnUrl = (Request.Form["ReturnUrl"] ?? Request.QueryString["ReturnUrl"]) ?? string.Empty;
                     //if (!returnUrl.Equals(string.Empty))
                     //    return new RedirectResult(returnUrl);
-
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     Logger.Error(ex, "Executing {0} threw error: {1}", id, ex.Message);
+
                     return Get501(Request, _processService, action, ex.Message, timer.ElapsedMilliseconds);
                 }
 
             }
 
             Logger.Warning("Unathorized user {0} attempting access to {1}.", User.Identity.IsAuthenticated ? User.Identity.Name : "Anonymous@" + Request.UserHostAddress, id);
+
+
             return Get401(format, action);
 
         }
@@ -305,8 +314,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
         private static ContentResult Get401(string action, string format, long time = 5) {
-            var message = format == "json" ? string.Format("{{ \"request\":\"{0}\", \"status\":401, \"message\":\"not allowed\", \"time\":{1} }}", action, time)
-                : string.Format("<cfg request=\"{0}\" status=\"401\" message=\"not allowed\" time=\"{1}\" />", action, time);
+            var message = format == "json" ? $"{{ \"request\":\"{action}\", \"status\":401, \"message\":\"not allowed\", \"time\":{time} }}" : $"<cfg request=\"{action}\" status=\"401\" message=\"not allowed\" time=\"{time}\" />";
             return new ContentResult {
                 Content = message,
                 ContentType = "text/" + format

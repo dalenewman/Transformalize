@@ -83,7 +83,7 @@ namespace Transformalize.Providers.File {
             var builder = new DelimitedClassBuilder(identifier) {
                 IgnoreEmptyLines = true,
                 Delimiter = delimiter,
-                IgnoreFirstLines = context.Connection.Start
+                IgnoreFirstLines = context.Connection.Start > 1 ? context.Connection.Start -1 : context.Connection.Start
             };
 
             if (context.Connection.TextQualifier == string.Empty) {
