@@ -40,6 +40,9 @@ namespace Transformalize.Transforms {
             return new[] {
                 new OperationSignature("append") {
                     Parameters = new List<OperationParameter> {new OperationParameter("value")}
+                },
+                new OperationSignature("suffix") {
+                    Parameters = new List<OperationParameter> {new OperationParameter("value")}
                 }
             };
         }

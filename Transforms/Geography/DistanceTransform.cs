@@ -31,7 +31,10 @@ namespace Transformalize.Transforms.Geography {
         private int _nonNumericCount;
         private readonly HashSet<string> _nonNumericValues = new HashSet<string>();
 
-        public DistanceTransform(IContext context) : base(context, "double") {
+        public DistanceTransform(IContext context = null) : base(context, "double") {
+            if (IsMissingContext()) {
+                return;
+            }
 
             _fields = context.GetAllEntityFields().ToArray();
 
@@ -139,7 +142,19 @@ namespace Transformalize.Transforms.Geography {
                 }
             }
             base.Dispose();
+        }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("distance"){
+                    Parameters = new List<OperationParameter>(4) {
+                        new OperationParameter("from-lat"),
+                        new OperationParameter("from-lon"),
+                        new OperationParameter("to-lat"),
+                        new OperationParameter("to-lon")
+                    }
+                }
+            };
         }
     }
 }

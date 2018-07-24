@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,13 @@ namespace Transformalize.Transforms.Velocity {
         private readonly Field[] _input;
         private readonly string _templateName;
 
-        public VelocityTransform(IContext context, IReader reader) : base(context, context.Field.Type) {
+        public VelocityTransform(IContext context = null, IReader reader = null) : base(context, "object") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
+            Returns = Context.Field.Type;
 
             if (IsMissing(context.Operation.Template)) {
                 return;
@@ -74,6 +81,15 @@ namespace Transformalize.Transforms.Velocity {
 
             
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("velocity") {
+                Parameters = new List<OperationParameter>(2) {
+                    new OperationParameter("template"),
+                    new OperationParameter("content-type","raw")
+                }
+            };
         }
 
     }

@@ -25,7 +25,11 @@ namespace Transformalize.Transforms {
         private readonly Field[] _input;
         private readonly string _sep;
 
-        public CommonPrefixesTransform(IContext context) : base(context, "string") {
+        public CommonPrefixesTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()){
+                return;
+            }
+
             _input = MultipleInput();
             _sep = Context.Operation.Separator == Constants.DefaultSetting ? "," : Context.Operation.Separator;
         }
@@ -45,6 +49,18 @@ namespace Transformalize.Transforms {
             var letters = input.Where(s=>s.Length > 0).Select(s => s[0]).Distinct();
 
             return letters.Select(letter => input.Where(s => s.Length > 0 && s[0] == letter).ToArray()).Select(CommonPrefixTransform.Get);
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures()
+        {
+            return new[] {
+                new OperationSignature("commonprefixes") {
+                    Parameters = new List<OperationParameter>(1)
+                    {
+                        new OperationParameter("separator",",")
+                    }
+                }
+            };
         }
     }
 }

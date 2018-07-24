@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Xml;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -27,7 +28,12 @@ namespace Transformalize.Transforms.Xml {
         private readonly bool _xPathIsField;
         private readonly Field _xPathField;
 
-        public XPathTransform(IContext context) : base(context, null) {
+        public XPathTransform(IContext context = null) : base(context, null) {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -77,6 +83,18 @@ namespace Transformalize.Transforms.Xml {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("xpath") {
+                    Parameters = new List<OperationParameter>(3) {
+                        new OperationParameter("expression"),
+                        new OperationParameter("name-space",""),
+                        new OperationParameter("url", "")
+                    }
+                }
+            };
         }
     }
 }

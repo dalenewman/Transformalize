@@ -29,8 +29,7 @@ namespace Transformalize.Transforms.Geography {
         private readonly Func<IRow, double> _getLongitude;
 
         public GeohashEncodeTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext())
-            {
+            if (IsMissingContext()){
                 return;
             }
 
@@ -102,6 +101,20 @@ namespace Transformalize.Transforms.Geography {
                 return true;
             }
             return false;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures()
+        {
+            return new[] {
+                new OperationSignature("geohashencode") {
+                    Parameters = new List<OperationParameter>(3)
+                    {
+                        new OperationParameter("latitude"),
+                        new OperationParameter("longitude"),
+                        new OperationParameter("length", "6")
+                    }
+                }
+            };
         }
     }
 }

@@ -55,13 +55,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("pattern"));
 
                 root.Signatures.Add(new Signature {
-                    Name = "template",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "template" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "content-type", Value="raw" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
                     Name = "any",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "value" },
@@ -69,41 +62,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                 });
 
-                root.Signatures.Add(new Signature {
-                    Name = "xpath",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "expression" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "name-space", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" }
-                        }
-                });
                 root.Signatures.Add(Simple("domain"));
-                root.Signatures.Add(new Signature {
-                    Name = "iif",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "expression" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "true-field" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "false-field" }
-                        }
-                });
-                root.Signatures.Add(new Signature {
-                    Name = "geohash",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "latitude" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "longitude" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "length", Value="6" }
-                        }
-                });
-                root.Signatures.Add(Simple("direction"));
-                root.Signatures.Add(new Signature {
-                    Name = "distance",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "fromlat" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "fromlon" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "tolat" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "tolon" }
-                        }
-                });
                 root.Signatures.Add(new Signature {
                     Name = "web",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
@@ -124,10 +83,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "toupper", Signature = "none" });
-                root.Methods.Add(new Method { Name = "upper", Signature = "none" });
-                root.Methods.Add(new Method { Name = "velocity", Signature = "template" });
-                root.Methods.Add(new Method { Name = "xpath", Signature = "xpath" });
                 root.Methods.Add(new Method { Name = "in", Signature = "domain" });
                 root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
@@ -136,13 +91,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "include", Signature = "any" });
                 root.Methods.Add(new Method { Name = "exclude", Signature = "any" });
                 root.Methods.Add(new Method { Name = "slugify", Signature = "none" });
-                root.Methods.Add(new Method { Name = "iif", Signature = "iif" });
-                root.Methods.Add(new Method { Name = "geohashencode", Signature = "geohash" });
                 root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
-                root.Methods.Add(new Method { Name = "geohashneighbor", Signature = "direction" });
-                root.Methods.Add(new Method { Name = "commonprefix", Signature = "none" });
-                root.Methods.Add(new Method { Name = "commonprefixes", Signature = "separator" });
-                root.Methods.Add(new Method { Name = "distance", Signature = "distance" });
 
                 root.Methods.Add(new Method { Name = "web", Signature = "web" });
                 root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
@@ -154,10 +103,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
                 root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
                 root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
-                root.Methods.Add(new Method { Name = "append", Signature = "value" });
-                root.Methods.Add(new Method { Name = "prepend", Signature = "value" });
-                root.Methods.Add(new Method { Name = "prefix", Signature = "value" });
-                root.Methods.Add(new Method { Name = "suffix", Signature = "value" });
                 root.Check();
 
 

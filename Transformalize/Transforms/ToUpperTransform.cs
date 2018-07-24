@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,16 +23,27 @@ namespace Transformalize.Transforms {
     public class ToUpperTransform : BaseTransform {
         private readonly Field _input;
 
-        public ToUpperTransform(IContext context) : base(context, "string") {
+        public ToUpperTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
             _input = SingleInput();
         }
+
         public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].ToString().ToUpperInvariant();
             
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            var upper = new OperationSignature("toupper");
+            var toUpper = new OperationSignature("upper");
+            return new OperationSignature[] { upper, toUpper };
         }
 
     }

@@ -22,6 +22,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms.Geography {
 
     public class GeohashNeighborTransform : BaseTransform {
+
         private readonly Field _input;
         private readonly int[] _direction;
 
@@ -36,7 +37,12 @@ namespace Transformalize.Transforms.Geography {
             {"northwest", new int[] {1, -1}}
         };
 
-        public GeohashNeighborTransform(IContext context) : base(context, "string") {
+        public GeohashNeighborTransform(IContext context = null) : base(context, "string") {
+
+            if (IsMissingContext()){
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -49,6 +55,16 @@ namespace Transformalize.Transforms.Geography {
             row[Context.Field] = NGeoHash.Portable.GeoHash.Neighbor((string)row[_input], _direction);
             
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature("geohashneighbor") {
+                    Parameters = new List<OperationParameter>(1) {
+                        new OperationParameter("direction")
+                    }
+                }
+            };
         }
     }
 }

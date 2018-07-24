@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -23,7 +24,11 @@ namespace Transformalize.Transforms {
     public class CommonPrefixTransform : BaseTransform {
         private readonly Field[] _input;
 
-        public CommonPrefixTransform(IContext context) : base(context, "string") {
+        public CommonPrefixTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()){
+                return;
+            }
+
             _input = MultipleInput();
         }
 
@@ -52,6 +57,10 @@ namespace Transformalize.Transforms {
             }
 
             return input[0];
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("commonprefix")};
         }
     }
 }
