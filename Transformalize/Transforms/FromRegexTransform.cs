@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
@@ -11,9 +12,13 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         private readonly Field[] _output;
 
-        public FromRegexTransform(IContext context) : base(context, null) {
+        public FromRegexTransform(IContext context = null) : base(context, null) {
 
             ProducesFields = true;
+
+            if(IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("string")) {
                 return;
@@ -55,6 +60,10 @@ namespace Transformalize.Transforms {
 
             return row;
 
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("fromregex") };
         }
 
     }

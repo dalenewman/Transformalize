@@ -20,7 +20,9 @@ using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class NextDayTransform : BaseTransform {
+
         private readonly DateTime _next;
 
         public NextDayTransform(IContext context = null) : base(context, "datetime") {

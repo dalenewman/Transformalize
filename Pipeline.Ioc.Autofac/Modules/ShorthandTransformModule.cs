@@ -83,19 +83,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
 
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
+
                 root.Methods.Add(new Method { Name = "in", Signature = "domain" });
                 root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
-                root.Methods.Add(new Method { Name = "include", Signature = "any" });
-                root.Methods.Add(new Method { Name = "exclude", Signature = "any" });
-                root.Methods.Add(new Method { Name = "slugify", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
 
                 root.Methods.Add(new Method { Name = "web", Signature = "web" });
                 root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
-                root.Methods.Add(new Method { Name = "fromjson", Signature = "none" });
                 root.Methods.Add(new Method { Name = "datemath", Signature = "expression" });
 
                 root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });

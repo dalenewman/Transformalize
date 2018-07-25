@@ -31,10 +31,18 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, bool> _filter;
         private readonly FilterType _filterType;
 
-        public FilterTransform(IContext context, FilterType filterType) : base(context, null) {
+        public FilterTransform(FilterType filterType, IContext context = null) : base(context, null) {
+
+            _filterType = filterType;
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsMissing(context.Operation.Operator)) {
                 return;
             }
+
             if (IsMissing(context.Operation.Value)) {
                 return;
             }
@@ -53,7 +61,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            _filterType = filterType;
+            
             _filter = GetFunc(input, context.Operation.Operator, SingleInput().Convert(context.Operation.Value));
         }
 
@@ -91,6 +99,17 @@ namespace Transformalize.Transforms {
                 default:
                     return row => row[input].Equals(value);
             }
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] {
+                new OperationSignature(_filterType == FilterType.Include ? "include" : "exclude") {
+                    Parameters = new List<OperationParameter>(2) {
+                        new OperationParameter("value"),
+                        new OperationParameter("operator","equals")
+                    }
+                }
+            };
         }
     }
 }

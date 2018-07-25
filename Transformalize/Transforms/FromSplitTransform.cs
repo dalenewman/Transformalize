@@ -15,19 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class FromSplitTransform : BaseTransform {
+
         private readonly char[] _separator;
         private readonly Field _input;
         private readonly Field[] _output;
 
-        public FromSplitTransform(IContext context) : base(context, null) {
-
+        public FromSplitTransform(IContext context = null) : base(context, null) {
+            
             ProducesFields = true;
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (IsNotReceiving("string")) {
                 return;
@@ -60,6 +67,10 @@ namespace Transformalize.Transforms {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("fromsplit") };
         }
 
     }

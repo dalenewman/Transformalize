@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using Transformalize.Configuration;
@@ -25,7 +26,11 @@ namespace Transformalize.Transforms.Globalization {
     public class SlugifyTransform : StringTransform {
         private readonly Field _input;
 
-        public SlugifyTransform(IContext context) : base(context, "string") {
+        public SlugifyTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             _input = SingleInput();
         }
 
@@ -86,6 +91,10 @@ namespace Transformalize.Transforms.Globalization {
 
             return slug.Trim('-', '_', '.');
 
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("slugify") };
         }
     }
 }

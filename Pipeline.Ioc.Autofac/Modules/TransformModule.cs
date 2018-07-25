@@ -149,6 +149,17 @@ namespace Transformalize.Ioc.Autofac.Modules
             RegisterTransform(builder, (ctx, c) => new CommonPrefixTransform(c), new CommonPrefixTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CommonPrefixesTransform(c), new CommonPrefixesTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new DistanceTransform(c), new DistanceTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new SlugifyTransform(c), new SlugifyTransform().GetSignatures());
+
+            // row filtering
+            RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Exclude, c), new FilterTransform(FilterType.Exclude).GetSignatures());
+
+            // field producing
+            RegisterTransform(builder, (ctx, c) => new FromSplitTransform(c), new FromSplitTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FromRegexTransform(c), new FromRegexTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder))
@@ -174,16 +185,6 @@ namespace Transformalize.Ioc.Autofac.Modules
 
             // old method
 
-            // filters rows
-            builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Include)).Named<ITransform>("include");
-            builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Exclude)).Named<ITransform>("exclude");
-
-            // produce fields
-            builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
-            builder.Register((c, p) => new FromRegexTransform(p.Positional<IContext>(0))).Named<ITransform>("fromregex");
-            builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
-            builder.Register((c, p) => new FromJsonTransform(p.Positional<IContext>(0), o => JsonConvert.SerializeObject(o, Formatting.None))).Named<ITransform>("fromjson");
-
             // return true or false transforms
             builder.Register((c, p) => new AnyTransform(p.Positional<IContext>(0))).Named<ITransform>("any");
             builder.Register((c, p) => new StartsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("startswith");
@@ -201,7 +202,7 @@ namespace Transformalize.Ioc.Autofac.Modules
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
             builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
-            builder.Register((c, p) => new SlugifyTransform(p.Positional<IContext>(0))).Named<ITransform>("slugify");
+            
 
             builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
@@ -209,8 +210,7 @@ namespace Transformalize.Ioc.Autofac.Modules
             builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
             builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
 
-            builder.Register((c, p) =>
-            {
+            builder.Register((c, p) => {
                 var context = p.Positional<IContext>(0);
                 return context.Operation.Mode == "all" || context.Field.Engine != "auto" ?
                     new Transforms.Xml.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
@@ -223,19 +223,15 @@ namespace Transformalize.Ioc.Autofac.Modules
 
         }
 
-        private void RegisterTransform(ContainerBuilder builder, Func<IComponentContext, IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures)
-        {
+        private void RegisterTransform(ContainerBuilder builder, Func<IComponentContext, IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
 
-            foreach (var s in signatures)
-            {
-                if (_methods.Add(s.Method))
-                {
+            foreach (var s in signatures) {
+                if (_methods.Add(s.Method)) {
 
                     var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
                     _shortHand.Methods.Add(method);
 
-                    var signature = new Signature
-                    {
+                    var signature = new Signature {
                         Name = s.Method,
                         NamedParameterIndicator = s.NamedParameterIndicator
                     };
@@ -256,10 +252,8 @@ namespace Transformalize.Ioc.Autofac.Modules
 
         }
 
-        public static string AssemblyDirectory
-        {
-            get
-            {
+        public static string AssemblyDirectory  {
+            get {
                 var codeBase = typeof(Process).Assembly.CodeBase;
                 var uri = new UriBuilder(codeBase);
                 var path = Uri.UnescapeDataString(uri.Path);

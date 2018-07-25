@@ -22,17 +22,25 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class FromLengthsTranform : BaseTransform {
+
+    public class FromLengthsTransform : BaseTransform {
+
         private readonly Field _input;
         private readonly Field[] _output;
         private readonly int[] _lengths;
 
-        public FromLengthsTranform(IContext context) : base(context, null) {
+        public FromLengthsTransform(IContext context = null) : base(context, null) {
 
             ProducesFields = true;
 
+            if (IsMissingContext()) {
+                return;
+            }
+
             _input = SingleInputForMultipleOutput();
+
             Run = _input.Type == "string";
+
             if (!Run)
                 return;
 
@@ -88,6 +96,10 @@ namespace Transformalize.Transforms {
 
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("fromlengths") };
         }
     }
 }

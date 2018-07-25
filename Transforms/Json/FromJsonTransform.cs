@@ -30,11 +30,22 @@ namespace Transformalize.Transforms.Json {
         private readonly Field[] _output;
         private readonly HashSet<string> _errors = new HashSet<string>();
 
-        public FromJsonTransform(IContext context, Func<object, string> serializer) : base(context, "object") {
+        public FromJsonTransform(IContext context = null, Func<object, string> serializer = null) : base(context, "object") {
+
             ProducesFields = true;
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!context.Operation.Parameters.Any()) {
                 Error($"The {context.Operation.Method} transform requires a collection of output fields.");
+                Run = false;
+                return;
+            }
+
+            if(serializer == null) {
+                Error($"The {context.Operation.Method} transform requires a JSON serializer.");
                 Run = false;
                 return;
             }
@@ -87,6 +98,10 @@ namespace Transformalize.Transforms.Json {
 
             return row;
 
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("fromjson") };
         }
     }
 
