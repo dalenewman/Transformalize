@@ -16,28 +16,40 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class IsTransform : StringTransform {
+
         private readonly Field _input;
         private readonly Func<string, object> _canConvert;
         private readonly bool _isCompatible;
 
-        public IsTransform(IContext context) : base(context, "bool") {
-            if (IsMissing(context.Operation.Type)) {
+        public IsTransform(IContext context = null) : base(context, "bool") {
+
+            if (IsMissingContext()) {
                 return;
             }
+
+            if (IsMissing(Context.Operation.Type)) {
+                return;
+            }
+
             _input = SingleInput();
-            _isCompatible = Received() == context.Operation.Type || _input.IsNumeric() && context.Operation.Type == "double";
-            _canConvert = v => Constants.CanConvert()[context.Operation.Type](v);
+            _isCompatible = Received() == Context.Operation.Type || _input.IsNumeric() && Context.Operation.Type == "double";
+            _canConvert = v => Constants.CanConvert()[Context.Operation.Type](v);
         }
+
         public override IRow Operate(IRow row) {
             row[Context.Field] = _isCompatible ? true : _canConvert(GetString(row, _input));
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("is") { Parameters = new List<OperationParameter>(1) { new OperationParameter("type", Constants.DefaultSetting) } };
+        }
     }
 }

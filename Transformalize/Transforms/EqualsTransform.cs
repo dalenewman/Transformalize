@@ -76,13 +76,19 @@ namespace Transformalize.Transforms {
             yield return new OperationSignature {
                 Method = "all",
                 Parameters = new List<OperationParameter>{
-                    new OperationParameter("value", "[default]")
+                    new OperationParameter("value", Constants.DefaultSetting)
                 }
             };
             yield return new OperationSignature {
                 Method = "equals",
                 Parameters = new List<OperationParameter>{
-                    new OperationParameter("value", "[default]")
+                    new OperationParameter("value", Constants.DefaultSetting)
+                }
+            };
+            yield return new OperationSignature {
+                Method = "equal",
+                Parameters = new List<OperationParameter>{
+                    new OperationParameter("value", Constants.DefaultSetting)
                 }
             };
         }

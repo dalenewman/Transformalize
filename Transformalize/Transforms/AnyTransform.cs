@@ -25,7 +25,7 @@ namespace Transformalize.Transforms {
 
     public class AnyTransform : BaseTransform {
 
-        class FieldWithValue {
+        private class FieldWithValue {
             public Field Field { get; set; }
             public object Value { get; set; }
         }
@@ -33,12 +33,17 @@ namespace Transformalize.Transforms {
         private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
         private readonly Func<IRow, bool> _func;
 
-        public AnyTransform(IContext context) : base(context, "bool") {
+        public AnyTransform(IContext context = null) : base(context, "bool") {
 
-            if (IsMissing(context.Operation.Operator)) {
+            if (IsMissingContext()) {
                 return;
             }
-            if (IsMissing(context.Operation.Value)) {
+
+            if (IsMissing(Context.Operation.Operator)) {
+                return;
+            }
+
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
 
@@ -72,7 +77,7 @@ namespace Transformalize.Transforms {
                 case ">":
                 case "greaterthanequal":
                 case ">=":
-                default:
+                default:  // equals
                     return row => _input.Any(f => row[f.Field].Equals(f.Value));
             }
         }
@@ -82,6 +87,13 @@ namespace Transformalize.Transforms {
             return row;
         }
 
-
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("any") {
+                Parameters = new List<OperationParameter>(2){
+                    new OperationParameter("value"),
+                    new OperationParameter("operator","equals")
+                }
+            };
+        }
     }
 }

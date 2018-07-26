@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -24,17 +26,28 @@ namespace Transformalize.Transforms {
 
         private readonly Field _input;
 
-        public StartsWithTransform(IContext context) : base(context, "bool") {
-            if (IsMissing(context.Operation.Value)) {
+        public StartsWithTransform(IContext context = null) : base(context, "bool") {
+            if (IsMissingContext()) {
+                return;
+            }
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
             _input = SingleInput();
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = GetString(row,_input).StartsWith(Context.Operation.Value);
-            
+            row[Context.Field] = GetString(row, _input).StartsWith(Context.Operation.Value);
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("startswith") {
+                Parameters = new List<OperationParameter>(1) {
+                    new OperationParameter("value", Constants.DefaultSetting)
+                }
+            };
         }
     }
 }

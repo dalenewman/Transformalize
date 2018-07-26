@@ -44,7 +44,7 @@ namespace Tests {
           </fields>
           <calculated-fields>
             <add name='File' type='string' t='connection(input,File)' />
-            <add name='Port' type='int' t='connection(input,Port)' />            
+            <add name='Port' type='int' t='connection(input,Port).convert()' />            
             <add name='FileName' length='128' t='connection(other,File).filename()' />
             <add name='FileNameNoExt' length='128' t='connection(other,File).filename(false)' />
             <add name='FileExt' length='128' t='connection(other,File).fileext()' />

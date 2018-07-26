@@ -21,13 +21,19 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class InTransform : BaseTransform {
+
         private readonly Field _input;
         private readonly HashSet<object> _set = new HashSet<object>();
 
-        public InTransform(IContext context) : base(context, "bool") {
+        public InTransform(IContext context = null) : base(context, "bool") {
 
-            if (IsMissing(context.Operation.Domain)) {
+            if (IsMissingContext()) {
+                return;
+            }
+
+            if (IsMissing(Context.Operation.Domain)) {
                 return;
             }
 
@@ -37,16 +43,19 @@ namespace Transformalize.Transforms {
                 try {
                     _set.Add(_input.Convert(item));
                 } catch (Exception ex) {
-                    context.Warn($"In transform can't convert {item} to {_input.Type} {ex.Message}.");
+                    Context.Warn($"In transform can't convert {item} to {_input.Type} {ex.Message}.");
                 }
             }
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _set.Contains(row[_input]);
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("domain") } };
+        }
     }
 }

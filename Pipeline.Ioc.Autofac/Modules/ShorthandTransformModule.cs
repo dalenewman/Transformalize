@@ -55,15 +55,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("pattern"));
 
                 root.Signatures.Add(new Signature {
-                    Name = "any",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "value" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "operator", Value="equals" }
-                        }
-                });
-
-                root.Signatures.Add(Simple("domain"));
-                root.Signatures.Add(new Signature {
                     Name = "web",
                     Parameters = new List<Cfg.Net.Shorthand.Parameter> {
                             new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" },
@@ -75,26 +66,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 root.Signatures.Add(Simple("key"));
                 root.Signatures.Add(Simple("units"));
 
-                root.Methods.Add(new Method { Name = "any", Signature = "any" });
-
-                root.Methods.Add(new Method { Name = "contains", Signature = "value" });
-
-                root.Methods.Add(new Method { Name = "is", Signature = "type" });
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
-
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-
-                root.Methods.Add(new Method { Name = "in", Signature = "domain" });
-                root.Methods.Add(new Method { Name = "startswith", Signature = "value" });
-                root.Methods.Add(new Method { Name = "endswith", Signature = "value" });
                 root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
-                root.Methods.Add(new Method { Name = "isempty", Signature = "none" });
                 root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
-
                 root.Methods.Add(new Method { Name = "web", Signature = "web" });
                 root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
                 root.Methods.Add(new Method { Name = "datemath", Signature = "expression" });
-
                 root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
                 root.Methods.Add(new Method { Name = "fromaddress", Signature = "key" });
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });

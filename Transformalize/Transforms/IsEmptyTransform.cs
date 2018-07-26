@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -22,7 +24,12 @@ namespace Transformalize.Transforms {
     public class IsEmptyTransform : BaseTransform {
         private readonly Field _input;
 
-        public IsEmptyTransform(IContext context) : base(context, "bool") {
+        public IsEmptyTransform(IContext context = null) : base(context, "bool") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
@@ -31,9 +38,12 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = (string)row[_input] == string.Empty;
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("isempty");
+        }
     }
 }

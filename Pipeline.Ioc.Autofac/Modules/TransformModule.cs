@@ -45,10 +45,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Module = Autofac.Module;
 
-namespace Transformalize.Ioc.Autofac.Modules
-{
-    public class TransformModule : Module
-    {
+namespace Transformalize.Ioc.Autofac.Modules {
+    public class TransformModule : Module {
 
         public const string Name = "shorthand-t";
         private readonly HashSet<string> _methods = new HashSet<string>();
@@ -56,14 +54,12 @@ namespace Transformalize.Ioc.Autofac.Modules
         private readonly Process _process;
         private readonly IPipelineLogger _logger;
 
-        public TransformModule(Process process, IPipelineLogger logger)
-        {
+        public TransformModule(Process process, IPipelineLogger logger) {
             _process = process;
             _logger = logger;
         }
 
-        protected override void Load(ContainerBuilder builder)
-        {
+        protected override void Load(ContainerBuilder builder) {
 
             var loadContext = new PipelineContext(_logger, _process);
             builder.Properties["ShortHand"] = _shortHand;
@@ -161,21 +157,28 @@ namespace Transformalize.Ioc.Autofac.Modules
             RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
 
+            // return true or false transforms
+            RegisterTransform(builder, (ctx, c) => new AnyTransform(c), new AnyTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new StartsWithTransform(c), new StartsWithTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new EndsWithTransform(c), new EndsWithTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new InTransform(c), new InTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ContainsTransform(c), new ContainsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new IsTransform(c), new IsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new EqualsTransform(c), new EqualsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new IsEmptyTransform(c), new IsEmptyTransform().GetSignatures());
+
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
-            if (Directory.Exists(pluginsFolder))
-            {
+            if (Directory.Exists(pluginsFolder)) {
 
                 var assemblies = new List<Assembly>();
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly))
-                {
+                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-                    loadContext.Debug(() => $"Loading {name} transform");
+                    loadContext.Debug(() => $"Loading {name} transform(s)");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
-                if (assemblies.Any())
-                {
+                if (assemblies.Any()) {
                     builder.RegisterAssemblyModules(assemblies.ToArray());
                 }
             }
@@ -186,15 +189,6 @@ namespace Transformalize.Ioc.Autofac.Modules
             // old method
 
             // return true or false transforms
-            builder.Register((c, p) => new AnyTransform(p.Positional<IContext>(0))).Named<ITransform>("any");
-            builder.Register((c, p) => new StartsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("startswith");
-            builder.Register((c, p) => new EndsWithTransform(p.Positional<IContext>(0))).Named<ITransform>("endswith");
-            builder.Register((c, p) => new InTransform(p.Positional<IContext>(0))).Named<ITransform>("in");
-            builder.Register((c, p) => new ContainsTransform(p.Positional<IContext>(0))).Named<ITransform>("contains");
-            builder.Register((c, p) => new IsTransform(p.Positional<IContext>(0))).Named<ITransform>("is");
-            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("equal");
-            builder.Register((c, p) => new EqualsTransform(p.Positional<IContext>(0))).Named<ITransform>("equals");
-            builder.Register((c, p) => new IsEmptyTransform(p.Positional<IContext>(0))).Named<ITransform>("isempty");
             builder.Register((c, p) => new IsDefaultTransform(p.Positional<IContext>(0))).Named<ITransform>("isdefault");
             builder.Register((c, p) => new IsNumericTransform(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
             builder.Register((c, p) => new RegexIsMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
@@ -202,7 +196,7 @@ namespace Transformalize.Ioc.Autofac.Modules
             builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
             builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
             builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
-            
+
 
             builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
@@ -236,10 +230,8 @@ namespace Transformalize.Ioc.Autofac.Modules
                         NamedParameterIndicator = s.NamedParameterIndicator
                     };
 
-                    foreach (var parameter in s.Parameters)
-                    {
-                        signature.Parameters.Add(new Parameter
-                        {
+                    foreach (var parameter in s.Parameters) {
+                        signature.Parameters.Add(new Parameter {
                             Name = parameter.Name,
                             Value = parameter.Value
                         });
@@ -252,7 +244,7 @@ namespace Transformalize.Ioc.Autofac.Modules
 
         }
 
-        public static string AssemblyDirectory  {
+        public static string AssemblyDirectory {
             get {
                 var codeBase = typeof(Process).Assembly.CodeBase;
                 var uri = new UriBuilder(codeBase);
