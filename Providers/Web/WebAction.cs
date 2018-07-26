@@ -40,6 +40,30 @@ namespace Transformalize.Providers.Web {
             return _action.Method == "get" ? Get(_action) : Post(_action);
         }
 
+        public static ActionResponse GetData(Action action) {
+            var request = (HttpWebRequest)WebRequest.Create(action.Url);
+            request.Method = "GET";
+            request.Timeout = action.TimeOut == 0 ? Timeout.Infinite : action.TimeOut;
+            request.KeepAlive = action.TimeOut == 0;
+
+            try {
+                using (var response = (HttpWebResponse)request.GetResponse()) {
+                    using (var responseStream = response.GetResponseStream()) {
+                        if (responseStream == null)
+                            return new ActionResponse { Code = (int)response.StatusCode, Action = action };
+
+                        var reader = new MemoryStream();
+                        responseStream.CopyTo(reader);
+
+                        return new ActionResponse((int)response.StatusCode, "Data") { Action = action, Data = reader.ToArray() };
+                    }
+                }
+            } catch (Exception e) {
+                return new ActionResponse(500, e.Message) { Action = action };
+            }
+
+        }
+
         public static ActionResponse Get(Action action) {
             var request = (HttpWebRequest)WebRequest.Create(action.Url);
             request.Method = "GET";
@@ -51,6 +75,7 @@ namespace Transformalize.Providers.Web {
                     using (var responseStream = response.GetResponseStream()) {
                         if (responseStream == null)
                             return new ActionResponse { Code = (int)response.StatusCode, Action = action };
+
                         var reader = new StreamReader(responseStream);
                         return new ActionResponse((int)response.StatusCode, reader.ReadToEnd()) { Action = action };
                     }

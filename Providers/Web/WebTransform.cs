@@ -17,40 +17,50 @@
 #endregion
 using System;
 using Transformalize.Actions;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Providers.Web {
     public class WebTransform : BaseTransform {
+
         private readonly Func<IRow, Configuration.Action> _getAction;
         private readonly Func<Configuration.Action, ActionResponse> _getResponse;
-        private readonly Field _input;
 
-        public WebTransform(IContext context) : base(context, "string") {
-            Field url;
-            _input = SingleInput();
+        public WebTransform(IContext context = null) : base(context, "object") {
 
-            if (_input.Equals(Context.Field)) {
+            if (IsMissingContext()) {
+                return;
+            }
+
+            var input = SingleInput();
+
+            Returns = Context.Field.Type;
+
+            if (input.Equals(Context.Field)) {
                 // the url in this field will be transformed inline a web response
-                _getAction = row => new Configuration.Action { Type = "web", Url = row[Context.Field] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
+                _getAction = row => new Configuration.Action { Type = "web", Url = row[Context.Field] as string, Method = Context.Operation.WebMethod, Body = Context.Operation.Body };
             } else {
-                if (context.Entity.TryGetField(context.Operation.Url, out url)) {
+                if (Context.Entity.TryGetField(Context.Operation.Url, out var url)) {
                     // url referenced a field
-                    _getAction = row => new Configuration.Action { Type = "web", Url = row[url] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
+                    _getAction = row => new Configuration.Action { Type = "web", Url = row[url] as string, Method = Context.Operation.WebMethod, Body = Context.Operation.Body };
                 } else {
-                    if (context.Operation.Url != string.Empty) {
+                    if (Context.Operation.Url != string.Empty) {
                         // url is literal url
-                        _getAction = row => new Configuration.Action { Type = "web", Url = context.Operation.Url, Method = context.Operation.WebMethod, Body = context.Operation.Body };
+                        _getAction = row => new Configuration.Action { Type = "web", Url = Context.Operation.Url, Method = Context.Operation.WebMethod, Body = Context.Operation.Body };
                     } else {
                         // the url as copied in via a parameter (aka copy(url))
-                        _getAction = row => new Configuration.Action { Type = "web", Url = row[_input] as string, Method = context.Operation.WebMethod, Body = context.Operation.Body };
+                        _getAction = row => new Configuration.Action { Type = "web", Url = row[input] as string, Method = Context.Operation.WebMethod, Body = Context.Operation.Body };
                     }
                 }
             }
 
-            if (context.Operation.WebMethod == "GET") {
-                _getResponse = WebAction.Get;
+            if (Context.Operation.WebMethod == "GET") {
+                if (Context.Field.Type == "byte[]") {
+                    _getResponse = WebAction.GetData;
+                } else {
+                    _getResponse = WebAction.Get;
+                }
+
             } else {
                 _getResponse = WebAction.Post;
             }
@@ -58,8 +68,9 @@ namespace Transformalize.Providers.Web {
 
         public override IRow Operate(IRow row) {
             var response = _getResponse(_getAction(row));
-            
-            row[Context.Field] = response.Message;
+            var value = Context.Field.Type == "byte[]" ? (object) response.Data : response.Message;
+
+            row[Context.Field] = value ?? Context.Field.DefaultValue();
             return row;
         }
     }

@@ -22,6 +22,7 @@ namespace Transformalize.Actions {
     public class ActionResponse {
 
         public string Message { get; set; } = string.Empty;
+        public byte[] Data { get; set; } 
         public int Code { get; set; } = 200;
         public Action Action { get; set; }
 

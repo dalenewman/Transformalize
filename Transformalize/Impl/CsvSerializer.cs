@@ -45,8 +45,8 @@ namespace Transformalize.Impl {
                 var field = _fields[index];
                 var value = row[field];
                 switch (field.Type) {
-                    case "byte[]":
-                        builder.Append("0x" + string.Format("{0:X}", Utility.BytesToHexString(value as byte[]).TrimStart(new[] { '0' })));
+                    case "byte[]": 
+                        builder.Append(value == null ? string.Empty : value is byte[] ? Convert.ToBase64String((byte[])value) : value);
                         break;
                     case "date":
                     case "datetime":

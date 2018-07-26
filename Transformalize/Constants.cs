@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace Transformalize {
     public static class Constants {
@@ -161,7 +162,7 @@ namespace Transformalize {
             {"float", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x))},
             {"byte", (x => Convert.ToByte(x))},
-            {"byte[]", (Utility.HexStringToBytes)}
+            {"byte[]", (ObjectToByteArray)}
         };
 
         public static readonly Dictionary<string, Func<object, object>> ObjectConversionMap = new Dictionary<string, Func<object, object>> {
@@ -190,7 +191,7 @@ namespace Transformalize {
             {"float", (x => Convert.ToSingle(x))},
             {"guid", (x => Guid.Parse(x.ToString()))},
             {"byte", (x => Convert.ToByte(x))},
-            {"byte[]", (x => Utility.HexStringToBytes(x.ToString()))}
+            {"byte[]", (ObjectToByteArray)}
         };
 
         public static HashSet<string> InvalidFieldNames { get; internal set; } = new HashSet<string>(new[] { TflKey, TflBatchId, TflDeleted, TflHashCode }, StringComparer.OrdinalIgnoreCase);
@@ -214,49 +215,51 @@ namespace Transformalize {
 
         }
 
-        public static Dictionary<string, Func<string, bool>> CanConvert() {
-            bool boolOut;
-            byte byteOut;
-            char charOut;
-            decimal decOut;
-            DateTime dateOut;
-            double doubleOut;
-            float floatOut;
-            float singleOut;
-            Guid guidOut;
-            int intOut;
-            short int16Out;
-            long longOut;
-            ushort uInt16Out;
-            uint uInt32Out;
-            ulong uInt64Out;
 
+        // Convert an object to a byte array
+        private static byte[] ObjectToByteArray(object obj) {
+            if (obj is byte[] bytes)
+                return bytes;
+
+#if NETS10
+                return new byte[0];
+#else
+            var bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            using (var ms = new MemoryStream()) {
+                bf.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+#endif
+
+        }
+
+        public static Dictionary<string, Func<string, bool>> CanConvert() {
             return _canConvert ?? (
                 _canConvert = new Dictionary<string, Func<string, bool>> {
-                    {"bool",s=> bool.TryParse(NormalizeBool(s), out boolOut)},
-                    {"boolean",s=> bool.TryParse(NormalizeBool(s), out boolOut)},
-                    {"byte",s=>byte.TryParse(s, out byteOut)},
+                    {"bool",s=> bool.TryParse(NormalizeBool(s), out _)},
+                    {"boolean",s=> bool.TryParse(NormalizeBool(s), out _)},
+                    {"byte",s=>byte.TryParse(s, out _)},
                     {"byte[]", s => false},
-                    {"char",s=>char.TryParse(s, out charOut)},
-                    {"date",s=> s.Length > 5 && DateTime.TryParse(s, out dateOut)},
-                    {"datetime",s=> s.Length > 5 && DateTime.TryParse(s, out dateOut)},
-                    {"decimal",s=>decimal.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo)), out decOut)},
-                    {"double",s=>double.TryParse(s, out doubleOut)},
-                    {"float",s=>float.TryParse(s, out floatOut)},
-                    {"guid", s=>Guid.TryParse(s, out guidOut)},
-                    {"int",s=>int.TryParse(s, out intOut)},
-                    {"int16", s=>short.TryParse(s, out int16Out)},
-                    {"int32",s=>int.TryParse(s, out intOut)},
-                    {"int64",s=>long.TryParse(s, out longOut)},
-                    {"long",s=>long.TryParse(s, out longOut)},
+                    {"char",s=>char.TryParse(s, out _)},
+                    {"date",s=> s.Length > 5 && DateTime.TryParse(s, out _)},
+                    {"datetime",s=> s.Length > 5 && DateTime.TryParse(s, out _)},
+                    {"decimal",s=>decimal.TryParse(s, NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo)), out _)},
+                    {"double",s=>double.TryParse(s, out _)},
+                    {"float",s=>float.TryParse(s, out _)},
+                    {"guid", s=>Guid.TryParse(s, out _)},
+                    {"int",s=>int.TryParse(s, out _)},
+                    {"int16", s=>short.TryParse(s, out _)},
+                    {"int32",s=>int.TryParse(s, out _)},
+                    {"int64",s=>long.TryParse(s, out _)},
+                    {"long",s=>long.TryParse(s, out _)},
                     {"object", s=>true},
-                    {"real",s=>float.TryParse(s, out singleOut)},
-                    {"short",s=>short.TryParse(s, out int16Out)},
-                    {"single",s=>float.TryParse(s, out singleOut)},
+                    {"real",s=>float.TryParse(s, out _)},
+                    {"short",s=>short.TryParse(s, out _)},
+                    {"single",s=>float.TryParse(s, out _)},
                     {"string",s=>true},
-                    {"uint16",s=>ushort.TryParse(s, out uInt16Out)},
-                    {"uint32",s=>uint.TryParse(s, out uInt32Out)},
-                    {"uint64",s=>ulong.TryParse(s, out uInt64Out)}
+                    {"uint16",s=>ushort.TryParse(s, out _)},
+                    {"uint32",s=>uint.TryParse(s, out _)},
+                    {"uint64",s=>ulong.TryParse(s, out _)}
                 });
         }
 
