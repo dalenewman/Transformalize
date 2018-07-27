@@ -131,8 +131,8 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new CommonPrefixesTransform(p.Positional<IContext>(0))).Named<ITransform>("commonprefixes");
             builder.Register((c, p) => new DistanceTransform(p.Positional<IContext>(0))).Named<ITransform>("distance");
 
-            builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Include)).Named<ITransform>("include");
-            builder.Register((c, p) => new FilterTransform(p.Positional<IContext>(0), FilterType.Exclude)).Named<ITransform>("exclude");
+            builder.Register((c, p) => new FilterTransform(FilterType.Include, p.Positional<IContext>(0))).Named<ITransform>("include");
+            builder.Register((c, p) => new FilterTransform(FilterType.Exclude, p.Positional<IContext>(0))).Named<ITransform>("exclude");
 
             // Humanizer
             builder.Register((c, p) => new CamelizeTransform(p.Positional<IContext>(0))).Named<ITransform>("camelize");
@@ -156,7 +156,7 @@ namespace Pipeline.Web.Orchard.Modules {
             builder.Register((c, p) => new ByteSizeTransform(p.Positional<IContext>(0))).Named<ITransform>("bytesize");
             builder.Register((c, p) => new DateAddTransform(p.Positional<IContext>(0))).Named<ITransform>("dateadd");
             builder.Register((c, p) => new FromSplitTransform(p.Positional<IContext>(0))).Named<ITransform>("fromsplit");
-            builder.Register((c, p) => new FromLengthsTranform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
+            builder.Register((c, p) => new FromLengthsTransform(p.Positional<IContext>(0))).Named<ITransform>("fromlengths");
 
             // return true or false
             builder.Register((c, p) => new AnyTransform(p.Positional<IContext>(0))).Named<ITransform>("any");

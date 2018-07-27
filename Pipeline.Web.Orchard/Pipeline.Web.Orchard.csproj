@@ -109,9 +109,8 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NReco.LambdaParser, Version=1.0.6.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.6\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NReco.LambdaParser, Version=1.0.7.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.7\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>

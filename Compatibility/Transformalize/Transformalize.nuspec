@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.5-beta</version>
+    <version>0.3.6-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>Changed StringTransform.GetString Signature</releaseNotes>
-    <copyright>Copyright 2013-2017</copyright>
+    <releaseNotes>Fixed Bugs, etc.</releaseNotes>
+    <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="portable-net45+win8+wpa81+wp8" />
@@ -19,16 +19,16 @@
         <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.1" />
         <dependency id="NETStandard.Library" version="1.6.0" />
         <dependency id="System.Dynamic.Runtime" version="4.0.11" />
-        <dependency id="Cfg-NET" version="0.10.2" />
+        <dependency id="Cfg-NET" version="0.10.3" />
       </group>
       <group targetFramework="net40">
-        <dependency id="Cfg-NET" version="0.10.2" />
+        <dependency id="Cfg-NET" version="0.10.3" />
       </group>
       <group targetFramework="net45">
-        <dependency id="Cfg-NET" version="0.10.2" />
+        <dependency id="Cfg-NET" version="0.10.3" />
       </group>
       <group targetFramework="net452">
-        <dependency id="Cfg-NET" version="0.10.2" />
+        <dependency id="Cfg-NET" version="0.10.3" />
       </group>
     </dependencies>
   </metadata>
