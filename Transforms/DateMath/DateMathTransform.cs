@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,12 +24,16 @@ namespace Transformalize.Transforms.DateMath {
     public class DateMathTransform : BaseTransform {
         private readonly Field _input;
 
-        public DateMathTransform(IContext context) : base(context, "datetime") {
+        public DateMathTransform(IContext context = null) : base(context, "datetime") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("date")) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Expression)) {
+            if (IsMissing(Context.Operation.Expression)) {
                 return;
             }
 
@@ -37,8 +42,14 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = DaleNewman.DateMath.Apply((DateTime)row[_input], Context.Operation.Expression);
-            
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("datemath") {
+                Parameters = new List<OperationParameter>(1) { new OperationParameter("expression") }
+            };
         }
     }
 }

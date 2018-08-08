@@ -109,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CancelTransform.cs" />
+    <Compile Include="ConfigurationContainer.cs" />
     <Compile Include="FolderReader.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="LibaryVersionChecker.cs" />

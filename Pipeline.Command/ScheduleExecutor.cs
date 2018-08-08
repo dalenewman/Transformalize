@@ -21,9 +21,9 @@ using System.Linq;
 using Flurl;
 using Quartz;
 using Transformalize.Contracts;
-using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Command {
+
     [DisallowConcurrentExecution]
     public class ScheduleExecutor : BaseExecutor, IJob, IDisposable {
         public string Schedule { get; private set; } = string.Empty;
@@ -35,8 +35,7 @@ namespace Transformalize.Command {
 
         public new void Execute(string cfg, Dictionary<string, string> parameters) {
 
-            Process process;
-            if (ProcessFactory.TryCreate(cfg, parameters, out process)) {
+            if (ProcessFactory.TryCreate(Options, parameters, out var process)) {
                 process.Mode = Options.Mode;
 
                 /* if an internal schedule with mode is running this, 

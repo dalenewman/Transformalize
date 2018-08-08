@@ -16,29 +16,34 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class IsNumericTransform : BaseTransform {
         private readonly Func<IRow, bool> _transform;
 
-        public IsNumericTransform(IContext context) : base(context, "bool") {
+        public IsNumericTransform(IContext context = null) : base(context, "bool") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             var input = SingleInput();
             if (input.IsNumeric()) {
                 _transform = row => true;
             } else {
-                _transform = row => {
-                    double val;
-                    return double.TryParse(row[input].ToString(), out val);
-                };
+                _transform = row => double.TryParse(row[input].ToString(), out var _);
             }
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _transform(row);
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("isnumeric");
+        }
     }
 }

@@ -1,7 +1,9 @@
+@using System.Linq
 @using Transformalize.Configuration
 @{
     var process = (Process) Model.Process;
     var fields = process.GetSearchFields();
+    var key = fields.FirstOrDefault(f => f.PrimaryKey) == null ? "tflkey" : fields.First(f=>f.PrimaryKey).Alias.ToLower();
 }
 <schema name="example" version="1.5">
 
@@ -25,7 +27,7 @@
         
     </fields>
 
-    <uniqueKey>tflkey</uniqueKey>
+    <uniqueKey>@key</uniqueKey>
 
     <types>
 

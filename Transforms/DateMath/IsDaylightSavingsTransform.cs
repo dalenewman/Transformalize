@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -25,7 +26,11 @@ namespace Transformalize.Transforms.DateMath {
 
         private readonly Field _input;
 
-        public IsDaylightSavingsTransform(IContext context) : base(context, "bool") {
+        public IsDaylightSavingsTransform(IContext context = null) : base(context, "bool") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("date")) {
                 return;
             }
@@ -35,8 +40,12 @@ namespace Transformalize.Transforms.DateMath {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = ((DateTime)row[_input]).IsDaylightSavingTime();
-            
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("isdaylightsavings");
         }
     }
 }

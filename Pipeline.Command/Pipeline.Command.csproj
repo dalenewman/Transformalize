@@ -165,7 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseExecutor.cs" />
-    <Compile Include="NowExecutor.cs" />
     <Compile Include="QuartzCronSchedulerViaInternalSchedule.cs" />
     <Compile Include="NowScheduler.cs" />
     <Compile Include="Options.cs" />
@@ -205,7 +204,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="files\solr\schema.cshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="job_scheduling_data_2_0.xsd">
       <SubType>Designer</SubType>

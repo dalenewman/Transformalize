@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -28,12 +30,17 @@ namespace Transformalize.Transforms {
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexIsMatchTransform(IContext context) : base(context, "bool") {
+        public RegexIsMatchTransform(IContext context = null) : base(context, "bool") {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             _input = MultipleInput();
 #if NETS10
-            _regex = new Regex(context.Operation.Pattern);
+            _regex = new Regex(Context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
 #endif
         }
 
@@ -47,9 +54,12 @@ namespace Transformalize.Transforms {
                     row[Context.Field] = false;
                 }
             }
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("ismatch") { Parameters = new List<OperationParameter>(1) { new OperationParameter("pattern")}};
+        }
     }
 }

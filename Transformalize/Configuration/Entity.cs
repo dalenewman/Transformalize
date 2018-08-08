@@ -349,6 +349,10 @@ namespace Transformalize.Configuration {
 
         protected override void Validate() {
 
+            if (Name == "Control" && Alias == Name) {
+                Error("An entity may not be named 'Control' without an alias.  Please provide an alias.");
+            }
+
             // if validation has been defined, check to see if corresponding valid and message fields are present and create them if not
             var calculatedKeys = new HashSet<string>(CalculatedFields.Select(f => f.Alias ?? f.Name).Distinct(), StringComparer.OrdinalIgnoreCase);
 

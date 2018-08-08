@@ -166,6 +166,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new IsTransform(c), new IsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new EqualsTransform(c), new EqualsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IsEmptyTransform(c), new IsEmptyTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new IsDefaultTransform(c), new IsDefaultTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new IsNumericTransform(c), new IsNumericTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new RegexIsMatchTransform(c), new RegexIsMatchTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new IsDaylightSavingsTransform(c), new IsDaylightSavingsTransform().GetSignatures());
+
+            RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
+
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -187,17 +195,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
 
             // old method
-
-            // return true or false transforms
-            builder.Register((c, p) => new IsDefaultTransform(p.Positional<IContext>(0))).Named<ITransform>("isdefault");
-            builder.Register((c, p) => new IsNumericTransform(p.Positional<IContext>(0))).Named<ITransform>("isnumeric");
-            builder.Register((c, p) => new RegexIsMatchTransform(p.Positional<IContext>(0))).Named<ITransform>("ismatch");
-
-            builder.Register((c, p) => new GeocodeTransform(p.Positional<IContext>(0))).Named<ITransform>("fromaddress");
-            builder.Register((c, p) => new DateMathTransform(p.Positional<IContext>(0))).Named<ITransform>("datemath");
-            builder.Register((c, p) => new IsDaylightSavingsTransform(p.Positional<IContext>(0))).Named<ITransform>("isdaylightsavings");
-
-
             builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");
             builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
 

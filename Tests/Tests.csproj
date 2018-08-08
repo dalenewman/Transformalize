@@ -81,7 +81,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ConfigurationContainer.cs" />
     <Compile Include="ContainsTransform.cs" />
     <Compile Include="DateConvert.cs" />
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />

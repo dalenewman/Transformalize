@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -23,7 +25,11 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         private readonly object _default;
 
-        public IsDefaultTransform(IContext context) : base(context, "bool") {
+        public IsDefaultTransform(IContext context = null) : base(context, "bool") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             _input = SingleInput();
             var types = Constants.TypeDefaults();
             _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
@@ -31,9 +37,12 @@ namespace Transformalize.Transforms {
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = row[_input].Equals(_default);
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("isdefault");
+        }
     }
 }

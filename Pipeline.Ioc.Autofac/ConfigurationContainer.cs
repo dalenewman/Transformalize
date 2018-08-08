@@ -15,13 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
 
-namespace Tests {
+namespace Transformalize.Ioc.Autofac {
     public static class ConfigurationContainer {
         public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
             var builder = new ContainerBuilder();

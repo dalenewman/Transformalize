@@ -37,13 +37,17 @@ namespace Transformalize.Transforms.Geography {
         private readonly int _originalConnectionLimit;
         private readonly ComponentFilter _componentFilter;
 
-        public GeocodeTransform(IContext context) : base(context, "object") {
+        public GeocodeTransform(IContext context = null) : base(context, "object") {
 
             ProducesFields = true;
 
-            if (context.Operation.Parameters.Any()) {
+            if (IsMissingContext()) {
+                return;
+            }
 
-                var lat = context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
+            if (Context.Operation.Parameters.Any()) {
+
+                var lat = Context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lat", "latitude"));
                 if (lat == null) {
                     Error("The fromaddress (geocode) transform requires an output field named lat, or latitude.");
                     Run = false;
@@ -55,7 +59,7 @@ namespace Transformalize.Transforms.Geography {
                     return;
                 }
 
-                var lon = context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
+                var lon = Context.Operation.Parameters.FirstOrDefault(p => p.Name.ToLower().In("lon", "long", "longitude"));
                 if (lon == null) {
                     Error("The fromaddress (geocode) transform requires an output field named lon, long, or longitude.");
                     Run = false;
@@ -74,18 +78,18 @@ namespace Transformalize.Transforms.Geography {
 
             _input = SingleInput();
             _output = MultipleOutput();
-            if (context.Operation.Key != string.Empty) {
-                GoogleSigned.AssignAllServices(new GoogleSigned(context.Operation.Key));
+            if (Context.Operation.Key != string.Empty) {
+                GoogleSigned.AssignAllServices(new GoogleSigned(Context.Operation.Key));
             }
             _originalConnectionLimit = ServicePointManager.DefaultConnectionLimit;
             ServicePointManager.DefaultConnectionLimit = 255;
-            _rateGate = new RateGate(context.Operation.Limit, TimeSpan.FromMilliseconds(context.Operation.Time));
+            _rateGate = new RateGate(Context.Operation.Limit, TimeSpan.FromMilliseconds(Context.Operation.Time));
             _componentFilter = new ComponentFilter {
-                AdministrativeArea = context.Operation.AdministrativeArea,
-                Country = context.Operation.Country,
-                Locality = context.Operation.Locality,
-                PostalCode = context.Operation.PostalCode,
-                Route = context.Operation.Route
+                AdministrativeArea = Context.Operation.AdministrativeArea,
+                Country = Context.Operation.Country,
+                Locality = Context.Operation.Locality,
+                PostalCode = Context.Operation.PostalCode,
+                Route = Context.Operation.Route
             };
         }
 
@@ -147,6 +151,10 @@ namespace Transformalize.Transforms.Geography {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("fromaddress") { Parameters = new List<OperationParameter>(1) { new OperationParameter("key") } };
         }
 
         public override void Dispose() {

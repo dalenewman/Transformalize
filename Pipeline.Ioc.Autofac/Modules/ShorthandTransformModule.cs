@@ -62,21 +62,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             new Cfg.Net.Shorthand.Parameter { Name = "body", Value="" }
                         }
                 });
-                root.Signatures.Add(Simple("expression"));
-                root.Signatures.Add(Simple("key"));
                 root.Signatures.Add(Simple("units"));
 
                 root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
                 root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "isdefault", Signature = "none" });
-                root.Methods.Add(new Method { Name = "isnumeric", Signature = "none" });
                 root.Methods.Add(new Method { Name = "web", Signature = "web" });
                 root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
-                root.Methods.Add(new Method { Name = "datemath", Signature = "expression" });
-                root.Methods.Add(new Method { Name = "isdaylightsavings", Signature = "none" });
-                root.Methods.Add(new Method { Name = "fromaddress", Signature = "key" });
                 root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
-                root.Methods.Add(new Method { Name = "ismatch", Signature = "pattern" });
                 root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
                 root.Check();
 

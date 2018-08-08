@@ -60,7 +60,7 @@ namespace Transformalize.Command {
                 }
 
                 if (_options.Schedule == "internal") {
-                    var process = ProcessFactory.Create(_options.Arrangement, new Dictionary<string, string>());
+                    var process = ProcessFactory.Create(_options, new Dictionary<string, string>());
                     if (process.Errors().Any()) {
                         Console.Error.WriteLine("In order for an internal schedule to work, the arrangement passed in must be valid!");
                         foreach (var error in process.Errors()) {
