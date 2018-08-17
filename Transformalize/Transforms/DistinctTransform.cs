@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -25,7 +26,13 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
         private readonly char[] _sep;
 
-        public DistinctTransform(IContext context) : base(context, "string") {
+        public DistinctTransform(IContext context = null) : base(context, "string") {
+
+            //TODO: should it presume to join bact to string?
+
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
 
             // check input type
@@ -35,19 +42,22 @@ namespace Transformalize.Transforms {
             }
 
             // check separator
-            if (context.Operation.Separator == Constants.DefaultSetting) {
-                context.Operation.Separator = " ";
+            if (Context.Operation.Separator == Constants.DefaultSetting) {
+                Context.Operation.Separator = " ";
             }
 
-            _sep = context.Operation.Separator.ToCharArray();
+            _sep = Context.Operation.Separator.ToCharArray();
 
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = string.Join(Context.Operation.Separator, ((string)row[_input]).Split(_sep, StringSplitOptions.RemoveEmptyEntries).Distinct());
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("distinct") { Parameters = new List<OperationParameter>(1) { new OperationParameter("separator", " ") } };
+        }
     }
 }

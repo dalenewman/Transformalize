@@ -82,7 +82,6 @@ namespace Tests {
             var ext = "sqlite3";
 
             var builder = new ContainerBuilder();
-            builder.RegisterModule(new ShorthandTransformModule());
             builder.RegisterModule(new RootModule());
             var container = builder.Build();
             var process = ResolveRoot(container, xml);

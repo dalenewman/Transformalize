@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
@@ -25,7 +27,11 @@ namespace Transformalize.Validators {
         private readonly object _default;
         private readonly BetterFormat _betterFormat;
 
-        public DefaultValidator(IContext context) : base(context) {
+        public DefaultValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (!Run)
                 return;
 
@@ -33,11 +39,11 @@ namespace Transformalize.Validators {
             var types = Constants.TypeDefaults();
             _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
 
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{context.Field.Label} must be the default value of {_default}.";
+                help = $"{Context.Field.Label} must be the default value of {_default}.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -46,6 +52,10 @@ namespace Transformalize.Validators {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("default");
         }
     }
 }

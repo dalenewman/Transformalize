@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -27,7 +28,11 @@ namespace Transformalize.Validators {
         private readonly Func<IRow, bool> _validator;
         private readonly BetterFormat _betterFormat;
 
-        public EqualsValidator(IContext context) : base(context) {
+        public EqualsValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (!Run)
                 return;
 
@@ -36,11 +41,11 @@ namespace Transformalize.Validators {
             var input = MultipleInput();
             var first = input.First();
 
-            if (context.Operation.Value == Constants.DefaultSetting) {
+            if (Context.Operation.Value == Constants.DefaultSetting) {
                 rest = input.Skip(1).ToArray();
                 sameTypes = rest.All(f => f.Type == first.Type);
             } else {
-                _value = first.Convert(context.Operation.Value);
+                _value = first.Convert(Context.Operation.Value);
                 rest = input.ToArray();
                 sameTypes = input.All(f => f.Type == first.Type);
             }
@@ -55,15 +60,15 @@ namespace Transformalize.Validators {
                 _validator = row => false;
             }
 
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
                 if (_value == null) {
-                    help = $"{context.Field.Label} must equal {{{first.Alias}}} in {first.Label}.";
+                    help = $"{Context.Field.Label} must equal {{{first.Alias}}} in {first.Label}.";
                 } else {
-                    help = $"{context.Field.Label} must equal {_value}.";
+                    help = $"{Context.Field.Label} must equal {_value}.";
                 }
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -72,6 +77,11 @@ namespace Transformalize.Validators {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("equals") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
+            yield return new OperationSignature("equal") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
         }
     }
 }

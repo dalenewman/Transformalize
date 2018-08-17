@@ -4,11 +4,12 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class LengthValidator : StringValidate {
+
+    public class MaxLengthValidator : StringValidate {
         private readonly Field _input;
         private readonly BetterFormat _betterFormat;
 
-        public LengthValidator(IContext context = null) : base(context) {
+        public MaxLengthValidator(IContext context = null) : base(context) {
             if (IsMissingContext()) {
                 return;
             }
@@ -18,13 +19,13 @@ namespace Transformalize.Validators {
             _input = SingleInput();
             var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{Context.Field.Label} must be {Context.Operation.Length} characters.";
+                help = $"{Context.Field.Label} must have {Context.Operation.Length} or less characters.";
             }
             _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
-            if (IsInvalid(row, GetString(row, _input).Length == Context.Operation.Length)) {
+            if (IsInvalid(row, GetString(row, _input).Length > Context.Operation.Length)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
 
@@ -33,7 +34,7 @@ namespace Transformalize.Validators {
 
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("length") { Parameters = new List<OperationParameter>(1) { new OperationParameter("length") } };
+            yield return new OperationSignature("maxlength") { Parameters = new List<OperationParameter>(1) { new OperationParameter("length") } };
         }
     }
 }

@@ -38,7 +38,12 @@ namespace Transformalize.Validators {
         public bool Run { get; set; } = true;
 
         protected BaseValidate(IContext context) {
+
             Context = context;
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!context.Entity.TryGetField(Context.Field.ValidField, out _validField)) {
                 Error($"The validator {Context.Operation.Method} can't find it's valid-field {Context.Field.ValidField}.");
@@ -66,6 +71,14 @@ namespace Transformalize.Validators {
                 };
             }
 
+        }
+
+        protected bool IsMissingContext() {
+            if (Context == null) {
+                Run = false;
+                return true;
+            }
+            return false;
         }
 
         // this **must** be implemented

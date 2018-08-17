@@ -116,12 +116,10 @@
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
     <Compile Include="Modules\RazorModule.cs" />
-    <Compile Include="Modules\ShorthandValidateModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\ExcelModule.cs" />
     <Compile Include="Modules\FileSystemModule.cs" />
-    <Compile Include="Modules\ShorthandTransformModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />

@@ -30,9 +30,7 @@ namespace Transformalize.Ioc.Autofac {
             builder.Register(c => logger).As<IPipelineLogger>();
             builder.Register(c => placeHolderStyle).Named<string>("placeHolderStyle");
             builder.RegisterModule(new TransformModule(new Process { Name = "ConfigurationContainer" }, logger));
-            builder.RegisterModule(new ShorthandTransformModule());
-            builder.RegisterModule(new ValidateModule());
-            builder.RegisterModule(new ShorthandValidateModule());
+            builder.RegisterModule(new ValidateModule(new Process { Name = "ConfigurationContainer" }, logger));
             builder.RegisterModule(new RootModule());
             return builder.Build();
         }

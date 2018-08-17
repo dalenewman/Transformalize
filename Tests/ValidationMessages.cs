@@ -25,21 +25,23 @@ namespace Tests {
 
         [TestMethod]
         public void TryIt() {
+
             const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
+          
           <rows>
             <add Field1='11' Field2='12' Field3='13' />
             <add Field1='xx' Field2='' Field3='100.8' />
           </rows>
+
           <fields>
             <add name='Field1' v='contains(1)' message-field='Message' />
             <add name='Field2' v='required().is(int)' message-field='Message' />
             <add name='Field3' v='matches(^[0-9/.]{5}$)' message-field='Message' help='Field3 must be a 5 digit number (including decimal pt.)' />
           </fields>
           <calculated-fields>
-            
             <add name='Message' length='1000' default='' />
           </calculated-fields>
         </add>

@@ -34,24 +34,23 @@ namespace Transformalize.Validators {
         private Action<IRow> _validate;
         private bool _autoMap;
 
-        public MapValidator(IContext context, bool inMap) : base(context) {
+        public MapValidator(bool inMap, IContext context = null) : base(context) {
             _inMap = inMap;
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!Run)
                 return;
 
-            if (context.Operation.Map == string.Empty) {
+            if (Context.Operation.Map == string.Empty) {
                 Error("The map method requires a map name or comma delimited list of values.");
                 Run = false;
                 return;
             }
 
             _input = SingleInput();
-
-
-
-
-
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
@@ -126,6 +125,15 @@ namespace Transformalize.Validators {
         public override IRow Operate(IRow row) {
             _validate(row);
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            if (_inMap) {
+                yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
+                yield return new OperationSignature("map") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
+            } else {
+                yield return new OperationSignature("notin") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
+            }
         }
     }
 

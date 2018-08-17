@@ -22,13 +22,13 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.DateMath {
     public class TimeZoneTransform : BaseTransform {
+
         private readonly Field _input;
+        private readonly Func<DateTime, object> _transform;
+        private readonly TimeZoneInfo _fromTimeZoneInfo;
         private readonly TimeZoneInfo _toTimeZoneInfo;
-        private readonly TimeSpan _adjustment;
-        private readonly TimeSpan _daylightAdjustment;
 
         public TimeZoneTransform(IContext context = null) : base(context, "datetime") {
-
             if (IsMissingContext()) {
                 return;
             }
@@ -47,22 +47,25 @@ namespace Transformalize.Transforms.DateMath {
 
             _input = SingleInput();
 
-            var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.FromTimeZone);
-            _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(context.Operation.ToTimeZone);
+            _fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
+            _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
 
-            _adjustment = _toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
-            _daylightAdjustment = _adjustment.Add(new TimeSpan(0, 1, 0, 0));
+            if (_fromTimeZoneInfo.StandardName == "UTC") {
+                _transform = (dt) => TimeZoneInfo.ConvertTimeFromUtc(dt, _toTimeZoneInfo);
+            } else if (_toTimeZoneInfo.StandardName == "UTC") {
+                _transform = (dt) => TimeZoneInfo.ConvertTimeToUtc(dt, _fromTimeZoneInfo);
+            } else {
+                _transform = (dt) => {
+                    var utc = TimeZoneInfo.ConvertTimeToUtc(dt, _fromTimeZoneInfo);
+                    return TimeZoneInfo.ConvertTimeFromUtc(utc, _toTimeZoneInfo);
+                };
+            }
 
         }
 
         public override IRow Operate(IRow row) {
-
             var date = (DateTime)row[_input];
-            if (_toTimeZoneInfo.IsDaylightSavingTime(date)) {
-                row[Context.Field] = date.Add(_daylightAdjustment);
-            } else {
-                row[Context.Field] = date.Add(_adjustment);
-            }
+            row[Context.Field] = _transform(date);
             return row;
         }
 

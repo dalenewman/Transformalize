@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
@@ -24,14 +25,21 @@ namespace Transformalize.Providers.Web {
     public class UrlEncodeTransform : BaseTransform {
         private readonly Field _input;
 
-        public UrlEncodeTransform(IContext context) : base(context, "string") {
+        public UrlEncodeTransform(IContext context = null) : base(context, "string") {
+            if (IsMissingContext()) {
+                return;
+            }
             _input = SingleInput();
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = Uri.EscapeDataString((string)row[_input]);
-            
+
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("urlencode");
         }
     }
 }

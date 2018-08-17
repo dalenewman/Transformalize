@@ -43,33 +43,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     builder.Register(c => root).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
                 }
 
-                root.Signatures.Add(new Signature { Name = "none" });
-                root.Signatures.Add(Simple("separator", ","));
-                root.Signatures.Add(new Signature {
-                    Name = "separator-space",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> { new Cfg.Net.Shorthand.Parameter { Name = "separator", Value = " " } }
-                });
-                root.Signatures.Add(Simple("value", "[default]"));
-                root.Signatures.Add(Simple("type", "[default]"));
-                root.Signatures.Add(Simple("script"));
-                root.Signatures.Add(Simple("pattern"));
-
-                root.Signatures.Add(new Signature {
-                    Name = "web",
-                    Parameters = new List<Cfg.Net.Shorthand.Parameter> {
-                            new Cfg.Net.Shorthand.Parameter { Name = "url", Value="" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "web-method", Value="GET" },
-                            new Cfg.Net.Shorthand.Parameter { Name = "body", Value="" }
-                        }
-                });
-                root.Signatures.Add(Simple("units"));
-
-                root.Methods.Add(new Method { Name = "javascript", Signature = "script" });
-                root.Methods.Add(new Method { Name = "js", Signature = "script" });
-                root.Methods.Add(new Method { Name = "web", Signature = "web" });
-                root.Methods.Add(new Method { Name = "urlencode", Signature = "none" });
-                root.Methods.Add(new Method { Name = "distinct", Signature = "separator-space" });
-                root.Methods.Add(new Method { Name = "matchcount", Signature = "pattern" });
                 root.Check();
 
 
@@ -78,7 +51,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     foreach (var error in root.Errors()) {
                         context.Error(error);
                     }
-                    context.Error("Please fix you shorthand configuration.  No short-hand is being processed for the t attribute.");
+                    context.Error("Please fix your shorthand configuration.  No short-hand is being processed for the t attribute.");
                 } else {
                     return new ShorthandCustomizer(root, new[] { "fields", "calculated-fields" }, "t", "transforms", "method");
                 }

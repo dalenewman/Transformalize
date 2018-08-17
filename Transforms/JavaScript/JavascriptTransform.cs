@@ -30,31 +30,33 @@ namespace Transformalize.Transforms.JavaScript {
         private readonly Field[] _input;
         private readonly Dictionary<int, string> _errors = new Dictionary<int, string>();
         private readonly IJsEngine _engine;
-        private readonly IContext _context;
 
-        public JavascriptTransform(IJsEngineFactory factory, IContext context, IReader reader) : base(context, "object") {
+        public JavascriptTransform(IJsEngineFactory factory, IReader reader, IContext context = null) : base(context, "object") {
 
-            if (IsMissing(context.Operation.Script)) {
+            if (IsMissingContext()) {
                 return;
             }
 
-            _context = context;
+            if (IsMissing(Context.Operation.Script)) {
+                return;
+            }
+
             _engine = factory.CreateEngine();
-            _input = context.Entity.GetFieldMatches(context.Operation.Script).ToArray();
+            _input = Context.Entity.GetFieldMatches(Context.Operation.Script).ToArray();
 
             // load any global scripts
-            foreach (var sc in context.Process.Scripts.Where(s => s.Global)) {
-                ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
+            foreach (var sc in Context.Process.Scripts.Where(s => s.Global)) {
+                ProcessScript(context, reader, Context.Process.Scripts.First(s => s.Name == sc.Name));
             }
 
             // load any specified scripts
-            if (context.Operation.Scripts.Any()) {
-                foreach (var sc in context.Operation.Scripts) {
-                    ProcessScript(context, reader, context.Process.Scripts.First(s => s.Name == sc.Name));
+            if (Context.Operation.Scripts.Any()) {
+                foreach (var sc in Context.Operation.Scripts) {
+                    ProcessScript(context, reader, Context.Process.Scripts.First(s => s.Name == sc.Name));
                 }
             }
 
-            context.Debug(() => $"Script in {context.Field.Alias} : {context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
+            Context.Debug(() => $"Script in {Context.Field.Alias} : {Context.Operation.Script.Replace("{", "{{").Replace("}", "}}")}");
         }
 
         private void ProcessScript(IContext context, IReader reader, Script script) {
@@ -118,7 +120,7 @@ namespace Transformalize.Transforms.JavaScript {
                 }
             }
 
-            
+
             return row;
         }
 
@@ -127,10 +129,16 @@ namespace Transformalize.Transforms.JavaScript {
                 try {
                     _engine.CollectGarbage();
                 } catch (Exception) {
-                    _context.Debug((() => "Error collecting js garbage"));
+                    Context.Debug(() => "Error collecting js garbage");
                 }
             }
             _engine.Dispose();
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("js") { Parameters = new List<OperationParameter>(1) { new OperationParameter("script") } };
+            yield return new OperationSignature("javascript") { Parameters = new List<OperationParameter>(1) { new OperationParameter("script") } };
+            yield return new OperationSignature("chakra") { Parameters = new List<OperationParameter>(1) { new OperationParameter("script") } };
         }
     }
 }

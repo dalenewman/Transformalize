@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
@@ -26,20 +28,24 @@ namespace Transformalize.Validators {
         private readonly Field _input;
         private readonly BetterFormat _betterFormat;
 
-        public StartsWithValidator(IContext context) : base(context) {
+        public StartsWithValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (!Run) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Value)) {
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
             _input = SingleInput();
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{context.Field.Label} must start with {context.Operation.Value}.";
+                help = $"{Context.Field.Label} must start with {Context.Operation.Value}.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -49,6 +55,10 @@ namespace Transformalize.Validators {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("startswith") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
         }
     }
 }

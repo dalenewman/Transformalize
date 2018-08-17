@@ -34,16 +34,20 @@ namespace Transformalize.Validators {
         private readonly Func<IRow, bool> _func;
         private readonly BetterFormat _betterFormat;
 
-        public AnyValidator(IContext context) : base(context) {
+        public AnyValidator(IContext context = null) : base(context) {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!Run)
                 return;
 
-            if (IsMissing(context.Operation.Operator)) {
+            if (IsMissing(Context.Operation.Operator)) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Value)) {
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
 
@@ -54,11 +58,11 @@ namespace Transformalize.Validators {
             }
 
             _func = GetFunc(Context.Operation.Operator);
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"At least one of the field(s): {Utility.ReadableDomain(_input.Select(f => f.Field.Alias))} must be {context.Operation.Operator.TrimEnd('s')} to {context.Operation.Value}.";
+                help = $"At least one of the field(s): {Utility.ReadableDomain(_input.Select(f => f.Field.Alias))} must be {Context.Operation.Operator.TrimEnd('s')} to {context.Operation.Value}.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         /// <summary>
@@ -91,6 +95,10 @@ namespace Transformalize.Validators {
                 AppendMessage(row, _betterFormat.Format(row));
             }
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("any") { Parameters = new List<OperationParameter>(2) { new OperationParameter("value"), new OperationParameter("operator", "equal") } };
         }
     }
 }

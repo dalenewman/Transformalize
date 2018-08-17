@@ -31,22 +31,26 @@ namespace Transformalize.Validators {
         private readonly Dictionary<string, Func<string, bool>> _converter = Constants.CanConvert();
         private readonly BetterFormat _betterFormat;
 
-        public IsValidator(IContext context) : base(context) {
+        public IsValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (!Run)
                 return;
 
-            if (IsMissing(context.Operation.Type)) {
+            if (IsMissing(Context.Operation.Type)) {
                 return;
             }
             _input = SingleInput();
-            _isCompatible = _input.Type == context.Operation.Type || _input.IsNumeric() && context.Operation.Type == "double";
-            _canConvert = v => _converter[context.Operation.Type](v);
+            _isCompatible = _input.Type == Context.Operation.Type || _input.IsNumeric() && Context.Operation.Type == "double";
+            _canConvert = v => _converter[Context.Operation.Type](v);
 
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{_input.Label}'s value is incompatable with the {context.Operation.Type} data type.";
+                help = $"{_input.Label}'s value is incompatable with the {Context.Operation.Type} data type.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -57,5 +61,8 @@ namespace Transformalize.Validators {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("is") { Parameters = new List<OperationParameter>(1) { new OperationParameter("type") } };
+        }
     }
 }

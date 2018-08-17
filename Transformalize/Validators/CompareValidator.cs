@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
@@ -7,11 +8,11 @@ namespace Transformalize.Validators {
     public class CompareValidator : BaseValidate {
         private readonly Func<IRow, bool> _validator;
         private readonly BetterFormat _betterFormat;
-
-        public CompareValidator(IContext context, string type) : base(context) {
-
+        private readonly string _type;
+        public CompareValidator(string type, IContext context = null) : base(context) {
+            _type = type;
             string explanation;
-            switch (type) {
+            switch (_type) {
                 case "min":
                     explanation = "must be greater than or equal to";
                     break;
@@ -23,22 +24,26 @@ namespace Transformalize.Validators {
                     return;
             }
 
+            if (IsMissingContext()) {
+                return;
+            }
+
             var input = SingleInput();
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{context.Field.Label} {explanation} {context.Operation.Value}.";
+                help = $"{Context.Field.Label} {explanation} {Context.Operation.Value}.";
             }
 
             var isComparable = Constants.TypeDefaults()[input.Type] is IComparable;
             if (!isComparable) {
-                context.Error($"you can't use {type} validator on {input.Alias} field.  It's type is not comparable.");
+                Context.Error($"you can't use {type} validator on {input.Alias} field.  It's type is not comparable.");
                 Run = false;
                 return;
             }
 
-            var isField = context.Entity.FieldMatcher.IsMatch(context.Operation.Value);
+            var isField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.Value);
             if (isField) {
-                var field = context.Entity.GetField(context.Operation.Value);
+                var field = Context.Entity.GetField(Context.Operation.Value);
                 _validator = delegate (IRow row) {
                     var inputValue = (IComparable)row[input];
                     var otherValue = row[field];
@@ -46,7 +51,7 @@ namespace Transformalize.Validators {
                 };
 
             } else {
-                var value = input.Convert(context.Operation.Value);
+                var value = input.Convert(Context.Operation.Value);
                 _validator = delegate (IRow row) {
                     var inputValue = (IComparable)row[input];
                     var otherValue = value;
@@ -54,13 +59,17 @@ namespace Transformalize.Validators {
                 };
             }
 
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
         public override IRow Operate(IRow row) {
             if (IsInvalid(row, _validator(row))) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature(_type) { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
         }
     }
 }

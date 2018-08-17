@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
@@ -24,7 +25,11 @@ namespace Transformalize.Validators {
         private readonly Func<IRow, bool> _validator;
         private readonly BetterFormat _betterFormat;
 
-        public NumericValidator(IContext context) : base(context) {
+        public NumericValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (!Run)
                 return;
 
@@ -32,16 +37,13 @@ namespace Transformalize.Validators {
             if (input.IsNumeric()) {
                 _validator = row => true;
             } else {
-                _validator = row => {
-                    double val;
-                    return double.TryParse(GetString(row, input), out val);
-                };
+                _validator = row => double.TryParse(GetString(row, input), out _);
             }
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"The value {{{context.Field.Alias}}} in {context.Field.Label} must be numeric.";
+                help = $"The value {{{Context.Field.Alias}}} in {Context.Field.Label} must be numeric.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -50,6 +52,10 @@ namespace Transformalize.Validators {
             }
 
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("numeric");
         }
     }
 }

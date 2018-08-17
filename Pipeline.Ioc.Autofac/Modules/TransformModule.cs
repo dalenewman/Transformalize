@@ -173,7 +173,17 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
 
+            RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ? 
+                    new Transforms.Xml.FromXmlTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))) : 
+                    new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
+            );
+
+            RegisterTransform(builder, (ctx, c) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), ctx.Resolve<IReader>(), c), new JavascriptTransform(null,null).GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -193,24 +203,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             // register the short hand
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
-
-            // old method
-            builder.Register((c, p) => new WebTransform(p.Positional<IContext>(0))).Named<ITransform>("web");
-            builder.Register((c, p) => new UrlEncodeTransform(p.Positional<IContext>(0))).Named<ITransform>("urlencode");
-
-            builder.Register((c, p) => new DistinctTransform(p.Positional<IContext>(0))).Named<ITransform>("distinct");
-            builder.Register((c, p) => new RegexMatchCountTransform(p.Positional<IContext>(0))).Named<ITransform>("matchcount");
-
-            builder.Register((c, p) => {
-                var context = p.Positional<IContext>(0);
-                return context.Operation.Mode == "all" || context.Field.Engine != "auto" ?
-                    new Transforms.Xml.FromXmlTransform(context, c.ResolveNamed<IRowFactory>(context.Entity.Key, new NamedParameter("capacity", context.GetAllEntityFields().Count()))) :
-                    new Transforms.FromXmlTransform(context) as ITransform;
-            }).Named<ITransform>("fromxml");
-
-            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("js");
-            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("javascript");
-            builder.Register((c, p) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), p.Positional<IContext>(0), c.Resolve<IReader>())).Named<ITransform>("chakra");
+            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(Name), new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).Named<IDependency>(Name).InstancePerLifetimeScope();
 
         }
 

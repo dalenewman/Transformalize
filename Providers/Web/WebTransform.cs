@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
@@ -27,6 +28,8 @@ namespace Transformalize.Providers.Web {
         private readonly Func<Configuration.Action, ActionResponse> _getResponse;
 
         public WebTransform(IContext context = null) : base(context, "object") {
+
+            //TODO: see geocode for making more http requests concurrently and rate gate
 
             if (IsMissingContext()) {
                 return;
@@ -68,10 +71,20 @@ namespace Transformalize.Providers.Web {
 
         public override IRow Operate(IRow row) {
             var response = _getResponse(_getAction(row));
-            var value = Context.Field.Type == "byte[]" ? (object) response.Data : response.Message;
+            var value = Context.Field.Type == "byte[]" ? (object)response.Data : response.Message;
 
             row[Context.Field] = value ?? Context.Field.DefaultValue();
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("web") {
+                Parameters = new List<OperationParameter>(3) {
+                    new OperationParameter("url",""),
+                    new OperationParameter("web-method", "GET"),
+                    new OperationParameter("body", "")
+                }
+            };
         }
     }
 }

@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -30,7 +32,10 @@ namespace Transformalize.Validators {
         private readonly Field _input;
         private readonly BetterFormat _betterFormat;
 
-        public MatchValidator(IContext context) : base(context) {
+        public MatchValidator(IContext context = null) : base(context) {
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!Run)
                 return;
@@ -39,14 +44,14 @@ namespace Transformalize.Validators {
 #if NETS10
             _regex = new Regex(context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
 #endif
 
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
-                help = $"{context.Field.Label} must match the regular expression pattern: {Context.Operation.Pattern.Replace("{", "{{").Replace("}", "}}")}.";
+                help = $"{Context.Field.Label} must match the regular expression pattern: {Context.Operation.Pattern.Replace("{", "{{").Replace("}", "}}")}.";
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
         }
 
         public override IRow Operate(IRow row) {
@@ -54,6 +59,10 @@ namespace Transformalize.Validators {
                 AppendMessage(row, _betterFormat.Format(row));
             }
             return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("matches") { Parameters = new List<OperationParameter>(1) { new OperationParameter("pattern") } };
         }
     }
 }

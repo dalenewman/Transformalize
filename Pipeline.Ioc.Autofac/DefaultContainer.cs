@@ -46,10 +46,7 @@ namespace Transformalize.Ioc.Autofac {
 
             /* this stuff is loaded (again) because tfl actions can create processes, which will need short-hand to expand configuration in advance */
             builder.RegisterCallback(new TransformModule(process, logger).Configure);
-            builder.RegisterCallback(new ShorthandTransformModule().Configure);
-            builder.RegisterCallback(new ValidateModule().Configure);
-            builder.RegisterCallback(new ShorthandValidateModule().Configure);
-
+            builder.RegisterCallback(new ValidateModule(process, logger).Configure);
             builder.RegisterCallback(new RootModule().Configure);
             builder.RegisterCallback(new ContextModule(process).Configure);
 

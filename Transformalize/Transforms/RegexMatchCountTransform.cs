@@ -15,29 +15,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class RegexMatchCountTransform : BaseTransform {
+
         private readonly Regex _regex;
         private readonly Field[] _input;
 
-        public RegexMatchCountTransform(IContext context) : base(context, "int") {
+        public RegexMatchCountTransform(IContext context = null) : base(context, "int") {
+            if (IsMissingContext()) {
+                return;
+            }
+
             if (IsNotReceiving("string")) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Pattern)) {
+            if (IsMissing(Context.Operation.Pattern)) {
                 return;
             }
 
             _input = MultipleInput();
 #if NETS10
-            _regex = new Regex(context.Operation.Pattern);
+            _regex = new Regex(Context.Operation.Pattern);
 #else
-            _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
+            _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
 #endif
         }
 
@@ -48,9 +55,12 @@ namespace Transformalize.Transforms {
                 count += matches.Count;
             }
             row[Context.Field] = count;
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("matchcount") { Parameters = new List<OperationParameter>(1) { new OperationParameter("pattern") } };
+        }
     }
 }

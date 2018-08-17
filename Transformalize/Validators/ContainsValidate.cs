@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -27,26 +29,30 @@ namespace Transformalize.Validators {
         private readonly bool _valueIsField;
         private readonly BetterFormat _betterFormat;
 
-        public ContainsValidator(IContext context) : base(context) {
+        public ContainsValidator(IContext context = null) : base(context) {
+
+            if (IsMissingContext()) {
+                return;
+            }
 
             if (!Run)
                 return;
 
-            if (IsMissing(context.Operation.Value)) {
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
             _input = MultipleInput();
-            _valueIsField = context.Entity.TryGetField(context.Operation.Value, out _valueField);
+            _valueIsField = Context.Entity.TryGetField(Context.Operation.Value, out _valueField);
 
-            var help = context.Field.Help;
+            var help = Context.Field.Help;
             if (help == string.Empty) {
                 if (_valueIsField) {
-                    help = $"{context.Field.Label} must contain {{{_valueField.Alias}}}.";
+                    help = $"{Context.Field.Label} must contain {{{_valueField.Alias}}}.";
                 } else {
-                    help = $"{context.Field.Label} must contain {context.Operation.Value}.";
+                    help = $"{Context.Field.Label} must contain {Context.Operation.Value}.";
                 }
             }
-            _betterFormat = new BetterFormat(context, help, context.Entity.GetAllFields);
+            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
 
         }
 
@@ -60,5 +66,8 @@ namespace Transformalize.Validators {
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("contains") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
+        }
     }
 }
