@@ -62,6 +62,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
         protected override void Load(ContainerBuilder builder) {
 
             var loadContext = new PipelineContext(_logger, _process);
+
+            // set properties for plugins
             builder.Properties["ShortHand"] = _shortHand;
             builder.Properties["Methods"] = _methods;
             builder.Properties["Process"] = _process;
