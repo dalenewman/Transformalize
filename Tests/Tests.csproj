@@ -81,8 +81,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="LogTransform.cs" />
     <Compile Include="ContainsTransform.cs" />
     <Compile Include="DateConvert.cs" />
+    <Compile Include="CondenseTransform.cs" />
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />
     <Compile Include="TestFromRegex.cs" />
     <Compile Include="TestBase.cs" />

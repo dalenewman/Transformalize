@@ -17,10 +17,10 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
     public class AppendTransform : StringTransform {
         private readonly StringTransform _internal;
         public AppendTransform(IContext context = null) : base(context, "string") {

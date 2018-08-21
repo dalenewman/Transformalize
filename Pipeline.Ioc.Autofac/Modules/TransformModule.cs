@@ -146,6 +146,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new CommonPrefixesTransform(c), new CommonPrefixesTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new DistanceTransform(c), new DistanceTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new SlugifyTransform(c), new SlugifyTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
 
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());
@@ -156,6 +162,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new FromRegexTransform(c), new FromRegexTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
 
             // return true or false transforms
             RegisterTransform(builder, (ctx, c) => new AnyTransform(c), new AnyTransform().GetSignatures());
@@ -171,13 +178,10 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new RegexIsMatchTransform(c), new RegexIsMatchTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IsDaylightSavingsTransform(c), new IsDaylightSavingsTransform().GetSignatures());
 
-            RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
-
+            // uncategorized
+            RegisterTransform(builder, (ctx, c) => new LogTransform(c), new LogTransform().GetSignatures());
+            
+            // js
             RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ? 
                     new Transforms.Xml.FromXmlTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))) : 
                     new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }

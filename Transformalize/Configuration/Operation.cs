@@ -272,6 +272,9 @@ namespace Transformalize.Configuration {
         [Cfg(value = 1000)]
         public int Time { get; set; }
 
+        [Cfg(value = "info", toLower = true, ignoreCase = true, domain = "info,error,debug,warn")]
+        public string Level { get; set; }
+
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }

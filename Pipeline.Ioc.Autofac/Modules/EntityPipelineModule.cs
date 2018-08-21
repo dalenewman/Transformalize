@@ -26,6 +26,7 @@ using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Transforms;
 using Transformalize.Transforms.System;
+using LogTransform = Transformalize.Transforms.System.LogTransform;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 

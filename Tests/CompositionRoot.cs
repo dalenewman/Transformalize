@@ -25,35 +25,28 @@ using Transformalize.Ioc.Autofac;
 using Transformalize.Providers.Trace;
 using Process = Transformalize.Configuration.Process;
 
-namespace Tests
-{
+namespace Tests {
 
-    public class CompositionRoot
-    {
+    public class CompositionRoot {
 
         public Process Process { get; set; }
 
-        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()")
-        {
+        public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
 
             var logger = new TraceLogger(logLevel);
             var container = ConfigurationContainer.Create(cfg, logger, parameters, placeHolderStyle);
 
             Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
-            if (Process.Errors().Any())
-            {
-                foreach (var error in Process.Errors())
-                {
+            if (Process.Errors().Any()) {
+                foreach (var error in Process.Errors()) {
                     Trace.WriteLine(error);
                 }
                 throw new Exception("Configuration Error(s)");
             }
 
-            if (Process.Warnings().Any())
-            {
-                foreach (var warning in Process.Warnings())
-                {
+            if (Process.Warnings().Any()) {
+                foreach (var warning in Process.Warnings()) {
                     Trace.WriteLine(warning);
                 }
             }

@@ -135,8 +135,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendFieldTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CondenseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\LogTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\OppositeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchingTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RowNumberTransform.cs" />
