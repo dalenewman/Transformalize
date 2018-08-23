@@ -61,8 +61,7 @@ namespace Transformalize.Providers.File {
 
             using (reader) {
                 foreach (var record in engine) {
-                    _context.Info(record.ToString());
-
+                    
                     if (end == 0 || engine.LineNumber.Between(start, end)) {
                         var values = engine.LastRecordValues;
                         var row = _rowFactory.Create();

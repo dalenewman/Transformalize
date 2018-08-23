@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +27,7 @@ using Transformalize.Extensions;
 
 namespace Transformalize.Providers.OpenXml {
     public class ExcelWriter : IWrite {
+        private readonly IConnectionContext _context;
 
         private readonly WorkbookDfn _workbook;
         private readonly FileInfo _fileInfo;
@@ -32,6 +35,7 @@ namespace Transformalize.Providers.OpenXml {
         private readonly List<RowDfn> _rowDfns;
 
         public ExcelWriter(IConnectionContext context) {
+            _context = context;
             _fileInfo = new FileInfo(context.Connection.File);
             _fields = context.Entity.GetAllOutputFields().Where(f => !f.System).ToArray();
             _rowDfns = new List<RowDfn>();
@@ -48,10 +52,12 @@ namespace Transformalize.Providers.OpenXml {
                 ),
                 Rows = _rowDfns
                 }
-            }};
+            }
+            };
         }
 
         public void Write(IEnumerable<IRow> rows) {
+            var count = 0;
 
             foreach (var row in rows) {
                 var cellDfns = new List<CellDfn>();
@@ -59,12 +65,14 @@ namespace Transformalize.Providers.OpenXml {
                 cellDfns.AddRange(_fields.Select(field => new CellDfn {
                     CellDataType = field.ToCellDataType(),
                     Value = field.Type == "guid" ? row[field].ToString() : row[field],
-                    FormatCode = field.Format.Replace("tt","AM/PM")
+                    FormatCode = field.Format.Replace("tt", "AM/PM")
                 }));
                 _rowDfns.Add(rowDef);
+                ++count;
             }
 
             SpreadsheetWriter.Write(_fileInfo.FullName, _workbook);
+            _context.Entity.Inserts = Convert.ToUInt32(count);
         }
 
     }

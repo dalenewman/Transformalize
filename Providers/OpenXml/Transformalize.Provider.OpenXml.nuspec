@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.3.5-beta</version>
+    <version>0.3.6-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>used to write excel</description>
-    <releaseNotes>update dependencies</releaseNotes>
+    <releaseNotes>update entity's inserts</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
