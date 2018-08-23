@@ -61,7 +61,6 @@ namespace Transformalize.Ioc.Autofac {
             if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
             if (providers.Contains("folder")) { builder.RegisterCallback(new FolderModule(process).Configure); }
             if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
-            if (providers.Contains("excel")) { builder.RegisterCallback(new ExcelModule(process).Configure); }
             if (providers.Contains("web")) { builder.RegisterCallback(new WebModule(process).Configure); }
             if (providers.Contains("rethinkdb")) { builder.RegisterCallback(new RethinkDBModule(process).Configure); }
 

@@ -125,7 +125,6 @@
     <Compile Include="StarView.cs" />
     <Compile Include="TagTransform.cs" />
     <Compile Include="Temp.cs" />
-    <Compile Include="TestQuery.cs" />
     <Compile Include="TestReader.cs" />
     <Compile Include="TestFormat.cs" />
     <Compile Include="TrimThenStartsWith.cs" />
@@ -155,10 +154,6 @@
     <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
       <Name>Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Excel\Excel.csproj">
-      <Project>{c0ce8961-4137-4ca6-ad0e-0d69a55a3b16}</Project>
-      <Name>Excel</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>

@@ -23,7 +23,6 @@ using Cfg.Net.Ext;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
-using Transformalize.Providers.Excel;
 using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac {
@@ -50,11 +49,7 @@ namespace Transformalize.Ioc.Autofac {
 
                 var fileInput = new InputContext(context) { Connection = fileConnection };
 
-                if (file.Extension.ToLower().Contains("xls")) {
-                    readers.Add(new ExcelReader(fileInput, rowFactory));
-                } else {
-                    readers.Add(new DelimitedFileReader(fileInput, rowFactory));
-                }
+                readers.Add(new DelimitedFileReader(fileInput, rowFactory));
             }
             _reader = new CompositeReader(readers);
         }

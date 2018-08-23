@@ -49,7 +49,8 @@ namespace Pipeline.Web.Orchard.Impl {
             var cacheKey = (name ?? DynamicallyGeneratedClassName) + GetHash(code);
             var generatedClassName = name != null ? name.Strip(c => !c.IsLetter() && !Char.IsDigit(c)) : DynamicallyGeneratedClassName;
 
-            if (_cache.TryGetValue(cacheKey, out var assembly)) {
+            Assembly assembly;
+            if (_cache.TryGetValue(cacheKey, out assembly)) {
                 return assembly.CreateInstance(NamespaceForDynamicClasses + "." + generatedClassName);
             }
 
@@ -95,7 +96,7 @@ namespace Pipeline.Web.Orchard.Impl {
             var compilerResults = new CSharpCodeProvider().CompileAssemblyFromDom(compilerParameters, unitToCompile);
             if (compilerResults.Errors.HasErrors) {
                 var errors = compilerResults.Errors.Cast<CompilerError>().Aggregate(string.Empty, (s, error) => s + "\r\nTemplate '" + templateName + "': " + error.ToString());
-                throw new Exception($"Razor template compilation errors:\r\n{errors}");
+                throw new Exception(string.Format("Razor template compilation errors:\r\n{0}", errors));
             }
 
             var compiledAssembly = compilerResults.CompiledAssembly;

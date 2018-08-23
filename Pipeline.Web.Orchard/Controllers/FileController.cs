@@ -8,10 +8,10 @@ using Orchard;
 using Orchard.Localization;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Orchard.Core.Contents;
 using Orchard.Roles.Services;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services.Contracts;
+using Permissions = Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 

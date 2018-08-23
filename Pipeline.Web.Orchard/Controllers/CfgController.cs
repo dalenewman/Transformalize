@@ -23,7 +23,6 @@ using System.Net;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
-using Orchard.Core.Contents;
 using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
@@ -36,6 +35,7 @@ using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 using Process = Transformalize.Configuration.Process;
+using Permissions = Orchard.Core.Contents.Permissions;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -311,7 +311,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     // check security
                                     var actionPart = _orchardServices.ContentManager.Get(action.Id);
                                     if (actionPart == null) {
-                                        return new HttpNotFoundResult($"The action id {action.Id} does not refer to a content item id.");
+                                        return new HttpNotFoundResult(string.Format("The action id {0} does not refer to a content item id.", action.Id));
                                     }
 
                                     if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
@@ -340,7 +340,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                                 return _batchRedirectService.Redirect(action.Url, batchParameters);
                                             }
 
-                                            var message = batchParameters.ContainsKey("BatchId") ? $"Batch {batchParameters["BatchId"]} failed." : "Batch failed.";
+                                            var message = batchParameters.ContainsKey("BatchId") ? string.Format("Batch {0} failed.", batchParameters["BatchId"]) : "Batch failed.";
                                             Logger.Error(message);
                                             _orchardServices.Notifier.Error(T(message));
                                             foreach (var key in batchParameters.Keys) {

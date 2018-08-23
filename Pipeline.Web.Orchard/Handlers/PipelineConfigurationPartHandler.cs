@@ -117,7 +117,8 @@ namespace Pipeline.Web.Orchard.Handlers {
                 return;
             }
 
-            if (IPAddress.TryParse(ipAddress, out _)) {
+            IPAddress ip;
+            if (IPAddress.TryParse(ipAddress, out ip)) {
                 return;
             }
             _notifier.Add(NotifyType.Warning, T("{0} is an invalid address.", ipAddress));

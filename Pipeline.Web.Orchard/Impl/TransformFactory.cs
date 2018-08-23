@@ -38,14 +38,15 @@ namespace Pipeline.Web.Orchard.Impl {
 
                 foreach (var t in field.Transforms) {
                     var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                    if (TryTransform(ctx, transformContext, out var add)) {
+                    ITransform add;
+                    if (TryTransform(ctx, transformContext, out add)) {
                         transforms.Add(add);
                     }
                 }
                 // add conversion if necessary
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {
-                    context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
+                    context.Warn(string.Format("The output field {0} is not setup to receive a {1} type. It expects a {2}.  Adding conversion.", field.Alias, lastType, field.Type));
                     transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
                 }
             }

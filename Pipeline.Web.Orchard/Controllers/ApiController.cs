@@ -314,7 +314,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         }
 
         private static ContentResult Get401(string action, string format, long time = 5) {
-            var message = format == "json" ? $"{{ \"request\":\"{action}\", \"status\":401, \"message\":\"not allowed\", \"time\":{time} }}" : $"<cfg request=\"{action}\" status=\"401\" message=\"not allowed\" time=\"{time}\" />";
+            var message = format == "json" ? string.Format("{{ \"request\":\"{0}\", \"status\":401, \"message\":\"not allowed\", \"time\":{1} }}", action, time) : string.Format("<cfg request=\"{0}\" status=\"401\" message=\"not allowed\" time=\"{1}\" />", action, time);
             return new ContentResult {
                 Content = message,
                 ContentType = "text/" + format

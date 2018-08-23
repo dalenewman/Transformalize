@@ -17,29 +17,30 @@ namespace Pipeline.Web.Orchard.Models {
         public List<SelectListItem> EditorThemes { get; set; }
 
         public string EditorTheme {
-            get => string.IsNullOrEmpty(Record.EditorTheme) ? "cobalt" : Record.EditorTheme;
-            set => Record.EditorTheme = value;
+            get { return string.IsNullOrEmpty(Record.EditorTheme) ? "cobalt" : Record.EditorTheme; }
+            set { Record.EditorTheme = value; }
         }
 
         public string MapBoxToken {
-            get => Record.MapBoxToken;
-            set => Record.MapBoxToken = value;
+            get { return Record.MapBoxToken; }
+            set { Record.MapBoxToken = value; }
         }
 
         public int MapBoxLimit {
-            get => Record.MapBoxLimit == 0 ? 2500 : Record.MapBoxLimit;
-            set => Record.MapBoxLimit = value;
+            get { return Record.MapBoxLimit == 0 ? 2500 : Record.MapBoxLimit; }
+            set { Record.MapBoxLimit = value; }
         }
 
         public double StartingLatitude {
-            get => Record.StartingLatitude;
-            set => Record.StartingLatitude = value;
+            get { return Record.StartingLatitude; }
+            set { Record.StartingLatitude = value; }
         }
 
         public double StartingLongitude {
-            get => Record.StartingLongitude;
-            set => Record.StartingLongitude = value;
+            get { return Record.StartingLongitude; }
+            set { Record.StartingLongitude = value; }
         }
+
         public bool IsValid() {
             return true;
         }

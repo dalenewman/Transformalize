@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Field = Transformalize.Configuration.Field;
 
@@ -20,7 +21,7 @@ namespace Pipeline.Web.Orchard.Ext {
                         attributes["data-parsley-required"] = "true";
                         break;
                     case "length":
-                        attributes["data-parsley-length"] = $"[{expression.SingleParameter}, {expression.SingleParameter}]";
+                        attributes["data-parsley-length"] = string.Format("[{0}, {1}]", expression.SingleParameter, expression.SingleParameter);
                         break;
                     case "numeric":
                         attributes["data-parsley-type"] = "number";
@@ -50,7 +51,7 @@ namespace Pipeline.Web.Orchard.Ext {
             }
 
 
-            return string.Join(" ",attributes.Select(i => $"{i.Key}=\"{i.Value}\""));
+            return string.Join(" ",attributes.Select(i => string.Format("{0}=\"{1}\"", i.Key, i.Value)));
         }
     }
 }
