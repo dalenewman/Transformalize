@@ -83,6 +83,11 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
                             <td>Files</td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
