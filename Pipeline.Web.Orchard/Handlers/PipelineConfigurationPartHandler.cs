@@ -57,8 +57,8 @@ namespace Pipeline.Web.Orchard.Handlers {
             if (part.ReportMode()) {
                 context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                     {"Area", Common.ModuleName},
-                    {"Controller", "Cfg"},
-                    {"Action", "Report"},
+                    {"Controller", "Report"},
+                    {"Action", "Index"},
                     {"id", context.ContentItem.Id}
                 };
             } else {

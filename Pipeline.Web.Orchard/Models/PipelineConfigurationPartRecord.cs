@@ -43,6 +43,9 @@ namespace Pipeline.Web.Orchard.Models {
         [StringLength(128)]
         public virtual string Modes { get; set; }
 
+        [StringLength(128)]
+        public virtual string MapStyle { get; set; }
+
         [StringLength(3)]
         public virtual string PlaceHolderStyle { get; set; }
     }

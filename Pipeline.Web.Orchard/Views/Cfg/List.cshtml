@@ -120,7 +120,7 @@
                             </button>
                         }
                         @if (part.ReportMode() && !part.NeedsInputFile || part.ReportMode() && part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(Url.Action("Report", "Cfg", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
+                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(Url.Action("Index", "Report", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
                                 <span class="glyphicon glyphicon-th-list"></span>
                             </button>
                         }

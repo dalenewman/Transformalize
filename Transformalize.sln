@@ -135,6 +135,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Razor", "Providers\Razor\Razor.csproj", "{730DCD3B-2B96-4E4A-8E11-E33AB56F62A6}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Transformalize\Pipeline.Shared.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
 		Transformalize\Pipeline.Shared.projitems*{50c78faa-713d-495f-971e-47f3aca46971}*SharedItemsImports = 4

@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Shorthand;
@@ -193,6 +194,9 @@ namespace Pipeline.Web.Orchard.Modules {
 
             // razor implementation uses Orchard CMS implementation
             RegisterTransform(builder, (ctx, c) => new OrchardRazorTransform(ctx.Resolve<ITemplateProcessor>(), c), new OrchardRazorTransform(null).GetSignatures());
+
+            // xml
+            RegisterTransform(builder, (ctx, c) => new Transformalize.Transforms.FromXmlTransform(c), new Transformalize.Transforms.FromXmlTransform(null).GetSignatures());
 
             // register the short hand
             builder.Register((c, p) => new TransformShorthandCustomizer(_shortHand, new[] {"fields", "calculated-fields"}, "t", "transforms", "method")).As<TransformShorthandCustomizer>().SingleInstance();

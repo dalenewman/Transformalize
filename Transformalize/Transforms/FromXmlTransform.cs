@@ -35,10 +35,13 @@ namespace Transformalize.Transforms {
         private readonly bool _searchAttributes;
         private readonly int _total;
 
-        public FromXmlTransform(IContext context) : base(context, null) {
+        public FromXmlTransform(IContext context = null) : base(context, null) {
+            if (IsMissingContext()) {
+                return;
+            }
 
-            if (!context.Operation.Parameters.Any()) {
-                Error($"The {context.Operation.Method} transform requires a collection of output fields.");
+            if (!Context.Operation.Parameters.Any()) {
+                Error($"The {Context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;
                 return;
             }
@@ -60,9 +63,10 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
+
             var xml = row[_input] as string;
             if (string.IsNullOrEmpty(xml)) {
-                
+
                 return row;
             }
 
@@ -106,9 +110,12 @@ namespace Transformalize.Transforms {
                 }
                 subNodes = nextNodes.ToArray();
             }
-            
+
             return row;
         }
 
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("fromxml");
+        }
     }
 }

@@ -1,0 +1,70 @@
+﻿@model Transformalize.Configuration.Process
+@{
+    var activeParameters = Model.GetActiveParameters();
+}
+<!-- Parameters.cshtml - Start -->
+<div class="row" style="margin-bottom: 4px;">
+
+    <div class="col-md-12">
+
+        @if (true) {
+
+            var parameters = activeParameters.Where(p => p.Prompt).ToArray();
+
+            foreach (var parameter in parameters) {
+                <div class="form-group form-group-sm">
+                    <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
+                    <div class="input-group input-group-sm" style="padding-top: 2px;">
+                        <span class="input-group-addon">@parameter.Label</span>
+                        @switch (parameter.Type) {
+                            case "date":
+                            case "datetime":
+                                var requestedDate = Request.QueryString[parameter.Name] ?? (string.IsNullOrEmpty(parameter.Value) ? DateTime.Now.ToString("yyyy-MM-dd") : parameter.Value);
+                                <input class="form-control date"
+                                       size="10"
+                                       type="datetime"
+                                       name="@parameter.Name"
+                                       placeholder="@parameter.Label"
+                                       value="@requestedDate"
+                                       @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty)) />
+                                break;
+                            default:
+                                var requestedValue = Request.QueryString[parameter.Name] ?? parameter.Value;
+                                if (string.IsNullOrEmpty(parameter.Map)) {
+                                    <input class="form-control"
+                                           name="@parameter.Name"
+                                           value="@requestedValue"
+                                           placeholder="@parameter.Label"
+                                           @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty)) />
+                                } else {
+                                    <select class="form-control"
+                                            size="1"
+                                            multiple="@(parameter.Multiple)"
+                                            name="@parameter.Name"
+                                            @(Html.Raw(parameter.Width > 0 ? "style=\"width:" + parameter.Width + "px\"" : string.Empty))>
+                                        @{
+                                            var items = Model.Maps.First(m => m.Name == parameter.Map).Items;
+                                            if (parameter.Multiple) {
+                                                var values = Request.QueryString[parameter.Name] == null ? new HashSet<string>() : new HashSet<string>(Request.QueryString.GetValues(parameter.Name));
+                                                foreach (var item in items) {
+                                                    <option value="@item.To" selected="@(values.Contains(item.To.ToString()))">@item.From</option>
+                                                }
+                                            } else {
+                                                <option value="*" selected="@(requestedValue == "*")">ALL</option>
+                                                foreach (var item in items) {
+                                                    <option value="@item.To" selected="@(item.To.ToString() == requestedValue)">@item.From</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                }
+                                break;
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+</div>
+<!-- Parameters.cshtml - End -->

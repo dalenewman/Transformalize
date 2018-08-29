@@ -185,7 +185,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             
             // js
             RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ? 
-                    new Transforms.Xml.FromXmlTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))) : 
+                    new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) : 
                     new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
             );
 

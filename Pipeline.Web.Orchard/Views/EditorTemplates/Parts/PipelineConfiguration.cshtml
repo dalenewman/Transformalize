@@ -54,6 +54,12 @@
     @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
 </div>
 
+<div class="editor-field">
+    @Html.LabelFor(x => x.MapStyle, T("Map Style (if applicable)"))
+    @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
+    @Html.ValidationMessageFor(x => x.MapStyle)
+</div>
+
 <fieldset>
     <legend>Run Options</legend>
 

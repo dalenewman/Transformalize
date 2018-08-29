@@ -51,7 +51,10 @@ namespace Transformalize.Transforms.Xml {
         private readonly List<Field> _outerFields;
         private readonly Dictionary<string, object> _typeDefaults;
 
-        public FromXmlTransform(IContext context, IRowFactory rowFactory) : base(context, "object") {
+        public FromXmlTransform(IRowFactory rowFactory, IContext context = null) : base(context, null) {
+            if (IsMissingContext()) {
+                return;
+            }
 
             ProducesFields = true;
 
@@ -182,6 +185,10 @@ namespace Transformalize.Transforms.Xml {
 
         public override IRow Operate(IRow row) {
             throw new NotImplementedException();
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            yield return new OperationSignature("fromxml");
         }
     }
 

@@ -36,6 +36,20 @@ namespace Pipeline.Web.Orchard.Models {
             new SelectListItem {Selected = false, Text = "@[parameter]", Value = "@[]"}
         };
 
+        public static List<SelectListItem> MapStyles = new List<SelectListItem> {
+            new SelectListItem {Selected = false, Text = "Streets", Value = "streets-v10"},
+            new SelectListItem {Selected = false, Text = "Outdoors", Value = "outdoors-v10"},
+            new SelectListItem {Selected = false, Text = "Light", Value = "light-v9"},
+            new SelectListItem {Selected = false, Text = "Dark", Value = "dark-v9"},
+            new SelectListItem {Selected = false, Text = "Satellite", Value = "satellite-v9"},
+            new SelectListItem {Selected = false, Text = "Satellite Streets", Value = "satellite-streets-v10"},
+            new SelectListItem {Selected = false, Text = "Navigation Preview Day", Value = "navigation-preview-day-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Preview Night", Value = "navigation-preview-night-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Guidance Day", Value = "navigation-guidance-day-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Guidance Night", Value = "navigation-guidance-night-v4"}
+
+        };
+
         public string Configuration {
             get {
                 var cfg = this.Retrieve(x => x.Configuration, versioned: true);
@@ -85,6 +99,11 @@ namespace Pipeline.Web.Orchard.Models {
         public string EditorMode {
             get { return this.Retrieve(x => x.EditorMode, versioned: true) ?? "xml"; }
             set { this.Store(x => x.EditorMode, value, true); }
+        }
+
+        public string MapStyle {
+            get { return this.Retrieve(x => x.MapStyle, versioned: true) ?? "streets-v10"; }
+            set { this.Store(x => x.MapStyle, value, true); }
         }
 
         public bool Migrated {

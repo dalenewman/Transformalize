@@ -172,6 +172,11 @@ namespace Pipeline.Web.Orchard {
             return 13;
         }
 
+        public int UpdateFrom13() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapStyle", DbType.String));
+            return 14;
+        }
+
     }
 
     public class FileMigrations : DataMigrationImpl {

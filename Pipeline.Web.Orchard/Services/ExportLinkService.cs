@@ -16,10 +16,19 @@ namespace Pipeline.Web.Orchard.Services {
                 url.QueryParams.Remove(star);
             }
 
-            if (type != "page") {
-                return new HtmlString(url.SetQueryParam("output", type).ToString());
+            if (type == "map") {
+                url.Path = url.Path.Replace("/Report", "/Map");
+                url.RemoveQueryParam("output");
+                return new HtmlString(url);
             }
-            return new HtmlString(url.RemoveQueryParam("output").ToString());
+
+            if (type == "report") {
+                url.Path = url.Path.Replace("/Map", "/Report");
+                url.RemoveQueryParam("output");
+                return new HtmlString(url);
+            }
+
+            return new HtmlString(url.SetQueryParam("output", type).ToString());
         }
     }
 }
