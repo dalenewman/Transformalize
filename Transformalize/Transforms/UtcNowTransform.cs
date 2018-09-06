@@ -21,17 +21,31 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class UtcNowTransform : BaseTransform {
+
+        private Func<DateTime> _now;
+
         public UtcNowTransform(IContext context = null) : base(context, "datetime") {
-            IsMissingContext();
+            if (IsMissingContext()) {
+                return;
+            }
+
+            var now = DateTime.UtcNow;
+
+            if (Context.Operation.Count == 0) {
+                _now = () => DateTime.UtcNow;
+            } else {
+                _now = () => now;
+            }
+
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = DateTime.UtcNow;
+            row[Context.Field] = _now();
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            return new[] { new OperationSignature("now") };
+            return new[] { new OperationSignature("now") { Parameters = new List<OperationParameter>(1) { new OperationParameter("count") } } };
         }
     }
 }
