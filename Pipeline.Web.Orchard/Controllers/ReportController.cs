@@ -187,7 +187,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     }
                                 }
 
-                            } else { // export
+                            } else { // convert process to export specified output and re-serialize and load
                                 ConvertToExport(user, process, part, reportType, parameters);
                                 process.Load(process.Serialize(), parameters);
                             }

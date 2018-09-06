@@ -12,7 +12,7 @@
             var parameters = activeParameters.Where(p => p.Prompt).ToArray();
 
             foreach (var parameter in parameters) {
-                <div class="form-group form-group-sm">
+                <div id="parameters" class="form-group form-group-sm">
                     <label class="sr-only" for="@parameter.Name">@parameter.Label</label>
                     <div class="input-group input-group-sm" style="padding-top: 2px;">
                         <span class="input-group-addon">@parameter.Label</span>

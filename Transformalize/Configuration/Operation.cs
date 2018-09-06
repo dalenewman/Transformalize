@@ -279,10 +279,6 @@ namespace Transformalize.Configuration {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }
 
-        //public static HashSet<string> ValidatorSet() {
-        //    return _validateSet ?? (_validateSet = new HashSet<string>(ValidatorDomain.Split(',')));
-        //}
-
         public static HashSet<string> ProducerSet() {
             return _producerSet ?? (_producerSet = new HashSet<string>(ProducerDomain.Split(',')));
         }

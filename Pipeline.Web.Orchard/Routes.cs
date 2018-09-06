@@ -67,6 +67,22 @@ namespace Pipeline.Web.Orchard {
                 },
 
                 new RouteDescriptor {
+                    Priority = 11,
+                    Route = new Route(
+                        "Pipeline/Headless/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Report" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
                 Priority = 11,
                 Route = new Route(
                         "Pipeline/Map/{id}",
@@ -89,6 +105,22 @@ namespace Pipeline.Web.Orchard {
                         new RouteValueDictionary {
                             {"area", Common.ModuleName },
                             {"controller", "Action" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 11,
+                    Route = new Route(
+                        "Pipeline/PivotTable/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "PivotTable" },
                             {"action", "Index"},
                             {"id", 0}
                         },

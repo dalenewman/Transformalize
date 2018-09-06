@@ -43,9 +43,17 @@ namespace Pipeline.Web.Orchard.Modules {
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" });
 
-            builder.Register(c => new RunTimeDataReader(logger, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>())).As<IRunTimeRun>();
+            builder.Register(c => new RunTimeDataReader(
+                    context.Logger,
+                    c.Resolve<IAppDataFolder>(),
+                    new RazorReportTemplateProcessor(new RazorReportCompiler(), c.Resolve<HttpContextBase>(), c.Resolve<IOrchardServices>()),
+                    c.Resolve<INotifier>()
+                )
+            ).As<IRunTimeRun>();
+
             builder.Register(c => new CachingRunTimeSchemaReader(new RunTimeSchemaReader(context, c.Resolve<IAppDataFolder>(), c.Resolve<ITemplateProcessor>(), c.Resolve<INotifier>()))).As<IRunTimeSchemaReader>();
             builder.Register(c => new SchemaHelper(context, c.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
+
             builder.Register(c => new RunTimeExecuter(
                     context, 
                     c.Resolve<IAppDataFolder>(), 
@@ -53,6 +61,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     c.Resolve<INotifier>()
                 )
             ).As<IRunTimeExecute>();
+
+
 
         }
 

@@ -49,26 +49,31 @@
         </div>
     </div>
 
-    <div class="col-md-4" style="text-align: center;">
-        <ul class="pagination pagination-sm" style="display: inline; white-space:nowrap;">
-            @if (entity.Pagination.HasPrevious) {
-                <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-            } else {
-                <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-backward"></span></a></li>
-                <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
-            }
-            <li class="disabled"><a href="#" style="white-space: nowrap;">Found @entity.Hits, Page <strong>@(entity.Page == 0 ? 1 : entity.Page)</strong> of @(entity.Pagination.Pages == 0 ? 1 : entity.Pagination.Pages)</a></li>
 
-            @if (entity.Pagination.HasNext) {
-                <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-            } else {
-                <li class="disabled"><a href="#"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
-                <li class="disabled"><a href="#"><span class="glyphicon glyphicon-step-forward"></span></a></li>
-            }
-        </ul>
+    <div class="col-md-4" style="text-align: center;">
+        @if (Model.Process.Mode == "report") {
+            <ul class="pagination pagination-sm" style="display: inline; white-space:nowrap;">
+                @if (entity.Pagination.HasPrevious) {
+                    <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Previous)"><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                } else {
+                    <li class="disabled"><a href=""><span class="glyphicon glyphicon-step-backward"></span></a></li>
+                    <li class="disabled"><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
+                }
+                <li class="disabled"><a href="" style="white-space: nowrap;">Found @entity.Hits, Page <strong>@(entity.Page == 0 ? 1 : entity.Page)</strong> of @(entity.Pagination.Pages == 0 ? 1 : entity.Pagination.Pages)</a></li>
+
+                @if (entity.Pagination.HasNext) {
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li><a href="javascript:controls.submit(@entity.Pagination.Last)"><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                } else {
+                    <li class="disabled"><a href=""><span class="glyphicon glyphicon-chevron-right"></span></a></li>
+                    <li class="disabled"><a href=""><span class="glyphicon glyphicon-step-forward"></span></a></li>
+                }
+            </ul>
+        }
     </div>
+
+
 
     <div class="col-md-4">
 
@@ -95,7 +100,7 @@
                     </button>
                     <ul class="dropdown-menu" id="mapStyles">
                         @foreach (var style in PipelineConfigurationPart.MapStyles) {
-                            <li><a id="@style.Value" href="#">@style.Text</a></li>
+                            <li><a id="@style.Value" href="">@style.Text</a></li>
                         }
                     </ul>
                 </div>
