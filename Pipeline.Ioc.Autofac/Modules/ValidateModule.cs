@@ -83,14 +83,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 var assemblies = new List<Assembly>();
 
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Validate.*.Transform.dll", SearchOption.TopDirectoryOnly)) {
-                    var info = new FileInfo(file);
-                    var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-                    loadContext.Debug(() => $"Loading {name} validator(s)");
-                    var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-                    assemblies.Add(assembly);
-                }
-
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Validate.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "validate" && f != "autofac");
