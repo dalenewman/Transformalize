@@ -24,7 +24,7 @@ namespace Transformalize.Provider.Internal {
 
     public class InternalReader : IRead {
 
-        readonly InputContext _input;
+        private readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
         private readonly HashSet<string> _missing;
 

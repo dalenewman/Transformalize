@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>Fixed Bugs, etc.</releaseNotes>
+    <releaseNotes>Bug fixes, etc.</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>

@@ -55,7 +55,6 @@ namespace Transformalize.Validators {
 
             if (MessageField == null) {
                 AppendMessage = delegate { };
-
             } else {
                 AppendMessage = (row, message) => row[MessageField] = row[MessageField] + message + "|";
             }

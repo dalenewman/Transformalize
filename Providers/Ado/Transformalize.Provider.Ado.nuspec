@@ -10,12 +10,12 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Common ADO Provider for Transformalize</description>
-    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
+    <releaseNotes>updated to transformalize 0.3.6-beta</releaseNotes>
     <copyright>Copyright 2013-2017</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.5-beta" />
+        <dependency id="Transformalize" version="0.3.6-beta" />
         <dependency id="Dapper" version="1.50.4" />
       </group>
     </dependencies>
