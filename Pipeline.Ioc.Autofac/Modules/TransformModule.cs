@@ -48,7 +48,8 @@ using Module = Autofac.Module;
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {
 
-        public const string Name = "shorthand-t";
+        public const string FieldsName = "shorthand-t";
+        public const string ParametersName = "shorthand-p";
         private readonly HashSet<string> _methods = new HashSet<string>();
         private readonly ShorthandRoot _shortHand = new ShorthandRoot();
         private readonly Process _process;
@@ -208,8 +209,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
             }
 
             // register the short hand
-            builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
-            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(Name), new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).Named<IDependency>(Name).InstancePerLifetimeScope();
+            builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(FieldsName).InstancePerLifetimeScope();
+            builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ParametersName).InstancePerLifetimeScope();
+            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields"}, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
+            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(ParametersName).InstancePerLifetimeScope();
+
 
         }
 

@@ -23,7 +23,9 @@ using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
 
 namespace Transformalize.Ioc.Autofac {
+
     public static class ConfigurationContainer {
+
         public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
             var builder = new ContainerBuilder();
             builder.Register(c => cfg).Named<string>("cfg");

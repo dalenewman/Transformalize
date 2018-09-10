@@ -32,10 +32,9 @@ namespace Transformalize {
             Storage[field.MasterIndex] = value;
         }
 
-        public object this[IField field]
-        {
-            get { return Storage[field.MasterIndex]; }
-            set { Storage[field.MasterIndex] = value; }
+        public object this[IField field] {
+            get => Storage[field.MasterIndex];
+            set => Storage[field.MasterIndex] = value;
         }
 
     }

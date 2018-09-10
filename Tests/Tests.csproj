@@ -81,6 +81,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TransformParameters.cs" />
     <Compile Include="LogTransform.cs" />
     <Compile Include="ContainsTransform.cs" />
     <Compile Include="DateConvert.cs" />

@@ -26,9 +26,11 @@ using Cfg.Net.Reader;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.IO;
+using Transformalize.Context;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Impl;
+using Parameter = Autofac.Core.Parameter;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -49,12 +51,72 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             builder.Register((ctx, p) => {
 
+                Process process;
+                string cfg = null;
+                var dependencies = new List<IDependency> { ctx.Resolve<IReader>() };
+
+                // short hand for parameters is defined, try to transform parameters in advance
+                if (ctx.IsRegisteredWithName<IDependency>("shorthand-p")) {
+
+                    dependencies.Add(new DateMathModifier());
+                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-p"));
+                    process = GetProcess(ctx, p, dependencies);
+
+                    if (process.Errors().Any()) {
+                        return process;
+                    }
+
+                    // transform parameters here?
+                    var parameters = process.GetActiveParameters().Where(pr => pr.Transforms.Any()).ToArray();
+                    if (parameters.Length > 0) {
+                        var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms }).ToList();
+                        var len = fields.Count;
+                        var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
+                        var mini = new Process {
+                            Name = "ParameterTransform",
+                            ReadOnly = true,
+                            Entities = new List<Entity> { entity }
+                        };
+
+                        mini.Check();  // very important to check after creating, as it runs validation and even modifies!
+
+                        if (!mini.Errors().Any()) {
+
+                            // modification in Check() do not make it out to local variables so overwrite them
+                            fields = mini.Entities.First().Fields;
+                            entity = mini.Entities.First();
+
+                            var transforms = TransformFactory.GetTransforms(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity), fields);
+
+                            // make an input out of the parameters
+                            var input = new List<IRow>();
+                            var row = new MasterRow(len);
+                            for (var i = 0; i < len; i++) {
+                                row[fields[i]] = parameters[i].Value;
+                            }
+                            input.Add(row);
+
+                            var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
+
+                            for (var i = 0; i < len; i++) {
+                                var parameter = parameters[i];
+                                parameter.Value = output[fields[i]].ToString();
+                                parameter.T = string.Empty;
+                                parameter.Transforms.Clear();
+                            }
+
+                            cfg = process.Serialize();
+                        }
+                    }
+                }
+
+                // now do full process load with parameter, form, environment and short hand for fields
                 var placeHolderStyle = "@()";
                 if (ctx.IsRegisteredWithName<string>("placeHolderStyle")) {
                     placeHolderStyle = ctx.ResolveNamed<string>("placeHolderStyle");
                 }
 
-                var dependencies = new List<IDependency> {
+                dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     new FormParameterModifier(new DateMathModifier()),
                     new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
@@ -68,27 +130,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
 
-
-                var process = new Process(dependencies.ToArray());
-
-                switch (p.Count()) {
-                    case 2:
-                        process.Load(
-                            p.Named<string>("cfg"),
-                            p.Named<Dictionary<string, string>>("parameters")
-                        );
-                        break;
-                    case 1:
-                        process.Load(p.Named<string>("cfg"));
-                        break;
-                    default:
-                        if (ctx.IsRegisteredWithName<string>("cfg")) {
-                            process.Load(ctx.ResolveNamed<string>("cfg"));
-                            break;
-                        }
-                        throw new Exception("Configuration Container could not find the configuration!  Pass in or register a `cfg` string.");
-
-                }
+                process = GetProcess(ctx, p, dependencies, cfg);
 
                 if (process.Errors().Any()) {
                     return process;
@@ -118,7 +160,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                             process.Output().Provider = "console";
                         }
                     } catch (IOException) {
-                        
+
                         // just a hack to determine if in console
                     }
                 }
@@ -148,8 +190,37 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 }
 
                 return process;
+
             }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
 
         }
+
+        private static Process GetProcess(IComponentContext ctx, IEnumerable<Parameter> p, IEnumerable<IDependency> dependencies, string cfg = null) {
+            var process = new Process(dependencies.ToArray());
+            if (cfg != null) {
+                process.Load(cfg);
+                return process;
+            }
+
+            switch (p.Count()) {
+                case 2:
+                    process.Load(
+                        p.Named<string>("cfg"),
+                        p.Named<Dictionary<string, string>>("parameters")
+                    );
+                    return process;
+                case 1:
+                    process.Load(p.Named<string>("cfg"));
+                    return process;
+                default:
+                    if (ctx.IsRegisteredWithName<string>("cfg")) {
+                        process.Load(ctx.ResolveNamed<string>("cfg"));
+                        return process;
+                    }
+
+                    throw new Exception("Configuration Container could not find the configuration!  Pass in or register a `cfg` string.");
+            }
+        }
+
     }
 }

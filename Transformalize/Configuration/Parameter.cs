@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 
@@ -66,6 +67,18 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "", toLower = true)]
         public string Map { get; set; }
+
+        /// <summary>
+        /// Shorthand transforms for parameters
+        /// </summary>
+        [Cfg(value = "")]
+        public string T { get; set; }
+
+        /// <summary>
+        /// Long-hand transforms for parmaters
+        /// </summary>
+        [Cfg]
+        public List<Operation> Transforms { get; set; }
 
         protected override void Validate() {
             switch (Type) {

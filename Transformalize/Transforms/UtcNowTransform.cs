@@ -22,7 +22,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms {
     public class UtcNowTransform : BaseTransform {
 
-        private Func<DateTime> _now;
+        private readonly Func<DateTime> _now;
 
         public UtcNowTransform(IContext context = null) : base(context, "datetime") {
             if (IsMissingContext()) {
@@ -45,7 +45,7 @@ namespace Transformalize.Transforms {
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            return new[] { new OperationSignature("now") { Parameters = new List<OperationParameter>(1) { new OperationParameter("count") } } };
+            return new[] { new OperationSignature("now") { Parameters = new List<OperationParameter>(1) { new OperationParameter("count","0") } } };
         }
     }
 }
