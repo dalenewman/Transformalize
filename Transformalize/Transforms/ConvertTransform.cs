@@ -22,7 +22,9 @@ using System.Globalization;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
     public class ConvertTransform : BaseTransform {
+
         private readonly Func<object, object> _convert;
         private readonly string _type;
 

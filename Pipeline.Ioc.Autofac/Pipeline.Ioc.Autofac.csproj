@@ -78,14 +78,8 @@
       <HintPath>..\packages\Castle.NVelocity.1.1.1\lib\net40\NVelocity.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.3.1.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\packages\protobuf-net.2.3.1\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="Quartz, Version=2.6.1.0, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
       <HintPath>..\packages\Quartz.2.6.1\lib\net40\Quartz.dll</HintPath>
-    </Reference>
-    <Reference Include="RethinkDb">
-      <HintPath>..\packages\rethinkdb-net.0.12.1.0\lib\net45\RethinkDb.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -117,7 +111,6 @@
     <Compile Include="Modules\ConsoleModule.cs" />
     <Compile Include="Modules\RazorModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
-    <Compile Include="Modules\RethinkDbModule.cs" />
     <Compile Include="Modules\FileSystemModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
@@ -186,10 +179,6 @@
     <ProjectReference Include="..\Providers\Kml\Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
       <Name>Kml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
-      <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
-      <Name>Rethink</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>

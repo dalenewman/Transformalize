@@ -50,7 +50,10 @@ namespace Transformalize.Ioc.Autofac {
                                 context.Warn($"Un-supported types found. Switching javascript engine to jint for field {field.Alias}");
                             }
                         }
+                    }
 
+                    if (t.Method == "convert" && t.Type == "string" && t.Format != string.Empty) {
+                        t.Method = "tostring";
                     }
 
                     var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);

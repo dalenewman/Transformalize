@@ -168,10 +168,6 @@
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>OpenXml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\Rethink\Rethink.csproj">
-      <Project>{603213bc-2203-46f8-bb3a-c680d94685ec}</Project>
-      <Name>Rethink</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
       <Name>Web</Name>
