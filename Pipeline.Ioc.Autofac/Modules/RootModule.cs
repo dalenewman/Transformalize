@@ -67,8 +67,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
 
                     // transform parameters here?
-                    var parameters = process.GetActiveParameters().Where(pr => pr.Transforms.Any()).ToArray();
-                    if (parameters.Length > 0) {
+                    var parameters = process.GetActiveParameters();
+                    if (parameters.Any(pr=>pr.Transforms.Any())) {
                         var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms }).ToList();
                         var len = fields.Count;
                         var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
