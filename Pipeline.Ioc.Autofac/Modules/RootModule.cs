@@ -26,6 +26,7 @@ using Cfg.Net.Reader;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.IO;
+using Quartz.Util;
 using Transformalize.Context;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
@@ -75,7 +76,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         var mini = new Process {
                             Name = "ParameterTransform",
                             ReadOnly = true,
-                            Entities = new List<Entity> { entity }
+                            Entities = new List<Entity> { entity },
+                            Maps = process.Maps,  // for map transforms
+                            Scripts = process.Scripts // for transforms that use scripts (e.g. js)
                         };
 
                         mini.Check();  // very important to check after creating, as it runs validation and even modifies!
