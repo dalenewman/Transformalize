@@ -94,7 +94,7 @@ namespace Transformalize.Configuration {
                     }
                     break;
                 default:
-                    if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
+                    if (T == string.Empty && !string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
                         Error($"The parameter {Name} is supposed to be a {Type}, but {Value} can not be parsed as such.");
                     }
                     break;
