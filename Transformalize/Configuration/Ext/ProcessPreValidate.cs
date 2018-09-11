@@ -147,32 +147,48 @@ namespace Transformalize.Configuration.Ext {
             }
         }
 
+        private static Map CreateMap(string inlineMap) {
+            var map = new Map { Name = inlineMap };
+            var split = inlineMap.Split(',');
+            foreach (var item in split) {
+                if (item.Contains(":")) {
+                    var innerSplit = item.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+                    var from = innerSplit.First();
+                    var to = innerSplit.Last();
+                    map.Items.Add(new MapItem { From = from, To = to });
+                } else {
+                    map.Items.Add(new MapItem { From = item, To = item });
+                }
+            }
+
+            return map;
+        }
+
         /// <summary>
         /// When a filter and parameter are related via a parameter name, create the map between them, the provider fills the map
         /// </summary>
         /// <param name="p"></param>
         private static void AutomaticMaps(Process p) {
 
-            // create map from comma delimited list
+            var parameters = p.GetActiveParameters();
+
+            // create maps for inline field transform maps
             foreach (var field in p.GetAllFields().Where(f => f.Map.Contains(","))) {
                 if (p.Maps.All(m => m.Name != field.Map)) {
-                    var map = new Map { Name = field.Map };
-                    var split = field.Map.Split(',');
-                    foreach (var item in split) {
-                        map.Items.Add(new MapItem { From = item, To = item });
-                    }
-                    p.Maps.Add(map);
+                    p.Maps.Add(CreateMap(field.Map));
+                }
+            }
+
+            // create maps for inline parameter transform maps
+            foreach (var transform in parameters.SelectMany(pr => pr.Transforms.Where(t => t.Map.Contains(",")))) {
+                if (p.Maps.All(m => m.Name != transform.Map)) {
+                    p.Maps.Add(CreateMap(transform.Map));
                 }
             }
 
             if (!p.Connections.Any(c => c.Provider.In("elasticsearch", "solr"))) {
                 return;
             }
-
-            var parameters = p.GetActiveParameters();
-            //if (parameters.Any(pr => !pr.Prompt)) {
-            //    return;
-            //}
 
             foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
                 var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
