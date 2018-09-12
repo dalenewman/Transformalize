@@ -25,6 +25,11 @@ namespace Transformalize.Validators {
         protected readonly Func<IRow, IField, string> GetString;
 
         protected StringValidate(IContext context) : base(context) {
+
+            if (IsMissingContext()) {
+                return;
+            }
+
             GetString = delegate (IRow row, IField field) {
                 if (SingleInput().Type == "string") {
                     return (string)row[field];  // cast

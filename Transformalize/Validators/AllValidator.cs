@@ -25,6 +25,7 @@ using Transformalize.Transforms;
 namespace Transformalize.Validators {
 
     public class AllValidator : StringValidate {
+
         private class FieldWithValue {
             public Field Field { get; set; }
             public object Value { get; set; }
