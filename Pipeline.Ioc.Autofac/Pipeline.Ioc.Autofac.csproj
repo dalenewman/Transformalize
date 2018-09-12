@@ -109,7 +109,6 @@
     <Compile Include="LibaryVersionChecker.cs" />
     <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
-    <Compile Include="Modules\RazorModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\FileSystemModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
@@ -155,10 +154,6 @@
     <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>OpenXml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Razor\Razor.csproj">
-      <Project>{730dcd3b-2b96-4e4a-8e11-e33ab56f62a6}</Project>
-      <Name>Razor</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Web\Web.csproj">
       <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>

@@ -81,9 +81,6 @@ namespace Transformalize.Ioc.Autofac {
                 }
             }
 
-            // template providers
-            builder.RegisterCallback(new RazorModule(process).Configure);
-
             // etc
             builder.RegisterCallback(new MapModule(process).Configure);
             builder.RegisterCallback(new TemplateModule(process).Configure);

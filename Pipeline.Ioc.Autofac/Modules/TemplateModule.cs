@@ -22,7 +22,6 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Providers.Razor;
 using Transformalize.Transforms.Velocity;
 
 namespace Transformalize.Ioc.Autofac.Modules {
@@ -40,7 +39,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
             if (_process == null)
                 return;
 
-            foreach (var t in _process.Templates.Where(t => t.Enabled)) {
+            // razor moved to plugin, velocity too soon...
+            foreach (var t in _process.Templates.Where(t => t.Enabled && t.Engine != "razor")) {
                 var template = t;
                 builder.Register<ITemplateEngine>(ctx => {
                     var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
@@ -48,8 +48,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     switch (template.Engine) {
                         case "velocity":
                             return new VelocityTemplateEngine(context, template, ctx.Resolve<IReader>());
-                        case "razor":
-                            return new RazorTemplateEngine(context, template, ctx.Resolve<IReader>());
                         default:
                             return new NullTemplateEngine();
                     }

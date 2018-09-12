@@ -28,7 +28,6 @@ using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
 using Transformalize.Contracts;
 using Transformalize.Providers.File.Transforms;
-using Transformalize.Providers.Razor;
 using Transformalize.Providers.Web;
 using Transformalize.Transforms;
 using Transformalize.Transforms.Compression;
@@ -119,7 +118,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new TimeAgoTransform(c), new TimeAgoTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new PadLeftTransform(c), new PadLeftTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new PadRightTransform(c), new PadRightTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new RazorTransform(c), new RazorTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RegexReplaceTransform(c), new RegexReplaceTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RemoveTransform(c), new RemoveTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new ReplaceTransform(c), new ReplaceTransform().GetSignatures());

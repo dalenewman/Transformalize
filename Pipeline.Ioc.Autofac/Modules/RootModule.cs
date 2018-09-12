@@ -26,7 +26,6 @@ using Cfg.Net.Reader;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.IO;
-using Quartz.Util;
 using Transformalize.Context;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
