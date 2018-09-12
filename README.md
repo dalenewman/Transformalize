@@ -88,6 +88,11 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Razor">Razor</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
+                        </tr>
+                        <tr>
                             <td>Files</td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
@@ -103,19 +108,19 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td title="SQL Server Analysis Services">SSAS</td>
+                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
                             <td style="color:green"></td>
                             <td style="color:green">BETA</td>
                         </tr>
                         <tr>
-                            <td>Humans</td>
+                            <td title="Forms in Orchard CMS Module">Humans</td>
                             <td style="color:green">BETA</td>
                             <td style="color:green"></td>
                         </tr>
                         <tr>
-                            <td>RethinkDB</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
                             <td style="color:green"></td>
-                            <td style="color:green">WIP</td>
+                            <td style="color:green">BETA</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
