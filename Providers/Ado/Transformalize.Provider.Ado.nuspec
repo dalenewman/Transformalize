@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Ado</id>
-    <version>0.3.9-beta</version>
+    <version>0.3.10-beta</version>
     <title>Transformalize Provider ADO</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,13 +10,13 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Common ADO Provider for Transformalize</description>
-    <releaseNotes>updated to transformalize 0.3.6-beta</releaseNotes>
-    <copyright>Copyright 2013-2017</copyright>
+    <releaseNotes>updated transformalize and dapper</releaseNotes>
+    <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.6-beta" />
-        <dependency id="Dapper" version="1.50.4" />
+        <dependency id="Transformalize" version="0.3.7-beta" />
+        <dependency id="Dapper" version="1.50.5" />
       </group>
     </dependencies>
   </metadata>
