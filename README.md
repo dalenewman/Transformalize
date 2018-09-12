@@ -400,7 +400,7 @@ are [foreign keys](https://en.wikipedia.org/wiki/Foreign_key) (e.g. `ProductID`,
 These refer to more descriptive information in related entities. Others are 
 [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) (i.e. `Quantity`, `UnitPrice`).
 
-To denormalize *Order Details*, we need to the foreign keys `OrderID` and `ProductID` to 
+To denormalize *Order Details*, we need to use the foreign keys `OrderID` and `ProductID` to 
 retrieve the related information from *Orders* and *Products* (see diagram).  This means we have 
 to add the *Orders* and *Products* entities to our arrangement.
 
