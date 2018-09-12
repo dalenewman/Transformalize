@@ -10,6 +10,7 @@ It works with many data sources:
         <tr>
             <th>Relational</th>
             <th>Non-Relational</th>
+            <th>Other</th>
         </tr>
     </thead>
     <tbody>
@@ -83,6 +84,29 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
+                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="vertical-align:top">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Input</th>
+                            <th>Output</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
                             <td style="color:green">&#10003;</td>
                             <td style="color:green">&#10003;</td>
@@ -108,19 +132,9 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
-                            <td style="color:green"></td>
-                            <td style="color:green">BETA</td>
-                        </tr>
-                        <tr>
                             <td title="Forms in Orchard CMS Module">Humans</td>
                             <td style="color:green">BETA</td>
                             <td style="color:green"></td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
-                            <td style="color:green"></td>
-                            <td style="color:green">BETA</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
