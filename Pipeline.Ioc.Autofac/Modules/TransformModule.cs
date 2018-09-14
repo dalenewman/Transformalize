@@ -153,6 +153,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
 
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());

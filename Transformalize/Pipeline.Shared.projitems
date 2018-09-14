@@ -141,6 +141,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LogTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\OppositeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchingTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\RandomTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RowNumberTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\IncrementTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LastTransform.cs" />
