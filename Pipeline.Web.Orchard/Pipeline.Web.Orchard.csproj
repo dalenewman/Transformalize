@@ -232,10 +232,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\..\Transformalize.Transform.Humanizer\src\Transformalize.Transform.Humanizer\bin\$(Configuration)\Transformalize.Transform.Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.JavaScript, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\..\..\Transformalize\Pipeline.Command\bin\x64\$(Configuration)\Transformalize.Transform.JavaScript.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Transform.Jint">
       <HintPath>..\..\..\..\..\..\..\..\Transformalize.Transform.Jint\src\Transformalize.Transform.Jint\bin\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>

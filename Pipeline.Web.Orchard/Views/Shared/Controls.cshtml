@@ -73,8 +73,6 @@
         }
     </div>
 
-
-
     <div class="col-md-4">
 
         <div class="btn-group pull-right">
@@ -100,7 +98,7 @@
                     </button>
                     <ul class="dropdown-menu" id="mapStyles">
                         @foreach (var style in PipelineConfigurationPart.MapStyles) {
-                            <li><a id="@style.Value" href="">@style.Text</a></li>
+                            <li style="cursor: pointer;"><a id="@style.Value">@style.Text</a></li>
                         }
                     </ul>
                 </div>

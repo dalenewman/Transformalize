@@ -106,7 +106,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process = _processService.Resolve(part);
                     
-                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                    var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
                     if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
                         _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
                         process.Name = "File Not Found";
@@ -168,7 +168,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                                     } else {
                                                         _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
                                                     }
-                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Report", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
+                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Index", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
                                                     return _batchRedirectService.Redirect(referrer, batchParameters);
                                                 }
                                                 return _batchRedirectService.Redirect(action.Url, batchParameters);

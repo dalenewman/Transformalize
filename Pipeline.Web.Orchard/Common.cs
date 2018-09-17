@@ -49,11 +49,8 @@ namespace Pipeline.Web.Orchard {
             return Path.Combine(FileFolder, now.Year.ToString(), now.ToString("MM-MMM").ToUpper(), now.ToString("dd"));
         }
 
-        public static IDictionary<string, string> GetParameters(
-            HttpRequestBase request,
-            ISecureFileService secureFileService,
-            IOrchardServices orchard
-        ) {
+        public static IDictionary<string, string> GetParameters(HttpRequestBase request, IOrchardServices orchard, ISecureFileService secureFileService = null) {
+
             var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             if (request != null) {
                 if (request.QueryString != null) {
@@ -75,22 +72,24 @@ namespace Pipeline.Web.Orchard {
             }
 
             // handle input file
-            int inputFileId;
-            if (parameters.ContainsKey(InputFileIdName) && int.TryParse(parameters[InputFileIdName], out inputFileId)) {
-                var response = secureFileService.Get(inputFileId);
-                if (response.Status == 200) {
-                    parameters[InputFilePath] = response.Part.FullPath;
-                    parameters[InputFileName] = response.Part.FileName();
-                    parameters[InputFileTitleName] = response.Part.Title();
+            if (secureFileService != null) {
+                int inputFileId;
+                if (parameters.ContainsKey(InputFileIdName) && int.TryParse(parameters[InputFileIdName], out inputFileId)) {
+                    var response = secureFileService.Get(inputFileId);
+                    if (response.Status == 200) {
+                        parameters[InputFilePath] = response.Part.FullPath;
+                        parameters[InputFileName] = response.Part.FileName();
+                        parameters[InputFileTitleName] = response.Part.Title();
+                    } else {
+                        parameters[InputFilePath] = response.Message;
+                        parameters[InputFileName] = response.Message;
+                        parameters[InputFileTitleName] = response.Message;
+                    }
                 } else {
-                    parameters[InputFilePath] = response.Message;
-                    parameters[InputFileName] = response.Message;
-                    parameters[InputFileTitleName] = response.Message;
+                    parameters[InputFileIdName] = "0";
                 }
-            } else {
-                parameters[InputFileIdName] = "0";
             }
-
+            
             AddOrchardVariables(parameters, orchard, request);
             return parameters;
         }

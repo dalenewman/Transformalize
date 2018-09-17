@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Shorthand;
@@ -137,6 +138,7 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
 
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());
@@ -195,7 +197,11 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new OrchardRazorTransform(ctx.Resolve<ITemplateProcessor>(), c), new OrchardRazorTransform(null).GetSignatures());
 
             // xml
-            RegisterTransform(builder, (ctx, c) => new Transformalize.Transforms.FromXmlTransform(c), new Transformalize.Transforms.FromXmlTransform(null).GetSignatures());
+            // RegisterTransform(builder, (ctx, c) => new Transformalize.Transforms.FromXmlTransform(c), new Transformalize.Transforms.FromXmlTransform(null).GetSignatures());
+            RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ?
+                    new Transformalize.Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) :
+                    new Transformalize.Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
+            );
 
             // register the short hand
             builder.Register((c, p) => new TransformShorthandCustomizer(_shortHand, new[] {"fields", "calculated-fields"}, "t", "transforms", "method")).As<TransformShorthandCustomizer>().SingleInstance();

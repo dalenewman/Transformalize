@@ -69,6 +69,22 @@ namespace Pipeline.Web.Orchard {
                 new RouteDescriptor {
                     Priority = 11,
                     Route = new Route(
+                        "Pipeline/Export/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Export" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 11,
+                    Route = new Route(
                         "Pipeline/Headless/{id}",
                         new RouteValueDictionary {
                             {"area", Common.ModuleName },

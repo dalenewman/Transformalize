@@ -42,20 +42,16 @@ namespace Pipeline.Web.Orchard.Controllers {
     [ValidateInput(false), Themed]
     public class MapController : Controller {
 
-        private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page" };
-
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
-        private readonly ICfgService _cfgService;
         private readonly ISlugService _slugService;
         private readonly IAppDataFolder _appDataFolder;
         private readonly IBatchCreateService _batchCreateService;
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
-        private readonly IFileService _fileService;
         private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting };
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
@@ -79,14 +75,12 @@ namespace Pipeline.Web.Orchard.Controllers {
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
-            _cfgService = cfgService;
             _sortService = sortService;
             _slugService = slugService;
             _batchCreateService = batchCreateService;
             _batchWriteService = batchWriteService;
             _batchRunService = batchRunService;
             _batchRedirectService = batchRedirectService;
-            _fileService = fileService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -97,7 +91,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var timer = new Stopwatch();
             timer.Start();
 
-            var process = new Process { Name = "Report" };
+            var process = new Process { Name = "Map" };
 
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
             if (part == null) {
@@ -110,7 +104,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process = _processService.Resolve(part);
 
-                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                    var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
                     if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
                         _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
                         process.Name = "File Not Found";
@@ -118,8 +112,13 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process.Load(part.Configuration, parameters);
                     process.Mode = "map";
-                    process.Buffer = false; // no buffering for reports
-                    process.ReadOnly = true;  // force reporting to omit system fields
+                    process.Buffer = false; // no buffering for maps
+                    process.ReadOnly = true;  // force maps to omit system fields
+
+                    // no paging for map
+                    foreach (var entity in process.Entities) {
+                        entity.Page = 0;
+                    }
 
                     // secure actions
                     var actions = process.Actions.Where(a => !a.Before && !a.After && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
@@ -136,9 +135,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                         Common.TranslatePageParametersToEntities(process, parameters, "page");
 
-                        // change process for export and batch purposes
-                        var reportType = Request["output"] ?? "page";
-                        if (!_renderedOutputs.Contains(reportType)) {
+                        // change process for batch operations
+                        var reportType = Request["output"] ?? "map";
+                        if (reportType != "map") {
 
                             if (reportType == "batch" && Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
@@ -172,7 +171,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                                     } else {
                                                         _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
                                                     }
-                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Report", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
+                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Index", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
                                                     return _batchRedirectService.Redirect(referrer, batchParameters);
                                                 }
                                                 return _batchRedirectService.Redirect(action.Url, batchParameters);
@@ -191,10 +190,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                     }
                                 }
 
-                            } else { // export
-                                ConvertToExport(user, process, part, reportType, parameters);
-                                process.Load(process.Serialize(), parameters);
-                            }
+                            } 
                         }
 
                         if (Request["sort"] != null) {
@@ -212,10 +208,8 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                             if (!process.Errors().Any()) {
 
-                                var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                                 try {
 
-                                    runner.Execute(process);
                                     process.Request = "Run";
                                     process.Time = timer.ElapsedMilliseconds;
 
@@ -230,33 +224,6 @@ namespace Pipeline.Web.Orchard.Controllers {
                                         process.Message = "Ok";
                                     }
 
-                                    var o = process.Output();
-                                    switch (o.Provider) {
-                                        case "kml":
-                                        case "geojson":
-                                        case "file":
-                                            Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
-                                            switch (o.Provider) {
-                                                case "kml":
-                                                    Response.ContentType = "application/vnd.google-earth.kml+xml";
-                                                    break;
-                                                case "geojson":
-                                                    Response.ContentType = "application/vnd.geo+json";
-                                                    break;
-                                                default:
-                                                    Response.ContentType = "application/csv";
-                                                    break;
-                                            }
-                                            Response.Flush();
-                                            Response.End();
-                                            return new EmptyResult();
-                                        case "excel":
-                                            return new FilePathResult(o.File, Common.ExcelContentType) {
-                                                FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
-                                            };
-                                        default:  // page and map are rendered to page
-                                            break;
-                                    }
                                 } catch (Exception ex) {
                                     Logger.Error(ex, ex.Message);
                                     _orchardServices.Notifier.Error(T(ex.Message));
@@ -272,80 +239,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             return View(new ReportViewModel(process, part));
 
         }
-
-        private void ConvertToExport(string user, Process process, PipelineConfigurationPart part, string exportType, IDictionary<string, string> parameters) {
-            var o = process.Output();
-            switch (exportType) {
-                case "xlsx":
-                    var folder = Common.GetAppFolder();
-                    if (!_appDataFolder.DirectoryExists(folder)) {
-                        _appDataFolder.CreateDirectory(folder);
-                    }
-
-                    var fileName = Common.GetSafeFileName(user, _slugService.Slugify(part.Title()), "xlsx");
-
-                    o.Provider = "excel";
-                    o.File = _appDataFolder.MapPath(_appDataFolder.Combine(folder, fileName));
-                    break;
-                case "geojson":
-                    o.Stream = true;
-                    o.Provider = "geojson";
-                    o.File = _slugService.Slugify(part.Title()) + ".geojson";
-                    break;
-                case "kml":
-                    o.Stream = true;
-                    o.Provider = "kml";
-                    o.File = _slugService.Slugify(part.Title()) + ".kml";
-                    break;
-                default: //csv
-                    o.Stream = true;
-                    o.Provider = "file";
-                    o.Delimiter = ",";
-                    o.File = _slugService.Slugify(part.Title()) + ".csv";
-                    break;
-            }
-
-            parameters["page"] = "0";
-
-            foreach (var entity in process.Entities) {
-
-                entity.Page = 0;
-                entity.Fields.RemoveAll(f => f.System);
-
-                foreach (var field in entity.GetAllFields()) {
-                    if (field.Alias == Common.BatchValueFieldName) {
-                        field.Output = false;
-                    }
-                    field.T = string.Empty; // because short-hand has already been expanded
-                    field.Output = field.Output && field.Export == "defer" || field.Export == "true";
-                }
-            }
-        }
-
-        [Themed(false)]
-        [HttpGet]
-        public ActionResult Download(int id) {
-
-            var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
-
-            var process = new Process { Name = "Export" };
-
-            if (part == null) {
-                process.Name = "Not Found";
-                return new FileStreamResult(Common.GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
-            }
-
-            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
-                process.Name = "Not Authorized";
-                return new FileStreamResult(Common.GenerateStreamFromString(process.Serialize()), "text/xml") { FileDownloadName = id + ".xml" };
-            }
-
-            return new FileStreamResult(Common.GenerateStreamFromString(part.Configuration), "text/" + part.EditorMode) { FileDownloadName = _slugService.Slugify(part.Title()) + "." + part.EditorMode };
-
-        }
-
-
-
 
     }
 }

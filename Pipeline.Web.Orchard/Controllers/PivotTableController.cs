@@ -15,11 +15,7 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
@@ -27,14 +23,12 @@ using Orchard.Localization;
 using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
-using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using Orchard.Autoroute.Services;
 using Orchard.FileSystems.AppData;
 using Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
-using Transformalize.Configuration.Ext;
 using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;
 
@@ -43,21 +37,10 @@ namespace Pipeline.Web.Orchard.Controllers {
     [ValidateInput(false), Themed]
     public class PivotTableController : Controller {
 
-        private static readonly HashSet<string> _renderedOutputs = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "map", "page" };
-
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
-        private readonly ISortService _sortService;
+
         private readonly ISecureFileService _secureFileService;
-        private readonly ICfgService _cfgService;
-        private readonly ISlugService _slugService;
-        private readonly IAppDataFolder _appDataFolder;
-        private readonly IBatchCreateService _batchCreateService;
-        private readonly IBatchWriteService _batchWriteService;
-        private readonly IBatchRunService _batchRunService;
-        private readonly IBatchRedirectService _batchRedirectService;
-        private readonly IFileService _fileService;
-        private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting };
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 
@@ -76,18 +59,9 @@ namespace Pipeline.Web.Orchard.Controllers {
             IBatchRedirectService batchRedirectService,
             IFileService fileService
         ) {
-            _appDataFolder = appDataFolder;
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
-            _cfgService = cfgService;
-            _sortService = sortService;
-            _slugService = slugService;
-            _batchCreateService = batchCreateService;
-            _batchWriteService = batchWriteService;
-            _batchRunService = batchRunService;
-            _batchRedirectService = batchRedirectService;
-            _fileService = fileService;
             T = NullLocalizer.Instance;
             Logger = NullLogger.Instance;
         }
@@ -111,7 +85,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process = _processService.Resolve(part);
 
-                    var parameters = Common.GetParameters(Request, _secureFileService, _orchardServices);
+                    var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
 
                     process.Load(part.Configuration, parameters);
                     process.Mode = "pivot";

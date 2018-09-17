@@ -6,6 +6,7 @@ using Pipeline.Web.Orchard.Services.Contracts;
 namespace Pipeline.Web.Orchard.Services {
     public class ExportLinkService : IExportLinkService {
         public IHtmlString Create(HttpRequestBase request, string type) {
+
             var url = request.RawUrl.SetQueryParam("output", type);
             if (url.QueryParams.ContainsKey(Common.InputFileIdName) && url.QueryParams[Common.InputFileIdName].Equals("0")) {
                 url.RemoveQueryParam(Common.InputFileIdName);
@@ -27,6 +28,10 @@ namespace Pipeline.Web.Orchard.Services {
                 url.RemoveQueryParam("output");
                 return new HtmlString(url);
             }
+
+            var split = url.Path.Split(new[] {'/'});
+            split[split.Length - 2] = "Export";
+            url.Path = string.Join("/", split);
 
             return new HtmlString(url.SetQueryParam("output", type).ToString());
         }
