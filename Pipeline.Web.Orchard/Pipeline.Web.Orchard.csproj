@@ -71,6 +71,9 @@
     <Reference Include="CfgNet, Version=0.10.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.0.10.3\lib\net452\CfgNet.dll</HintPath>
     </Reference>
+    <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\DateMath.1.0.0\lib\net45\DateMath.dll</HintPath>
       <Private>True</Private>
@@ -82,9 +85,8 @@
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Elasticsearch.Net.5.6.0\lib\net45\Elasticsearch.Net.dll</HintPath>
     </Reference>
-    <Reference Include="ExcelDataReader, Version=3.1.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\ExcelDataReader.3.1.0\lib\net45\ExcelDataReader.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="ExcelDataReader, Version=3.4.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ExcelDataReader.3.4.0\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
     <Reference Include="Flurl, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Flurl.2.7.1\lib\net40\Flurl.dll</HintPath>
@@ -97,8 +99,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Jint, Version=0.0.0.0, Culture=neutral, PublicKeyToken=2e92ba9c8d81157f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Jint.2.11.23\lib\net451\Jint.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\..\packages\Jint.2.11.58\lib\net451\Jint.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -112,8 +113,8 @@
       <HintPath>..\..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NReco.LambdaParser, Version=1.0.7.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.7\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
+    <Reference Include="NReco.LambdaParser, Version=1.0.8.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.8\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
     </Reference>
     <Reference Include="OpenXmlPowerTools, Version=4.5.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>
@@ -131,6 +132,7 @@
     <Reference Include="System.Diagnostics.Contracts">
       <HintPath>..\..\..\..\..\..\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Diagnostics.Contracts\v4.0_4.0.0.0__b03f5f7f11d50a3a\System.Diagnostics.Contracts.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
       <Private>True</Private>

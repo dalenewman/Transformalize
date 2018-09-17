@@ -7,6 +7,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
     public class BetterFormat {
+
         private const string Pattern = "(?<={)[^}]+(?=})";
         public readonly Func<IRow, string> Format = row => string.Empty;
         public bool Valid { get; set; }
@@ -54,7 +55,13 @@ namespace Transformalize.Transforms {
                 foreach (var name in names) {
                     if (context.Entity.TryGetField(name, out var f)) {
                         fields.Add(f);
-                        format = format.Replace("{" + name, "{" + count);
+
+                        if (format.Contains("{" + name + "}")) {
+                            format = format.Replace("{" + name + "}", "{" + count + "}");
+                        } else if (format.Contains("{" + name + ":")) {
+                            format = format.Replace("{" + name + ":", "{" + count + ":");
+                        }
+
                         count++;
                     } else {
                         context.Error($"Invalid {name} place-holder found in {context.Field.Alias} format template.");

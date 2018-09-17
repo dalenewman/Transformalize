@@ -37,12 +37,18 @@ namespace Pipeline.Web.Orchard.Impl {
                 var field = f;
 
                 foreach (var t in field.Transforms) {
+
+                    if (t.Method == "convert" && t.Type == "string" && t.Format != string.Empty) {
+                        t.Method = "tostring";
+                    }
+
                     var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                     ITransform add;
                     if (TryTransform(ctx, transformContext, out add)) {
                         transforms.Add(add);
                     }
                 }
+
                 // add conversion if necessary
                 var lastType = transforms.Last().Returns;
                 if (lastType != null && field.Type != lastType) {

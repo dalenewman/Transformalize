@@ -61,7 +61,6 @@ namespace Transformalize.Providers.GeoJson {
 
             var textWriter = new StreamWriter(_stream);
             var jsonWriter = new JsonTextWriter(textWriter);
-            // var tableBuilder = new StringBuilder();
 
             jsonWriter.WriteStartObject(); //root
 

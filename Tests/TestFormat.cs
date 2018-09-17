@@ -36,13 +36,14 @@ namespace Tests {
           <fields>
             <add name='Field1' />
             <add name='Field2' />
-            <add name='Field3' />
+            <add name='Field3' type='double' />
           </fields>
           <calculated-fields>
             <add name='Format' t='copy(Field1,Field2,Field3).format({0}-{1}+{2} ).trim()' />
             <add name='BetterFormat' t='format({Field1}-{Field2}+{Field3} ).trim()' />
             <add name='FormatRepeats' t='copy(Field1,Field2,Field3).format({0}-{1}+{2}_{1})' />
             <add name='BetterFormatRepeats' t='format({Field1}-{Field2}+{Field3}_{Field2})' />
+            <add name='WithFormat' t='format({Field1:#.0} and {Field3:000.0000})' />
           </calculated-fields>
         </add>
       </entities>
@@ -56,6 +57,7 @@ namespace Tests {
             Assert.AreEqual("1-2+3", output[0][composer.Process.Entities.First().CalculatedFields.First(f=>f.Name == "BetterFormat")]);
             Assert.AreEqual("1-2+3_2", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "FormatRepeats")]);
             Assert.AreEqual("1-2+3_2", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "BetterFormatRepeats")]);
+            Assert.AreEqual("1 and 003.0000", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "WithFormat")]);
 
         }
     }
