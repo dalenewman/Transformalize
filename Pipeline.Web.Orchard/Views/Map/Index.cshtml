@@ -43,7 +43,6 @@
     Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js");
 
-    // var fields = entity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
     var activeParameters = Model.Process.GetActiveParameters();
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
     AppendMeta("description", title, ",");
@@ -53,14 +52,18 @@
 
     var latitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
     var longitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
+
     var colorField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-color");
     var sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size");
     var symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol");
     var descriptionField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-description");
+    var batchField = fields.FirstOrDefault(f => f.Alias.ToLower() == "batchvalue");
+
     var hasColor = colorField != null;
     var hasSize = sizeField != null;
     var hasSymbol = symbolField != null;
     var hasDescription = descriptionField != null;
+    var hasBatchValue = batchField != null;
 
 }
 
@@ -79,7 +82,8 @@
                     description: @(Html.Raw(hasDescription ? Newtonsoft.Json.JsonConvert.ToString(row[descriptionField]) : "\"Add geojson-description to output!\"")),
                     "marker-color": "@(hasColor ? "#" + row[colorField].ToString().TrimStart('#').Right(6) : "#0080ff")",
                     "marker-symbol": "@(hasSymbol ? row[symbolField] : "marker")",
-                    "marker-size": @(hasSize ? row[sizeField] : "1.0")
+                    "marker-size": @(hasSize ? row[sizeField] : "1.0"),
+                    "batch-value": @(Html.Raw(hasBatchValue ? Newtonsoft.Json.JsonConvert.ToString(row[batchField]) : "0"))
                 }
             },</text>
             } 
@@ -265,7 +269,7 @@
                                         "class": "bulk-action",
                                         style: "visibility: hidden",
                                         name: "row",
-                                        value: feature.properties.BatchValue
+                                        value: feature.properties["batch-value"]
                                     }).appendTo("#id_report");
                                 });
 
@@ -401,17 +405,6 @@
         }
     }
 
-    function updateBulkActions() {
-        var length = $(".bulk-action:checked").length;
-        var all = length === $(".bulk-action").length;
-        $(".bulk-action-link").each(function () {
-            var link = $(this);
-            var len = (all ? "All" : $('#select-all:checked').length > 0 ? length - 1 : length);
-            controls.bulkActionLength =  len;
-            link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + len + "</span>");
-        });
-    }
-
     $(document).ready(function() {
 
         function removeMessages() {
@@ -533,15 +526,6 @@
             console.log(expression);
             controls.setSort(expression);
             controls.submit(@(entity.Page == 0 ? 0 : 1));
-        });
-
-        $(":checkbox[name=select-all]").click(function () {
-            $(":checkbox[name=row]").prop("checked", this.checked);
-            updateBulkActions();
-        });
-
-        $(":checkbox[name=row]").click(function () {
-            updateBulkActions();
         });
 
     });

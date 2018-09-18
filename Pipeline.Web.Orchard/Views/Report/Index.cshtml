@@ -329,7 +329,8 @@
             });
             var $form = $('#id_report');
             $form.attr('method', 'POST');
-            $form.attr('action', '@(Url.Action("Index","Action", new { Model.Part.Id }))');
+            // $form.attr('action', '@(Url.Action("Index","Action", new { Model.Part.Id }))');
+            $form.attr('action', removeUrlParameter(window.location.href, "output"));
             $form.append('<input type="hidden" name="__RequestVerificationToken" value="@(Html.AntiForgeryTokenValueOrchard())" />');
             $form.append('<input type="hidden" name="action" value="'+description+'" />');
             $form.append('<input type="hidden" name="actionId" value="'+id+'" />');
@@ -517,16 +518,9 @@
 
     });
 
-    //-->
-</script>
-
-<script type="text/javascript">
-    //<!--
     $(document).ready(function() {
         SyntaxHighlighter.all();
     });
+
     //-->
 </script>
-
-
-

@@ -46,8 +46,6 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IProcessService _processService;
         private readonly ISortService _sortService;
         private readonly ISecureFileService _secureFileService;
-        private readonly ISlugService _slugService;
-        private readonly IAppDataFolder _appDataFolder;
         private readonly IBatchCreateService _batchCreateService;
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
@@ -71,12 +69,10 @@ namespace Pipeline.Web.Orchard.Controllers {
             IBatchRedirectService batchRedirectService,
             IFileService fileService
         ) {
-            _appDataFolder = appDataFolder;
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
             _sortService = sortService;
-            _slugService = slugService;
             _batchCreateService = batchCreateService;
             _batchWriteService = batchWriteService;
             _batchRunService = batchRunService;
@@ -129,108 +125,100 @@ namespace Pipeline.Web.Orchard.Controllers {
                         }
                     }
 
-                    var output = process.Output();
+                    Common.TranslatePageParametersToEntities(process, parameters, "page");
 
-                    if (_reportOutputs.Contains(output.Provider)) {
+                    if (Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
-                        Common.TranslatePageParametersToEntities(process, parameters, "page");
+                        var action = process.Actions.FirstOrDefault(a => a.Description == parameters["action"]);
 
-                        // change process for batch operations
-                        var reportType = Request["output"] ?? "map";
-                        if (reportType != "map") {
+                        if (action != null) {
 
-                            if (reportType == "batch" && Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
-
-                                var action = process.Actions.FirstOrDefault(a => a.Description == parameters["action"]);
-
-                                if (action != null) {
-
-                                    // check security
-                                    var actionPart = _orchardServices.ContentManager.Get(action.Id);
-                                    if (actionPart == null) {
-                                        return new HttpNotFoundResult(string.Format("The action id {0} does not refer to a content item id.", action.Id));
-                                    }
-
-                                    if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
-
-                                        // security okay
-                                        parameters["entity"] = process.Entities.First().Alias;
-                                        var batchParameters = _batchCreateService.Create(process, parameters);
-
-                                        Common.AddOrchardVariables(batchParameters, _orchardServices, Request);
-
-                                        batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
-                                        var count = _batchWriteService.Write(Request, process, batchParameters);
-
-                                        if (count > 0) {
-
-                                            if (_batchRunService.Run(action, batchParameters)) {
-                                                if (action.Url == string.Empty) {
-                                                    if (batchParameters.ContainsKey("BatchId")) {
-                                                        _orchardServices.Notifier.Information(T(string.Format("Processed {0} records in batch {1}.", count, batchParameters["BatchId"])));
-                                                    } else {
-                                                        _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
-                                                    }
-                                                    var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Index", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
-                                                    return _batchRedirectService.Redirect(referrer, batchParameters);
-                                                }
-                                                return _batchRedirectService.Redirect(action.Url, batchParameters);
-                                            }
-
-                                            var message = batchParameters.ContainsKey("BatchId") ? string.Format("Batch {0} failed.", batchParameters["BatchId"]) : "Batch failed.";
-                                            Logger.Error(message);
-                                            _orchardServices.Notifier.Error(T(message));
-                                            foreach (var key in batchParameters.Keys) {
-                                                Logger.Error("Batch Parameter {0} = {1}.", key, batchParameters[key]);
-                                            }
-                                            return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, message);
-                                        }
-                                    } else {
-                                        return new HttpUnauthorizedResult("You do not have access to this bulk action.");
-                                    }
-                                }
-
-                            } 
-                        }
-
-                        if (Request["sort"] != null) {
-                            _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
-                        }
-
-                        if (process.Errors().Any()) {
-                            foreach (var error in process.Errors()) {
-                                _orchardServices.Notifier.Add(NotifyType.Error, T(error));
-                            }
-                        } else {
-                            if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
-                                _orchardServices.WorkContext.Resolve<ISchemaHelper>().Help(process);
+                            // check security
+                            var actionPart = _orchardServices.ContentManager.Get(action.Id);
+                            if (actionPart == null) {
+                                return new HttpNotFoundResult(string.Format("The action id {0} does not refer to a content item id.", action.Id));
                             }
 
-                            if (!process.Errors().Any()) {
+                            if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, actionPart)) {
 
-                                try {
+                                // security okay
+                                parameters["entity"] = process.Entities.First().Alias;
+                                var batchParameters = _batchCreateService.Create(process, parameters);
 
-                                    process.Request = "Run";
-                                    process.Time = timer.ElapsedMilliseconds;
+                                Common.AddOrchardVariables(batchParameters, _orchardServices, Request);
 
-                                    if (process.Errors().Any()) {
-                                        foreach (var error in process.Errors()) {
-                                            _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                                batchParameters["count"] = parameters.ContainsKey("count") ? parameters["count"] : "0";
+                                var count = _batchWriteService.Write(Request, process, batchParameters);
+
+                                if (count > 0) {
+
+                                    if (_batchRunService.Run(action, batchParameters)) {
+                                        if (action.Url == string.Empty) {
+                                            if (batchParameters.ContainsKey("BatchId")) {
+                                                _orchardServices.Notifier.Information(T(string.Format("Processed {0} records in batch {1}.", count, batchParameters["BatchId"])));
+                                            } else {
+                                                _orchardServices.Notifier.Information(T(string.Format("Processed {0} records.", count)));
+                                            }
+                                            var referrer = HttpContext.Request.UrlReferrer == null ? Url.Action("Index", new { Id = id }) : HttpContext.Request.UrlReferrer.ToString();
+                                            return _batchRedirectService.Redirect(referrer, batchParameters);
                                         }
-                                        process.Status = 500;
-                                        process.Message = "There are errors in the pipeline.  See log.";
-                                    } else {
-                                        process.Status = 200;
-                                        process.Message = "Ok";
+                                        return _batchRedirectService.Redirect(action.Url, batchParameters);
                                     }
 
-                                } catch (Exception ex) {
-                                    Logger.Error(ex, ex.Message);
-                                    _orchardServices.Notifier.Error(T(ex.Message));
+                                    var message = batchParameters.ContainsKey("BatchId") ? string.Format("Batch {0} failed.", batchParameters["BatchId"]) : "Batch failed.";
+                                    Logger.Error(message);
+                                    _orchardServices.Notifier.Error(T(message));
+                                    foreach (var key in batchParameters.Keys) {
+                                        Logger.Error("Batch Parameter {0} = {1}.", key, batchParameters[key]);
+                                    }
+                                    return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, message);
                                 }
+                            } else {
+                                return new HttpUnauthorizedResult("You do not have access to this bulk action.");
+                            }
+                        }
+
+                    }
+
+
+                    if (Request["sort"] != null) {
+                        _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
+                    }
+
+                    if (process.Errors().Any()) {
+                        foreach (var error in process.Errors()) {
+                            _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                        }
+                    } else {
+                        if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
+                            _orchardServices.WorkContext.Resolve<ISchemaHelper>().Help(process);
+                        }
+
+                        if (!process.Errors().Any()) {
+
+                            try {
+
+                                process.Request = "Run";
+                                process.Time = timer.ElapsedMilliseconds;
+
+                                if (process.Errors().Any()) {
+                                    foreach (var error in process.Errors()) {
+                                        _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                                    }
+                                    process.Status = 500;
+                                    process.Message = "There are errors in the pipeline.  See log.";
+                                } else {
+                                    process.Status = 200;
+                                    process.Message = "Ok";
+                                }
+
+                            } catch (Exception ex) {
+                                Logger.Error(ex, ex.Message);
+                                _orchardServices.Notifier.Error(T(ex.Message));
                             }
                         }
                     }
+
                 } else {
                     _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
                 }
