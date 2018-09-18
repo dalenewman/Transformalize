@@ -55,13 +55,8 @@ namespace Transformalize.Transforms {
                 foreach (var name in names) {
                     if (context.Entity.TryGetField(name, out var f)) {
                         fields.Add(f);
-
-                        if (format.Contains("{" + name + "}")) {
-                            format = format.Replace("{" + name + "}", "{" + count + "}");
-                        } else if (format.Contains("{" + name + ":")) {
-                            format = format.Replace("{" + name + ":", "{" + count + ":");
-                        }
-
+                        format = format.Replace("{" + name + "}", "{" + count + "}");
+                        format = format.Replace("{" + name + ":", "{" + count + ":");
                         count++;
                     } else {
                         context.Error($"Invalid {name} place-holder found in {context.Field.Alias} format template.");
