@@ -15,21 +15,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Environment;
 using Cfg.Net.Ext;
 using Cfg.Net.Reader;
-using Transformalize.Configuration;
-using Transformalize.Contracts;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Context;
+using Transformalize.Contracts;
+using Transformalize.Impl;
+using Transformalize.Ioc.Autofac.Impl;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
-using Transformalize.Impl;
 using Parameter = Autofac.Core.Parameter;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -59,6 +60,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 if (ctx.IsRegisteredWithName<IDependency>("shorthand-p")) {
 
                     dependencies.Add(new DateMathModifier());
+                    dependencies.Add(new EnvironmentModifier(new NullPlaceHolderReplacer()));
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-p"));
                     process = GetProcess(ctx, p, dependencies);
 
@@ -69,6 +71,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     // transform parameters here?
                     var parameters = process.GetActiveParameters();
                     if (parameters.Any(pr => pr.Transforms.Any())) {
+
                         var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms }).ToList();
                         var len = fields.Count;
                         var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
@@ -202,6 +205,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         }
 
+        // this is confusing, refactor
         private static Process GetProcess(IComponentContext ctx, IEnumerable<Parameter> p, IEnumerable<IDependency> dependencies, string cfg = null) {
             var process = new Process(dependencies.ToArray());
             if (cfg != null) {

@@ -20,7 +20,9 @@ using Transformalize.Actions;
 using Transformalize.Contracts;
 
 namespace Transformalize.Ioc.Autofac {
+
     public class PipelineAction : IAction {
+
         private readonly ILifetimeScope _scope;
 
         public PipelineAction(ILifetimeScope scope) {

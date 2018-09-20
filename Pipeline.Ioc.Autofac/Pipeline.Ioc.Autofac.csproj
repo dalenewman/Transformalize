@@ -105,6 +105,7 @@
     <Compile Include="CancelTransform.cs" />
     <Compile Include="ConfigurationContainer.cs" />
     <Compile Include="FolderReader.cs" />
+    <Compile Include="Impl\NullPlaceHolderReplacer.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="LibaryVersionChecker.cs" />
     <Compile Include="Modules\ActionModule.cs" />
