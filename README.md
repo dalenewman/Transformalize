@@ -1,6 +1,6 @@
 # Transformalize
 
-Transformalize automates the movement of data into data warehouses, search engines, and other value-adding systems.
+Transformalize automates moving data into data warehouses, search engines, and other *value-adding* systems.
 
 It works with many data sources:
 
@@ -149,56 +149,45 @@ It works with many data sources:
 </table>
 </div>
 
-**Note**: The providers are being moved into plug-ins.
-
-Jobs are arranged in [XML](https://en.wikipedia.org/wiki/XML)
-or [JSON](https://en.wikipedia.org/wiki/JSON) and executed 
-with a [CLI](https://en.wikipedia.org/wiki/Command-line_interface) or 
-an [Orchard CMS](http://www.orchardproject.net/) module.
-
 ---
 
 ### Getting Started
 
-> * Introducing **`<connections/>`**
-> * **`<entities/>`**
-> * and the **`tfl.exe`** command line interface
+> This section introduces `<connections/>`, `<entities/>`, and the **`tfl.exe`** command line interface.
 
-I use the Northwind relational database for demonstration. To follow along, you need:
+This introduction to Transformalize uses the Northwind 
+relational database. To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
-* [NorthWind](http://www.microsoft.com/en-us/download/details.aspx?id=23654) on a local instance of SQL Server
-* an editor (recommended: [Visual Studio Code](https://code.visualstudio.com/) with [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize)) 
 * a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
+* this [northwind.sqlite](https://github.com/dalenewman/Transformalize/blob/master/Files/northwind.sqlite) database to use as input; found [here](http://www.microsoft.com/en-us/download/details.aspx?id=23654) and converted [here](https://www.rebasedata.com/convert-tsql-to-sqlite-online).
+* an editor like [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 
-First, get familiar with Northwind:
+First, take a look at the diagram below to get see a partial view of the NorthWind schema:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The diagram shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables.  Focus on *Order Details* because:
+This shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+tables.  Our main point of interest is *Order Details* because it contains sales and is related to 
+everything else.
 
-1. It contains sales transactions (money).
-2. It's related to everything.
-3. In data-warehousing terms, it's a [fact table](https://en.wikipedia.org/wiki/Fact_table).
+---
 
-Open your editor and paste this in:
+Transformalize jobs are arranged (aka *configured*) in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)).  Open your editor and paste this in:
 
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" 
-         provider="sqlserver"
-         server="localhost"
-         database="NorthWind" />
+    <add name="input" provider="sqlite" file="E:\Code\Transformalize\Files\NorthWindInput.sqlite3" />
   </connections>
   <entities>
-    <add name="Order Details" />
+    <add name="Order Details" page="1" size="5" />
   </entities>
 </cfg>
 ```
 
-The arrangment above defines the *input* as Northwind's `Order Details` table. Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
+The arrangment above defines the *input* as the *NorthWind.sqlite3* database's `Order Details` table. 
+Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -208,17 +197,12 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 10248,72,34.8000,5,0
 10249,14,18.6000,9,0
 10249,51,42.4000,40,0
-...
 </pre>
 
-> * Introducing **`<fields/>`** within **`<entities/>`**
-> * Specifying modes with the **`-m`** flag
-> * **`check`** mode
-
-Transformalize detected the fields and read the data. 
-This is handy, but if you want to modify or 
-create new fields, you must define your input fields. 
-You could hand-write them, or run `tfl` in `check` mode like this:
+Transformalize detected the field names and read 5 rows. 
+This is handy, but if you want to modify or create new fields, 
+you have to define what fields to extract. You could hand-write 
+fields, or run `tfl` in `check` mode like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -233,6 +217,11 @@ You could hand-write them, or run `tfl` in `check` mode like this:
 ...
 </pre>
 
+
+> * Introducing **`<fields/>`** within **`<entities/>`**
+> * Specifying modes with the **`-m`** flag
+> * **`check`** mode
+
 Instead of getting order details (the records), `check` mode 
 returns the detected fields. Copy them into the arrangement 
 like this:
@@ -240,7 +229,7 @@ like this:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlserver" database="NorthWind"/>
+    <add name="input" provider="sqlite" file="e:\Code\Transformalize\Files\NorthWindInput.sqlite3" />
   </connections>
   <entities>
     <add name="Order Details">

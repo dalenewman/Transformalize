@@ -75,7 +75,7 @@ namespace Transformalize.Providers.Ado {
                     if (_errors[i]) {
                         var value = reader.GetValue(i);
                         try {
-                            row[fields[i]] = _conversions[i](value);
+                            row[fields[i]] = fields[i].Type == "object" ? value : _conversions[i](value);
                         } catch (FormatException) {
                             _context.Error($"Could not convert value {value} in field {fields[i].Alias} to {fields[i].Type}");
                         }
@@ -89,7 +89,7 @@ namespace Transformalize.Providers.Ado {
                     if (reader.IsDBNull(i))
                         continue;
                     if (_errors[i]) {
-                        row[fields[i]] = _conversions[i](reader.GetValue(i));
+                        row[fields[i]] = fields[i].Type == "object" ? reader.GetValue(i) : _conversions[i](reader.GetValue(i));
                     } else {
                         row[fields[i]] = reader.GetValue(i);
                     }
