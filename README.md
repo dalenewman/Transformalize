@@ -204,13 +204,15 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 10249,51,42.4000,40,0
 </pre>
 
-![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Step01.gif "Step 1")
-
+![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step01.gif "Step 1")
 
 Transformalize detected the field names and read 5 rows. 
-This is handy, but if you want to modify or create new fields, 
-you have to define what fields to extract. You could hand-write 
-fields, or run `tfl` in `check` mode like this:
+This is handy, but if we want to modify or create new fields, 
+we have to define the input fields.
+
+> Introducing `<fields/>` and **`check`** mode
+
+We could hand-write fields, or run `tfl` in `check` mode like this:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -225,14 +227,9 @@ fields, or run `tfl` in `check` mode like this:
 ...
 </pre>
 
-
-> * Introducing **`<fields/>`** within **`<entities/>`**
-> * Specifying modes with the **`-m`** flag
-> * **`check`** mode
-
 Instead of getting order details (the records), `check` mode 
-returns the detected fields. Copy them into the arrangement 
-like this:
+parses and returns the arrangement. Copy the `<fields/>` into 
+the arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -253,6 +250,11 @@ like this:
   </entities>
 </cfg>
 ```
+
+![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
+
+
+
 
 > * Introducing The **`<calculated-fields/>`** section within **`<entities/>`**
 > * The **`t`** attribute (short for **t**ransformation)
