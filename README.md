@@ -253,12 +253,7 @@ the arrangement like this:
 
 ![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
 
-
-
-
-> * Introducing The **`<calculated-fields/>`** section within **`<entities/>`**
-> * The **`t`** attribute (short for **t**ransformation)
-> * and th **`js`** and **`round`** transformations
+> Introducing **`<calculated-fields/>`**, the **`t`** attribute, and the **`js`** and **`round`** transformations
 
 Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
 
@@ -284,19 +279,18 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 *Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
 may chain transformations as long as the output of one is compatible with the input of another.
 
-**Note**: Transforms are being moved into plug-ins (e.g. [Jint](https://github.com/dalenewman/Transformalize.Transform.Jint), [C#](https://github.com/dalenewman/Transformalize.Transform.CSharp), [Humanizer](https://github.com/dalenewman/Transformalize.Transform.Humanizer), [LambdaParser](https://github.com/dalenewman/Transformalize.Transform.LambdaParser), etc.).
-
 ### Output
 
 > Introducing **`init`** mode
 
-Without defining an output, `tfl` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. Add an output in `<connections/>`:
+Without defining an output, `tfl` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. 
+Add an output in `<connections/>` and also remove the `page` and `size` attributes in the `Order Details` entity:
 
 ```xml
 <connections>
-    <add name="input" provider="sqlserver" database="NorthWind"/>
-    <!-- add it here -->
-    <add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
+    <!-- add the output here -->
+    <add name="output" provider="sqlite" file="NorthWindOutput.sqlite3" />
 </connections>
 ```
 
@@ -324,7 +318,8 @@ Writing *Order Details* into SQLite frees up the console for logging.
 
 #### Mapping
 
-Transformalize doesn't *map* input to pre-existing output.  Instead, it creates a consistent output structure that is optimized for incremental updates.
+Transformalize doesn't *map* input to pre-existing output.  Instead, it creates a consistent output structure 
+that is optimized for incremental updates.
 
 You decide:
 
@@ -338,16 +333,23 @@ You decide:
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize performs incrementals.  To determine if an update or 
-insert is necessary, `tfl` compares input with output.
+An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize performs incrementals. 
+To determine if an update or insert is necessary, `tfl` compares input with output.
 
-While keys and hashes are used to compare, comparison is unnecessary when an input's provider is queryable and stores a record version.  A version is a value in a row that increments anytime the row's data is updated.  Many tables have these by design.  If not, SQL Server includes a `ROWVERSION` type that may be added to provide automatic versioning. Add one to `Order Details` like this:
+While keys and hashes are used to compare, comparison is unnecessary 
+when an input's provider is queryable and has a row version. 
+A row version increments anytime the row is inserted or updated. 
+Many tables have these by design, but if not, you can add them to a 
+table like this:
 
 ```sql
+/* MS-SQL */
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
+/* MySQL */
+ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ```
 
-Now let `tfl` know about `RowVersion` like this:
+Once added, we have to let `tfl` know about `RowVersion` like this:
 
 ```xml
 <entities>
@@ -366,6 +368,7 @@ Now let `tfl` know about `RowVersion` like this:
   </add>
 </entities>
 ```
+
 Adding a field changes output structure, so re-initialize like so:
 
 <pre style="font-size:smaller;">
@@ -382,7 +385,10 @@ info  | NorthWind |               | Time elapsed: 00:00:00.20
 </pre>
 
 With a `version` in place, the second run doesn't read and compare 
-un-changed data.
+un-changed data.  Unfortunately, the provider I'm using in this demo (Sqlite) 
+doesn't have an automatic row version.  Nevertheless, I wanted to 
+mention it because row versions should be used whenever 
+possible to make incrementals fast.
 
 ### Denormalization
 
@@ -405,20 +411,11 @@ to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
 
-Here is the process for adding entities:
-
-1. Identify or add a version field to the source if possible (optional)
-1. Add the entity to the `<entities/>` section.
-1. Run `tfl` in `check` mode to get field definitions (optional).  
-1. Add the fields to your new entity (in the arrangement)
-1. Set the version attribute on the entity (optional)
-1. Relate the new entity to the first entity
-  
-Follow the first 5 steps to add *Orders* to the arrangement. When finished, 
-the arrangement should have a new entity like this:
+If you add another entity to your arrangement in the same way we 
+added `Order Details`, you must relate it to the first entity. Here is what the `Orders` entity should look like:
 
 ```xml
-<add name="Orders" version="RowVersion">
+<add name="Orders">
   <fields>
     <add name="OrderID" type="int" primary-key="true" />
     <add name="CustomerID" length="5" />
@@ -434,7 +431,6 @@ the arrangement should have a new entity like this:
     <add name="ShipRegion" length="15" />
     <add name="ShipPostalCode" length="10" />
     <add name="ShipCountry" length="15" />
-    <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" length="8" />
   </fields>
 </add>
 ```
@@ -451,12 +447,9 @@ All entities must be related to the first entity in the `<relationships/>` secti
 follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your arrangement:
 
 ```xml
-  <relationships>
-    <add left-entity="Order Details" 
-         left-field="OrderID" 
-         right-entity="Orders" 
-         right-field="OrderID"/>
-  </relationships>
+<relationships>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
+</relationships>
 ```
 
 This tells Transformalize to use `OrderID` to relate the two entities. Now re-initialize 

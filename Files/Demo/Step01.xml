@@ -3,14 +3,6 @@
     <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
   </connections>
   <entities>
-    <add connection="input" name="Order Details" page="1" size="5">
-      <fields>
-        <add name="OrderID" type="long" primarykey="true" />
-        <add name="ProductID" type="long" primarykey="true" />
-        <add name="UnitPrice" type="decimal" precision="53" />
-        <add name="Quantity" type="long" />
-        <add name="Discount" type="decimal" precision="53" />
-      </fields>
-    </add>
+    <add name="Order Details" page="1" size="5"/>
   </entities>
 </cfg>

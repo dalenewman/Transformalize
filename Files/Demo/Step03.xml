@@ -1,0 +1,22 @@
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
+    <add name="output" provider="sqlite" file="NorthWindOutput.sqlite3" />
+  </connections>
+  <entities>
+    <add name="Order Details">
+      <fields>
+        <add name="OrderID" type="long" primarykey="true" />
+        <add name="ProductID" type="long" primarykey="true" />
+        <add name="UnitPrice" type="decimal" precision="53" />
+        <add name="Quantity" type="long" />
+        <add name="Discount" type="decimal" precision="53" />
+      </fields>
+      <calculated-fields>
+        <add name="Revenue"
+          type="decimal"
+          t="jint(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
+      </calculated-fields>
+    </add>
+  </entities>
+</cfg>

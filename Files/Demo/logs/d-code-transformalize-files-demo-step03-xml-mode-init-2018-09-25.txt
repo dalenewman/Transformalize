@@ -1,0 +1,7 @@
+2018-09-25 22:57:26 | warn  | NorthWind | Order Details |             | Un-supported types found. Switching javascript engine to jint for field Revenue
+2018-09-25 22:57:26 | warn  | NorthWind | Order Details |             | Initializing
+2018-09-25 22:57:26 | warn  | NorthWind | Order Details |             | Could not drop output view NorthWindOrder Details
+2018-09-25 22:57:26 | warn  | NorthWind | Order Details |             | Could not drop output NorthWindOrder DetailsTable
+2018-09-25 23:59:16 | warn  | NorthWind | Order Details |             | Un-supported types found. Switching javascript engine to jint for field Revenue
+2018-09-25 23:59:16 | warn  | NorthWind | Order Details |             | Initializing
+2018-09-25 23:59:36 | warn  | NorthWind | Order Details |             | Initializing
