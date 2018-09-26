@@ -155,30 +155,35 @@ It works with many data sources:
 
 > This section introduces `<connections/>`, `<entities/>`, and the **`tfl.exe`** command line interface.
 
-This introduction to Transformalize uses the Northwind 
-relational database. To follow along, you need:
+This introduction to Transformalize demonstrates it's ability to 
+denormalize a relational database and and load it into Elasticsearch and SOLR. 
+To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
-* a SQLite tool (e.g. [DB Browser for SQLite](http://sqlitebrowser.org))
-* this [northwind.sqlite](https://github.com/dalenewman/Transformalize/blob/master/Files/northwind.sqlite) database to use as input; found [here](http://www.microsoft.com/en-us/download/details.aspx?id=23654) and converted [here](https://www.rebasedata.com/convert-tsql-to-sqlite-online).
-* an editor like [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
+* [DB Browser for SQLite](http://sqlitebrowser.org)
+* this [NorthWindInput.sqlite3](https://github.com/dalenewman/Transformalize/blob/master/Files/NorthWindInput.sqlite3) database.
+* [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
+* optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
-First, take a look at the diagram below to get see a partial view of the NorthWind schema:
+First, take a look at the diagram below to get see a part of the NorthWind schema:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-This shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables.  Our main point of interest is *Order Details* because it contains sales and is related to 
-everything else.
+The eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+tables above are centered around *Order Details*.  We will start with it 
+because it's related to everything and stores the most interesting [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)).
 
 ---
 
-Transformalize jobs are arranged (aka *configured*) in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)).  Open your editor and paste this in:
+Transformalize jobs are arrangements (aka configurations) and may be 
+stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
+or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code. 
+Open your editor and paste this in:
 
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlite" file="E:\Code\Transformalize\Files\NorthWindInput.sqlite3" />
+    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5" />
@@ -186,7 +191,7 @@ Transformalize jobs are arranged (aka *configured*) in [XML](https://en.wikipedi
 </cfg>
 ```
 
-The arrangment above defines the *input* as the *NorthWind.sqlite3* database's `Order Details` table. 
+The arrangment above defines the *input* as the *NorthWindInput.sqlite3* database's `Order Details` table. 
 Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
 
 <pre style="font-size:smaller;">
@@ -198,6 +203,9 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 10249,14,18.6000,9,0
 10249,51,42.4000,40,0
 </pre>
+
+![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Step01.gif "Step 1")
+
 
 Transformalize detected the field names and read 5 rows. 
 This is handy, but if you want to modify or create new fields, 

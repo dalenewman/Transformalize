@@ -1,0 +1,8 @@
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
+  </connections>
+  <entities>
+    <add name="Order Details" page="1" size="5" />
+  </entities>
+</cfg>

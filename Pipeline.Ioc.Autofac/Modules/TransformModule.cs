@@ -179,6 +179,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new IsNumericTransform(c), new IsNumericTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RegexIsMatchTransform(c), new RegexIsMatchTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IsDaylightSavingsTransform(c), new IsDaylightSavingsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ToBoolTransform(c), new ToBoolTransform().GetSignatures());
 
             // uncategorized
             RegisterTransform(builder, (ctx, c) => new LogTransform(c), new LogTransform().GetSignatures());
