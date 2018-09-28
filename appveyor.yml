@@ -1,5 +1,6 @@
-version: 0.2.0.{build}
+version: 0.3.7.{build}
+image: Visual Studio 2017
 before_build:
-- cmd: nuget restore -Source https://api.nuget.org/v3/index.json -Source https://ci.appveyor.com/nuget/solrnet-022x5w7kmuba
+- cmd: nuget restore
 build:
   verbosity: minimal
