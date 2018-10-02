@@ -1,5 +1,8 @@
 # Transformalize
 
+[![Build status](https://ci.appveyor.com/api/projects/status/qm4auhkcv6b23abr?svg=true)](https://ci.appveyor.com/project/dalenewman/transformalize)
+[![NuGet](https://img.shields.io/nuget/v/Cfg-NET.svg?label=Nuget)](https://www.nuget.org/packages/Transformalize)
+
 Transformalize automates moving data into data warehouses, search engines, and other *value-adding* systems.
 
 It works with many data sources:
@@ -139,6 +142,11 @@ It works with many data sources:
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
                             <td style="color:green">&#10003;</td>
+                            <td style="color:green"></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.ActiveDirectory">Active Directory</a></td>
+                            <td style="color:green">BETA</td>
                             <td style="color:green"></td>
                         </tr>
                     </tbody>

@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net;
 
 namespace Transformalize.Configuration {
     public class Connection : CfgNode {
@@ -250,6 +250,8 @@ namespace Transformalize.Configuration {
 
         public override string ToString() {
             switch (Provider) {
+                case "activedirectory":
+                    return $"{Name} {Provider}";
                 case "mysql":
                 case "sqlserver":
                 case "postgresql":
@@ -325,10 +327,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = 60)]
         public double ScrollWindow { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string LinePattern { get; set; }
 
-        public Dictionary<int,string> Lines { get; set; } = new Dictionary<int, string>();
+        public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 
         protected override void PostValidate() {
             if (Command.Contains(" ")) {
@@ -337,5 +339,6 @@ namespace Transformalize.Configuration {
                 }
             }
         }
+
     }
 }

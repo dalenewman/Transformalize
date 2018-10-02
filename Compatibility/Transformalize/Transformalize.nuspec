@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.7-beta</version>
+    <version>0.3.8-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>Bug fixes, etc.</releaseNotes>
+    <releaseNotes>allow activedirectory provider and add 462 target</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
@@ -30,6 +30,9 @@
       <group targetFramework="net452">
         <dependency id="Cfg-NET" version="0.10.3" />
       </group>
+      <group targetFramework="net462">
+        <dependency id="Cfg-NET" version="0.10.4" />
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -38,5 +41,6 @@
     <file src="..\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
     <file src="..\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
     <file src="..\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
+    <file src="..\Transformalize.462\bin\Release\Transformalize.dll" target="lib\net462\Transformalize.dll" />
   </files>
 </package>

@@ -35,7 +35,7 @@ namespace Transformalize.Transforms {
             }
 
             switch (Received()) {
-                
+
                 case "string":
                     _transform = delegate (object o) {
                         var input = ((string)o).ToLower();
@@ -65,6 +65,9 @@ namespace Transformalize.Transforms {
                 case "int64":
                 case "long":
                     _transform = o => (long)o != 0;
+                    break;
+                case "byte":
+                    _transform = o => (byte)o != 0;
                     break;
                 case "byte[]":
                     _transform = o => ((byte[])o).Length != 0;
