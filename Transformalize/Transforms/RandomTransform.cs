@@ -21,41 +21,51 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
+
     public class RandomTransform : BaseTransform {
+
         private readonly Func<object> _transform;
         public RandomTransform(IContext context = null) : base(context, null) {
             if (IsMissingContext()) {
                 return;
             }
 
-            Returns = Context.Operation.Type;
+            Returns = Context.Field.Type;
 
-            if (!Context.Operation.Type.In("double", "int")) {
+            if (!Context.Field.Type.In("double", "int")) {
                 Run = false;
                 Context.Error($"The random operation in {Context.Field.Alias} must return an int or double.  It can not return a {Context.Operation.Type}.");
             }
 
             var random = Context.Operation.Seed > 0 ? new Random(Context.Operation.Seed) : new Random();
 
-            if (Context.Operation.Type == "int" && int.TryParse(Context.Field.Max.ToString(), out var max) && int.TryParse(Context.Field.Min.ToString(), out var min) && max > 0) {
+            if (Context.Field.Type == "int" && int.TryParse(Context.Field.Max.ToString(), out var max) && int.TryParse(Context.Field.Min.ToString(), out var min) && max > 0)
+            {
                 _transform = () => random.Next(min, max);
 
-            } else if (Context.Operation.Type == "double") {
+            }
+            else if (Context.Field.Type == "double")
+            {
                 _transform = () => random.NextDouble();
-            } else {
+            }
+            else
+            {
                 Run = false;
                 Context.Error("If the random operation returns an int, you must set the min and max attributes on the field.");
             }
 
         }
 
-        public override IRow Operate(IRow row) {
+        public override IRow Operate(IRow row)
+        {
             row[Context.Field] = _transform();
             return row;
         }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("random") {
+        public override IEnumerable<OperationSignature> GetSignatures()
+        {
+            yield return new OperationSignature("random")
+            {
                 Parameters = new List<OperationParameter> {
                     new OperationParameter("seed","0")
                 }

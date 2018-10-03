@@ -138,6 +138,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CondenseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\IdentityTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LogTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\OppositeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexMatchingTransform.cs" />

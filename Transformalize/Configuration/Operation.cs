@@ -278,6 +278,9 @@ namespace Transformalize.Configuration {
         [Cfg(value=0)]
         public int Seed { get; set; }
 
+        [Cfg(value=1)]
+        public int Step { get; set; }
+
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }

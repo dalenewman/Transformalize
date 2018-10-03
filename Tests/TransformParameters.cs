@@ -29,6 +29,7 @@ namespace Tests {
     public class TransformParameters {
 
         [TestMethod]
+        [Ignore]  // because you need humanize plugin
         public void A() {
 
             const string xml = @"
