@@ -52,7 +52,7 @@ namespace Transformalize.Providers.Ado {
             var updateVariables = string.Join(", ", _model.Fields.Where(f => f.Name != _model.KeyLongName).Select(f => $"{_cf.Enclose(f.Alias)} = @{f.FieldName()}"));
 
             var builder = new StringBuilder();
-            builder.AppendLine($"UPDATE {_output.Process.Flat}");
+            builder.AppendLine($"UPDATE {_output.Process.Name + _output.Process.FlatSuffix}");
             builder.AppendLine($"SET {updateVariables}");
             builder.AppendLine($"WHERE {_model.EnclosedKeyLongName} = @{_model.KeyShortName};");
 

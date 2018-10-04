@@ -52,7 +52,7 @@ namespace Transformalize.Ioc.Autofac {
                 },
                 Entities = new List<Entity>(1) {
                     new Entity {
-                        Name = process.InternalProvider == "sqlce" ? (readFirstTable ? firstTable : process.Flat) : process.Star,
+                        Name = process.InternalProvider == "sqlce" ? (readFirstTable ? firstTable : process.Name + process.FlatSuffix) : process.Name + process.StarSuffix,
                         Connection = "input",
                         Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {
                             Index = counter++,

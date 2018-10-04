@@ -72,7 +72,7 @@ namespace Transformalize.Providers.Ado {
             } else {
                 sql = $@"
                 SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))} 
-                FROM {_cf.Enclose(_output.Process.Star)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} 
+                FROM {_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} 
                 WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
             }
 

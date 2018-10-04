@@ -41,8 +41,8 @@ namespace Transformalize.Providers.Ado {
             Fields = output.Process.GetStarFields().SelectMany(e => e).ToArray();
             Aliases = Fields.Select(f => cf.Enclose(f.Alias)).ToArray();
             FieldNames = Fields.Select(f => f.FieldName()).ToArray();
-            Flat = cf.Enclose(output.Process.Flat);
-            Star = cf.Enclose(output.Process.Star);
+            Flat = cf.Enclose(output.Process.Name + output.Process.FlatSuffix);
+            Star = cf.Enclose(output.Process.Name + output.Process.StarSuffix);
             Threshold = output.Process.Entities.Select(e => e.BatchId).ToArray().Min() - 1;
             MasterEntity = output.Process.Entities.First();
             Master = cf.Enclose(MasterEntity.OutputTableName(output.Process.Name));

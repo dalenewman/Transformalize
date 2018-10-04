@@ -120,7 +120,7 @@ namespace Tests {
                         },
                         Entities = new List<Entity>(1) {
                             new Entity {
-                                Name = provider == "sqlce" ? process.Flat : process.Star,
+                                Name = provider == "sqlce" ? process.Name + process.FlatSuffix : process.Name + process.StarSuffix,
                                 Connection = "input",
                                 Fields = process.GetStarFields().SelectMany(f => f).Select(field => new Field {
                                     Name = field.Alias,

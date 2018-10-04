@@ -24,7 +24,6 @@ using Cfg.Net.Ext;
 using Cfg.Net.Serializers;
 using Transformalize.Configuration.Ext;
 using Transformalize.Context;
-using Transformalize.Extensions;
 using Transformalize.Logging;
 using System.Text.RegularExpressions;
 using Transformalize.Impl;
@@ -83,7 +82,7 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "", required = true, unique = true)]
         public string Name {
-            get { return _name; }
+            get => _name;
             set {
                 _name = value;
                 if (value == null)
@@ -93,6 +92,9 @@ namespace Transformalize.Configuration {
                 }
             }
         }
+
+        [Cfg(value="")]
+        public string Version { get; set; }
 
         /// <summary>
         /// Optional.
@@ -121,51 +123,28 @@ namespace Transformalize.Configuration {
         public string Mode { get; set; }
 
         /// <summary>
-        /// Optional.  Default is `false`
-        /// 
-        /// If true, process entities in parallel.  If false, process them one by one in their configuration order.
-        /// 
-        /// Parallel *on* allows you to process all the entities at the same time, potentially faster.
-        /// Parallel *off* allows you to have one entity depend on a previous entity's data.
-        /// </summary>
-        [Cfg(value = false)]
-        public bool Parallel { get; set; }
-
-        /// <summary>
         /// Optional.
         /// 
-        /// A choice between `defer`, `linq`, `parallel.linq`, `streams`, `parallel.streams`.
+        /// A choice between `defer`, `linq`, and `parallel.linq`.
         /// 
         /// The default `defer` defers this decision to the entity's Pipeline setting.
         /// </summary>
         [Cfg(value = "defer", domain = "defer,linq,parallel.linq", toLower = true)]
         public string Pipeline { get; set; }
 
-        /// <summary>
-        /// Optional (Name + "Star").
-        /// 
-        /// If your output is a relational database that supports views,
-        /// this is the name of a view that projects fields from all the entities in the
-        /// star-schema to a a single flat projection.
-        /// 
-        /// If not set, it is the combination of the process name, and "Star." 
-        /// </summary>
-        [Cfg(value = "")]
-        public string Star { get; set; }
+        [Cfg(value = "Star")]
+        public string StarSuffix { get; set; }
 
         /// <summary>
         /// Optional (false)
         /// 
-        /// If set to true, a <see cref="Flat"/> table is created with the same structure as the <see cref="Star"/> view, and all the data is copied into it.
+        /// If set to true, a <see cref="FlatSuffix"/> table is created with the same structure as the <see cref="Star"/> view, and all the data is copied into it.
         /// </summary>
         [Cfg(value = false)]
         public bool Flatten { get; set; }
 
-        /// <summary>
-        /// Optional (Name + "Flat")
-        /// </summary>
-        [Cfg(value = "")]
-        public string Flat { get; set; }
+        [Cfg(value = "Flat")]
+        public string FlatSuffix { get; set; }
 
         /// <summary>
         /// Optional.

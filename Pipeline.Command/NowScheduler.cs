@@ -79,7 +79,6 @@ namespace Transformalize.Command {
         }
 
         private static void SimplifyForOutput(Process process) {
-            process.Star = string.Empty;
             foreach (var connection in process.Connections) {
                 connection.Delimiters.Clear();
             }

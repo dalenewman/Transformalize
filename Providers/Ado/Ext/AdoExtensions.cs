@@ -66,8 +66,8 @@ namespace Transformalize.Providers.Ado.Ext {
 
         public static string SqlCreateFlatIndex(this OutputContext c, IConnectionFactory cf) {
             var pk = c.Process.Entities.First(e => e.IsMaster).GetAllFields().Where(f => f.PrimaryKey).Select(f => f.Alias).ToArray();
-            var indexName = ("UX_" + Utility.Identifier(c.Process.Flat + "_" + SqlKeyName(pk))).Left(128);
-            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Flat)} ({string.Join(",", pk.Select(cf.Enclose))})";
+            var indexName = ("UX_" + Utility.Identifier(c.Process.Name + c.Process.FlatSuffix + "_" + SqlKeyName(pk))).Left(128);
+            var sql = $"CREATE UNIQUE INDEX {cf.Enclose(indexName)} ON {cf.Enclose(c.Process.Name + c.Process.FlatSuffix)} ({string.Join(",", pk.Select(cf.Enclose))})";
             if (c.Process.Entities.First(e => e.IsMaster).IgnoreDuplicateKey && c.Connection.Provider == "sqlserver") {
                 sql += " WITH (IGNORE_DUP_KEY = ON)";
             }
@@ -323,13 +323,13 @@ FROM (
         }
 
         public static string SqlDropStarView(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {cf.Enclose(c.Process.Star)}{cf.Terminator}";
+            var sql = $"DROP {(cf.AdoProvider == AdoProvider.Access ? "TABLE" : "VIEW")} {cf.Enclose(c.Process.Name + c.Process.StarSuffix)}{cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }
 
         public static string SqlDropFlatTable(this OutputContext c, IConnectionFactory cf) {
-            var sql = $"DROP TABLE {cf.Enclose(c.Process.Flat)}{cf.Terminator}";
+            var sql = $"DROP TABLE {cf.Enclose(c.Process.Name + c.Process.FlatSuffix)}{cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }
@@ -399,7 +399,7 @@ FROM (
 
         public static string SqlCreateStarView(this IContext c, IConnectionFactory cf) {
             var select = SqlSelectStar(c, cf);
-            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Star)} AS {select}{cf.Terminator}";
+            var sql = $"CREATE VIEW {cf.Enclose(c.Process.Name + c.Process.StarSuffix)} AS {select}{cf.Terminator}";
             c.Debug(() => sql);
             return sql;
         }
@@ -412,11 +412,11 @@ FROM (
                 }
             }
 
-            var sql = $"CREATE TABLE {cf.Enclose(c.Process.Flat)}({string.Join(",", definitions)}, ";
+            var sql = $"CREATE TABLE {cf.Enclose(c.Process.Name + c.Process.FlatSuffix)}({string.Join(",", definitions)}, ";
             if (cf.AdoProvider == AdoProvider.SqLite) {
                 sql += $"PRIMARY KEY ({cf.Enclose(Constants.TflKey)} ASC));";
             } else {
-                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Process.Flat + "_tflkey")} PRIMARY KEY ({cf.Enclose(Constants.TflKey)})){cf.Terminator}";
+                sql += $"CONSTRAINT {Utility.Identifier("pk_" + c.Process.Name + c.Process.FlatSuffix + "_tflkey")} PRIMARY KEY ({cf.Enclose(Constants.TflKey)})){cf.Terminator}";
             }
             c.Debug(() => sql);
             return sql;

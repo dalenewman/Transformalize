@@ -26,13 +26,6 @@ namespace Transformalize.Configuration.Ext {
         private const string All = "*";
 
         public static void PreValidate(this Process p, Action<string> error, Action<string> warn) {
-            if (string.IsNullOrEmpty(p.Star)) {
-                p.Star = p.Name + "Star";
-            }
-
-            if (string.IsNullOrEmpty(p.Flat)) {
-                p.Flat = p.Name + "Flat";
-            }
 
             // process-level calculated fields are not input
             foreach (var calculatedField in p.CalculatedFields) {

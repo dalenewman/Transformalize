@@ -42,7 +42,6 @@ namespace Transformalize.Providers.File {
 
             return new Process {
                 Name = name,
-                Star = name,
                 Pipeline = "parallel.linq",
                 Connections = new List<Connection> {
                         new Connection{

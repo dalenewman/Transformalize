@@ -50,7 +50,7 @@ namespace Transformalize.Providers.Ado {
                 builder.AppendLine(@from);
             }
 
-            builder.AppendLine($"LEFT OUTER JOIN {_cf.Enclose(_output.Process.Flat)} flat ON (flat.{_model.EnclosedKeyLongName} = {masterAlias}.{_model.EnclosedKeyShortName}){close}");
+            builder.AppendLine($"LEFT OUTER JOIN {_cf.Enclose(_output.Process.Name + _output.Process.FlatSuffix)} flat ON (flat.{_model.EnclosedKeyLongName} = {masterAlias}.{_model.EnclosedKeyShortName}){close}");
             builder.AppendLine($" WHERE flat.{_model.EnclosedKeyLongName} IS NULL AND {masterAlias}.{_model.Batch} > @Threshold; ");
 
             var command = builder.ToString();

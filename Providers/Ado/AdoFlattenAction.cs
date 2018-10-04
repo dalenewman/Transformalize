@@ -86,7 +86,7 @@ namespace Transformalize.Providers.Ado {
                         builder.AppendLine(@from);
                     }
 
-                    builder.AppendFormat("INNER JOIN {0} flat ON (flat.{1} = {2}.{3})", _cf.Enclose(_output.Process.Flat), model.EnclosedKeyLongName, masterAlias, model.EnclosedKeyShortName);
+                    builder.AppendFormat("INNER JOIN {0} flat ON (flat.{1} = {2}.{3})", _cf.Enclose(_output.Process.Name + _output.Process.FlatSuffix), model.EnclosedKeyLongName, masterAlias, model.EnclosedKeyShortName);
 
                     builder.AppendLine($" WHERE {masterAlias}.{model.Batch} > @Threshold; ");
 
