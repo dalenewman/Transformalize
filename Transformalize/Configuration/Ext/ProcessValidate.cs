@@ -18,13 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Cfg.Net;
-using Transformalize.Context;
-using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Logging;
-using Transformalize.Transforms;
 
 namespace Transformalize.Configuration.Ext {
     public static class ProcessValidate {
@@ -33,6 +27,15 @@ namespace Transformalize.Configuration.Ext {
 
             if (p.ReadOnly && p.Buffer) {
                 error("A process can not be read-only and buffer at the same time.");
+            }
+
+            if (p.Environment != string.Empty && p.Environments.All(e => e.Name != p.Environment)) {
+                warn($"This process refers to an undefined environment: {p.Environment}");
+                if (p.Environments.Any()) {
+                    p.Environment = p.Environments.First().Name;
+                } else {
+                    error("Please remove the environment attribute or add a matching environment.");
+                }
             }
 
             ValidateDuplicateEntities(p, error);

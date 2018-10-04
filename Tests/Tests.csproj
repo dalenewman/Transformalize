@@ -65,9 +65,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize.Provider.SqlServer, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Transformalize.Provider.SqlServer.0.3.4-beta\lib\net452\Transformalize.Provider.SqlServer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -98,14 +95,12 @@
     <Compile Include="ConnectionTransform.cs" />
     <Compile Include="CopyTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />
-    <Compile Include="SlaveGetsInserts.cs" />
     <Compile Include="SubstringTest.cs" />
     <Compile Include="DistinctTest.cs" />
     <Compile Include="TwoEntitiesFileOutput.cs" />
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="DeleteHandler.cs" />
-    <Compile Include="DeleteIntegration.cs" />
     <Compile Include="DirectoryReader.cs" />
     <Compile Include="FilterTransform.cs" />
     <Compile Include="FormatXmlTransform.cs" />
@@ -113,7 +108,6 @@
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="IIfTransform.cs" />
     <Compile Include="InTransform.cs" />
-    <Compile Include="Inventory.cs" />
     <Compile Include="JavascriptTransform.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />
@@ -122,8 +116,6 @@
     <Compile Include="ShouldRun.cs" />
     <Compile Include="Signature.cs" />
     <Compile Include="SolrIntegration.cs" />
-    <Compile Include="FlatTable.cs" />
-    <Compile Include="StarView.cs" />
     <Compile Include="TagTransform.cs" />
     <Compile Include="Temp.cs" />
     <Compile Include="TestReader.cs" />
@@ -147,10 +139,6 @@
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Ado\Ado.csproj">
-      <Project>{03ab8b72-1a0c-4238-b369-c37147c42a48}</Project>
-      <Name>Ado</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
