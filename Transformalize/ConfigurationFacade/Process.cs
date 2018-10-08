@@ -16,16 +16,11 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Cfg.Net;
 using Cfg.Net.Contracts;
-using Cfg.Net.Ext;
 using Cfg.Net.Serializers;
-using Transformalize.Configuration.Ext;
-using Transformalize.Context;
+using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Impl;
 using Transformalize.Logging;
 
@@ -155,6 +150,31 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Id { get; set; }
+
+        public List<ConfigurationFacade.Parameter> GetActiveParameters() {
+            if (string.IsNullOrEmpty(Environment)) {
+
+                if (Parameters.Any()) {
+                    return Parameters;
+                }
+
+                if (Environments.Any()) {
+                    return Environments.First().Parameters;
+                }
+
+            }
+
+
+            var environment = Environment.ToLower();
+            foreach (var e in Environments) {
+                if (!string.IsNullOrEmpty(e.Name) && e.Name.ToLower() == environment) {
+                    return e.Parameters;
+                }
+            }
+
+
+            return new List<Parameter>();
+        }
 
     }
 }

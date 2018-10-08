@@ -29,13 +29,12 @@ namespace Tests {
     public class TransformParameters {
 
         [TestMethod]
-        [Ignore]  // because you need humanize plugin
         public void A() {
 
             const string xml = @"
     <add name='TestProcess'>
       <parameters>
-        <add name='humanized' value='camelCase' t='titleize().replace( ,-).upper()' />
+        <add name='humanized' value='camelCase' t='replace(lC,l-c).upper()' />
         <add name='replaced' value='TestEnvironment' t='replace(Test,Production).trimEnd(s).append(s)' />
       </parameters>
       <entities>

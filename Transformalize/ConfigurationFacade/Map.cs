@@ -16,8 +16,9 @@
 // limitations under the License.
 #endregion
 
-using System.Collections.Generic;
 using Cfg.Net;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Transformalize.ConfigurationFacade {
 
@@ -34,6 +35,16 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public List<MapItem> Items { get; set; }
+
+        public Configuration.Map ToMap() {
+            var map = new Configuration.Map {
+                Name = this.Name,
+                Connection = this.Connection,
+                Query = this.Query,
+                Items = this.Items.Select(mi => mi.ToMapItem()).ToList()
+            };
+            return map;
+        }
 
     }
 }

@@ -51,73 +51,73 @@ namespace Transformalize.Ioc.Autofac.Modules {
             );
 
             builder.Register((ctx, p) => {
-
-                Process process;
                 string cfg = null;
                 var dependencies = new List<IDependency> { ctx.Resolve<IReader>() };
 
                 // short hand for parameters is defined, try to transform parameters in advance
                 if (ctx.IsRegisteredWithName<IDependency>("shorthand-p")) {
 
-                    dependencies.Add(new DateMathModifier());
-                    dependencies.Add(new EnvironmentModifier(new NullPlaceHolderReplacer()));
-                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-p"));
-                    process = GetProcess(ctx, p, dependencies);
+                    if (ctx.IsRegisteredWithName<string>("cfg")) {
 
-                    if (process.Errors().Any()) {
-                        return process;
-                    }
+                        dependencies.Add(new DateMathModifier());
+                        dependencies.Add(new EnvironmentModifier(new NullPlaceHolderReplacer()));
+                        dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-p"));
+                        var preCfg = ctx.ResolveNamed<string>("cfg");
+                        var preProcess = new Transformalize.ConfigurationFacade.Process(preCfg, new Dictionary<string, string>(), dependencies.ToArray());
 
-                    // transform parameters here?
-                    var parameters = process.GetActiveParameters();
-                    if (parameters.Any(pr => pr.Transforms.Any())) {
+                        // transform parameters here?
+                        var parameters = preProcess.GetActiveParameters();
+                        if (parameters.Any(pr => pr.Transforms.Any())) {
 
-                        var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms }).ToList();
-                        var len = fields.Count;
-                        var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
-                        var mini = new Process {
-                            Name = "ParameterTransform",
-                            ReadOnly = true,
-                            Entities = new List<Entity> { entity },
-                            Maps = process.Maps,  // for map transforms
-                            Scripts = process.Scripts // for transforms that use scripts (e.g. js)
-                        };
+                            var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms.Select(o => o.ToOperation()).ToList() }).ToList();
+                            var len = fields.Count;
+                            var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
+                            var mini = new Process {
+                                Name = "ParameterTransform",
+                                ReadOnly = true,
+                                Entities = new List<Entity> { entity },
+                                Maps = preProcess.Maps.Select(m => m.ToMap()).ToList(),  // for map transforms
+                                Scripts = preProcess.Scripts.Select(s => s.ToScript()).ToList() // for transforms that use scripts (e.g. js)
+                            };
 
-                        mini.Check();  // very important to check after creating, as it runs validation and even modifies!
+                            mini.Check();  // very important to check after creating, as it runs validation and even modifies!
 
-                        if (!mini.Errors().Any()) {
+                            if (!mini.Errors().Any()) {
 
-                            // modification in Check() do not make it out to local variables so overwrite them
-                            fields = mini.Entities.First().Fields;
-                            entity = mini.Entities.First();
+                                // modification in Check() do not make it out to local variables so overwrite them
+                                fields = mini.Entities.First().Fields;
+                                entity = mini.Entities.First();
 
-                            var transforms = TransformFactory.GetTransforms(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity), fields);
+                                var transforms = TransformFactory.GetTransforms(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity), fields);
 
-                            // make an input out of the parameters
-                            var input = new List<IRow>();
-                            var row = new MasterRow(len);
-                            for (var i = 0; i < len; i++) {
-                                row[fields[i]] = parameters[i].Value;
-                            }
-                            input.Add(row);
+                                // make an input out of the parameters
+                                var input = new List<IRow>();
+                                var row = new MasterRow(len);
+                                for (var i = 0; i < len; i++) {
+                                    row[fields[i]] = parameters[i].Value;
+                                }
+                                input.Add(row);
 
-                            var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
+                                var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
 
-                            for (var i = 0; i < len; i++) {
-                                var parameter = parameters[i];
-                                parameter.Value = output[fields[i]].ToString();
-                                parameter.T = string.Empty;
-                                parameter.Transforms.Clear();
-                            }
+                                for (var i = 0; i < len; i++) {
+                                    var parameter = parameters[i];
+                                    parameter.Value = output[fields[i]].ToString();
+                                    parameter.T = string.Empty;
+                                    parameter.Transforms.Clear();
+                                }
 
-                            cfg = process.Serialize();
-                        } else {
-                            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity);
-                            foreach (var error in mini.Errors()) {
-                                context.Error(error);
+                                cfg = preProcess.Serialize();
+                            } else {
+                                var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity);
+                                foreach (var error in mini.Errors()) {
+                                    context.Error(error);
+                                }
                             }
                         }
                     }
+
+
                 }
 
                 // now do full process load with parameter, form, environment and short hand for fields
@@ -140,7 +140,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
 
-                process = GetProcess(ctx, p, dependencies, cfg);
+                var process = GetProcess(ctx, p, dependencies, cfg);
 
                 if (process.Errors().Any()) {
                     return process;

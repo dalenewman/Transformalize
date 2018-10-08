@@ -23,5 +23,9 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Name { get; set; }
+
+        public Configuration.NameReference ToNameReference() {
+            return new Configuration.NameReference { Name = this.Name };
+        }
     }
 }

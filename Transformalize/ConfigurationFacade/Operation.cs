@@ -16,10 +16,9 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Cfg.Net;
-using Transformalize.Contracts;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Transformalize.ConfigurationFacade {
 
@@ -96,7 +95,7 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string RunOperator { get; set; }
-        
+
         [Cfg]
         public string RunValue { get; set; }
 
@@ -261,6 +260,115 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Step { get; set; }
+
+        public Configuration.Operation ToOperation() {
+            var operation = new Configuration.Operation {
+                Name = this.Name,
+                AdministrativeArea = this.AdministrativeArea,
+                Body = this.Body,
+                CalendarWeekRule = this.CalendarWeekRule,
+                Class = this.Class,
+                Connection = this.Connection,
+                ContentType = this.ContentType,
+                Country = this.Country,
+                DayOfWeek = this.DayOfWeek,
+                Direction = this.Direction,
+                Domain = this.Domain,
+                Expression = this.Expression,
+                FalseField = this.FalseField,
+                Format = this.Format,
+                Fields = new List<Configuration.Field>(),
+                FromLat = this.FromLat,
+                FromLon = this.FromLon,
+                FromTimeZone = this.FromTimeZone,
+                HRef = this.HRef,
+                Latitude = this.Latitude,
+                Level = this.Level,
+                Locality = this.Locality,
+                Longitude = this.Longitude,
+                Method = this.Method,
+                Map = this.Map,
+                Mode = this.Mode,
+                NewValue = this.NewValue,
+                OldValue = this.OldValue,
+                Operator = this.Operator,
+                PaddingChar = this.PaddingChar,
+                Parameter = this.Parameter,
+                Pattern = this.Pattern,
+                PostalCode = this.PostalCode,
+                Role = this.Role,
+                Root = this.Root,
+                Route = this.Route,
+                RunField = this.RunField,
+                RunOperator = this.RunOperator,
+                RunValue = this.RunValue,
+                Script = this.Script,
+                Src = this.Src,
+                Tag = this.Tag,
+                Target = this.Target,
+                Template = this.Template,
+                TimeComponent = this.TimeComponent,
+                Title = this.Title,
+                ToLat = this.ToLat,
+                ToLon = this.ToLon,
+                ToTimeZone = this.ToTimeZone,
+                Separator = this.Separator,
+                TrimChars = this.TrimChars,
+                TrueField = this.TrueField,
+                Type = this.Type,
+                Units = this.Units,
+                Url = this.Url,
+                Value = this.Value,
+                WebMethod = this.WebMethod,
+                XmlMode = this.XmlMode
+            };
+
+
+            int.TryParse(this.Count, out var count);
+            operation.Count = count;
+
+            int.TryParse(this.Decimals, out var decimals);
+            operation.Decimals = decimals;
+
+            bool.TryParse(this.Encode, out var encode);
+            operation.Encode = encode;
+
+            bool.TryParse(this.Extension, out var extension);
+            operation.Extension = extension;
+
+            int.TryParse(this.Height, out var height);
+            operation.Height = height;
+
+            int.TryParse(this.Index, out var index);
+            operation.Index = index;
+
+            int.TryParse(this.Length, out var length);
+            operation.Length = length;
+
+            int.TryParse(this.Limit, out var limit);
+            operation.Limit = limit;
+
+            operation.Parameters = this.Parameters.Select(p => p.ToParameter()).ToList();
+
+            operation.Scripts = this.Scripts.Select(s => s.ToNameReference()).ToList();
+
+            int.TryParse(this.Seed, out var seed);
+            operation.Seed = seed;
+
+            int.TryParse(this.StartIndex, out var startIndex);
+            operation.StartIndex = startIndex;
+
+            int.TryParse(this.Time, out var time);
+            operation.Time = time;
+
+            int.TryParse(this.TotalWidth, out var totalWidth);
+            operation.TotalWidth = totalWidth;
+
+            int.TryParse(this.Width, out var width);
+            operation.Width = width;
+
+            return operation;
+        }
 
     }
 }

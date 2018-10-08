@@ -32,5 +32,15 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Value { get; set; }
+
+        public Configuration.MapItem ToMapItem() {
+            var mapItem = new Configuration.MapItem {
+                From = this.From,
+                Parameter = this.Parameter,
+                To = this.To,
+                Value = this.Value
+            };
+            return mapItem;
+        }
     }
 }

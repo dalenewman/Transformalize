@@ -16,10 +16,9 @@
 // limitations under the License.
 #endregion
 
-using System;
+using Cfg.Net;
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
 
@@ -72,6 +71,38 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Multiple { get; set; }
+
+        public Configuration.Parameter ToParameter() {
+            var parameter = new Configuration.Parameter {
+                Entity = this.Entity,
+                Field = this.Field,
+                InvalidCharacters = this.InvalidCharacters,
+                Name = this.Name,
+                Value = this.Value,
+                Scope = this.Scope,
+                Map = this.Map,
+                Type = this.Type,
+                Label = this.Label,
+                Format = this.Format,
+
+            };
+
+            int.TryParse(this.Width, out var width);
+            parameter.Width = width;
+
+            bool.TryParse(this.Multiple, out var multiple);
+            parameter.Multiple = multiple;
+
+            bool.TryParse(this.Input, out var input);
+            parameter.Input = input;
+
+            bool.TryParse(this.Prompt, out var prompt);
+            parameter.Prompt = prompt;
+
+            parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
+
+            return parameter;
+        }
 
     }
 
