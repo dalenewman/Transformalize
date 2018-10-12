@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -55,16 +55,19 @@ namespace Transformalize.Providers.Ado {
                 sql = $"SELECT MAX({_cf.Enclose(version.Name)}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
             }
 
-            _context.Debug(()=>$"Loading Input Version: {sql}");
+            _context.Debug(() => $"Loading Input Version: {sql}");
 
             try {
                 using (var cn = _cf.GetConnection()) {
                     cn.Open();
                     return cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
                 }
-            } catch (Exception ex) {
-                _context.Error(ex, ex.Message + " " + sql);
-                throw;
+            } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Error retrieving max version from {_context.Connection.Name}, {_context.Entity.Alias}.");
+                _context.Error(ex.Message);
+                _context.Debug(() => ex.StackTrace);
+                _context.Debug(() => sql);
+                return null;
             }
         }
 

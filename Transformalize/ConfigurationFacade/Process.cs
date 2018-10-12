@@ -151,7 +151,7 @@ namespace Transformalize.ConfigurationFacade {
         [Cfg]
         public string Id { get; set; }
 
-        public List<ConfigurationFacade.Parameter> GetActiveParameters() {
+        public List<Parameter> GetActiveParameters() {
             if (string.IsNullOrEmpty(Environment)) {
 
                 if (Parameters.Any()) {
@@ -162,16 +162,14 @@ namespace Transformalize.ConfigurationFacade {
                     return Environments.First().Parameters;
                 }
 
-            }
-
-
-            var environment = Environment.ToLower();
-            foreach (var e in Environments) {
-                if (!string.IsNullOrEmpty(e.Name) && e.Name.ToLower() == environment) {
-                    return e.Parameters;
+            } else {
+                var environment = Environment.ToLower();
+                foreach (var e in Environments) {
+                    if (!string.IsNullOrEmpty(e.Name) && e.Name.ToLower() == environment) {
+                        return e.Parameters;
+                    }
                 }
             }
-
 
             return new List<Parameter>();
         }

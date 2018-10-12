@@ -15,15 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
+
     public class AdoOutputProvider : IOutputProvider {
 
         private readonly OutputContext _context;
@@ -49,16 +50,29 @@ namespace Transformalize.Providers.Ado {
 
             var version = _context.Entity.GetVersionField();
             string sql;
+            string objectName;
 
             switch (_cf.AdoProvider) {
                 case AdoProvider.PostgreSql:
-                    sql = $"SELECT {_cf.Enclose(version.Alias)} FROM {_cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name))} WHERE {_cf.Enclose(Constants.TflDeleted)} = false ORDER BY {_cf.Enclose(version.Alias)} DESC LIMIT 1;";
+                    objectName = _cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name));
                     break;
                 case AdoProvider.SqlCe:
-                    sql = $"SELECT MAX({_cf.Enclose(version.FieldName())}) FROM {_cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name))} WHERE {_cf.Enclose(_context.Entity.TflDeleted().FieldName())} = 0;";
+                    objectName = _cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name));
                     break;
                 default:
-                    sql = $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {_cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name))} WHERE {_cf.Enclose(Constants.TflDeleted)} = 0;";
+                    objectName = _cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name));
+                    break;
+            }
+
+            switch (_cf.AdoProvider) {
+                case AdoProvider.PostgreSql:
+                    sql = $"SELECT {_cf.Enclose(version.Alias)} FROM {objectName} WHERE {_cf.Enclose(Constants.TflDeleted)} = false ORDER BY {_cf.Enclose(version.Alias)} DESC LIMIT 1;";
+                    break;
+                case AdoProvider.SqlCe:
+                    sql = $"SELECT MAX({_cf.Enclose(version.FieldName())}) FROM {objectName} WHERE {_cf.Enclose(_context.Entity.TflDeleted().FieldName())} = 0;";
+                    break;
+                default:
+                    sql = $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {objectName} WHERE {_cf.Enclose(Constants.TflDeleted)} = 0;";
                     break;
             }
 
@@ -69,9 +83,12 @@ namespace Transformalize.Providers.Ado {
                     _cn.Open();
                 }
                 return _cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
-            } catch (Exception ex) {
-                _context.Error(ex, ex.Message + " " + sql);
-                throw;
+            } catch (System.Data.Common.DbException ex) {
+                _context.Error($"Error retrieving maximum version from {_context.Connection.Name}, {objectName}.");
+                _context.Error(ex.Message);
+                _context.Debug(() => ex.StackTrace);
+                _context.Debug(() => sql);
+                return null;
             }
         }
 
@@ -84,14 +101,38 @@ namespace Transformalize.Providers.Ado {
                 _cn.Open();
             }
             var sql = _context.SqlControlLastBatchId(_cf);
-            return _cn.ExecuteScalar<int>(sql) + 1;
+
+            var result = 0;
+            try {
+                result = _cn.ExecuteScalar<int>(sql) + 1;
+            } catch (System.Data.Common.DbException e) {
+                _context.Error(e.Message);
+                _context.Debug(() => sql);
+                _context.Debug(() => e.StackTrace);
+            }
+
+            return result;
+
         }
 
         public int GetMaxTflKey() {
             if (_cn.State != ConnectionState.Open) {
                 _cn.Open();
             }
-            return _cn.ExecuteScalar<int>($"SELECT MAX({_cf.Enclose(_context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name))};");
+
+            var tableName = _context.Entity.OutputTableName(_context.Process.Name);
+            var sql = $"SELECT MAX({_cf.Enclose(_context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(tableName)};";
+            var result = 0;
+            try {
+                result = _cn.ExecuteScalar<int>(sql);
+            } catch (System.Data.Common.DbException e) {
+                _context.Error($"Error retrieving maximum surrogate key (TflKey) from {tableName}.");
+                _context.Error(e.Message);
+                _context.Debug(() => sql);
+                _context.Debug(() => e.StackTrace);
+            }
+
+            return result;
         }
 
         public void Initialize() {

@@ -24,7 +24,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
     /// Inherit from EntityModule and override LoadEntity when want to perform something on every entity.
     /// </summary>
     public abstract class EntityModule : Module {
-        readonly Process _process;
+        private readonly Process _process;
 
         protected EntityModule() { }
 

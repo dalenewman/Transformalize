@@ -422,6 +422,9 @@
     <Content Include="msvcr120.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="plugins\Dapper.dll" />
+    <Content Include="plugins\Transformalize.Provider.SqlServer.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Provider.SqlServer.dll" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="files\solr\data\" />

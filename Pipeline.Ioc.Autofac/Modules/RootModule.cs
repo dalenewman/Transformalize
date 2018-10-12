@@ -51,82 +51,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
             );
 
             builder.Register((ctx, p) => {
-                string cfg = null;
-                var dependencies = new List<IDependency> { ctx.Resolve<IReader>() };
 
-                // short hand for parameters is defined, try to transform parameters in advance
-                if (ctx.IsRegisteredWithName<IDependency>("shorthand-p")) {
-
-                    if (ctx.IsRegisteredWithName<string>("cfg")) {
-
-                        dependencies.Add(new DateMathModifier());
-                        dependencies.Add(new EnvironmentModifier(new NullPlaceHolderReplacer()));
-                        dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-p"));
-                        var preCfg = ctx.ResolveNamed<string>("cfg");
-                        var preProcess = new Transformalize.ConfigurationFacade.Process(preCfg, new Dictionary<string, string>(), dependencies.ToArray());
-
-                        // transform parameters here?
-                        var parameters = preProcess.GetActiveParameters();
-                        if (parameters.Any(pr => pr.Transforms.Any())) {
-
-                            var fields = parameters.Select(pr => new Field { Name = pr.Name, Alias = pr.Name, Default = pr.Value, Type = pr.Type, Transforms = pr.Transforms.Select(o => o.ToOperation()).ToList() }).ToList();
-                            var len = fields.Count;
-                            var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
-                            var mini = new Process {
-                                Name = "ParameterTransform",
-                                ReadOnly = true,
-                                Entities = new List<Entity> { entity },
-                                Maps = preProcess.Maps.Select(m => m.ToMap()).ToList(),  // for map transforms
-                                Scripts = preProcess.Scripts.Select(s => s.ToScript()).ToList() // for transforms that use scripts (e.g. js)
-                            };
-
-                            mini.Check();  // very important to check after creating, as it runs validation and even modifies!
-
-                            if (!mini.Errors().Any()) {
-
-                                // modification in Check() do not make it out to local variables so overwrite them
-                                fields = mini.Entities.First().Fields;
-                                entity = mini.Entities.First();
-
-                                var transforms = TransformFactory.GetTransforms(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity), fields);
-
-                                // make an input out of the parameters
-                                var input = new List<IRow>();
-                                var row = new MasterRow(len);
-                                for (var i = 0; i < len; i++) {
-                                    row[fields[i]] = parameters[i].Value;
-                                }
-                                input.Add(row);
-
-                                var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
-
-                                for (var i = 0; i < len; i++) {
-                                    var parameter = parameters[i];
-                                    parameter.Value = output[fields[i]].ToString();
-                                    parameter.T = string.Empty;
-                                    parameter.Transforms.Clear();
-                                }
-
-                                cfg = preProcess.Serialize();
-                            } else {
-                                var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity);
-                                foreach (var error in mini.Errors()) {
-                                    context.Error(error);
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-
-                // now do full process load with parameter, form, environment and short hand for fields
                 var placeHolderStyle = "@()";
                 if (ctx.IsRegisteredWithName<string>("placeHolderStyle")) {
                     placeHolderStyle = ctx.ResolveNamed<string>("placeHolderStyle");
                 }
 
-                dependencies = new List<IDependency> {
+                var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     new FormParameterModifier(new DateMathModifier()),
                     new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
@@ -140,7 +71,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
 
-                var process = GetProcess(ctx, p, dependencies, cfg);
+                var process = GetProcess(ctx, p, dependencies, TransformConfiguration(ctx));
 
                 if (process.Errors().Any()) {
                     return process;
@@ -203,6 +134,85 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
 
+        }
+
+        private static string TransformConfiguration(IComponentContext ctx) {
+
+            // short hand for parameters is defined, try to transform parameters in advance
+            if (!ctx.IsRegisteredWithName<IDependency>("shorthand-p"))
+                return null;
+
+            if (!ctx.IsRegisteredWithName<string>("cfg"))
+                return null;
+
+            var dependencies = new List<IDependency> {
+                ctx.Resolve<IReader>(),
+                new DateMathModifier(),
+                new EnvironmentModifier(new NullPlaceHolderReplacer()),
+                ctx.ResolveNamed<IDependency>("shorthand-p")
+            };
+
+            var preCfg = ctx.ResolveNamed<string>("cfg");
+            var preProcess = new ConfigurationFacade.Process(preCfg, new Dictionary<string, string>(), dependencies.ToArray());
+
+            var parameters = preProcess.GetActiveParameters();
+            if (!parameters.Any(pr => pr.Transforms.Any()))
+                return null;
+
+            var fields = parameters.Select(pr => new Field {
+                Name = pr.Name,
+                Alias = pr.Name,
+                Default = pr.Value,
+                Type = pr.Type,
+                Transforms = pr.Transforms.Select(o => o.ToOperation()).ToList()
+            }).ToList();
+            var len = fields.Count;
+            var entity = new Entity { Name = "Parameters", Alias = "Parameters", Fields = fields };
+            var mini = new Process {
+                Name = "ParameterTransform",
+                ReadOnly = true,
+                Entities = new List<Entity> { entity },
+                Maps = preProcess.Maps.Select(m => m.ToMap()).ToList(), // for map transforms
+                Scripts = preProcess.Scripts.Select(s => s.ToScript()).ToList() // for transforms that use scripts (e.g. js)
+            };
+
+            mini.Check(); // very important to check after creating, as it runs validation and even modifies!
+
+            if (!mini.Errors().Any()) {
+
+                // modification in Check() do not make it out to local variables so overwrite them
+                fields = mini.Entities.First().Fields;
+                entity = mini.Entities.First();
+
+                var transforms = TransformFactory.GetTransforms(ctx, new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity), fields);
+
+                // make an input out of the parameters
+                var input = new List<IRow>();
+                var row = new MasterRow(len);
+                for (var i = 0; i < len; i++) {
+                    row[fields[i]] = parameters[i].Value;
+                }
+
+                input.Add(row);
+
+                var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
+
+                for (var i = 0; i < len; i++) {
+                    var parameter = parameters[i];
+                    parameter.Value = output[fields[i]].ToString();
+                    parameter.T = string.Empty;
+                    parameter.Transforms.Clear();
+                }
+
+                return preProcess.Serialize();
+            }
+
+            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), mini, entity);
+            foreach (var error in mini.Errors()) {
+                context.Error(error);
+            }
+
+            return null;
         }
 
         // this is confusing, refactor

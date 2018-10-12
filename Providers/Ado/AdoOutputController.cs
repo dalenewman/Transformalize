@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Dapper;
 using System;
 using System.Data;
 using System.Diagnostics;
-using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
@@ -146,15 +146,24 @@ namespace Transformalize.Providers.Ado {
                     cmd.ExecuteNonQuery();
 
                 } else {
-                    cn.Execute(sql, new {
-                        Inserts = Convert.ToInt64(Context.Entity.Inserts),
-                        Updates = Convert.ToInt64(Context.Entity.Updates),
-                        Deletes = Convert.ToInt64(Context.Entity.Deletes),
-                        End = DateTime.Now,
-                        Entity = Context.Entity.Alias,
-                        Input = Context.Entity.Connection,
-                        Context.Entity.BatchId
-                    });
+                    try {
+                        cn.Execute(sql, new {
+                            Inserts = Convert.ToInt64(Context.Entity.Inserts),
+                            Updates = Convert.ToInt64(Context.Entity.Updates),
+                            Deletes = Convert.ToInt64(Context.Entity.Deletes),
+                            End = DateTime.Now,
+                            Entity = Context.Entity.Alias,
+                            Input = Context.Entity.Connection,
+                            Context.Entity.BatchId
+                        });
+                    } catch (System.Data.Common.DbException e) {
+                        Context.Error("Error writing to the control table.");
+                        Context.Error(e.Message);
+                        Context.Debug(() => e.StackTrace);
+                        Context.Debug(() => sql);
+                        return;
+                    }
+
                 }
                 if (cn.State != ConnectionState.Closed) {
                     cn.Close();

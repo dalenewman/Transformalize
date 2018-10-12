@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -33,7 +34,7 @@ namespace Transformalize.Providers.Ado {
         private readonly Field[] _fields;
         private readonly IConnectionFactory _cf;
         private readonly ReadFrom _readFrom;
-        readonly AdoRowCreator _rowCreator;
+        private readonly AdoRowCreator _rowCreator;
         private readonly string _filter;
         private readonly string _schemaPrefix;
 
@@ -44,7 +45,7 @@ namespace Transformalize.Providers.Ado {
                 ? context.Process.Connections.First(c => c.Name == "output")
                 : context.Process.Connections.First(c => c.Name == context.Entity.Connection);
             _tableOrView = readFrom == ReadFrom.Output ? context.Entity.OutputTableName(context.Process.Name) : context.Entity.Name;
-            _schemaPrefix = readFrom == ReadFrom.Output ? string.Empty : (context.Entity.Schema == string.Empty ? string.Empty : cf.Enclose(context.Entity.Schema) + "." );
+            _schemaPrefix = readFrom == ReadFrom.Output ? string.Empty : (context.Entity.Schema == string.Empty ? string.Empty : cf.Enclose(context.Entity.Schema) + ".");
             _filter = readFrom == ReadFrom.Output ? $"WHERE {cf.Enclose(_context.Entity.TflDeleted().FieldName())} != 1" : string.Empty;
             _fields = fields;
             _readFrom = readFrom;
@@ -65,7 +66,14 @@ namespace Transformalize.Providers.Ado {
                     {_filter};";
                 _context.Debug(() => cmd.CommandText);
 
-                var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+                IDataReader reader;
+                try {
+                    reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+                } catch (System.Data.Common.DbException e) {
+                    _context.Error($"Error reading data from {_connection.Name}, {_tableOrView}.");
+                    _context.Error(e.Message);
+                    yield break;
+                }
 
                 while (reader.Read()) {
                     _rowCount++;

@@ -15,18 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Cfg.Net;
 using Cfg.Net.Contracts;
 using Cfg.Net.Ext;
 using Cfg.Net.Serializers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Transformalize.Configuration.Ext;
 using Transformalize.Context;
-using Transformalize.Logging;
-using System.Text.RegularExpressions;
 using Transformalize.Impl;
+using Transformalize.Logging;
 
 namespace Transformalize.Configuration {
 
@@ -93,7 +93,7 @@ namespace Transformalize.Configuration {
             }
         }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Version { get; set; }
 
         /// <summary>
@@ -320,6 +320,10 @@ namespace Transformalize.Configuration {
 
             if (Entities.Any()) {
                 Entities.First().IsMaster = true;
+            }
+
+            if (Mode.StartsWith("@")) {
+                Warn($"Mode is {Mode}.");
             }
 
             ModifyLogLimits();
