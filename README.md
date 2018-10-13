@@ -226,8 +226,8 @@ We could hand-write fields, or run `tfl` in `check` mode like this:
 > tfl -a NorthWind.xml <strong>-m check</strong>
 ...
 &lt;fields&gt;
-  &lt;add name="OrderID" type="int" primarykey="true" /&gt;
-  &lt;add name="ProductID" type="int" primarykey="true" /&gt;
+  &lt;add name="OrderID" type="int" primary-key="true" /&gt;
+  &lt;add name="ProductID" type="int" primary-key="true" /&gt;
   &lt;add name="UnitPrice" type="decimal" precision="19" scale="4" /&gt;
   &lt;add name="Quantity" type="short" /&gt;
   &lt;add name="Discount" type="single" /&gt;
@@ -287,12 +287,11 @@ may chain transformations as long as the output of one is compatible with the in
 
 ![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
 
-
 ### Output
 
 > Introducing **`init`** mode
 
-Without defining an output, `tfl` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. 
+Without an output, `tfl.exe` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. 
 Add an output in `<connections/>` and also remove the `page` and `size` attributes in the `Order Details` entity:
 
 ```xml
@@ -302,6 +301,9 @@ Add an output in `<connections/>` and also remove the `page` and `size` attribut
     <add name="output" provider="sqlite" file="NorthWindOutput.sqlite3" />
 </connections>
 ```
+
+![Step03](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step03.gif "Step 3")
+
 
 ### Initialization
 

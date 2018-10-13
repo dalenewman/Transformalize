@@ -1,16 +1,16 @@
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
-    <add name="output" provider="sqlite" file="NorthWindOutput.sqlite3" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
+    <add name="output" provider="sqlite" file="northwind.sqlite3" />
   </connections>
   <entities>
     <add name="Order Details">
       <fields>
-        <add name="OrderID" type="long" primarykey="true" />
-        <add name="ProductID" type="long" primarykey="true" />
-        <add name="UnitPrice" type="decimal" precision="53" />
-        <add name="Quantity" type="long" />
-        <add name="Discount" type="decimal" precision="53" />
+        <add name="OrderID" type="int" primary-key="true" />
+        <add name="ProductID" type="int" primary-key="true" />
+        <add name="UnitPrice" type="decimal" precision="19" scale="4" />
+        <add name="Quantity" type="short" />
+        <add name="Discount" type="single" />
       </fields>
       <calculated-fields>
         <add name="Revenue"
