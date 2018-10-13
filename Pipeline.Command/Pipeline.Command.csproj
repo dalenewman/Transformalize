@@ -423,8 +423,31 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="plugins\Dapper.dll" />
+    <Content Include="plugins\Humanizer.dll" />
+    <Content Include="plugins\Jint.dll" />
+    <Content Include="plugins\msvcr90.dll" />
+    <Content Include="plugins\netstandard.dll" />
+    <Content Include="plugins\sqlceca40.dll" />
+    <Content Include="plugins\sqlcecompact40.dll" />
+    <Content Include="plugins\sqlceer40EN.dll" />
+    <Content Include="plugins\sqlceme40.dll" />
+    <Content Include="plugins\sqlceqp40.dll" />
+    <Content Include="plugins\sqlcese40.dll" />
+    <Content Include="plugins\SQLite.Interop.dll" />
+    <Content Include="plugins\System.Data.SQLite.dll" />
+    <Content Include="plugins\System.Data.SqlServerCe.dll" />
+    <Content Include="plugins\Transformalize.Provider.SqlCe.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Provider.SqlCe.dll" />
+    <Content Include="plugins\Transformalize.Provider.Sqlite.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Provider.Sqlite.dll" />
     <Content Include="plugins\Transformalize.Provider.SqlServer.Autofac.dll" />
     <Content Include="plugins\Transformalize.Provider.SqlServer.dll" />
+    <Content Include="plugins\Transformalize.Transform.Humanizer.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Transform.Humanizer.dll" />
+    <Content Include="plugins\Transformalize.Transform.Jint.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Transform.Jint.dll" />
+    <Content Include="plugins\Transformalize.Validate.Jint.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Validate.Jint.dll" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="files\solr\data\" />
