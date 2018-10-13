@@ -296,9 +296,9 @@ Add an output in `<connections/>` and also remove the `page` and `size` attribut
 
 ```xml
 <connections>
-    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
     <!-- add the output here -->
-    <add name="output" provider="sqlite" file="NorthWindOutput.sqlite3" />
+    <add name="output" provider="sqlite" file="northwind.sqlite3" />
 </connections>
 ```
 
