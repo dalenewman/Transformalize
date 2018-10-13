@@ -354,10 +354,13 @@ Many tables have these by design, but if not, you can add them to a
 table like this:
 
 ```sql
-/* MS-SQL */
+/* SQL Server and SQL CE */
 ALTER TABLE [Order Details] ADD [RowVersion] ROWVERSION;
+
 /* MySQL */
 ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+/* PostgreSql, use the system field xmin */
 ```
 
 Once added, we have to let `tfl` know about `RowVersion` like this:
@@ -400,6 +403,9 @@ un-changed data.  Unfortunately, the provider I'm using in this demo (Sqlite)
 doesn't have an automatic row version.  Nevertheless, I wanted to 
 mention it because row versions should be used whenever 
 possible to make incrementals fast.
+
+![Step04](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step04.gif "Step 4")
+
 
 ### Denormalization
 
