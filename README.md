@@ -169,7 +169,7 @@ To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
 * [DB Browser for SQLite](http://sqlitebrowser.org)
-* this [NorthWindInput.sqlite3](https://github.com/dalenewman/Transformalize/blob/master/Files/NorthWindInput.sqlite3) database.
+* this SQL CE [northwind.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/northwind.sdf) database.
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 * optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
@@ -191,7 +191,7 @@ Open your editor and paste this in:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlite" file="NorthWindInput.sqlite3" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5" />
@@ -199,7 +199,7 @@ Open your editor and paste this in:
 </cfg>
 ```
 
-The arrangment above defines the *input* as the *NorthWindInput.sqlite3* database's `Order Details` table. 
+The arrangment above defines the *input* as the *northwind.sdf* database's `Order Details` table. 
 Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
 
 <pre style="font-size:smaller;">
@@ -242,7 +242,7 @@ the arrangement like this:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlite" file="e:\Code\Transformalize\Files\NorthWindInput.sqlite3" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
   </connections>
   <entities>
     <add name="Order Details">
@@ -258,8 +258,6 @@ the arrangement like this:
   </entities>
 </cfg>
 ```
-
-![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
 
 > Introducing **`<calculated-fields/>`**, the **`t`** attribute, and the **`js`** and **`round`** transformations
 
@@ -286,6 +284,9 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 
 *Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
 may chain transformations as long as the output of one is compatible with the input of another.
+
+![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
+
 
 ### Output
 

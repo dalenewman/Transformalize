@@ -422,38 +422,102 @@
     <Content Include="msvcr120.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="plugins\Dapper.dll" />
-    <Content Include="plugins\Humanizer.dll" />
-    <Content Include="plugins\Jint.dll" />
-    <Content Include="plugins\msvcr90.dll" />
-    <Content Include="plugins\netstandard.dll" />
-    <Content Include="plugins\RazorEngine.dll" />
-    <Content Include="plugins\sqlceca40.dll" />
-    <Content Include="plugins\sqlcecompact40.dll" />
-    <Content Include="plugins\sqlceer40EN.dll" />
-    <Content Include="plugins\sqlceme40.dll" />
-    <Content Include="plugins\sqlceqp40.dll" />
-    <Content Include="plugins\sqlcese40.dll" />
-    <Content Include="plugins\SQLite.Interop.dll" />
-    <Content Include="plugins\System.Data.SQLite.dll" />
-    <Content Include="plugins\System.Data.SqlServerCe.dll" />
-    <Content Include="plugins\System.Web.Razor.dll" />
-    <Content Include="plugins\Transformalize.Provider.Razor.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Provider.Razor.dll" />
-    <Content Include="plugins\Transformalize.Provider.SqlCe.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Provider.SqlCe.dll" />
-    <Content Include="plugins\Transformalize.Provider.Sqlite.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Provider.Sqlite.dll" />
-    <Content Include="plugins\Transformalize.Provider.SqlServer.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Provider.SqlServer.dll" />
-    <Content Include="plugins\Transformalize.Transform.Humanizer.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Transform.Humanizer.dll" />
-    <Content Include="plugins\Transformalize.Transform.Jint.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Transform.Jint.dll" />
-    <Content Include="plugins\Transformalize.Transform.Razor.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Transform.Razor.dll" />
-    <Content Include="plugins\Transformalize.Validate.Jint.Autofac.dll" />
-    <Content Include="plugins\Transformalize.Validate.Jint.dll" />
+    <Content Include="plugins\Dapper.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Humanizer.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Jint.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\msvcr90.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\netstandard.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\RazorEngine.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlceca40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlcecompact40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlceer40EN.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlceme40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlceqp40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\sqlcese40.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\SQLite.Interop.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\System.Data.SQLite.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\System.Data.SqlServerCe.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\System.Web.Razor.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.Razor.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.Razor.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.SqlCe.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.SqlCe.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.Sqlite.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.Sqlite.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.SqlServer.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Provider.SqlServer.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Humanizer.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Humanizer.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Jint.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Jint.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Razor.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.Razor.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Validate.Jint.Autofac.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Validate.Jint.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="files\solr\data\" />

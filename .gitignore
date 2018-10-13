@@ -167,6 +167,7 @@ AppPackages/
 
 # Others
 sql/
+logs/
 *.Cache
 ClientBin/
 [Ss]tyle[Cc]op.*

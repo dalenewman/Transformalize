@@ -53,6 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 		Files\northwind-in-banana-youtube.png = Files\northwind-in-banana-youtube.png
 		Files\northwind-in-excel-youtube.png = Files\northwind-in-excel-youtube.png
 		Files\northwind-in-kibana-youtube.png = Files\northwind-in-kibana-youtube.png
+		Files\northwind.sdf = Files\northwind.sdf
 		Files\Northwind_in_Kibana5_4YouTube.png = Files\Northwind_in_Kibana5_4YouTube.png
 		Files\NorthWindEntitiesRelated.xml = Files\NorthWindEntitiesRelated.xml
 		Files\notepadpp.png = Files\notepadpp.png
