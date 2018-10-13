@@ -390,12 +390,11 @@ Adding a field changes output structure, so re-initialize like so:
 warn  | NorthWind | Order Details | Initializing
 info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
-info  | NorthWind |               | Time elapsed: 00:00:00.70
+info  | NorthWind |               | Time elapsed: 00:00:03.09
 
 <strong>>tfl -a NorthWind.xml</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1064016.
 <strong>info  | NorthWind | Order Details | Change Detected: No.</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.20
+info  | NorthWind |               | Time elapsed: 00:00:00.71
 </pre>
 
 With a `version` in place, the second run doesn't read and compare 
@@ -405,7 +404,6 @@ mention it because row versions should be used whenever
 possible to make incrementals fast.
 
 ![Step04](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step04.gif "Step 4")
-
 
 ### Denormalization
 
@@ -429,7 +427,8 @@ to add the *Orders* and *Products* entities to our arrangement.
 ### Adding an Entity
 
 If you add another entity to your arrangement in the same way we 
-added `Order Details`, you must relate it to the first entity. Here is what the `Orders` entity should look like:
+added `Order Details`, you must relate it to the first entity. 
+Here is what the `Orders` entity should look like:
 
 ```xml
 <add name="Orders">
@@ -483,11 +482,12 @@ info  | NorthWind | Orders        | 830 inserts into output</strong>
 info  | NorthWind |               | Time elapsed: 00:00:01.02
 
 <strong>tfl -a NorthWind.xml</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1124897.
 info  | NorthWind | Order Details | Change Detected: No.
 <strong>info  | NorthWind | Orders        | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.25
 </pre>
+
+![Step05](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step05.gif "Step 5")
 
 Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
 a view called `NorthWindStar` is created.  *NorthWindStar* joins Transformalize's 

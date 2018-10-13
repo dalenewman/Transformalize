@@ -1,0 +1,45 @@
+<cfg name="NorthWind">
+  <connections>
+    <add name="input" provider="sqlce" file="northwind-ts.sdf" />
+    <add name="output" provider="sqlite" file="northwind.sqlite3" />
+  </connections>
+  <entities>
+    <add name="Order Details" version="RowVersion">
+      <fields>
+        <add name="OrderID" type="int" primary-key="true" />
+        <add name="ProductID" type="int" primary-key="true" />
+        <add name="UnitPrice" type="decimal" precision="19" scale="4" />
+        <add name="Quantity" type="short" />
+        <add name="Discount" type="single" />
+        <add name="RowVersion" type="byte[]" length="8" />
+      </fields>
+      <calculated-fields>
+        <add name="Revenue"
+          type="decimal"
+          t="jint(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
+      </calculated-fields>
+    </add>
+    <add name="Orders" version="RowVersion">
+      <fields>
+        <add name="OrderID" type="int" primarykey="true" />
+        <add name="CustomerID" length="5" />
+        <add name="EmployeeID" type="int" />
+        <add name="OrderDate" type="datetime" />
+        <add name="RequiredDate" type="datetime" />
+        <add name="ShippedDate" type="datetime" />
+        <add name="ShipVia" type="int" />
+        <add name="Freight" type="decimal" precision="19" scale="4" />
+        <add name="ShipName" length="40" />
+        <add name="ShipAddress" length="60" />
+        <add name="ShipCity" length="15" />
+        <add name="ShipRegion" length="15" />
+        <add name="ShipPostalCode" length="10" />
+        <add name="ShipCountry" length="15" />
+        <add name="RowVersion" type="byte[]" alias="OrdersRowVersion" length="8" />
+      </fields>
+    </add>
+  </entities>
+<relationships>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
+</relationships>  
+</cfg>
