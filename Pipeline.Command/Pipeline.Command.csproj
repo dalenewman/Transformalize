@@ -427,6 +427,7 @@
     <Content Include="plugins\Jint.dll" />
     <Content Include="plugins\msvcr90.dll" />
     <Content Include="plugins\netstandard.dll" />
+    <Content Include="plugins\RazorEngine.dll" />
     <Content Include="plugins\sqlceca40.dll" />
     <Content Include="plugins\sqlcecompact40.dll" />
     <Content Include="plugins\sqlceer40EN.dll" />
@@ -436,6 +437,9 @@
     <Content Include="plugins\SQLite.Interop.dll" />
     <Content Include="plugins\System.Data.SQLite.dll" />
     <Content Include="plugins\System.Data.SqlServerCe.dll" />
+    <Content Include="plugins\System.Web.Razor.dll" />
+    <Content Include="plugins\Transformalize.Provider.Razor.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Provider.Razor.dll" />
     <Content Include="plugins\Transformalize.Provider.SqlCe.Autofac.dll" />
     <Content Include="plugins\Transformalize.Provider.SqlCe.dll" />
     <Content Include="plugins\Transformalize.Provider.Sqlite.Autofac.dll" />
@@ -446,6 +450,8 @@
     <Content Include="plugins\Transformalize.Transform.Humanizer.dll" />
     <Content Include="plugins\Transformalize.Transform.Jint.Autofac.dll" />
     <Content Include="plugins\Transformalize.Transform.Jint.dll" />
+    <Content Include="plugins\Transformalize.Transform.Razor.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Transform.Razor.dll" />
     <Content Include="plugins\Transformalize.Validate.Jint.Autofac.dll" />
     <Content Include="plugins\Transformalize.Validate.Jint.dll" />
   </ItemGroup>
