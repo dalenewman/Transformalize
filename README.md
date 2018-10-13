@@ -398,10 +398,7 @@ info  | NorthWind |               | Time elapsed: 00:00:00.71
 </pre>
 
 With a `version` in place, the second run doesn't read and compare 
-un-changed data.  Unfortunately, the provider I'm using in this demo (Sqlite) 
-doesn't have an automatic row version.  Nevertheless, I wanted to 
-mention it because row versions should be used whenever 
-possible to make incrementals fast.
+un-changed data.
 
 ![Step04](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step04.gif "Step 4")
 
