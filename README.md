@@ -560,7 +560,7 @@ You may query it just as you queried *NorthWindStar*.
 
 ### More Relationships
 
-To add all the entities from NorthWind database (diagramed above), follow the *Add an Entity* 
+To add all the entities from NorthWind database (diagrammed above), follow the *Add an Entity* 
 process (above) for *Products*, *Customers*, *Employees*, *Shippers*, *Suppliers*, and *Categories*.
 
 In the end, the relationships should look like this:

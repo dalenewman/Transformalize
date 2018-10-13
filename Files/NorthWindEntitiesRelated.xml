@@ -1,7 +1,7 @@
-﻿<cfg name="NorthWind" flatten="true">
+﻿<cfg name="NorthWind">
 	<connections>
-		<add name="input" provider="sqlserver" database="NorthWind"/>
-		<add name="output" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+		<add name="input" provider="sqlce" file="northwind.sdf"/>
+		<add name="output" provider="sqlite" file="northwind.sqlite3" />
 	</connections>
 	<entities>
 		<add name="Order Details" version="RowVersion">
