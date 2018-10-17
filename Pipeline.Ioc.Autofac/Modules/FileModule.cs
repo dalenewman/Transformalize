@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Autofac;
 using System;
 using System.IO;
 using System.Linq;
-using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -98,7 +98,11 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 foreach (var entity in _process.Entities) {
 
                     // ENTITY OUTPUT CONTROLLER
-                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+                    builder.Register<IOutputController>(ctx => {
+                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                        var initializer = _process.Mode == "init" ? (IInitializer)new FileInitializer(output) : new NullInitializer();
+                        return new FileOutputController(output, initializer, new NullInputProvider(), new NullOutputProvider());
+                    }).Named<IOutputController>(entity.Key);
 
                     // ENTITY WRITER
                     builder.Register<IWrite>(ctx => {

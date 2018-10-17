@@ -64,12 +64,14 @@
     <Compile Include="FileInspection.cs" />
     <Compile Include="FileLineReader.cs" />
     <Compile Include="Actions\FileMoveAction.cs" />
+    <Compile Include="FileOutputController.cs" />
     <Compile Include="FileReader.cs" />
     <Compile Include="FileSystemReader.cs" />
     <Compile Include="Actions\FileReplaceAction.cs" />
     <Compile Include="FileStreamWriter.cs" />
     <Compile Include="Actions\OpenAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="FileInitializer.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />
     <Compile Include="Transforms\FileNameTransform.cs" />
     <Compile Include="Transforms\FilePathTransform.cs" />

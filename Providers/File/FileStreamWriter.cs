@@ -25,38 +25,40 @@ namespace Transformalize.Providers.File {
     public class FileStreamWriter : IWrite {
 
         private readonly OutputContext _context;
-        private readonly StreamWriter _writer;
+        private readonly FileInfo _fileInfo;
+        private readonly Stream _stream;
 
         public FileStreamWriter(OutputContext context) {
             _context = context;
-            _writer = new StreamWriter(context.Connection.File);
+            _fileInfo = new FileInfo(context.Connection.File);
         }
 
         public FileStreamWriter(OutputContext context, Stream stream) {
             _context = context;
-            _writer = new StreamWriter(stream);
+            _stream = stream;
         }
 
         public void Write(IEnumerable<IRow> rows) {
+            var writer = _stream == null ? new StreamWriter(_fileInfo.FullName) : new StreamWriter(_stream);
             var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
 
-            using(_writer){
+            using (writer) {
 
-                if (!string.IsNullOrEmpty(_context.Connection.Header)){
-                    _writer.WriteLine(_context.Connection.Header);
+                if (!string.IsNullOrEmpty(_context.Connection.Header)) {
+                    writer.WriteLine(_context.Connection.Header);
                 }
 
                 foreach (var row in rows) {
                     foreach (var field in fields) {
-                        _writer.Write(row[field]);
+                        writer.Write(row[field]);
                     }
-                    _writer.WriteLine();
+                    writer.WriteLine();
                 }
 
                 if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
-                    _writer.Write(_context.Connection.Footer);
+                    writer.Write(_context.Connection.Footer);
                 }
-                _writer.Flush();
+                writer.Flush();
             }
         }
     }
