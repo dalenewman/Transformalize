@@ -1,9 +1,7 @@
 # Transformalize
 
-[![Build status](https://ci.appveyor.com/api/projects/status/qm4auhkcv6b23abr?svg=true)](https://ci.appveyor.com/project/dalenewman/transformalize)
-[![NuGet](https://img.shields.io/nuget/v/Cfg-NET.svg?label=Nuget)](https://www.nuget.org/packages/Transformalize)
-
-Transformalize automates moving data into data warehouses, search engines, and other *value-adding* systems.
+Transformalize automates moving data into data warehouses, 
+search engines, and other *value-adding* systems.
 
 It works with many data sources:
 
@@ -163,8 +161,12 @@ It works with many data sources:
 
 > This section introduces `<connections/>`, `<entities/>`, and the **`tfl.exe`** command line interface.
 
-This introduction to Transformalize demonstrates it's ability to 
-denormalize a relational database and and load it into Elasticsearch and SOLR. 
+This introduction to Transformalize demonstrates it's ability to:
+
+* denormalize a relational database
+* load data into Elasticsearch and SOLR
+* keep Elasticsearch and SOLR updated
+ 
 To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
@@ -173,7 +175,7 @@ To follow along, you need:
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 * optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
-First, take a look at the diagram below to see part of the NorthWind schema:
+First, take a look at the diagram below to see part of the NorthWind database's schema:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
