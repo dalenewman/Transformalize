@@ -173,13 +173,12 @@ To follow along, you need:
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 * optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
-First, take a look at the diagram below to get see a part of the NorthWind schema:
+First, take a look at the diagram below to see part of the NorthWind schema:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
 The eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables above are centered around *Order Details*.  We will start with it 
-because it's related to everything and stores the most interesting [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)).
+tables above support *Order Details*.  Order details includes important [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)).
 
 ---
 
@@ -236,8 +235,8 @@ We could hand-write fields, or run `tfl` in `check` mode like this:
 </pre>
 
 Instead of getting order details (the records), `check` mode 
-parses and returns the arrangement. Copy the `<fields/>` into 
-the arrangement like this:
+parses and returns the arrangement. Copy the `<fields/>` from the 
+output into your arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -533,7 +532,6 @@ LIMIT 10;
 
 > Introducing the **`flatten`** attribute
 
-
 Transformalize de-normalizes in two phases.  First, it moves data 
 from a relational model into a [star-schema](https://en.wikipedia.org/wiki/Star_schema).
 Secondly, it moves data into a completely de-normalized (flat) output. 
@@ -624,6 +622,8 @@ info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.59
 </pre>
+
+![AllEntities](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/AllEntities.gif "All Entities")
 
 ### Incrementals (Part 2)
 

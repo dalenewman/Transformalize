@@ -57,16 +57,25 @@ namespace Transformalize.Configuration.Ext {
             ValidateParameterMaps(p, error);
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
             ValidateFlatten(p, error, warn);
-            ValidateTransformParameters(p, warn);
+            ValidateTransformParameters(p, error, warn);
         }
 
-        private static void ValidateTransformParameters(Process process, Action<string> warn) {
+        private static void ValidateTransformParameters(Process process, Action<string> error, Action<string> warn) {
             var fields = new HashSet<string>(process.GetAllFields().Select(f => f.Alias));
             foreach (var transform in process.GetAllTransforms().Where(t => !Operation.ProducerSet().Contains(t.Method))) {
                 foreach (var parameter in transform.Parameters) {
-                    if (fields.Contains(parameter.Name)) {
-                        warn($"A parameter name attribute is the same as a field name: {parameter.Name}.  Perhaps you meant to use use the field attribute.");
+                    if (parameter.Name != string.Empty) {
+                        if (fields.Contains(parameter.Name)) {
+                            warn($"A parameter name attribute is the same as a field name: {parameter.Name}.  Perhaps you meant to use use the field attribute.");
+                        }
                     }
+
+                    if (parameter.Field != string.Empty) {
+                        if (!fields.Contains(parameter.Field)) {
+                            error($"A {transform.Method} operation refers to an invalid field: {parameter.Field}!  Note: if a field name is aliased, use the alias.");
+                        }
+                    }
+
                 }
             }
         }

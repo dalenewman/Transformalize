@@ -291,6 +291,7 @@ namespace Transformalize.Configuration.Ext {
             foreach (var field in p.CalculatedFields) {
                 field.TransformCopyIntoParameters();
             }
+            
         }
 
         private static void SetPrimaryKeys(Process p) {

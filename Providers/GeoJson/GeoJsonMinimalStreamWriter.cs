@@ -30,13 +30,11 @@ namespace Transformalize.Providers.GeoJson {
         private readonly Field _latitudeField;
         private readonly Field _longitudeField;
         private readonly Field _colorField;
-        private readonly Field _sizeField;
         private readonly Field _symbolField;
 
         private readonly Field _descriptionField;
         private readonly Field _batchField;
         private readonly bool _hasColor;
-        private readonly bool _hasSize;
         private readonly bool _hasSymbol;
         private readonly bool _hasDescription;
         private readonly bool _hasBatchValue;
@@ -48,14 +46,12 @@ namespace Transformalize.Providers.GeoJson {
             _latitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
             _longitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
             _colorField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-color");
-            _sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size");
             _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol");
 
             _descriptionField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-description");
             _batchField = fields.FirstOrDefault(f => f.Alias.ToLower() == "batchvalue");
 
             _hasColor = _colorField != null;
-            _hasSize = _sizeField != null;
             _hasSymbol = _symbolField != null;
             _hasDescription = _descriptionField != null;
             _hasBatchValue = _batchField != null;
@@ -111,11 +107,6 @@ namespace Transformalize.Providers.GeoJson {
                 if (_hasColor) {
                     jsonWriter.WritePropertyName("marker-color");
                     jsonWriter.WriteValue(row[_colorField]);
-                }
-
-                if (_hasSize) {
-                    jsonWriter.WritePropertyName("marker-size");
-                    jsonWriter.WriteValue(row[_sizeField]);
                 }
 
                 if (_hasSymbol) {
