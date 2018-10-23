@@ -26,6 +26,7 @@ using Transformalize.Providers.Ado.Ext;
 
 namespace Transformalize.Providers.Ado {
     public class AdoStarParametersReader : IRead {
+
         private readonly IConnectionContext _output;
         private readonly Process _parent;
         private readonly IConnectionFactory _cf;

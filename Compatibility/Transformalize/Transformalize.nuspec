@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.8-beta</version>
+    <version>0.3.10-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>allow activedirectory provider and add 462 target</releaseNotes>
+    <releaseNotes>change to star and flat suffix methods</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>

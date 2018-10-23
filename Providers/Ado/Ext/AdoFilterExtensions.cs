@@ -26,6 +26,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Providers.Ado.Ext {
 
     public static class SqlFilterExtensions {
+
         public static string ResolveFilter(this IContext c, IConnectionFactory factory) {
 
             var builder = new StringBuilder("(");

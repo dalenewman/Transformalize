@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Dynamic;
 using System.Linq;
 using Dapper;
 using Transformalize.Configuration;
@@ -85,21 +84,21 @@ namespace Transformalize.Providers.Ado {
                         }
                     }
                     cmd.CommandText = _input.Entity.Query;
-                    // handle ado parameters
-                    if (cmd.CommandText.Contains("@")) {
-                        var active = _input.Process.GetActiveParameters();
-                        foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-                            var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                            if (match != null) {
-                                var parameter = cmd.CreateParameter();
-                                parameter.ParameterName = match.Name;
-                                parameter.Value = match.Convert(match.Value);
-                                cmd.Parameters.Add(parameter);
-                            }
+                }
+
+                // handle ado parameters
+                if (cmd.CommandText.Contains("@")) {
+                    var active = _input.Process.GetActiveParameters();
+                    foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
+                        var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                        if (match != null) {
+                            var parameter = cmd.CreateParameter();
+                            parameter.ParameterName = match.Name;
+                            parameter.Value = match.Convert(match.Value);
+                            cmd.Parameters.Add(parameter);
                         }
                     }
                 }
-
                 cmd.CommandType = CommandType.Text;
                 cmd.CommandTimeout = 0;
 

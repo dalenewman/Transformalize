@@ -18,6 +18,7 @@
 using Dapper;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -60,7 +61,27 @@ namespace Transformalize.Providers.Ado {
             try {
                 using (var cn = _cf.GetConnection()) {
                     cn.Open();
-                    return cn.ExecuteScalar(sql, commandTimeout: _context.Connection.RequestTimeout);
+
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = sql;
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandTimeout = _context.Connection.RequestTimeout;
+
+                    // handle ado parameters
+                    if (cmd.CommandText.Contains("@")) {
+                        var active = _context.Process.GetActiveParameters();
+                        foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
+                            var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                            if (match != null) {
+                                var parameter = cmd.CreateParameter();
+                                parameter.ParameterName = match.Name;
+                                parameter.Value = match.Convert(match.Value);
+                                cmd.Parameters.Add(parameter);
+                            }
+                        }
+                    }
+
+                    return cmd.ExecuteScalar();
                 }
             } catch (System.Data.Common.DbException ex) {
                 _context.Error($"Error retrieving max version from {_context.Connection.Name}, {_context.Entity.Alias}.");
