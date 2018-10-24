@@ -16,12 +16,7 @@
     <fields>
         @foreach (Field field in fields) {
             var searchType = process.SearchTypes.First(st => st.Name == field.SearchType);
-            <field name="@field.Alias.ToLower()"
-                   type="@(searchType.Analyzer == string.Empty ? field.Type : searchType.Analyzer)"
-                   indexed="@(searchType.Index ? "true" : "false")"
-                   stored="@(searchType.Store ? "true" : "false")"
-                   multiValued="@(searchType.MultiValued ? "true" : "false")"
-                   required="@(field.Alias.ToLower() == "tflkey" ? "true" : "false")" />
+            <field name="@field.Alias.ToLower()" type="@(searchType.Analyzer == string.Empty ? field.Type : searchType.Analyzer)" indexed="@(searchType.Index ? "true" : "false")" stored="@(searchType.Store ? "true" : "false")" multiValued="@(searchType.MultiValued ? "true" : "false")" required="@(field.Alias.ToLower() == "tflkey" ? "true" : "false")" />
         }
         <field name="_version_" stored="true" indexed="true" type="long" />
         <field name="_root_" type="@(primaryKey.Type)" indexed="true" stored="false" />
@@ -30,9 +25,12 @@
         @if (!fields.Any(f => f.Alias.Equals("text"))) {
             <field name="text" type="string" indexed="true" stored="true" required="false" />
         }
+        
+        @if (version >= 7) {
+            <dynamicField name="*_l_ns" type="tlong" indexed="true" stored="false" />
+            <dynamicField name="*_s_ns" type="string" indexed="true" stored="false" />
+        }
 
-        <!--<dynamicField name="*_l_ns" type="plong" indexed="true" stored="false" />
-        <dynamicField name="*_s_ns" type="string" indexed="true" stored="false" />-->
 
     </fields>
 
