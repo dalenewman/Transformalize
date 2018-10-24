@@ -52,7 +52,7 @@ It works with many data sources:
                             <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access (32-bit)</a></td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
                             <td style="color:green">BETA</td>
                             <td style="color:green">BETA</td>
                         </tr>
