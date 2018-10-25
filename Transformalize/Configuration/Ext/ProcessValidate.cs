@@ -63,7 +63,7 @@ namespace Transformalize.Configuration.Ext {
         private static void ValidateTransformParameters(Process process, Action<string> error, Action<string> warn) {
             var aliases = new HashSet<string>(process.GetAllFields().Select(f => f.Alias));
             var names = new HashSet<string>(process.GetAllFields().Select(f => f.Name));
-            foreach (var transform in process.GetAllTransforms().Where(t => !Operation.ProducerSet().Contains(t.Method))) {
+            foreach (var transform in process.GetAllTransforms().Where(t => !t.Fields.Any())) {
                 foreach (var parameter in transform.Parameters) {
                     if (parameter.Name != string.Empty) {
                         if (aliases.Contains(parameter.Name)) {

@@ -49,7 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DistanceTransform.cs" />
-    <Compile Include="GeocodeTransform.cs" />
     <Compile Include="GeohashEncodeTransform.cs" />
     <Compile Include="GeohashNeighborTransform.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Cfg.Net;
 using Transformalize.Impl;
 
 namespace Transformalize.Configuration {
@@ -460,7 +460,7 @@ namespace Transformalize.Configuration {
         public void MergeParameters() {
 
             foreach (var field in Fields) {
-                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !Operation.ProducerSet().Contains(t.Method))) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !t.Fields.Any())) {
                     if (transform.Parameter == "*") {
                         foreach (var f in Fields.Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != f.Alias)) {
@@ -481,7 +481,7 @@ namespace Transformalize.Configuration {
 
             var index = 0;
             foreach (var calculatedField in CalculatedFields) {
-                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !Operation.ProducerSet().Contains(t.Method))) {
+                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !t.Fields.Any())) {
                     if (transform.Parameter == "*") {
                         foreach (var field in GetAllFields().Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != field.Alias)) {
@@ -520,11 +520,13 @@ namespace Transformalize.Configuration {
         }
 
         public void AdaptFieldsCreatedFromTransforms() {
-            foreach (var method in Operation.ProducerSet()) {
+
+            foreach (var method in this.GetAllTransforms().Where(t => t.Fields.Any()).Select(t=>t.Method).Distinct()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);
                 }
             }
+
         }
 
         public override string ToString() {

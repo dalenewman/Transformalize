@@ -23,7 +23,7 @@ namespace Transformalize.Impl {
 
     /// <summary>
     /// Producers are transforms that produce new fields as output.  The fields are originally defined
-    /// within the transform,but get moved but into the calculated fields collection and remembered as 
+    /// within the transform, but get moved but into the calculated fields collection and remembered as 
     /// output parameters
     /// </summary>
     public class TransformFieldsToParametersAdapter {

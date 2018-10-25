@@ -36,6 +36,7 @@ namespace Tests {
           </rows>
           <fields>
             <add name='Field1' />
+            <add name='Field2' />
           </fields>
           <calculated-fields>
             <add name='MatchField1' t='copy(Field1).match(3[0-9]{3}(?=@))' default='None' />
