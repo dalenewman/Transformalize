@@ -75,7 +75,14 @@ namespace Transformalize.Providers.File {
                                 prevLine = line;
                             }
                         } else {
-                            prevLine = prevLine + " " + line;
+                            if (regex.IsMatch(prevLine)) {
+                                var row = _rowFactory.Create();
+                                row[_field] = string.Copy(prevLine);
+                                prevLine = line;
+                                yield return row;
+                            } else {
+                                prevLine = prevLine + " " + line;
+                            }
                         }
                     }
 
