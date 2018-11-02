@@ -18,6 +18,7 @@
 using Cfg.Net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
@@ -30,6 +31,8 @@ namespace Transformalize.Configuration {
 
         private static HashSet<string> _transformProducerSet;
         private string _runOperator;
+
+        public bool ProducesFields { get; private set; }
 
         [Cfg(value = "")]
         public string Connection { get; set; }
@@ -279,6 +282,8 @@ namespace Transformalize.Configuration {
         [Cfg(value = 1)]
         public int Step { get; set; }
 
+
+
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }
@@ -292,6 +297,12 @@ namespace Transformalize.Configuration {
             if (XmlMode == "all" && Mode == "first") {
                 Mode = "all";
                 Warn("XmlMode is being phased out.  Please use Mode instead.");
+            }
+        }
+
+        protected override void Validate() {
+            if (Fields.Any()) {
+                ProducesFields = true;
             }
         }
 

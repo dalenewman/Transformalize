@@ -460,7 +460,7 @@ namespace Transformalize.Configuration {
         public void MergeParameters() {
 
             foreach (var field in Fields) {
-                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !t.Fields.Any())) {
+                foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !t.ProducesFields)) {
                     if (transform.Parameter == "*") {
                         foreach (var f in Fields.Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != f.Alias)) {
@@ -481,7 +481,7 @@ namespace Transformalize.Configuration {
 
             var index = 0;
             foreach (var calculatedField in CalculatedFields) {
-                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !t.Fields.Any())) {
+                foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !t.ProducesFields)) {
                     if (transform.Parameter == "*") {
                         foreach (var field in GetAllFields().Where(f => !f.System)) {
                             if (transform.Parameters.All(p => p.Field != field.Alias)) {
@@ -521,7 +521,7 @@ namespace Transformalize.Configuration {
 
         public void AdaptFieldsCreatedFromTransforms() {
 
-            foreach (var method in this.GetAllTransforms().Where(t => t.Fields.Any()).Select(t=>t.Method).Distinct()) {
+            foreach (var method in this.GetAllTransforms().Where(t => t.ProducesFields).Select(t=>t.Method).Distinct()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);
                 }
@@ -673,5 +673,8 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "en", domain = "az,cz,de,de_AT,de_CH,el,en,en_AU,en_au_ocker,en_BORK,en_CA,en_GB,en_IE,en_IND,en_US,es,es_MX,fa,fr,fr_CA,ge,id_ID,it,ja,ko,lv,nb_NO,nep,nl,nl_BE,pl,nl_BE,pl,pt_BR,pt_PT,ro,ru,sk,sv,tr,uk,vi,zh_CN,zh_TW")]
         public string Locale { get; set; }
+
+        [Cfg]
+        public bool Distinct { get; set; }
     }
 }

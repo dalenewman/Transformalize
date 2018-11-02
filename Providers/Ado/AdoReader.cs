@@ -27,7 +27,8 @@ namespace Transformalize.Providers.Ado {
     /// A reader for an entity's input (source) or output (destination).
     /// </summary>
     public class AdoReader : IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
-        int _rowCount;
+
+        private int _rowCount;
         private readonly IContext _context;
         private readonly Connection _connection;
         private readonly string _tableOrView;

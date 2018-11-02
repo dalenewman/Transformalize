@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Linq;
 using Cfg.Net.Ext;
-using Transformalize.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using Transformalize.Extensions;
 
 namespace Transformalize.Configuration.Ext {
     public static class ProcessPreValidate {
@@ -106,6 +106,15 @@ namespace Transformalize.Configuration.Ext {
                     }
                 }
             }
+
+            // special short-cut for referencing a script file name directly from entity
+            if (!p.Scripts.Any() && p.Entities.Count == 1) {
+                var script = p.Entities.First().Script;
+                if (script.Contains(".")) {
+                    p.Scripts.Add(new Script { Name = script, File = script });
+                }
+            }
+
         }
 
         /// <summary>
@@ -248,7 +257,7 @@ namespace Transformalize.Configuration.Ext {
             }
             var index = 0;
             foreach (var field in p.CalculatedFields) {
-                foreach (var transform in field.Transforms.Where(t => !t.Fields.Any())) {
+                foreach (var transform in field.Transforms.Where(t => !t.ProducesFields)) {
                     if (!string.IsNullOrEmpty(transform.Parameter)) {
                         if (transform.Parameter == All) {
                             foreach (var entity in p.Entities) {
@@ -291,7 +300,7 @@ namespace Transformalize.Configuration.Ext {
             foreach (var field in p.CalculatedFields) {
                 field.TransformCopyIntoParameters();
             }
-            
+
         }
 
         private static void SetPrimaryKeys(Process p) {

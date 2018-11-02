@@ -101,7 +101,7 @@ namespace Transformalize.Providers.Ado.Ext {
             var orderBy = c.ResolveOrder(cf);
 
             if (!c.Entity.IsPageRequest())
-                return $"SELECT {fieldList} FROM {SqlInputName(c, cf)} {filter} {orderBy}";
+                return $"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)}{fieldList} FROM {SqlInputName(c, cf)} {filter} {orderBy}";
 
             var start = (c.Entity.Page * c.Entity.Size) - c.Entity.Size;
             var end = start + c.Entity.Size;
@@ -111,13 +111,13 @@ namespace Transformalize.Providers.Ado.Ext {
                     if (string.IsNullOrWhiteSpace(orderBy)) {
                         orderBy = GetRequiredOrderBy(fields, cf);
                     }
-                    var subQuery = $@"SELECT {fieldList},ROW_NUMBER() OVER ({orderBy}) AS TflRow FROM {table} WITH (NOLOCK) {filter}";
+                    var subQuery = $@"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)}{fieldList},ROW_NUMBER() OVER ({orderBy}) AS TflRow FROM {table} WITH (NOLOCK) {filter}";
                     return $"WITH p AS ({subQuery}) SELECT {fieldList} FROM p WHERE TflRow BETWEEN {start + 1} AND {end}";
                 case AdoProvider.SqlCe:
                     if (string.IsNullOrWhiteSpace(orderBy)) {
                         orderBy = GetRequiredOrderBy(fields, cf);
                     }
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.Size} ROWS ONLY";
+                    return $"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)}{fieldList} FROM {table} {filter} {orderBy} OFFSET {start} ROWS FETCH NEXT {c.Entity.Size} ROWS ONLY";
                 case AdoProvider.Access:
                     // todo: make sure primary key is always include in sort to avoid wierd access top n behavior, see: https://stackoverflow.com/questions/887787/access-sql-using-top-5-returning-more-than-5-results
                     if (string.IsNullOrWhiteSpace(orderBy)) {
@@ -131,16 +131,16 @@ namespace Transformalize.Providers.Ado.Ext {
 FROM (
     SELECT TOP {c.Entity.Size} {xFieldList}
     FROM (
-        SELECT TOP {end} {fieldList} FROM {table} {filter} {orderBy}
+        SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)} TOP {end} {fieldList} FROM {table} {filter} {orderBy}
     ) x
    {flippedOrderBy}
 ) y
 {orderBy}";
                 case AdoProvider.PostgreSql:
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.Size} OFFSET {start}";
+                    return $"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)}{fieldList} FROM {table} {filter} {orderBy} LIMIT {c.Entity.Size} OFFSET {start}";
                 case AdoProvider.MySql:
                 case AdoProvider.SqLite:
-                    return $"SELECT {fieldList} FROM {table} {filter} {orderBy} LIMIT {start},{c.Entity.Size}";
+                    return $"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)}{fieldList} FROM {table} {filter} {orderBy} LIMIT {start},{c.Entity.Size}";
                 case AdoProvider.None:
                     return string.Empty;
                 default:
@@ -157,7 +157,7 @@ FROM (
             var fieldList = string.Join(",", fields.Select(f => cf.Enclose(f.Name)));
             var table = SqlInputName(c, cf);
             var filter = c.Entity.Filter.Any() ? $" WHERE {c.ResolveFilter(cf)} AND {versionFilter}" : $" WHERE {versionFilter}";
-            return $"SELECT {fieldList} FROM {table} {filter} {c.ResolveOrder(cf)}";
+            return $"SELECT {(c.Entity.Distinct ? "DISTINCT " : string.Empty)} {fieldList} FROM {table} {filter} {c.ResolveOrder(cf)}";
         }
 
         public static string SqlCreateOutput(this OutputContext c, IConnectionFactory cf) {

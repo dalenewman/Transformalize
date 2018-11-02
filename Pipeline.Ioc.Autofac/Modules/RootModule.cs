@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -31,6 +32,7 @@ using Transformalize.Impl;
 using Transformalize.Ioc.Autofac.Impl;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Globalization;
+using Module = Autofac.Module;
 using Parameter = Autofac.Core.Parameter;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -71,7 +73,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
                 }
 
-                var process = GetProcess(ctx, p, dependencies, TransformConfiguration(ctx));
+                var process = GetProcess(ctx, p, dependencies, TransformConfiguration(ctx, p));
 
                 if (process.Errors().Any()) {
                     return process;
@@ -136,13 +138,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         }
 
-        private static string TransformConfiguration(IComponentContext ctx) {
+        private static string TransformConfiguration(IComponentContext ctx, IEnumerable<Parameter> p) {
 
             // short hand for parameters is defined, try to transform parameters in advance
             if (!ctx.IsRegisteredWithName<IDependency>("shorthand-p"))
                 return null;
 
-            if (!ctx.IsRegisteredWithName<string>("cfg"))
+            if (!p.Any() && !ctx.IsRegisteredWithName<string>("cfg"))
                 return null;
 
             var dependencies = new List<IDependency> {
@@ -152,7 +154,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 ctx.ResolveNamed<IDependency>("shorthand-p")
             };
 
-            var preCfg = ctx.ResolveNamed<string>("cfg");
+            var preCfg = (p.Any() ? p.Named<string>("cfg") : null) ?? ctx.ResolveNamed<string>("cfg");
             var preProcess = new ConfigurationFacade.Process(preCfg, new Dictionary<string, string>(), dependencies.ToArray());
 
             var parameters = preProcess.GetActiveParameters();
