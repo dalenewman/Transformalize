@@ -246,7 +246,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Longitude { get; set; }
 
-        [Cfg(value = "north", domain = "north,northeast,east,southeast,south,southwest,west,northwest", toLower = true, ignoreCase = true, trim = true)]
+        [Cfg(value = "north", domain = "north,northeast,east,southeast,south,southwest,west,northwest,asc,desc", toLower = true, ignoreCase = true, trim = true)]
         public string Direction { get; set; }
 
         [Cfg(value = "")]

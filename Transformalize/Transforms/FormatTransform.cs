@@ -30,12 +30,12 @@ namespace Transformalize.Transforms {
         private readonly Template _template;
 
         public FormatTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext() || context == null) {
+            if (IsMissingContext()) {
                 return;
             }
 
             _input = MultipleInput();
-            _template = context.Process.Templates.FirstOrDefault(t => t.Name == context.Operation.Format);
+            _template = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Format);
 
             if (_template == null) {
                 _betterFormat = new BetterFormat(Context, Context.Operation.Format, ()=>_input);

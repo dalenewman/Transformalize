@@ -4,22 +4,25 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
+
+
+
     public class SplitTransform : StringTransform {
 
         private readonly Field _input;
         private readonly char[] _separator;
 
         public SplitTransform(IContext context = null) : base(context, "object") {
-            if (IsMissingContext() || context == null) {
+            if (IsMissingContext()) {
                 return;
             }
 
-            if (IsMissing(context.Operation.Separator)) {
+            if (IsMissing(Context.Operation.Separator)) {
                 return;
             }
 
             _input = SingleInput();
-            _separator = context.Operation.Separator.ToCharArray();
+            _separator = Context.Operation.Separator.ToCharArray();
 
         }
 

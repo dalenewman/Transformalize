@@ -28,10 +28,12 @@ namespace Transformalize.Transforms.Geography {
 
         private readonly Dictionary<string, int[]> _directions = new Dictionary<string, int[]> {
             {"north", new int[] { 1, 0}},
+            {"asc", new int[] { 1, 0}},
             {"northeast", new int[] {1,1}},
             {"east", new int[] {0, 1}},
             {"southeast", new int[] {-1, 1}},
             {"south", new int[] {-1, 0}},
+            {"desc", new int[] {-1, 0}},
             {"southwest", new int[] {-1, -1}},
             {"west", new int[] {0, -1}},
             {"northwest", new int[] {1, -1}}
@@ -48,12 +50,11 @@ namespace Transformalize.Transforms.Geography {
             }
 
             _input = SingleInput();
-            _direction = _directions[context.Operation.Direction];
+            _direction = _directions[Context.Operation.Direction];
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = NGeoHash.Portable.GeoHash.Neighbor((string)row[_input], _direction);
-            
             return row;
         }
 

@@ -16,7 +16,7 @@
 // limitations under the License.
 #endregion
 
-using System.Collections.Concurrent;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Transformalize.Configuration;
@@ -25,8 +25,9 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Providers.File.Transforms {
     public class FileNameTransform : BaseTransform {
+
         private readonly Field _input;
-        private readonly ConcurrentDictionary<string, string> _cache = new ConcurrentDictionary<string, string>();
+        private readonly Func<object, string> _transform;
 
         public FileNameTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
@@ -37,16 +38,17 @@ namespace Transformalize.Providers.File.Transforms {
                 return;
             }
             _input = SingleInput();
+
+            if (Context.Operation.Extension) {
+                _transform = o => Path.GetFileName((string)o);
+            } else {
+                _transform = o => Path.GetFileNameWithoutExtension((string)o);
+            }
+
         }
 
         public override IRow Operate(IRow row) {
-            if (_cache.TryGetValue(Context.Operation.Key, out var cache)) {
-                row[Context.Field] = cache;
-            } else {
-                var value = Context.Operation.Extension ? Path.GetFileName((string)row[_input]) : Path.GetFileNameWithoutExtension((string)row[_input]);
-                _cache.TryAdd(Context.Operation.Key, value);
-                row[Context.Field] = value;
-            }
+            row[Context.Field] = _transform(row[_input]);
             return row;
         }
 

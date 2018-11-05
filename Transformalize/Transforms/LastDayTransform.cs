@@ -25,7 +25,7 @@ namespace Transformalize.Transforms {
 
         public LastDayTransform(IContext context = null) : base(context, "datetime") {
 
-            if (IsMissingContext() || context == null) {
+            if (IsMissingContext()) {
                 return;
             }
 
@@ -33,12 +33,12 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (IsMissing(context.Operation.DayOfWeek)) {
+            if (IsMissing(Context.Operation.DayOfWeek)) {
                 return;
             }
 
             var from = DateTime.Today;
-            var to = Enum.Parse(typeof(DayOfWeek), context.Operation.DayOfWeek, true);
+            var to = Enum.Parse(typeof(DayOfWeek), Context.Operation.DayOfWeek, true);
             int diff = (int)from.DayOfWeek - (int)to;
             if (diff < 0) {
                 diff += 7;

@@ -87,10 +87,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new LastDayTransform(c), new LastDayTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FloorTransform(c), new FloorTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FormatXmlTransform(c), new FormatXmlTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FormatPhoneTransform(c), new FormatPhoneTransform().GetSignatures());
@@ -155,6 +152,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
+
+            // split
+            RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new SortTransform(c), new SortTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ReverseTransform(c), new ReverseTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new GetTransform(c), new GetTransform().GetSignatures());
 
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());

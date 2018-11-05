@@ -29,35 +29,36 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, string> _getNewValue;
 
         public ReplaceTransform(IContext context = null) : base(context, "string") {
+
             if(IsMissingContext()) {
                 return;
             }
 
-            if (IsMissing(context.Operation.OldValue)) {
+            if (IsMissing(Context.Operation.OldValue)) {
                 return;
             }
 
             _input = SingleInput();
 
-            context.Operation.OldValue = context.Operation.OldValue.Replace("\\r", "\r");
-            context.Operation.OldValue = context.Operation.OldValue.Replace("\\n", "\n");
+            Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\r", "\r");
+            Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\n", "\n");
 
-            var oldIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.OldValue);
-            if (oldIsField && context.Entity.TryGetField(context.Operation.OldValue, out var oldField)) {
+            var oldIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.OldValue);
+            if (oldIsField && Context.Entity.TryGetField(context.Operation.OldValue, out var oldField)) {
                 _getOldValue = row => GetString(row, oldField);
                 context.Debug(() => $"replace transform's old value comes from the field: {oldField.Alias}");
             } else {
-                _getOldValue = row => context.Operation.OldValue;
-                context.Debug(() => $"replace transform's old value is literal: {context.Operation.OldValue}");
+                _getOldValue = row => Context.Operation.OldValue;
+                Context.Debug(() => $"replace transform's old value is literal: {Context.Operation.OldValue}");
             }
 
-            var newIsField = context.Entity.FieldMatcher.IsMatch(context.Operation.NewValue);
-            if (newIsField && context.Entity.TryGetField(context.Operation.NewValue, out var newField)) {
+            var newIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.NewValue);
+            if (newIsField && Context.Entity.TryGetField(Context.Operation.NewValue, out var newField)) {
                 _getNewValue = row => GetString(row, newField);
-                context.Debug(() => $"replace transform's new value comes from the field: {newField.Alias}");
+                Context.Debug(() => $"replace transform's new value comes from the field: {newField.Alias}");
             } else {
-                _getNewValue = row => context.Operation.NewValue;
-                context.Debug(() => $"replace transform's new value is literal: {context.Operation.NewValue}");
+                _getNewValue = row => Context.Operation.NewValue;
+                Context.Debug(() => $"replace transform's new value is literal: {Context.Operation.NewValue}");
             }
 
         }

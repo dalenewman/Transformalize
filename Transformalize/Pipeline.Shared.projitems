@@ -158,6 +158,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CondenseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ReverseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\SortTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\GetTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FromRegexTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\IdentityTransform.cs" />

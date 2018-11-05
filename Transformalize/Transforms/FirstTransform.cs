@@ -8,11 +8,11 @@ namespace Transformalize.Transforms {
         private readonly Field _input;
 
         public FirstTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext() || context == null) {
+            if (IsMissingContext()) {
                 return;
             }
 
-            if (LastMethodIsNot("split")) {
+            if (LastMethodIsNot("split","sort","reverse")) {
                 return;
             }
 
@@ -20,7 +20,7 @@ namespace Transformalize.Transforms {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = ((string[])row[_input]).First();
+            row[Context.Field] = ((string[])row[_input]).FirstOrDefault() ?? string.Empty;
             
             return row;
         }
