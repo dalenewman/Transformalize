@@ -24,8 +24,8 @@ using Transformalize.Contracts;
 namespace Transformalize.Actions {
     public class ScriptLoaderAction : IAction {
 
-        readonly IContext _context;
-        readonly IReader _reader;
+        private readonly IContext _context;
+        private readonly IReader _reader;
 
         public ScriptLoaderAction(IContext context, IReader reader) {
             _context = context;

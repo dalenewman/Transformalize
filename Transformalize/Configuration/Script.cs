@@ -23,7 +23,7 @@ namespace Transformalize.Configuration {
         [Cfg(required = true, unique = true, toLower = true)]
         public string Name { get; set; }
         
-        [Cfg(required = true)]
+        [Cfg(required = false)]
         public string File { get; set; }
         
         [Cfg(value="")]

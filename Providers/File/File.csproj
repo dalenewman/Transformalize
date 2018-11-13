@@ -35,9 +35,6 @@
     <Reference Include="CfgNet, Version=0.10.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="FileHelpers, Version=3.1.5.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\FileHelpers.3.1.5\lib\net45\FileHelpers.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
@@ -116,14 +113,8 @@
   <ItemGroup>
     <Compile Include="Actions\FileArchiveAction.cs" />
     <Compile Include="ContentToFileAction.cs" />
-    <Compile Include="DelimitedFileStreamReader.cs" />
-    <Compile Include="DelimitedFileReader.cs" />
-    <Compile Include="DelimitedFileStreamWriter.cs" />
-    <Compile Include="DelimitedFileWriter.cs" />
     <Compile Include="Actions\FileCopyAction.cs" />
-    <Compile Include="FileHelpersEngineFactory.cs" />
     <Compile Include="FileImport.cs" />
-    <Compile Include="FileInspection.cs" />
     <Compile Include="FileLineReader.cs" />
     <Compile Include="Actions\FileMoveAction.cs" />
     <Compile Include="FileOutputController.cs" />
@@ -133,7 +124,6 @@
     <Compile Include="FileStreamWriter.cs" />
     <Compile Include="Actions\OpenAction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FileInitializer.cs" />
     <Compile Include="Transforms\FileExtTransform.cs" />
     <Compile Include="Transforms\FileNameTransform.cs" />
     <Compile Include="Transforms\FilePathTransform.cs" />

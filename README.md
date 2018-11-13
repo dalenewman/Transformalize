@@ -171,7 +171,7 @@ To follow along, you need:
 
 * the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
 * [DB Browser for SQLite](http://sqlitebrowser.org)
-* this SQL CE [northwind.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/northwind.sdf) database.
+* SQL CE databases: [northwind.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/Demo/northwind.sdf) and [northwind-ts.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/Demo/northwind-ts.sdf) (+[drivers](https://www.microsoft.com/en-us/download/details.aspx?id=17876)).
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 * optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 

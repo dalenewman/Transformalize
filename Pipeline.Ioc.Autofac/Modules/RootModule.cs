@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -241,7 +240,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         return process;
                     }
 
-                    throw new Exception("Configuration Container could not find the configuration!  Pass in or register a `cfg` string.");
+                    return process;  // unloaded
+
             }
         }
 

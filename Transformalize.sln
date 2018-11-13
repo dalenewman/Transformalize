@@ -53,7 +53,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 		Files\northwind-in-banana-youtube.png = Files\northwind-in-banana-youtube.png
 		Files\northwind-in-excel-youtube.png = Files\northwind-in-excel-youtube.png
 		Files\northwind-in-kibana-youtube.png = Files\northwind-in-kibana-youtube.png
-		Files\northwind.sdf = Files\northwind.sdf
 		Files\Northwind_in_Kibana5_4YouTube.png = Files\Northwind_in_Kibana5_4YouTube.png
 		Files\NorthWindEntitiesRelated.xml = Files\NorthWindEntitiesRelated.xml
 		Files\notepadpp.png = Files\notepadpp.png
@@ -132,6 +131,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Globalization", "Transforms\Globalization\Globalization.csproj", "{55C2704F-CAAB-4EEC-AF2E-9B3A775D4598}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.462", "Compatibility\Transformalize.462\Transformalize.462.csproj", "{8FFA5596-C738-479A-A0F7-1D88BA62B610}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{00A6A3EF-B483-4A04-83B3-4208E28EAAED}"
+	ProjectSection(SolutionItems) = preProject
+		Files\Demo\northwind-ts.sdf = Files\Demo\northwind-ts.sdf
+		Files\Demo\northwind.sdf = Files\Demo\northwind.sdf
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -286,6 +291,7 @@ Global
 		{36724DD4-0A61-494B-ABCB-4FE845306EB8} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{55C2704F-CAAB-4EEC-AF2E-9B3A775D4598} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{8FFA5596-C738-479A-A0F7-1D88BA62B610} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
+		{00A6A3EF-B483-4A04-83B3-4208E28EAAED} = {6ADEE326-F1A6-486F-89D1-ACA0E2A24720}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

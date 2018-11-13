@@ -16,12 +16,12 @@
 // limitations under the License.
 #endregion
 
+using Autofac;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Autofac;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
@@ -56,23 +56,27 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new InternalModule(process).Configure);
 
             if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
-            if (providers.Contains("file")) { builder.RegisterCallback(new FileModule(process).Configure); }
             if (providers.Contains("geojson")) { builder.RegisterCallback(new GeoJsonModule(process).Configure); }
             if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
-            if (providers.Contains("folder")) { builder.RegisterCallback(new FolderModule(process).Configure); }
             if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
             if (providers.Contains("web")) { builder.RegisterCallback(new WebModule(process).Configure); }
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
-                
+
                 var assemblies = new List<Assembly>();
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
+
+                    if (providers.Contains("file") && name == "filehelpers") {
+                        name = "file"; // for now
+                    }
+
                     if (!providers.Contains(name))
                         continue;
-                    loadContext.Debug(()=>$"Loading {name} provider");
+
+                    loadContext.Debug(() => $"Loading {name} provider");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }

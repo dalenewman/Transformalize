@@ -157,7 +157,6 @@
   <ItemGroup>
     <Compile Include="CancelTransform.cs" />
     <Compile Include="ConfigurationContainer.cs" />
-    <Compile Include="FolderReader.cs" />
     <Compile Include="Impl\NullPlaceHolderReplacer.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="LibaryVersionChecker.cs" />
@@ -169,8 +168,6 @@
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\WebModule.cs" />
-    <Compile Include="Modules\FileModule.cs" />
-    <Compile Include="Modules\FolderModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
