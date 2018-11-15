@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Provider.GeoJson</id>
+    <version>0.3.13-beta</version>
+    <title>Transformalize Provider GeoJson</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>GeoJson Provider for Transformalize</description>
+    <releaseNotes>target 462</releaseNotes>
+    <copyright>Copyright 2013-2018</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.13-beta" />
+        <dependency id="Newtonsoft.Json" version="11.0.2" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\Providers\GeoJson\bin\Release\Transformalize.Provider.GeoJson.dll" target="lib\net462\Transformalize.Provider.GeoJson.dll" />
+  </files>
+</package>

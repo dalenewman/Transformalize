@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Logging.NLog</id>
-    <version>0.3.1-beta</version>
+    <version>0.3.13-beta</version>
     <title>Transformalize Logging NLog</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,17 +10,17 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NLog Logging implementation</description>
-    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
-    <copyright>Copyright 2013-2017</copyright>
+    <releaseNotes>target 462</releaseNotes>
+    <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.1-beta" />
-        <dependency id="NLog" version="4.4.11" />
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.13-beta" />
+        <dependency id="NLog" version="4.5.11" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Logging.NLog.dll" target="lib\net452\Transformalize.Logging.NLog.dll" />
+    <file src="..\Pipeline.Logging.NLog\bin\Release\Transformalize.Logging.NLog.dll" target="lib\net462\Transformalize.Logging.NLog.dll" />
   </files>
 </package>
