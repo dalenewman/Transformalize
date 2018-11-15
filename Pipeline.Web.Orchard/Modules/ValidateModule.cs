@@ -16,14 +16,16 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
 using Autofac;
 using Cfg.Net.Shorthand;
+using System;
+using System.Collections.Generic;
 using Transformalize;
+using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Validators;
 using CompareValidator = Transformalize.Validators.CompareValidator;
+using Parameter = Cfg.Net.Shorthand.Parameter;
 using RegularExpressionValidator = Transformalize.Validators.RegularExpressionValidator;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -63,7 +65,7 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
 
             // register the short hand
-            builder.Register((c, p) => new ValidateShorthandCustomizer(_shortHand, new[] {"fields", "calculated-fields"}, "v", "validators", "method")).As<ValidateShorthandCustomizer>().SingleInstance();
+            builder.Register((c, p) => new ValidateShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "v", "validators", "method")).As<ValidateShorthandCustomizer>().SingleInstance();
 
         }
 

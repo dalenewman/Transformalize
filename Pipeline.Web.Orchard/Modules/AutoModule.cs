@@ -17,6 +17,8 @@
 
 using System.Web;
 using Autofac;
+using Cfg.Net.Contracts;
+using Cfg.Net.Reader;
 using Orchard;
 using Orchard.FileSystems.AppData;
 using Orchard.Logging;
@@ -27,6 +29,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize.Impl;
+using ILogger = Orchard.Logging.ILogger;
 using Module = Autofac.Module;
 
 namespace Pipeline.Web.Orchard.Modules {
@@ -42,6 +45,9 @@ namespace Pipeline.Web.Orchard.Modules {
 
             var logger = new OrchardLogger();
             var context = new PipelineContext(logger, new Process { Name = "OrchardCMS" });
+
+            // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
+            builder.Register(c => new DefaultReader(new FileReader(), new WebReader())).As<IReader>();
 
             builder.Register(c => new RunTimeDataReader(
                     context.Logger,
@@ -62,7 +68,7 @@ namespace Pipeline.Web.Orchard.Modules {
                 )
             ).As<IRunTimeExecute>();
 
-
+            
 
         }
 

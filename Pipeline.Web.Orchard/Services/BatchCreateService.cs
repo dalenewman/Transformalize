@@ -29,6 +29,8 @@ namespace Pipeline.Web.Orchard.Services {
 
         public IDictionary<string, string> Create(Process process, IDictionary<string, string> parameters) {
 
+            Logger.Information("Creating batch for process: {0}", process == null ? "null" : process.Name);
+
             var result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var batchCreate = process.Actions.FirstOrDefault(a => a.Description.Equals(BatchCreateIndicator, StringComparison.OrdinalIgnoreCase));
 

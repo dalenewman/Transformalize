@@ -31,6 +31,9 @@ namespace Pipeline.Web.Orchard.Services {
         }
 
         public Process Resolve(PipelineConfigurationPart part, string input, string output) {
+            
+            Logger.Information("Resolving Process for Part: {0}", part == null ? "null" : part.Title());
+
             var marker = part.PlaceHolderStyle[0];
             var prefix = part.PlaceHolderStyle[1];
             var suffix = part.PlaceHolderStyle[2];
@@ -40,20 +43,22 @@ namespace Pipeline.Web.Orchard.Services {
                 case "json":
                     switch (output) {
                         case "json":
+                            Logger.Information("Resolving Process with {0} input, and {1} output.", input, output);
                             return new Process(
                                 new FormParameterModifier(new DateMathModifier()),
                                 new FastJsonParser(),
                                 new JsonSerializer(),
-                                _orchard.WorkContext.Resolve<TransformShorthandCustomizer>(),
+                                _orchard.WorkContext.Resolve<FieldTransformShorthandCustomizer>(),
                                 _orchard.WorkContext.Resolve<ValidateShorthandCustomizer>(),
                                 modifier
                             );
                         default:  // xml
+                            Logger.Information("Resolving Process with {0} input, and {1} output.", input, output);
                             return new Process(
                                 new FormParameterModifier(new DateMathModifier()),
                                 new FastJsonParser(),
                                 new XmlSerializer(),
-                                _orchard.WorkContext.Resolve<TransformShorthandCustomizer>(),
+                                _orchard.WorkContext.Resolve<FieldTransformShorthandCustomizer>(),
                                 _orchard.WorkContext.Resolve<ValidateShorthandCustomizer>(),
                                 modifier
                             );
@@ -61,20 +66,22 @@ namespace Pipeline.Web.Orchard.Services {
                 default:
                     switch (output) {
                         case "json":
+                            Logger.Information("Resolving Process with {0} input, and {1} output.", input, output);
                             return new Process(
                                 new FormParameterModifier(new DateMathModifier()),
                                 new NanoXmlParser(),
                                 new JsonSerializer(),
-                                _orchard.WorkContext.Resolve<TransformShorthandCustomizer>(),
+                                _orchard.WorkContext.Resolve<FieldTransformShorthandCustomizer>(),
                                 _orchard.WorkContext.Resolve<ValidateShorthandCustomizer>(),
                                 modifier
                             );
                         default: // xml
+                            Logger.Information("Resolving Process with {0} input, and {1} output.", input, output);
                             return new Process(
                                 new FormParameterModifier(new DateMathModifier()),
                                 new NanoXmlParser(),
                                 new XmlSerializer(),
-                                _orchard.WorkContext.Resolve<TransformShorthandCustomizer>(),
+                                _orchard.WorkContext.Resolve<FieldTransformShorthandCustomizer>(),
                                 _orchard.WorkContext.Resolve<ValidateShorthandCustomizer>(),
                                 modifier
                             );

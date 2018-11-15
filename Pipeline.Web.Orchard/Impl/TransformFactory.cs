@@ -16,10 +16,9 @@
 // limitations under the License.
 #endregion
 
-using System;
+using Autofac;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -90,6 +89,7 @@ namespace Pipeline.Web.Orchard.Impl {
                 ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)) :
                 new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)));
         }
+
 
     }
 }

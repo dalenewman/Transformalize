@@ -16,18 +16,20 @@
 // limitations under the License.
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Environment;
 using Cfg.Net.Reader;
+using Orchard.Localization;
+using Orchard.Logging;
+using System.Collections.Generic;
+using System.Linq;
+using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Orchard.Localization;
-using Transformalize;
 using Transformalize.Impl;
 using Transformalize.Transforms.DateMath;
+using IDependency = Cfg.Net.Contracts.IDependency;
 
 // ReSharper disable PossibleMultipleEnumeration
 
@@ -35,24 +37,21 @@ namespace Pipeline.Web.Orchard.Modules {
 
     public class RootModule : Module {
         public Localizer T { get; set; }
+        public global::Orchard.Logging.ILogger Logger { get; set; }
 
         public RootModule() {
             T = NullLocalizer.Instance;
+            Logger = NullLogger.Instance;
         }
 
         protected override void Load(ContainerBuilder builder) {
 
             builder.RegisterType<Cfg.Net.Serializers.XmlSerializer>().As<ISerializer>();
 
-            // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
-            builder.RegisterType<FileReader>().Named<IReader>("file");
-            builder.RegisterType<WebReader>().Named<IReader>("web");
-            builder.Register<IReader>(ctx => new DefaultReader(
-                ctx.ResolveNamed<IReader>("file"),
-                new ReTryingReader(ctx.ResolveNamed<IReader>("web"), attempts: 3))
-            );
+            builder.Register(ctx => {
 
-            builder.Register((ctx, p) => {
+                // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
+                builder.Register(c => new DefaultReader(new FileReader(), new WebReader())).As<IReader>();
 
                 var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
@@ -62,8 +61,8 @@ namespace Pipeline.Web.Orchard.Modules {
                     new IllegalCharacterValidator()
                 };
 
-                if (ctx.IsRegistered<TransformShorthandCustomizer>()) {
-                    dependencies.Add(ctx.Resolve<TransformShorthandCustomizer>());
+                if (ctx.IsRegistered<FieldTransformShorthandCustomizer>()) {
+                    dependencies.Add(ctx.Resolve<FieldTransformShorthandCustomizer>());
                 }
 
                 if (ctx.IsRegistered<ValidateShorthandCustomizer>()) {
@@ -72,17 +71,15 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 var process = new Process(dependencies.ToArray());
 
-                switch (p.Count()) {
-                    case 2:
-                        process.Load(
-                            p.Named<string>("cfg"),
-                            p.Named<Dictionary<string, string>>("parameters")
-                        );
-                        break;
-                    default:
-                        process.Load(p.Named<string>("cfg"));
-                        break;
+                if (!ctx.IsRegisteredWithName<string>("cfg")) {
+                    process.Name = "Error";
+                    process.Status = 500;
+                    process.Message = "The configuration (cfg) is not registered in the container.";
+                    process.Check();
+                    return process;
                 }
+
+                process.Load(ctx.ResolveNamed<string>("cfg"));
 
                 // this might be put into it's own type and injected (or not)
                 if (process.Entities.Count == 1) {

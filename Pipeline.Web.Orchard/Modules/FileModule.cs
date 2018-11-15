@@ -26,9 +26,10 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using Transformalize.Providers.File;
 using Pipeline.Web.Orchard.Impl;
 using Transformalize;
+using Transformalize.Providers.FileHelpers;
+using FileReader = Transformalize.Providers.File.FileReader;
 
 namespace Pipeline.Web.Orchard.Modules {
 

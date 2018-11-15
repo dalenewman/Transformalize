@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -50,7 +49,6 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
-        private readonly HashSet<string> _reportOutputs = new HashSet<string> { "internal", "file", Transformalize.Constants.DefaultSetting };
         public Localizer T { get; set; }
         public ILogger Logger { get; set; }
 

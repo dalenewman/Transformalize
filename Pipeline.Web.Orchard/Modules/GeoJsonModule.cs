@@ -69,7 +69,7 @@ namespace Pipeline.Web.Orchard.Modules {
                         switch (output.Connection.Provider) {
                             case "geojson":
                                 return output.Connection.Stream ?
-                                    (IWrite) new GeoJsonStreamWriter(output, HttpContext.Current.Response.OutputStream) :
+                                    (IWrite) new GeoJsonMinimalStreamWriter(output, HttpContext.Current.Response.OutputStream) :
                                     new GeoJsonFileWriter(output);
                             default:
                                 return new NullWriter(output);

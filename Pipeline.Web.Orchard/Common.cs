@@ -104,7 +104,7 @@ namespace Pipeline.Web.Orchard {
             } else {
                 returnUrl = orchard.WorkContext.CurrentSite.HomePage;
             }
-            parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : returnUrl;
+            parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : returnUrl ?? string.Empty;
         }
 
         public static void TranslatePageParametersToEntities(Process process, IDictionary<string, string> parameters, string defaultOutput) {

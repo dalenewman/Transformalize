@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Cfg.Net.Contracts;
+using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
 using Newtonsoft.Json;
 using Orchard.Templates.Services;
@@ -35,16 +36,28 @@ using Transformalize.Transforms.Jint;
 using Transformalize.Transforms;
 using Transformalize.Providers.File.Transforms;
 using Transformalize.Providers.Web;
+using Transformalize.Transform.GoogleMaps;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Json;
 using Transformalize.Transforms.LambdaParser;
 using Transformalize.Transforms.Xml;
+using Parameter = Cfg.Net.Shorthand.Parameter;
 
 namespace Pipeline.Web.Orchard.Modules {
 
-    public class TransformShorthandCustomizer : ShorthandCustomizer {
-        public TransformShorthandCustomizer(ShorthandRoot root, IEnumerable<string> shortHandCollections, string shortHandProperty, string longHandCollection, string longHandProperty) : base(root, shortHandCollections, shortHandProperty, longHandCollection, longHandProperty) { }
+    /// <summary>
+    /// Make this class since Orchard doesn't allow you to resolve by name or key
+    /// </summary>
+    public class FieldTransformShorthandCustomizer : ShorthandCustomizer {
+        public FieldTransformShorthandCustomizer(ShorthandRoot root, IEnumerable<string> shortHandCollections, string shortHandProperty, string longHandCollection, string longHandProperty) : base(root, shortHandCollections, shortHandProperty, longHandCollection, longHandProperty) { }
+    }
+
+    /// <summary>
+    /// Make this class since Orchard doesn't allow you to resolve by name or key
+    /// </summary>
+    public class ParameterTransformShorthandCustomizer : ShorthandCustomizer {
+        public ParameterTransformShorthandCustomizer(ShorthandRoot root, IEnumerable<string> shortHandCollections, string shortHandProperty, string longHandCollection, string longHandProperty) : base(root, shortHandCollections, shortHandProperty, longHandCollection, longHandProperty) { }
     }
 
     public class TransformModule : Module {
@@ -53,6 +66,9 @@ namespace Pipeline.Web.Orchard.Modules {
         private readonly ShorthandRoot _shortHand = new ShorthandRoot();
 
         protected override void Load(ContainerBuilder builder) {
+
+            // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
+            builder.Register(c => new DefaultReader(new FileReader(), new Cfg.Net.Reader.WebReader())).As<IReader>();
 
             // new method so transform author can define shorthand signature(s)
             RegisterTransform(builder, (ctx, c) => new AbsTransform(c), new AbsTransform().GetSignatures());
@@ -73,10 +89,8 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
+
             RegisterTransform(builder, (ctx, c) => new LastDayTransform(c), new LastDayTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FloorTransform(c), new FloorTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FormatXmlTransform(c), new FormatXmlTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FormatPhoneTransform(c), new FormatPhoneTransform().GetSignatures());
@@ -140,6 +154,14 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
 
+            // Split
+            RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new GetTransform(c), new GetTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new SortTransform(c), new SortTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ReverseTransform(c), new ReverseTransform().GetSignatures());
+
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Exclude, c), new FilterTransform(FilterType.Exclude).GetSignatures());
@@ -149,7 +171,9 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new FromRegexTransform(c), new FromRegexTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
+
             RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new PlaceTransform(c), new PlaceTransform().GetSignatures());
 
             // return true or false transforms
             RegisterTransform(builder, (ctx, c) => new AnyTransform(c), new AnyTransform().GetSignatures());
@@ -164,6 +188,7 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new IsNumericTransform(c), new IsNumericTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RegexIsMatchTransform(c), new RegexIsMatchTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IsDaylightSavingsTransform(c), new IsDaylightSavingsTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ToBoolTransform(c), new ToBoolTransform().GetSignatures());
 
             // uncategorized
             RegisterTransform(builder, (ctx, c) => new LogTransform(c), new LogTransform().GetSignatures());
@@ -204,7 +229,8 @@ namespace Pipeline.Web.Orchard.Modules {
             );
 
             // register the short hand
-            builder.Register((c, p) => new TransformShorthandCustomizer(_shortHand, new[] {"fields", "calculated-fields"}, "t", "transforms", "method")).As<TransformShorthandCustomizer>().SingleInstance();
+            builder.Register((c, p) => new FieldTransformShorthandCustomizer(_shortHand, new[] {"fields", "calculated-fields"}, "t", "transforms", "method")).As<FieldTransformShorthandCustomizer>().SingleInstance();
+            builder.Register((c, p) => new ParameterTransformShorthandCustomizer(_shortHand, new[] { "parameters" }, "t", "transforms", "method")).As<ParameterTransformShorthandCustomizer>().SingleInstance();
 
         }
 

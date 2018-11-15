@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.3.6-beta</version>
+    <version>0.3.12-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,17 +10,17 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>used to write excel</description>
-    <releaseNotes>update entity's inserts</releaseNotes>
+    <releaseNotes>target 462</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.5-beta" />
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.12-beta" />
         <dependency id="OpenXmlPowerTools" version="4.5.3.1" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Provider.OpenXml.dll" target="lib\net452\Transformalize.Provider.OpenXml.dll" />
+    <file src="bin\Release\Transformalize.Provider.OpenXml.dll" target="lib\net462\Transformalize.Provider.OpenXml.dll" />
   </files>
 </package>
