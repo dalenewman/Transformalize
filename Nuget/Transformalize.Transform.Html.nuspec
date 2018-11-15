@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>Transformalize.Provider.Web</id>
+    <id>Transformalize.Transform.Html</id>
     <version>0.3.13-beta</version>
-    <title>Transformalize Provider Web</title>
+    <title>Transformalize Html</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Web Provider for Transformalize</description>
-    <releaseNotes>updated deps</releaseNotes>
+    <description>Html related transforms for Transformalize</description>
+    <releaseNotes>update dependencies</releaseNotes>
     <copyright>Copyright 2013-2018</copyright>
     <tags>etl</tags>
     <dependencies>
@@ -20,6 +20,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\Providers\Web\bin\Release\Transformalize.Provider.Web.dll" target="lib\net462\Transformalize.Provider.Web.dll" />
+    <file src="..\Transforms\Html\bin\Release\Transformalize.Transform.Html.dll" target="lib\net462\Transformalize.Transform.Html.dll" />
   </files>
 </package>

@@ -38,14 +38,14 @@ namespace Transformalize.Transforms.Json {
                 return;
             }
 
-            if (!context.Operation.Parameters.Any()) {
-                Error($"The {context.Operation.Method} transform requires a collection of output fields.");
+            if (!Context.Operation.Parameters.Any()) {
+                Error($"The {Context.Operation.Method} transform requires a collection of output fields.");
                 Run = false;
                 return;
             }
 
             if(serializer == null) {
-                Error($"The {context.Operation.Method} transform requires a JSON serializer.");
+                Error($"The {Context.Operation.Method} transform requires a JSON serializer.");
                 Run = false;
                 return;
             }

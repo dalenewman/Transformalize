@@ -27,6 +27,7 @@ using Action = Transformalize.Configuration.Action;
 
 namespace Transformalize.Providers.Web {
     public class WebAction : IAction {
+
         private readonly PipelineContext _context;
         private readonly Action _action;
 

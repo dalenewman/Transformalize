@@ -13,18 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		WE-Markdown.css = WE-Markdown.css
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037}"
-	ProjectSection(SolutionItems) = preProject
-		Articles\Babies.md = Articles\Babies.md
-		Articles\BackupSqlExpress.md = Articles\BackupSqlExpress.md
-		Articles\Example-00-Prerequisites.md = Articles\Example-00-Prerequisites.md
-		Articles\Example-01-Single-Entity.md = Articles\Example-01-Single-Entity.md
-		Articles\FantasyFootballKibana.md = Articles\FantasyFootballKibana.md
-		Articles\IncrementalDenormalize.md = Articles\IncrementalDenormalize.md
-		Articles\SolrWindsApache.md = Articles\SolrWindsApache.md
-		Articles\TransformalizeNorthWind.md = Articles\TransformalizeNorthWind.md
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Logging.NLog", "Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj", "{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Scheduler.Quartz", "Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj", "{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}"
@@ -86,8 +74,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Provider.Trace.nuspec = Nuget\Transformalize.Provider.Trace.nuspec
 		Nuget\Transformalize.Provider.Web.nuspec = Nuget\Transformalize.Provider.Web.nuspec
 		Nuget\Transformalize.Scheduler.Quartz.nuspec = Nuget\Transformalize.Scheduler.Quartz.nuspec
+		Nuget\Transformalize.Transform.Compression.nuspec = Nuget\Transformalize.Transform.Compression.nuspec
+		Nuget\Transformalize.Transform.DateMath.nuspec = Nuget\Transformalize.Transform.DateMath.nuspec
+		Nuget\Transformalize.Transform.Geography.nuspec = Nuget\Transformalize.Transform.Geography.nuspec
 		Nuget\Transformalize.Transform.Globalization.nuspec = Nuget\Transformalize.Transform.Globalization.nuspec
+		Nuget\Transformalize.Transform.Html.nuspec = Nuget\Transformalize.Transform.Html.nuspec
 		Nuget\Transformalize.Transform.JavaScript.nuspec = Nuget\Transformalize.Transform.JavaScript.nuspec
+		Nuget\Transformalize.Transform.Json.nuspec = Nuget\Transformalize.Transform.Json.nuspec
+		Nuget\Transformalize.Transform.Xml.nuspec = Nuget\Transformalize.Transform.Xml.nuspec
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{89D90201-5EA9-4D51-B4A7-0A977FB7504D}"
@@ -262,7 +256,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{2015F370-2D4E-4EBC-B9E7-7FC3CA0A2037} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 		{03AB8B72-1A0C-4238-B369-C37147C42A48} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}

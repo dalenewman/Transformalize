@@ -35,12 +35,6 @@
     <Reference Include="CfgNet, Version=0.10.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Maps, Version=0.14.51.34051, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\gmaps-api-net.0.14.51\lib\net\Google.Maps.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\gmaps-api-net.0.14.51\lib\net\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="NGeoHash.Portable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NGeoHash.Portable.1.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\NGeoHash.Portable.dll</HintPath>
     </Reference>
@@ -60,9 +54,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Compatibility\Transformalize.452\Transformalize.452.csproj">
-      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
-      <Name>Transformalize.452</Name>
+    <ProjectReference Include="..\..\Compatibility\Transformalize.462\Transformalize.462.csproj">
+      <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
+      <Name>Transformalize.462</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

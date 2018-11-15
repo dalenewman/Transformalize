@@ -38,16 +38,16 @@ namespace Transformalize.Transforms.Xml {
                 return;
             }
 
-            if (IsMissing(context.Operation.Expression)) {
+            if (IsMissing(Context.Operation.Expression)) {
                 return;
             }
 
-            if (!string.IsNullOrEmpty(context.Operation.NameSpace) && string.IsNullOrEmpty(context.Operation.Url)) {
+            if (!string.IsNullOrEmpty(Context.Operation.NameSpace) && string.IsNullOrEmpty(context.Operation.Url)) {
                 Error("If you set a namespace, you must also set the url that references the name space.");
             }
 
             _input = SingleInput();
-            _xPathIsField = context.Process.TryGetField(context.Operation.Expression, out _xPathField);
+            _xPathIsField = Context.Process.TryGetField(context.Operation.Expression, out _xPathField);
             _hasNamespace = !string.IsNullOrEmpty(context.Operation.NameSpace);
         }
 
