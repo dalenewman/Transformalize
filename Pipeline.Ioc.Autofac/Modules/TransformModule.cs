@@ -152,6 +152,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new GuidTransform(c), new GuidTransform().GetSignatures());
 
             // split
             RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());

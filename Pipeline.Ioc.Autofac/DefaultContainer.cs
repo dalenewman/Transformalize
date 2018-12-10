@@ -73,7 +73,7 @@ namespace Transformalize.Ioc.Autofac {
                         name = "file"; // for now
                     }
 
-                    if (!providers.Contains(name))
+                    if (!providers.Contains(name) && name != "ado")
                         continue;
 
                     loadContext.Debug(() => $"Loading {name} provider");
@@ -86,7 +86,6 @@ namespace Transformalize.Ioc.Autofac {
             }
 
             // etc
-            builder.RegisterCallback(new MapModule(process).Configure);
             builder.RegisterCallback(new TemplateModule(process).Configure);
             builder.RegisterCallback(new ActionModule(process).Configure);
 

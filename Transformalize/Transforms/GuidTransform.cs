@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -15,14 +15,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-namespace Transformalize.Providers.Ado {
-    public enum AdoProvider {
-        SqlServer,
-        MySql,
-        None,
-        PostgreSql,
-        SqlCe,
-        SqLite,
-        Access
+using System;
+using System.Collections.Generic;
+using Transformalize.Contracts;
+
+namespace Transformalize.Transforms {
+    public class GuidTransform : BaseTransform {
+
+        public GuidTransform(IContext context = null) : base(context, "guid") {
+        }
+
+        public override IRow Operate(IRow row) {
+            row[Context.Field] = Guid.NewGuid();
+            return row;
+        }
+
+        public override IEnumerable<OperationSignature> GetSignatures() {
+            return new[] { new OperationSignature("guid") };
+        }
     }
 }

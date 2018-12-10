@@ -173,7 +173,6 @@
     <Compile Include="Modules\ContextModule.cs" />
     <Compile Include="Modules\EntityModule.cs" />
     <Compile Include="Modules\EntityPipelineModule.cs" />
-    <Compile Include="Modules\MapModule.cs" />
     <Compile Include="Modules\ProcessControlModule.cs" />
     <Compile Include="Modules\ProcessPipelineModule.cs" />
     <Compile Include="Modules\TemplateModule.cs" />
@@ -193,10 +192,6 @@
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Ado\Ado.csproj">
-      <Project>{03AB8B72-1A0C-4238-B369-C37147C42A48}</Project>
-      <Name>Ado</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>

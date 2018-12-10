@@ -17,21 +17,16 @@
 #endregion
 using System.Linq;
 using Autofac;
-using Cfg.Net.Reader;
 using Quartz.Collection;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
-using Transformalize.Providers.Ado;
-using Transformalize.Providers.Ado.Actions;
 using Transformalize.Providers.Console;
 using Transformalize.Providers.File;
 using Transformalize.Providers.File.Actions;
 using Transformalize.Providers.Web;
-using FileReader = Cfg.Net.Reader.FileReader;
-using WebReader = Cfg.Net.Reader.WebReader;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
@@ -41,7 +36,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
     public class ActionModule : Module {
 
         private readonly Process _process;
-        private readonly HashSet<string> _types = new HashSet<string> { "copy", "move", "archive", "replace", "print", "log", "web", "wait", "form-commands", "tfl", "run", "open", "exit" };
+        private readonly HashSet<string> _types = new HashSet<string> { "copy", "move", "archive", "replace", "print", "log", "web", "wait", "tfl", "open", "exit" };
 
         public ActionModule() { }
 
@@ -66,7 +61,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
         }
 
         private static IAction SwitchAction(IComponentContext ctx, Process process, Action action) {
-            Connection connection;
+
             var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process);
             switch (action.Type) {
                 case "copy":
@@ -85,9 +80,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     return new LogAction(context, action);
                 case "web":
                     return new WebAction(context, action);
-                case "form-commands":
-                    connection = process.Connections.First(c => c.Name == action.Connection);
-                    return new AdoEntityFormCommands(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key));
                 case "wait":
                 case "sleep":
                     return new WaitAction(action);
@@ -103,26 +95,13 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         context.Warn(warning);
                     }
                     if (root.Errors().Any()) {
-                        context.Error($"TFL Pipeline Action '{cfg.Left(15) + "..." + cfg.Right(15)}' has errors!");
+                        context.Error($"TFL Pipeline Action '{cfg.Left(30)}'... has errors!");
                         foreach (var error in root.Errors()) {
                             context.Error(error);
                         }
                         return new NullAction();
                     }
-
                     return new PipelineAction(DefaultContainer.Create(root, ctx.Resolve<IPipelineLogger>(), action.PlaceHolderStyle));
-                case "run":
-                    connection = process.Connections.First(c => c.Name == action.Connection);
-                    switch (connection.Provider) {
-                        case "mysql":
-                        case "postgresql":
-                        case "sqlite":
-                        case "sqlserver":
-                            return new AdoRunAction(context, action, ctx.ResolveNamed<IConnectionFactory>(connection.Key), new DefaultReader(new FileReader(), new WebReader()));
-                        default:
-                            context.Error("{0} provider is not registered for run action.", connection.Provider);
-                            return new NullAction();
-                    }
                 case "open":
                     return new OpenAction(action);
                 case "exit":

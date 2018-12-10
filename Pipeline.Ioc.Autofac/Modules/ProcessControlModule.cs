@@ -15,16 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Autofac;
+using Cfg.Net.Contracts;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Process = Transformalize.Configuration.Process;
-using Cfg.Net.Contracts;
 using Transformalize.Impl;
-using Transformalize.Providers.Ado;
+using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class ProcessControlModule : Module {
@@ -76,8 +75,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 // flatten, should be the first post-action
                 var o = ctx.ResolveNamed<OutputContext>(outputConnection.Key);
                 var isAdo = Constants.AdoProviderSet().Contains(outputConnection.Provider);
-                if (_process.Flatten && isAdo ) {
-                    controller.PostActions.Add(new AdoFlattenAction(o, ctx.ResolveNamed<IConnectionFactory>(outputConnection.Key)));
+                if (_process.Flatten && isAdo) {
+                    if (ctx.IsRegisteredWithName<IAction>(outputConnection.Key)) {
+                        controller.PostActions.Add(ctx.ResolveNamed<IAction>(outputConnection.Key));
+                    } else {
+                        o.Error($"Could not find ADO Flatten Action for provider {outputConnection.Provider}.");
+                    }
                 }
 
                 // scripts
