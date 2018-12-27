@@ -36,7 +36,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
     public class ActionModule : Module {
 
         private readonly Process _process;
-        private readonly HashSet<string> _types = new HashSet<string> { "copy", "move", "archive", "replace", "print", "log", "web", "wait", "tfl", "open", "exit" };
+        private readonly HashSet<string> _types = new HashSet<string> { "copy", "move", "archive", "replace", "print", "log", "web", "wait", "sleep", "tfl", "open", "exit" };
 
         public ActionModule() { }
 
