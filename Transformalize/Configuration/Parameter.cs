@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2017 Dale Newman
+// Copyright 2013-2019 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -160,6 +160,12 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = false)]
         public bool Multiple { get; set; }
+
+        [Cfg(value=false)]
+        public bool Required { get; set; }
+
+        [Cfg(value=false)]
+        public bool Sticky { get; set; }
 
         public object Convert(string value) {
             return Type == "string" ? value : Constants.ConversionMap[Type](value);

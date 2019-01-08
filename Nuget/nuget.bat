@@ -1,4 +1,4 @@
-REM nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 rem nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"

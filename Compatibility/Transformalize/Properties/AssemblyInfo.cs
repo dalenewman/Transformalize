@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2017 Dale Newman
+// Copyright 2013-2019 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,5 +43,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.3.13.0")]
-[assembly: AssemblyFileVersion("0.3.13.0")]
+[assembly: AssemblyVersion("0.3.14.0")]
+[assembly: AssemblyFileVersion("0.3.14.0")]

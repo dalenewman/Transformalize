@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.13-beta</version>
+    <version>0.3.14-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>added a few more transforms</releaseNotes>
-    <copyright>Copyright 2013-2018</copyright>
+    <releaseNotes>added required and sticky properties to parameters</releaseNotes>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="portable-net45+win8+wpa81+wp8" />
