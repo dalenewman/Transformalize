@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Configuration {
     public class Field : CfgNode, IField {
@@ -267,12 +268,11 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "64", toLower = true)]
         public string Length {
-            get { return _length; }
+            get => _length;
             set {
                 if (value == null)
                     return;
-                int number;
-                if (int.TryParse(value, out number)) {
+                if (int.TryParse(value, out var number)) {
                     if (number <= 0) {
                         Error("A field's length must be a number greater than zero, or max.");
                     }
@@ -507,12 +507,12 @@ namespace Transformalize.Configuration {
         [Cfg(value = "auto", domain = "auto,chakra,jint", toLower = true)]
         public string Engine { get; set; }
 
-        [Cfg(value = "", toLower = true)]
-        public string ClassMap { get; set; }
-
         [Cfg(value = "")]
         public string Format { get; set; }
 
+        [Cfg(value = "")]
+        public string Connection { get; set; }
+       
         [Cfg(value = false)]
         public bool Facet { get; set; }
 

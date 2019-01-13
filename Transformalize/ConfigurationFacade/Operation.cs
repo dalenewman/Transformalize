@@ -263,6 +263,9 @@ namespace Transformalize.ConfigurationFacade {
         [Cfg]
         public string Query { get; set; }
 
+        [Cfg]
+        public string Command { get; set; }
+
         public Configuration.Operation ToOperation() {
             var operation = new Configuration.Operation {
                 Name = this.Name,
@@ -323,7 +326,8 @@ namespace Transformalize.ConfigurationFacade {
                 Value = this.Value,
                 WebMethod = this.WebMethod,
                 XmlMode = this.XmlMode,
-                Query = this.Query
+                Query = this.Query,
+                Command = this.Command
             };
 
             int.TryParse(this.Count, out var count);

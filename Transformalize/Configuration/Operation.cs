@@ -285,6 +285,9 @@ namespace Transformalize.Configuration {
         [Cfg(value="")]
         public string Query { get; set; }
 
+        [Cfg(value="")]
+        public string Command { get; set; }
+
         public static HashSet<string> TransformProducerSet() {
             return _transformProducerSet ?? (_transformProducerSet = new HashSet<string>(TransformProducerDomain.Split(',')));
         }

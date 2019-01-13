@@ -223,5 +223,8 @@ namespace Transformalize.ConfigurationFacade {
         [Cfg]
         public string Remote { get; set; }
 
+        [Cfg]
+        public string Connection { get; set; }
+
     }
 }
