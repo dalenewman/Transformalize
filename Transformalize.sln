@@ -63,7 +63,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\nuget.push.bat = Nuget\nuget.push.bat
 		Nuget\Transformalize.Logging.NLog.nuspec = Nuget\Transformalize.Logging.NLog.nuspec
 		Nuget\Transformalize.nuspec = Nuget\Transformalize.nuspec
-		Nuget\Transformalize.Provider.Ado.nuspec = Nuget\Transformalize.Provider.Ado.nuspec
 		Nuget\Transformalize.Provider.Console.nuspec = Nuget\Transformalize.Provider.Console.nuspec
 		Nuget\Transformalize.Provider.File.nuspec = Nuget\Transformalize.Provider.File.nuspec
 		Nuget\Transformalize.Provider.GeoJson.nuspec = Nuget\Transformalize.Provider.GeoJson.nuspec

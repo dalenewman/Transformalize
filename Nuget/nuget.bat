@@ -3,7 +3,6 @@ nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
 
-rem nuget pack Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
 rem nuget pack Transformalize.Provider.GeoJson.nuspec -OutputDirectory "c:\temp\modules"

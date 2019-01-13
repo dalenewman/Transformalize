@@ -1,10 +1,9 @@
-nuget push "c:\temp\modules\Transformalize.0.3.15-beta.nupkg" -source https://api.nuget.org/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.3.16-beta.nupkg" -source https://api.nuget.org/v3/index.json
 
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.3.13-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Trace.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 
-REM nuget push "c:\temp\modules\Transformalize.Provider.Ado.0.3.11-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.OpenXml.0.3.12-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.File.0.3.13-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.GeoJson.0.3.13-beta.nupkg" -source https://api.nuget.org/v3/index.json
