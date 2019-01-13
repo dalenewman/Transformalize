@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.14-beta</version>
+    <version>0.3.15-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>added required and sticky properties to parameters</releaseNotes>
+    <releaseNotes>add query property to operation class</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
@@ -36,11 +36,11 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="..\Transformalize\bin\Release\Transformalize.dll" target="lib\netstandard1.0\Transformalize.dll" />
-    <file src="..\Transformalize\bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
-    <file src="..\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
-    <file src="..\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
-    <file src="..\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
-    <file src="..\Transformalize.462\bin\Release\Transformalize.dll" target="lib\net462\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize\bin\Release\Transformalize.dll" target="lib\netstandard1.0\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize\bin\Release\Transformalize.dll" target="lib\portable-net45+win8+wpa81+wp8\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize.40\bin\Release\Transformalize.dll" target="lib\net40\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize.45\bin\Release\Transformalize.dll" target="lib\net45\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize.452\bin\Release\Transformalize.dll" target="lib\net452\Transformalize.dll" />
+    <file src="..\Compatibility\Transformalize.462\bin\Release\Transformalize.dll" target="lib\net462\Transformalize.dll" />
   </files>
 </package>

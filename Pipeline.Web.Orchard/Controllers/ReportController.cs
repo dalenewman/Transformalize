@@ -15,31 +15,29 @@
 // limitations under the License.
 #endregion
 
+using Orchard;
+using Orchard.Autoroute.Services;
+using Orchard.ContentManagement;
+using Orchard.FileSystems.AppData;
+using Orchard.Logging;
+using Orchard.Services;
+using Orchard.Themes;
+using Orchard.UI.Notify;
+using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services;
+using Pipeline.Web.Orchard.Services.Contracts;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using Orchard;
-using Orchard.ContentManagement;
-using Orchard.Localization;
-using Orchard.Logging;
-using Orchard.Themes;
-using Orchard.UI.Notify;
 using Transformalize.Contracts;
-using Pipeline.Web.Orchard.Models;
-using Pipeline.Web.Orchard.Services;
-using Orchard.Autoroute.Services;
-using Orchard.FileSystems.AppData;
-using Orchard.Services;
-using Pipeline.Web.Orchard.Services.Contracts;
-using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;
+using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
-
     [ValidateInput(false), Themed]
-    public class ReportController : Controller {
+    public class ReportController : BaseController {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -49,8 +47,6 @@ namespace Pipeline.Web.Orchard.Controllers {
         private readonly IBatchWriteService _batchWriteService;
         private readonly IBatchRunService _batchRunService;
         private readonly IBatchRedirectService _batchRedirectService;
-        public Localizer T { get; set; }
-        public ILogger Logger { get; set; }
 
         public ReportController(
             IOrchardServices services,
@@ -75,8 +71,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             _batchWriteService = batchWriteService;
             _batchRunService = batchRunService;
             _batchRedirectService = batchRedirectService;
-            T = NullLocalizer.Instance;
-            Logger = NullLogger.Instance;
         }
 
         [Themed(true)]
@@ -104,10 +98,44 @@ namespace Pipeline.Web.Orchard.Controllers {
                         process.Name = "File Not Found";
                     }
 
+                    // get sticky values
+                    var suffix = part.Id.ToString();
+                    foreach (string key in Session.Keys) {
+                        if (key.EndsWith(suffix)) {
+                            var name = key.Substring(0, key.Length - suffix.Length);
+                            if (!parameters.ContainsKey(name) && Session[key] != null) {
+                                parameters[name] = Session[key].ToString();
+                            }
+                        }
+                    }
+
                     process.Load(part.Configuration, parameters);
                     process.Mode = "report";
                     process.Buffer = false; // no buffering for reports
                     process.ReadOnly = true;  // force reporting to omit system fields
+
+                    var reportParameters = process.GetActiveParameters();
+
+                    // sticky session parameters
+                    foreach (var parameter in reportParameters.Where(p => p.Sticky)) {
+                        var key = parameter.Name + part.Id;
+                        if (Request.QueryString[parameter.Name] == null) {
+                            if (Session[key] != null) {
+                                parameter.Value = Session[key].ToString();
+                            }
+                        } else {  // A parameter is set
+                            var value = Request.QueryString[parameter.Name];
+                            if (Session[key] == null) {
+                                Session[key] = value;  // for the next time
+                                parameter.Value = value; // for now
+                            } else {
+                                if (Session[key].ToString() != value) {
+                                    Session[key] = value; // for the next time
+                                    parameter.Value = value; // for now
+                                }
+                            }
+                        }
+                    }
 
                     // secure actions
                     var actions = process.Actions.Where(a => !a.Before && !a.After && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
@@ -122,9 +150,20 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     if (Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
+                        var system = reportParameters.FirstOrDefault(p => p.Name.Equals("System", StringComparison.OrdinalIgnoreCase));
+                        if (system == null) {
+                            Logger.Error("The {0} requires a System parameter in order to run bulk actions.", part.Title());
+                            _orchardServices.Notifier.Error(T("The {0} requires a System parameter in order to run bulk actions.", part.Title()));
+                        } else {
+                            if (system.Value == "*") {
+                                _orchardServices.Notifier.Warning(T("The {0} must be selected in order to run an action.", system.Label));
+                                system = null;
+                            }
+                        }
+
                         var action = process.Actions.FirstOrDefault(a => a.Description == parameters["action"]);
 
-                        if (action != null) {
+                        if (action != null && system != null) {
 
                             // check security
                             var actionPart = _orchardServices.ContentManager.Get(action.Id);
@@ -136,6 +175,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                                 // security okay
                                 parameters["entity"] = process.Entities.First().Alias;
+                                foreach (var p in reportParameters.Where(pr => pr.Name.ToLower() != "entity" && pr.Value != "*")) {
+                                    parameters[p.Name] = p.Value;
+                                }
                                 var batchParameters = _batchCreateService.Create(process, parameters);
 
                                 Common.AddOrchardVariables(batchParameters, _orchardServices, Request);
@@ -188,6 +230,10 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                         if (!process.Errors().Any()) {
 
+                            if (IsMissingRequiredParameters(reportParameters, _orchardServices.Notifier)) {
+                                return View(new ReportViewModel(process, part));
+                            }
+
                             var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                             try {
 
@@ -210,6 +256,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                                 Logger.Error(ex, ex.Message);
                                 _orchardServices.Notifier.Error(T(ex.Message));
                             }
+
                         }
                     }
 

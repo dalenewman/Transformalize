@@ -10,6 +10,7 @@
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
     var sortService = WorkContext.Resolve<ISortService>();
     var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
+    var parameters = Model.Process.GetActiveParameters();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     if (hasActions) {
@@ -44,7 +45,7 @@
 
     var fields = entity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
     var isSortable = fields.Any(f => f.Sortable == "true");
-    var activeParameters = Model.Process.GetActiveParameters();
+
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
     AppendMeta("description", title, ",");
     Layout.Title = title;
@@ -115,155 +116,156 @@
     <div class="alert alert-warning" role="alert">@logEntry.Message</div>
 }
 
-    <form id="id_report" class="form-inline" role="form" method="GET">
+<form id="id_report" class="form-inline" role="form" method="GET">
 
-        <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
-        @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
-            <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
-        }
-        <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
-        <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
+    <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+    @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
+        <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
+    }
+    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+    <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
 
-        @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
-            <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
-        }
+    @foreach (var parameter in parameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
+    }
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
+    @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
+    @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
 
-        <div class="row">
-            <div class="table-responsive col-sm-12">
-                <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
-                    <thead>
-                        <tr style="font-size: smaller; font-weight: bolder;">
+    <div class="row">
+        <div class="table-responsive col-sm-12">
+            <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
+                <thead>
+                    <tr style="font-size: smaller; font-weight: bolder;">
+                        @if (hasActions) {
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
+                                    </label>
+                                </div>
+                            </td>
+                        }
+                        @foreach (var field in fields) {
+                            <td title="@field.Name">@field.Label</td>
+                        }
+                    </tr>
+                    @if (isSortable) {
+                        var expression = Request["sort"] ?? string.Empty;
+                        <tr>
+                            @if (hasActions) {
+                                <td class="sorter">&nbsp;</td>
+                            }
+                            @for (var i = 0; i < fields.Length; i++) {
+                                var field = fields[i];
+                                var number = i + 1;
+                                if (field.Sortable == "true") {
+                                    <td class="sorter" data-order-by="@(number)">
+                                        <div class="btn-group btn-group-xs" style="width: 41px;">
+                                            <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                                <span class="glyphicon glyphicon-chevron-up"></span>
+                                            </a>
+                                            <a href="javascript:void()" title="Sort Descending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                                <span class="glyphicon glyphicon-chevron-down"></span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                } else {
+                                    <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
+                                }
+                            }
+                        </tr>
+                    }
+                </thead>
+                <tbody>
+                    @foreach (var row in entity.Rows) {
+                        <tr>
                             @if (hasActions) {
                                 <td>
                                     <div class="checkbox">
                                         <label>
-                                            <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
+                                            <input title="Select this row"
+                                                   type="checkbox"
+                                                   class="bulk-action shift-select"
+                                                   name="row"
+                                                   value="@(row[Common.BatchValueFieldName])"
+                                                   placeholder="Select Record">
                                         </label>
                                     </div>
                                 </td>
                             }
+
                             @foreach (var field in fields) {
-                                <td title="@field.Name">@field.Label</td>
+                                <td>
+                                    @switch (field.Type) {
+                                        case "bool":
+                                        case "boolean":
+                                            if ((bool)row[field.Alias]) {
+                                                <span class="badge alert-success">
+                                                    <span class="glyphicon glyphicon-ok"></span>
+                                                </span>
+                                            } else {
+                                                <span class="badge alert-danger">
+                                                    <span class="glyphicon glyphicon-remove"></span>
+                                                </span>
+                                            }
+                                            break;
+                                        case "date":
+                                        case "datetime":
+                                            if (field.Format == string.Empty) {
+                                                @(row[field.Alias])
+                                            } else {
+                                                if (row[field.Alias] is DateTime) {
+                                                    @(((DateTime)row[field.Alias]).ToString(field.Format))
+                                                } else {
+                                                    @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
+                                                }
+                                            }
+                                            break;
+                                        case "byte[]":
+                                            @Transformalize.Utility.BytesToHexString(row[field.Alias] as byte[])
+                                            break;
+                                        case "single":
+                                        case "double":
+                                        case "decimal":
+                                        case "float":
+                                            if (field.Format == string.Empty) {
+                                                @(row[field.Alias])
+                                            } else {
+                                                switch (field.Type) {
+                                                    case "single":
+                                                    case "float":
+                                                        @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    case "decimal":
+                                                        @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    case "double":
+                                                        @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
+                                                        break;
+                                                    default:
+                                                        @(row[field.Alias])
+                                                        break;
+                                                }
+
+                                            }
+                                            break;
+                                        default:
+                                            @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
+                                            break;
+
+                                    }
+                                </td>
                             }
                         </tr>
-                        @if (isSortable) {
-                            var expression = Request["sort"] ?? string.Empty;
-                            <tr>
-                                @if (hasActions) {
-                                    <td class="sorter">&nbsp;</td>
-                                }
-                                @for (var i = 0; i < fields.Length; i++) {
-                                    var field = fields[i];
-                                    var number = i + 1;
-                                    if (field.Sortable == "true") {
-                                        <td class="sorter" data-order-by="@(number)">
-                                            <div class="btn-group btn-group-xs" style="width: 41px;">
-                                                <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-up"></span>
-                                                </a>
-                                                <a href="javascript:void()" title="Sort Descending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    } else {
-                                        <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
-                                    }
-                                }
-                            </tr>
-                        }
-                    </thead>
-                    <tbody>
-                        @foreach (var row in entity.Rows) {
-                            <tr>
-                                @if (hasActions) {
-                                    <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input title="Select this row"
-                                                        type="checkbox"
-                                                        class="bulk-action shift-select"
-                                                        name="row"
-                                                        value="@(row[Common.BatchValueFieldName])"
-                                                        placeholder="Select Record">
-                                            </label>
-                                        </div>
-                                    </td>
-                                }
-
-                                @foreach (var field in fields) {
-                                    <td>
-                                        @switch (field.Type) {
-                                            case "bool":
-                                            case "boolean":
-                                                if ((bool)row[field.Alias]) {
-                                                    <span class="badge alert-success">
-                                                        <span class="glyphicon glyphicon-ok"></span>
-                                                    </span>
-                                                } else {
-                                                    <span class="badge alert-danger">
-                                                        <span class="glyphicon glyphicon-remove"></span>
-                                                    </span>
-                                                }
-                                                break;
-                                            case "date":
-                                            case "datetime":
-                                                if (field.Format == string.Empty) {
-                                                    @(row[field.Alias])
-                                                } else {
-                                                    if (row[field.Alias] is DateTime) {
-                                                        @(((DateTime)row[field.Alias]).ToString(field.Format))
-                                                    } else {
-                                                        @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
-                                                    }
-                                                }
-                                                break;
-                                            case "byte[]":
-                                                @Transformalize.Utility.BytesToHexString(row[field.Alias] as byte[])
-                                                break;
-                                            case "single":
-                                            case "double":
-                                            case "decimal":
-                                            case "float":
-                                                if (field.Format == string.Empty) {
-                                                    @(row[field.Alias])
-                                                } else {
-                                                    switch (field.Type) {
-                                                        case "single":
-                                                        case "float":
-                                                            @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        case "decimal":
-                                                            @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        case "double":
-                                                            @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        default:
-                                                            @(row[field.Alias])
-                                                            break;
-                                                    }
-
-                                                }
-                                                break;
-                                            default:
-                                                @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
-                                                break;
-
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                </tbody>
+            </table>
         </div>
-    </form>
+    </div>
+
+</form>
 
 <div id="busy_holder">
     <div id="busy"></div>
@@ -294,16 +296,16 @@
     // https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
     function removeUrlParameter(url, parameter) {
         //prefer to use l.search if you have a location/link object
-        var urlparts= url.split('?');   
+        var urlparts= url.split('?');
         if (urlparts.length>=2) {
 
             var prefix= encodeURIComponent(parameter)+'=';
             var pars= urlparts[1].split(/[&;]/g);
 
             //reverse iteration as may be destructive
-            for (var i= pars.length; i-- > 0;) {    
+            for (var i= pars.length; i-- > 0;) {
                 //idiom for string.startsWith
-                if (pars[i].lastIndexOf(prefix, 0) !== -1) {  
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
                     pars.splice(i, 1);
                 }
             }
@@ -354,12 +356,10 @@
         });
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        function removeMessages() {
-            $(".zone-messages").fadeOut();
-        }
-        setTimeout(removeMessages, 5000);
+        var cleared = "_Cleared";
+        var lastFilter;
 
         var $boxes = $('.shift-select');
         $boxes.click(function(e) {
@@ -373,19 +373,18 @@
                 var end = $boxes.index(controls.lastChecked);
 
                 $boxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', controls.lastChecked.checked);
-
             }
 
             controls.lastChecked = this;
         });
 
         var isSortable = @(isSortable.ToString().ToLower());
-        var defaultSize = @(pageSizes.FirstOrDefault());
 
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
             onChange: function () {
+                lastFilter = this.$select.attr("name");
                 controls.setPage(1);
                 if (!this.$select[0].multiple) {
                     controls.submit(1);
@@ -404,7 +403,7 @@
         $('span.multiselect-selected-text').parent().removeClass('btn-default');
         $('span.multiselect-selected-text').not('span.multiselect-selected-text:contains("ALL")').parent().addClass('btn-info');
 
-        $('.search-button').bind('click', function(e) {
+        $('.search-button').bind('click', function() {
             $('#id_report').submit();
         });
 
@@ -422,7 +421,7 @@
 
         $(".form-control.date").datepicker({ dateFormat: "yy-mm-dd" });
 
-        $('#id_report').bind('submit', function(e) {
+        $('#id_report').bind('submit', function() {
 
             // stop double submit
             $('#id_submit').prop('disabled', true);
@@ -434,20 +433,22 @@
                 $('#id_page').attr('disabled', true);
             }
 
-            $('#id_report input').filter(function() {
+            $('#id_report input').filter(function () {
                 var value = $(this).val();
                 return value === "*" || value === "";
             }).attr('disabled',true);
 
-            $("#id_report select").each(function() {
-                var selected = $('option:selected', this);
-                var count = selected.length;
-                if (count === 0) {
-                    $(this).attr('disabled', true);
-                } else if (count === 1) {
-                    var value = $(selected[0]).val();
-                    if (value === "" || value === "*") {
+            $("#id_report select").each(function () {
+                if (lastFilter !== $(this).attr("name") && lastFilter !== cleared) {
+                    var selected = $('option:selected', this);
+                    var count = selected.length;
+                    if (count === 0) {
                         $(this).attr('disabled', true);
+                    } else if (count === 1) {
+                        var value = $(selected[0]).val();
+                        if (value === "" || value === "*") {
+                            $(this).attr('disabled', true);
+                        }
                     }
                 }
             });
@@ -458,7 +459,9 @@
             return true;
         });
 
-        $('#id_clear').click(function() {
+        $('#id_clear').click(function () {
+
+            lastFilter = cleared;
 
             // set single select back to first
             $('#id_report select:not([multiple])').val($('#id_report select option:first').val());

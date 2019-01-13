@@ -260,6 +260,9 @@ namespace Transformalize.ConfigurationFacade {
         [Cfg]
         public string Step { get; set; }
 
+        [Cfg]
+        public string Query { get; set; }
+
         public Configuration.Operation ToOperation() {
             var operation = new Configuration.Operation {
                 Name = this.Name,
@@ -319,9 +322,9 @@ namespace Transformalize.ConfigurationFacade {
                 Url = this.Url,
                 Value = this.Value,
                 WebMethod = this.WebMethod,
-                XmlMode = this.XmlMode
+                XmlMode = this.XmlMode,
+                Query = this.Query
             };
-
 
             int.TryParse(this.Count, out var count);
             operation.Count = count;

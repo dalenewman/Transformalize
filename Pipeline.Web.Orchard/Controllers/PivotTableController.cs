@@ -19,8 +19,6 @@ using System.Diagnostics;
 using System.Web.Mvc;
 using Orchard;
 using Orchard.ContentManagement;
-using Orchard.Localization;
-using Orchard.Logging;
 using Orchard.Themes;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
@@ -35,14 +33,12 @@ using Permissions = Orchard.Core.Contents.Permissions;
 namespace Pipeline.Web.Orchard.Controllers {
 
     [ValidateInput(false), Themed]
-    public class PivotTableController : Controller {
+    public class PivotTableController : BaseController {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
 
         private readonly ISecureFileService _secureFileService;
-        public Localizer T { get; set; }
-        public ILogger Logger { get; set; }
 
         public PivotTableController(
             IOrchardServices services,
@@ -62,8 +58,6 @@ namespace Pipeline.Web.Orchard.Controllers {
             _orchardServices = services;
             _processService = processService;
             _secureFileService = secureFileService;
-            T = NullLocalizer.Instance;
-            Logger = NullLogger.Instance;
         }
 
         [Themed(true)]

@@ -25,7 +25,8 @@
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
-    <NuGetPackageImportStamp>6150715d</NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -62,13 +63,13 @@
     </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.3.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.Reader.0.3.3\lib\net45\Cfg.Net.Reader.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Cfg.Net.Shorthand, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.2.11\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
     <Reference Include="CfgNet, Version=0.10.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Transformalize\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="Dapper, Version=1.50.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Dapper.1.50.5\lib\net451\Dapper.dll</HintPath>
@@ -87,11 +88,20 @@
     <Reference Include="ExcelDataReader, Version=3.4.2.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\ExcelDataReader.3.4.2\lib\net45\ExcelDataReader.dll</HintPath>
     </Reference>
+    <Reference Include="FileHelpers, Version=3.1.5.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\FileHelpers.3.1.5\lib\net45\FileHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="Flurl, Version=2.7.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Flurl.2.7.1\lib\net40\Flurl.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Maps">
-      <HintPath>..\..\..\..\..\..\Transformalize.Transform.GoogleMaps\src\Transformalize.Transform.GoogleMaps\bin\Release\Google.Maps.dll</HintPath>
+    <Reference Include="Google.Maps, Version=0.25.0.0, Culture=neutral, PublicKeyToken=4aa992bb5d22d4ff, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\gmaps-api-net.0.25.0\lib\net461\Google.Maps.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -105,8 +115,14 @@
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data, Version=8.0.13.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\MySql.Data.8.0.13\lib\net452\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NGeoHash.Portable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NGeoHash.Portable.1.0.0\lib\portable-net45+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS\NGeoHash.Portable.dll</HintPath>
     </Reference>
     <Reference Include="NReco.LambdaParser, Version=1.0.8.0, Culture=neutral, PublicKeyToken=50b5ad72a1d364c6, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\NReco.LambdaParser.1.0.8\lib\portable-net45+win8+wp8+wpa81\NReco.LambdaParser.dll</HintPath>
@@ -115,20 +131,35 @@
       <HintPath>..\..\..\packages\OpenXmlPowerTools.4.5.3.2\lib\net45\OpenXmlPowerTools.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SolrNet, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\SolrNet.Core.1.0.11\lib\net46\SolrNet.dll</HintPath>
+    <Reference Include="SolrNet, Version=1.0.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\SolrNet.Core.1.0.13\lib\net46\SolrNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.IO.FileSystem.Primitives.4.0.1\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Packaging, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.IO.Packaging.4.0.0\lib\net46\System.IO.Packaging.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Net.Http" />
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\System.Reflection.TypeExtensions.4.5.1\lib\net461\System.Reflection.TypeExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -157,78 +188,77 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.3.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Transformalize\Compatibility\Transformalize.462\bin\$(Configuration)\Transformalize.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.3.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.0.3.14-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Ado">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\Ado\bin\$(Configuration)\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.3.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.3.11-beta\lib\net452\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Elasticsearch">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.Elasticsearch\src\Transformalize.Provider.Elasticsearch\bin\$(Configuration)\Transformalize.Provider.Elasticsearch.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Elasticsearch, Version=0.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Elasticsearch.0.3.12-beta\lib\net462\Transformalize.Provider.Elasticsearch.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Excel">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.Excel\src\Transformalize.Provider.Excel\bin\$(Configuration)\Transformalize.Provider.Excel.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Excel, Version=0.3.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Excel.0.3.12-beta\lib\net462\Transformalize.Provider.Excel.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.File">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\File\bin\$(Configuration)\Transformalize.Provider.File.dll</HintPath>
+    <Reference Include="Transformalize.Provider.File, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.File.0.3.13-beta\lib\net462\Transformalize.Provider.File.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.FileHelpers">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.FileHelpers\src\Transformalize.Provider.FileHelpers\bin\Release\Transformalize.Provider.FileHelpers.dll</HintPath>
+    <Reference Include="Transformalize.Provider.FileHelpers, Version=0.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.FileHelpers.0.3.12-beta\lib\net462\Transformalize.Provider.FileHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.GeoJson">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\GeoJson\bin\$(Configuration)\Transformalize.Provider.GeoJson.dll</HintPath>
+    <Reference Include="Transformalize.Provider.GeoJson, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.GeoJson.0.3.13-beta\lib\net462\Transformalize.Provider.GeoJson.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Kml">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\Kml\bin\$(Configuration)\Transformalize.Provider.Kml.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Kml, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Kml.0.3.13-beta\lib\net462\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.MySql">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.MySql\src\Transformalize.Provider.MySql\bin\$(Configuration)\Transformalize.Provider.MySql.dll</HintPath>
+    <Reference Include="Transformalize.Provider.MySql, Version=0.3.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.MySql.0.3.5-beta\lib\net462\Transformalize.Provider.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.OpenXml">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\OpenXml\bin\$(Configuration)\Transformalize.Provider.OpenXml.dll</HintPath>
+    <Reference Include="Transformalize.Provider.OpenXml, Version=0.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.OpenXml.0.3.12-beta\lib\net462\Transformalize.Provider.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Solr">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.Solr\src\Transformalize.Provider.Solr\bin\$(Configuration)\Transformalize.Provider.Solr.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Solr, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Solr.0.3.13-beta\lib\net462\Transformalize.Provider.Solr.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer">
-      <HintPath>..\..\..\..\..\..\Transformalize.Provider.SqlServer\src\Transformalize.Provider.SqlServer\bin\$(Configuration)\Transformalize.Provider.SqlServer.dll</HintPath>
+    <Reference Include="Transformalize.Provider.SqlServer, Version=0.3.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.3.9-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Web">
-      <HintPath>..\..\..\..\..\..\Transformalize\Providers\Web\bin\$(Configuration)\Transformalize.Provider.Web.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Web, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Web.0.3.13-beta\lib\net462\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Compression">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Compression\bin\$(Configuration)\Transformalize.Transform.Compression.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Compression, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Compression.0.3.13-beta\lib\net462\Transformalize.Transform.Compression.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.DateMath">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\DateMath\bin\$(Configuration)\Transformalize.Transform.DateMath.dll</HintPath>
+    <Reference Include="Transformalize.Transform.DateMath, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.DateMath.0.3.13-beta\lib\net462\Transformalize.Transform.DateMath.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Geography">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Geography\bin\$(Configuration)\Transformalize.Transform.Geography.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Geography, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Geography.0.3.13-beta\lib\net462\Transformalize.Transform.Geography.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Globalization">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Globalization\bin\$(Configuration)\Transformalize.Transform.Globalization.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Globalization, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Globalization.0.3.13-beta\lib\net462\Transformalize.Transform.Globalization.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.GoogleMaps">
-      <HintPath>..\..\..\..\..\..\Transformalize.Transform.GoogleMaps\src\Transformalize.Transform.GoogleMaps\bin\Release\Transformalize.Transform.GoogleMaps.dll</HintPath>
+    <Reference Include="Transformalize.Transform.GoogleMaps, Version=0.3.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.GoogleMaps.0.3.12-beta\lib\net462\Transformalize.Transform.GoogleMaps.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Html">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Html\bin\$(Configuration)\Transformalize.Transform.Html.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Html, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Html.0.3.13-beta\lib\net462\Transformalize.Transform.Html.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Humanizer">
-      <HintPath>..\..\..\..\..\..\Transformalize.Transform.Humanizer\src\Transformalize.Transform.Humanizer\bin\$(Configuration)\Transformalize.Transform.Humanizer.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Humanizer, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Humanizer.0.3.6-beta\lib\net452\Transformalize.Transform.Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Jint">
-      <HintPath>..\..\..\..\..\..\Transformalize.Transform.Jint\src\Transformalize.Transform.Jint\bin\$(Configuration)\Transformalize.Transform.Jint.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Jint, Version=0.3.12.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.3.12-beta\lib\net462\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Json">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Json\bin\$(Configuration)\Transformalize.Transform.Json.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Json, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Json.0.3.13-beta\lib\net462\Transformalize.Transform.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.LambdaParser">
-      <HintPath>..\..\..\..\..\..\Transformalize.Transform.LambdaParser\src\Transformalize.Transform.LambdaParser\bin\$(Configuration)\Transformalize.Transform.LambdaParser.dll</HintPath>
+    <Reference Include="Transformalize.Transform.LambdaParser, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.LambdaParser.0.3.13-beta\lib\net462\Transformalize.Transform.LambdaParser.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Xml">
-      <HintPath>..\..\..\..\..\..\Transformalize\Transforms\Xml\bin\$(Configuration)\Transformalize.Transform.Xml.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Xml, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Xml.0.3.13-beta\lib\net462\Transformalize.Transform.Xml.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +308,7 @@
   <ItemGroup>
     <Compile Include="Common.cs" />
     <Compile Include="Controllers\ActionController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\PivotTableController.cs" />
     <Compile Include="Controllers\ExportController.cs" />
     <Compile Include="Controllers\MapController.cs" />
@@ -386,6 +417,7 @@
     <Content Include="PrecompiledApp.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="libman.json" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />
@@ -417,10 +449,6 @@
     <ProjectReference Include="..\..\..\Orchard\Orchard.Framework.csproj">
       <Project>{2d1d92bb-4555-4cbe-8d0e-63563d6ce4c6}</Project>
       <Name>Orchard.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Tools\Orchard\Orchard.csproj">
-      <Project>{33B1BC8D-E292-4972-A363-22056B207156}</Project>
-      <Name>Orchard</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\Orchard.Core.csproj">
       <Project>{9916839c-39fc-4ceb-a5af-89ca7e87119f}</Project>
@@ -478,7 +506,16 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <SaveServerSettingsInUserFile>True</SaveServerSettingsInUserFile>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>45979</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://orchard.codeplex.com</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
         </WebProjectProperties>
       </FlavorProperties>
     </VisualStudio>
@@ -487,4 +524,11 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets'))" />
+  </Target>
 </Project>

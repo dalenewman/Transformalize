@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Autofac;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -82,7 +82,7 @@ namespace Transformalize.Ioc.Autofac {
 
             if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
 
-                var t = ShouldRunTransform(ctx, context);
+                var t = ShouldRunTransform(ctx, context, context.Operation.Method);
 
                 foreach (var warning in t.Warnings()) {
                     context.Warn(warning);
@@ -97,16 +97,35 @@ namespace Transformalize.Ioc.Autofac {
                     transform = t;
                 }
             } else {
-                context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
-                success = false;
+
+                if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Key)) {
+                    var t = ShouldRunTransform(ctx, context, context.Operation.Key);
+
+                    foreach (var warning in t.Warnings()) {
+                        context.Warn(warning);
+                    }
+
+                    if (t.Errors().Any()) {
+                        foreach (var error in t.Errors()) {
+                            context.Error(error);
+                        }
+                        success = false;
+                    } else {
+                        transform = t;
+                    }
+                } else {
+                    context.Error($"The {context.Operation.Method} method used in the {context.Field.Alias} field is not registered.");
+                    success = false;
+                }
+
             }
             return success;
         }
 
-        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
+        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context, string name) {
             return context.Operation.ShouldRun == null ?
-                ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)) :
-                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)));
+                ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)) :
+                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)));
         }
 
     }

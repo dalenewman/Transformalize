@@ -61,15 +61,15 @@ namespace Transformalize.Transforms.Xml {
             _rowFactory = rowFactory;
             _input = SingleInputForMultipleOutput();
             var output = MultipleOutput();
-            _fields = context.GetAllEntityFields().ToArray();
+            _fields = Context.GetAllEntityFields().ToArray();
             _outerFields = _fields.Except(output).Where(f => !f.System).ToList();
             if (!_input.Output) {
                 _outerFields.Remove(_input);
             }
             _typeDefaults = Constants.TypeDefaults();
 
-            _root = context.Operation.Root;
-            _findRoot = !string.IsNullOrEmpty(context.Operation.Root);
+            _root = Context.Operation.Root;
+            _findRoot = !string.IsNullOrEmpty(Context.Operation.Root);
 
             foreach (var field in output) {
                 if (!_searchAttributes && field.NodeType.Equals("attribute", Ic)) {
@@ -79,7 +79,7 @@ namespace Transformalize.Transforms.Xml {
             }
 
             _setSystemFields = new SetSystemFields(context);
-            _hashCode = context.Entity.TflHashCode();
+            _hashCode = Context.Entity.TflHashCode();
             _fieldsToHash = _fields.Where(f => !f.System).ToArray();
         }
 

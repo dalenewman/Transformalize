@@ -4,7 +4,6 @@
 @using Pipeline.Web.Orchard.Models
 @using Pipeline.Web.Orchard.Services.Contracts
 @using Transformalize.Contracts
-@using Transformalize.Extensions
 @model ReportViewModel
 
 @{
@@ -13,7 +12,7 @@
     var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
     var linkService = WorkContext.Resolve<IExportLinkService>();
-    var runner = WorkContext.Resolve<IRunTimeRun>();
+    var parameters = Model.Process.GetActiveParameters();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     if (hasActions) {
@@ -24,6 +23,9 @@
             bv.Output = false;
         }
     }
+
+    var renderMap = true;
+    var isMissingRequiredParameters = parameters.Any(p => p.Required && (Request.QueryString[p.Name] == null || Request.QueryString[p.Name] == "*"));
 
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
@@ -43,27 +45,10 @@
     Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js");
 
-    var activeParameters = Model.Process.GetActiveParameters();
+
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
     AppendMeta("description", title, ",");
     Layout.Title = title;
-
-    var fields = entity.GetAllFields().ToArray();
-
-    var latitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
-    var longitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "longitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lon"));
-
-    var colorField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-color");
-    var sizeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-size");
-    var symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol");
-    var descriptionField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-description");
-    var batchField = fields.FirstOrDefault(f => f.Alias.ToLower() == "batchvalue");
-
-    var hasColor = colorField != null;
-    var hasSize = sizeField != null;
-    var hasSymbol = symbolField != null;
-    var hasDescription = descriptionField != null;
-    var hasBatchValue = batchField != null;
 
 }
 
@@ -131,27 +116,43 @@
     <div class="alert alert-warning" role="alert">@logEntry.Message</div>
 }
 
-<form id="id_report" class="form-inline" role="form" method="GET">
+    <form id="id_report" class="form-inline" role="form" method="GET">
 
-    <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
-    @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
-        <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
-    }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
-    <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
-    <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
+        <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+        @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
+            <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
+        }
+        <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
+        <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
+        <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
 
-    @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
-        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
-    }
+        @foreach (var parameter in parameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+            <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
+        }
 
-    @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
+        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
 
-    @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
+        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
 
-    @if (!string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
-        <div id="id_map" style="height: 655px; width: 100%"></div>
-        <script>
+        @if (isMissingRequiredParameters) {
+            renderMap = false;  // message is already present
+        }
+
+        @if (renderMap && string.IsNullOrEmpty(settings.MapBoxToken)) {
+            renderMap = false;
+            <div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-warning-sign"> </span> &nbsp;A MapBox token must be configured!</div>
+        }
+
+        @if (renderMap && entity.Hits > settings.MapBoxLimit) {
+            renderMap = false;
+            <div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-warning-sign"> </span> &nbsp;You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.!</div>
+        }
+
+        <div id="id_map_alert" style="display: none;" class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign"> </span></div>
+
+        @if (renderMap) {
+            <div id="id_map" style="height: 655px; width: 100%"></div>
+            <script>
             //<!--
             mapboxgl.accessToken = '@(settings.MapBoxToken)';
             var url = '@(linkService.Create(Request, "geojson"))';
@@ -166,7 +167,7 @@
                     center: [@settings.StartingLongitude, @settings.StartingLatitude ],
                     zoom: 6
                 });
-                
+
                 function addDataLayer() {
                     map.addSource("orders-data", { type: "geojson", data: window.data });
 
@@ -209,16 +210,35 @@
                     map.addControl(new mapboxgl.NavigationControl());
 
                     $.getJSON(url, function (data) {
+
+                        // filter out zeroes
+                        var zeroes = 0;
+                        data.features = data.features.filter(function (f) {
+                            if (f.geometry.coordinates[0] === 0.0 && f.geometry.coordinates[1] === 0.0) {
+                                zeroes++;
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+                        if (zeroes > 0) {
+                            $('#id_map_alert').text(zeroes + ' record(s) are missing coordinates.  They are not displayed on the map below.').show();
+                        } else {
+                            $('#id_map_alert').hide();
+                        }
+
                         window.data = data;
 
                         addDataLayer();
 
                         // fit map
-                        var bounds = new mapboxgl.LngLatBounds();
-                        window.data.features.forEach(function(feature) {
-                            bounds.extend(feature.geometry.coordinates);
-                        });
-                        map.fitBounds(bounds, { padding: 100 });
+                        if (window.data.features.length > 0) {
+                            var bounds = new mapboxgl.LngLatBounds();
+                            window.data.features.forEach(function(feature) {
+                                bounds.extend(feature.geometry.coordinates);
+                            });
+                            map.fitBounds(bounds, { padding: 100 });
+                        }
 
                         // for drawing polygons and selecting points
                         var draw = new MapboxDraw({
@@ -229,7 +249,7 @@
                             }
                         });
                         map.addControl(draw);
-                        
+
                         function updateArea(e) {
 
                             var data = draw.getAll();
@@ -286,22 +306,20 @@
 
                         $('#busy').hide();
                     });
-
-
-
                 });
-
             });
             //-->
-        </script>
-    } else {
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="alert alert-danger" role="alert">You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.</div>
-            </div>
-        </div>
-    }
-</form>
+            </script>
+        } else {
+            if (entity.Hits > settings.MapBoxLimit) {
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="alert alert-danger" role="alert">You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.</div>
+                    </div>
+                </div>
+            }
+        }
+    </form>
 
 <div id="busy_holder">
     <div id="busy"></div>
@@ -382,11 +400,6 @@
     }
 
     $(document).ready(function() {
-
-        function removeMessages() {
-            $(".zone-messages").fadeOut();
-        }
-        setTimeout(removeMessages, 5000);
 
         $('#id_report select').multiselect({
             enableFiltering: true,

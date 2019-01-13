@@ -251,6 +251,13 @@ namespace Transformalize.Configuration {
                 } else {
                     entity.Key = entity.GetHashCode().ToString();
                 }
+
+                foreach (var field in entity.GetAllFields()) {
+                    foreach (var transform in field.Transforms) {
+                        transform.Key = Name + entity.Alias + field.Alias + transform.Method;
+                    }
+                }
+
             }
 
             // templates
