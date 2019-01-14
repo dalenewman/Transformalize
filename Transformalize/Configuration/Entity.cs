@@ -521,7 +521,7 @@ namespace Transformalize.Configuration {
 
         public void AdaptFieldsCreatedFromTransforms() {
 
-            foreach (var method in this.GetAllTransforms().Where(t => t.ProducesFields).Select(t=>t.Method).Distinct()) {
+            foreach (var method in this.GetAllTransforms().Where(t => t.ProducesFields).Select(t => t.Method).Distinct()) {
                 while (new TransformFieldsToParametersAdapter(this).Adapt(method) > 0) {
                     new TransformFieldsMoveAdapter(this).Adapt(method);
                 }

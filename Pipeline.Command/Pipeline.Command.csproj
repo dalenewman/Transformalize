@@ -634,6 +634,8 @@
     <Content Include="plugins\Transformalize.Provider.SqlServer.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="plugins\Transformalize.Transform.Ado.Autofac.dll" />
+    <Content Include="plugins\Transformalize.Transform.Ado.dll" />
     <Content Include="plugins\Transformalize.Transform.CsScript.Autofac.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

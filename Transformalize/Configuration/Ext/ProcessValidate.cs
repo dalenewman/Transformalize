@@ -191,21 +191,25 @@ namespace Transformalize.Configuration.Ext {
 
         private static void ValidateTransformConnections(Process p, Action<string> error) {
 
-            var methodsWithConnections = new[] { "mail", "run" };
+            var methodsWithConnections = new HashSet<string>(new[] { "mail", "run", "fromquery" });
 
-            foreach (var transform in p.GetAllTransforms().Where(t => methodsWithConnections.Any(nc => nc == t.Method))) {
-                var connection = p.Connections.FirstOrDefault(c => c.Name == transform.Connection);
-                if (connection == null) {
-                    error($"The {transform.Method} transform references an invalid connection: {transform.Connection}.");
-                    continue;
-                }
-
-                switch (transform.Method) {
-                    case "mail":
-                        if (connection.Provider != "mail") {
-                            error($"The {transform.Method} transform references the wrong type of connection: {connection.Provider}.");
-                        }
-                        break;
+            foreach (var field in p.GetAllFields().Where(f=>f.Transforms.Any())) {
+                foreach (var transform in field.Transforms.Where(t => methodsWithConnections.Contains(t.Method))) {
+                    if (transform.Connection == string.Empty) {
+                        transform.Connection = field.Connection;
+                    }
+                    var connection = p.Connections.FirstOrDefault(c => c.Name == transform.Connection);
+                    if (connection == null) {
+                        error($"The {transform.Method} transform references an invalid connection: {transform.Connection}.");
+                        continue;
+                    }
+                    switch (transform.Method) {
+                        case "mail":
+                            if (connection.Provider != "mail") {
+                                error($"The {transform.Method} transform references the wrong type of connection: {connection.Provider}.");
+                            }
+                            break;
+                    }
                 }
             }
         }
