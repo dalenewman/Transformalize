@@ -21,7 +21,6 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-
     public class InTransform : BaseTransform {
 
         private readonly Field _input;

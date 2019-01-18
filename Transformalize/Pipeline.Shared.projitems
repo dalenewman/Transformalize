@@ -158,6 +158,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CondenseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\CountTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ReverseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SortTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\GetTransform.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\LogTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToBoolTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\GuidTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToRowTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AlphanumValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />

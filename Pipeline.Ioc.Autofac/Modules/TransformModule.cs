@@ -15,16 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Autofac;
 using Cfg.Net.Contracts;
 using Cfg.Net.Shorthand;
 using JavaScriptEngineSwitcher.ChakraCore;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Transformalize.Configuration;
+using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.File.Transforms;
 using Transformalize.Providers.Web;
@@ -32,16 +34,14 @@ using Transformalize.Transforms;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.DateMath;
 using Transformalize.Transforms.Geography;
+using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Html;
 using Transformalize.Transforms.JavaScript;
 using Transformalize.Transforms.Json;
 using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
-using Transformalize.Transforms.Globalization;
-using Parameter = Cfg.Net.Shorthand.Parameter;
-using Transformalize.Configuration;
-using Transformalize.Context;
 using Module = Autofac.Module;
+using Parameter = Cfg.Net.Shorthand.Parameter;
 
 namespace Transformalize.Ioc.Autofac.Modules {
     public class TransformModule : Module {
@@ -52,6 +52,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
         private readonly ShorthandRoot _shortHand = new ShorthandRoot();
         private readonly Process _process;
         private readonly IPipelineLogger _logger;
+        private IContext _context;
 
         public TransformModule(Process process, IPipelineLogger logger) {
             _process = process;
@@ -60,7 +61,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
         protected override void Load(ContainerBuilder builder) {
 
-            var loadContext = new PipelineContext(_logger, _process);
+            _context = new PipelineContext(_logger, _process);
 
             // set properties for plugins
             builder.Properties["ShortHand"] = _shortHand;
@@ -72,7 +73,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new SliceTransform(c), new SliceTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FormatTransform(c), new FormatTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new AddTransform(c), new AddTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new EqualsTransform(c), new EqualsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CeilingTransform(c), new CeilingTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CoalesceTransform(c), new CoalesceTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new ConcatTransform(c), new ConcatTransform().GetSignatures());
@@ -161,6 +161,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new ReverseTransform(c), new ReverseTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new GetTransform(c), new GetTransform().GetSignatures());
 
+            // row producing
+            RegisterTransform(builder, (ctx, c) => new ToRowTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))), new ToRowTransform().GetSignatures());
+
             // row filtering
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Include, c), new FilterTransform(FilterType.Include).GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FilterTransform(FilterType.Exclude, c), new FilterTransform(FilterType.Exclude).GetSignatures());
@@ -188,14 +191,17 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             // uncategorized
             RegisterTransform(builder, (ctx, c) => new LogTransform(c), new LogTransform().GetSignatures());
-            
+
+            // new
+            RegisterTransform(builder, (ctx, c) => new CountTransform(c), new CountTransform().GetSignatures());
+
             // xml
-            RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ? 
-                    new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) : 
+            RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ?
+                    new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) :
                     new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
             );
 
-            RegisterTransform(builder, (ctx, c) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), ctx.Resolve<IReader>(), c), new JavascriptTransform(null,null).GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new JavascriptTransform(new ChakraCoreJsEngineFactory(), ctx.Resolve<IReader>(), c), new JavascriptTransform(null, null).GetSignatures());
 
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
@@ -204,7 +210,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-                    loadContext.Debug(() => $"Loading {name} transform(s)");
+                    _context.Debug(() => $"Loading {name} transform(s)");
                     var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
                     assemblies.Add(assembly);
                 }
@@ -216,7 +222,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // register the short hand
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(FieldsName).InstancePerLifetimeScope();
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ParametersName).InstancePerLifetimeScope();
-            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields"}, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
+            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
             builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(ParametersName).InstancePerLifetimeScope();
 
 
@@ -242,6 +248,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         });
                     }
                     _shortHand.Signatures.Add(signature);
+                } else {
+                    _context.Warn($"There are multiple {s.Method} transforms trying to register.");
                 }
 
                 builder.Register((ctx, p) => getTransform(ctx, p.Positional<IContext>(0))).Named<ITransform>(s.Method);

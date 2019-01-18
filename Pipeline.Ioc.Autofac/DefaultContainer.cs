@@ -60,6 +60,8 @@ namespace Transformalize.Ioc.Autofac {
             if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
             if (providers.Contains("web")) { builder.RegisterCallback(new WebModule(process).Configure); }
 
+            //builder.RegisterCallback(new FileHelpersModule().Configure);
+
             var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
             if (Directory.Exists(pluginsFolder)) {
 
@@ -68,16 +70,25 @@ namespace Transformalize.Ioc.Autofac {
                     var info = new FileInfo(file);
                     var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
 
-                    if (providers.Contains("file") && name == "filehelpers") {
-                        name = "file"; // for now
+                    switch (name) {
+                        case "filehelpers" when (providers.Contains("file") || providers.Contains("folder")):
+                            loadContext.Debug(() => "Loading filehelpers provider");
+                            assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
+                            break;
+                        case "ado":
+                            loadContext.Debug(() => "Loading ADO provider");
+                            assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
+                            break;
+                        default:
+                            if (providers.Contains(name)) {
+                                loadContext.Debug(() => $"Loading {name} provider.");
+                                var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                                assemblies.Add(assembly);
+                            } else {
+                                loadContext.Debug(() => $"Loading {name} isn't necessary for this arrangement.");
+                            }
+                            break;
                     }
-
-                    if (!providers.Contains(name) && name != "ado")
-                        continue;
-
-                    loadContext.Debug(() => $"Loading {name} provider");
-                    var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-                    assemblies.Add(assembly);
                 }
                 if (assemblies.Any()) {
                     builder.RegisterAssemblyModules(assemblies.ToArray());

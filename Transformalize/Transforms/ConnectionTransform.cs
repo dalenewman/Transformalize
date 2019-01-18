@@ -15,11 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Cfg.Net;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -27,6 +27,8 @@ namespace Transformalize.Transforms {
     public class ConnectionTransform : BaseTransform {
 
         private readonly object _value;
+        private readonly string[] _props;
+        private readonly Connection _connection;
 
         public ConnectionTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
@@ -41,32 +43,35 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            string[] props;
-
 #if NETS10
-            props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
+            _props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
 #else
-            props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
+            _props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
 #endif
 
-            var set = new HashSet<string>(props, StringComparer.OrdinalIgnoreCase);
+            var set = new HashSet<string>(_props, StringComparer.OrdinalIgnoreCase);
 
             if (!set.Contains(Context.Operation.Property)) {
-                Error($"The connection property {Context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", props))}.");
+                Error($"The connection property {Context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", _props))}.");
                 Run = false;
                 return;
             }
 
             Context.Operation.Property = set.First(s => s.Equals(Context.Operation.Property, StringComparison.OrdinalIgnoreCase));
 
-            var connection = Context.Process.Connections.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
-            _value = Utility.GetPropValue(connection, Context.Operation.Property);
+            _connection = Context.Process.Connections.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = _value;
-
+            row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
             return row;
+        }
+
+        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+            foreach (var row in rows) {
+                row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
+                yield return row;
+            }
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {

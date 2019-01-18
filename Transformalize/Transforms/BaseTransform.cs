@@ -36,6 +36,7 @@ namespace Transformalize.Transforms {
         public IContext Context { get; }
         public bool Run { get; set; } = true;
         public bool ProducesFields { get; set; } = false;
+        public bool ProducesRows { get; set; } = false;
 
         protected BaseTransform(IContext context, string returns) {
             Context = context;
