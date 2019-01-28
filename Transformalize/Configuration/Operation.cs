@@ -249,8 +249,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = "north", domain = "north,northeast,east,southeast,south,southwest,west,northwest,asc,desc", toLower = true, ignoreCase = true, trim = true)]
         public string Direction { get; set; }
 
+        public string Key { get; set; } = string.Empty;
+
         [Cfg(value = "")]
-        public string Key { get; set; }
+        public string ApiKey { get; set; }
 
         [Cfg(value = 50)]
         public int Limit { get; set; }
@@ -282,10 +284,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = 1)]
         public int Step { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Query { get; set; }
 
-        [Cfg(value="")]
+        [Cfg(value = "")]
         public string Command { get; set; }
 
         public static HashSet<string> TransformProducerSet() {

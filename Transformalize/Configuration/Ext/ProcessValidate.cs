@@ -193,7 +193,7 @@ namespace Transformalize.Configuration.Ext {
 
             var methodsWithConnections = new HashSet<string>(new[] { "mail", "run", "fromquery" });
 
-            foreach (var field in p.GetAllFields().Where(f=>f.Transforms.Any())) {
+            foreach (var field in p.GetAllFields().Where(f => f.Transforms.Any())) {
                 foreach (var transform in field.Transforms.Where(t => methodsWithConnections.Contains(t.Method))) {
                     if (transform.Connection == string.Empty) {
                         transform.Connection = field.Connection;
@@ -299,12 +299,16 @@ namespace Transformalize.Configuration.Ext {
                 var problem = false;
 
                 // validate (and modify) left side
-                Entity leftEntity;
-                if (p.TryGetEntity(relationship.LeftEntity, out leftEntity)) {
+                if (p.TryGetEntity(relationship.LeftEntity, out var leftEntity)) {
+
+                    if (relationship.LeftEntity == leftEntity.Name && relationship.LeftEntity != leftEntity.Alias) {
+                        warn($"If an entity is aliased, please use it's alias in relationships.  Use {leftEntity.Alias} instead of {leftEntity.Name}.");
+                    }
+
                     relationship.Summary.LeftEntity = leftEntity;
                     foreach (var leftField in relationship.GetLeftJoinFields()) {
-                        Field field;
-                        if (leftEntity.TryGetField(leftField, out field)) {
+
+                        if (leftEntity.TryGetField(leftField, out var field)) {
                             relationship.Summary.LeftFields.Add(field);
                         } else {
                             var message = $"A relationship references a left-field that doesn't exist: {leftField}";
@@ -327,12 +331,10 @@ namespace Transformalize.Configuration.Ext {
                 }
 
                 //validate (and modify) right side
-                Entity rightEntity;
-                if (p.TryGetEntity(relationship.RightEntity, out rightEntity)) {
+                if (p.TryGetEntity(relationship.RightEntity, out var rightEntity)) {
                     relationship.Summary.RightEntity = rightEntity;
                     foreach (var rightField in relationship.GetRightJoinFields()) {
-                        Field field;
-                        if (rightEntity.TryGetField(rightField, out field)) {
+                        if (rightEntity.TryGetField(rightField, out var field)) {
                             relationship.Summary.RightFields.Add(field);
                         } else {
                             var message = $"A relationship references a right-field that doesn't exist: {rightField}";

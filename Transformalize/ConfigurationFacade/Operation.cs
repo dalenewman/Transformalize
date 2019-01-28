@@ -228,7 +228,7 @@ namespace Transformalize.ConfigurationFacade {
         public string Direction { get; set; }
 
         [Cfg]
-        public string Key { get; set; }
+        public string ApiKey { get; set; }
 
         [Cfg]
         public string Limit { get; set; }
@@ -327,7 +327,8 @@ namespace Transformalize.ConfigurationFacade {
                 WebMethod = this.WebMethod,
                 XmlMode = this.XmlMode,
                 Query = this.Query,
-                Command = this.Command
+                Command = this.Command,
+                ApiKey = this.ApiKey
             };
 
             int.TryParse(this.Count, out var count);

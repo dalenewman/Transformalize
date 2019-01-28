@@ -25,13 +25,28 @@ namespace Transformalize.Transforms {
         private readonly Func<IRow, object> _transform;
 
         public AddTransform(IContext context = null) : base(context, "decimal") {
-
             if (IsMissingContext()) {
                 return;
             }
 
             if (IsNotReceivingNumbers()) {
                 return;
+            }
+
+            var values = new List<string>();
+
+            if (Context.Operation.Value != Constants.DefaultSetting) {
+                if (Context.Operation.Separator != Constants.DefaultSetting) {
+                    foreach (var value in Context.Operation.Value.Split(Context.Operation.Separator[0])) {
+                        if (double.TryParse(value, out var v)) {
+                            values.Add(value);
+                        }
+                    }
+                } else {
+                    if (double.TryParse(Context.Operation.Value, out var v)) {
+                        values.Add(Context.Operation.Value);
+                    }
+                }
             }
 
             var input = MultipleInput();
@@ -41,28 +56,74 @@ namespace Transformalize.Transforms {
                 switch (type) {
                     case "decimal":
                         Returns = "decimal";
-                        _transform = row => input.Sum(f => (decimal)row[f]);
+                        if (values.Any()) {
+                            decimal add = 0;
+                            foreach (var value in values) {
+                                if (decimal.TryParse(value, out var result)) {
+                                    add += result;
+                                }
+                            }
+                            _transform = row => input.Sum(f => (decimal)row[f]) + add;
+                        } else {
+                            _transform = row => input.Sum(f => (decimal)row[f]);
+                        }
                         break;
                     case "double":
                         Returns = "double";
-                        _transform = row => input.Sum(f => (double)row[f]);
+                        if (values.Any()) {
+                            double add = 0;
+                            foreach (var value in values) {
+                                if (double.TryParse(value, out var result)) {
+                                    add += result;
+                                }
+                            }
+                            _transform = row => input.Sum(f => (double)row[f]) + add;
+                        } else {
+                            _transform = row => input.Sum(f => (double)row[f]);
+                        }
                         break;
                     case "long":
                     case "int64":
                         Returns = "long";
-                        _transform = row => input.Sum(f => (long)row[f]);
+                        if (values.Any()) {
+                            long add = 0;
+                            foreach (var value in values) {
+                                if (long.TryParse(value, out var result)) {
+                                    add += result;
+                                }
+                            }
+                            _transform = row => input.Sum(f => (long)row[f]) + add;
+                        } else {
+                            _transform = row => input.Sum(f => (long)row[f]);
+                        }
                         break;
                     case "int":
                     case "int32":
                         Returns = "int";
-                        _transform = row => input.Sum(f => (int)row[f]);
+                        if (values.Any()) {
+                            int add = 0;
+                            foreach (var value in values) {
+                                if (int.TryParse(value, out var result)) {
+                                    add += result;
+                                }
+                            }
+                            _transform = row => input.Sum(f => (int)row[f]) + add;
+                        } else {
+                            _transform = row => input.Sum(f => (int)row[f]);
+                        }
                         break;
-                    //case "float":
-                    //    Returns = "float";
-                    //    _transform = row => _input.Sum(f => (float) row[f]);
-                    //    break;
                     default:
-                        _transform = row => input.Sum(f => Convert.ToDecimal(row[f]));
+                        if (values.Any()) {
+                            decimal add = 0;
+                            foreach (var value in values) {
+                                if (decimal.TryParse(value, out var result)) {
+                                    add += result;
+                                }
+                            }
+                            _transform = row => input.Sum(f => Convert.ToDecimal(row[f])) + add;
+                        } else {
+                            _transform = row => input.Sum(f => Convert.ToDecimal(row[f]));
+                        }
                         break;
                 }
             } else {
@@ -76,8 +137,8 @@ namespace Transformalize.Transforms {
         }
 
         public new IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("add");
-            yield return new OperationSignature("sum");
+            yield return new OperationSignature("add") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
+            yield return new OperationSignature("sum") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
         }
 
     }

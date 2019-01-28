@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.19-beta</version>
+    <version>0.3.21-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>adjust validation for mail, run, fromquery transforms</releaseNotes>
+    <releaseNotes>bump version</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
