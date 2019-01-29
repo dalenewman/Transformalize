@@ -1,4 +1,4 @@
-nuget push "c:\temp\modules\Transformalize.0.3.19-beta.nupkg" -source https://api.nuget.org/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.3.21-beta.nupkg" -source https://api.nuget.org/v3/index.json
 
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.3.13-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Trace.0.3.1-beta.nupkg" -source https://api.nuget.org/v3/index.json

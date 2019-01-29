@@ -25,7 +25,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Name { get; set; }
 
-        [Cfg(value = "")]
+        [Cfg(value = 0, minValue = 0, maxValue = 65535)]
         public int Port { get; set; }
 
         [Cfg(value = "")]
