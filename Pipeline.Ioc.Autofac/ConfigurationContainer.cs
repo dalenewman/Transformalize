@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
 using Autofac;
+using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac.Modules;
@@ -25,13 +25,18 @@ namespace Transformalize.Ioc.Autofac {
 
     public static class ConfigurationContainer {
 
+        private const string Cfg = "cfg";
+
         public static ILifetimeScope Create(string cfg, IPipelineLogger logger, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
             var builder = new ContainerBuilder();
-            builder.Register(c => cfg).Named<string>("cfg");
+            builder.Register(c => cfg).Named<string>(Cfg);
             builder.Register(c => logger).As<IPipelineLogger>();
             builder.Register(c => placeHolderStyle).Named<string>("placeHolderStyle");
-            builder.RegisterModule(new TransformModule(new Process { Name = "ConfigurationContainer" }, logger));
-            builder.RegisterModule(new ValidateModule(new Process { Name = "ConfigurationContainer" }, logger));
+
+            // these are called here to register short-hand (t and v attributes)
+            builder.RegisterModule(new TransformModule(new Process { Name = Cfg }, logger));
+            builder.RegisterModule(new ValidateModule(new Process { Name = Cfg }, logger));
+
             builder.RegisterModule(new RootModule());
             return builder.Build();
         }

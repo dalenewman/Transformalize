@@ -2,12 +2,12 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.File</id>
-    <version>0.3.13-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize Provider File Base</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
-    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Base File Provider for Transformalize</description>
     <releaseNotes>moved filehelpers to it's own plugin, target 462</releaseNotes>
@@ -15,12 +15,11 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.3.13-beta" />
-        <dependency id="FileHelpers" version="3.1.5" />
+        <dependency id="Transformalize" version="0.3.24-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
+    <file src="..\Providers\File\bin\Release\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
   </files>
 </package>

@@ -2,24 +2,24 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Console</id>
-    <version>0.3.1-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize Provider for Console</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
-    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Transformalize Provider for Console</description>
     <releaseNotes>beta</releaseNotes>
-    <copyright>Copyright 2013-2017</copyright>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.3.1-beta" />
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.24-beta" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Provider.Console.dll" target="lib\net452\Transformalize.Provider.Console.dll" />
+    <file src="..\Providers\Console\bin\Release\Transformalize.Provider.Console.dll" target="lib\net462\Transformalize.Provider.Console.dll" />
   </files>
 </package>

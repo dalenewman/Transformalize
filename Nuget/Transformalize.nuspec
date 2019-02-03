@@ -1,15 +1,16 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.21-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>bump version</releaseNotes>
+    <releaseNotes>fix server port configuration setting</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>

@@ -2,20 +2,20 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.Geography</id>
-    <version>0.3.13-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize Geography</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
-    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--<license type="expression">Apache-2.0</license>-->
     <description>Geography related transforms for Transformalize</description>
     <releaseNotes>update dependencies</releaseNotes>
-    <copyright>Copyright 2013-2018</copyright>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.3.13-beta" />
+        <dependency id="Transformalize" version="0.3.24-beta" />
         <dependency id="NGeoHash.Portable" version="1.0.0" />
       </group>
     </dependencies>

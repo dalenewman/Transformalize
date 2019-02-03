@@ -2,25 +2,25 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.JavaScript</id>
-    <version>0.2.10-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize Transform JavaScript</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
-    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <!--<license type="expression">Apache-2.0</license>-->
     <description>JavaScript Engine Switcher Transform for Transformalize</description>
-    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
-    <copyright>Copyright 2013-2016</copyright>
+    <releaseNotes>updated dependencies</releaseNotes>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.10-beta" />
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.24-beta" />
         <dependency id="JavaScriptEngineSwitcher.Core" version="2.1.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Transform.JavaScript.dll" target="lib\net452\Transformalize.Transform.JavaScript.dll" />
+    <file src="..\Transforms\Javascript\bin\Release\Transformalize.Transform.JavaScript.dll" target="lib\net462\Transformalize.Transform.JavaScript.dll" />
   </files>
 </package>

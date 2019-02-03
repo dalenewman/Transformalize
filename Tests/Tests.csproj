@@ -76,6 +76,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestCalculatedFieldProcess.cs" />
     <Compile Include="TransformParameters.cs" />
     <Compile Include="LogTransform.cs" />
     <Compile Include="ContainsTransform.cs" />

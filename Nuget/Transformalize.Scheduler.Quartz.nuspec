@@ -2,25 +2,25 @@
 <package>
   <metadata>
     <id>Transformalize.Scheduler.Quartz</id>
-    <version>0.2.10-beta</version>
+    <version>0.3.24-beta</version>
     <title>Transformalize Scheduler Quartz.NET</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
-    <licenseUrl>https://github.com/dalenewman/Transformalize/blob/master/LICENSE.md</licenseUrl>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+    <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Quartz.NET Scheduler for Transformalize</description>
-    <releaseNotes>fixed various edge-case bugs plus optimized comparisons</releaseNotes>
-    <copyright>Copyright 2013-2017</copyright>
+    <releaseNotes>update dependencies</releaseNotes>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
-      <group targetFramework="net452">
-        <dependency id="Transformalize" version="0.2.10-beta" />
-        <dependency id="Quartz" version="2.6.0" />
+      <group targetFramework="net462">
+        <dependency id="Transformalize" version="0.3.24-beta" />
+        <dependency id="Quartz" version="2.6.2" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Transformalize.Scheduler.Quartz.dll" target="lib\net452\Transformalize.Scheduler.Quartz.dll" />
+    <file src="..\Pipeline.Scheduler.Quartz\bin\Release\Transformalize.Scheduler.Quartz.dll" target="lib\net462\Transformalize.Scheduler.Quartz.dll" />
   </files>
 </package>

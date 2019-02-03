@@ -29,6 +29,7 @@ namespace Transformalize.Transforms {
         private readonly Template _template;
 
         public FormatTransform(IContext context = null) : base(context, "string") {
+
             if (IsMissingContext()) {
                 return;
             }
@@ -37,13 +38,13 @@ namespace Transformalize.Transforms {
             _template = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Format);
 
             if (_template == null) {
-                _betterFormat = new BetterFormat(Context, Context.Operation.Format, ()=>_input);
+                _betterFormat = new BetterFormat(Context, Context.Operation.Format, () => _input);
             }
         }
 
         public override IRow Operate(IRow row) {
             row[Context.Field] = _betterFormat.Format(row);
-            
+
             return row;
         }
 

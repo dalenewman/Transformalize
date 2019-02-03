@@ -382,6 +382,7 @@ namespace Transformalize.Configuration {
                     lastField.PostBack = "true";
                 }
             }
+
         }
 
         public void ModifyIndexes() {
@@ -561,6 +562,46 @@ namespace Transformalize.Configuration {
                 parameter.Entity = string.Empty;
             }
 
+            if (CalculatedFields.Any()) {
+                Regex matcher;
+                var regex = string.Join("|", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
+#if NETS10
+                matcher = new Regex(regex);
+#else
+                matcher = new Regex(regex, RegexOptions.Compiled);
+#endif
+                // somehow get the fields necessary for the calculated fields process
+                // in format's format attr
+                // in eval's expression attr
+                // in cs, js, csscript, jint, and chakra's script attr
+                var found = new List<Field>();
+                foreach (var transform in entity.CalculatedFields.SelectMany(cf => cf.Transforms)) {
+                    var content = string.Join(" ", transform.Format, transform.Script, transform.Expression, transform.Template).Trim();
+                    if (content != string.Empty) {
+                        foreach (Match match in matcher.Matches(content)) {
+                            if (TryGetField(match.Value, out var field)) {
+                                if (field.Output) {
+                                    found.Add(field.Clone());
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                if (found.Any()) {
+                    entity.Fields.AddRange(found.Distinct().Except(entity.Fields));
+                }
+            }
+
+            // create entity field's matcher
+            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
+#if NETS10
+            entity.FieldMatcher = new Regex(pattern);
+#else
+            entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
+#endif
+
             foreach (var field in entity.Fields) {
                 field.Source = Utility.GetExcelName(field.EntityIndex) + "." + field.FieldName();
             }
@@ -573,14 +614,6 @@ namespace Transformalize.Configuration {
             calc.Entities.Add(entity);
             calc.ModifyKeys();
             calc.ModifyIndexes();
-
-            // create entity field's matcher
-            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
-#if NETS10
-            entity.FieldMatcher = new Regex(pattern);
-#else
-            entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
-#endif
 
             return calc;
         }

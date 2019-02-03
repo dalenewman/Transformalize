@@ -225,7 +225,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
             builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(ParametersName).InstancePerLifetimeScope();
 
-
         }
 
         private void RegisterTransform(ContainerBuilder builder, Func<IComponentContext, IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
