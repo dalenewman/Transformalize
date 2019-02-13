@@ -18,15 +18,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Extensions;
 
 namespace Transformalize.Configuration.Ext {
     public static class ProcessValidate {
 
         public static void Validate(this Process p, Action<string> error, Action<string> warn) {
 
-            if (p.ReadOnly && p.Buffer) {
-                error("A process can not be read-only and buffer at the same time.");
+            if (p.ReadOnly) {
+                if (p.Buffer) {
+                    error("A process can not be read-only and buffer at the same time.");
+                }
+
+                if (p.CalculatedFields.Any()) {
+                    error("A process can not be read-only and have process-level calculated fields at the same time.");
+                }
             }
 
             if (p.Environment != string.Empty && p.Environments.All(e => e.Name != p.Environment)) {
@@ -58,6 +63,8 @@ namespace Transformalize.Configuration.Ext {
             ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
             ValidateFlatten(p, error, warn);
             ValidateTransformParameters(p, error, warn);
+
+
         }
 
         private static void ValidateTransformParameters(Process process, Action<string> error, Action<string> warn) {
@@ -103,9 +110,10 @@ namespace Transformalize.Configuration.Ext {
             if (p.Entities.Count < 2) {
                 warn("To flatten, you must have at least 2 entities.");
             }
-            //if (p.Output() == null || !Constants.AdoProviderSet().Contains(p.Output().Provider)) {
-            //    error($"To flatten, you must use an ADO based output provider, e.g. ({Constants.AdoProviderDomain})");
-            //}
+
+            if (p.ReadOnly) {
+                warn("flatten and read-only do not work together.");
+            }
         }
 
         private static void ValidateDirectoryReaderHasAtLeastOneValidField(Process process, Action<string> error) {
@@ -284,13 +292,16 @@ namespace Transformalize.Configuration.Ext {
 
         private static void ValidateRelationships(Process p, Action<string> error, Action<string> warn) {
 
-            // count check
-            if (p.Entities.Count > 1 && p.Relationships.Count + 1 < p.Entities.Count) {
-                var message = $"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.";
-                if (p.Mode == "check") {
-                    warn(message);
-                } else {
-                    error(message);
+
+            if (!p.ReadOnly) {
+                // count check
+                if (p.Entities.Count > 1 && p.Relationships.Count + 1 < p.Entities.Count) {
+                    var message = $"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.";
+                    if (p.Mode == "check") {
+                        warn(message);
+                    } else {
+                        error(message);
+                    }
                 }
             }
 
@@ -380,15 +391,30 @@ namespace Transformalize.Configuration.Ext {
 
 
         private static void ValidateDuplicateFields(Process p, Action<string> error) {
-            var fieldDuplicates = p.Entities
-                .SelectMany(e => e.GetAllFields())
-                .Where(f => f.Output && !f.PrimaryKey && !f.System && f.Name != null)
-                .Concat(p.CalculatedFields.Where(f => f.Name != null))
-                .GroupBy(f => f.Alias.ToLower())
-                .Where(group => @group.Count() > 1)
-                .Select(group => @group.Key)
-                .ToArray();
-            foreach (var duplicate in fieldDuplicates) {
+            var dups = new List<string>();
+
+            if (p.ReadOnly) {
+                /* if it's read-only, then we don't really need to have unique field names across the entire process */
+                foreach (var entity in p.Entities) {
+                    dups.AddRange(entity.GetAllFields()
+                        .Where(f => f.Output && !f.PrimaryKey && !f.System && f.Name != null)
+                        .Concat(p.CalculatedFields.Where(f => f.Name != null))
+                        .GroupBy(f => f.Alias.ToLower())
+                        .Where(group => group.Count() > 1)
+                        .Select(group => group.Key));
+                }
+            } else {
+                /* if it's not read-only, them we do need to have unique fields since we're storing the data somewhere */
+                dups.AddRange(p.Entities
+                    .SelectMany(e => e.GetAllFields())
+                    .Where(f => f.Output && !f.PrimaryKey && !f.System && f.Name != null)
+                    .Concat(p.CalculatedFields.Where(f => f.Name != null))
+                    .GroupBy(f => f.Alias.ToLower())
+                    .Where(group => group.Count() > 1)
+                    .Select(group => group.Key));
+            }
+
+            foreach (var duplicate in dups) {
                 error($"The entity field '{duplicate}' occurs more than once. Remove, alias, or prefix one.");
             }
         }

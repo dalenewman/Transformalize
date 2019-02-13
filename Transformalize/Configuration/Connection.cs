@@ -19,6 +19,7 @@ using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Transformalize.Configuration {
     public class Connection : CfgNode {
@@ -329,6 +330,12 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string LinePattern { get; set; }
+
+        [Cfg(value=5)]
+        public short Shards { get; set; }
+
+        [Cfg(value=1)]
+        public short Replicas { get; set; }
 
         public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 

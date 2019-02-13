@@ -107,11 +107,15 @@ namespace Transformalize.Configuration.Ext {
                 }
             }
 
-            // special short-cut for referencing a script file name directly from entity
-            if (!p.Scripts.Any() && p.Entities.Count == 1) {
-                var script = p.Entities.First().Script;
-                if (script.Contains(".")) {
-                    p.Scripts.Add(new Script { Name = script, File = script });
+            // for referencing a script file directly in an entity.
+            // note: the purpose of an entity script is to be used to create the query for the entity
+            // note: not to be confused with transform scripts (i.e. jint, cs).
+            if (!p.Scripts.Any()) {
+                foreach (var entity in p.Entities) {
+                    var script = entity.Script;
+                    if (script.Contains(".")) {
+                        p.Scripts.Add(new Script { Name = script, File = script });
+                    }
                 }
             }
 

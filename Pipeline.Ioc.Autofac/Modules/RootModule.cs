@@ -78,6 +78,19 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     return process;
                 }
 
+                if (process.Output().Provider == Constants.DefaultSetting || process.Output().Provider == "internal") {
+                    try {
+                        Console.WindowHeight = Console.WindowHeight + 1 - 1;
+                        Console.Title = process.Name;
+                        if (!System.Environment.CommandLine.Contains("TESTWINDOW") && !System.Environment.CommandLine.Contains("TESTPLATFORM")) {
+                            process.Output().Provider = "console";
+                        }
+                    } catch (IOException) {
+
+                        // just a hack to determine if in console
+                    }
+                }
+
                 // this might be put into it's own type and injected (or not)
                 if (process.Entities.Count == 1) {
                     var entity = process.Entities.First();
@@ -94,18 +107,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-                if (process.Output().Provider == Constants.DefaultSetting || process.Output().Provider == "internal") {
-                    try {
-                        Console.WindowHeight = Console.WindowHeight + 1 - 1;
-                        Console.Title = process.Name;
-                        if (!System.Environment.CommandLine.Contains("TESTWINDOW") && !System.Environment.CommandLine.Contains("TESTPLATFORM")) {
-                            process.Output().Provider = "console";
-                        }
-                    } catch (IOException) {
-
-                        // just a hack to determine if in console
-                    }
-                }
+                if (process.ReadOnly)
+                    return process;
 
                 // handling multiple entities with non-relational output
                 var originalOutput = process.Output().Clone();
@@ -130,6 +133,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                         }
                     }
                 }
+
 
                 return process;
 

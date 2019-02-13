@@ -39,7 +39,7 @@ namespace Transformalize.Impl {
         public bool TryAttribute(string name, out IAttribute attr) {
             if (_attributes == null) {
                 _attributes = new Dictionary<string, IAttribute>();
-                for (int i = 0; i < Attributes.Count; i++) {
+                for (var i = 0; i < Attributes.Count; i++) {
                     _attributes[Attributes[i].Name] = Attributes[i];
                 }
             }

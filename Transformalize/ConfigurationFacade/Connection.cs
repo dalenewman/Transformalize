@@ -178,6 +178,12 @@ namespace Transformalize.ConfigurationFacade {
         [Cfg]
         public string LinePattern { get; set; }
 
+        [Cfg]
+        public string Shards { get; set; }
+
+        [Cfg]
+        public string Replicas { get; set; }
+
 
     }
 }

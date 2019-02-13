@@ -15,10 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Cfg.Net;
 
 namespace Transformalize.Configuration {
 
@@ -161,10 +161,10 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool Multiple { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Required { get; set; }
 
-        [Cfg(value=false)]
+        [Cfg(value = false)]
         public bool Sticky { get; set; }
 
         public object Convert(string value) {
@@ -173,6 +173,10 @@ namespace Transformalize.Configuration {
 
         public object Convert(object value) {
             return Constants.ObjectConversionMap[Type](value);
+        }
+
+        public override string ToString() {
+            return $"{Name}={Value}";
         }
 
     }
