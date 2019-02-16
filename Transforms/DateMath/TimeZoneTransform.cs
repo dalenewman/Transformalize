@@ -51,7 +51,12 @@ namespace Transformalize.Transforms.DateMath {
             _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
 
             if (_fromTimeZoneInfo.StandardName == "UTC") {
-                _transform = (dt) => TimeZoneInfo.ConvertTimeFromUtc(dt, _toTimeZoneInfo);
+                _transform = (dt) => {
+                    if (dt.Kind != DateTimeKind.Utc) {
+                        dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
+                    }
+                    return TimeZoneInfo.ConvertTimeFromUtc(dt, _toTimeZoneInfo);
+                };
             } else if (_toTimeZoneInfo.StandardName == "UTC") {
                 _transform = (dt) => TimeZoneInfo.ConvertTimeToUtc(dt, _fromTimeZoneInfo);
             } else {
