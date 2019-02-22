@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize</id>
-    <version>0.3.25-beta</version>
+    <version>0.3.26-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This is the main library for Transformalize.</description>
-    <releaseNotes>added shards and replicas properties for elasticsearch connections</releaseNotes>
+    <releaseNotes>bump version</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
