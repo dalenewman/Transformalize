@@ -15,26 +15,25 @@
 // limitations under the License.
 #endregion
 
-using System;
+using Orchard;
+using Orchard.Autoroute.Services;
+using Orchard.ContentManagement;
+using Orchard.FileSystems.AppData;
+using Orchard.Localization;
+using Orchard.Logging;
+using Orchard.Services;
+using Orchard.Themes;
+using Orchard.UI.Notify;
+using Pipeline.Web.Orchard.Models;
+using Pipeline.Web.Orchard.Services;
+using Pipeline.Web.Orchard.Services.Contracts;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
-using Orchard;
-using Orchard.ContentManagement;
-using Orchard.Localization;
-using Orchard.Logging;
-using Orchard.Themes;
-using Orchard.UI.Notify;
 using Transformalize.Contracts;
-using Pipeline.Web.Orchard.Models;
-using Pipeline.Web.Orchard.Services;
-using Orchard.Autoroute.Services;
-using Orchard.FileSystems.AppData;
-using Orchard.Services;
-using Pipeline.Web.Orchard.Services.Contracts;
-using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;
+using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -107,63 +106,42 @@ namespace Pipeline.Web.Orchard.Controllers {
                             _orchardServices.Notifier.Add(NotifyType.Error, T(error));
                         }
                     } else {
-                        if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
-                            _orchardServices.WorkContext.Resolve<ISchemaHelper>().Help(process);
-                        }
 
-                        if (!process.Errors().Any()) {
+                        var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
 
-                            var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
+                        var o = process.Output();
+                        switch (o.Provider) {
+                            case "kml":
+                            case "geojson":
+                            case "file":
+                                Response.Clear();
+                                Response.BufferOutput = false;
 
-                            try {
-
-                                runner.Execute(process);
-                                process.Request = "Export";
-                                process.Time = timer.ElapsedMilliseconds;
-
-                                if (process.Errors().Any()) {
-                                    foreach (var error in process.Errors()) {
-                                        _orchardServices.Notifier.Add(NotifyType.Error, T(error));
-                                    }
-                                    process.Status = 500;
-                                    process.Message = "There are errors in the pipeline.  See log.";
-                                } else {
-                                    process.Status = 200;
-                                    process.Message = "Ok";
-                                }
-
-                                var o = process.Output();
                                 switch (o.Provider) {
                                     case "kml":
+                                        Response.ContentType = "application/vnd.google-earth.kml+xml";
+                                        break;
                                     case "geojson":
-                                    case "file":
-                                        Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
-                                        switch (o.Provider) {
-                                            case "kml":
-                                                Response.ContentType = "application/vnd.google-earth.kml+xml";
-                                                break;
-                                            case "geojson":
-                                                Response.ContentType = "application/vnd.geo+json";
-                                                break;
-                                            default:
-                                                Response.ContentType = "application/csv";
-                                                break;
-                                        }
-                                        Response.Flush();
-                                        Response.End();
-                                        return new EmptyResult();
-                                    case "excel":
-                                        return new FilePathResult(o.File, Common.ExcelContentType) {
-                                            FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
-                                        };
-                                    default:  // page and map are rendered to page
+                                        Response.ContentType = "application/vnd.geo+json";
+                                        break;
+                                    default:
+                                        Response.ContentType = "application/csv";
                                         break;
                                 }
-                            } catch (Exception ex) {
-                                Logger.Error(ex, ex.Message);
-                                _orchardServices.Notifier.Error(T(ex.Message));
-                            }
+                                
+                                Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
+                                runner.Execute(process);
+                                return new EmptyResult();
+                            case "excel":
+                                runner.Execute(process);
+
+                                return new FilePathResult(o.File, Common.ExcelContentType) {
+                                    FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
+                                };
+                            default:  // page and map are rendered to page
+                                break;
                         }
+
                     }
 
                 } else {

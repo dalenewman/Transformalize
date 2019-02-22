@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Kml</id>
-    <version>0.3.25-beta</version>
+    <version>0.3.26-beta</version>
     <title>Transformalize Provider KML</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,8 +10,8 @@
     <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KML Provider for Transformalize</description>
-    <releaseNotes>courtesy flushing</releaseNotes>
-    <copyright>Copyright 2013-2018</copyright>
+    <releaseNotes>removed courtesy flushing</releaseNotes>
+    <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">

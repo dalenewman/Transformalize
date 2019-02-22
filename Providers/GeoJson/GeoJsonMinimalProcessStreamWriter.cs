@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Providers.GeoJson {
 
@@ -71,57 +70,53 @@ namespace Transformalize.Providers.GeoJson {
                 _writer.WriteStartArray();  //features
             }
 
-            foreach (var partition in rows.Partition(_context.Entity.InsertSize)) {
+            foreach (var row in rows) {
 
-                foreach (var row in partition) {
+                _writer.WriteStartObject(); //feature
+                _writer.WritePropertyName("type");
+                _writer.WriteValue("Feature");
+                _writer.WritePropertyName("geometry");
+                _writer.WriteStartObject(); //geometry 
+                _writer.WritePropertyName("type");
+                _writer.WriteValue("Point");
 
-                    _writer.WriteStartObject(); //feature
-                    _writer.WritePropertyName("type");
-                    _writer.WriteValue("Feature");
-                    _writer.WritePropertyName("geometry");
-                    _writer.WriteStartObject(); //geometry 
-                    _writer.WritePropertyName("type");
-                    _writer.WriteValue("Point");
+                _writer.WritePropertyName("coordinates");
+                _writer.WriteStartArray();
+                _writer.WriteValue(row[_longitudeField]);
+                _writer.WriteValue(row[_latitudeField]);
+                _writer.WriteEndArray();
 
-                    _writer.WritePropertyName("coordinates");
-                    _writer.WriteStartArray();
-                    _writer.WriteValue(row[_longitudeField]);
-                    _writer.WriteValue(row[_latitudeField]);
-                    _writer.WriteEndArray();
+                _writer.WriteEndObject(); //geometry
 
-                    _writer.WriteEndObject(); //geometry
+                _writer.WritePropertyName("properties");
+                _writer.WriteStartObject(); //properties
 
-                    _writer.WritePropertyName("properties");
-                    _writer.WriteStartObject(); //properties
-
-                    _writer.WritePropertyName("description");
-                    if (_hasDescription) {
-                        _writer.WriteValue(row[_descriptionField]);
-                    } else {
-                        _writer.WriteValue("add geojson-description to output");
-                    }
-
-                    if (_hasBatchValue) {
-                        _writer.WritePropertyName("batch-value");
-                        _writer.WriteValue(row[_batchField]);
-                    }
-
-                    if (_hasColor) {
-                        _writer.WritePropertyName("marker-color");
-                        _writer.WriteValue(row[_colorField]);
-                    }
-
-                    if (_hasSymbol) {
-                        var symbol = row[_symbolField].ToString();
-                        _writer.WritePropertyName("marker-symbol");
-                        _writer.WriteValue(symbol);
-                    }
-
-                    _writer.WriteEndObject(); //properties
-
-                    _writer.WriteEndObject(); //feature
+                _writer.WritePropertyName("description");
+                if (_hasDescription) {
+                    _writer.WriteValue(row[_descriptionField]);
+                } else {
+                    _writer.WriteValue("add geojson-description to output");
                 }
-                _writer.Flush();
+
+                if (_hasBatchValue) {
+                    _writer.WritePropertyName("batch-value");
+                    _writer.WriteValue(row[_batchField]);
+                }
+
+                if (_hasColor) {
+                    _writer.WritePropertyName("marker-color");
+                    _writer.WriteValue(row[_colorField]);
+                }
+
+                if (_hasSymbol) {
+                    var symbol = row[_symbolField].ToString();
+                    _writer.WritePropertyName("marker-symbol");
+                    _writer.WriteValue(symbol);
+                }
+
+                _writer.WriteEndObject(); //properties
+
+                _writer.WriteEndObject(); //feature
             }
 
             if (Equals(_context.Process.Entities.Last(), _context.Entity)) {

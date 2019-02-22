@@ -21,7 +21,6 @@ using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Providers.GeoJson {
 
@@ -39,7 +38,7 @@ namespace Transformalize.Providers.GeoJson {
         private readonly bool _hasSymbol;
         private readonly bool _hasDescription;
         private readonly bool _hasBatchValue;
-        private IContext _context;
+        private readonly IContext _context;
 
         public GeoJsonMinimalEntityStreamWriter(IContext context, Stream stream) {
             _context = context;
@@ -75,58 +74,55 @@ namespace Transformalize.Providers.GeoJson {
             jsonWriter.WriteStartArray();  //features
 
 
-            foreach (var partition in rows.Partition(_context.Entity.InsertSize)) {
+            foreach (var row in rows) {
 
-                foreach (var row in partition) {
+                jsonWriter.WriteStartObject(); //feature
+                jsonWriter.WritePropertyName("type");
+                jsonWriter.WriteValue("Feature");
+                jsonWriter.WritePropertyName("geometry");
+                jsonWriter.WriteStartObject(); //geometry 
+                jsonWriter.WritePropertyName("type");
+                jsonWriter.WriteValue("Point");
 
-                    jsonWriter.WriteStartObject(); //feature
-                    jsonWriter.WritePropertyName("type");
-                    jsonWriter.WriteValue("Feature");
-                    jsonWriter.WritePropertyName("geometry");
-                    jsonWriter.WriteStartObject(); //geometry 
-                    jsonWriter.WritePropertyName("type");
-                    jsonWriter.WriteValue("Point");
+                jsonWriter.WritePropertyName("coordinates");
+                jsonWriter.WriteStartArray();
+                jsonWriter.WriteValue(row[_longitudeField]);
+                jsonWriter.WriteValue(row[_latitudeField]);
+                jsonWriter.WriteEndArray();
 
-                    jsonWriter.WritePropertyName("coordinates");
-                    jsonWriter.WriteStartArray();
-                    jsonWriter.WriteValue(row[_longitudeField]);
-                    jsonWriter.WriteValue(row[_latitudeField]);
-                    jsonWriter.WriteEndArray();
+                jsonWriter.WriteEndObject(); //geometry
 
-                    jsonWriter.WriteEndObject(); //geometry
+                jsonWriter.WritePropertyName("properties");
+                jsonWriter.WriteStartObject(); //properties
 
-                    jsonWriter.WritePropertyName("properties");
-                    jsonWriter.WriteStartObject(); //properties
-
-                    jsonWriter.WritePropertyName("description");
-                    if (_hasDescription) {
-                        jsonWriter.WriteValue(row[_descriptionField]);
-                    } else {
-                        jsonWriter.WriteValue("add geojson-description to output");
-                    }
-
-                    if (_hasBatchValue) {
-                        jsonWriter.WritePropertyName("batch-value");
-                        jsonWriter.WriteValue(row[_batchField]);
-                    }
-
-                    if (_hasColor) {
-                        jsonWriter.WritePropertyName("marker-color");
-                        jsonWriter.WriteValue(row[_colorField]);
-                    }
-
-                    if (_hasSymbol) {
-                        var symbol = row[_symbolField].ToString();
-                        jsonWriter.WritePropertyName("marker-symbol");
-                        jsonWriter.WriteValue(symbol);
-                    }
-
-                    jsonWriter.WriteEndObject(); //properties
-
-                    jsonWriter.WriteEndObject(); //feature
+                jsonWriter.WritePropertyName("description");
+                if (_hasDescription) {
+                    jsonWriter.WriteValue(row[_descriptionField]);
+                } else {
+                    jsonWriter.WriteValue("add geojson-description to output");
                 }
-                jsonWriter.Flush();
+
+                if (_hasBatchValue) {
+                    jsonWriter.WritePropertyName("batch-value");
+                    jsonWriter.WriteValue(row[_batchField]);
+                }
+
+                if (_hasColor) {
+                    jsonWriter.WritePropertyName("marker-color");
+                    jsonWriter.WriteValue(row[_colorField]);
+                }
+
+                if (_hasSymbol) {
+                    var symbol = row[_symbolField].ToString();
+                    jsonWriter.WritePropertyName("marker-symbol");
+                    jsonWriter.WriteValue(symbol);
+                }
+
+                jsonWriter.WriteEndObject(); //properties
+
+                jsonWriter.WriteEndObject(); //feature
             }
+
 
             jsonWriter.WriteEndArray(); //features
 

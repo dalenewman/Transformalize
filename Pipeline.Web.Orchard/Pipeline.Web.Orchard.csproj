@@ -189,6 +189,7 @@
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Transformalize, Version=0.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Transformalize.0.3.25-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Ado, Version=0.3.24.0, Culture=neutral, processorArchitecture=MSIL">
@@ -203,14 +204,14 @@
     <Reference Include="Transformalize.Provider.File, Version=0.3.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.File.0.3.24-beta\lib\net462\Transformalize.Provider.File.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.FileHelpers, Version=0.3.24.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.FileHelpers.0.3.24-beta\lib\net462\Transformalize.Provider.FileHelpers.dll</HintPath>
+    <Reference Include="Transformalize.Provider.FileHelpers, Version=0.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.FileHelpers.0.3.25-beta\lib\net462\Transformalize.Provider.FileHelpers.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.GeoJson, Version=0.3.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.GeoJson.0.3.25-beta\lib\net462\Transformalize.Provider.GeoJson.dll</HintPath>
+    <Reference Include="Transformalize.Provider.GeoJson, Version=0.3.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.GeoJson.0.3.27-beta\lib\net462\Transformalize.Provider.GeoJson.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Kml, Version=0.3.24.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Kml.0.3.24-beta\lib\net462\Transformalize.Provider.Kml.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Kml, Version=0.3.25.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Kml.0.3.25-beta\lib\net462\Transformalize.Provider.Kml.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.MySql, Version=0.3.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.MySql.0.3.5-beta\lib\net462\Transformalize.Provider.MySql.dll</HintPath>
@@ -219,7 +220,7 @@
       <HintPath>..\..\..\packages\Transformalize.Provider.OpenXml.0.3.24-beta\lib\net462\Transformalize.Provider.OpenXml.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Solr, Version=0.3.13.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Solr.0.3.13-beta\lib\net462\Transformalize.Provider.Solr.dll</HintPath>
+      <HintPath>..\..\..\packages\Transformalize.Provider.Solr.0.3.25-beta\lib\net462\Transformalize.Provider.Solr.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.SqlServer, Version=0.3.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.3.24-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
@@ -326,7 +327,6 @@
     <Compile Include="Impl\NullPlaceHolderReplacer.cs" />
     <Compile Include="Impl\OpenAction.cs" />
     <Compile Include="Impl\OrchardLogWriter.cs" />
-    <Compile Include="Impl\ProcessController.cs" />
     <Compile Include="Impl\RazorReportCompiler.cs" />
     <Compile Include="Impl\RazorReportTemplateProcessor.cs" />
     <Compile Include="Impl\RunTimeDataReader.cs" />

@@ -26,7 +26,7 @@ using Transformalize.Contracts;
 using Transformalize.Providers.Ado;
 using Process = Transformalize.Configuration.Process;
 using Cfg.Net.Contracts;
-using ProcessController = Pipeline.Web.Orchard.Impl.ProcessController;
+using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ProcessControlModule : Module {
@@ -130,8 +130,6 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 return controller;
             }).As<IProcessController>();
-
         }
-
     }
 }

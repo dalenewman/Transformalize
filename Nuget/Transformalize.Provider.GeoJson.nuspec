@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.GeoJson</id>
-    <version>0.3.27-beta</version>
+    <version>0.3.29-beta</version>
     <title>Transformalize Provider GeoJson</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>GeoJson Provider for Transformalize</description>
-    <releaseNotes>fixed transformalize reference</releaseNotes>
+    <releaseNotes>removed courtesy flushing</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>
