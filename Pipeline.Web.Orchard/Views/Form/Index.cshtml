@@ -64,7 +64,7 @@
 </div>
 
 <div id="id_content">@{
-    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Cfg/FormContent.cshtml", Model);    
+    Html.RenderPartial("Content", Model);    
 }</div>
 
 <div id="busy_holder">
@@ -101,8 +101,8 @@
             $.unblockUI();
         });
 
-        var ajaxUrl = "@(Url.Action("FormContent", new { Model.Part.Id }))" + window.location.search;
-        var saveUrl = "@(Url.Action("Form", new { Model.Part.Id }))" + window.location.search;
+        var ajaxUrl = "@(Url.Action("Content", new { Model.Part.Id }))" + window.location.search;
+        var saveUrl = "@(Url.Action("Index", new { Model.Part.Id }))" + window.location.search;
 
         $('#id_validate_button').bind('click', function() {
             post();

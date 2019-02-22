@@ -98,42 +98,31 @@
                 <td>
                     <div class="btn-group" role="group" aria-label="...">
 
-                        <button title="Edit" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                        @{
+                            var editUrl = Url.ItemEditUrl(part.ContentItem);
+                            var viewUrl = Url.ItemDisplayUrl(part.ContentItem);
+                        }
+
+                        <button title="Edit at @editUrl" type="button" class="btn btn-success btn-xs" onclick="window.open('@editUrl', '_self');">
                             <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+
+                        <button title="View at @viewUrl" type="button" class="btn btn-warning btn-xs" onclick="window.open('@viewUrl', '_self')">
+                            <span class="glyphicon glyphicon-eye-open"> </span>
                         </button>
 
                         <button title="Clone" type="button" class="btn btn-info btn-xs" onclick="$('#clone_@part.Id').submit();">
                             <span class="glyphicon glyphicon-duplicate"></span>
                         </button>
 
-                        <button title="Delete" type="button" class="btn btn-danger btn-xs" onclick="if (confirm('Are you sure?')) { $('#remove_@part.Id').submit();}">
+                        <button title="Delete" type="button" class="btn btn-danger btn-xs" onclick="if (confirm('Are you sure?')) { $('#remove_@part.Id').submit(); }">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
-
-                        <button type="button" class="btn btn-info btn-xs" title="Download" onclick="window.open('@Url.Action("Download", "Cfg", new {id = @part.Id})', '_self');">
+                        
+                        <button title="Download the Configuration" type="button" class="btn btn-default btn-xs" onclick="window.open('@Url.Action("Download", "Cfg", new {id = @part.Id})', '_self');">
                             <span class="glyphicon glyphicon-download"></span>
                         </button>
 
-                        @if (!part.NeedsInputFile || part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Check" type="button" class="btn btn-success btn-xs" onclick="window.open('@(Url.Action("Check", "Api", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
-                                <span class="glyphicon glyphicon-check"></span>
-                            </button>
-                        }
-                        @if (part.ReportMode() && !part.NeedsInputFile || part.ReportMode() && part.NeedsInputFile && inputFileId > 0) {
-                            <button title="Report" type="button" class="btn btn-warning btn-xs" onclick="window.open('@(Url.Action("Index", "Report", new {id = part.Id, InputFileId = inputFileId}))', '_self');">
-                                <span class="glyphicon glyphicon-th-list"></span>
-                            </button>
-                        }
-                        @if (part.FormMode()) {
-                            <button title="Form" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("Form", "Cfg", new {id = part.Id}))', '_self');">
-                                <span class="glyphicon glyphicon-baby-formula"></span>
-                            </button>
-                        }
-                        @if (part.HandsOnTableMode()) {
-                            <button title="Table Editor" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("Index", "HandsOnTable", new {id = part.Id}))', '_self');">
-                                <span class="glyphicon glyphicon-list-alt"></span>
-                            </button>
-                        }
                         @if (part.NeedsInputFile) {
                             <button title="File" type="button" class="btn btn-default btn-xs" onclick="window.open('@(Url.Action("List", "File", new {tagFilter = Common.AllTag, ArrangementId = part.Id}))', '_self');">
                                 <span class="glyphicon glyphicon-file"></span>

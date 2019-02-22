@@ -9,58 +9,95 @@
     string returnUrl;
     string returnName;
     if (string.IsNullOrEmpty(Request.QueryString[Common.ReturnUrlName])) {
-        returnUrl = Url.Action("List", "Cfg", new {area = Common.ModuleName});
+        returnUrl = Url.Action("List", "Cfg", new { area = Common.ModuleName });
         returnName = "Jobs";
     } else {
         returnUrl = Request.QueryString[Common.ReturnUrlName];
         returnName = "Back";
     }
-    
-    Html.RenderPartial("~/Modules/Pipeline.Web.Orchard/Views/Shared/ConfigurationEditor.cshtml", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
+
+    Html.RenderPartial("Shared/ConfigurationEditor", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
 }
 
-<div class="editor-field">
-    @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
-    @Html.DropDownListFor(x => x.EditorMode, PipelineConfigurationPart.EditorModes)
-    @Html.ValidationMessageFor(x => x.EditorMode)
 
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
-    @if(!Model.NeedsInputFile) {
-        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Check", "Api", new {id = Model.Id, area = Common.ModuleName}))', '_blank');">Check</button>
-    }
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Cfg", "Api", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Cfg</button>
-</div>
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
+    <legend>Configuration</legend>
+    <div class="editor-field">
+        @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
+        @Html.DropDownListFor(x => x.EditorMode, PipelineConfigurationPart.EditorModes)
+        @Html.ValidationMessageFor(x => x.EditorMode)
 
-<div class="editor-field">
-    @Html.LabelFor(x => x.Configuration, T("Configuration"))
-    @Html.TextAreaFor(x => x.Configuration)
-</div>
+        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
+        @if (!Model.NeedsInputFile) {
+            <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Check", "Api", new {id = Model.Id, area = Common.ModuleName}))', '_blank');">Check</button>
+        }
+        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Cfg", "Api", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Cfg</button>
+    </div>
+    <div class="editor-field">
+        @Html.LabelFor(x => x.PlaceHolderStyle, T("Place Holder Style"))
+        @Html.DropDownListFor(x => x.PlaceHolderStyle, PipelineConfigurationPart.PlaceHolderStyles)
+        @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
+    </div>
 
-<div class="hint" style="font-size: smaller;">
-    <strong>F11</strong>: <span>Full Screen</span>,
-    <strong>Esc</strong>: <span>Exit Full Screen</span>,
-    <strong>Ctrl-S</strong>: <span>Save</span>,
-    <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
-    <strong>Ctrl-F</strong>: <span>Find</span>,
-    <strong>Ctrl-G</strong>: <span>Find next</span>,
-    <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
-    <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
-    <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
-</div>
+    <div class="editor-field">
+        @Html.LabelFor(x => x.Configuration, T("Configuration"))
+        @Html.TextAreaFor(x => x.Configuration)
+    </div>
 
-<div class="editor-field">
-    @Html.LabelFor(x => x.PlaceHolderStyle, T("Place Holder Style"))
-    @Html.DropDownListFor(x => x.PlaceHolderStyle, PipelineConfigurationPart.PlaceHolderStyles)
-    @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
-</div>
+    <div class="hint" style="font-size: smaller;">
+        <strong>F11</strong>: <span>Full Screen</span>,
+        <strong>Esc</strong>: <span>Exit Full Screen</span>,
+        <strong>Ctrl-S</strong>: <span>Save</span>,
+        <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
+        <strong>Ctrl-F</strong>: <span>Find</span>,
+        <strong>Ctrl-G</strong>: <span>Find next</span>,
+        <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
+        <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
+        <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
+    </div>
 
-<div class="editor-field">
-    @Html.LabelFor(x => x.MapStyle, T("Map Style (if applicable)"))
-    @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
-    @Html.ValidationMessageFor(x => x.MapStyle)
-</div>
+</fieldset>
 
-<fieldset>
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
+    <legend>Report Options</legend>
+    <div class="editor-field">
+        <table>
+            <tr>
+                <td style="padding-right: 10px;">@Html.EditorFor(x => x.ClientSideSorting)</td>
+                <td>@Html.LabelFor(x => x.ClientSideSorting, T("Client Side Sorting"))</td>
+                <td> &nbsp;</td>
+                <td><div class="hint"> @T("Enables client side sorting.")</div></td>
+                <td>@Html.ValidationMessageFor(x => x.ClientSideSorting)</td>
+            </tr>
+        </table>
+    </div>
+</fieldset>
+
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
+    <legend>Map Options</legend>
+
+    <div class="editor-field">
+        @Html.LabelFor(x => x.MapStyle, T("Map Style"))
+        @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
+        @Html.ValidationMessageFor(x => x.MapStyle)
+    </div>
+
+    <div class="editor-field">
+        @Html.LabelFor(x => x.MapCircleRadius, T("Map Circle Radius"))
+        @Html.EditorFor(x => x.MapCircleRadius)
+        @Html.ValidationMessageFor(x => x.MapCircleRadius)
+    </div>
+    <div class="hint">@T("Map circle radius is an integer greater than 0")</div>
+
+    <div class="editor-field">
+        @Html.LabelFor(x => x.MapCircleOpacity, T("Map Circle Opacity"))
+        @Html.EditorFor(x => x.MapCircleOpacity)
+        @Html.ValidationMessageFor(x => x.MapCircleOpacity)
+    </div>
+    <div class="hint">@T("Map circle opacity is a double betwee 0.0 and 1.0")</div>
+</fieldset>
+
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
     <legend>Run Options</legend>
 
     <div class="editor-field">
@@ -92,8 +129,8 @@
 
 <hr />
 
-<fieldset>
-    <legend>White-list by IP</legend>
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
+    <legend>White-list</legend>
     <table>
         <tr>
             <td>
@@ -119,17 +156,17 @@
                 <p>
                     <strong style="color: red; font-weight: bold;">CAUTION</strong>: You should only white-list internal IP addresses on configurations using trusted authentication. Trusted
                     authentication does not store the <code>user</code> and <code>password</code> in your connections. Instead, it relies on the credentials
-                    of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br/><br/>
+                    of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br /><br />
                 </p>
 
                 <p>
                     White-listing allows access to <code>~/Pipeline/Api/Cfg</code> so that
-                    other computers on your network can read the configuration (and run them, or not).<br/><br/>
+                    other computers on your network can read the configuration (and run them, or not).<br /><br />
                 </p>
 
                 <p>
                     You can enable <code>~/Pipeline/Api/Run</code> by tagging this configuration as <strong>SERVICE</strong> below. Note: Run removes
-                    the credentials (user, password) from the connections.<br/><br/>
+                    the credentials (user, password) from the connections.<br /><br />
                 </p>
                 <p>
                     @T("Your IP is {0}", Request.UserHostAddress).

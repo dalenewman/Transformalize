@@ -199,10 +199,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                     o.Provider = "kml";
                     o.File = _slugService.Slugify(part.Title()) + ".kml";
                     break;
-                default: //csv
+                default: // csv
                     o.Stream = true;
                     o.Provider = "file";
                     o.Delimiter = ",";
+                    o.TextQualifier = "\"";
                     o.File = _slugService.Slugify(part.Title()) + ".csv";
                     break;
             }

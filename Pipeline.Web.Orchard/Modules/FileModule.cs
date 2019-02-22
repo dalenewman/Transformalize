@@ -123,17 +123,16 @@ namespace Pipeline.Web.Orchard.Modules {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
 
                         switch (output.Connection.Provider) {
+                            case "filehelpers":
                             case "file":
                                 if (output.Connection.File.StartsWith("~")){
                                     if(output.Connection.File.StartsWith("~/App_Data", System.StringComparison.OrdinalIgnoreCase)) {
                                         output.Connection.File = _appDataFolder.MapPath(output.Connection.File);
                                     } else {
-                                        output.Connection.File = _appDataFolder.MapPath(Path.Combine("~/App_Data/", output.Connection.File.Trim(new[] { '~','/'})));
+                                        output.Connection.File = _appDataFolder.MapPath(Path.Combine("~/App_Data/", output.Connection.File.Trim('~', '/')));
                                     }
                                 }
-                                return output.Connection.Stream ?
-                                    (IWrite)new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream) :
-                                    new DelimitedFileWriter(output);
+                                return output.Connection.Stream ? (IWrite)new DelimitedFileStreamWriter(output, HttpContext.Current.Response.OutputStream) : new DelimitedFileWriter(output);
                             default:
                                 return new NullWriter(output);
                         }

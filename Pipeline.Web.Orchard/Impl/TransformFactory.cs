@@ -62,8 +62,10 @@ namespace Pipeline.Web.Orchard.Impl {
         public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
             transform = null;
             var success = true;
+
             if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
-                var t = ShouldRunTransform(ctx, context);
+
+                var t = ShouldRunTransform(ctx, context, context.Operation.Method);
 
                 foreach (var warning in t.Warnings()) {
                     context.Warn(warning);
@@ -78,16 +80,35 @@ namespace Pipeline.Web.Orchard.Impl {
                     transform = t;
                 }
             } else {
-                context.Error(string.Format("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias));
-                success = false;
+
+                if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Key)) {
+                    var t = ShouldRunTransform(ctx, context, context.Operation.Key);
+
+                    foreach (var warning in t.Warnings()) {
+                        context.Warn(warning);
+                    }
+
+                    if (t.Errors().Any()) {
+                        foreach (var error in t.Errors()) {
+                            context.Error(error);
+                        }
+                        success = false;
+                    } else {
+                        transform = t;
+                    }
+                } else {
+                    context.Error("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias);
+                    success = false;
+                }
+
             }
             return success;
         }
 
-        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context) {
+        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context, string name) {
             return context.Operation.ShouldRun == null ?
-                ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)) :
-                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context)));
+                ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)) :
+                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)));
         }
 
 

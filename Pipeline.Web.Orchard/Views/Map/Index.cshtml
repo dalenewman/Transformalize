@@ -11,7 +11,7 @@
     var settings = WorkContext.CurrentSite.As<PipelineSettingsPart>();
     var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
-    var linkService = WorkContext.Resolve<IExportLinkService>();
+    var linkService = WorkContext.Resolve<ILinkService>();
     var parameters = Model.Process.GetActiveParameters();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
@@ -30,7 +30,6 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
-    Script.Include("jquery.tablesorter.min.js");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
 
     if (hasActions) {
@@ -44,7 +43,6 @@
     Script.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js");
     Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js");
-
 
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
     AppendMeta("description", title, ",");
@@ -130,9 +128,10 @@
             <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
         }
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
+        @Html.Partial("Shared/Parameters", Model.Process)
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
+        @Html.Partial("Shared/Controls", Model)
+
 
         @if (isMissingRequiredParameters) {
             renderMap = false;  // message is already present
@@ -155,7 +154,7 @@
             <script>
             //<!--
             mapboxgl.accessToken = '@(settings.MapBoxToken)';
-            var url = '@(linkService.Create(Request, "geojson"))';
+            var url = '@(linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson"))';
 
             $(document).ready(function() {
 
@@ -177,10 +176,11 @@
                         source: "orders-data",
                         paint: {
                             "circle-color": { "type": "identity", "property": "marker-color" },
-                            "circle-radius": 8,
+                            "circle-radius": @Model.Part.MapCircleRadius,
+                            "circle-opacity": @Model.Part.MapCircleOpacity,
                             "circle-stroke-width": 1,
                             "circle-stroke-color": '#000000',
-                            "circle-stroke-opacity": 1
+                            "circle-stroke-opacity": 0.9
                         }
                     });
                 }

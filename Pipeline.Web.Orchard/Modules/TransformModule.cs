@@ -172,6 +172,9 @@ namespace Pipeline.Web.Orchard.Modules {
             RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
 
+            // row producing
+            RegisterTransform(builder, (ctx, c) => new ToRowTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))), new ToRowTransform().GetSignatures());
+
             RegisterTransform(builder, (ctx, c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new PlaceTransform(c), new PlaceTransform().GetSignatures());
 

@@ -109,16 +109,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 return new HttpNotFoundResult();
             }
 
-            // get sticky values
-            var suffix = part.Id.ToString();
-            foreach (string key in Session.Keys) {
-                if (key.EndsWith(suffix)) {
-                    var name = key.Substring(0, key.Length - suffix.Length);
-                    if (!parameters.ContainsKey(name) && Session[key] != null) {
-                        parameters[name] = Session[key].ToString();
-                    }
-                }
-            }
+            GetStickyParameters(part.Id, parameters);
 
             process.Load(part.Configuration, parameters);
 
@@ -136,26 +127,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             var reportParameters = process.GetActiveParameters();
 
-            // sticky session parameters
-            foreach (var parameter in reportParameters.Where(p => p.Sticky)) {
-                var key = parameter.Name + part.Id;
-                if (Request.QueryString[parameter.Name] == null) {
-                    if (Session[key] != null) {
-                        parameter.Value = Session[key].ToString();
-                    }
-                } else {  // A parameter is set
-                    var value = Request.QueryString[parameter.Name];
-                    if (Session[key] == null) {
-                        Session[key] = value;  // for the next time
-                        parameter.Value = value; // for now
-                    } else {
-                        if (Session[key].ToString() != value) {
-                            Session[key] = value; // for the next time
-                            parameter.Value = value; // for now
-                        }
-                    }
-                }
-            }
+            SetStickyParameters(part.Id, reportParameters);
 
             // secure actions
             var actions = process.Actions.Where(a => !a.Before && !a.After && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));

@@ -40,9 +40,6 @@ namespace Pipeline.Web.Orchard {
                 RouteDescriptorWithId("File", "View"),
                 RouteDescriptorWithTagFilter("File", "List"),
 
-                RouteDescriptorWithId("Cfg", "Builder"),
-                RouteDescriptorWithId("Cfg", "Form"),
-                RouteDescriptorWithId("Cfg", "FormContent"),
                 RouteDescriptorWithId("Cfg", "Download"),
                 RouteDescriptorWithTagFilter("Cfg", "List"),
 
@@ -58,6 +55,38 @@ namespace Pipeline.Web.Orchard {
                             {"area", Common.ModuleName },
                             {"controller", "Report" },
                             {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 11,
+                    Route = new Route(
+                        "Pipeline/Form/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Form" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 11,
+                    Route = new Route(
+                        "Pipeline/FormContent/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Form" },
+                            {"action", "Content"},
                             {"id", 0}
                         },
                         new RouteValueDictionary(),

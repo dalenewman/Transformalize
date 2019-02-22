@@ -18,9 +18,9 @@
     var orchard = WorkContext.Resolve<IOrchardServices>();
     var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
 
-    var linkService = WorkContext.Resolve<IExportLinkService>();
-    var exportCsvLink = linkService.Create(Request, "csv");
-    var exportXlsxLink = linkService.Create(Request, "xlsx");
+    var linkService = WorkContext.Resolve<ILinkService>();
+    var exportCsvLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "csv");
+    var exportXlsxLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "xlsx");
 }
 
 <div class="row" style="margin-bottom: 4px;">
@@ -93,7 +93,7 @@
                  }
 
                 if (Model.Process.Mode == "report" && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
-                     <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, "map"))', '_self');">
+                    <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Map", new RouteValueDictionary { {"Id", Model.Part.Id}}), "map"))', '_self');">
                          <span class="glyphicon glyphicon-map-marker"></span>
                      </button>
                 }
@@ -112,7 +112,7 @@
                          </ul>
                      </div>
 
-                    <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, "report"))', '_self');">
+                    <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report"))', '_self');">
                         <span class="glyphicon glyphicon-align-justify"></span>
                     </button>
                 }
@@ -129,8 +129,8 @@
                         <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
                         @{
                             if (hasCoordinates) {
-                                var exportGeoJsonLink = linkService.Create(Request, "geojson");
-                                var exportKmlLink = linkService.Create(Request, "kml");
+                                var exportGeoJsonLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson");
+                                var exportKmlLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "kml");
                                 <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
                                 <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
                             }

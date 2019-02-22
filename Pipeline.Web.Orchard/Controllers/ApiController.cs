@@ -158,10 +158,6 @@ namespace Pipeline.Web.Orchard.Controllers {
                     process.Time = timer.ElapsedMilliseconds;
                     RemoveCredentials(process);
 
-                    if (process.Status == 200 && parameters.ContainsKey("ReturnUrl") && !string.IsNullOrEmpty(parameters["ReturnUrl"])) {
-                        return new RedirectResult(parameters["ReturnUrl"]);
-                    }
-
                     return new ContentResult { Content = process.Serialize(), ContentType = "text/" + format };
                 } catch (Exception ex) {
                     Logger.Error(ex, "Executing {0} threw error: {1}", id, ex.Message);

@@ -19,7 +19,6 @@
 using System.Linq;
 using Autofac;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado;
 

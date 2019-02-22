@@ -76,7 +76,10 @@ namespace Pipeline.Web.Orchard {
                         .WithSetting("ContentPermissionsPartSettings.DeleteOwn", "Administrator")
                         .WithSetting("ContentPermissionsPartSettings.PreviewOwn", "Administrator")
                         .WithSetting("ContentPermissionsPartSettings.DisplayedRoles", "Authenticated,Anonymous")
-                    )
+                    ).WithPart("AutoroutePart", builder => builder
+                        .WithSetting("AutorouteSettings.AllowCustomPattern", "True")
+                        .WithSetting("AutorouteSettings.AutomaticAdjustmentOnEdit", "False")
+                        .WithSetting("AutorouteSettings.PatternDefinitions", "[{\"Name\":\"Title\",\"Pattern\":\"{Content.Slug}\",\"Description\":\"slugified-title\"}]"))
                 );
                 return 1;
             } catch (Exception e) {
@@ -177,6 +180,16 @@ namespace Pipeline.Web.Orchard {
             return 14;
         }
 
+        public int UpdateFrom14() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("ClientSideSorting", DbType.Boolean));
+            return 15;
+        }
+
+        public int UpdateFrom15() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapCircleRadius", DbType.Int32));
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapCircleOpacity", DbType.Double));
+            return 16;
+        }
     }
 
     public class FileMigrations : DataMigrationImpl {

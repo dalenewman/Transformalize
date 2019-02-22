@@ -6,14 +6,15 @@
 
 @model ReportViewModel
 @{
-    var entity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
-    var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
+    var firstEntity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
+    var firstAllFields = firstEntity.GetAllFields().Where(f => !f.System).ToArray();
     var sortService = WorkContext.Resolve<ISortService>();
     var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
+    var parameters = Model.Process.GetActiveParameters();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
     if (hasActions) {
-        var bv = allFields.FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
+        var bv = firstAllFields.FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
         if (bv == null) {
             hasActions = false;
         } else {
@@ -24,7 +25,9 @@
     Style.Require("jQueryUI_Orchard");
     Script.Require("jQuery").AtHead();
     Script.Require("jQueryUI").AtHead();
-    Script.Include("jquery.tablesorter.min.js");
+    if (Model.Part.ClientSideSorting) {
+        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/js/jquery.tablesorter.min.js");
+    }
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
 
     Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
@@ -38,14 +41,14 @@
 
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css");
 
-    Style.Include("tablesorter.css");
+    if (Model.Part.ClientSideSorting) {
+        Style.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/css/theme.default.min.css");
+    }
+
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
-    var fields = entity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
-    var isSortable = fields.Any(f => f.Sortable == "true");
-    var activeParameters = Model.Process.GetActiveParameters();
-    var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
+    var title = firstEntity.Label == string.Empty ? firstEntity.Alias : firstEntity.Label;
     AppendMeta("description", title, ",");
     Layout.Title = title;
 }
@@ -121,20 +124,25 @@
         @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
             <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
         }
-        <input id="id_page" class="bsh" type="hidden" name="page" value="@entity.Page" />
-        <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
+        <input id="id_page" class="bsh" type="hidden" name="page" value="@firstEntity.Page" />
+        <input id="id_size" class="bsh" type="hidden" name="size" value="@(firstEntity.Size)" />
 
-        @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+        @foreach (var parameter in parameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
             <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
         }
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Parameters.cshtml", Model.Process)
+        @Html.Partial("Shared/Parameters", Model.Process)
 
-        @Html.Partial("~/Modules/Pipeline.Web.Orchard/Views/Shared/Controls.cshtml", Model)
+        @Html.Partial("Shared/Controls", Model)
+
+        @foreach (var entity in Model.Process.Entities) {
+
+            var fields = firstEntity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
+            var isSortable = fields.Any(f => f.Sortable == "true");
 
         <div class="row">
             <div class="table-responsive col-sm-12">
-                <table id="id_table" class="table table-condensed table-hover table-striped tablesorter">
+                    <table id="id_table_@entity.Sequence" class="table table-condensed table-hover table-striped tablesorter">
                     <thead>
                         <tr style="font-size: smaller; font-weight: bolder;">
                             @if (hasActions) {
@@ -261,8 +269,30 @@
                         }
                     </tbody>
                 </table>
+                    
+                    @if (Model.Part.ClientSideSorting) {
+                        <script type="text/javascript">
+                            // <!--
+                            $(document).ready(function() {
+                                $("#id_table_@entity.Sequence").tablesorter();
+                                $("#id_table_@entity.Sequence")
+                                    .bind("sortStart",
+                                        function() {
+                                            $('#busy').show();
+                                        })
+                                    .bind("sortEnd",
+                                        function() {
+                                            $('#busy').hide();
+                                        });
+                            });
+                            // -->
+                        </script>
+                    }
+
             </div>
         </div>
+        }
+
     </form>
 
 <div id="busy_holder">
@@ -333,7 +363,6 @@
             });
             var $form = $('#id_report');
             $form.attr('method', 'POST');
-            // $form.attr('action', '@(Url.Action("Index","Action", new { Model.Part.Id }))');
             $form.attr('action', removeUrlParameter(window.location.href, "output"));
             $form.append('<input type="hidden" name="__RequestVerificationToken" value="@(Html.AntiForgeryTokenValueOrchard())" />');
             $form.append('<input type="hidden" name="action" value="'+description+'" />');
@@ -357,10 +386,8 @@
 
     $(document).ready(function() {
 
-        function removeMessages() {
-            $(".zone-messages").fadeOut();
-        }
-        setTimeout(removeMessages, 5000);
+        var cleared = "_Cleared";
+        var lastFilter;
 
         var $boxes = $('.shift-select');
         $boxes.click(function(e) {
@@ -380,13 +407,13 @@
             controls.lastChecked = this;
         });
 
-        var isSortable = @(isSortable.ToString().ToLower());
-        var defaultSize = @(pageSizes.FirstOrDefault());
+        @*var isSortable = @(isSortable.ToString().ToLower());*@
 
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
             onChange: function () {
+                lastFilter = this.$select.attr("name");
                 controls.setPage(1);
                 if (!this.$select[0].multiple) {
                     controls.submit(1);
@@ -405,25 +432,13 @@
         $('span.multiselect-selected-text').parent().removeClass('btn-default');
         $('span.multiselect-selected-text').not('span.multiselect-selected-text:contains("ALL")').parent().addClass('btn-info');
 
-        $('.search-button').bind('click', function(e) {
+        $('.search-button').bind('click', function() {
             $('#id_report').submit();
         });
 
-        // enable client side sorting if server side support is off
-        if (!isSortable) {
-            $("#id_table").tablesorter();
-            $("#id_table")
-                .bind("sortStart", function() {
-                    $('#busy').show();
-                })
-                .bind("sortEnd", function() {
-                    $('#busy').hide();
-                });
-        }
-
         $(".form-control.date").datepicker({ dateFormat: "yy-mm-dd" });
 
-        $('#id_report').bind('submit', function(e) {
+        $('#id_report').bind('submit', function() {
 
             // stop double submit
             $('#id_submit').prop('disabled', true);
@@ -441,6 +456,7 @@
             }).attr('disabled',true);
 
             $("#id_report select").each(function() {
+                if (lastFilter !== $(this).attr("name") && lastFilter !== cleared) {
                 var selected = $('option:selected', this);
                 var count = selected.length;
                 if (count === 0) {
@@ -450,6 +466,7 @@
                     if (value === "" || value === "*") {
                         $(this).attr('disabled', true);
                     }
+                }
                 }
             });
 
@@ -461,6 +478,8 @@
 
         $('#id_clear').click(function() {
 
+            lastFilter = cleared;
+
             // set single select back to first
             $('#id_report select:not([multiple])').val($('#id_report select option:first').val());
 
@@ -471,7 +490,7 @@
             // set other inputs to blank
             $('#id_report input:visible').val("");
 
-            controls.submit(@(entity.Page == 0 ? 0 : 1));
+            controls.submit(@(firstEntity.Page == 0 ? 0 : 1));
         });
 
         $('.sortable').click(function() {
@@ -508,7 +527,7 @@
             var expression = sort.replace(/^\.+|\.+$/gm, '');
             console.log(expression);
             controls.setSort(expression);
-            controls.submit(@(entity.Page == 0 ? 0 : 1));
+            controls.submit(@(firstEntity.Page == 0 ? 0 : 1));
         });
 
         $(":checkbox[name=select-all]").click(function () {

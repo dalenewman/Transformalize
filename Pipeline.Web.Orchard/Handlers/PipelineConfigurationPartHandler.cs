@@ -14,10 +14,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Linq;
-using System.Net;
-using System.Web.Routing;
 using Orchard.ContentManagement;
 using Orchard.ContentManagement.Handlers;
 using Orchard.Data;
@@ -26,6 +22,10 @@ using Orchard.Logging;
 using Orchard.UI.Notify;
 using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
+using System;
+using System.Linq;
+using System.Net;
+using System.Web.Routing;
 
 namespace Pipeline.Web.Orchard.Handlers {
 
@@ -48,35 +48,58 @@ namespace Pipeline.Web.Orchard.Handlers {
         }
 
         protected override void GetItemMetadata(GetContentItemMetadataContext context) {
-            var part = context.ContentItem.As<PipelineConfigurationPart>();
 
+            if (context.ContentItem.ContentType != Common.PipelineConfigurationName) {
+                return;
+            }
+
+            var part = context.ContentItem.As<PipelineConfigurationPart>();
             if (part == null)
                 return;
 
             base.GetItemMetadata(context);
-            if (part.ReportMode()) {
-                context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                    {"Area", Common.ModuleName},
-                    {"Controller", "Report"},
-                    {"Action", "Index"},
-                    {"id", context.ContentItem.Id}
-                };
-            } else {
-                if (part.FormMode()) {
-                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                        {"Area", Common.ModuleName},
-                        {"Controller", "Cfg"},
-                        {"Action", "Form"},
-                        {"id", context.ContentItem.Id}
-                    };
-                } else {
+
+            switch (part.GetDefaultMode()) {
+                case "data":
                     context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                         {"Area", Common.ModuleName},
                         {"Controller", "Api"},
-                        {"Action", "Api/Cfg"},
+                        {"Action", "Run"},
                         {"id", context.ContentItem.Id}
                     };
-                }
+                    break;
+                case "report":
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Report"},
+                        {"Action", "Index"},
+                        {"id", context.ContentItem.Id}
+                    };
+                    break;
+                case "form":
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Form"},
+                        {"Action", "Index"},
+                        {"id", context.ContentItem.Id}
+                    };
+                    break;
+                case "map":
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Map"},
+                        {"Action", "Index"},
+                        {"id", context.ContentItem.Id}
+                    };
+                    break;
+                default:
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "Api"},
+                        {"Action", "Cfg"},
+                        {"id", context.ContentItem.Id}
+                    };
+                    break;
             }
         }
 

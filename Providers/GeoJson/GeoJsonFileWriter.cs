@@ -21,6 +21,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.GeoJson {
+
     public class GeoJsonFileWriter : IWrite {
         private readonly OutputContext _context;
         private readonly IWrite _streamWriter;

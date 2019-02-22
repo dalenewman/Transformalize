@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Transformalize")]
-[assembly: AssemblyCopyright("Copyright ©  2016-2018")]
+[assembly: AssemblyCopyright("Copyright ©  2016-2019 Dale Newman")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("0.3.38.0")]
-[assembly: AssemblyFileVersion("0.3.38.0")]
+[assembly: AssemblyVersion("0.3.45.0")]
+[assembly: AssemblyFileVersion("0.3.45.0")]
 [assembly: NeutralResourcesLanguage("en-US")]
 

@@ -87,6 +87,7 @@ namespace Pipeline.Web.Orchard.Impl {
             container.RegisterCallback(new KmlModule(process).Configure);
 
             container.RegisterCallback(new TransformModule().Configure);
+            container.RegisterCallback(new AdoTransformModule(process).Configure);
             container.RegisterCallback(new ValidateModule().Configure);
             container.RegisterCallback(new MapModule(process).Configure);
             container.RegisterCallback(new ActionModule(process).Configure);

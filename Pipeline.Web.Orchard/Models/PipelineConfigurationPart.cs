@@ -15,16 +15,17 @@
 // limitations under the License.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
 using Orchard.ContentManagement;
 using Orchard.Core.Title.Models;
 using Orchard.Tags.Models;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace Pipeline.Web.Orchard.Models {
     public class PipelineConfigurationPart : ContentPart<PipelineConfigurationPartRecord> {
+
+        private string _defaultMode = null;
 
         public static List<SelectListItem> EditorModes = new List<SelectListItem> {
                 new SelectListItem {Selected = false, Text = "JSON", Value = "json"},
@@ -106,6 +107,16 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.MapStyle, value, true); }
         }
 
+        public int MapCircleRadius {
+            get { return this.Retrieve(x => x.MapCircleRadius, versioned: true, defaultValue: () => 8); }
+            set { this.Store(x => x.MapCircleRadius, value, true); }
+        }
+
+        public double MapCircleOpacity {
+            get { return this.Retrieve(x => x.MapCircleOpacity, versioned: true, defaultValue: () => 1.0); }
+            set { this.Store(x => x.MapCircleOpacity, value, true); }
+        }
+
         public bool Migrated {
             get { return this.Retrieve(x => x.Migrated, versioned: false, defaultValue: () => false); }
             set { this.Store(x => x.Migrated, value, versioned: false); }
@@ -116,16 +127,19 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.Modes, value, versioned: false); }
         }
 
-        public bool ReportMode() {
-            return Modes.Split(',').Contains("report", StringComparer.OrdinalIgnoreCase) || Tags().Contains("REPORT");
-        }
+        public string GetDefaultMode() {
+            if (_defaultMode != null)
+                return _defaultMode;
 
-        public bool FormMode() {
-            return Modes.Split(',').Contains("form", StringComparer.OrdinalIgnoreCase) || Tags().Contains("FORM");
-        }
+            var modes = new List<string>();
+            foreach (var mode in Modes.ToLower().Split(',')) {
+                if (mode.EndsWith("*") || mode.StartsWith("*")) {
+                    _defaultMode = mode.Trim('*');
+                }
+                modes.Add(mode.Trim('*'));
+            }
 
-        public bool HandsOnTableMode() {
-            return Modes.Split(',').Contains("table", StringComparer.OrdinalIgnoreCase) || Tags().Contains("TABLE");
+            return _defaultMode ?? (_defaultMode = modes.Any() ? modes.First() : "default");
         }
 
         public string PlaceHolderStyle {
@@ -133,8 +147,13 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.PlaceHolderStyle, value, versioned: false); }
         }
 
+        public bool ClientSideSorting {
+            get { return this.Retrieve(x => x.ClientSideSorting, versioned: true); }
+            set { this.Store(x => x.ClientSideSorting, value, true); }
+        }
+
         public bool IsValid() {
-            return PlaceHolderStyle.Length == 3;
+            return true; // return PlaceHolderStyle.Length == 3 && MapCircleRadius > 0 && MapCircleOpacity > 0.0 && MapCircleOpacity <= 1.0;
         }
 
     }

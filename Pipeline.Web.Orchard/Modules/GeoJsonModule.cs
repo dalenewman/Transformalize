@@ -16,9 +16,11 @@
 // limitations under the License.
 #endregion
 
+using System.IO;
 using System.Linq;
 using System.Web;
 using Autofac;
+using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -60,6 +62,9 @@ namespace Pipeline.Web.Orchard.Modules {
             }
 
             if (_process.Output().Provider == "geojson") {
+
+                var jsonWriter = new JsonTextWriter(new StreamWriter(HttpContext.Current.Response.OutputStream));
+
                 foreach (var entity in _process.Entities) {
 
                     // ENTITY WRITER
@@ -68,14 +73,13 @@ namespace Pipeline.Web.Orchard.Modules {
 
                         switch (output.Connection.Provider) {
                             case "geojson":
-                                return output.Connection.Stream ?
-                                    (IWrite) new GeoJsonMinimalStreamWriter(output, HttpContext.Current.Response.OutputStream) :
-                                    new GeoJsonFileWriter(output);
+                                return output.Connection.Stream ? (IWrite) new GeoJsonMinimalProcessStreamWriter(output, jsonWriter) : new GeoJsonFileWriter(output);
                             default:
                                 return new NullWriter(output);
                         }
                     }).Named<IWrite>(entity.Key);
                 }
+
             }
 
         }

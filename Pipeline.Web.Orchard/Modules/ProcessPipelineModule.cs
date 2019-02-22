@@ -43,6 +43,10 @@ namespace Pipeline.Web.Orchard.Modules {
             if (_process == null)
                 return;
 
+            if (!_process.CalculatedFields.Any()) {
+                return;
+            }
+
             var calc = _process.ToCalculatedFieldsProcess();
             var entity = calc.Entities.First();
 

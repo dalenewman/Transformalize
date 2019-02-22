@@ -676,5 +676,19 @@ namespace Transformalize.Configuration {
 
         [Cfg]
         public bool Distinct { get; set; }
+
+        public override bool Equals(object obj) {
+            var other = obj as Entity;
+
+            if (other == null)
+                return false;
+
+            return Alias == other.Alias;
+
+        }
+
+        public override int GetHashCode() {
+            return Alias.GetHashCode();
+        }
     }
 }

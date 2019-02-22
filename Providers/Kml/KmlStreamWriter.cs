@@ -22,9 +22,11 @@ using System.Text;
 using System.Xml;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Providers.Kml {
     public class KmlStreamWriter : IWrite {
+        private readonly IContext _context;
 
         private readonly Field _latitudeField;
         private readonly Field _longitudeField;
@@ -44,6 +46,7 @@ namespace Transformalize.Providers.Kml {
         public string DefaultOpacity { get; set; } = "C9";
 
         public KmlStreamWriter(IContext context, Stream stream) {
+            _context = context;
             var fields = context.GetAllEntityFields().ToArray();
 
             _latitudeField = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));
@@ -64,74 +67,80 @@ namespace Transformalize.Providers.Kml {
             _xmlWriter.WriteStartElement(string.Empty, "kml", "http://www.opengis.net/kml/2.2");
             _xmlWriter.WriteStartElement("Document");
 
-            foreach (var row in rows) {
-                var coordinates = $"{row[_longitudeField]},{row[_latitudeField]},0";
-                _xmlWriter.WriteStartElement("Placemark");
+            foreach (var partition in rows.Partition(_context.Entity.InsertSize)) {
 
-                if (_nameField != null) {
-                    _xmlWriter.WriteStartElement("name");
-                    _xmlWriter.WriteString(row[_nameField].ToString());
-                    _xmlWriter.WriteEndElement(); //name
+                foreach (var row in partition) {
+
+                    var coordinates = $"{row[_longitudeField]},{row[_latitudeField]},0";
+                    _xmlWriter.WriteStartElement("Placemark");
+
+                    if (_nameField != null) {
+                        _xmlWriter.WriteStartElement("name");
+                        _xmlWriter.WriteString(row[_nameField].ToString());
+                        _xmlWriter.WriteEndElement(); //name
+                    }
+
+                    _xmlWriter.WriteStartElement("description");
+                    tableBuilder.Clear();
+                    tableBuilder.AppendLine("<table>");
+                    foreach (var field in _propertyFields) {
+                        tableBuilder.AppendLine("<tr>");
+
+                        tableBuilder.AppendLine("<td><strong>");
+                        tableBuilder.AppendLine(field.Label);
+                        tableBuilder.AppendLine(":</strong></td>");
+
+                        tableBuilder.AppendLine("<td>");
+                        tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
+                        tableBuilder.AppendLine("</td>");
+
+                        tableBuilder.AppendLine("</tr>");
+                    }
+                    tableBuilder.AppendLine("</table>");
+                    _xmlWriter.WriteCData(tableBuilder.ToString());
+                    _xmlWriter.WriteEndElement(); //description
+
+                    if (_hasStyle) {
+                        _xmlWriter.WriteStartElement("Style");
+                        _xmlWriter.WriteStartElement("IconStyle");
+                        if (_colorField != null) {
+
+                            var color = row[_colorField].ToString().Trim('#');
+                            if (color.Length == 6) {
+                                color = DefaultOpacity + color;
+                            }
+                            _xmlWriter.WriteElementString("color", color);
+                        }
+                        if (_symbolField != null) {
+                            // e.g. http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png
+                            var marker = row[_symbolField].ToString();
+                            if (marker.StartsWith("http")) {
+                                _xmlWriter.WriteStartElement("Icon");
+                                _xmlWriter.WriteElementString("href", row[_symbolField].ToString());
+                                _xmlWriter.WriteEndElement();//Icon
+                            }
+                        }
+                        if (_sizeField != null) {
+                            var size = row[_sizeField].ToString().ToLower();
+                            if (_sizes.ContainsKey(size)) {
+                                size = _sizes[size];
+                            }
+                            _xmlWriter.WriteElementString("scale", size);
+                        }
+                        _xmlWriter.WriteEndElement(); //IconStyle
+                        _xmlWriter.WriteEndElement(); //Style
+                    }
+
+                    _xmlWriter.WriteStartElement("Point");
+                    _xmlWriter.WriteStartElement("coordinates");
+                    _xmlWriter.WriteString(coordinates);
+                    _xmlWriter.WriteEndElement(); //coordinates
+                    _xmlWriter.WriteEndElement(); //Point
+
+                    _xmlWriter.WriteEndElement(); //Placemark
                 }
 
-                _xmlWriter.WriteStartElement("description");
-                tableBuilder.Clear();
-                tableBuilder.AppendLine("<table>");
-                foreach (var field in _propertyFields) {
-                    tableBuilder.AppendLine("<tr>");
-
-                    tableBuilder.AppendLine("<td><strong>");
-                    tableBuilder.AppendLine(field.Label);
-                    tableBuilder.AppendLine(":</strong></td>");
-
-                    tableBuilder.AppendLine("<td>");
-                    tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
-                    tableBuilder.AppendLine("</td>");
-
-                    tableBuilder.AppendLine("</tr>");
-                }
-                tableBuilder.AppendLine("</table>");
-                _xmlWriter.WriteCData(tableBuilder.ToString());
-                _xmlWriter.WriteEndElement(); //description
-
-                if (_hasStyle) {
-                    _xmlWriter.WriteStartElement("Style");
-                    _xmlWriter.WriteStartElement("IconStyle");
-                    if (_colorField != null) {
-
-                        var color = row[_colorField].ToString().Trim('#');
-                        if (color.Length == 6) {
-                            color = DefaultOpacity + color;
-                        }
-                        _xmlWriter.WriteElementString("color", color);
-                    }
-                    if (_symbolField != null) {
-                        // e.g. http://maps.google.com/mapfiles/kml/pushpin/wht-pushpin.png
-                        var marker = row[_symbolField].ToString();
-                        if (marker.StartsWith("http")) {
-                            _xmlWriter.WriteStartElement("Icon");
-                            _xmlWriter.WriteElementString("href", row[_symbolField].ToString());
-                            _xmlWriter.WriteEndElement();//Icon
-                        }
-                    }
-                    if (_sizeField != null) {
-                        var size = row[_sizeField].ToString().ToLower();
-                        if (_sizes.ContainsKey(size)) {
-                            size = _sizes[size];
-                        }
-                        _xmlWriter.WriteElementString("scale", size);
-                    }
-                    _xmlWriter.WriteEndElement(); //IconStyle
-                    _xmlWriter.WriteEndElement(); //Style
-                }
-
-                _xmlWriter.WriteStartElement("Point");
-                _xmlWriter.WriteStartElement("coordinates");
-                _xmlWriter.WriteString(coordinates);
-                _xmlWriter.WriteEndElement(); //coordinates
-                _xmlWriter.WriteEndElement(); //Point
-
-                _xmlWriter.WriteEndElement(); //Placemark
+                _xmlWriter.Flush();
             }
 
             _xmlWriter.WriteEndElement(); //Document

@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GeoJsonFileWriter.cs" />
-    <Compile Include="GeoJsonMinimalStreamWriter.cs" />
+    <Compile Include="GeoJsonMinimalProcessStreamWriter.cs" />
+    <Compile Include="GeoJsonMinimalEntityStreamWriter.cs" />
     <Compile Include="GeoJsonStreamWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

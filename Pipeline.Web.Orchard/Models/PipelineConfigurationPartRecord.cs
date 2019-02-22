@@ -38,6 +38,8 @@ namespace Pipeline.Web.Orchard.Models {
 
         public virtual bool Reportable { get; set; }
 
+        public virtual bool ClientSideSorting { get; set; }
+
         public virtual bool NeedsInputFile { get; set; }
 
         [StringLength(128)]
@@ -45,6 +47,11 @@ namespace Pipeline.Web.Orchard.Models {
 
         [StringLength(128)]
         public virtual string MapStyle { get; set; }
+
+        public virtual int MapCircleRadius { get; set; } 
+
+        public virtual double MapCircleOpacity { get; set; }
+
 
         [StringLength(3)]
         public virtual string PlaceHolderStyle { get; set; }

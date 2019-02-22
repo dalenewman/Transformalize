@@ -39,6 +39,9 @@ namespace Pipeline.Web.Orchard.Drivers {
             part.NeedsInputFile = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "NeedsInputFile"));
             part.Modes = context.Attribute(part.PartDefinition.Name, "Modes");
             part.PlaceHolderStyle = context.Attribute(part.PartDefinition.Name, "PlaceHolderStyle");
+            part.ClientSideSorting = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "ClientSideSorting"));
+            part.MapCircleRadius = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapCircleRadius"));
+            part.MapCircleOpacity = Convert.ToDouble(context.Attribute(part.PartDefinition.Name, "MapCircleOpacity"));
             part.Migrated = true;
         }
 
@@ -50,6 +53,9 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.EndAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Runnable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("ClientSideSorting", part.ClientSideSorting);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleRadius", part.MapCircleRadius);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleOpacity", part.MapCircleOpacity);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Modes);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.PlaceHolderStyle);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", true);
@@ -60,6 +66,10 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EndAddress", part.Record.EndAddress);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Runnable", part.Record.Runnable);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("NeedsInputFile", part.Record.NeedsInputFile);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("ClientSideSorting", part.Record.ClientSideSorting);
+
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleRadius", part.Record.MapCircleRadius);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleOpacity", part.Record.MapCircleOpacity);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", "default");
                 context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", "@()");
 

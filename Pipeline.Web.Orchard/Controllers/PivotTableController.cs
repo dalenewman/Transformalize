@@ -37,7 +37,6 @@ namespace Pipeline.Web.Orchard.Controllers {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
-
         private readonly ISecureFileService _secureFileService;
 
         public PivotTableController(
@@ -81,10 +80,16 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
 
+                    GetStickyParameters(part.Id, parameters);
+
                     process.Load(part.Configuration, parameters);
                     process.Mode = "pivot";
                     process.Buffer = false; // no buffering for pivot tables
                     process.ReadOnly = true;  // force pivot to omit system fields
+
+                    var reportParameters = process.GetActiveParameters();
+
+                    SetStickyParameters(part.Id, reportParameters);
 
                     // no paging
                     foreach(var entity in process.Entities) {
@@ -93,6 +98,13 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     // no actions
                     process.Actions.Clear();
+
+                    if (IsMissingRequiredParameters(reportParameters, _orchardServices.Notifier)) {
+                        return View(new ReportViewModel(process, part));
+                    }
+
+                    // note: currently the view executes the process and converts the rows to a JSON format, 
+                    // as opposed to how it works for the map where it initiates a "download"
 
                 } else {
                     _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
