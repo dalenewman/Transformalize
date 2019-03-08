@@ -27,6 +27,7 @@ using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -41,6 +42,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
     [ValidateInput(false), SessionState(SessionStateBehavior.ReadOnly), Themed]
     public class MapController : BaseController {
+
+        private const string MissingMapboxToken = "Register a MapBox token in settings.";
+        private const string MissingFile = "This transformalize expects a file.";
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -82,9 +86,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             var settings = _orchardServices.WorkContext.CurrentSite.As<PipelineSettingsPart>();
 
             if (string.IsNullOrEmpty(settings.MapBoxToken)) {
-                var message = "Register a MapBox token in settings.";
-                _orchardServices.Notifier.Add(NotifyType.Warning, T(message));
-                return new HttpStatusCodeResult(500, message);
+                _orchardServices.Notifier.Add(NotifyType.Warning, T(MissingMapboxToken));
+                return new HttpStatusCodeResult(500, MissingMapboxToken);
             }
 
             var process = new Process { Name = "Map" };
@@ -105,8 +108,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
 
             if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
-                _orchardServices.Notifier.Add(NotifyType.Error, T("This transformalize expects a file."));
-                return new HttpNotFoundResult();
+                _orchardServices.Notifier.Add(NotifyType.Error, T(MissingFile));
+                return new HttpNotFoundResult(MissingFile);
             }
 
             GetStickyParameters(part.Id, parameters);
@@ -137,6 +140,14 @@ namespace Pipeline.Web.Orchard.Controllers {
                     action.Description = "BatchUnauthorized";
                 }
             }
+
+            var sizes = new List<int>();
+            sizes.AddRange(part.Sizes(part.PageSizes));
+            sizes.AddRange(part.Sizes(part.MapSizes));
+
+            var stickySize = GetStickyUrlParameter(part.Id, "size", () => sizes.Min());
+
+            Common.SetPageSize(process, parameters, sizes.Min(), stickySize, sizes.Max());
 
             if (Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
@@ -178,6 +189,10 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                         if (count > 0) {
 
+                            if (!batchParameters.ContainsKey("system")) {
+                                batchParameters["system"] = system.Value;
+                            }
+
                             if (_batchRunService.Run(action, batchParameters)) {
                                 if (action.Url == string.Empty) {
                                     if (batchParameters.ContainsKey("BatchId")) {
@@ -206,12 +221,6 @@ namespace Pipeline.Web.Orchard.Controllers {
 
             }
 
-            // just need to get a count
-            foreach (var entity in process.Entities) {
-                entity.Page = 1;
-                entity.Size = 0;
-            }
-
             if (IsMissingRequiredParameters(reportParameters, _orchardServices.Notifier)) {
                 return View(new ReportViewModel(process, part));
             }
@@ -228,25 +237,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         _orchardServices.Notifier.Add(NotifyType.Error, T(error.Message));
                     }
                     process.Status = 500;
-                    process.Message = "Execution errors!";
-                    return new HttpStatusCodeResult(500, "Execution errors!");
-                }
-
-                var hits = process.Entities.First().Hits;
-                if (settings.MapBoxLimit >= hits) {
-                    process.Status = 200;
-                    process.Message = "Ok";
-
-                    // disable paging
-                    foreach (var entity in process.Entities) {
-                        entity.Page = 0;
-                        entity.Size = 0;
-                    }
-
-                } else {
-                    var message = string.Format("This request exceeds the maximum number of points you may plot on the map.  The max is {0}, the this this request had {1} results.", settings.MapBoxLimit, hits);
-                    _orchardServices.Notifier.Add(NotifyType.Error, T(message));
-                    return new HttpStatusCodeResult(403, message);
+                    return new HttpStatusCodeResult(500);
                 }
 
             } catch (Exception ex) {

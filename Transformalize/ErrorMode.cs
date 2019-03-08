@@ -20,6 +20,7 @@ namespace Transformalize {
         Abort,
         Continue,
         Default,
-        Exception
+        Exception,
+        Ignore
     }
 }

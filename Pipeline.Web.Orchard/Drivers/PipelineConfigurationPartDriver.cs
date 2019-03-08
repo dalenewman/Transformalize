@@ -42,6 +42,9 @@ namespace Pipeline.Web.Orchard.Drivers {
             part.ClientSideSorting = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "ClientSideSorting"));
             part.MapCircleRadius = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapCircleRadius"));
             part.MapCircleOpacity = Convert.ToDouble(context.Attribute(part.PartDefinition.Name, "MapCircleOpacity"));
+            part.PageSizes = context.Attribute(part.PartDefinition.Name, "PageSizes");
+            part.MapSizes = context.Attribute(part.PartDefinition.Name, "MapSizes");
+            part.EnableInlineParameters = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "EnableInlineParameters"));
             part.Migrated = true;
         }
 
@@ -58,7 +61,11 @@ namespace Pipeline.Web.Orchard.Drivers {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleOpacity", part.MapCircleOpacity);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Modes);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.PlaceHolderStyle);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("PageSizes", part.PageSizes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.MapSizes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EnableInlineParameters", part.EnableInlineParameters);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", true);
+                
             } else {
                 context.Element(part.PartDefinition.Name).SetAttributeValue("EditorMode", part.Record.EditorMode);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Configuration", part.Record.Configuration);
@@ -70,9 +77,11 @@ namespace Pipeline.Web.Orchard.Drivers {
 
                 context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleRadius", part.Record.MapCircleRadius);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("MapCircleOpacity", part.Record.MapCircleOpacity);
-                context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", "default");
-                context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", "@()");
-
+                context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Record.Modes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.Record.PlaceHolderStyle);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("PageSizes", part.Record.PageSizes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.Record.MapSizes);
+                context.Element(part.PartDefinition.Name).SetAttributeValue("EnableInlineParameters", part.Record.EnableInlineParameters);
                 context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", false);
             }
         }

@@ -63,14 +63,29 @@
     <div class="editor-field">
         <table>
             <tr>
+                <td style="padding-right: 10px;">@Html.EditorFor(x => x.EnableInlineParameters)</td>
+                <td>@Html.LabelFor(x => x.EnableInlineParameters, T("Enable Inline Parameters"))</td>
+                <td> &nbsp;</td>
+                <td><div class="hint"> @T("Enable inline parameters (moving them from the top to just under the column header).")</div></td>
+                <td>@Html.ValidationMessageFor(x => x.EnableInlineParameters)</td>
+            </tr>
+            <tr>
                 <td style="padding-right: 10px;">@Html.EditorFor(x => x.ClientSideSorting)</td>
                 <td>@Html.LabelFor(x => x.ClientSideSorting, T("Client Side Sorting"))</td>
                 <td> &nbsp;</td>
-                <td><div class="hint"> @T("Enables client side sorting.")</div></td>
+                <td>
+                    <div class="hint"> @T("Enables client side sorting.")</div>
+                </td>
                 <td>@Html.ValidationMessageFor(x => x.ClientSideSorting)</td>
             </tr>
         </table>
     </div>
+    <div class="editor-field">
+        @Html.LabelFor(x => x.PageSizes, T("Page Sizes"))
+        @Html.EditorFor(x => x.PageSizes)
+        @Html.ValidationMessageFor(x => x.PageSizes)
+    </div>
+    <div class="hint">@T("a comma delimited list of page sizes (integers)")</div>
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
@@ -95,6 +110,13 @@
         @Html.ValidationMessageFor(x => x.MapCircleOpacity)
     </div>
     <div class="hint">@T("Map circle opacity is a double betwee 0.0 and 1.0")</div>
+
+    <div class="editor-field">
+        @Html.LabelFor(x => x.MapSizes, T("Map Page Sizes"))
+        @Html.EditorFor(x => x.MapSizes)
+        @Html.ValidationMessageFor(x => x.MapSizes)
+    </div>
+    <div class="hint">@T("a comma delimited list of larger page sizes that only appear when viewing maps")</div>
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">

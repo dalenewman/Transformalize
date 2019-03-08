@@ -15,12 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using Cfg.Net;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using Cfg.Net;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Configuration {
     public class Field : CfgNode, IField {
@@ -31,12 +31,20 @@ namespace Transformalize.Configuration {
         private string _type;
         private string _length;
         private string _runOperator;
+        private Func<string, object> _toDateTime;
 
-        /// <summary>
-        /// **Required**
-        /// 
-        ///     <add name="Name" />
-        /// </summary>
+        public Field() {
+            _toDateTime = GetDateTimeConversion();
+        }
+
+        private Func<string, object> GetDateTimeConversion() {
+            if (!Type.StartsWith("date")) return null;
+            if (Format == string.Empty) {
+                return s => Constants.ConversionMap[Type](s);
+            }
+            return s => DateTime.ParseExact(s, Format, CultureInfo.InvariantCulture);
+        }
+
         [Cfg(required = true)]
         public string Name { get; set; }
 
@@ -72,7 +80,7 @@ namespace Transformalize.Configuration {
         /// </summary>
         [Cfg(value = "string", domain = Constants.TypeDomain, toLower = true)]
         public string Type {
-            get { return _type; }
+            get => _type;
             set {
                 if (value == null)
                     return;
@@ -90,12 +98,21 @@ namespace Transformalize.Configuration {
                     case "int32":
                         value = "int";
                         break;
+                    case "int64":
+                        value = "long";
+                        break;
+                    case "int16":
+                        value = "short";
+                        break;
                     case "boolean":
                         value = "bool";
+                        break;
+                    default:
                         break;
                 }
 
                 _type = value;
+                _toDateTime = GetDateTimeConversion();
             }
         }
 
@@ -390,7 +407,15 @@ namespace Transformalize.Configuration {
         }
 
         public object Convert(string value) {
-            return Type == "string" ? value : Constants.ConversionMap[Type](value);
+            switch (Type) {
+                case "string":
+                    return value;
+                case "date":
+                case "datetime":
+                    return _toDateTime(value);
+                default:
+                    return Constants.ConversionMap[Type](value);
+            }
         }
 
         public object Convert(object value) {
@@ -512,7 +537,7 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "")]
         public string Connection { get; set; }
-       
+
         [Cfg(value = false)]
         public bool Facet { get; set; }
 
@@ -603,6 +628,10 @@ namespace Transformalize.Configuration {
                 Value = Default == Constants.DefaultSetting ? Constants.StringDefaults()[Type] : Default
             };
         }
+
+        // match up a parameter by something other than this field's alias / name
+        [Cfg(unique = true)]
+        public string Parameter { get; set; }
 
     }
 }

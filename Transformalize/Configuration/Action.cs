@@ -76,7 +76,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = true)]
         public bool After { get; set; }
 
-        [Cfg(value = Constants.DefaultSetting, domain = "exception,abort,continue," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
+        [Cfg(value = Constants.DefaultSetting, domain = "ignore,exception,abort,continue," + Constants.DefaultSetting, ignoreCase = true, toLower = true)]
         public string ErrorMode { get; set; }
 
         public ErrorMode ToErrorMode() {
@@ -87,6 +87,8 @@ namespace Transformalize.Configuration {
                     return Transformalize.ErrorMode.Continue;
                 case "exception":
                     return Transformalize.ErrorMode.Exception;
+                case "ignore":
+                    return Transformalize.ErrorMode.Ignore;
                 default:
                     return Transformalize.ErrorMode.Default;
             }

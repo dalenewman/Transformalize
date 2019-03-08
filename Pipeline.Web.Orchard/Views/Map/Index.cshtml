@@ -128,7 +128,7 @@
             <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
         }
 
-        @Html.Partial("Shared/Parameters", Model.Process)
+        @Html.Partial("Shared/Parameters", Model)
 
         @Html.Partial("Shared/Controls", Model)
 
@@ -142,11 +142,6 @@
             <div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-warning-sign"> </span> &nbsp;A MapBox token must be configured!</div>
         }
 
-        @if (renderMap && entity.Hits > settings.MapBoxLimit) {
-            renderMap = false;
-            <div class="alert alert-warning" role="alert"><span class="glyphicon glyphicon-warning-sign"> </span> &nbsp;You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.!</div>
-        }
-
         <div id="id_map_alert" style="display: none;" class="alert alert-info" role="alert"><span class="glyphicon glyphicon-info-sign"> </span></div>
 
         @if (renderMap) {
@@ -154,7 +149,7 @@
             <script>
             //<!--
             mapboxgl.accessToken = '@(settings.MapBoxToken)';
-            var url = '@(linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson"))';
+            var url = '@(linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson", false))';
 
             $(document).ready(function() {
 
@@ -310,15 +305,7 @@
             });
             //-->
             </script>
-        } else {
-            if (entity.Hits > settings.MapBoxLimit) {
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="alert alert-danger" role="alert">You may not plot more than @(settings.MapBoxLimit) points.  Your query is returning @entity.Hits points.</div>
-                    </div>
-                </div>
-            }
-        }
+        } 
     </form>
 
 <div id="busy_holder">

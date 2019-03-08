@@ -72,81 +72,79 @@ namespace Pipeline.Web.Orchard.Controllers {
             var timer = new Stopwatch();
             timer.Start();
 
-            var process = new Process { Name = "Export" };
-
             var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
+
             if (part == null) {
-                process.Name = "Not Found";
+                return new HttpNotFoundResult();
+            }
+
+            var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+
+            if (!_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                return new HttpUnauthorizedResult();
+            }
+
+            var process = _processService.Resolve(part);
+
+            var parameters = Common.GetParameters(Request, _orchardServices, null);
+
+            process.Load(part.Configuration, parameters);
+            process.Buffer = false; // no buffering for export
+            process.ReadOnly = true;  // force exporting to omit system fields
+
+            // change process for export and batch purposes
+            var reportType = Request["output"] ?? "page";
+
+            ConvertToExport(user, process, part, reportType, parameters);
+            process.Load(process.Serialize(), parameters);
+
+            Common.SetPageSize(process, parameters, 0, 0, 0);
+
+            if (Request["sort"] != null) {
+                _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
+            }
+
+            if (process.Errors().Any()) {
+                foreach (var error in process.Errors()) {
+                    _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+                }
             } else {
 
-                var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+                var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
 
-                if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
+                var o = process.Output();
+                switch (o.Provider) {
+                    case "kml":
+                    case "geojson":
+                    case "file":
+                        Response.Clear();
+                        Response.BufferOutput = false;
 
-                    process = _processService.Resolve(part);
-
-                    var parameters = Common.GetParameters(Request, _orchardServices, null);
-
-                    process.Load(part.Configuration, parameters);
-                    process.Buffer = false; // no buffering for export
-                    process.ReadOnly = true;  // force exporting to omit system fields
-
-                    // change process for export and batch purposes
-                    var reportType = Request["output"] ?? "page";
-
-                    ConvertToExport(user, process, part, reportType, parameters);
-                    process.Load(process.Serialize(), parameters);
-
-                    if (Request["sort"] != null) {
-                        _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
-                    }
-
-                    if (process.Errors().Any()) {
-                        foreach (var error in process.Errors()) {
-                            _orchardServices.Notifier.Add(NotifyType.Error, T(error));
-                        }
-                    } else {
-
-                        var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
-
-                        var o = process.Output();
                         switch (o.Provider) {
                             case "kml":
+                                Response.ContentType = "application/vnd.google-earth.kml+xml";
+                                break;
                             case "geojson":
-                            case "file":
-                                Response.Clear();
-                                Response.BufferOutput = false;
-
-                                switch (o.Provider) {
-                                    case "kml":
-                                        Response.ContentType = "application/vnd.google-earth.kml+xml";
-                                        break;
-                                    case "geojson":
-                                        Response.ContentType = "application/vnd.geo+json";
-                                        break;
-                                    default:
-                                        Response.ContentType = "application/csv";
-                                        break;
-                                }
-                                
-                                Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
-                                runner.Execute(process);
-                                return new EmptyResult();
-                            case "excel":
-                                runner.Execute(process);
-
-                                return new FilePathResult(o.File, Common.ExcelContentType) {
-                                    FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
-                                };
-                            default:  // page and map are rendered to page
+                                Response.ContentType = "application/vnd.geo+json";
+                                break;
+                            default:
+                                Response.ContentType = "application/csv";
                                 break;
                         }
 
-                    }
+                        Response.AddHeader("content-disposition", "attachment; filename=" + o.File);
+                        runner.Execute(process);
+                        return new EmptyResult();
+                    case "excel":
+                        runner.Execute(process);
 
-                } else {
-                    _orchardServices.Notifier.Warning(user == "Anonymous" ? T("Sorry. Anonymous users do not have permission to view this report. You may need to login.") : T("Sorry {0}. You do not have permission to view this report.", user));
+                        return new FilePathResult(o.File, Common.ExcelContentType) {
+                            FileDownloadName = _slugService.Slugify(part.Title()) + ".xlsx"
+                        };
+                    default:  // page and map are rendered to page
+                        break;
                 }
+
             }
 
             return View(new ReportViewModel(process, part));
@@ -186,11 +184,8 @@ namespace Pipeline.Web.Orchard.Controllers {
                     break;
             }
 
-            parameters["page"] = "0";
-
             foreach (var entity in process.Entities) {
 
-                entity.Page = 0;
                 entity.Fields.RemoveAll(f => f.System);
 
                 foreach (var field in entity.GetAllFields()) {

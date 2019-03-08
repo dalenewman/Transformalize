@@ -39,7 +39,7 @@ using Permissions = Orchard.Core.Contents.Permissions;
 namespace Pipeline.Web.Orchard.Controllers {
 
     [ValidateInput(false), Themed]
-    public class ActionController : Controller {
+    public class ActionController : BaseController {
 
         private readonly IOrchardServices _orchardServices;
         private readonly IProcessService _processService;
@@ -116,7 +116,12 @@ namespace Pipeline.Web.Orchard.Controllers {
                     }
                 }
 
-                Common.TranslatePageParametersToEntities(process, parameters, "page");
+                var sizes = new List<int>();
+                sizes.AddRange(part.Sizes(part.PageSizes));
+
+                var stickySize = GetStickyUrlParameter(part.Id, "size", () => sizes.Min());
+
+                Common.SetPageSize(process, parameters, sizes.Min(), stickySize, sizes.Max());
 
                 if (parameters.ContainsKey("action")) {
 
@@ -142,6 +147,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                             var count = _batchWriteService.Write(Request, process, batchParameters);
 
                             if (count > 0) {
+
+                                //if (!batchParameters.ContainsKey("system")) {
+                                //    batchParameters["system"] = system.Value;
+                                //}
 
                                 if (_batchRunService.Run(action, batchParameters)) {
                                     if (action.Url == string.Empty) {

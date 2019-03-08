@@ -27,6 +27,7 @@ namespace Transformalize.Configuration {
         public int Next { get; private set; }
         public int First { get; private set; }
         public int Last { get; private set; }
+        public int Size { get; set; }
 
         public Pagination(int hits, int page, int pageSize) {
             var pages = pageSize == 0 ? 0 : (int)Math.Ceiling((decimal)hits / pageSize);
@@ -37,6 +38,17 @@ namespace Transformalize.Configuration {
             Next = page == pages ? page : page + 1;
             Last = Pages;
             First = 1;
+            if (pageSize > 0 && hits > 0) {
+                if (page == Last) {
+                    Size = hits % pageSize;
+                } else {
+                    if (hits < pageSize) {
+                        Size = pageSize - hits;
+                    } else {
+                        Size = pageSize;
+                    }
+                }
+            }
         }
     }
 }

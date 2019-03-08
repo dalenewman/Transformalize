@@ -26,11 +26,6 @@ namespace Pipeline.Web.Orchard.Models {
             set { Record.MapBoxToken = value; }
         }
 
-        public int MapBoxLimit {
-            get { return Record.MapBoxLimit == 0 ? 2500 : Record.MapBoxLimit; }
-            set { Record.MapBoxLimit = value; }
-        }
-
         public double StartingLatitude {
             get { return Record.StartingLatitude; }
             set { Record.StartingLatitude = value; }

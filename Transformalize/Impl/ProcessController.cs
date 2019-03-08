@@ -66,6 +66,10 @@ namespace Transformalize.Impl {
                     continue;
                 }
 
+                if (errorMode == ErrorMode.Ignore) {
+                    continue;
+                }
+
                 if (errorMode == ErrorMode.Exception) {
                     _context.Error("Exception: " + response.Message);
                     throw new Exception(response.Message);

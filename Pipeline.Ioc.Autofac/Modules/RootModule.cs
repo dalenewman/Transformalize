@@ -64,12 +64,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
                 };
 
-                if (ctx.IsRegisteredWithName<IDependency>("shorthand-t")) {
-                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-t"));
+                if (ctx.IsRegisteredWithName<IDependency>(TransformModule.FieldsName)) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>(TransformModule.FieldsName));
                 }
 
-                if (ctx.IsRegisteredWithName<IDependency>("shorthand-v")) {
-                    dependencies.Add(ctx.ResolveNamed<IDependency>("shorthand-v"));
+                if (ctx.IsRegisteredWithName<IDependency>(ValidateModule.Name)) {
+                    dependencies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.Name));
                 }
 
                 var process = GetProcess(ctx, p, dependencies, TransformConfiguration(ctx, p));
@@ -134,7 +134,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     }
                 }
 
-
                 return process;
 
             }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good
@@ -144,7 +143,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
         private static string TransformConfiguration(IComponentContext ctx, IEnumerable<Parameter> p) {
 
             // short hand for parameters is defined, try to transform parameters in advance
-            if (!ctx.IsRegisteredWithName<IDependency>("shorthand-p"))
+            if (!ctx.IsRegisteredWithName<IDependency>(TransformModule.ParametersName))
                 return null;
 
             if (!p.Any() && !ctx.IsRegisteredWithName<string>("cfg"))
@@ -154,7 +153,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 ctx.Resolve<IReader>(),
                 new DateMathModifier(),
                 new EnvironmentModifier(new NullPlaceHolderReplacer()),
-                ctx.ResolveNamed<IDependency>("shorthand-p")
+                ctx.ResolveNamed<IDependency>(TransformModule.ParametersName)
             };
 
             var preCfg = (p.Any() ? p.Named<string>("cfg") : null) ?? ctx.ResolveNamed<string>("cfg");
@@ -201,6 +200,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 input.Add(row);
 
                 var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
+
+
 
                 for (var i = 0; i < len; i++) {
                     var parameter = parameters[i];

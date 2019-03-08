@@ -121,7 +121,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                     return Get503(action, process, format, timer.ElapsedMilliseconds);
                 }
 
-                Common.TranslatePageParametersToEntities(process, parameters, "api");
+                var sizes = new List<int>();
+                sizes.AddRange(part.Sizes(part.PageSizes));
+
+                Common.SetPageSize(process, parameters, sizes.Min(), 0, sizes.Max());
 
                 if (MissingFieldHelper(process, part, format, parameters)) {
                     if (process.Errors().Any()) {

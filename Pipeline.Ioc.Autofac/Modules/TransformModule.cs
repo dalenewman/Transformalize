@@ -76,7 +76,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new CeilingTransform(c), new CeilingTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CoalesceTransform(c), new CoalesceTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new ConcatTransform(c), new ConcatTransform().GetSignatures());
-            RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new ConvertTransform(c), new ConvertTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new CopyTransform(c), new CopyTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new DateDiffTransform(c), new DateDiffTransform().GetSignatures());
@@ -153,6 +152,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
             RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new GuidTransform(c), new GuidTransform().GetSignatures());
 
+            // getting properties from the configuration you're running in
+            RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ParameterTransform(c), new ParameterTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ActionTransform(c), new ActionTransform().GetSignatures());
+            RegisterTransform(builder, (ctx, c) => new ScriptTransform(c), new ScriptTransform().GetSignatures());
+
             // split
             RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
             RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
@@ -222,7 +227,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             // register the short hand
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(FieldsName).InstancePerLifetimeScope();
             builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ParametersName).InstancePerLifetimeScope();
-            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
+            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "t", "transforms", "method")).Named<IDependency>(FieldsName).InstancePerLifetimeScope();
             builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(ParametersName).InstancePerLifetimeScope();
 
         }

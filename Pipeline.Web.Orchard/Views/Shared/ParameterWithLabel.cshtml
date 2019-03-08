@@ -1,0 +1,12 @@
+﻿@model Pipeline.Web.Orchard.Models.ParameterModel
+@{
+    var warning = Model.Parameter.Required && (Request.QueryString[Model.Parameter.Name] == null || Request.QueryString[Model.Parameter.Name] == "*");
+}
+<div class="form-group form-group-sm @(warning ? "has-warning" : string.Empty)" title="@(warning ? Model.Parameter.Label + " is required." : string.Empty)" required="@Model.Parameter.Required">
+    <label class="sr-only" for="@Model.Parameter.Name">@Model.Parameter.Label</label>
+    <div class="input-group input-group-sm" style="padding-top: 2px;">
+        <span class="input-group-addon">@Model.Parameter.Label</span>
+        @Html.Partial("Shared/Parameter", Model)
+    </div>
+</div>
+

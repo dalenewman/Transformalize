@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Orchard;
+using Orchard.ContentManagement;
+using Orchard.ContentManagement.Records;
+using Orchard.Tags.Models;
+using Pipeline.Web.Orchard.Services.Contracts;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
-using Orchard;
-using Orchard.ContentManagement;
-using Orchard.ContentManagement.Records;
-using Orchard.Tags.Models;
 using Transformalize.Configuration;
-using Pipeline.Web.Orchard.Services.Contracts;
 
 namespace Pipeline.Web.Orchard {
     public static class Common {
@@ -89,12 +89,12 @@ namespace Pipeline.Web.Orchard {
                     parameters[InputFileIdName] = "0";
                 }
             }
-            
+
             AddOrchardVariables(parameters, orchard, request);
             return parameters;
         }
 
-        public static void AddOrchardVariables(IDictionary<string,string> parameters, IOrchardServices orchard, HttpRequestBase request) {
+        public static void AddOrchardVariables(IDictionary<string, string> parameters, IOrchardServices orchard, HttpRequestBase request) {
             parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
             parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
             parameters["Orchard.Url"] = HttpContext.Current.Request.Url.PathAndQuery;
@@ -107,55 +107,37 @@ namespace Pipeline.Web.Orchard {
             parameters["Orchard.ReturnUrl"] = parameters.ContainsKey("ReturnUrl") ? parameters["ReturnUrl"] : returnUrl ?? string.Empty;
         }
 
-        public static void TranslatePageParametersToEntities(Process process, IDictionary<string, string> parameters, string defaultOutput) {
-
-            var output = parameters.ContainsKey("output") ? parameters["output"] : defaultOutput;
-
-            var isOutput = Outputs.Contains(output);
-            var isMode = Modes.Contains(output);
+        public static void SetPageSize(Process process, IDictionary<string, string> parameters, int min, int stickySize, int max) {
 
             foreach (var entity in process.Entities) {
-                if (isMode) {
-                    if (output == "map") {
-                        entity.Page = 1;
-                        entity.Size = 0;
-                    } else {
-                        if (entity.Page > 0) {
-                            int page;
-                            if (parameters.ContainsKey("page")) {
-                                if (!int.TryParse(parameters["page"], out page)) {
-                                    page = 1;
-                                }
-                            } else {
-                                page = 1;
-                            }
+                if (entity.Page <= 0) {
+                    continue;  // This entity isn't intended to be paged
+                }
 
-                            entity.Page = page;
-
-                            var size = 0;
-                            if (parameters.ContainsKey("size")) {
-                                int.TryParse(parameters["size"], out size);
-                            }
-
-                            if (size > 0 || output == "page") {
-                                if (size == 0) {
-                                    size = DefaultPageSize;
-                                }
-                                entity.Size = size > 100 ? 100 : size;
-                            }
-                        }
-
+                // parse out a page number
+                int page;
+                if (parameters.ContainsKey("page")) {
+                    if (!int.TryParse(parameters["page"], out page)) {
+                        page = 1;
                     }
                 } else {
-                    if (isOutput) {
-                        entity.Page = 0;
-                        entity.Size = 0;
-                    } else {  // unknown output request
-                        entity.Page = 1;
-                        entity.Size = 0;
-                    }
+                    page = 1;
                 }
+
+                entity.Page = page;
+
+                var size = stickySize;
+                if (parameters.ContainsKey("size")) {
+                    int.TryParse(parameters["size"], out size);
+                }
+
+                if (size == 0 && min > 0) {
+                    size = min;
+                }
+                entity.Size = max > 0 && size > max ? max : size;
+
             }
+
         }
 
         public static readonly HashSet<string> Outputs = new HashSet<string>(new[] { "csv", "xlsx", "geojson", "kml" });

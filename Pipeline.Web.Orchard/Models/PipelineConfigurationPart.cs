@@ -51,6 +51,8 @@ namespace Pipeline.Web.Orchard.Models {
 
         };
 
+
+
         public string Configuration {
             get {
                 var cfg = this.Retrieve(x => x.Configuration, versioned: true);
@@ -97,6 +99,11 @@ namespace Pipeline.Web.Orchard.Models {
             set { this.Store(x => x.NeedsInputFile, value, true); }
         }
 
+        public bool EnableInlineParameters {
+            get { return this.Retrieve(x => x.EnableInlineParameters, versioned: true); }
+            set { this.Store(x => x.EnableInlineParameters, value, true); }
+        }
+
         public string EditorMode {
             get { return this.Retrieve(x => x.EditorMode, versioned: true) ?? "xml"; }
             set { this.Store(x => x.EditorMode, value, true); }
@@ -123,8 +130,18 @@ namespace Pipeline.Web.Orchard.Models {
         }
 
         public string Modes {
-            get { return this.Retrieve(x => x.Modes, versioned: false, defaultValue: () => "init,default*"); }
+            get { return this.Retrieve(x => x.Modes, versioned: false, defaultValue: () => "default"); }
             set { this.Store(x => x.Modes, value, versioned: false); }
+        }
+
+        public string PageSizes {
+            get { return this.Retrieve(x => x.PageSizes, versioned: false, defaultValue: () => "10,15,25,50,100"); }
+            set { this.Store(x => x.PageSizes, value, versioned: false); }
+        }
+
+        public string MapSizes {
+            get { return this.Retrieve(x => x.MapSizes, versioned: false, defaultValue: () => "1000,5000,10000"); }
+            set { this.Store(x => x.MapSizes, value, versioned: false); }
         }
 
         public string GetDefaultMode() {
@@ -153,8 +170,23 @@ namespace Pipeline.Web.Orchard.Models {
         }
 
         public bool IsValid() {
-            return true; // return PlaceHolderStyle.Length == 3 && MapCircleRadius > 0 && MapCircleOpacity > 0.0 && MapCircleOpacity <= 1.0;
+            return PlaceHolderStyle.Length == 3 &&
+                   MapCircleRadius > 0 &&
+                   MapCircleOpacity > 0.0 &&
+                   MapCircleOpacity <= 1.0;
         }
 
+        public IEnumerable<int> Sizes(string sizes) {
+            if (string.IsNullOrEmpty(sizes)) {
+                yield return 0;
+            } else {
+                foreach (var item in sizes.Split(',')) {
+                    int size;
+                    if (int.TryParse(item, out size)) {
+                        yield return size;
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,14 +1,18 @@
-﻿using System.Linq;
-using System.Web;
-using Flurl;
+﻿using Flurl;
 using Pipeline.Web.Orchard.Services.Contracts;
+using System.Linq;
+using System.Web;
 
 namespace Pipeline.Web.Orchard.Services {
     public class LinkService : ILinkService {
-        public IHtmlString Create(HttpRequestBase request, string actionUrl, string type) {
+        public IHtmlString Create(HttpRequestBase request, string actionUrl, string type, bool everything) {
 
             var url = RemoveNoiseFromUrl(request.RawUrl.SetQueryParam("output", type));
             url.Path = actionUrl;
+
+            if (everything) {
+                url.SetQueryParam("page", 0);
+            }
 
             switch (type) {
                 case "map":
@@ -18,7 +22,7 @@ namespace Pipeline.Web.Orchard.Services {
                 default:
                     return new HtmlString(url.SetQueryParam("output", type).ToString());
             }
-            
+
         }
 
         private static Url RemoveNoiseFromUrl(Url url) {

@@ -5,6 +5,7 @@
 @using Pipeline.Web.Orchard.Models
 @using Pipeline.Web.Orchard.Services.Contracts
 @using Transformalize.Configuration
+@using Transformalize.Extensions
 @model ReportViewModel
 
 @{
@@ -16,11 +17,10 @@
     var allFields = entity.GetAllFields().Where(f => !f.System).ToArray();
     var hasCoordinates = allFields.Any(f => f.Alias.StartsWith("lat", StringComparison.OrdinalIgnoreCase)) && allFields.Any(f => f.Alias.StartsWith("lon", StringComparison.OrdinalIgnoreCase));
     var orchard = WorkContext.Resolve<IOrchardServices>();
-    var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
 
     var linkService = WorkContext.Resolve<ILinkService>();
-    var exportCsvLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "csv");
-    var exportXlsxLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "xlsx");
+    var exportCsvLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "csv", true);
+    var exportXlsxLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "xlsx", true);
 }
 
 <div class="row" style="margin-bottom: 4px;">
@@ -33,32 +33,32 @@
                 </button>
 
                 if (hasParameters) {
-                     <button id="id_clear" title="Clear the Search Parameters" type="button" class="btn btn-info btn-sm">Clear</button>
-                 }
-                
+                    <button id="id_clear" title="Clear the Search Parameters" type="button" class="btn btn-info btn-sm">Clear</button>
+                }
+
                 if (hasActions) {
-                     <div class="btn-group">
-                         <button type="button" class="btn btn-sm btn-danger">Action</button>
-                         <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown">
-                             <span class="caret"></span>
-                             <span class="sr-only">Toggle Dropdown</span>
-                         </button>
-                         <ul class="dropdown-menu" role="menu">
-                             @foreach (var action in Model.Process.Actions.Where(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase))) {
-                                 <li>
-                                     <a class="bulk-action-link" rel="@action.Description" href="javascript:bulkAction(1,'@action.Description',@action.Id);">@action.Description</a>
-                                 </li>
-                             }
-                         </ul>
-                     </div>
-                 }
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-danger">Action</button>
+                        <button type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            @foreach (var action in Model.Process.Actions.Where(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase))) {
+                                <li>
+                                    <a class="bulk-action-link" rel="@action.Description" href="javascript:bulkAction(1,'@action.Description',@action.Id);">@action.Description</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
             }
         </div>
     </div>
 
 
     <div class="col-md-4" style="text-align: center;">
-        @if (entity.Name != "Missing Entity" && Model.Process.Mode == "report") {
+        @if (entity.Name != "Missing Entity" && Model.Process.Mode.In("report", "map")) {
             <ul class="pagination pagination-sm" style="display: inline; white-space:nowrap;">
                 @if (entity.Pagination.HasPrevious) {
                     <li><a href="javascript:controls.submit(@entity.Pagination.First)"><span class="glyphicon glyphicon-step-backward"></span></a></li>
@@ -67,7 +67,7 @@
                     <li class="disabled"><a href=""><span class="glyphicon glyphicon-step-backward"></span></a></li>
                     <li class="disabled"><a href=""><span class="glyphicon glyphicon-chevron-left"></span></a></li>
                 }
-                <li class="disabled"><a href="" style="white-space: nowrap;">Found @entity.Hits, Page <strong>@(entity.Page == 0 ? 1 : entity.Page)</strong> of @(entity.Pagination.Pages == 0 ? 1 : entity.Pagination.Pages)</a></li>
+                <li class="disabled"><a href="" style="white-space: nowrap;">Displaying @entity.Pagination.Size of @entity.Hits Records, Page <strong>@(entity.Page == 0 ? 1 : entity.Page)</strong> of @(entity.Pagination.Pages == 0 ? 1 : entity.Pagination.Pages)</a></li>
 
                 @if (entity.Pagination.HasNext) {
                     <li><a href="javascript:controls.submit(@entity.Pagination.Next)"><span class="glyphicon glyphicon-chevron-right"></span></a></li>
@@ -83,36 +83,36 @@
     <div class="col-md-4">
 
         <div class="btn-group pull-right">
-            
+
             @if (entity.Name != "Missing Entity") {
 
                 if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-                     <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-                         <span class="glyphicon glyphicon-edit"></span>
-                     </button>
-                 }
+                    <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                        <span class="glyphicon glyphicon-edit"></span>
+                    </button>
+                }
 
-                if (Model.Process.Mode == "report" && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken) && entity.Hits <= settings.MapBoxLimit) {
-                    <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Map", new RouteValueDictionary { {"Id", Model.Part.Id}}), "map"))', '_self');">
-                         <span class="glyphicon glyphicon-map-marker"></span>
-                     </button>
+                if (Model.Process.Mode == "report" && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken)) {
+                    <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Map", new RouteValueDictionary { {"Id", Model.Part.Id}}), "map", false))', '_self');">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                    </button>
                 }
 
                 if (Model.Process.Mode == "map") {
 
-                     <div class="btn-group" role="group">
-                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                             Style
-                             <span class="caret"></span>
-                         </button>
-                         <ul class="dropdown-menu" id="mapStyles">
-                             @foreach (var style in PipelineConfigurationPart.MapStyles) {
-                                 <li style="cursor: pointer;"><a id="@style.Value">@style.Text</a></li>
-                             }
-                         </ul>
-                     </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Style
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" id="mapStyles">
+                            @foreach (var style in PipelineConfigurationPart.MapStyles) {
+                                <li style="cursor: pointer;"><a id="@style.Value">@style.Text</a></li>
+                            }
+                        </ul>
+                    </div>
 
-                    <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report"))', '_self');">
+                    <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report", false))', '_self');">
                         <span class="glyphicon glyphicon-align-justify"></span>
                     </button>
                 }
@@ -129,8 +129,8 @@
                         <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
                         @{
                             if (hasCoordinates) {
-                                var exportGeoJsonLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson");
-                                var exportKmlLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "kml");
+                                var exportGeoJsonLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson", true);
+                                var exportKmlLink = linkService.Create(Request, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "kml", true);
                                 <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
                                 <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
                             }
@@ -138,21 +138,28 @@
                     </ul>
                 </div>
 
-                if (Model.Process.Mode == "report" && entity.Page > 0) {
-                     <div class="btn-group">
-                         <button class="btn btn-sm">Size</button>
-                         <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
-                             <span class="caret"></span>
-                         </button>
-                         <ul class="dropdown-menu">
-                             @foreach (var pageSize in pageSizes) {
-                                 <li class="@(entity.Size.Equals(pageSize) ? "active" : string.Empty)">
-                                     <a href="javascript:controls.setSize(@pageSize);">@pageSize</a>
-                                 </li>
-                             }
-                         </ul>
-                     </div>
-                 }
+                if (entity.Page > 0 && Model.Process.Mode.In("report", "map")) {
+                    <div class="btn-group">
+                        <button class="btn btn-sm">Size</button>
+                        <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (var size in Model.Part.Sizes(Model.Part.PageSizes)) {
+                                <li class="@(entity.Size.Equals(size) ? "active" : string.Empty)">
+                                    <a href="javascript:controls.setSize(@size);">@size</a>
+                                </li>
+                            }
+                            @if (Model.Process.Mode == "map") {
+                                foreach (var size in Model.Part.Sizes(Model.Part.MapSizes)) {
+                                    <li class="@(entity.Size.Equals(size) ? "active" : string.Empty)">
+                                        <a href="javascript:controls.setSize(@size);">@size</a>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
             }
         </div>
     </div>

@@ -190,6 +190,17 @@ namespace Pipeline.Web.Orchard {
             SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapCircleOpacity", DbType.Double));
             return 16;
         }
+
+        public int UpdateFrom16() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("PageSizes", DbType.String));
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapSizes", DbType.String));
+            return 17;
+        }
+
+        public int UpdateFrom17() {
+            SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("EnableInlineParameters", DbType.Boolean));
+            return 18;
+        }
     }
 
     public class FileMigrations : DataMigrationImpl {

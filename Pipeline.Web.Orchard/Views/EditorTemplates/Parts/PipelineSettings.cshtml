@@ -1,4 +1,5 @@
 ﻿@using System.Web.Mvc.Html
+@using Pipeline.Web.Orchard
 @using Pipeline.Web.Orchard.Models
 @model PipelineSettingsPart
 
@@ -6,7 +7,7 @@
     @Html.LabelFor(x => x.EditorTheme, T("Default Editor Theme"))
     @Html.DropDownListFor(x => x.EditorTheme, Model.EditorThemes)
     @Html.ValidationMessageFor(x => x.EditorTheme)
-    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "Cfg", new {area = "Pipeline.Web.Orchard"}))', '_self');">Jobs</button>
+    <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("List", "Cfg", new {area = Common.ModuleName }))', '_self');">Jobs</button>
 </div>
 
 <div class="editor-field">
@@ -15,13 +16,6 @@
     @Html.ValidationMessageFor(x => x.MapBoxToken)
 </div>
 <div class="hint">@T("Get a token at <a href=\"https://www.mapbox.com\" target=\"_blank\">https://www.mapbox.com</a>.")</div>
-
-<div class="editor-field">
-    @Html.LabelFor(x => x.MapBoxLimit, T("Mapbox Limit"))
-    @Html.EditorFor(x => x.MapBoxLimit)
-    @Html.ValidationMessageFor(x => x.MapBoxLimit)
-</div>
-<div class="hint">@T("Sending a large number of points can be slow, so it's best to set a limit (e.g. 2500)")</div>
 
 <div class="editor-field">
     @Html.LabelFor(x => x.StartingLatitude, T("Starting Latitude"))

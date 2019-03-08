@@ -153,13 +153,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ActionTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendFieldTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendValueTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\BetterFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CondenseTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\CountTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ParameterTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ReverseTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ScriptTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SortTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\GetTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FirstTransform.cs" />

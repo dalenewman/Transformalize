@@ -92,6 +92,15 @@ namespace Pipeline.Web.Orchard.Handlers {
                         {"id", context.ContentItem.Id}
                     };
                     break;
+                case "hot":
+                case "table":
+                    context.Metadata.DisplayRouteValues = new RouteValueDictionary {
+                        {"Area", Common.ModuleName},
+                        {"Controller", "HandsOnTable"},
+                        {"Action", "Index"},
+                        {"id", context.ContentItem.Id}
+                    };
+                    break;
                 default:
                     context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                         {"Area", Common.ModuleName},

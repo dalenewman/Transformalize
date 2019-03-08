@@ -55,5 +55,14 @@ namespace Pipeline.Web.Orchard.Models {
 
         [StringLength(3)]
         public virtual string PlaceHolderStyle { get; set; }
+
+        [StringLength(128)]
+        public virtual string PageSizes { get; set; }
+        [StringLength(128)]
+        public virtual string MapSizes { get; set; }
+
+        public virtual bool EnableInlineParameters { get; set; }
+
+
     }
 }

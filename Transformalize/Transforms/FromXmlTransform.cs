@@ -74,7 +74,8 @@ namespace Transformalize.Transforms {
             var doc = new NanoXmlDocument(xml);
             if (_elements.ContainsKey(doc.RootNode.Name)) {
                 var field = _elements[doc.RootNode.Name];
-                row[field] = field.Convert(doc.RootNode.Value ?? (field.ReadInnerXml ? doc.RootNode.InnerText() : doc.RootNode.ToString()));
+                var value = doc.RootNode.Value ?? (field.ReadInnerXml ? doc.RootNode.InnerText() : doc.RootNode.ToString());
+                row[field] = field.Convert(value);
                 count++;
             }
 

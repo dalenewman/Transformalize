@@ -27,6 +27,7 @@ using Pipeline.Web.Orchard.Models;
 using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -118,7 +119,11 @@ namespace Pipeline.Web.Orchard.Controllers {
                         }
                     }
 
-                    Common.TranslatePageParametersToEntities(process, parameters, "page");
+                    var sizes = new List<int>();
+                    sizes.AddRange(part.Sizes(part.PageSizes));
+                    var stickySize = GetStickyUrlParameter(part.Id, "size", ()=>sizes.Min());
+
+                    Common.SetPageSize(process, parameters, sizes.Min(), stickySize, sizes.Max());
 
                     if (Request.HttpMethod.Equals("POST") && parameters.ContainsKey("action")) {
 
@@ -158,6 +163,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                                 var count = _batchWriteService.Write(Request, process, batchParameters);
 
                                 if (count > 0) {
+
+                                    if (!batchParameters.ContainsKey("system")) {
+                                        batchParameters["system"] = system.Value;
+                                    }
 
                                     if (_batchRunService.Run(action, batchParameters)) {
                                         if (action.Url == string.Empty) {

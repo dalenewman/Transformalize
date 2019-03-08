@@ -9,7 +9,7 @@
     var firstEntity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
     var firstAllFields = firstEntity.GetAllFields().Where(f => !f.System).ToArray();
     var sortService = WorkContext.Resolve<ISortService>();
-    var pageSizes = new[] { 5, 10, 15, 25, 50, 100 };
+
     var parameters = Model.Process.GetActiveParameters();
     var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
@@ -407,8 +407,6 @@
             controls.lastChecked = this;
         });
 
-        @*var isSortable = @(isSortable.ToString().ToLower());*@
-
         $('#id_report select').multiselect({
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
@@ -419,14 +417,15 @@
                     controls.submit(1);
                 }
             },
-            maxHeight: 400,
+            maxHeight: 450,
+            dropUp: @(firstEntity.Pagination.Size < firstEntity.Size ? "true": "false"),
             nonSelectedText: 'ALL',
             nSelectedText: 'Selected',
             allSelectedText: 'Selected',
             buttonContainer: '<div class="btn-group btn-group-sm" />',
             templates: {
                 filter: '<li class="multiselect-item filter"><div class="input-group input-group-sm"><input class="form-control multiselect-search" type="text"></div></li>',
-                filterClearBtn: '<span class="input-group-btn"> <button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button> <button class="btn btn-primary search-button" type="button"><i class="glyphicon glyphicon-search"></i></button> </span>',
+                filterClearBtn: '<span class="input-group-btn"> <button class="btn btn-default multiselect-clear-filter" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button> <button class="btn btn-primary search-button" type="button"><i class="glyphicon glyphicon-search"></i></button> </span>'
             }
         });
         $('span.multiselect-selected-text').parent().removeClass('btn-default');
