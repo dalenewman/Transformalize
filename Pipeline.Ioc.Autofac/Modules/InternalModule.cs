@@ -23,7 +23,6 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
-using Transformalize.Writers;
 using System.Collections.Generic;
 using Transformalize.Provider.Internal;
 using Transformalize.Providers.File;

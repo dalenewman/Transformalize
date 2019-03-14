@@ -625,6 +625,12 @@
     <Content Include="plugins\Transformalize.Transform.Ado.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="plugins\Transformalize.Transform.CSharp.Autofac.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="plugins\Transformalize.Transform.CSharp.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="plugins\Transformalize.Transform.CsScript.Autofac.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
