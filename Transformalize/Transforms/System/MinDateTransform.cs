@@ -22,33 +22,34 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
 
-    public class MinDateTransform : BaseTransform {
-        private readonly Field[] _dates;
-        private readonly DateTime _minDate;
-        private readonly bool _toString;
+   public class MinDateTransform : BaseTransform {
 
-        public MinDateTransform(IContext context, DateTime minDate)
-            : base(context, "datetime") {
-            _dates = context.Entity.GetAllFields().Where(f => f.Output && f.Type.StartsWith("date", StringComparison.Ordinal)).ToArray();
-            _minDate = minDate;
-            _toString = context.Process.Connections.First(c => c.Name == context.Entity.Connection).Provider == "mysql";
-        }
+      private readonly Field[] _dates;
+      private readonly DateTime _minDate;
+      private readonly bool _toString;
 
-        public override IRow Operate(IRow row) {
-            foreach (var date in _dates) {
-                if (_toString) {
-                    if (Convert.ToDateTime(row[date].ToString()) < _minDate) {
-                        row[date] = _minDate;
-                    }
-                } else {
-                    if ((DateTime)row[date] < _minDate) {
-                        row[date] = _minDate;
-                    }
-                }
+      public MinDateTransform(IContext context, DateTime minDate) : base(context, "datetime") {
+
+         _dates = context.Entity.GetAllFields().Where(f => f.Output && f.Type.StartsWith("date", StringComparison.Ordinal)).ToArray();
+
+         _minDate = minDate;
+         _toString = context.Process.Connections.First(c => c.Name == context.Entity.Connection).Provider == "mysql";
+      }
+
+      public override IRow Operate(IRow row) {
+         foreach (var date in _dates) {
+            if (_toString) {
+               if (Convert.ToDateTime(row[date].ToString()) < _minDate) {
+                  row[date] = _minDate;
+               }
+            } else {
+               if ((DateTime)row[date] < _minDate) {
+                  row[date] = _minDate;
+               }
             }
-            // 
-            return row;
-        }
+         }
+         return row;
+      }
 
-    }
+   }
 }

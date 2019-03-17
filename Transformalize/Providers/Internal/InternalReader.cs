@@ -15,48 +15,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Transforms;
 
-namespace Transformalize.Provider.Internal {
+namespace Transformalize.Providers.Internal {
 
-    public class InternalReader : IRead {
+   public class InternalReader : IRead {
 
-        private readonly InputContext _input;
-        private readonly IRowFactory _rowFactory;
-        private readonly HashSet<string> _missing;
+      private readonly InputContext _input;
+      private readonly IRowFactory _rowFactory;
+      private readonly HashSet<string> _missing;
+      private readonly List<ITransform> _transforms = new List<ITransform>();
 
-        public InternalReader(InputContext input, IRowFactory rowFactory) {
-            _input = input;
-            _rowFactory = rowFactory;
-            _missing = new HashSet<string>();
-        }
+      public InternalReader(InputContext input, IRowFactory rowFactory) {
+         _input = input;
+         _rowFactory = rowFactory;
+         _missing = new HashSet<string>();
 
-        public IEnumerable<IRow> Read() {
-            var fields = _input.Entity.Fields.Where(f => f.Input).ToArray();
-            var rows = new List<IRow>();
-            foreach (var row in _input.Entity.Rows) {
+         foreach (var field in input.Entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
+            _transforms.Add(new ConvertTransform(new PipelineContext(input.Logger, input.Process, input.Entity, field, new Operation { Method = "convert" })));
+         }
+      }
 
-                var stringRow = _rowFactory.Create();
-                foreach (var field in fields) {
-                    if (row.Map.ContainsKey(field.Name)) {
-                        stringRow[field] = row[field.Name];
-                    } else {
-                        if (_missing.Add(field.Name)) {
-                            _input.Warn($"An internal row in {_input.Entity.Alias} is missing the field {field.Name}.");
-                        }
-                    }
-                }
-                rows.Add(stringRow);
+      private IEnumerable<IRow> PreRead() {
+
+         var fields = _input.Entity.Fields.Where(f => f.Input).ToArray();
+         var rows = new List<IRow>();
+         foreach (var row in _input.Entity.Rows) {
+
+            var stringRow = _rowFactory.Create();
+            foreach (var field in fields) {
+               if (row.Map.ContainsKey(field.Name)) {
+                  stringRow[field] = row[field.Name];
+               } else {
+                  if (_missing.Add(field.Name)) {
+                     _input.Warn($"An internal row in {_input.Entity.Alias} is missing the field {field.Name}.");
+                  }
+               }
             }
-            _input.Entity.Hits = rows.Count;
-            return rows;
-        }
+            rows.Add(stringRow);
+         }
+         _input.Entity.Hits = rows.Count;
+         return rows;
+      }
 
-        public object GetVersion() {
-            return null;
-        }
-    }
+      public IEnumerable<IRow> Read() {
+         return _transforms.Aggregate(PreRead(), (rows, transform) => transform.Operate(rows));
+      }
+
+      public object GetVersion() {
+         return null;
+      }
+   }
 }

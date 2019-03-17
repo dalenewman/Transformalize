@@ -15,91 +15,76 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
-using System.Linq;
 using Autofac;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 using Transformalize.Impl;
 using Transformalize.Nulls;
-using Transformalize.Transforms;
 using Transformalize.Transforms.System;
 using LogTransform = Transformalize.Transforms.System.LogTransform;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class EntityPipelineModule : EntityModule {
+   public class EntityPipelineModule : EntityModule {
 
-        protected EntityPipelineModule() { }
+      protected EntityPipelineModule() { }
 
-        public EntityPipelineModule(Process process) : base(process) { }
+      public EntityPipelineModule(Process process) : base(process) { }
 
-        public override void LoadEntity(ContainerBuilder builder, Process process, Entity entity) {
-            if (process == null)
-                return;
+      public override void LoadEntity(ContainerBuilder builder, Process process, Entity entity) {
+         if (process == null)
+            return;
 
-            var type = process.Pipeline == "defer" ? entity.Pipeline : process.Pipeline;
+         var type = process.Pipeline == "defer" ? entity.Pipeline : process.Pipeline;
 
-            builder.Register(ctx => {
-                var context = ctx.ResolveNamed<IContext>(entity.Key);
-                IPipeline pipeline;
-                context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
-                var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
-                switch (type) {
-                    case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                        break;
-                    default:
-                        pipeline = new DefaultPipeline(outputController, context);
-                        break;
-                }
+         builder.Register(ctx => {
+            var context = ctx.ResolveNamed<IContext>(entity.Key);
+            IPipeline pipeline;
+            context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
+            var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
+            switch (type) {
+               case "parallel.linq":
+                  pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
+                  break;
+               default:
+                  pipeline = new DefaultPipeline(outputController, context);
+                  break;
+            }
 
-                var output = process.Output();
+            // TODO: rely on IInputProvider's Read method instead (after every provider has one)
+            pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
+            pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
-                // TODO: rely on IInputProvider's Read method instead (after every provider has one)
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
+            // transforms
+            if (!process.ReadOnly) {
+               pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+            }
 
-                // transforms
-                if (!process.ReadOnly) {
-                    pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                }
+            pipeline.Register(new CancelTransform(context));
+            pipeline.Register(new IncrementTransform(context));
+            pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
 
-                pipeline.Register(new CancelTransform(context));
-                pipeline.Register(new IncrementTransform(context));
-                pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
+            pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
+            pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
-                if (ctx.ResolveNamed<IConnectionContext>(entity.Key).Connection.Provider.In("internal", "file", Constants.DefaultSetting)) {
-                    foreach (var field in entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
-                        context.Debug(() => "Automatically adding convert transform");
-                        pipeline.Register(new ConvertTransform(new PipelineContext(context.Logger, context.Process, entity, field, new Operation { Method = "convert" })));
-                    }
-                }
+            if (!process.ReadOnly) {
+               pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+            }
 
-                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
-                pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
+            pipeline.Register(new LogTransform(context));
 
-                if (!process.ReadOnly) {
-                    pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-                    if (output.Provider == "sqlserver") {
-                        pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity), new DateTime(1753, 1, 1)));
-                    }
-                }
+            // writer, TODO: rely on IOutputProvider instead
+            pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
+            pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
 
-                pipeline.Register(new LogTransform(context));
+            // updater
+            pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));
 
-                // writer, TODO: rely on IOutputProvider instead
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
-                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
+            return pipeline;
 
-                // updater
-                pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));
-
-                return pipeline;
-
-            }).Named<IPipeline>(entity.Key);
-        }
-    }
+         }).Named<IPipeline>(entity.Key);
+      }
+   }
 }

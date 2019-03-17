@@ -26,6 +26,7 @@ using Transformalize.Nulls;
 using System.Collections.Generic;
 using Transformalize.Provider.Internal;
 using Transformalize.Providers.File;
+using Transformalize.Providers.Internal;
 using Transformalize.Providers.Trace;
 
 namespace Transformalize.Ioc.Autofac.Modules {

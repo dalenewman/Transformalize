@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 
 namespace Transformalize.Contracts {
-    public interface IRead {
-        IEnumerable<IRow> Read();
-    }
+   public interface IRead {
+      IEnumerable<IRow> Read();
+   }
 }

@@ -21,19 +21,20 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
-    public class CompositeReader : IRead {
-        private readonly IEnumerable<IRead> _readers;
+   public class CompositeReader : IRead {
+      private readonly IEnumerable<IRead> _readers;
 
-        public CompositeReader(params IRead[] readers) {
-            _readers = readers;
-        }
+      public CompositeReader(params IRead[] readers) {
+         _readers = readers;
+      }
 
-        public CompositeReader(IEnumerable<IRead> readers) {
-            _readers = readers;
-        }
+      public CompositeReader(IEnumerable<IRead> readers) {
+         _readers = readers;
+      }
 
-        public IEnumerable<IRow> Read() {
-            return _readers.SelectMany(reader => reader.Read());
-        }
-    }
+      public IEnumerable<IRow> Read() {
+         return _readers.SelectMany(reader => reader.Read());
+      }
+
+   }
 }

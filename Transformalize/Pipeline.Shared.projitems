@@ -79,6 +79,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IOperation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IParameterFinder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Contracts\IValidate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Impl\ContextFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\DefaultRowReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\FormParameterModifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Impl\LineReader.cs" />
