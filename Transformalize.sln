@@ -76,7 +76,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Transform.Geography.nuspec = Nuget\Transformalize.Transform.Geography.nuspec
 		Nuget\Transformalize.Transform.Globalization.nuspec = Nuget\Transformalize.Transform.Globalization.nuspec
 		Nuget\Transformalize.Transform.Html.nuspec = Nuget\Transformalize.Transform.Html.nuspec
-		Nuget\Transformalize.Transform.JavaScript.nuspec = Nuget\Transformalize.Transform.JavaScript.nuspec
 		Nuget\Transformalize.Transform.Json.nuspec = Nuget\Transformalize.Transform.Json.nuspec
 		Nuget\Transformalize.Transform.Xml.nuspec = Nuget\Transformalize.Transform.Xml.nuspec
 	EndProjectSection

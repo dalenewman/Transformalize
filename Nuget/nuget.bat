@@ -13,7 +13,6 @@ REM nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\
 REM nuget pack Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
 REM 
 REM REM TRANSFORMS
-REM nuget pack Transformalize.Transform.JavaScript.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Transform.Compression.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Transform.DateMath.nuspec -OutputDirectory "c:\temp\modules"
