@@ -112,7 +112,6 @@
     <Compile Include="MatchTransform.cs" />
     <Compile Include="MathTransforms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShouldRun.cs" />
     <Compile Include="Signature.cs" />
     <Compile Include="SolrIntegration.cs" />
     <Compile Include="TagTransform.cs" />

@@ -285,7 +285,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\DefaultTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\MinDateTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\SetSystemFields.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\ShouldRunTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\System\StringTruncateTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\TagTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToLowerTransform.cs" />
