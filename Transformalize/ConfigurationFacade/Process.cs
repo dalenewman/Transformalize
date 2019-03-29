@@ -136,15 +136,6 @@ namespace Transformalize.ConfigurationFacade {
       public string ReadOnly { get; set; }
 
       [Cfg]
-      public string InternalProvider { get; set; }
-
-      [Cfg]
-      public string Buffer { get; set; }
-
-      [Cfg]
-      public string Hosted { get; set; }
-
-      [Cfg]
       public string Id { get; set; }
 
    }

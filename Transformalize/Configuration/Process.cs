@@ -22,7 +22,6 @@ using Cfg.Net.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using Transformalize.Configuration.Ext;
 using Transformalize.Context;
@@ -336,7 +335,7 @@ namespace Transformalize.Configuration {
          foreach (var entity in Entities) {
             var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
 #if NETS10
-                entity.FieldMatcher = new Regex(pattern);
+            entity.FieldMatcher = new Regex(pattern);
 #else
             entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
 #endif
@@ -561,7 +560,7 @@ namespace Transformalize.Configuration {
             Regex matcher;
             var regex = string.Join("|", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
 #if NETS10
-                matcher = new Regex(regex);
+            matcher = new Regex(regex);
 #else
             matcher = new Regex(regex, RegexOptions.Compiled);
 #endif
@@ -592,7 +591,7 @@ namespace Transformalize.Configuration {
          // create entity field's matcher
          var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
 #if NETS10
-            entity.FieldMatcher = new Regex(pattern);
+         entity.FieldMatcher = new Regex(pattern);
 #else
          entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
 #endif
@@ -644,18 +643,6 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool ReadOnly { get; set; }
 
-      [Obsolete("This was part of a neat, but not frequently used feature that I plan to remove in the future.")]
-      [Cfg(value = "sqlite", domain = "sqlite,sqlce", toLower = true)]
-      public string InternalProvider { get; set; }
-
-
-      [Obsolete("This was part of a neat, but not frequently used feature that I plan to remove in the future.")]
-      [Cfg(value = false)]
-      public bool Buffer { get; set; }
-
-      [Cfg(value=false)]
-      public bool Hosted { get; set; }
-
       /// <summary>
       /// An optional Id (used in Orchard CMS module)
       /// </summary>
@@ -690,6 +677,6 @@ namespace Transformalize.Configuration {
          return Connections.Any(c => c.Name == Constants.OriginalOutput && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
       }
 
-      
+
    }
 }

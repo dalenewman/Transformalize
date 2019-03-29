@@ -25,10 +25,6 @@ namespace Transformalize.Configuration.Ext {
       public static void Validate(this Process p, Action<string> error, Action<string> warn) {
 
          if (p.ReadOnly) {
-            if (p.Buffer) {
-               error("A process can not be read-only and buffer at the same time.");
-            }
-
             if (p.CalculatedFields.Any()) {
                error("A process can not be read-only and have process-level calculated fields at the same time.");
             }

@@ -96,7 +96,6 @@
     <Compile Include="DateDiffTransform.cs" />
     <Compile Include="SubstringTest.cs" />
     <Compile Include="DistinctTest.cs" />
-    <Compile Include="TwoEntitiesFileOutput.cs" />
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="DeleteHandler.cs" />
@@ -113,9 +112,7 @@
     <Compile Include="MathTransforms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Signature.cs" />
-    <Compile Include="SolrIntegration.cs" />
     <Compile Include="TagTransform.cs" />
-    <Compile Include="Temp.cs" />
     <Compile Include="TestReader.cs" />
     <Compile Include="TestFormat.cs" />
     <Compile Include="TrimThenStartsWith.cs" />

@@ -30,7 +30,6 @@ using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Ioc.Autofac.Impl;
 using Transformalize.Transforms.DateMath;
-using Transformalize.Transforms.Globalization;
 using Module = Autofac.Module;
 using Parameter = Autofac.Core.Parameter;
 
@@ -114,25 +113,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
             var originalOutput = process.Output().Clone();
             originalOutput.Name = Constants.OriginalOutput;
             originalOutput.Key = process.Name + originalOutput.Name;
-
-            if (!process.OutputIsRelational() && (process.Entities.Count > 1 || process.Buffer)) {
-
-               process.Output().Provider = process.InternalProvider;
-               var folder = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData), Constants.ApplicationFolder);
-               var file = new FileInfo(Path.Combine(folder, SlugifyTransform.Slugify(process.Name) + "." + (process.InternalProvider == "sqlce" ? "sdf" : "sqlite3")));
-               var exists = file.Exists;
-               process.Output().File = file.FullName;
-               process.Output().RequestTimeout = process.InternalProvider == "sqlce" ? 0 : process.Output().RequestTimeout;
-               process.Flatten = process.InternalProvider == "sqlce";
-               process.Mode = exists ? process.Mode : "init";
-               process.Connections.Add(originalOutput);
-
-               if (!exists) {
-                  if (!Directory.Exists(file.DirectoryName)) {
-                     Directory.CreateDirectory(folder);
-                  }
-               }
-            }
 
             return process;
 
