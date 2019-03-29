@@ -106,7 +106,6 @@
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="IIfTransform.cs" />
     <Compile Include="InTransform.cs" />
-    <Compile Include="JavascriptTransform.cs" />
     <Compile Include="MapTransform.cs" />
     <Compile Include="MatchTransform.cs" />
     <Compile Include="MathTransforms.cs" />
@@ -174,10 +173,6 @@
     <ProjectReference Include="..\Transforms\Html\Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Html</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\JavaScript\JavaScript.csproj">
-      <Project>{c54a7c66-2f1d-4035-a798-4598b07ce3ca}</Project>
-      <Name>JavaScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
       <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
