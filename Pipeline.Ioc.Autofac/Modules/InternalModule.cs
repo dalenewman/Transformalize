@@ -24,7 +24,6 @@ using Transformalize.Contracts;
 using Transformalize.Logging.NLog;
 using Transformalize.Nulls;
 using System.Collections.Generic;
-using Transformalize.Provider.Internal;
 using Transformalize.Providers.File;
 using Transformalize.Providers.Internal;
 using Transformalize.Providers.Trace;

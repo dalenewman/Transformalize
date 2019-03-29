@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Internal {
+namespace Transformalize.Providers.Internal {
 
     public class InternalOutputProvider : IOutputProvider {
         private readonly OutputContext _context;

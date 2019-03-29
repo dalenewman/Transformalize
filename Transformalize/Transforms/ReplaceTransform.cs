@@ -17,67 +17,71 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class ReplaceTransform : StringTransform {
-        private readonly Field _input;
-        private readonly Func<IRow, string> _getOldValue;
-        private readonly Func<IRow, string> _getNewValue;
+   public class ReplaceTransform : StringTransform {
 
-        public ReplaceTransform(IContext context = null) : base(context, "string") {
+      private readonly Field _input;
+      private readonly Func<IRow, string> _getOldValue;
+      private readonly Func<IRow, string> _getNewValue;
 
-            if(IsMissingContext()) {
-                return;
-            }
+      public ReplaceTransform(IContext context = null) : base(context, "string") {
 
-            if (IsMissing(Context.Operation.OldValue)) {
-                return;
-            }
+         if (IsMissingContext()) {
+            return;
+         }
 
-            _input = SingleInput();
+         if (IsMissing(Context.Operation.OldValue)) {
+            return;
+         }
 
-            Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\r", "\r");
-            Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\n", "\n");
+         _input = SingleInput();
 
-            var oldIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.OldValue);
-            if (oldIsField && Context.Entity.TryGetField(context.Operation.OldValue, out var oldField)) {
-                _getOldValue = row => GetString(row, oldField);
-                context.Debug(() => $"replace transform's old value comes from the field: {oldField.Alias}");
-            } else {
-                _getOldValue = row => Context.Operation.OldValue;
-                Context.Debug(() => $"replace transform's old value is literal: {Context.Operation.OldValue}");
-            }
+         Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\r", "\r");
+         Context.Operation.OldValue = Context.Operation.OldValue.Replace("\\n", "\n");
 
-            var newIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.NewValue);
-            if (newIsField && Context.Entity.TryGetField(Context.Operation.NewValue, out var newField)) {
-                _getNewValue = row => GetString(row, newField);
-                Context.Debug(() => $"replace transform's new value comes from the field: {newField.Alias}");
-            } else {
-                _getNewValue = row => Context.Operation.NewValue;
-                Context.Debug(() => $"replace transform's new value is literal: {Context.Operation.NewValue}");
-            }
+         var oldIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.OldValue);
+         if (oldIsField && Context.Entity.TryGetField(Context.Operation.OldValue, out var oldField)) {
+            _getOldValue = row => GetString(row, oldField);
+            Context.Debug(() => $"replace transform's old value comes from the field: {oldField.Alias}");
+         } else {
+            _getOldValue = row => Context.Operation.OldValue;
+            Context.Debug(() => $"replace transform's old value is literal: {Context.Operation.OldValue}");
+         }
 
-        }
+         var newIsField = Context.Entity.FieldMatcher.IsMatch(Context.Operation.NewValue);
+         if (newIsField && Context.Entity.TryGetField(Context.Operation.NewValue, out var newField)) {
+            _getNewValue = row => GetString(row, newField);
+            Context.Debug(() => $"replace transform's new value comes from the field: {newField.Alias}");
+         } else {
+            _getNewValue = row => Context.Operation.NewValue;
+            Context.Debug(() => $"replace transform's new value is literal: {Context.Operation.NewValue}");
+         }
 
-        public override IRow Operate(IRow row) {
-            var oldValue = _getOldValue(row);
-            if (oldValue != string.Empty) {
-                row[Context.Field] = GetString(row, _input).Replace(oldValue, _getNewValue(row));
-            }
+      }
 
-            return row;
-        }
+      public override IRow Operate(IRow row) {
+         var oldValue = _getOldValue(row);
+         if (oldValue != string.Empty) {
+            row[Context.Field] = GetString(row, _input).Replace(oldValue, _getNewValue(row));
+         }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("replace") {
-                Parameters = new List<OperationParameter> {
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("replace") {
+            Parameters = new List<OperationParameter> {
                     new OperationParameter("old-value"),
                     new OperationParameter("new-value","")
                 }
-            };
-        }
-    }
+         };
+      }
+
+      public override string ToString() {
+         return Context?.Operation != null ? $"replace(old-value:{Context.Operation.OldValue},new-value:{Context.Operation.NewValue})" : "replace(old-value,new-value)";
+      }
+   }
 }

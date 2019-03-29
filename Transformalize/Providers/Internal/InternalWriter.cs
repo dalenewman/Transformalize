@@ -15,12 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
-namespace Transformalize.Provider.Internal {
+namespace Transformalize.Providers.Internal {
 
     public class InternalWriter : IWrite {
         private readonly OutputContext _context;
