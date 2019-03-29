@@ -33,16 +33,6 @@ namespace Transformalize.Configuration.Ext {
                 calculatedField.IsCalculated = true;
             }
 
-            // Convenience, User can use Parameters collection at root process level instead of creating Environments collection with sets of parameters
-            if (p.Parameters.Any() && p.Environments.Any()) {
-                error("You can not have parameters and environments.  Choose one.");
-            } else {
-                if (p.Parameters.Any() && !p.Environments.Any()) {
-                    p.Environments.Add(new Environment { Name = "One", Parameters = p.Parameters.Select(x => x.Clone()).ToList() });
-                    p.Parameters.Clear();
-                }
-            }
-
             AddDefaultDelimiters(p);
 
             // add internal input if nothing specified
@@ -176,8 +166,6 @@ namespace Transformalize.Configuration.Ext {
         /// <param name="p"></param>
         private static void AutomaticMaps(Process p) {
 
-            var parameters = p.GetActiveParameters();
-
             // create maps for inline field transform maps
             foreach (var field in p.GetAllFields().Where(f => f.Map.Contains(","))) {
                 if (p.Maps.All(m => m.Name != field.Map)) {
@@ -186,7 +174,7 @@ namespace Transformalize.Configuration.Ext {
             }
 
             // create maps for inline parameter transform maps
-            foreach (var transform in parameters.SelectMany(pr => pr.Transforms.Where(t => t.Map.Contains(",")))) {
+            foreach (var transform in p.Parameters.SelectMany(pr => pr.Transforms.Where(t => t.Map.Contains(",")))) {
                 if (p.Maps.All(m => m.Name != transform.Map)) {
                     p.Maps.Add(CreateMap(transform.Map));
                 }
@@ -200,7 +188,7 @@ namespace Transformalize.Configuration.Ext {
                 var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
                 if (connection != null) {
                     foreach (var filter in entity.Filter.Where(QualifiesForAutomaticMap())) {
-                        var parameter = parameters.FirstOrDefault(pr => string.IsNullOrEmpty(pr.Map) && pr.Name == filter.Field && pr.Value == filter.Value);
+                        var parameter = p.Parameters.FirstOrDefault(pr => string.IsNullOrEmpty(pr.Map) && pr.Name == filter.Field && pr.Value == filter.Value);
                         if (parameter != null) {
                             var mapName = filter.Field.GetHashCode().ToString();
                             parameter.Map = mapName;

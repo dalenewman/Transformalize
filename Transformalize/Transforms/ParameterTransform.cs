@@ -42,7 +42,7 @@ namespace Transformalize.Transforms {
 
             Context.Operation.Property = set.First(s => s.Equals(Context.Operation.Property, StringComparison.OrdinalIgnoreCase));
 
-            _parameter = Context.Process.GetActiveParameters().First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
+            _parameter = Context.Process.Parameters.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
         }
 
         public override IRow Operate(IRow row) {

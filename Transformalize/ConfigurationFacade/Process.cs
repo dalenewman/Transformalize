@@ -46,12 +46,6 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public List<LogEntry> Log { get; set; }
 
-      [Cfg]
-      public string Environment { get; set; }
-
-      [Cfg]
-      public List<Environment> Environments { get; set; }
-
       public Process(
           string cfg,
           IDictionary<string, string> parameters,
@@ -152,29 +146,6 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string Id { get; set; }
-
-      public List<Parameter> GetActiveParameters() {
-         if (string.IsNullOrEmpty(Environment)) {
-
-            if (Parameters.Any()) {
-               return Parameters;
-            }
-
-            if (Environments.Any()) {
-               return Environments.First().Parameters;
-            }
-
-         } else {
-            var environment = Environment.ToLower();
-            foreach (var e in Environments) {
-               if (!string.IsNullOrEmpty(e.Name) && e.Name.ToLower() == environment) {
-                  return e.Parameters;
-               }
-            }
-         }
-
-         return new List<Parameter>();
-      }
 
    }
 }

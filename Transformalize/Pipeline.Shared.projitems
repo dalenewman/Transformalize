@@ -21,7 +21,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Delimiter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Entity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Environment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Field.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Filter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConfigurationFacade\Join.cs" />
@@ -49,7 +48,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Delimiter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Entity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\Environment.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Ext\ProcessPreValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Ext\ProcessValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Field.cs" />

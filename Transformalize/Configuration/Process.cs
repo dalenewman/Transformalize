@@ -58,12 +58,6 @@ namespace Transformalize.Configuration {
       [Cfg]
       public List<LogEntry> Log { get; set; }
 
-      [Cfg(value = "")]
-      public string Environment { get; set; }
-
-      [Cfg]
-      public List<Environment> Environments { get; set; }
-
       public Process(
           string cfg,
           IDictionary<string, string> parameters,
@@ -668,13 +662,6 @@ namespace Transformalize.Configuration {
       [Cfg(value = 0)]
       public int Id { get; set; }
 
-      public List<Parameter> GetActiveParameters() {
-         if (!Environments.Any())
-            return new List<Parameter>();
-
-         return string.IsNullOrEmpty(Environment) ? Environments.First().Parameters : Environments.First(e => e.Name == Environment).Parameters;
-      }
-
       public void Dispose() {
          if (Preserve)
             return;
@@ -684,7 +671,6 @@ namespace Transformalize.Configuration {
          Actions?.Clear();
          CalculatedFields?.Clear();
          Connections?.Clear();
-         Environments?.Clear();
          Maps?.Clear();
          Relationships?.Clear();
          Scripts?.Clear();

@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Linq;
+
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Ioc.Autofac;
@@ -25,13 +26,13 @@ using Transformalize.Providers.Trace;
 
 namespace Tests {
 
-    [TestClass]
-    public class TransformParameters {
+   [TestClass]
+   public class TransformParameters {
 
-        [TestMethod]
-        public void A() {
+      [TestMethod]
+      public void A() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <parameters>
         <add name='humanized' value='camelCase' t='replace(lC,l-c).upper()' />
@@ -41,24 +42,23 @@ namespace Tests {
       </entities>
     </add>";
 
-            var logger = new TraceLogger(LogLevel.Debug);
-            using (var outer = ConfigurationContainer.Create(xml, logger)) {
-                var process = outer.Resolve<Process>();
-                using (var inner = DefaultContainer.Create(process, logger, "@()")) {
+         var logger = new TraceLogger(LogLevel.Debug);
+         using (var outer = ConfigurationContainer.Create(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = DefaultContainer.Create(process, logger, "@()")) {
 
-                    inner.Resolve<IProcessController>().Execute();
+               inner.Resolve<IProcessController>().Execute();
 
-                    var parmeters = process.GetActiveParameters();
-                    Assert.AreEqual("CAMEL-CASE", parmeters.First().Value);
-                    Assert.AreEqual("ProductionEnvironments", parmeters.Skip(1).First().Value);
-
+               Assert.AreEqual("CAMEL-CASE", process.Parameters.First().Value);
+               Assert.AreEqual("ProductionEnvironments", process.Parameters.Skip(1).First().Value);
 
 
-                }
+
             }
+         }
 
 
 
-        }
-    }
+      }
+   }
 }

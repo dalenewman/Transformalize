@@ -22,35 +22,34 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Actions {
 
-    public class MapReaderAction : IAction {
+   public class MapReaderAction : IAction {
 
-        private readonly IContext _context;
-        private readonly Map _map;
-        private readonly IMapReader _mapReader;
+      private readonly IContext _context;
+      private readonly Map _map;
+      private readonly IMapReader _mapReader;
 
-        public MapReaderAction(IContext context, Map map, IMapReader mapReader) {
-            _context = context;
-            _map = map;
-            _mapReader = mapReader;
-        }
+      public MapReaderAction(IContext context, Map map, IMapReader mapReader) {
+         _context = context;
+         _map = map;
+         _mapReader = mapReader;
+      }
 
-        public ActionResponse Execute() {
-            var response = new ActionResponse();
-            try {
-                _map.Items.AddRange(_mapReader.Read(_context));
+      public ActionResponse Execute() {
+         var response = new ActionResponse();
+         try {
+            _map.Items.AddRange(_mapReader.Read(_context));
 
-                // populate map based parameter with first item in map if prompt is false
-                if (_map.Items.Any()) {
-                    var parameters = _context.Process.GetActiveParameters();
-                    foreach (var p in parameters.Where(p => p.Map == _map.Name && !p.Prompt)) {
-                        p.Value = _map.Items.First().To.ToString();
-                    }
-                }
-            } catch (Exception ex) {
-                response.Code = 500;
-                response.Message = "Could not read map " + _map.Name + ". Using query: " + _map.Query + ". Error: " + ex.Message;
+            // populate map based parameter with first item in map if prompt is false
+            if (_map.Items.Any()) {
+               foreach (var p in _context.Process.Parameters.Where(p => p.Map == _map.Name && !p.Prompt)) {
+                  p.Value = _map.Items.First().To.ToString();
+               }
             }
-            return response;
-        }
-    }
+         } catch (Exception ex) {
+            response.Code = 500;
+            response.Message = "Could not read map " + _map.Name + ". Using query: " + _map.Query + ". Error: " + ex.Message;
+         }
+         return response;
+      }
+   }
 }

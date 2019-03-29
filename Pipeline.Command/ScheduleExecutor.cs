@@ -43,7 +43,7 @@ namespace Transformalize.Command {
                 if (!string.IsNullOrEmpty(Schedule)) {
                     var schedule = process.Schedule.FirstOrDefault(s => s.Name == Schedule);
                     if (schedule != null) {
-                        var parameter = process.GetActiveParameters().FirstOrDefault(x => x.Name.Equals("Mode", StringComparison.OrdinalIgnoreCase));
+                        var parameter = process.Parameters.FirstOrDefault(x => x.Name.Equals("Mode", StringComparison.OrdinalIgnoreCase));
                         if (parameter != null) {
                             foreach (var action in process.Actions.Where(a => a.Type == "tfl" && a.Url != string.Empty)) {
                                 action.Url = action.Url.SetQueryParam(parameter.Name, schedule.Mode).ToString();
