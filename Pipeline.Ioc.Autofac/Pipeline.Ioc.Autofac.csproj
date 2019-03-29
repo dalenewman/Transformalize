@@ -168,7 +168,6 @@
     <Compile Include="Modules\EntityPipelineModule.cs" />
     <Compile Include="Modules\ProcessControlModule.cs" />
     <Compile Include="Modules\ProcessPipelineModule.cs" />
-    <Compile Include="Modules\TemplateModule.cs" />
     <Compile Include="PipelineAction.cs" />
     <Compile Include="DefaultContainer.cs" />
     <Compile Include="RunTimeRunner.cs" />
@@ -240,10 +239,6 @@
     <ProjectReference Include="..\Transforms\Json\Json.csproj">
       <Project>{98f2bf35-376a-4dfa-baef-cc491410219f}</Project>
       <Name>Json</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
-      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
-      <Name>Velocity</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
       <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>

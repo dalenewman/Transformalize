@@ -174,10 +174,6 @@
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Html</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Velocity\Velocity.csproj">
-      <Project>{ad2c4c26-b3c2-4ece-8d0c-19c27a9de70f}</Project>
-      <Name>Velocity</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -36,7 +36,6 @@ using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Html;
 using Transformalize.Transforms.Json;
-using Transformalize.Transforms.Velocity;
 using Transformalize.Transforms.Xml;
 using Module = Autofac.Module;
 using Parameter = Cfg.Net.Shorthand.Parameter;
@@ -128,7 +127,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new TrimStartTransform(c), new TrimStartTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new TrimEndTransform(c), new TrimEndTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new LineTransform(c), new LineTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new VelocityTransform(c, ctx.Resolve<IReader>()), new VelocityTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ToUpperTransform(c), new ToUpperTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new XPathTransform(c), new XPathTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new IIfTransform(c), new IIfTransform().GetSignatures());

@@ -96,7 +96,6 @@ namespace Transformalize.Ioc.Autofac {
             }
 
             // etc
-            builder.RegisterCallback(new TemplateModule(process).Configure);
             builder.RegisterCallback(new ActionModule(process).Configure);
 
             builder.RegisterCallback(new EntityPipelineModule(process).Configure);
