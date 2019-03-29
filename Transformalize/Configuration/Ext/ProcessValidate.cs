@@ -44,7 +44,6 @@ namespace Transformalize.Configuration.Ext {
          ValidateMapConnections(p, error);
          ValidateMapTransforms(p, error);
          ValidateSearchTypes(p, error);
-         ValidateShouldRuns(p, error, warn);
          ValidateScripts(p, error);
          ValidateParameterMaps(p, error);
          ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
@@ -418,44 +417,6 @@ namespace Transformalize.Configuration.Ext {
              .ToArray();
          foreach (var duplicate in entityDuplicates) {
             error($"The '{duplicate}' entity occurs more than once. Remove or alias one.");
-         }
-      }
-
-
-      private static void ValidateShouldRuns(Process p, Action<string> error, Action<string> warn) {
-
-         // transform run-* fields inherit from field run-* fields if necessary
-         foreach (var entity in p.Entities) {
-            foreach (var field in entity.GetAllFields().Where(f => f.RunField != string.Empty)) {
-               foreach (var transform in field.Transforms.Where(t => t.RunField == string.Empty)) {
-                  transform.RunField = field.RunField;
-                  transform.RunOperator = field.RunOperator;
-                  transform.RunValue = field.RunValue;
-               }
-            }
-         }
-
-         foreach (var entity in p.Entities) {
-            EvaluateRunFields(entity, f => f.Transforms, error, warn);
-            EvaluateRunFields(entity, f => f.Validators, error, warn);
-         }
-      }
-
-      private static void EvaluateRunFields(Entity entity, Func<Field, List<Operation>> operations, Action<string> error, Action<string> warn) {
-         foreach (var field in entity.GetAllFields().Where(f => operations(f).Any(t => t.RunField != string.Empty))) {
-            foreach (var operation in operations(field).Where(t => t.RunField != string.Empty)) {
-               if (entity.TryGetField(operation.RunField, out var runField)) {
-                  var runValue = runField.Type == "bool" && operation.RunValue == Constants.DefaultSetting ? "true" : operation.RunValue;
-                  try {
-                     var value = Constants.ConversionMap[runField.Type](runValue);
-                     operation.ShouldRun = row => Utility.Evaluate(row[runField], operation.RunOperator, value);
-                  } catch (Exception ex) {
-                     error($"Trouble converting {runValue} to {runField.Type}. {ex.Message}");
-                  }
-               } else {
-                  warn($"Run Field {operation.RunField} does not exist in {entity.Alias}, so it will not be evaluated.");
-               }
-            }
          }
       }
 

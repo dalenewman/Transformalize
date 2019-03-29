@@ -544,9 +544,6 @@ namespace Transformalize.Configuration {
         [Cfg(value = false)]
         public bool Learn { get; set; }
 
-        [Cfg(value = "")]
-        public string RunField { get; set; }
-
         [Cfg(value = "default", domain = "true,false,default", toLower = true, ignoreCase = true)]
         public string Dimension { get; set; }
 

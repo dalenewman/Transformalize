@@ -101,21 +101,6 @@ namespace Transformalize.Configuration {
         public string Root { get; set; }
 
         [Cfg(value = "")]
-        public string RunField { get; set; }
-
-        [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
-        public string RunOperator {
-            get => _runOperator;
-            set {
-                value = value?.TrimEnd('s');
-                _runOperator = value;
-            }
-        }
-
-        [Cfg(value = Constants.DefaultSetting)]
-        public string RunValue { get; set; }
-
-        [Cfg(value = "")]
         public string Script { get; set; }
 
         [Cfg(value = Constants.DefaultSetting)]
