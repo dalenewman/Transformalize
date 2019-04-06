@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NLog Logging implementation</description>
     <!--<license type="expression">Apache-2.0</license>-->
-    <releaseNotes>Update dependencies</releaseNotes>
+    <releaseNotes>updated dependencies</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>

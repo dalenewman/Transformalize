@@ -118,7 +118,6 @@
     <Compile Include="ValidationMessages.cs" />
     <Compile Include="Validate.cs" />
     <Compile Include="GeoJsonProvider.cs" />
-    <Compile Include="VelocityTransform.cs" />
     <Compile Include="WebReader.cs" />
   </ItemGroup>
   <ItemGroup>
