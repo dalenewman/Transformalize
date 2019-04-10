@@ -160,7 +160,6 @@
     <Compile Include="Modules\TransformModule.cs" />
     <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
-    <Compile Include="Modules\WebModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
     <Compile Include="Modules\ContextModule.cs" />
@@ -191,10 +190,6 @@
     <ProjectReference Include="..\Providers\OpenXml\OpenXml.csproj">
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>OpenXml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Web\Web.csproj">
-      <Project>{4d9d0159-f680-4e1b-b4e6-9ed1bdb03f40}</Project>
-      <Name>Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>

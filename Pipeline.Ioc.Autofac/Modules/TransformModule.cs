@@ -28,7 +28,6 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.File.Transforms;
-using Transformalize.Providers.Web;
 using Transformalize.Transforms;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.DateMath;
@@ -139,8 +138,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new DistanceTransform(c), new DistanceTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SlugifyTransform(c), new SlugifyTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());

@@ -26,7 +26,6 @@ using Transformalize.Extensions;
 using Transformalize.Providers.Console;
 using Transformalize.Providers.File;
 using Transformalize.Providers.File.Actions;
-using Transformalize.Providers.Web;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
@@ -78,8 +77,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     return new PrintAction(action);
                 case "log":
                     return new LogAction(context, action);
-                case "web":
-                    return new WebAction(context, action);
                 case "wait":
                 case "sleep":
                     return new WaitAction(action);
