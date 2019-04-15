@@ -60,7 +60,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             var dependencies = new List<IDependency> {
                     ctx.Resolve<IReader>(),
                     new FormParameterModifier(new DateMathModifier()),
-                    new EnvironmentModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
+                    new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]))
                 };
 
             if (ctx.IsRegisteredWithName<IDependency>(TransformModule.FieldsName)) {
@@ -132,7 +132,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          var dependencies = new List<IDependency> {
                 ctx.Resolve<IReader>(),
                 new DateMathModifier(),
-                new EnvironmentModifier(new NullPlaceHolderReplacer()),
+                new ParameterModifier(new NullPlaceHolderReplacer()),
                 ctx.ResolveNamed<IDependency>(TransformModule.ParametersName)
             };
 

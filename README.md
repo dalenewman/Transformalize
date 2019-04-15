@@ -159,9 +159,7 @@ It works with many data sources:
 
 ### Getting Started
 
-> This section introduces `<connections/>`, `<entities/>`, and the **`tfl.exe`** command line interface.
-
-This introduction to Transformalize demonstrates it's ability to:
+This *readme* demonstrates how to:
 
 * denormalize a relational database
 * load data into Elasticsearch and SOLR
@@ -175,19 +173,18 @@ To follow along, you need:
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
 * optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
-First, take a look at the diagram below to see part of the NorthWind database's schema:
+For your convenience, here is part of NorthWind's database schema:
 
 <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables above support *Order Details*.  Order details includes important [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)).
+The above shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+tables that all relate to *Order Details*. 
 
----
+> This section introduces `<connections/>`, and `<entities/>`.
 
-Transformalize jobs are arrangements (aka configurations) and may be 
-stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
+Transformalize arrangements are stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
 or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code. 
-Open your editor and paste this in:
+Open VS Code and paste this in:
 
 ```xml
 <cfg name="NorthWind">
@@ -201,7 +198,10 @@ Open your editor and paste this in:
 ```
 
 The arrangment above defines the *input* as the *northwind.sdf* database's `Order Details` table. 
-Save it as *NorthWind.xml* and use **`tfl.exe`** to run it:
+
+Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This 
+runs *NorthWind.xml* with the CLI (`tfl.exe`) and may be done without VS Code.  The output 
+should look like this:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -215,13 +215,13 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 
 ![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step01.gif "Step 1")
 
-Transformalize detected the field names and read 5 rows. 
-This is handy, but if we want to modify or create new fields, 
-we have to define the input fields.
+Transformalize detected field names and read 5 rows. 
+This is nice, but in order to modify or create new fields, 
+we have to define input fields.
 
-> Introducing `<fields/>` and **`check`** mode
+> Introducing `<fields/>`.
 
-We could hand-write fields, or run `tfl` in `check` mode like this:
+We could hand-write fields, or press CTRL-P and run the the `tfl:schema` command:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m check</strong>
@@ -236,8 +236,8 @@ We could hand-write fields, or run `tfl` in `check` mode like this:
 ...
 </pre>
 
-Instead of getting order details (the records), `check` mode 
-parses and returns the arrangement. Copy the `<fields/>` from the 
+Instead of reading the records, `tfl:schema` mode 
+reads the schema and returns the arrangement. Copy the `<fields/>` from the 
 output into your arrangement like this:
 
 ```xml
@@ -246,7 +246,7 @@ output into your arrangement like this:
     <add name="input" provider="sqlce" file="northwind.sdf" />
   </connections>
   <entities>
-    <add name="Order Details">
+    <add name="Order Details" page="1" size="5">
       <!-- copy/paste the fields here -->
       <fields>
         <add name="OrderID" type="int" primary-key="true" />
@@ -292,8 +292,10 @@ may chain transformations as long as the output of one is compatible with the in
 
 > Introducing **`init`** mode
 
-Without an output, `tfl.exe` writes to console. To save output, define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) database. 
-Add an output in `<connections/>` and also remove the `page` and `size` attributes in the `Order Details` entity:
+Define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) 
+database.  Add an output in `<connections/>` (see below).  Also, 
+remove the `page` and `size` attributes in the `Order Details` entity 
+so we get all the records.
 
 ```xml
 <connections>
@@ -303,20 +305,18 @@ Add an output in `<connections/>` and also remove the `page` and `size` attribut
 </connections>
 ```
 
-![Step03](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step03.gif "Step 3")
-
-
 ### Initialization
 
-Initializing does three things:
+Initializing is required anytime you're creating or changing an 
+arrangement's output structure.
+
+It does three things:
 
 1. destroys pre-existing output structures
 2. creates output structures
 3. bulk inserts data.
 
-Initializing is required anytime you create or change an arrangement's output structure.
-
-To initialize, run **`tfl`** in `init` mode using the **`-m`** flag like this:
+Go ahead and press CTRL-P and run the `tfl:init` command.
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m init</strong>
@@ -326,12 +326,15 @@ info  | NorthWind | Order Details | 2155 inserts into output Order Details
 info  | NorthWind | Order Details | Ending 00:00:00.67
 </pre>
 
-Writing *Order Details* into SQLite frees up the console for logging.
+![Step03](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step03.gif "Step 3")
+
+Note that writing *Order Details* into SQLite frees up 
+the console for logging.
 
 #### Mapping
 
-Transformalize doesn't *map* input to pre-existing output.  Instead, it creates a consistent output structure 
-that is optimized for incremental updates.
+Transformalize doesn't *map* input to pre-existing output. Instead, it 
+creates a consistent output structure that is optimized for incremental updates.
 
 You decide:
 
@@ -345,8 +348,9 @@ You decide:
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild and may be time-consuming. So, by default, Transformalize performs incrementals. 
-To determine if an update or insert is necessary, `tfl` compares input with output.
+An *initialization* is a full rebuild and may be time-consuming. So, by default, 
+Transformalize performs incrementals. To determine if an update or insert 
+is necessary, `tfl` compares input with output.
 
 While keys and hashes are used to compare, comparison is unnecessary 
 when an input's provider is queryable and has a row version. 
@@ -363,6 +367,9 @@ ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIME
 
 /* PostgreSql, use the system field xmin */
 ```
+
+Note: I have prepared a *northwind-ts.sdf* database that has row version fields. 
+Add "-ts" to the your input's file name.
 
 Once added, we have to let `tfl` know about `RowVersion` like this:
 
@@ -451,11 +458,8 @@ Here is what the `Orders` entity should look like:
 Next, tell Transformalize how to relate *Order Details* to *Orders*.
 
 #### Relationships
-<span style="background-color:#777777">
 
 > Introducing the **`<relationships/>`** section
-
-</span>
 
 All entities must be related to the first entity in the `<relationships/>` section which 
 follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your arrangement:
@@ -629,11 +633,9 @@ info  | NorthWind |               | Time elapsed: 00:00:00.59
 
 ### Incrementals (Part 2)
 
-Let's simulate a data change:
+Let's simulate a data change.  Use *CompactView* or some other tool to edit *northwind-ts.sdf*.
 
 ```sql
-USE [NorthWind];
-
 UPDATE Customers
 SET CompanyName = 'Bottom Dollar Markets'
 WHERE CustomerID = 'BOTTM';
@@ -662,24 +664,20 @@ customer has purchased 35 items (in *Order Details*), the flat table is updated 
 
 #### Scheduling Incrementals
 
-> Intrucing the **`-s`** (schedule) flag
-
 Most likely, you'll want to schedule incremantals so that the de-normalized data is current. 
-Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Using 
-the **`-s`** schedule flag, pass in a [cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/tutorial-lesson-06.html) 
-like this:
+Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Add this next 
+bit to your arrangement: 
 
-<pre style="font-size:smaller;">
-<strong>>tfl -a "c:\Temp\NorthWind.xml" -s "0/5 * * * * ?"
-info  | Process   |                 Starting Scheduler: 0/5 * * * * ?</strong>
-info  | NorthWind |               | Compiled NorthWind user code in 00:00:00.1032057.
-info  | NorthWind | Order Details | Change Detected: No.
-info  | NorthWind | Orders        | Change Detected: No.
-... and just keeps running ...
-</pre>
+```xml
+<schedule>
+   <add name="every 3 seconds" cron="0/3 * * * * ?" mode="default" />
+</schedule>
+```
 
 This runs an incremental every five seconds until you press **`CTRL-C`**.  If you 
 want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
+
+![Scheduler](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/scheduler.gif "Scheduler")
 
 ### Transformations to Make Life Easier
 
