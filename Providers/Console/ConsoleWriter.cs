@@ -20,33 +20,33 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
 
-    public class ConsoleWriter : IWrite {
-        private readonly ISerialize _serializer;
+   public class ConsoleWriter : IWrite {
+      private readonly ISerialize _serializer;
 
-        public ConsoleWriter(ISerialize serializer) {
-            _serializer = serializer;
-        }
+      public ConsoleWriter(ISerialize serializer) {
+         _serializer = serializer;
+      }
 
-        public void Write(IEnumerable<IRow> rows) {
-            if (!string.IsNullOrEmpty(_serializer.Header)) {
-                System.Console.Out.WriteLine(_serializer.Header);
+      public void Write(IEnumerable<IRow> rows) {
+         if (!string.IsNullOrEmpty(_serializer.Header)) {
+            System.Console.Out.WriteLine(_serializer.Header);
+         }
+
+         using (var enumerator = rows.GetEnumerator()) {
+            var last = !enumerator.MoveNext();
+
+            while (!last) {
+               var current = enumerator.Current;
+               last = !enumerator.MoveNext();
+               System.Console.Out.Write(_serializer.RowPrefix);
+               System.Console.Out.Write(_serializer.Serialize(current));
+               System.Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
             }
+         }
 
-            using (var enumerator = rows.GetEnumerator()) {
-                var last = !enumerator.MoveNext();
-
-                while (!last) {
-                    var current = enumerator.Current;
-                    last = !enumerator.MoveNext();
-                    System.Console.Out.Write(_serializer.RowPrefix);
-                    System.Console.Out.Write(_serializer.Serialize(current));
-                    System.Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
-                }
-            }
-
-            if (!string.IsNullOrEmpty(_serializer.Footer)) {
-                System.Console.Out.WriteLine(_serializer.Footer);
-            }
-        }
-    }
+         if (!string.IsNullOrEmpty(_serializer.Footer)) {
+            System.Console.Out.WriteLine(_serializer.Footer);
+         }
+      }
+   }
 }

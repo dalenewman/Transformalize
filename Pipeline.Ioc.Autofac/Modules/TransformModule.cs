@@ -144,6 +144,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new GuidTransform(c), new GuidTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new HexTransform(c), new HexTransform().GetSignatures());
 
          // getting properties from the configuration you're running in
          RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());
@@ -195,8 +196,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
          // xml
          RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ?
-                 new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) :
-                 new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
+            new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) :
+            new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
          );
 
          var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");

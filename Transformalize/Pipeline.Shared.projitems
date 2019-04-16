@@ -152,6 +152,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\HexTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ActionTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AnyTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AppendFieldTransform.cs" />

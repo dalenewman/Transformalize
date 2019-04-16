@@ -23,70 +23,68 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
-    public class CsvSerializer : ISerialize {
+   public class CsvSerializer : ISerialize {
 
-        private const string Quote = "\"";
-        private const string EscapedQuote = "\"\"";
-        private static readonly char[] CharactersThatMustBeQuoted = { ',', '"', '\n' };
+      private const string Quote = "\"";
+      private const string EscapedQuote = "\"\"";
+      private static readonly char[] CharactersThatMustBeQuoted = { ',', '"', '\n' };
 
-        private readonly OutputContext _context;
-        private readonly int _length;
-        private readonly Field[] _fields;
+      private readonly int _length;
+      private readonly Field[] _fields;
 
-        public CsvSerializer(OutputContext context) {
-            _context = context;
-            _fields = context.OutputFields.Where(f => !f.System).ToArray();
-            _length = _fields.Length;
-        }
-        public string Serialize(IRow row) {
-            var builder = new StringBuilder();
-            for (var index = 0; index < _length; index++) {
-                var field = _fields[index];
-                var value = row[field];
-                switch (field.Type) {
-                    case "byte[]": 
-                        builder.Append(value == null ? string.Empty : value is byte[] ? Convert.ToBase64String((byte[])value) : value);
-                        break;
-                    case "date":
-                    case "datetime":
-                        if (field.Format != string.Empty) {
-                            var date = (DateTime)value;
-                            var formatted = date.ToString(field.Format);
-                            builder.Append(Escape(formatted));
-                        } else {
-                            builder.Append(Escape(value.ToString()));
-                        }
-                        break;
-                    default:
-                        builder.Append(Escape(value.ToString()));
-                        break;
-                }
-                if (index < _length - 1) {
-                    builder.Append(",");
-                }
+      public CsvSerializer(OutputContext context) {
+         _fields = context.OutputFields.Where(f => !f.System).ToArray();
+         _length = _fields.Length;
+      }
+      public string Serialize(IRow row) {
+         var builder = new StringBuilder();
+         for (var index = 0; index < _length; index++) {
+            var field = _fields[index];
+            var value = row[field];
+            switch (field.Type) {
+               case "byte[]":
+                  builder.Append(value == null ? string.Empty : value is byte[]? Convert.ToBase64String((byte[])value) : value);
+                  break;
+               case "date":
+               case "datetime":
+                  if (field.Format != string.Empty) {
+                     var date = (DateTime)value;
+                     var formatted = date.ToString(field.Format);
+                     builder.Append(Escape(formatted));
+                  } else {
+                     builder.Append(Escape(value.ToString()));
+                  }
+                  break;
+               default:
+                  builder.Append(Escape(value.ToString()));
+                  break;
             }
-            return builder.ToString();
-        }
-
-        string ISerialize.Header {
-            get {
-                return string.Join(",", _fields.Select(f => f.Alias));
+            if (index < _length - 1) {
+               builder.Append(",");
             }
-        }
+         }
+         return builder.ToString();
+      }
 
-        public string Footer => string.Empty;
-        public string RowSuffix { get; } = string.Empty;
-        public string RowPrefix { get; } = string.Empty;
+      string ISerialize.Header {
+         get {
+            return string.Join(",", _fields.Select(f => f.Alias));
+         }
+      }
 
-        public static string Escape(string s) {
-            if (s.Contains(Quote))
-                s = s.Replace(Quote, EscapedQuote);
+      public string Footer => string.Empty;
+      public string RowSuffix { get; } = string.Empty;
+      public string RowPrefix { get; } = string.Empty;
 
-            if (s.IndexOfAny(CharactersThatMustBeQuoted) > -1)
-                s = Quote + s + Quote;
+      public static string Escape(string s) {
+         if (s.Contains(Quote))
+            s = s.Replace(Quote, EscapedQuote);
 
-            return s;
-        }
+         if (s.IndexOfAny(CharactersThatMustBeQuoted) > -1)
+            s = Quote + s + Quote;
 
-    }
+         return s;
+      }
+
+   }
 }
