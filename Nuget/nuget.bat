@@ -1,4 +1,4 @@
-REM nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 REM 
 REM nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
@@ -16,8 +16,8 @@ REM nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c
 REM nuget pack Transformalize.Transform.Compression.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Transform.DateMath.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Transform.Geography.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Transform.Html.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Transform.Json.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Transform.Html.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Transform.Json.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
 
 

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize</id>
-    <version>0.5.1-beta</version>
+    <version>0.5.2.2-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The main Transformalize library</description>
-    <releaseNotes>added cube property to connection</releaseNotes>
+    <releaseNotes>additions to pagination helper class</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>

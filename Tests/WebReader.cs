@@ -19,14 +19,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests {
 
-    [TestClass]
-    public class WebReaderTest {
+   [TestClass]
+   public class WebReaderTest {
 
-        [TestMethod]
-        [Ignore]
-        public void Test() {
+      [TestMethod]
+      [Ignore]
+      public void Test() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
         <connections>
             <add name='input' provider='web' url='' user='' password='' />
@@ -55,10 +55,10 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
+         var composer = new CompositionRoot();
+         var controller = composer.Compose(xml);
+         controller.Execute();
 
-        }
-    }
+      }
+   }
 }

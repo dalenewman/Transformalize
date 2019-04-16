@@ -76,6 +76,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="PaginationTest.cs" />
     <Compile Include="TwoEntitiesReadOnly.cs" />
     <Compile Include="TestCalculatedFieldProcess.cs" />
     <Compile Include="TransformParameters.cs" />
