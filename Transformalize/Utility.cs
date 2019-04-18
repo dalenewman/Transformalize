@@ -181,13 +181,16 @@ namespace Transformalize {
 
       public static void CodeToError(IContext context, string code) {
          var lineNo = 1;
+         var sb = new StringBuilder();
+         sb.AppendLine("Code with Line Numbers");
          using (var sr = new StringReader(code)) {
             string line;
             while ((line = sr.ReadLine()) != null) {
-               context.Error($"{lineNo:0000} {line.Replace("{", "{{").Replace("}", "}}")}");
+               sb.AppendLine($"{lineNo:0000} {line.Replace("{", "{{").Replace("}", "}}")}");
                ++lineNo;
             }
          }
+         context.Error(sb.ToString());
       }
 
       public static char FindDelimiter(IEnumerable<string> strings, List<Delimiter> delimiters, bool quoted) {
@@ -232,7 +235,7 @@ namespace Transformalize {
 #if NETS10
          return src.GetType().GetRuntimeProperty(propName).GetValue(src);
 #else
-            return src.GetType().GetProperty(propName)?.GetValue(src, null);
+         return src.GetType().GetProperty(propName)?.GetValue(src, null);
 #endif
       }
 

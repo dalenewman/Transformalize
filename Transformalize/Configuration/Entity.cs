@@ -273,7 +273,7 @@ namespace Transformalize.Configuration {
 
             // any fields that are sortable should have sort-field populated
             foreach (var field in GetAllFields().Where(f => f.Sortable == "true" && string.IsNullOrEmpty(f.SortField))) {
-                field.SortField = string.IsNullOrEmpty(Query) ? field.Alias : field.Name;
+                field.SortField = field.Name;
             }
 
         }
