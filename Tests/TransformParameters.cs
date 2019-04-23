@@ -37,6 +37,7 @@ namespace Tests {
       <parameters>
         <add name='humanized' value='camelCase' t='replace(lC,l-c).upper()' />
         <add name='replaced' value='TestEnvironment' t='replace(Test,Production).trimEnd(s).append(s)' />
+        <add name='copied' t='copy(humanized).lower()' />
       </parameters>
       <entities>
       </entities>
@@ -51,7 +52,7 @@ namespace Tests {
 
                Assert.AreEqual("CAMEL-CASE", process.Parameters.First().Value);
                Assert.AreEqual("ProductionEnvironments", process.Parameters.Skip(1).First().Value);
-
+               Assert.AreEqual("camel-case", process.Parameters.Last().Value);
 
 
             }

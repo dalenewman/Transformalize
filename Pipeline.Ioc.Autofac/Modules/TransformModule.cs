@@ -145,6 +145,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new GuidTransform(c), new GuidTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new HexTransform(c), new HexTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new StartOfWeekTransform(c), new StartOfWeekTransform().GetSignatures());
 
          // getting properties from the configuration you're running in
          RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());

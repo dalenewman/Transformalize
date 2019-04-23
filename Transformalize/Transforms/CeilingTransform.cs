@@ -20,45 +20,46 @@ using System.Collections.Generic;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class CeilingTransform : BaseTransform {
-        private readonly Func<IRow, object> _transform;
 
-        public CeilingTransform(IContext context = null) : base(context, "decimal") {
-            if (IsMissingContext()) {
-                return;
-            }
+   public class CeilingTransform : BaseTransform {
+      private readonly Func<IRow, object> _transform;
 
-            if (IsNotReceivingNumber()) {
-                return;
-            }
+      public CeilingTransform(IContext context = null) : base(context, "decimal") {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            var input = SingleInput();
-            switch (input.Type) {
-                case "decimal":
-                    Returns = "decimal";
-                    _transform = row => Math.Ceiling((decimal)row[input]);
-                    break;
-                case "double":
-                    Returns = "double";
-                    _transform = row => Math.Ceiling((double)row[input]);
-                    break;
-                default:
-                    // @ojw713 pointed out bug here (used to be Math.Floor)
-                    Returns = "decimal";
-                    _transform = row => Math.Ceiling(Convert.ToDecimal(row[input]));
-                    break;
+         if (IsNotReceivingNumber()) {
+            return;
+         }
 
-            }
-        }
+         var input = SingleInput();
+         switch (input.Type) {
+            case "decimal":
+               Returns = "decimal";
+               _transform = row => Math.Ceiling((decimal)row[input]);
+               break;
+            case "double":
+               Returns = "double";
+               _transform = row => Math.Ceiling((double)row[input]);
+               break;
+            default:
+               // @ojw713 pointed out bug here (used to be Math.Floor)
+               Returns = "decimal";
+               _transform = row => Math.Ceiling(Convert.ToDecimal(row[input]));
+               break;
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = _transform(row);
-            return row;
-        }
+         }
+      }
+
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = _transform(row);
+         return row;
+      }
 
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("ceiling");
-        }
-    }
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("ceiling");
+      }
+   }
 }

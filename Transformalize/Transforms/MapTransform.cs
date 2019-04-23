@@ -40,7 +40,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            _input = IsFirst() ? SingleInput() : Context.Field;
+            _input = SingleInput();
         }
 
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {

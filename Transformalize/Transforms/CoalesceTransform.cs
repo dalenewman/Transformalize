@@ -21,34 +21,34 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class CoalesceTransform : BaseTransform {
-        private class FieldWithDefault {
-            public Field Field { get; set; }
-            public object Default { get; set; }
-        }
 
-        private readonly FieldWithDefault[] _input;
+   public class CoalesceTransform : BaseTransform {
+      private class FieldWithDefault {
+         public Field Field { get; set; }
+         public object Default { get; set; }
+      }
 
-        public CoalesceTransform(IContext context = null) : base(context, null) {
-            if (IsMissingContext()) {
-                return;
-            }
-            
-            _input = MultipleInput().Select(f => new FieldWithDefault { Field = f, Default = f.Convert(f.Default) }).ToArray();
+      private readonly FieldWithDefault[] _input;
 
-        }
+      public CoalesceTransform(IContext context = null) : base(context, null) {
+         if (IsMissingContext()) {
+            return;
+         }
 
-        public override IRow Operate(IRow row) {
-            var first = _input.FirstOrDefault(f => !row[f.Field].Equals(f.Default));
-            if (first != null) {
-                row[Context.Field] = Context.Field.Type == first.Field.Type ? row[first.Field] : Context.Field.Convert(row[first.Field]);
-            }
-            return row;
-        }
+         _input = MultipleInput().Select(f => new FieldWithDefault { Field = f, Default = f.Convert(f.Default) }).ToArray();
 
-        public override IEnumerable<OperationSignature> GetSignatures()
-        {
-            yield return new OperationSignature("coalesce");
-        }
-    }
+      }
+
+      public override IRow Operate(IRow row) {
+         var first = _input.FirstOrDefault(f => !row[f.Field].Equals(f.Default));
+         if (first != null) {
+            row[Context.Field] = Context.Field.Type == first.Field.Type ? row[first.Field] : Context.Field.Convert(row[first.Field]);
+         }
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("coalesce");
+      }
+   }
 }

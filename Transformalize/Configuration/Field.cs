@@ -422,50 +422,6 @@ namespace Transformalize.Configuration {
          return Constants.ObjectConversionMap[Type](value);
       }
 
-      public void TransformCopyIntoParameters(Entity entity = null) {
-
-         if (RequiresCopyParameters()) {
-            if (!Transforms.Any()) {
-               Transforms.Add(new Operation { Method = "copy" });
-            }
-            var first = Transforms.First();
-            var expression = Utility.Split(T, ExpressionSplitter)[0];
-            var parameters = Utility.Split(expression.Substring(expression.IndexOf('(') + 1), ',');
-
-            foreach (var p in parameters) {
-               var parameter = new Parameter();
-               var modified = p.EndsWith(")") ? p.Substring(0, p.Length - 1) : p;
-               if (modified.Contains(":")) {
-                  //named values
-                  var named = modified.Split(':');
-                  parameter.Name = named[0];
-                  parameter.Value = named[1];
-               } else if (modified.Contains(".")) {
-                  // entity, field combinations
-                  var dotted = modified.Split('.');
-                  parameter.Entity = dotted[0];
-                  parameter.Field = dotted[1];
-               } else {
-                  parameter.Field = modified; // just fields
-                  if (entity != null) {
-                     parameter.Entity = entity.Alias;
-                  }
-               }
-               first.Parameters.Add(parameter);
-            }
-            // hack
-            if (first.Parameters.Count == 1 && first.Parameters.First().Field == "*") {
-               first.Parameter = "*";
-               first.Parameters.Clear();
-            }
-         }
-
-      }
-
-      private bool RequiresCopyParameters() {
-         return T.StartsWith("copy(", StringComparison.Ordinal);
-      }
-
       internal bool Is(string type) {
          return type == Type;
       }

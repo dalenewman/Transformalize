@@ -567,7 +567,7 @@ namespace Transformalize.Configuration {
             // somehow get the fields necessary for the calculated fields process
             // in format's format attr
             // in eval's expression attr
-            // in cs, js, csscript, jint, and chakra's script attr
+            // in cs, js, csscript, and jint's script attr
             var found = new List<Field>();
             foreach (var transform in entity.CalculatedFields.SelectMany(cf => cf.Transforms)) {
                var content = string.Join(" ", transform.Format, transform.Script, transform.Expression, transform.Template).Trim();

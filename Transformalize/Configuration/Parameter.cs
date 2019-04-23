@@ -176,7 +176,7 @@ namespace Transformalize.Configuration {
         }
 
         public override string ToString() {
-            return $"{Name}={Value}";
+            return string.IsNullOrEmpty(Field) ?  $"{Name}={Value}" : Field;
         }
 
     }
