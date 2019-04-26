@@ -1,0 +1,24 @@
+﻿<cfg name="Stat">
+   <connections>
+      <add name="input" provider="internal" />
+      <add name="output" provider="sqlserver" server="localhost" database="Junk" />
+   </connections>
+   <entities>
+      <add name="Record" update="false">
+         <fields>
+            <add name="Host" />
+            <add name="Process" />
+            <add name="Type" />
+            <add name="Name" />
+            <add name="InputProvider" />
+            <add name="InputServer" />
+            <add name="OutputProvider" />
+            <add name="OutputServer" />            
+            <add name="Started" type="datetime" />
+            <add name="Finished" type="datetime" />
+            <add name="Count" type="long" />            
+         </fields>
+      </add>
+   </entities>
+</cfg>
+ 

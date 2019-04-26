@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Ioc.Autofac;
 using Transformalize.Providers.Trace;
+using Transformalize.Containers.Autofac;
 
 namespace Tests {
     [TestClass]
@@ -45,7 +45,7 @@ namespace Tests {
 
             var logger = new TraceLogger(LogLevel.Debug);
 
-            using (var scope = ConfigurationContainer.Create(main, logger, new Dictionary<string, string>(), "@[]")) {
+            using (var scope = new ConfigurationContainer().CreateScope(main, logger, new Dictionary<string, string>(), "@[]")) {
                 var process = scope.Resolve<Process>();
                 Assert.AreEqual(0, process.Errors().Length);
                 Assert.AreEqual(true, process.CalculatedFields.First().Transforms.First().Method == "format");

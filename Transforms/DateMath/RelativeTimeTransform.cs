@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.DateMath {
+namespace Transformalize.Transforms.Dates {
 
     public class TimeAgoTransform : RelativeTimeTransform {
         public TimeAgoTransform(IContext context = null) : base(context, true) {}

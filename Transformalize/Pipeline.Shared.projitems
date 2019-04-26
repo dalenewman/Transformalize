@@ -9,7 +9,7 @@
     <Import_RootNamespace>Transformalize</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Actions\ActionResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ActionResponse.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\ExitAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\LogAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Actions\NullAction.cs" />

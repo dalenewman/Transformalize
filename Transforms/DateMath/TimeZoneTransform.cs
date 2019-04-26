@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.DateMath {
+namespace Transformalize.Transforms.Dates {
     public class TimeZoneTransform : BaseTransform {
 
         private readonly Field _input;

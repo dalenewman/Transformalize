@@ -16,17 +16,23 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Logging;
+using Transformalize.Transforms.Dates;
 
 namespace Tests {
 
-    [TestClass]
-    public class DateDiffTransform {
+   [TestClass]
+   public class TestDateDiffTransform {
 
-        [TestMethod]
-        public void DateDiff1() {
+      [TestMethod]
+      public void DateDiff1() {
 
-            var xml = @"
+         var xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' >
@@ -50,17 +56,21 @@ namespace Tests {
     </add>
             ".Replace('\'', '"');
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var transform = new TransformHolder((c)=>new DateDiffTransform(c), new DateDiffTransform().GetSignatures());
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual(0, output[0][cf[0]]);
-            Assert.AreEqual(61, output[0][cf[1]]);
-            Assert.AreEqual(87840, output[0][cf[2]]);
-            Assert.AreEqual(1464d, output[0][cf[3]]);
-            //Assert.AreEqual(1640, output[0][cf[4]]);
-            //Assert.AreEqual(1644, output[0][cf[5]]);
-        }
-    }
+         using(var outer = new ConfigurationContainer(transform).CreateScope(xml,new DebugLogger())) {
+            var process = outer.Resolve<Process>();
+            using(var inner = new Container(transform).CreateScope(process, new DebugLogger())) {
+               var output = inner.Resolve<IProcessController>().Read().ToArray();
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual(0, output[0][cf[0]]);
+               Assert.AreEqual(61, output[0][cf[1]]);
+               Assert.AreEqual(87840, output[0][cf[2]]);
+               Assert.AreEqual(1464d, output[0][cf[3]]);
+               //Assert.AreEqual(1640, output[0][cf[4]]);
+               //Assert.AreEqual(1644, output[0][cf[5]]);
+            }
+         }
+      }
+   }
 }

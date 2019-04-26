@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Cfg.Net.Contracts;
 
-namespace Transformalize.Transforms.DateMath {
+namespace Transformalize.Transforms.Dates {
     public class DateMathModifier : ICustomizer {
 
         private const string DefaultFormat = "yyyy-MM-dd";

@@ -96,12 +96,8 @@ namespace Transformalize.Transforms {
       public Field SingleInputForMultipleOutput() {
 
          var name = string.Empty;
-         if (Context.Operation.Parameter == string.Empty) {
-            if (Context.Operation.Parameters.Where(p => p.Input).Any()) {
-               name = Context.Operation.Parameters.First(p => p.Input).Field;
-            }
-         } else {
-            name = Context.Operation.Parameter;
+         if (Context.Operation.Parameters.Where(p => p.Input).Any()) {
+            name = Context.Operation.Parameters.First(p => p.Input).Field;
          }
 
          if (name != string.Empty) {

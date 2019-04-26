@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class FromXmlTransform {
+   [TestClass]
+   public class TestFromXmlTransform {
 
-        [TestMethod]
-        public void Try1() {
+      [TestMethod]
+      public void Try1() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
@@ -50,20 +55,30 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         var fromXml = new TransformHolder((c) => new Transformalize.Transforms.Xml.FromXmlTransform(c), new Transformalize.Transforms.Xml.FromXmlTransform().GetSignatures());
 
-            Assert.AreEqual(4, output.Length);
+         using (var cfgScope = new ConfigurationContainer(fromXml).CreateScope(xml, logger)) {
 
-            var name = composer.Process.Entities.First().CalculatedFields.First();
+            var process = cfgScope.Resolve<Process>();
 
-            var first = output[0];
-            Assert.AreEqual("deez", first[name]);
+            using (var scope = new Container(fromXml).CreateScope(process, logger)) {
 
-            var second = output[1];
-            Assert.AreEqual("nutz", second[name]);
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
 
-        }
-    }
+               Assert.AreEqual(4, output.Length);
+
+               var name = process.Entities.First().CalculatedFields.First();
+
+               var first = output[0];
+               Assert.AreEqual("deez", first[name]);
+
+               var second = output[1];
+               Assert.AreEqual("nutz", second[name]);
+            }
+         }
+
+
+      }
+   }
 }

@@ -18,10 +18,14 @@
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
-    public class NullOutputController : IOutputController {
-        public int BatchId { get; private set; }
-        public void Initialize() { }
-        public void Start() { }
-        public void End() { }
-    }
+   public class NullOutputController : IOutputController {
+      public int BatchId { get; private set; }
+      public ActionResponse Initialize() {
+         return new ActionResponse(200, "Ok") {
+            Action = new Configuration.Action { Type = "internal", ErrorMode = "ignore" }
+         };
+      }
+      public void Start() { }
+      public void End() { }
+   }
 }

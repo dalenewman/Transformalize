@@ -17,10 +17,11 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using Transformalize.Actions;
 
 namespace Transformalize.Contracts {
     public interface IPipeline : IRead, IDisposable {
-        void Initialize();
+        ActionResponse Initialize();
         void Register(IMapReader mapReader);
         void Register(IRead reader);
         void Register(ITransform transformer);

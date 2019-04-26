@@ -19,8 +19,8 @@ using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
-using Transformalize.Ioc.Autofac;
 using Transformalize.Providers.Trace;
 
 namespace Tests {
@@ -61,9 +61,9 @@ namespace Tests {
     </add>";
 
             var tracer = new TraceLogger(LogLevel.Debug);
-            using (var outer = ConfigurationContainer.Create(xml, tracer, new Dictionary<string, string>(), "@[]")) {
+            using (var outer = new ConfigurationContainer().CreateScope(xml, tracer, null, "@[]")) {
                 var process = outer.Resolve<Process>();
-                using (var inner = DefaultContainer.Create(process, tracer, "@[]")) {
+                using (var inner = new Container().CreateScope(process, tracer)) {
                     var context = inner.Resolve<IContext>();
                     foreach (var error in process.Errors()) {
                         context.Error(error);

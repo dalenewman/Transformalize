@@ -17,6 +17,7 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Actions;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -47,8 +48,8 @@ namespace Transformalize.Impl {
          Context.Debug(() => $"Registering {_controller.GetType().Name}.");
       }
 
-      public void Initialize() {
-         _controller.Initialize();
+      public ActionResponse Initialize() {
+         return _controller.Initialize();
       }
 
       public void Register(IMapReader mapReader) {

@@ -485,9 +485,6 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Src { get; set; }
 
-      [Cfg(value = "auto", domain = "auto,chakra,jint", toLower = true)]
-      public string Engine { get; set; }
-
       [Cfg(value = "")]
       public string Format { get; set; }
 

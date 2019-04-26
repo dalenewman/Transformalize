@@ -20,54 +20,54 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
-    /// <summary>
-    /// Things that every output needs
-    /// </summary>
-    public abstract class BaseOutputController : IOutputController {
+   /// <summary>
+   /// Things that every output needs
+   /// </summary>
+   public abstract class BaseOutputController : IOutputController {
 
-        public OutputContext Context { get; set; }
-        public IAction Initializer { get; set; }
-        public IInputProvider InputProvider { get; set; }
-        public IOutputProvider OutputProvider { get; set; }
+      public OutputContext Context { get; set; }
+      public IAction Initializer { get; set; }
+      public IInputProvider InputProvider { get; set; }
+      public IOutputProvider OutputProvider { get; set; }
 
-        protected BaseOutputController(
-            OutputContext context,
-            IAction initializer,
-            IInputProvider inputProvider,
-            IOutputProvider outputProvider) {
-            Context = context;
-            Initializer = initializer;
-            InputProvider = inputProvider;
-            OutputProvider = outputProvider;
-        }
+      protected BaseOutputController(
+          OutputContext context,
+          IAction initializer,
+          IInputProvider inputProvider,
+          IOutputProvider outputProvider) {
+         Context = context;
+         Initializer = initializer;
+         InputProvider = inputProvider;
+         OutputProvider = outputProvider;
+      }
 
-        public virtual void Initialize() {
-            Context.Debug(() => $"Initializing with {Initializer.GetType().Name}");
-            Initializer.Execute();
-        }
+      public virtual ActionResponse Initialize() {
+         Context.Debug(() => $"Initializing with {Initializer.GetType().Name}");
+         return Initializer.Execute();
+      }
 
-        /// <summary>
-        /// Implementation should over-ride Start, but still run base.Start() to set
-        /// Context.Entity.MaxVersion and Context.Entity.MinVersion.  In addition, the 
-        /// implementation should:
-        /// 
-        /// * query and set Context.Entity.BatchId (the max. TflBatchId) 
-        /// * query and set Context.Entity.Identity (the max. TflKey)
-        /// * query if output has any records and use in conjunction with MinVersion determine Content.Entity.IsFirstRun (MinVersion == null && outputCount == 0)
-        /// </summary>
-        public virtual void Start() {
-            Context.Debug(() => "Starting");
-            Context.Entity.MaxVersion = InputProvider.GetMaxVersion();
-            Context.Entity.MinVersion = OutputProvider.GetMaxVersion();
-            Context.Entity.BatchId = OutputProvider.GetNextTflBatchId();
-            Context.Entity.Identity = OutputProvider.GetMaxTflKey();
-        }
+      /// <summary>
+      /// Implementation should over-ride Start, but still run base.Start() to set
+      /// Context.Entity.MaxVersion and Context.Entity.MinVersion.  In addition, the 
+      /// implementation should:
+      /// 
+      /// * query and set Context.Entity.BatchId (the max. TflBatchId) 
+      /// * query and set Context.Entity.Identity (the max. TflKey)
+      /// * query if output has any records and use in conjunction with MinVersion determine Content.Entity.IsFirstRun (MinVersion == null && outputCount == 0)
+      /// </summary>
+      public virtual void Start() {
+         Context.Debug(() => "Starting");
+         Context.Entity.MaxVersion = InputProvider.GetMaxVersion();
+         Context.Entity.MinVersion = OutputProvider.GetMaxVersion();
+         Context.Entity.BatchId = OutputProvider.GetNextTflBatchId();
+         Context.Entity.Identity = OutputProvider.GetMaxTflKey();
+      }
 
-        /// <summary>
-        /// Implementation may optionally over-ride End
-        /// </summary>
-        public virtual void End() {
-            Context.Debug(() => "Ending");
-        }
-    }
+      /// <summary>
+      /// Implementation may optionally over-ride End
+      /// </summary>
+      public virtual void End() {
+         Context.Debug(() => "Ending");
+      }
+   }
 }

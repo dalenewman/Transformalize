@@ -33,8 +33,8 @@ namespace Transformalize.Impl {
             _pipeline.Execute();
         }
 
-        public void Initialize() {
-            _pipeline.Initialize();
+        public ActionResponse Initialize() {
+            return _pipeline.Initialize();
         }
 
         public void Register(IMapReader mapReader) {

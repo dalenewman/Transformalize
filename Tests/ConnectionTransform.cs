@@ -15,18 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Logging;
+using Transformalize.Providers.File.Transforms;
+using Transformalize.Transforms;
 
 namespace Tests {
 
-    [TestClass]
-    public class ConnectionTransform {
+   [TestClass]
+   public class TestConnectionTransform {
 
-        [TestMethod]
-        public void FileStuff() {
+      [TestMethod]
+      public void FileStuff() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <connections>
         <add name='input' provider='internal' file='c:\temp.txt' port='6' />
@@ -55,25 +63,34 @@ namespace Tests {
     </add>
             ";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var transforms = new List<TransformHolder> {
+            new TransformHolder((c) => new FileNameTransform(c), new FileNameTransform().GetSignatures()),
+            new TransformHolder((c) => new FileExtTransform(c), new FileExtTransform().GetSignatures()),
+            new TransformHolder((c) => new FilePathTransform(c), new FilePathTransform().GetSignatures())
+         }.ToArray();
 
-            var f = composer.Process.Entities.First().CalculatedFields;
-            var file = f.First(cf => cf.Name == "File");
-            var port = f.First(cf => cf.Name == "Port");
-            var fileName = f.First(cf => cf.Name == "FileName");
-            var fileNameNoExt = f.First(cf => cf.Name == "FileNameNoExt");
-            var fileExt = f.First(cf => cf.Name == "FileExt");
-            var filePath = f.First(cf => cf.Name == "FilePath");
+         using (var outer = new ConfigurationContainer(transforms).CreateScope(xml, new DebugLogger())) {
+            var process = outer.Resolve<Process>();
 
-            Assert.AreEqual(@"c:\temp.txt", output[0][file]);
-            Assert.AreEqual(6, output[0][port]);
-            Assert.AreEqual(@"2016-04-24.txt", output[0][fileName]);
-            Assert.AreEqual(@"2016-04-24", output[0][fileNameNoExt]);
-            Assert.AreEqual(@".txt", output[0][fileExt]);
-            Assert.AreEqual(@"\\server\projects\ETL\2016-04-24.txt", output[0][filePath]);
+            using (var inner = new Container(transforms).CreateScope(process, new DebugLogger())) {
+               var output = inner.Resolve<IProcessController>().Read().ToArray();
 
-        }
-    }
+               var f = process.Entities.First().CalculatedFields;
+               var file = f.First(cf => cf.Name == "File");
+               var port = f.First(cf => cf.Name == "Port");
+               var fileName = f.First(cf => cf.Name == "FileName");
+               var fileNameNoExt = f.First(cf => cf.Name == "FileNameNoExt");
+               var fileExt = f.First(cf => cf.Name == "FileExt");
+               var filePath = f.First(cf => cf.Name == "FilePath");
+
+               Assert.AreEqual(@"c:\temp.txt", output[0][file]);
+               Assert.AreEqual(6, output[0][port]);
+               Assert.AreEqual(@"2016-04-24.txt", output[0][fileName]);
+               Assert.AreEqual(@"2016-04-24", output[0][fileNameNoExt]);
+               Assert.AreEqual(@".txt", output[0][fileExt]);
+               Assert.AreEqual(@"\\server\projects\ETL\2016-04-24.txt", output[0][filePath]);
+            }
+         }
+      }
+   }
 }

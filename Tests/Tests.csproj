@@ -43,8 +43,20 @@
     <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
     </Reference>
+    <Reference Include="Cfg.Net.Environment, Version=0.3.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Environment.0.3.4\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Environment.dll</HintPath>
+    </Reference>
+    <Reference Include="Cfg.Net.Reader, Version=0.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Reader.0.3.3\lib\net45\Cfg.Net.Reader.dll</HintPath>
+    </Reference>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.2.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Cfg-NET.Shorthand.0.2.11\lib\portable-net45+win8+wpa81+wp8\Cfg.Net.Shorthand.dll</HintPath>
+    </Reference>
     <Reference Include="CfgNet, Version=0.10.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Cfg-NET.0.10.4\lib\net462\CfgNet.dll</HintPath>
+    </Reference>
+    <Reference Include="DateMath, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DateMath.1.0.0\lib\net45\DateMath.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -62,6 +74,9 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Transformalize.Container.Autofac, Version=0.5.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Transformalize.Container.Autofac.0.5.9-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -86,7 +101,6 @@
     <Compile Include="CondenseTransform.cs" />
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />
     <Compile Include="TestFromRegex.cs" />
-    <Compile Include="TestBase.cs" />
     <Compile Include="TestAppend.cs" />
     <Compile Include="TestXmlDecode.cs" />
     <Compile Include="TestSlice.cs" />
@@ -100,7 +114,6 @@
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="DeleteHandler.cs" />
-    <Compile Include="DirectoryReader.cs" />
     <Compile Include="FilterTransform.cs" />
     <Compile Include="FormatXmlTransform.cs" />
     <Compile Include="FromLengthsTransform.cs" />
@@ -118,17 +131,12 @@
     <Compile Include="TrimThenStartsWith.cs" />
     <Compile Include="ValidationMessages.cs" />
     <Compile Include="Validate.cs" />
-    <Compile Include="GeoJsonProvider.cs" />
     <Compile Include="WebReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compatibility\Transformalize.462\Transformalize.462.csproj">
       <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
       <Name>Transformalize.462</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Ioc.Autofac\Pipeline.Ioc.Autofac.csproj">
-      <Project>{58ff362e-4a8d-459e-a174-5aaae7ea8953}</Project>
-      <Name>Pipeline.Ioc.Autofac</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
@@ -158,9 +166,9 @@
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\DateMath\DateMath.csproj">
-      <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
-      <Name>DateMath</Name>
+    <ProjectReference Include="..\Transforms\DateMath\Dates.csproj">
+      <Project>{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}</Project>
+      <Name>Dates</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
       <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
@@ -169,6 +177,10 @@
     <ProjectReference Include="..\Transforms\Html\Html.csproj">
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Html</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
+      <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>
+      <Name>Xml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

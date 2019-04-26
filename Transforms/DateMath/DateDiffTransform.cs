@@ -21,7 +21,7 @@ using System.Linq;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
-namespace Transformalize.Transforms.DateMath {
+namespace Transformalize.Transforms.Dates {
 
     public class DateDiffTransform : BaseTransform {
 

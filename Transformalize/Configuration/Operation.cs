@@ -92,9 +92,6 @@ namespace Transformalize.Configuration {
         public char PaddingChar { get; set; }
 
         [Cfg(value = "")]
-        public string Parameter { get; set; }
-
-        [Cfg(value = "")]
         public string Pattern { get; set; }
 
         [Cfg(value = "")]

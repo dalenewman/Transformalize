@@ -289,7 +289,6 @@ namespace Transformalize.ConfigurationFacade {
             OldValue = this.OldValue,
             Operator = this.Operator,
             PaddingChar = this.PaddingChar,
-            Parameter = this.Parameter,
             Pattern = this.Pattern,
             PostalCode = this.PostalCode,
             Role = this.Role,

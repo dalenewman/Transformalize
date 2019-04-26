@@ -20,8 +20,8 @@ using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
-using Transformalize.Ioc.Autofac;
 using Transformalize.Providers.Trace;
 
 namespace Tests {
@@ -44,9 +44,9 @@ namespace Tests {
     </add>";
 
          var logger = new TraceLogger(LogLevel.Debug);
-         using (var outer = ConfigurationContainer.Create(xml, logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger, null, "@()")) {
             var process = outer.Resolve<Process>();
-            using (var inner = DefaultContainer.Create(process, logger, "@()")) {
+            using (var inner = new Container().CreateScope(process, logger)) {
 
                inner.Resolve<IProcessController>().Execute();
 

@@ -17,16 +17,22 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
+using Transformalize.Transforms.Dates;
 
 namespace Tests {
 
-    [TestClass]
-    public class DateMath {
+   [TestClass]
+   public class DateMath {
 
-        [TestMethod]
-        public void TrySomeDateMath() {
-            const string xml = @"
+      [TestMethod]
+      public void TrySomeDateMath() {
+         const string xml = @"
     <add name='TestDateMath'>
       <entities>
         <add name='Dates'>
@@ -45,21 +51,30 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         var dateMath = new TransformHolder((c)=>new DateMathTransform(c), new DateMathTransform().GetSignatures());
 
-            var process = composer.Process;
-            var row1 = process.Entities.First().Rows[0];
-            var row2 = process.Entities.First().Rows[1];
+         using (var cfgScope = new ConfigurationContainer(dateMath).CreateScope(xml, logger)) {
 
-            Assert.AreEqual(new DateTime(2017, 1, 1, 0, 0, 0), row1["RoundToMonth"]);
-            Assert.AreEqual(new DateTime(2017, 1, 1, 10, 1, 0), row1["AddOneHourOneMinute"]);
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual(new DateTime(2016, 6, 1, 0, 0, 0), row2["RoundToMonth"]);
-            Assert.AreEqual(new DateTime(2016, 6, 7, 13, 32, 22), row2["AddOneHourOneMinute"]);
+            using (var scope = new Container(dateMath).CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
 
-        }
+               var row1 = process.Entities.First().Rows[0];
+               var row2 = process.Entities.First().Rows[1];
 
-    }
+               Assert.AreEqual(new DateTime(2017, 1, 1, 0, 0, 0), row1["RoundToMonth"]);
+               Assert.AreEqual(new DateTime(2017, 1, 1, 10, 1, 0), row1["AddOneHourOneMinute"]);
+
+               Assert.AreEqual(new DateTime(2016, 6, 1, 0, 0, 0), row2["RoundToMonth"]);
+               Assert.AreEqual(new DateTime(2016, 6, 7, 13, 32, 22), row2["AddOneHourOneMinute"]);
+            }
+         }
+
+
+
+      }
+
+   }
 }

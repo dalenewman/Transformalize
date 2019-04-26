@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Autofac;
+using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
-using Transformalize.Ioc.Autofac;
 using Transformalize.Providers.Trace;
 using Process = Transformalize.Configuration.Process;
 
@@ -34,7 +34,7 @@ namespace Tests {
         public IProcessController Compose(string cfg, LogLevel logLevel = LogLevel.Info, Dictionary<string, string> parameters = null, string placeHolderStyle = "@()") {
 
             var logger = new TraceLogger(logLevel);
-            var container = ConfigurationContainer.Create(cfg, logger, parameters, placeHolderStyle);
+            var container = new ConfigurationContainer().CreateScope(cfg, logger, parameters, placeHolderStyle);
 
             Process = parameters == null ? container.Resolve<Process>(new NamedParameter("cfg", cfg)) : container.Resolve<Process>(new NamedParameter("cfg", cfg), new NamedParameter("parameters", parameters));
 
@@ -51,7 +51,7 @@ namespace Tests {
                 }
             }
 
-            return DefaultContainer.Create(Process, logger, placeHolderStyle).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
+            return new Container().CreateScope(Process, logger).Resolve<IProcessController>(new NamedParameter("cfg", cfg));
         }
 
     }

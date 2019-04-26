@@ -350,51 +350,14 @@ namespace Transformalize.Configuration {
       protected override void Validate() {
 
          if (Name == "Control" && Alias == Name) {
-            Error("An entity may not be named 'Control' without an alias.  Please provide an alias.");
-         }
-
-         // if validation has been defined, check to see if corresponding valid and message fields are present and create them if not
-         var calculatedKeys = new HashSet<string>(CalculatedFields.Select(f => f.Alias ?? f.Name).Distinct(), StringComparer.OrdinalIgnoreCase);
-
-         if (Fields.Any(f => f.Validators.Any())) {
-            foreach (var field in Fields.Where(f => f.Validators.Any())) {
-
-               if (!calculatedKeys.Contains(field.ValidField)) {
-                  CalculatedFields.Add(new Field {
-                     Name = field.ValidField,
-                     Alias = field.ValidField,
-                     Input = false,
-                     Type = "bool",
-                     Default = "true",
-                     IsCalculated = true
-                  });
-               }
-
-               if (!calculatedKeys.Contains(field.MessageField)) {
-                  CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true, Input = false });
-               }
-            }
-            // create an entity-wide valid field if necessary
-            if (ValidField == string.Empty) {
-               var valid = Alias + "Valid";
-               if (!CalculatedFields.Any(f => f.Name.Equals(valid))) {
-                  var add = new Field { Name = valid, Alias = valid, Type = "bool", ValidField = valid, Input = false, IsCalculated = true, Default = "true" };
-                  add.Validators.Add(new Operation {
-                     Method = "all",
-                     Operator = "equals",
-                     Value = "true",
-                     Parameters = GetAllFields().Where(f => f.ValidField != string.Empty).Select(f => f.ValidField).Distinct().Select(n => new Parameter { Field = n }).ToList()
-                  });
-                  CalculatedFields.Add(add);
-                  ValidField = valid;
-               }
-            }
+            Error("An entity named `Control` must have a aliase. `Control` is a reserved word.");
          }
 
          var fields = GetAllFields().ToArray();
          var names = new HashSet<string>(fields.Select(f => f.Name).Distinct());
          var aliases = new HashSet<string>(fields.Select(f => f.Alias));
 
+         ValidateValidationFields(fields);
          ValidateVersion(names, aliases);
          ValidateFilter(names, aliases);
          ValidateOrder(names, aliases);
@@ -409,6 +372,76 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = "")]
       public string ValidField { get; set; }
+
+      void ValidateValidationFields(Field[] fields) {
+
+         /* if validation has been defined, check to see if corresponding valid 
+         and message fields are present and create them if not */
+
+         if (!fields.Any(f => f.Validators.Any())) {
+            return;
+         }
+
+         var keys = new HashSet<string>(fields.Select(f => f.Alias ?? f.Name).Distinct(), StringComparer.OrdinalIgnoreCase);
+
+         foreach (var field in fields.Where(f => f.Validators.Any())) {
+
+            if (keys.Contains(field.ValidField)) {
+               if (TryGetField(field.ValidField, out Field vf)) {
+                  if (!vf.Type.StartsWith("bool")) {
+                     Error($"The valid field `{field.ValidField}` must be a bool.");
+                  }
+                  vf.Default = "true"; // innocent until proven guilty
+               }
+            } else {
+               CalculatedFields.Add(new Field {
+                  Name = field.ValidField,
+                  Alias = field.ValidField,
+                  Input = false,
+                  Type = "bool",
+                  Default = "true",  // innocent until proven guilty
+                  IsCalculated = true
+               });
+            }
+
+            if (!keys.Contains(field.MessageField)) {
+               CalculatedFields.Add(new Field { Name = field.MessageField, Alias = field.MessageField, Length = "255", Default = "", IsCalculated = true, Input = false });
+            }
+         }
+
+         // create an entity-wide valid field if necessary
+         if (ValidField == string.Empty) {
+            var validFieldName = Alias + "Valid";
+            if (CalculatedFields.Any(f => f.Name.Equals(validFieldName))) {
+               Warn($"Could not create the entity-wide valid field `{validFieldName}` because it already exists. If `{validFieldName}` is the entity-wide valid field, please set it in the entity's valid-field property.  If not, resolve this naming conflict by changing the name / alias of the entity or the `{validFieldName}` field.");
+            } else {
+               var add = new Field {
+                  Name = validFieldName,
+                  Alias = validFieldName,
+                  Type = "bool",
+                  ValidField = validFieldName,
+                  Input = false,
+                  IsCalculated = true,
+                  Default = "true"  // innocent until proven guilty
+               };
+               add.Validators.Add(new Operation {
+                  Method = "all",
+                  Operator = "equals",
+                  Value = "true",
+                  Parameters = GetAllFields().Where(f => f.ValidField != string.Empty).Select(f => f.ValidField).Distinct().Select(n => new Parameter { Field = n }).ToList()
+               });
+               CalculatedFields.Add(add);
+               ValidField = validFieldName;
+            }
+         }
+
+         if (ValidField != string.Empty && TryGetField(ValidField, out Field evf)) {
+            if (!evf.Type.StartsWith("bool")) {
+               Error($"The valid field `{ValidField}` must be a bool.");
+            }
+            evf.Default = "true";  // innocent until proven guilty
+         }
+      }
 
       void ValidateVersion(ICollection<string> names, ICollection<string> aliases) {
          if (Version == string.Empty)
@@ -455,56 +488,6 @@ namespace Transformalize.Configuration {
          var transforms = Fields.SelectMany(field => field.Transforms).ToList();
          transforms.AddRange(CalculatedFields.SelectMany(field => field.Transforms));
          return transforms;
-      }
-
-      public void MergeParameters() {
-
-         foreach (var field in Fields) {
-            foreach (var transform in field.Transforms.Where(t => t.Parameter != string.Empty && !t.ProducesFields)) {
-               if (transform.Parameter == "*") {
-                  foreach (var f in Fields.Where(f => !f.System)) {
-                     if (transform.Parameters.All(p => p.Field != f.Alias)) {
-                        transform.Parameters.Add(GetParameter(Alias, f.Alias, f.Type));
-                     }
-                  }
-               } else {
-                  transform.Parameters.Add(GetParameter(Alias, transform.Parameter));
-               }
-               transform.Parameter = string.Empty;
-               if (transform.Parameters.Count == 1 && transform.Parameters.First().Field == "*") {
-                  foreach (var f in Fields.Where(f => !f.System)) {
-                     transform.Parameters.Add(GetParameter(Alias, f.Alias, f.Type));
-                  }
-               }
-            }
-         }
-
-         var index = 0;
-         foreach (var calculatedField in CalculatedFields) {
-            foreach (var transform in calculatedField.Transforms.Where(t => t.Parameter != string.Empty && !t.ProducesFields)) {
-               if (transform.Parameter == "*") {
-                  foreach (var field in GetAllFields().Where(f => !f.System)) {
-                     if (transform.Parameters.All(p => p.Field != field.Alias)) {
-                        transform.Parameters.Add(GetParameter(Alias, field.Alias, field.Type));
-                     }
-                  }
-                  var thisField = calculatedField.Name;
-                  foreach (var calcField in CalculatedFields.Take(index).Where(cf => cf.Name != thisField)) {
-                     transform.Parameters.Add(GetParameter(Alias, calcField.Alias, calcField.Type));
-                  }
-               } else {
-                  transform.Parameters.Add(GetParameter(Alias, transform.Parameter));
-               }
-               transform.Parameter = string.Empty;
-               if (transform.Parameters.Count == 1 && transform.Parameters.First().Field == "*") {
-                  foreach (var f in GetAllFields().Where(f => !f.System)) {
-                     transform.Parameters.Add(GetParameter(Alias, f.Alias, f.Type));
-                  }
-               }
-            }
-            index++;
-         }
-
       }
 
       private static Parameter GetParameter(string entity, string field, string type) {

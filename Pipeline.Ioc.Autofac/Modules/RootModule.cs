@@ -29,7 +29,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Ioc.Autofac.Impl;
-using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Dates;
 using Module = Autofac.Module;
 using Parameter = Autofac.Core.Parameter;
 

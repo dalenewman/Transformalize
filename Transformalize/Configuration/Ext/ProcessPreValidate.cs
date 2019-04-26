@@ -65,7 +65,6 @@ namespace Transformalize.Configuration.Ext {
 
 
          // possible candidates for PostValidate
-         MergeParameters(p);
          AutomaticMaps(p);
          SetPrimaryKeys(p);
 
@@ -235,40 +234,6 @@ namespace Transformalize.Configuration.Ext {
 
          }
 
-      }
-
-      private static void MergeParameters(Process p) {
-         foreach (var entity in p.Entities) {
-            entity.MergeParameters();
-         }
-         var index = 0;
-         foreach (var field in p.CalculatedFields) {
-            foreach (var transform in field.Transforms.Where(t => !t.ProducesFields)) {
-               if (!string.IsNullOrEmpty(transform.Parameter)) {
-                  if (transform.Parameter == All) {
-                     foreach (var entity in p.Entities) {
-                        foreach (var entityField in entity.GetAllFields().Where(f => f.Output && !f.System)) {
-                           transform.Parameters.Add(GetParameter(entity.Alias, entityField.Alias, entityField.Type));
-                        }
-                     }
-                     var thisField = field;
-                     foreach (var cf in p.CalculatedFields.Take(index).Where(cf => cf.Name != thisField.Name)) {
-                        transform.Parameters.Add(GetParameter(string.Empty, cf.Alias, cf.Type));
-                     }
-                  } else {
-                     if (transform.Parameter.IndexOf('.') > 0) {
-                        var split = transform.Parameter.Split(new[] { '.' });
-                        transform.Parameters.Add(GetParameter(split[0], split[1]));
-                     } else {
-                        transform.Parameters.Add(GetParameter(transform.Parameter));
-                     }
-                  }
-                  transform.Parameter = string.Empty;
-               }
-
-            }
-            index++;
-         }
       }
 
       private static void SetPrimaryKeys(Process p) {

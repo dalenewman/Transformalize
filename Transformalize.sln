@@ -87,7 +87,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trace", "Providers\Trace\Tr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geography", "Transforms\Geography\Geography.csproj", "{F49EEF2B-5CF8-4643-8131-921D5A41C884}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateMath", "Transforms\DateMath\DateMath.csproj", "{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dates", "Transforms\DateMath\Dates.csproj", "{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Html", "Transforms\Html\Html.csproj", "{05087BE0-7469-474B-8306-8F64F5F02D50}"
 EndProject

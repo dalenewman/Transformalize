@@ -30,7 +30,7 @@ using Transformalize.Contracts;
 using Transformalize.Providers.File.Transforms;
 using Transformalize.Transforms;
 using Transformalize.Transforms.Compression;
-using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Dates;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Html;
@@ -196,10 +196,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new CountTransform(c), new CountTransform().GetSignatures());
 
          // xml
-         RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" || c.Field.Engine != "auto" ?
-            new Transforms.Xml.FromXmlTransform(ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count())), c) :
-            new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") }
-         );
+         RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" ? new Transforms.Xml.FromXmlTransform(c) : new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") });
 
          var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
          if (Directory.Exists(pluginsFolder)) {
