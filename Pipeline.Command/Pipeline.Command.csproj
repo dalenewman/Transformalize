@@ -822,6 +822,9 @@
     <Content Include="plugins\Transformalize.Transform.CsScript.Autofac.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="plugins\Transformalize.Transform.CsScript.Autofac.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="plugins\Transformalize.Transform.CsScript.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -131,7 +131,6 @@
     <Compile Include="TrimThenStartsWith.cs" />
     <Compile Include="ValidationMessages.cs" />
     <Compile Include="Validate.cs" />
-    <Compile Include="WebReader.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Compatibility\Transformalize.462\Transformalize.462.csproj">

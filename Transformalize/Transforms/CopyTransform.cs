@@ -59,14 +59,14 @@ namespace Transformalize.Transforms {
                   }
                }
                foreach (var field in fields) {
-                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias });
+                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
                }
             }
          } else {
 
             if (Context.Operation.Value == "*" && nextMethod != null) {
                foreach (var field in Context.Entity.GetAllFields()) {
-                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias });
+                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
                }
             } else {
                // simple copy
@@ -79,7 +79,7 @@ namespace Transformalize.Transforms {
                         return row;
                      };
                   } else {
-                     nextMethod.Parameters.Add(new Parameter() { Field = _singleInput.Alias });
+                     nextMethod.Parameters.Add(new Parameter() { Field = _singleInput.Alias, Entity = Context.Entity.Alias });
                   }
                } else {
                   Context.Error($"Could not find {Context.Operation.Value} for copy transform in {Context.Field.Alias}.");
