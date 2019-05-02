@@ -29,7 +29,7 @@ namespace Transformalize.Transforms {
             if (IsMissingContext()) {
                 return;
             }
-
+            
             _input = SingleInput();
             Run = Received() != "string";
 
@@ -57,7 +57,7 @@ namespace Transformalize.Transforms {
                         _toString = (o) => ((DateTime)o).ToString(Context.Operation.Format);
                         break;
                     case "byte[]":
-                        _toString = (o) => Utility.BytesToHexString((byte[])o);
+                        _toString = (o) => Utility.BytesToHexViaLookup32((byte[])o);
                         break;
                     default:
                         _toString = (o) => o.ToString();

@@ -333,7 +333,7 @@ namespace Transformalize.Configuration {
 
          // create entity field's matcher
          foreach (var entity in Entities) {
-            var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
+            var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
 #if NETS10
             entity.FieldMatcher = new Regex(pattern);
 #else
@@ -504,6 +504,7 @@ namespace Transformalize.Configuration {
       /// </summary>
       /// <returns>A made-up process that represents the denormalized output's fields that contribute to calculated fields</returns>
       public Process ToCalculatedFieldsProcess() {
+
          // clone process, remove entities, and create entity needed for calculated fields
          var calc = this.Clone();
          calc.LogLimit = LogLimit;
@@ -558,28 +559,35 @@ namespace Transformalize.Configuration {
 
          if (CalculatedFields.Any()) {
             Regex matcher;
-            var regex = string.Join("|", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
+            var regex = @"\b"+ string.Join(@"\b|\b", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
 #if NETS10
             matcher = new Regex(regex);
 #else
             matcher = new Regex(regex, RegexOptions.Compiled);
 #endif
-            // somehow get the fields necessary for the calculated fields process
+            var found = new List<Field>();
+            // get the fields necessary for the calculated fields process
             // in format's format attr
             // in eval's expression attr
             // in cs, js, csscript, and jint's script attr
-            var found = new List<Field>();
-            foreach (var transform in entity.CalculatedFields.SelectMany(cf => cf.Transforms)) {
-               var content = string.Join(" ", transform.Format, transform.Script, transform.Expression, transform.Template).Trim();
-               if (content != string.Empty) {
-                  foreach (Match match in matcher.Matches(content)) {
+            // in copy's value attr
+
+            foreach (var cf in entity.CalculatedFields) {
+               foreach (Match match in matcher.Matches(cf.T)) {
+                  if (TryGetField(match.Value, out var field)) {
+                     if (field.Output) {
+                        found.Add(field.Clone());
+                     }
+                  }
+               }
+               foreach (var t in cf.Transforms) {
+                  foreach (Match match in matcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
                      if (TryGetField(match.Value, out var field)) {
                         if (field.Output) {
                            found.Add(field.Clone());
                         }
                      }
                   }
-
                }
             }
 
@@ -589,7 +597,7 @@ namespace Transformalize.Configuration {
          }
 
          // create entity field's matcher
-         var pattern = string.Join("|", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias));
+         var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
 #if NETS10
          entity.FieldMatcher = new Regex(pattern);
 #else

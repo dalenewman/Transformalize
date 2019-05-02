@@ -27,81 +27,81 @@ using Transformalize.Transforms.System;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class ProcessPipelineModule : Module {
-        private readonly Process _process;
+   public class ProcessPipelineModule : Module {
+      private readonly Process _process;
 
-        public ProcessPipelineModule() { }
+      public ProcessPipelineModule() { }
 
-        public ProcessPipelineModule(Process process) {
-            _process = process;
-        }
+      public ProcessPipelineModule(Process process) {
+         _process = process;
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+         if (_process == null)
+            return;
+
+         // I need a process keyed pipeline
+         builder.Register(ctx => {
 
             var calc = _process.ToCalculatedFieldsProcess();
             var entity = calc.Entities.First();
 
-            // I need a process keyed pipeline
-            builder.Register(ctx => {
+            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
+            var outputContext = new OutputContext(context);
 
-                var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
-                var outputContext = new OutputContext(context);
+            IPipeline pipeline;
+            context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
+            var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
+            switch (_process.Pipeline) {
+               case "parallel.linq":
+                  pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
+                  break;
+               default:
+                  pipeline = new DefaultPipeline(outputController, context);
+                  break;
+            }
 
-                IPipeline pipeline;
-                context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
-                var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
-                switch (_process.Pipeline) {
-                    case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                        break;
-                    default:
-                        pipeline = new DefaultPipeline(outputController, context);
-                        break;
-                }
+            // no updater necessary
+            pipeline.Register(new NullUpdater(context, false));
 
-                // no updater necessary
-                pipeline.Register(new NullUpdater(context, false));
+            if (!_process.CalculatedFields.Any()) {
+               pipeline.Register(new NullReader(context, false));
+               pipeline.Register(new NullWriter(context, false));
+               return pipeline;
+            }
 
-                if (!_process.CalculatedFields.Any()) {
-                    pipeline.Register(new NullReader(context, false));
-                    pipeline.Register(new NullWriter(context, false));
-                    return pipeline;
-                }
+             // register transforms
+            pipeline.Register(new IncrementTransform(context));
+            pipeline.Register(new LogTransform(context));
+            pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
+            pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
+            pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
-                // register transforms
-                pipeline.Register(new IncrementTransform(context));
-                pipeline.Register(new LogTransform(context));
-                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
-                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
+            // register input and output
+            switch (outputContext.Connection.Provider) {
+               case "sqlserver":
+                  pipeline.Register(ctx.Resolve<IRead>());
+                  pipeline.Register(ctx.Resolve<IWrite>());
+                  pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), new DateTime(1753, 1, 1)));
+                  break;
+               case "mysql":
+               case "postgresql":
+               case "sqlce":
+               case "access":
+               case "sqlite":
+                  pipeline.Register(ctx.Resolve<IRead>());
+                  pipeline.Register(ctx.Resolve<IWrite>());
+                  break;
+               default:
+                  pipeline.Register(new NullReader(context));
+                  pipeline.Register(new NullWriter(context));
+                  break;
+            }
 
-                // register input and output
-                switch (outputContext.Connection.Provider) {
-                    case "sqlserver":
-                        pipeline.Register(ctx.Resolve<IRead>());
-                        pipeline.Register(ctx.Resolve<IWrite>());
-                        pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), new DateTime(1753, 1, 1)));
-                        break;
-                    case "mysql":
-                    case "postgresql":
-                    case "sqlce":
-                    case "access":
-                    case "sqlite":
-                        pipeline.Register(ctx.Resolve<IRead>());
-                        pipeline.Register(ctx.Resolve<IWrite>());
-                        break;
-                    default:
-                        pipeline.Register(new NullReader(context));
-                        pipeline.Register(new NullWriter(context));
-                        break;
-                }
+            return pipeline;
+         }).As<IPipeline>();
 
-                return pipeline;
-            }).As<IPipeline>();
-
-        }
-    }
+      }
+   }
 }

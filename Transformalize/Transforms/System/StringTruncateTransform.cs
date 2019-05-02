@@ -55,7 +55,6 @@ namespace Transformalize.Transforms.System {
             foreach (var field in _strings) {
                 row[field] = row[field].ToString().Left(field.Length);
             }
-            // 
             return row;
         }
 

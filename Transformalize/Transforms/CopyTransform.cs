@@ -71,9 +71,9 @@ namespace Transformalize.Transforms {
             } else {
                // simple copy
                if (Context.Entity.TryGetField(Context.Operation.Value, out _singleInput)) {
+                  Returns = _singleInput.Type;
                   if (nextMethod == null) {
                      Run = true;
-                     Returns = _singleInput.Type;
                      _transform = (row) => {
                         row[Context.Field] = row[_singleInput];
                         return row;

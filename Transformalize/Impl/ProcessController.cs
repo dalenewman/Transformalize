@@ -80,9 +80,9 @@ namespace Transformalize.Impl {
          if (response.Code == 200) {
             if (response.Action.Type != "internal") {
                if(response.Action.Description == string.Empty) {
-                  _context.Info($"Successfully ran pre-action {response.Action.Type}.");
+                  _context.Info($"Successfully ran action {response.Action.Type}.");
                } else {
-                  _context.Info($"Successfully ran pre-action {response.Action.Type}: {response.Action.Description}.");
+                  _context.Info($"Successfully ran action {response.Action.Type}: {response.Action.Description}.");
                }
             }
             if (response.Message != string.Empty) {
