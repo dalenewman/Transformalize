@@ -197,8 +197,18 @@ namespace Transformalize {
             {"double", (x => Convert.ToDouble(x))},
             {"decimal", (x => decimal.Parse(x.ToString(), NumberStyles.Float | NumberStyles.AllowThousands | NumberStyles.AllowCurrencySymbol, (IFormatProvider)CultureInfo.CurrentCulture.GetFormat(typeof(NumberFormatInfo))))},
             {"char", (x => x == (object)string.Empty ? ' ' : Convert.ToChar(x))},
-            {"date", (x => Convert.ToDateTime(x))},
-            {"datetime", (x => Convert.ToDateTime(x))},
+            {"date", (x => {
+               if(x is string str) {
+                  return ConversionMap["date"](str);
+               }
+               return Convert.ToDateTime(x);
+               })},
+            {"datetime", (x => {
+               if(x is string str) {
+                  return ConversionMap["datetime"](str);
+               }
+               return Convert.ToDateTime(x);
+               })},
             {"bool", (x => Convert.ToBoolean(x))},
             {"boolean", (x => Convert.ToBoolean(x))},
             {"single", (x => Convert.ToSingle(x))},

@@ -74,8 +74,8 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize.Container.Autofac, Version=0.5.9.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Transformalize.Container.Autofac.0.5.9-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
+    <Reference Include="Transformalize.Container.Autofac, Version=0.6.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Transformalize.Container.Autofac.0.6.3-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -91,6 +91,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestSpecifyKind.cs" />
     <Compile Include="PaginationTest.cs" />
     <Compile Include="TwoEntitiesReadOnly.cs" />
     <Compile Include="TestCalculatedFieldProcess.cs" />
@@ -164,10 +165,6 @@
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Transforms\DateMath\Dates.csproj">
-      <Project>{A2AA79D9-7053-422D-AF8D-E6EFC76FC6B5}</Project>
-      <Name>Dates</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
       <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>

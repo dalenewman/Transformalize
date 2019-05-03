@@ -215,10 +215,6 @@
       <Project>{36724dd4-0a61-494b-abcb-4fe845306eb8}</Project>
       <Name>Compression</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\DateMath\Dates.csproj">
-      <Project>{a2aa79d9-7053-422d-af8d-e6efc76fc6b5}</Project>
-      <Name>Dates</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Geography\Geography.csproj">
       <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
       <Name>Geography</Name>

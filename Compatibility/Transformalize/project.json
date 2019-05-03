@@ -2,6 +2,7 @@
   "supports": {},
   "dependencies": {
     "Cfg-NET": "0.10.4",
+    "DateMath": "1.0.0",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.1",
     "System.Dynamic.Runtime": "4.3.0"

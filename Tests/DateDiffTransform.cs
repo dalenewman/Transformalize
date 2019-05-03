@@ -48,8 +48,6 @@ namespace Tests {
             <add name='Days' type='int' t='copy(StartDate,EndDate).datediff(day)' />
             <add name='Minutes' type='int' t='copy(StartDate,EndDate).datediff(minute)' />
             <add name='Hours' type='double' t='copy(StartDate,EndDate).datediff(hour)' />
-            <add name='MovingUtc' type='int' t='copy(EndDate).datediff(hour,UTC)' />
-            <add name='MovingEst' type='int' t='copy(EndDate).datediff(hour,Eastern Standard Time)' />
           </calculated-fields>
         </add>
       </entities>
@@ -67,8 +65,6 @@ namespace Tests {
                Assert.AreEqual(61, output[0][cf[1]]);
                Assert.AreEqual(87840, output[0][cf[2]]);
                Assert.AreEqual(1464d, output[0][cf[3]]);
-               //Assert.AreEqual(1640, output[0][cf[4]]);
-               //Assert.AreEqual(1644, output[0][cf[5]]);
             }
          }
       }
