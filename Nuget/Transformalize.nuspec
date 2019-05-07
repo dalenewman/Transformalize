@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.6.3-beta</version>
+      <version>0.6.4-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
       <!--<license type="expression">Apache-2.0</license>-->
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>breaking changes to Initialize() method on several interfaces, removal of transform's single parameter attribute (and subsequently the code to "merge" parameters), changed copy transform to be a real transform, added datemath dependency</releaseNotes>
+      <releaseNotes>breaking changes to Initialize() method on several interfaces, removal of transform's single parameter attribute (and subsequently the code to "merge" parameters), changed copy transform to be a real transform, added datemath dependency, added language attribute to script</releaseNotes>
       <copyright>Copyright 2013-2019</copyright>
       <tags>etl</tags>
       <dependencies>

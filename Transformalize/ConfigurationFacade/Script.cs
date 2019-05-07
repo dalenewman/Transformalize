@@ -18,29 +18,32 @@
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
-    public class Script : CfgNode {
+   public class Script : CfgNode {
 
-        [Cfg]
-        public string Name { get; set; }
+      [Cfg]
+      public string Name { get; set; }
 
-        [Cfg]
-        public string File { get; set; }
+      [Cfg]
+      public string File { get; set; }
 
-        [Cfg]
-        public string Content { get; set; }
+      [Cfg]
+      public string Content { get; set; }
 
-        [Cfg]
-        public string Global { get; set; }
+      [Cfg]
+      public string Global { get; set; }
 
-        public Configuration.Script ToScript() {
-            var script = new Configuration.Script {
-                Name = this.Name,
-                File = this.File,
-                Content = this.Content
-            };
-            bool.TryParse(this.Global, out var global);
-            script.Global = global;
-            return script;
-        }
-    }
+      [Cfg]
+      public string Language { get; set; }
+
+      public Configuration.Script ToScript() {
+         var script = new Configuration.Script {
+            Name = this.Name,
+            File = this.File,
+            Content = this.Content
+         };
+         bool.TryParse(this.Global, out var global);
+         script.Global = global;
+         return script;
+      }
+   }
 }

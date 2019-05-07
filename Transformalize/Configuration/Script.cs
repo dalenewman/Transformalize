@@ -18,19 +18,22 @@
 using Cfg.Net;
 
 namespace Transformalize.Configuration {
-    public class Script : CfgNode {
+   public class Script : CfgNode {
 
-        [Cfg(required = true, unique = true, toLower = true)]
-        public string Name { get; set; }
-        
-        [Cfg(required = false)]
-        public string File { get; set; }
-        
-        [Cfg(value="")]
-        public string Content { get; set; }
+      [Cfg(required = true, unique = true, toLower = true)]
+      public string Name { get; set; }
 
-        [Cfg]
-        public bool Global { get; set; }
+      [Cfg(required = false)]
+      public string File { get; set; }
 
-    }
+      [Cfg(value = "")]
+      public string Content { get; set; }
+
+      [Cfg]
+      public bool Global { get; set; }
+
+      [Cfg(value = Constants.DefaultSetting, toLower = true, ignoreCase = true, domain = Constants.DefaultSetting + ",js,css,sql")]
+      public string Language { get; set; }
+
+   }
 }
