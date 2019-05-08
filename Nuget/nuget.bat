@@ -12,12 +12,11 @@ REM nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\
 REM nuget pack Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
 REM 
 REM REM TRANSFORMS
-REM nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.Compression.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.DateMath.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.Geography.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.Html.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.Json.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Compression.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Geography.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Html.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Json.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
 
 

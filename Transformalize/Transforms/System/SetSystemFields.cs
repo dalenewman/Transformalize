@@ -20,26 +20,32 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
-    public class SetSystemFields : BaseTransform {
-        private readonly Field _tflKey;
-        private readonly Field _tflDeleted;
-        private readonly Field _tflBatchId;
-        private readonly Field _tflHashCode;
+   public class SetSystemFields : BaseTransform {
+      private readonly Field _tflKey;
+      private readonly Field _tflDeleted;
+      private readonly Field _tflBatchId;
+      private readonly Field _tflHashCode;
 
-        public SetSystemFields(IContext context) : base(context, null) {
-            _tflKey = context.Entity.TflKey();
-            _tflDeleted = context.Entity.TflDeleted();
-            _tflBatchId = context.Entity.TflBatchId();
-            _tflHashCode = context.Entity.TflHashCode();
-        }
+      public SetSystemFields(IContext context) : base(context, null) {
 
-        public override IRow Operate(IRow row) {
-            row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
-            row[_tflDeleted] = false;
-            row[_tflBatchId] = Context.Entity.BatchId;
-            row[_tflHashCode] = 0;
-            return row;
-        }
+         if (Context.Process.ReadOnly) {
+            Run = false;
+            return;
+         }
 
-    }
+         _tflKey = context.Entity.TflKey();
+         _tflDeleted = context.Entity.TflDeleted();
+         _tflBatchId = context.Entity.TflBatchId();
+         _tflHashCode = context.Entity.TflHashCode();
+      }
+
+      public override IRow Operate(IRow row) {
+         row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
+         row[_tflDeleted] = false;
+         row[_tflBatchId] = Context.Entity.BatchId;
+         row[_tflHashCode] = 0;
+         return row;
+      }
+
+   }
 }

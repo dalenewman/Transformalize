@@ -74,8 +74,11 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize.Container.Autofac, Version=0.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Transformalize.Container.Autofac.0.6.3-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Transformalize.0.6.4-beta\lib\net462\Transformalize.dll</HintPath>
+    </Reference>
+    <Reference Include="Transformalize.Container.Autofac, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Transformalize.Container.Autofac.0.6.4-beta\lib\net462\Transformalize.Container.Autofac.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Choose>
@@ -134,10 +137,6 @@
     <Compile Include="Validate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Compatibility\Transformalize.462\Transformalize.462.csproj">
-      <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
-      <Name>Transformalize.462</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>
