@@ -82,9 +82,11 @@ namespace Transformalize.Transforms.Xml {
             _nameMap[field.Name] = field;
          }
 
-         _setSystemFields = new SetSystemFields(context);
-         _hashCode = Context.Entity.TflHashCode();
-         _fieldsToHash = _fields.Where(f => !f.System).ToArray();
+         if (!Context.Process.ReadOnly) {
+            _fieldsToHash = _fields.Where(f => !f.System).ToArray();
+            _setSystemFields = new SetSystemFields(Context);
+            _hashCode = Context.Entity.TflHashCode();
+         } 
       }
 
       public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {

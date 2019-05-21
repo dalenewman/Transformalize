@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.Xml</id>
-    <version>0.6.4-beta</version>
+    <version>0.6.5-beta</version>
     <title>Transformalize Xml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <!--<license type="expression">Apache-2.0</license>-->
     <description>Xml related transforms for Transformalize</description>
-    <releaseNotes>update dependencies</releaseNotes>
+    <releaseNotes>fix system field bug with creating new rows in read-only mode</releaseNotes>
     <copyright>Copyright 2013-2019</copyright>
     <tags>etl</tags>
     <dependencies>

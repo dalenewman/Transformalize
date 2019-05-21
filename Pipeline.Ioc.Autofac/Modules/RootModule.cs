@@ -106,14 +106,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
                }
             }
 
-            if (process.ReadOnly)
-               return process;
-
-            // handling multiple entities with non-relational output
-            var originalOutput = process.Output().Clone();
-            originalOutput.Name = Constants.OriginalOutput;
-            originalOutput.Key = process.Name + originalOutput.Name;
-
             return process;
 
          }).As<Process>().InstancePerDependency();  // because it has state, if you run it again, it's not so good

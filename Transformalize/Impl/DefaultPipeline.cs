@@ -17,7 +17,6 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Actions;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {

@@ -28,39 +28,55 @@ namespace Transformalize.Transforms.Dates {
       public static readonly Dictionary<string, Func<DateTime, DateTime, object>> Parts = new Dictionary<string, Func<DateTime, DateTime, object>>() {
             {"d", (x,y) => (y-x).TotalDays},
             {"day", (x,y) => (y-x).TotalDays},
+            {"days", (x,y) => (y-x).TotalDays},
             {"date", (x, y) => new DateTime((y-x).Ticks)},
             {"h", (x,y)=>(y-x).TotalHours},
             {"hour", (x,y)=>(y-x).TotalHours},
+            {"hours", (x,y)=>(y-x).TotalHours},
             {"ms", (x,y)=>(y-x).TotalMilliseconds},
             {"millisecond", (x,y)=>(y-x).TotalMilliseconds},
+            {"milliseconds", (x,y)=>(y-x).TotalMilliseconds},
             {"m",(x,y)=>(y-x).TotalMinutes},
             {"minute",(x,y)=>(y-x).TotalMinutes},
+            {"minutes",(x,y)=>(y-x).TotalMinutes},
             {"s",(x,y)=>(y-x).TotalSeconds},
             {"second",(x,y)=>(y-x).TotalSeconds},
+            {"seconds",(x,y)=>(y-x).TotalSeconds},
             {"tick",(x,y)=>(y-x).Ticks},
+            {"ticks",(x,y)=>(y-x).Ticks},
             {"M",(x,y)=>(y-x).TotalDays / (365/12.0) },
             {"month",(x,y)=>(y-x).TotalDays / (365/12.0) },
+            {"months",(x,y)=>(y-x).TotalDays / (365/12.0) },
             { "y",(x,y)=>(y-x).TotalDays / 365 },
-            { "year",(x,y)=>(y-x).TotalDays / 365 }
+            { "year",(x,y)=>(y-x).TotalDays / 365 },
+            { "years",(x,y)=>(y-x).TotalDays / 365 }
         };
 
       public static readonly Dictionary<string, string> PartReturns = new Dictionary<string, string> {
             {"d", "double"},
             {"day", "double"},
+            {"days", "double" },
             {"date", "date"},
             {"h", "double"},
             {"hour", "double"},
+            {"hours", "double" },
             {"ms", "double"},
             {"millisecond", "double"},
+            {"milliseconds", "double"},
             {"m","double"},
             {"minute","double"},
+            {"minutes", "double" },
             {"s","double"},
             {"second","double"},
+            {"seconds","double" },
             {"tick","long"},
+            {"ticks","long"},
             {"y","double" },
             {"year","double" },
+            {"years","double" },
             {"M","double" },
-            {"month","double" }
+            {"month","double" },
+            {"months","double" }
         };
 
       private readonly Action<IRow> _transform;
