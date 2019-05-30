@@ -20,90 +20,93 @@ using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
 
-    public class Action : CfgNode {
+   public class Action : CfgNode {
 
-        [Cfg]
-        public string Type { get; set; }
+      [Cfg]
+      public string Type { get; set; }
 
-        [Cfg]
-        public string After { get; set; }
+      [Cfg]
+      public string After { get; set; }
 
-        [Cfg]
-        public string ErrorMode { get; set; }
+      [Cfg]
+      public string ErrorMode { get; set; }
 
-        [Cfg]
-        public string Arguments { get; set; }
+      [Cfg]
+      public string Arguments { get; set; }
 
-        [Cfg]
-        public string Bcc { get; set; }
+      [Cfg]
+      public string Bcc { get; set; }
 
-        [Cfg]
-        public string Before { get; set; }
+      [Cfg]
+      public string Before { get; set; }
 
-        [Cfg]
-        public string Cc { get; set; }
+      [Cfg]
+      public string Cc { get; set; }
 
-        [Cfg]
-        public string Command { get; set; }
+      [Cfg]
+      public string Command { get; set; }
 
-        [Cfg]
-        public string Connection { get; set; }
+      [Cfg]
+      public string Connection { get; set; }
 
-        [Cfg]
-        public string File { get; set; }
+      [Cfg]
+      public string File { get; set; }
 
-        [Cfg]
-        public string From { get; set; }
+      [Cfg]
+      public string From { get; set; }
 
-        [Cfg]
-        public string Html { get; set; }
+      [Cfg]
+      public string Html { get; set; }
 
-        [Cfg]
-        public string Method { get; set; }
+      [Cfg]
+      public string Method { get; set; }
 
-        [Cfg]
-        public string Mode { get; set; }
+      [Cfg]
+      public string Mode { get; set; }
 
-        [Cfg]
-        public string NewValue { get; set; }
+      [Cfg]
+      public string NewValue { get; set; }
 
-        [Cfg]
-        public string OldValue { get; set; }
+      [Cfg]
+      public string OldValue { get; set; }
 
-        [Cfg]
-        public string Subject { get; set; }
+      [Cfg]
+      public string Subject { get; set; }
 
-        [Cfg]
-        public string TimeOut { get; set; }
+      [Cfg]
+      public string TimeOut { get; set; }
 
-        [Cfg]
-        public string To { get; set; }
+      [Cfg]
+      public string To { get; set; }
 
-        [Cfg]
-        public string Url { get; set; }
+      [Cfg]
+      public string Url { get; set; }
 
-        [Cfg]
-        public string Id { get; set; }
+      [Cfg]
+      public string Id { get; set; }
 
-        [Cfg]
-        public string Body { get; set; }
+      [Cfg]
+      public string Body { get; set; }
 
-        [Cfg]
-        public string PlaceHolderStyle { get; set; }
+      [Cfg]
+      public string PlaceHolderStyle { get; set; }
 
-        [Cfg]
-        public List<NameReference> Modes { get; set; }
+      [Cfg]
+      public List<NameReference> Modes { get; set; }
 
-        [Cfg]
-        public string Level { get; set; }
+      [Cfg]
+      public string Level { get; set; }
 
-        [Cfg]
-        public string Message { get; set; }
+      [Cfg]
+      public string Message { get; set; }
 
-        [Cfg]
-        public string RowCount { get; set; }
+      [Cfg]
+      public string RowCount { get; set; }
 
-        [Cfg]
-        public string Description { get; set; }
-    }
+      [Cfg]
+      public string Description { get; set; }
+
+      [Cfg]
+      public List<Parameter> Parameters { get; set; }
+   }
 }
