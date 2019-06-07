@@ -158,7 +158,6 @@
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\FileSystemModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />
-    <Compile Include="Modules\GeoJsonModule.cs" />
     <Compile Include="Modules\KmlModule.cs" />
     <Compile Include="Modules\InternalModule.cs" />
     <Compile Include="Modules\RootModule.cs" />
@@ -198,10 +197,6 @@
     <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
       <Name>Console</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\GeoJson\GeoJson.csproj">
-      <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
-      <Name>GeoJson</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Kml\Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>

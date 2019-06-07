@@ -22,70 +22,76 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
-    public class MapTransform : BaseTransform {
+   public class MapTransform : BaseTransform {
 
-        private readonly IField _input;
-        private readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
-        private object _catchAll;
-        private const string CatchAll = "*";
+      private readonly IField _input;
+      private readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
+      private object _catchAll;
+      private const string CatchAll = "*";
 
-        public MapTransform(IContext context = null) : base(context, null) {
-            if (IsMissingContext()) {
-                return;
+      public MapTransform(IContext context = null) : base(context, null) {
+         if (IsMissingContext()) {
+            return;
+         }
+
+         if (Context.Operation.Map == string.Empty) {
+            Error("The map method requires a map");
+            Run = false;
+            return;
+         }
+
+         _input = SingleInput();
+      }
+
+      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+
+         var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
+
+         // seems like i have over-complicated this...
+         foreach (var item in map.Items) {
+            if (item.From.Equals(CatchAll)) {
+               _catchAll = Context.Field.Convert(item.To);
+               continue;
             }
-
-            if (Context.Operation.Map == string.Empty) {
-                Error("The map method requires a map");
-                Run = false;
-                return;
-            }
-
-            _input = SingleInput();
-        }
-
-        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-
-            var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
-
-            // seems like i have over-complicated this...
-            foreach (var item in map.Items) {
-                if (item.From.Equals(CatchAll)) {
-                    _catchAll = Context.Field.Convert(item.To);
-                    continue;
-                }
-                var from = Constants.ObjectConversionMap[Received()](item.From);
-                if (item.To == null || item.To.Equals(string.Empty)) {
-                    var field = Context.Entity.GetField(item.Parameter);
-                    _map[from] = (r) => r[field];
-                } else {
-                    var to = Context.Field.Convert(item.To);
-                    _map[from] = (r) => to;
-                }
-            }
-            if (_catchAll == null) {
-                _catchAll = Context.Field.Convert(Context.Field.Default);
-            }
-
-            return base.Operate(rows);
-        }
-
-        public override IRow Operate(IRow row) {
-            if (_map.TryGetValue(row[_input], out var objects)) {
-                row[Context.Field] = objects(row);
+            var from = Constants.ObjectConversionMap[Received()](item.From);
+            if (item.To == null || item.To.Equals(Constants.DefaultSetting)) {
+               if (Context.Entity.TryGetField(item.Parameter, out var field)) {
+                  _map[from] = (r) => r[field];
+               } else {
+                  Context.Error($"Map {Context.Operation.Map} doesn't have a `to` value or a valid field referenced in `parameter`");
+                  yield break;
+               }
             } else {
-                row[Context.Field] = _catchAll;
+               var to = Context.Field.Convert(item.To);
+               _map[from] = (r) => to;
             }
-            
-            return row;
-        }
+         }
+         if (_catchAll == null) {
+            _catchAll = Context.Field.Convert(Context.Field.Default);
+         }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            return new[]{
+         foreach (var row in rows) {
+            yield return Operate(row);
+         }
+      }
+
+      public override IRow Operate(IRow row) {
+         if (_map.TryGetValue(row[_input], out var objects)) {
+            row[Context.Field] = objects(row);
+         } else {
+            row[Context.Field] = _catchAll;
+         }
+
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         return new[]{
                 new OperationSignature("map"){
                     Parameters = new List<OperationParameter> {new OperationParameter("map")}
                 }
             };
-        }
-    }
+      }
+   }
 
 }

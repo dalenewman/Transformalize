@@ -18,45 +18,44 @@
 using System;
 using System.Threading;
 using Autofac;
-using Quartz.Util;
 using Transformalize.Contracts;
 
 namespace Transformalize.Command {
-    internal class Program {
+   internal class Program {
 
-        private static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
+      private static readonly ManualResetEvent QuitEvent = new ManualResetEvent(false);
 
-        private static void Main(string[] args) {
+      private static void Main(string[] args) {
 
-            Console.CancelKeyPress += (sender, eArgs) => {
-                QuitEvent.Set();
-                eArgs.Cancel = true;
-            };
+         Console.CancelKeyPress += (sender, eArgs) => {
+            QuitEvent.Set();
+            eArgs.Cancel = true;
+         };
 
-            var options = new Options();
+         var options = new Options();
 
-            if (CommandLine.Parser.Default.ParseArguments(args, options)) {
-                Environment.ExitCode = 0;
-                var builder = new ContainerBuilder();
-                builder.RegisterModule(new ScheduleModule(options));
+         if (CommandLine.Parser.Default.ParseArguments(args, options)) {
+            Environment.ExitCode = 0;
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new ScheduleModule(options));
 
-                using (var scope = builder.Build().BeginLifetimeScope()) {
-                    var scheduler = scope.Resolve<IScheduler>();
-                    scheduler.Start();
+            using (var scope = builder.Build().BeginLifetimeScope()) {
+               var scheduler = scope.Resolve<IScheduler>();
+               scheduler.Start();
 
-                    if (scheduler is NowScheduler)
-                        return;
+               if (scheduler is NowScheduler)
+                  return;
 
-                    QuitEvent.WaitOne();
-                    Console.WriteLine("Stopping...");
-                    scheduler.Stop();
-                }
-            } else {
-                Environment.ExitCode = 1;
+               QuitEvent.WaitOne();
+               Console.WriteLine("Stopping...");
+               scheduler.Stop();
             }
+         } else {
+            Environment.ExitCode = 1;
+         }
 
-            NLog.LogManager.Flush();
+         NLog.LogManager.Flush();
 
-        }
-    }
+      }
+   }
 }

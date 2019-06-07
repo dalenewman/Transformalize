@@ -55,7 +55,6 @@ namespace Transformalize.Ioc.Autofac {
             builder.RegisterCallback(new InternalModule(process).Configure);
 
             if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
-            if (providers.Contains("geojson")) { builder.RegisterCallback(new GeoJsonModule(process).Configure); }
             if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
             if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
 

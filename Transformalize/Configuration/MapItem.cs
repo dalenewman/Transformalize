@@ -26,7 +26,7 @@ namespace Transformalize.Configuration {
         [Cfg(value = "")]
         public string Parameter { get; set; }
 
-        [Cfg(value = "")]
+        [Cfg(value = Constants.DefaultSetting)]
         public object To { get; set; }
 
         public Parameter AsParameter() {

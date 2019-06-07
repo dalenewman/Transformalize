@@ -16,17 +16,41 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Extensions;
 
 namespace Tests {
 
-    [TestClass]
-    public class FormatXmlTransform {
+   [TestClass]
+   public class FormatXmlTransform {
 
-        [TestMethod]
-        public void FormatXmlTransform1() {
+      [TestMethod]
+      public void WtfHowDoesSystemXmlLinqWork() {
+         var doc = XDocument.Parse(@"<items>
+  <item>
+    <Item>Latch</Item>
+    <Quantity>1</Quantity>
+    <Price>20</Price>
+  </item>
+  <item>
+    <Item>Hasp</Item>
+    <Quantity>1</Quantity>
+    <Price>20</Price>
+  </item>
+</items>");
 
-            const string xml = @"
+         Assert.AreEqual(2, doc.Descendants("item").Count());
+         var items = string.Join(", ", doc.Descendants("item").Select(item => item.Element("Quantity").Value + " " + item.Element("Item").Value));
+         var price = doc.Descendants("item").Where(item => !string.IsNullOrEmpty(item.Element("Price").Value)).Sum(item => System.Convert.ToInt32(item.Element("Price").Value) * System.Convert.ToInt32(item.Element("Quantity").Value));
+
+         System.Console.WriteLine(price);
+      }
+
+      [TestMethod]
+      public void FormatXmlTransform1() {
+
+         const string xml = @"
 <add name='TestProcess'>
     <entities>
         <add name='TestData'>
@@ -42,13 +66,13 @@ namespace Tests {
         </add>
     </entities>
 </add>";
-            
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
 
-            var output = controller.Read().ToArray();
+         var composer = new CompositionRoot();
+         var controller = composer.Compose(xml);
 
-            Assert.AreEqual(@"<stuff value=""1"">
+         var output = controller.Read().ToArray();
+
+         Assert.AreEqual(@"<stuff value=""1"">
   <things>
     <add item=""1"" />
     <add item=""2"" />
@@ -56,7 +80,12 @@ namespace Tests {
 </stuff>", output[0][composer.Process.Entities.First().CalculatedFields.First()]);
 
 
-        }
+      }
 
-    }
+
+
+   }
+
+
+
 }

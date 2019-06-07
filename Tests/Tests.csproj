@@ -157,10 +157,6 @@
       <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
       <Name>OpenXml</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Providers\GeoJson\GeoJson.csproj">
-      <Project>{1afb3c21-cb24-49ed-bcf1-99a577d86f28}</Project>
-      <Name>GeoJson</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Trace\Trace.csproj">
       <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
       <Name>Trace</Name>
