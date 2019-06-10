@@ -32,21 +32,24 @@ namespace Transformalize.Ioc.Autofac {
 
          foreach (var f in fields.Where(f => f.Transforms.Any() || f.Validators.Any())) {
             var field = f;
+            var fieldTransforms = new List<ITransform>();
 
             foreach (var t in field.Transforms) {
+
                if (t.Method == "convert" && t.Type == "string" && t.Format != string.Empty) {
                   t.Method = "tostring";
                }
 
                var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
                if (TryTransform(ctx, transformContext, out var add)) {
+                  fieldTransforms.Add(add);
                   transforms.Add(add);
                }
             }
 
             // add conversion if necessary
-            if (transforms.Any()) {
-               var lastType = transforms.Last().Returns;
+            if (fieldTransforms.Any()) {
+               var lastType = fieldTransforms.Last().Returns;
                if (lastType != null && lastType != "object" && field.Type != lastType) {
                   context.Warn($"The output field {field.Alias} is not setup to receive a {lastType} type. It expects a {field.Type}.  Adding conversion.");
                   transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));

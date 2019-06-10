@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.6.7-beta</version>
+      <version>0.6.8-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
       <!--<license type="expression">Apache-2.0</license>-->
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>added json to provider list, using default value for `to` in maps</releaseNotes>
+      <releaseNotes>added toUnixTime transform (a datetime to seconds or milliseconds) as long</releaseNotes>
       <copyright>Copyright 2013-2019</copyright>
       <tags>etl</tags>
       <dependencies>

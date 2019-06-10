@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class ValidationMessages {
+   [TestClass]
+   public class ValidationMessages {
 
-        [TestMethod]
-        public void TryIt() {
+      [TestMethod]
+      public void TryIt() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
@@ -48,20 +53,25 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
+         var logger = new ConsoleLogger(LogLevel.Debug);
 
-            var output = controller.Read().ToArray();
-            var process = composer.Process;
+         using(var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using(var inner = new Container().CreateScope(process, logger)) {
+               var controller = inner.Resolve<IProcessController>();
+               var output = controller.Read().ToArray();
+               var message = process.Entities.First().CalculatedFields.First(cf => cf.Name == "Message");
+               var valid = process.Entities.First().CalculatedFields.First(cf => cf.Name == "TestDataValid");
+               Assert.IsFalse((bool)output[0][valid]);
+               Assert.AreEqual("Field3 must be a 5 digit number (including decimal pt.)", output[0][message].ToString().Replace("|", " ").TrimEnd());
+               Assert.AreEqual("Field1 must contain 1. Field2 is required. Field2's value is incompatable with the int data type.", output[1][message].ToString().Replace("|", " ").TrimEnd());
 
-            var message = process.Entities.First().CalculatedFields.First(cf => cf.Name == "Message");
-            var valid = process.Entities.First().CalculatedFields.First(cf => cf.Name == "TestDataValid");
-            Assert.IsFalse((bool)output[0][valid]);
-            Assert.AreEqual("Field3 must be a 5 digit number (including decimal pt.)", output[0][message].ToString().Replace("|"," ").TrimEnd());
-            Assert.AreEqual("Field1 must contain 1. Field2 is required. Field2's value is incompatable with the int data type.", output[1][message].ToString().Replace("|", " ").TrimEnd());
-            
-        }
+            }
+         }
 
 
-    }
+      }
+
+
+   }
 }
