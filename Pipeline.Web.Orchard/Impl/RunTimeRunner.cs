@@ -15,7 +15,6 @@
 // limitations under the License.
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -25,79 +24,87 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Modules;
+using Transformalize.Providers.Solr.Autofac;
+using Transformalize.Providers.Elasticsearch.Autofac;
+using Transformalize.Providers.Clevest.Autofac;
+using Transformalize.Providers.Excel.Autofac;
+using Transformalize.Providers.GeoJson.Autofac;
+using Transformalize.Providers.Json.Autofac;
 
 namespace Pipeline.Web.Orchard.Impl {
-    public class RunTimeRunner : IRunTimeRun {
-        private readonly IContext _context;
-        private readonly IAppDataFolder _appDataFolder;
-        private readonly ITemplateProcessor _templateProcessor;
-        private readonly INotifier _notifier;
+   public class RunTimeRunner : IRunTimeRun {
+      private readonly IContext _context;
+      private readonly IAppDataFolder _appDataFolder;
+      private readonly ITemplateProcessor _templateProcessor;
+      private readonly INotifier _notifier;
 
-        public RunTimeRunner(IContext context, 
-            IAppDataFolder appDataFolder,
-            ITemplateProcessor templateProcessor,
-            INotifier notifier
-        ) {
-            _context = context;
-            _appDataFolder = appDataFolder;
-            _templateProcessor = templateProcessor;
-            _notifier = notifier;
-        }
+      public RunTimeRunner(IContext context,
+          IAppDataFolder appDataFolder,
+          ITemplateProcessor templateProcessor,
+          INotifier notifier
+      ) {
+         _context = context;
+         _appDataFolder = appDataFolder;
+         _templateProcessor = templateProcessor;
+         _notifier = notifier;
+      }
 
-        public IEnumerable<IRow> Run(Process process) {
+      public IEnumerable<IRow> Run(Process process) {
 
-            if (!process.Enabled) {
-                _context.Error("Process is disabled");
-                return Enumerable.Empty<IRow>();
+         if (!process.Enabled) {
+            _context.Error("Process is disabled");
+            return Enumerable.Empty<IRow>();
+         }
+
+         foreach (var warning in process.Warnings()) {
+            _context.Warn(warning);
+         }
+
+         if (process.Errors().Any()) {
+            foreach (var error in process.Errors()) {
+               _context.Error(error);
             }
+            _context.Error("The configuration errors must be fixed before this job will run.");
+            return Enumerable.Empty<IRow>();
+         }
 
-            foreach (var warning in process.Warnings()) {
-                _context.Warn(warning);
-            }
+         var container = new ContainerBuilder();
 
-            if (process.Errors().Any()) {
-                foreach (var error in process.Errors()) {
-                    _context.Error(error);
-                }
-                _context.Error("The configuration errors must be fixed before this job will run.");
-                return Enumerable.Empty<IRow>();
-            }
+         // Orchard CMS Stuff
+         container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+         container.RegisterInstance(_notifier).As<INotifier>();
+         container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
 
-            var container = new ContainerBuilder();
+         container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
+         container.RegisterCallback(new RootModule().Configure);
+         container.RegisterCallback(new ContextModule(process).Configure);
 
-            // Orchard CMS Stuff
-            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
-            container.RegisterInstance(_notifier).As<INotifier>();
-            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+         // providers
+         container.RegisterCallback(new AdoModule(process).Configure);
+         container.RegisterCallback(new SolrModule(process).Configure);
+         container.RegisterCallback(new ElasticsearchModule(process).Configure);
+         container.RegisterCallback(new InternalModule(process).Configure);
+         container.RegisterCallback(new FileModule(process).Configure);
+         container.RegisterCallback(new ExcelModule(process).Configure);
+         container.RegisterCallback(new WebModule(process).Configure);
+         container.RegisterCallback(new GeoJsonModule(process).Configure);
+         container.RegisterCallback(new KmlModule(process).Configure);
+         container.RegisterCallback(new ClevestModule(process).Configure);
+         container.RegisterCallback(new JsonModule(process).Configure);
 
-            container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
-            container.RegisterCallback(new ContextModule(process).Configure);
-             
-            // providers
-            container.RegisterCallback(new AdoModule(process).Configure);
-            container.RegisterCallback(new SolrModule(process).Configure);
-            container.RegisterCallback(new ElasticModule(process).Configure);
-            container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process).Configure);
-            container.RegisterCallback(new ExcelModule(process).Configure);
-            container.RegisterCallback(new WebModule(process).Configure);
-            container.RegisterCallback(new GeoJsonModule(process).Configure);
-            container.RegisterCallback(new KmlModule(process).Configure);
+         container.RegisterCallback(new TransformModule().Configure);
+         container.RegisterCallback(new AdoTransformModule(process).Configure);
+         container.RegisterCallback(new ValidateModule().Configure);
+         container.RegisterCallback(new MapModule(process).Configure);
+         container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
 
-            container.RegisterCallback(new TransformModule().Configure);
-            container.RegisterCallback(new AdoTransformModule(process).Configure);
-            container.RegisterCallback(new ValidateModule().Configure);
-            container.RegisterCallback(new MapModule(process).Configure);
-            container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
+         container.RegisterCallback(new EntityPipelineModule(process).Configure);
+         container.RegisterCallback(new ProcessPipelineModule(process).Configure);
+         container.RegisterCallback(new ProcessControlModule(process).Configure);
 
-            container.RegisterCallback(new EntityPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessControlModule(process).Configure);
-
-            using (var scope = container.Build().BeginLifetimeScope()) {
-                return scope.Resolve<IProcessController>().Read();
-            }
-        }
-    }
+         using (var scope = container.Build().BeginLifetimeScope()) {
+            return scope.Resolve<IProcessController>().Read();
+         }
+      }
+   }
 }

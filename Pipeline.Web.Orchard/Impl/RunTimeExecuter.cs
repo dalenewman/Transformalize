@@ -25,90 +25,98 @@ using Orchard.UI.Notify;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Pipeline.Web.Orchard.Modules;
+using Transformalize.Providers.Solr.Autofac;
+using Transformalize.Providers.Elasticsearch.Autofac;
+using Transformalize.Providers.Clevest.Autofac;
+using Transformalize.Providers.Excel.Autofac;
+using Transformalize.Providers.GeoJson.Autofac;
+using Transformalize.Providers.Json.Autofac;
 
 namespace Pipeline.Web.Orchard.Impl {
-    public class RunTimeExecuter : IRunTimeExecute {
+   public class RunTimeExecuter : IRunTimeExecute {
 
-        private readonly IContext _context;
-        private readonly IAppDataFolder _appDataFolder;
-        private readonly ITemplateProcessor _templateProcessor;
-        private readonly INotifier _notifier;
+      private readonly IContext _context;
+      private readonly IAppDataFolder _appDataFolder;
+      private readonly ITemplateProcessor _templateProcessor;
+      private readonly INotifier _notifier;
 
-        public RunTimeExecuter(
-            IContext context,
-            IAppDataFolder appDataFolder,
-            ITemplateProcessor templateProcessor,
-            INotifier notifier
-        ) {
-            _appDataFolder = appDataFolder;
-            _templateProcessor = templateProcessor;
-            _notifier = notifier;
-            _context = context;
-        }
+      public RunTimeExecuter(
+          IContext context,
+          IAppDataFolder appDataFolder,
+          ITemplateProcessor templateProcessor,
+          INotifier notifier
+      ) {
+         _appDataFolder = appDataFolder;
+         _templateProcessor = templateProcessor;
+         _notifier = notifier;
+         _context = context;
+      }
 
-        public void Execute(Process process) {
-            if (!process.Enabled) {
-                _context.Error("Process is disabled");
-                return;
+      public void Execute(Process process) {
+         if (!process.Enabled) {
+            _context.Error("Process is disabled");
+            return;
+         }
+
+         foreach (var warning in process.Warnings()) {
+            _context.Warn(warning);
+         }
+
+         if (process.Errors().Any()) {
+            foreach (var error in process.Errors()) {
+               _context.Error(error);
             }
+            _context.Error("The configuration errors must be fixed before this job will execute.");
+            return;
+         }
 
-            foreach (var warning in process.Warnings()) {
-                _context.Warn(warning);
+         var container = new ContainerBuilder();
+
+         // Register Orchard CMS Stuff
+         container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+         container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+         container.RegisterInstance(_notifier).As<INotifier>();
+
+         container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
+         container.RegisterCallback(new RootModule().Configure);
+         container.RegisterCallback(new ContextModule(process).Configure);
+
+         // providers
+         container.RegisterCallback(new AdoModule(process).Configure);
+         container.RegisterCallback(new SolrModule(process).Configure);
+         container.RegisterCallback(new ElasticsearchModule(process).Configure);
+         container.RegisterCallback(new InternalModule(process).Configure);
+         container.RegisterCallback(new FileModule(process).Configure);
+         container.RegisterCallback(new ExcelModule(process).Configure);
+         container.RegisterCallback(new WebModule(process).Configure);
+         container.RegisterCallback(new GeoJsonModule(process).Configure);
+         container.RegisterCallback(new KmlModule(process).Configure);
+         container.RegisterCallback(new ClevestModule(process).Configure);
+         container.RegisterCallback(new JsonModule(process).Configure);
+
+         container.RegisterCallback(new TransformModule().Configure);
+         container.RegisterCallback(new AdoTransformModule(process).Configure);
+         container.RegisterCallback(new ValidateModule().Configure);
+         container.RegisterCallback(new MapModule(process).Configure);
+         container.RegisterCallback(new ActionModule(process).Configure);
+         container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
+
+         container.RegisterCallback(new EntityPipelineModule(process).Configure);
+         container.RegisterCallback(new ProcessPipelineModule(process).Configure);
+         container.RegisterCallback(new ProcessControlModule(process).Configure);
+
+         using (var scope = container.Build().BeginLifetimeScope()) {
+            var logger = scope.Resolve<IPipelineLogger>() as OrchardLogger;
+            if (logger != null) {
+               logger.Process = process;
             }
+            scope.Resolve<IProcessController>().Execute();
+         }
 
-            if (process.Errors().Any()) {
-                foreach (var error in process.Errors()) {
-                    _context.Error(error);
-                }
-                _context.Error("The configuration errors must be fixed before this job will execute.");
-                return;
-            }
+      }
 
-            var container = new ContainerBuilder();
-
-            // Register Orchard CMS Stuff
-            container.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
-            container.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
-            container.RegisterInstance(_notifier).As<INotifier>();
-
-            container.RegisterInstance(_context.Logger).As<IPipelineLogger>().SingleInstance();
-            container.RegisterCallback(new RootModule().Configure);
-            container.RegisterCallback(new ContextModule(process).Configure);
-
-            // providers
-            container.RegisterCallback(new AdoModule(process).Configure);
-            container.RegisterCallback(new SolrModule(process).Configure);
-            container.RegisterCallback(new ElasticModule(process).Configure);
-            container.RegisterCallback(new InternalModule(process).Configure);
-            container.RegisterCallback(new FileModule(process).Configure);
-            container.RegisterCallback(new ExcelModule(process).Configure);
-            container.RegisterCallback(new WebModule(process).Configure);
-            container.RegisterCallback(new GeoJsonModule(process).Configure);
-            container.RegisterCallback(new KmlModule(process).Configure);
-
-            container.RegisterCallback(new TransformModule().Configure);
-            container.RegisterCallback(new AdoTransformModule(process).Configure);
-            container.RegisterCallback(new ValidateModule().Configure);
-            container.RegisterCallback(new MapModule(process).Configure);
-            container.RegisterCallback(new ActionModule(process).Configure);
-            container.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
-
-            container.RegisterCallback(new EntityPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            container.RegisterCallback(new ProcessControlModule(process).Configure);
-
-            using (var scope = container.Build().BeginLifetimeScope()) {
-                var logger = scope.Resolve<IPipelineLogger>() as OrchardLogger;
-                if (logger != null) {
-                    logger.Process = process;
-                }
-                scope.Resolve<IProcessController>().Execute();
-            }
-
-        }
-
-        public void Execute(string cfg, Dictionary<string, string> parameters) {
-            throw new NotImplementedException();
-        }
-    }
+      public void Execute(string cfg, Dictionary<string, string> parameters) {
+         throw new NotImplementedException();
+      }
+   }
 }

@@ -6,383 +6,413 @@
 
 @model ReportViewModel
 @{
-    var firstEntity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
-    
-    var sortService = WorkContext.Resolve<ISortService>();
-    var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
+   var firstEntity = Model.Process.Entities.FirstOrDefault() ?? new Entity { Name = "Missing Entity" };
 
-    if (hasActions) {
-        var bv = firstEntity.GetAllFields().FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
-        if (bv == null) {
-            hasActions = false;
-        } else {
-            bv.Output = false;
-        }
-    }
+   var sortService = WorkContext.Resolve<ISortService>();
+   var hasActions = Model.Process.Actions.Any(a => !a.Before && !a.After && !string.IsNullOrEmpty(a.Description) && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
 
-    Style.Require("jQueryUI_Orchard");
-    Script.Require("jQuery").AtHead();
-    Script.Require("jQueryUI").AtHead();
-    if (Model.Part.ClientSideSorting) {
-        Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/js/jquery.tablesorter.min.js");
-    }
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
+   if (hasActions) {
+      var bv = firstEntity.GetAllFields().FirstOrDefault(f => f.Alias == Common.BatchValueFieldName);
+      if (bv == null) {
+         hasActions = false;
+      } else {
+         bv.Output = false;
+      }
+   }
 
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushSql.min.js");
+   Script.Require("jQuery").AtHead();
+   Script.Require("jQueryUI").AtHead();
+   if (Model.Part.ClientSideSorting) {
+      Script.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/js/jquery.tablesorter.min.js");
+   }
+   Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
 
-    if (hasActions) {
-        Script.Require("BlockUI");
-    }
+   Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shCore.min.js");
+   Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushXml.min.js");
+   Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushJScript.min.js");
+   Script.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/scripts/shBrushSql.min.js");
 
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css");
+   Script.Include("jquery.shorten.1.1.js");
+   if (hasActions) {
+      Script.Require("BlockUI");
+   }
 
-    if (Model.Part.ClientSideSorting) {
-        Style.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/css/theme.default.min.css");
-    }
+   foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "js" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".js", StringComparison.OrdinalIgnoreCase)))) {
+      Script.Include(script.File);
+   }
 
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
-    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
+   Style.Require("jQueryUI_Orchard");
+   Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css");
+   Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCore.min.css");
+   Style.Include("https://cdnjs.cloudflare.com/ajax/libs/SyntaxHighlighter/3.0.83/styles/shCoreDefault.min.css");
 
-    var title = firstEntity.Label == string.Empty ? firstEntity.Alias : firstEntity.Label;
-    AppendMeta("description", title, ",");
-    Layout.Title = title;
+   if (Model.Part.ClientSideSorting) {
+      Style.Include("https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.1/css/theme.default.min.css");
+   }
+
+   foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "css" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".css", StringComparison.OrdinalIgnoreCase)))) {
+      Style.Include(script.File);
+   }
+
+   var title = firstEntity.Label == string.Empty ? firstEntity.Alias : firstEntity.Label;
+   AppendMeta("description", title, ",");
+   Layout.Title = title;
 }
 
 <style>
-    .btn-sort {
-        background-color: #dbdbdb;
-        border-color: #d2d1d1;
-        color: #727272;
-    }
+   .btn-sort {
+      background-color: #dbdbdb;
+      border-color: #d2d1d1;
+      color: #727272;
+   }
 
-    .btn-xs, .btn-group-xs > .btn {
-        border-radius: 3px;
-        font-size: 9px;
-        line-height: 1.5;
-    }
+   .btn-xs, .btn-group-xs > .btn {
+      border-radius: 3px;
+      font-size: 9px;
+      line-height: 1.5;
+   }
 
-    td.sorter .btn-xs {
-        font-size: 7px !important;
-    }
+   td.sorter .btn-xs {
+      font-size: 7px !important;
+   }
 
-    td.sorter {
-        padding: 0 3px 3px 4px !important;
-    }
+   td.sorter {
+      padding: 0 3px 3px 4px !important;
+   }
 
-    div.input-group > span > div.btn-group > button.multiselect {
-        -ms-border-bottom-left-radius: 0 !important;
-        border-bottom-left-radius: 0 !important;
-        -ms-border-top-left-radius: 0 !important;
-        border-top-left-radius: 0 !important;
-    }
+   div.input-group > span > div.btn-group > button.multiselect {
+      -ms-border-bottom-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+      -ms-border-top-left-radius: 0 !important;
+      border-top-left-radius: 0 !important;
+   }
 
-    thead > tr > td > input.form-control {
-        padding-left: 4px;
-        padding-right: 4px;
-        height: 30px;
-    }
+   thead > tr > td > input.form-control {
+      padding-left: 4px;
+      padding-right: 4px;
+      height: 30px;
+   }
 
-    #busy {
-        position: fixed;
-        left: 46%;
-        top: 40%;
-        display: none;
-        background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
-        background-size: 149px 149px;
-        background-repeat: no-repeat;
-        z-index: 1020;
-        height: 150px;
-        width: 150px;
-    }
+   #busy {
+      position: fixed;
+      left: 46%;
+      top: 40%;
+      display: none;
+      background: transparent url(@Url.Content("~/Modules/Pipeline.Web.Orchard/Styles/busy.gif"));
+      background-size: 149px 149px;
+      background-repeat: no-repeat;
+      z-index: 1020;
+      height: 150px;
+      width: 150px;
+   }
 
-    #busy-holder {
-        background: transparent;
-        width: 100%;
-        height: 100%;
-    }
+   #busy-holder {
+      background: transparent;
+      width: 100%;
+      height: 100%;
+   }
 
-    .form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
-        padding: 0 20px 0 10px;
-    }
+   .form-inline .multiselect-container label.checkbox, .form-inline .multiselect-container label.radio {
+      padding: 0 20px 0 10px;
+   }
 
-    .table-condensed > tbody > tr > td {
-        padding: 2px;
-    }
+   .table-condensed > tbody > tr > td {
+      padding: 2px;
+   }
 
-    tr.action-row {
-        font-size: smaller; 
-        font-weight: bolder;
-    }
+   tr.action-row {
+      font-size: smaller;
+      font-weight: bolder;
+   }
 
-    div.table-responsive {
-        min-height: 600px;
-    }
+   div.table-responsive {
+      min-height: 600px;
+   }
 
-    #layout-main-container {
-        width: 97%;
-    }
+   #layout-main-container {
+      width: 98%;
+   }
+
+   div.comment {
+      padding: 0;
+   }
+
+   @foreach (var script in Model.Process.Scripts.Where(s => s.Global && s.Language == "css" && string.IsNullOrEmpty(s.File))) {
+   <text>/* @script.Name css script */</text>
+   @Html.Raw(script.Content)
+
+   }
 
 </style>
 
 @foreach (var logEntry in Model.Process.Log.Where(le => le.LogLevel == LogLevel.Error)) {
-    <div class="alert alert-danger" role="alert">@logEntry.Message</div>
+   <div class="alert alert-danger" role="alert">@logEntry.Message</div>
 }
 
 @foreach (var logEntry in Model.Process.Log.Where(le => le.LogLevel == LogLevel.Warn)) {
-    <div class="alert alert-warning" role="alert">@logEntry.Message</div>
+   <div class="alert alert-warning" role="alert">@logEntry.Message</div>
 }
 
 <form id="id_report" class="form-inline" role="form" method="GET">
 
-    <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
-    @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
-        <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
-    }
-    <input id="id_page" class="bsh" type="hidden" name="page" value="@firstEntity.Page" />
-    <input id="id_size" class="bsh" type="hidden" name="size" value="@(firstEntity.Size)" />
+   <input id="id_sort" class="bsh" type="hidden" name="sort" value="@(Request["sort"] ?? string.Empty)" />
+   @if ((Request.QueryString[Common.InputFileIdName] ?? "0") != "0") {
+      <input id="id_file" class="bsh" type="hidden" name="@(Common.InputFileIdName)" value="@(Request.QueryString[Common.InputFileIdName])" />
+   }
+   <input id="id_page" class="bsh" type="hidden" name="page" value="@firstEntity.Page" />
+   <input id="id_size" class="bsh" type="hidden" name="size" value="@(firstEntity.Size)" />
 
-    @foreach (var parameter in Model.ActiveParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
-        <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
-    }
+   @foreach (var parameter in Model.ActiveParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+      <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
+   }
 
-    @Html.Partial("Shared/Parameters", Model)
+   @Html.Partial("Shared/Parameters", Model)
 
-    @Html.Partial("Shared/Controls", Model)
+   @Html.Partial("Shared/Controls", Model)
 
-    @foreach (var entity in Model.Process.Entities) {
+   @foreach (var entity in Model.Process.Entities) {
 
-        var fields = firstEntity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
-        var isSortable = fields.Any(f => f.Sortable == "true");
+      var fields = firstEntity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
+      var isSortable = fields.Any(f => f.Sortable == "true");
 
-        <div class="row">
-            <div class="col-sm-12 table-responsive">
-                <table id="id_table_@entity.Sequence" class="table table-condensed table-hover table-striped tablesorter">
-                    <thead>
-                        <tr class="action-row" >
-                            @if(hasActions) {
-                                <td>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
-                                        </label>
-                                    </div>
-                                </td>
-                            }
-                            @foreach (var field in fields) {
-                                <td title="@field.Name">@field.Label</td>
-                            }
-                        </tr>
-                        @if (isSortable) {
-                            var expression = Request["sort"] ?? string.Empty;
-                            <tr class="tablesorter-ignoreRow">
-                                @if (hasActions) {
-                                    <td class="sorter">&nbsp;</td>
-                                }
-                                @for (var i = 0; i < fields.Length; i++) {
-                                    var field = fields[i];
-                                    var number = i + 1;
-                                    if (field.Sortable == "true") {
-                                        <td class="sorter" data-order-by="@(number)">
-                                            <div class="btn-group btn-group-xs" style="width: 41px;">
-                                                <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-up"></span>
-                                                </a>
-                                                <a href="javascript:void()" title="Sort Descending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
-                                                    <span class="glyphicon glyphicon-chevron-down"></span>
-                                                </a>
-                                            </div>
-                                        </td>
+      <div class="row" style="padding-top: 2px;">
+         <div class="col-sm-12 table-responsive">
+            <table id="id_table_@entity.Sequence" class="table table-condensed table-hover table-striped tablesorter">
+               <thead>
+                  <tr class="action-row">
+                     @if (hasActions) {
+                        <td>
+                           <div class="checkbox">
+                              <label>
+                                 <input title="Select the entire search result" id="select-all" type="checkbox" class="bulk-action" name="select-all" placeholder="Select the entire search result">
+                              </label>
+                           </div>
+                        </td>
+                     }
+                     @foreach (var field in fields) {
+                        <td title="@field.Name">@field.Label</td>
+                     }
+                  </tr>
+                  @if (isSortable) {
+                     var expression = Request["sort"] ?? string.Empty;
+                     <tr class="tablesorter-ignoreRow">
+                        @if (hasActions) {
+                           <td class="sorter">&nbsp;</td>
+                        }
+                        @for (var i = 0; i < fields.Length; i++) {
+                           var field = fields[i];
+                           var number = i + 1;
+                           if (field.Sortable == "true") {
+                              <td class="sorter" data-order-by="@(number)">
+                                 <div class="btn-group btn-group-xs" style="width: 41px;">
+                                    <a href="javascript:void()" title="Sort Ascending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Asc ? "btn-primary" : "btn-sort") sortable">
+                                       <span class="glyphicon glyphicon-chevron-up"></span>
+                                    </a>
+                                    <a href="javascript:void()" title="Sort Descending by @field.Label" class="btn btn-xs @(sortService.Sort(number, expression) == Direction.Desc ? "btn-primary" : "btn-sort") sortable">
+                                       <span class="glyphicon glyphicon-chevron-down"></span>
+                                    </a>
+                                 </div>
+                              </td>
+                           } else {
+                              <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
+                           }
+                        }
+                     </tr>
+                  }
+                  @if (Model.Part.EnableInlineParameters && Model.InlineParameters.Any()) {
+                     <tr class="tablesorter-ignoreRow">
+                        @if (hasActions) {
+                           <td class="sorter">&nbsp;</td>
+                        }
+                        @foreach (var field in fields) {
+                           <td style="padding-left: 3px;">
+                              @if (Model.InlineParameters.ContainsKey(field.Alias)) {
+                                 var parameter = Model.InlineParameters[field.Alias];
+                                 @Html.Partial("Shared/Parameter", new ParameterModel { Maps = Model.Process.Maps, Parameter = parameter })
+                              }
+                           </td>
+                        }
+                     </tr>
+                  }
+               </thead>
+               <tbody>
+                  @foreach (var row in entity.Rows) {
+                     <tr>
+                        @if (hasActions) {
+                           <td>
+                              <div class="checkbox">
+                                 <label>
+                                    <input title="Select this row"
+                                           type="checkbox"
+                                           class="bulk-action shift-select"
+                                           name="row"
+                                           value="@(row[Common.BatchValueFieldName])"
+                                           placeholder="Select Record">
+                                 </label>
+                              </div>
+                           </td>
+                        }
+
+                        @foreach (var field in fields) {
+                           <td>
+                              @switch (field.Type) {
+                                 case "bool":
+                                 case "boolean":
+                                    if ((bool)row[field.Alias]) {
+                                       <span class="badge alert-success">
+                                          <span class="glyphicon glyphicon-ok"></span>
+                                       </span>
                                     } else {
-                                        <td style="padding: 0 3px 3px 1px;">&nbsp;</td>
+                                       <span class="badge alert-danger">
+                                          <span class="glyphicon glyphicon-remove"></span>
+                                       </span>
                                     }
-                                }
-                            </tr>
+                                    break;
+                                 case "date":
+                                 case "datetime":
+                                    if (field.Format == string.Empty) {
+                                       @(row[field.Alias])
+                                    } else {
+                                       if (row[field.Alias] is DateTime) {
+                                          @(((DateTime)row[field.Alias]).ToString(field.Format))
+                                       } else {
+                                          @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
+                                       }
+                                    }
+                                    break;
+                                 case "byte[]":
+                                    @Transformalize.Utility.BytesToHexString(row[field.Alias] as byte[])
+                                    break;
+                                 case "single":
+                                 case "double":
+                                 case "decimal":
+                                 case "float":
+                                    if (field.Format == string.Empty) {
+                                       @(row[field.Alias])
+                                    } else {
+                                       switch (field.Type) {
+                                          case "single":
+                                          case "float":
+                                             @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
+                                             break;
+                                          case "decimal":
+                                             @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
+                                             break;
+                                          case "double":
+                                             @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
+                                             break;
+                                          default:
+                                             @(row[field.Alias])
+                                             break;
+                                       }
+
+                                    }
+                                    break;
+                                 default:
+                                    if (field.Raw) {
+                                       @Html.Raw(row[field.Alias])
+                                    } else {
+                                       if (Model.Part.ClipTextAt > 0) {
+                                          var value = row[field.Alias].ToString().Trim();
+                                          if (value.Length > Model.Part.ClipTextAt + 3) {
+                                             <div class="comment">@value</div>
+                                          } else {
+                                             @value
+                                          }
+                                       } else {
+                                          @row[field.Alias]
+                                       }
+                                    }
+
+                                    break;
+                              }
+                           </td>
                         }
-                        @if (Model.Part.EnableInlineParameters && Model.InlineParameters.Any()) {
-                            <tr class="tablesorter-ignoreRow">
-                                @if (hasActions) {
-                                    <td class="sorter">&nbsp;</td>
-                                }
-                                @foreach (var field in fields) {
-                                    <td style="padding-left: 3px;">
-                                        @if (Model.InlineParameters.ContainsKey(field.Alias)) {
-                                            var parameter = Model.InlineParameters[field.Alias];
-                                            @Html.Partial("Shared/Parameter", new ParameterModel { Maps = Model.Process.Maps, Parameter = parameter })
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </thead>
-                    <tbody>
-                        @foreach (var row in entity.Rows) {
-                            <tr>
-                                @if (hasActions) {
-                                    <td>
-                                        <div class="checkbox">
-                                            <label>
-                                                <input title="Select this row"
-                                                       type="checkbox"
-                                                       class="bulk-action shift-select"
-                                                       name="row"
-                                                       value="@(row[Common.BatchValueFieldName])"
-                                                       placeholder="Select Record">
-                                            </label>
-                                        </div>
-                                    </td>
-                                }
+                     </tr>
+                  }
+               </tbody>
+            </table>
 
-                                @foreach (var field in fields) {
-                                    <td>
-                                        @switch (field.Type) {
-                                            case "bool":
-                                            case "boolean":
-                                                if ((bool)row[field.Alias]) {
-                                                    <span class="badge alert-success">
-                                                        <span class="glyphicon glyphicon-ok"></span>
-                                                    </span>
-                                                } else {
-                                                    <span class="badge alert-danger">
-                                                        <span class="glyphicon glyphicon-remove"></span>
-                                                    </span>
-                                                }
-                                                break;
-                                            case "date":
-                                            case "datetime":
-                                                if (field.Format == string.Empty) {
-                                                    @(row[field.Alias])
-                                                } else {
-                                                    if (row[field.Alias] is DateTime) {
-                                                        @(((DateTime)row[field.Alias]).ToString(field.Format))
-                                                    } else {
-                                                        @((Convert.ToDateTime(row[field.Alias])).ToString(field.Format))
-                                                    }
-                                                }
-                                                break;
-                                            case "byte[]":
-                                                @Transformalize.Utility.BytesToHexString(row[field.Alias] as byte[])
-                                                break;
-                                            case "single":
-                                            case "double":
-                                            case "decimal":
-                                            case "float":
-                                                if (field.Format == string.Empty) {
-                                                    @(row[field.Alias])
-                                                } else {
-                                                    switch (field.Type) {
-                                                        case "single":
-                                                        case "float":
-                                                            @(row[field.Alias] is float ? ((float)row[field.Alias]).ToString(field.Format) : Convert.ToSingle(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        case "decimal":
-                                                            @(row[field.Alias] is decimal ? ((decimal)row[field.Alias]).ToString(field.Format) : Convert.ToDecimal(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        case "double":
-                                                            @(row[field.Alias] is double ? ((double)row[field.Alias]).ToString(field.Format) : Convert.ToDouble(row[field.Alias]).ToString(field.Format))
-                                                            break;
-                                                        default:
-                                                            @(row[field.Alias])
-                                                            break;
-                                                    }
+            @if (Model.Part.ClientSideSorting) {
+               <script type="text/javascript">
+                   // <!--
+                  $(document).ready(function() {
+                     $("#id_table_@entity.Sequence").tablesorter();
+                     $("#id_table_@entity.Sequence")
+                        .bind("sortStart", function() {
+                           $('#busy').show();
+                        })
+                        .bind("sortEnd", function() {
+                           $('#busy').hide();
+                        });
+                  });
+                  // -->
+               </script>
+            }
 
-                                                }
-                                                break;
-                                            default:
-                                                @(field.Raw ? Html.Raw(row[field.Alias]) : row[field.Alias])
-                                                break;
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-
-                @if (Model.Part.ClientSideSorting) {
-                    <script type="text/javascript">
-                            // <!--
-                            $(document).ready(function() {
-                                $("#id_table_@entity.Sequence").tablesorter();
-                                $("#id_table_@entity.Sequence")
-                                    .bind("sortStart",
-                                        function() {
-                                            $('#busy').show();
-                                        })
-                                    .bind("sortEnd",
-                                        function() {
-                                            $('#busy').hide();
-                                        });
-                            });
-                            // -->
-                    </script>
-                }
-
-            </div>
-        </div>
-    }
+         </div>
+      </div>
+   }
 
 </form>
 
 <div id="busy_holder">
-    <div id="busy"></div>
+   <div id="busy"></div>
 </div>
 
 <script type="text/javascript">
-    //<!--
+   //<!--
 
-    var controls = {
-        setPage: function(page) {
-            $('#id_page').val(page);
-        },
-        submit: function(page) {
-            controls.setPage(page);
-            $("#id_report").submit();
-        },
-        setSize: function(size) {
-            $('#id_size').val(size);
-            controls.submit(1);
-        },
-        setSort: function(sort) {
-            $('#id_sort').val(sort);
-        },
-        lastChecked : null,
-        bulkActionLength: 0
-    }
+   var controls = {
+      setPage: function(page) {
+         $('#id_page').val(page);
+      },
+      submit: function(page) {
+         controls.setPage(page);
+         $("#id_report").submit();
+      },
+      setSize: function(size) {
+         $('#id_size').val(size);
+         controls.submit(1);
+      },
+      setSort: function(sort) {
+         $('#id_sort').val(sort);
+      },
+      lastChecked : null,
+      bulkActionLength: 0
+   }
 
     // https://stackoverflow.com/questions/1634748/how-can-i-delete-a-query-string-parameter-in-javascript
     function removeUrlParameter(url, parameter) {
-        //prefer to use l.search if you have a location/link object
-        var urlparts= url.split('?');
-        if (urlparts.length>=2) {
+      //prefer to use l.search if you have a location/link object
+      var urlparts= url.split('?');
+      if (urlparts.length>=2) {
 
-            var prefix= encodeURIComponent(parameter)+'=';
-            var pars= urlparts[1].split(/[&;]/g);
+         var prefix= encodeURIComponent(parameter)+'=';
+         var pars= urlparts[1].split(/[&;]/g);
 
-            //reverse iteration as may be destructive
-            for (var i= pars.length; i-- > 0;) {
-                //idiom for string.startsWith
-                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
-                    pars.splice(i, 1);
-                }
+         //reverse iteration as may be destructive
+         for (var i= pars.length; i-- > 0;) {
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+               pars.splice(i, 1);
             }
+         }
 
-            url= urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
-            return url;
-        } else {
-            return url;
-        }
-    }
+         url= urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+         return url;
+      } else {
+         return url;
+      }
+   }
 
-    function bulkAction(page,description,id) {
-        var length = $('.bulk-action:checked').length;
-        if (length > 0) {
+   function bulkAction(page,description,id) {
+      var length = $('.bulk-action:checked').length;
+      if (length > 0) {
             $.blockUI({
-                message: null,
+         message: null,
                 css: {
-                    border: 'none',
+            border: 'none',
                     padding: '15px',
                     backgroundColor: '#000',
                     '-webkit-border-radius': '10px',
@@ -391,51 +421,53 @@
                     color: '#fff',
                     baseZ: 1021
                 }
-            });
-            var $form = $('#id_report');
+         });
+         var $form = $('#id_report');
             $form.attr('method', 'POST');
-            $form.attr('action', removeUrlParameter(window.location.href, "output"));
+            $form.attr('action', '@(Url.Action("Index", "Action", new RouteValueDictionary { { "Id", Model.Part.Id } }))');
             $form.append('<input type="hidden" name="__RequestVerificationToken" value="@(Html.AntiForgeryTokenValueOrchard())" />');
             $form.append('<input type="hidden" name="action" value="'+description+'" />');
             $form.append('<input type="hidden" name="actionId" value="'+id+'" />');
             $form.append('<input type="hidden" name="count" value="'+controls.bulkActionLength+'" />');
             $('#id_output').val("batch");
-            controls.submit(page);
-        }
-    }
+         controls.submit(page);
+      }
+   }
 
-    function updateBulkActions() {
-        var length = $(".bulk-action:checked").length;
-        var all = length === $(".bulk-action").length;
+   function updateBulkActions() {
+      var length = $(".bulk-action:checked").length;
+      var all = length === $(".bulk-action").length;
         $(".bulk-action-link").each(function () {
-            var link = $(this);
-            var len = (all ? "All" : $('#select-all:checked').length > 0 ? length - 1 : length);
-            controls.bulkActionLength =  len;
-            link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + len + "</span>");
-        });
-    }
+         var link = $(this);
+         var len = (all ? "All" : $('#select-all:checked').length > 0 ? length - 1 : length);
+         controls.bulkActionLength =  len;
+         link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + len + "</span>");
+      });
+   }
 
     $(document).ready(function () {
 
-        var cleared = "_Cleared";
-        var lastFilter;
+       $(".comment").shorten({showChars: @Model.Part.ClipTextAt});
 
-        var $boxes = $('.shift-select');
+      var cleared = "_Cleared";
+      var lastFilter;
+
+      var $boxes = $('.shift-select');
         $boxes.click(function(e) {
-            if(!controls.lastChecked) {
-                controls.lastChecked = this;
-                return;
-            }
+         if(!controls.lastChecked) {
+            controls.lastChecked = this;
+            return;
+         }
 
-            if(e.shiftKey) {
-                var start = $boxes.index(this);
-                var end = $boxes.index(controls.lastChecked);
+         if(e.shiftKey) {
+            var start = $boxes.index(this);
+            var end = $boxes.index(controls.lastChecked);
 
                 $boxes.slice(Math.min(start,end), Math.max(start,end)+ 1).prop('checked', controls.lastChecked.checked);
-            }
+         }
 
-            controls.lastChecked = this;
-        });
+         controls.lastChecked = this;
+      });
 
         @*var isSortable = @(isSortable.ToString().ToLower());*@
 
@@ -506,7 +538,7 @@
             return true;
         });
 
-        $('#id_clear').click(function () {
+        $('.clear-button').click(function () {
 
             lastFilter = cleared;
 
@@ -571,9 +603,14 @@
 
     });
 
-    $(document).ready(function() {
-        SyntaxHighlighter.all();
-    });
+   $(document).ready(function() {
+      SyntaxHighlighter.all();
+   });
 
+   @foreach (var script in Model.Process.Scripts.Where(s => s.Global && string.IsNullOrEmpty(s.File) && s.Language == "js")) {
+      <text>/* @script.Name */</text>
+      @Html.Raw(script.Content)
+
+   }
     //-->
 </script>

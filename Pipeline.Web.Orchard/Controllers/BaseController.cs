@@ -43,50 +43,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             return !hasRequiredParameters;
         }
 
-        public T GetStickyUrlParameter<T>(int partId, string name, Func<T> defaultValue) where T : IConvertible {
-
-            var key = partId + name;
-
-            if (Request.QueryString[name] != null) {
-                try {
-                    var tc = TypeDescriptor.GetConverter(typeof(T));
-                    var queryValue = (T)tc.ConvertFromString(Request.QueryString[name]);
-                    if (queryValue != null) {
-                        if (!queryValue.Equals(Session[key])) {
-                            Session[key] = queryValue;
-                        }
-
-                        return queryValue;
-                    }
-                } catch (Exception exception) {
-                    Logger.Error(exception.Message);
-                }
-            }
-
-            if (Request.Form[name] != null) {
-                try {
-                    var tc = TypeDescriptor.GetConverter(typeof(T));
-                    var formValue = (T)tc.ConvertFromString(Request.Form[name]);
-                    if (formValue != null) {
-                        if (!formValue.Equals(Session[key])) {
-                            Session[key] = formValue;
-                        }
-                        
-                        return formValue;
-                    }
-                } catch (Exception exception) {
-                    Logger.Error(exception.Message);
-                }
-            }
-
-            if (Session[key] != null) {
-                return (T)Session[key];
-            }
-
-            var value = defaultValue();
-            Session[key] = value;
-            return value;
-
+        public T GetStickyParameter<T>(int partId, string name, Func<T> defaultValue) where T : IConvertible {
+            return Common.GetStickyParameter(Request, Session, partId, name, defaultValue);
         }
 
         public void SetStickyParameters(int id, List<Transformalize.Configuration.Parameter> parameters) {

@@ -28,7 +28,7 @@ using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Impl;
-using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Dates;
 using IDependency = Cfg.Net.Contracts.IDependency;
 
 // ReSharper disable PossibleMultipleEnumeration
@@ -57,7 +57,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     ctx.Resolve<IReader>(),
                     ctx.Resolve<ISerializer>(),
                     new DateMathModifier(),
-                    new EnvironmentModifier(),
+                    new ParameterModifier(),
                     new IllegalCharacterValidator()
                 };
 

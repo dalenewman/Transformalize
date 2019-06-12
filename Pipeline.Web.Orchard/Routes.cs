@@ -144,6 +144,22 @@ namespace Pipeline.Web.Orchard {
                 },
 
                 new RouteDescriptor {
+                Priority = 11,
+                Route = new Route(
+                        "Pipeline/Calendar/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Calendar" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
                     Priority = 11,
                     Route = new Route(
                         "Pipeline/Action/{id}",

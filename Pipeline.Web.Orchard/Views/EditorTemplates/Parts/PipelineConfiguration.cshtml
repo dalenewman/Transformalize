@@ -5,197 +5,314 @@
 @model PipelineConfigurationPart
 
 @{
-    var theme = WorkContext.CurrentSite.As<PipelineSettingsPart>().EditorTheme;
-    string returnUrl;
-    string returnName;
-    if (string.IsNullOrEmpty(Request.QueryString[Common.ReturnUrlName])) {
-        returnUrl = Url.Action("List", "Cfg", new { area = Common.ModuleName });
-        returnName = "Jobs";
-    } else {
-        returnUrl = Request.QueryString[Common.ReturnUrlName];
-        returnName = "Back";
-    }
+   var theme = WorkContext.CurrentSite.As<PipelineSettingsPart>().EditorTheme;
+   string returnUrl;
+   string returnName;
+   if (string.IsNullOrEmpty(Request.QueryString[Common.ReturnUrlName])) {
+      returnUrl = Url.Action("List", "Cfg", new { area = Common.ModuleName });
+      returnName = "Jobs";
+   } else {
+      returnUrl = Request.QueryString[Common.ReturnUrlName];
+      returnName = "Back";
+   }
 
-    Html.RenderPartial("Shared/ConfigurationEditor", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
+   Html.RenderPartial("Shared/ConfigurationEditor", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
 }
 
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
-    <legend>Configuration</legend>
-    <div class="editor-field">
-        @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
-        @Html.DropDownListFor(x => x.EditorMode, PipelineConfigurationPart.EditorModes)
-        @Html.ValidationMessageFor(x => x.EditorMode)
+   <legend>Configuration</legend>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.EditorMode, T("Editor Mode"))
+      @Html.DropDownListFor(x => x.EditorMode, PipelineConfigurationPart.EditorModes)
+      @Html.ValidationMessageFor(x => x.EditorMode)
 
-        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
-        @if (!Model.NeedsInputFile) {
-            <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Check", "Api", new {id = Model.Id, area = Common.ModuleName}))', '_blank');">Check</button>
-        }
-        <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Cfg", "Api", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Cfg</button>
-    </div>
-    <div class="editor-field">
-        @Html.LabelFor(x => x.PlaceHolderStyle, T("Place Holder Style"))
-        @Html.DropDownListFor(x => x.PlaceHolderStyle, PipelineConfigurationPart.PlaceHolderStyles)
-        @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
-    </div>
+      <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(returnUrl)', '_self');">@returnName</button>
+      @if (!Model.NeedsInputFile) {
+         <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Check", "Api", new {id = Model.Id, area = Common.ModuleName}))', '_blank');">Check</button>
+      }
+      <button style="float: right;" type="button" class="button grey" onclick="javascript: window.open('@(Url.Action("Cfg", "Api", new { id = Model.Id, area = Common.ModuleName }))', '_blank');">Cfg</button>
+   </div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.PlaceHolderStyle, T("Place Holder Style"))
+      @Html.DropDownListFor(x => x.PlaceHolderStyle, PipelineConfigurationPart.PlaceHolderStyles)
+      @Html.ValidationMessageFor(x => x.PlaceHolderStyle)
+   </div>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.Configuration, T("Configuration"))
-        @Html.TextAreaFor(x => x.Configuration)
-    </div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.Configuration, T("Configuration"))
+      @Html.TextAreaFor(x => x.Configuration)
+   </div>
 
-    <div class="hint" style="font-size: smaller;">
-        <strong>F11</strong>: <span>Full Screen</span>,
-        <strong>Esc</strong>: <span>Exit Full Screen</span>,
-        <strong>Ctrl-S</strong>: <span>Save</span>,
-        <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
-        <strong>Ctrl-F</strong>: <span>Find</span>,
-        <strong>Ctrl-G</strong>: <span>Find next</span>,
-        <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
-        <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
-        <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
-    </div>
+   <div class="hint" style="font-size: smaller;">
+      <strong>F11</strong>: <span>Full Screen</span>,
+      <strong>Esc</strong>: <span>Exit Full Screen</span>,
+      <strong>Ctrl-S</strong>: <span>Save</span>,
+      <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
+      <strong>Ctrl-F</strong>: <span>Find</span>,
+      <strong>Ctrl-G</strong>: <span>Find next</span>,
+      <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
+      <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
+      <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
+   </div>
 
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
-    <legend>Report Options</legend>
-    <div class="editor-field">
-        <table>
-            <tr>
-                <td style="padding-right: 10px;">@Html.EditorFor(x => x.EnableInlineParameters)</td>
-                <td>@Html.LabelFor(x => x.EnableInlineParameters, T("Enable Inline Parameters"))</td>
-                <td> &nbsp;</td>
-                <td><div class="hint"> @T("Enable inline parameters (moving them from the top to just under the column header).")</div></td>
-                <td>@Html.ValidationMessageFor(x => x.EnableInlineParameters)</td>
-            </tr>
-            <tr>
-                <td style="padding-right: 10px;">@Html.EditorFor(x => x.ClientSideSorting)</td>
-                <td>@Html.LabelFor(x => x.ClientSideSorting, T("Client Side Sorting"))</td>
-                <td> &nbsp;</td>
-                <td>
-                    <div class="hint"> @T("Enables client side sorting.")</div>
-                </td>
-                <td>@Html.ValidationMessageFor(x => x.ClientSideSorting)</td>
-            </tr>
-        </table>
-    </div>
-    <div class="editor-field">
-        @Html.LabelFor(x => x.PageSizes, T("Page Sizes"))
-        @Html.EditorFor(x => x.PageSizes)
-        @Html.ValidationMessageFor(x => x.PageSizes)
-    </div>
-    <div class="hint">@T("a comma delimited list of page sizes (integers)")</div>
+
+   <legend>Report Options</legend>
+
+   <div class="editor-field">
+      <table>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.EnableInlineParameters)</td>
+            <td>@Html.LabelFor(x => x.EnableInlineParameters, T("Enable Inline Parameters"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.EnableInlineParameters)</td>
+         </tr>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.ClientSideSorting)</td>
+            <td>@Html.LabelFor(x => x.ClientSideSorting, T("Client Side Sorting"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.ClientSideSorting)</td>
+         </tr>
+      </table>
+   </div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.ClipTextAt, T("Clip Text At"))
+      @Html.EditorFor(x => x.ClipTextAt)
+      @Html.ValidationMessageFor(x => x.ClipTextAt)
+   </div>
+   <div class="hint">@T("Clip field text at n number of characters. Default is 0 (no clipping).")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.PageSizes, T("Page Sizes"))
+      @Html.EditorFor(x => x.PageSizes)
+      @Html.ValidationMessageFor(x => x.PageSizes)
+   </div>
+   <div class="hint">@T("a comma delimited list of page sizes (integers)")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapSizes, T("Extended Page Sizes"))
+      @Html.EditorFor(x => x.MapSizes)
+      @Html.ValidationMessageFor(x => x.MapSizes)
+   </div>
+   <div class="hint">@T("a comma delimited list of larger page sizes that appear for long-running client-side operations (e.g. maps, calendars, etc).")</div>
+
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
-    <legend>Map Options</legend>
+   <legend>Map Options</legend>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.MapStyle, T("Map Style"))
-        @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
-        @Html.ValidationMessageFor(x => x.MapStyle)
-    </div>
+   <div class="editor-field">
+      <table>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.MapEnabled)</td>
+            <td>@Html.LabelFor(x => x.MapEnabled, T("Map Enabled"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.MapEnabled)</td>
+         </tr>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.MapPaging)</td>
+            <td>@Html.LabelFor(x => x.MapPaging, T("Map Paging"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.MapPaging)</td>
+         </tr>
+      </table>
+   </div>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.MapCircleRadius, T("Map Circle Radius"))
-        @Html.EditorFor(x => x.MapCircleRadius)
-        @Html.ValidationMessageFor(x => x.MapCircleRadius)
-    </div>
-    <div class="hint">@T("Map circle radius is an integer greater than 0")</div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapColorField, T("Map Color Field"))
+      @Html.EditorFor(x => x.MapColorField)
+      @Html.ValidationMessageFor(x => x.MapColorField)
+   </div>
+   <div class="hint">@T("Map color field.  Choose a field that has a hex color code.")</div>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.MapCircleOpacity, T("Map Circle Opacity"))
-        @Html.EditorFor(x => x.MapCircleOpacity)
-        @Html.ValidationMessageFor(x => x.MapCircleOpacity)
-    </div>
-    <div class="hint">@T("Map circle opacity is a double betwee 0.0 and 1.0")</div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapPopUpField, T("Map PopUp Field"))
+      @Html.EditorFor(x => x.MapPopUpField)
+      @Html.ValidationMessageFor(x => x.MapPopUpField)
+   </div>
+   <div class="hint">@T("Map popup field.  Choose a field that has descriptive text (preferably HTML).")</div>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.MapSizes, T("Map Page Sizes"))
-        @Html.EditorFor(x => x.MapSizes)
-        @Html.ValidationMessageFor(x => x.MapSizes)
-    </div>
-    <div class="hint">@T("a comma delimited list of larger page sizes that only appear when viewing maps")</div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapLatitudeField, T("Map Latitude Field"))
+      @Html.EditorFor(x => x.MapLatitudeField)
+      @Html.ValidationMessageFor(x => x.MapLatitudeField)
+   </div>
+   <div class="hint">@T("Map latitude field.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapLongitudeField, T("Map Longitude Field"))
+      @Html.EditorFor(x => x.MapLongitudeField)
+      @Html.ValidationMessageFor(x => x.MapLongitudeField)
+   </div>
+   <div class="hint">@T("Map longitude field.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapStyle, T("Map Style"))
+      @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
+      @Html.ValidationMessageFor(x => x.MapStyle)
+   </div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapCircleRadius, T("Map Circle Radius"))
+      @Html.EditorFor(x => x.MapCircleRadius)
+      @Html.ValidationMessageFor(x => x.MapCircleRadius)
+   </div>
+   <div class="hint">@T("Map circle radius is an integer greater than 0")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapCircleOpacity, T("Map Circle Opacity"))
+      @Html.EditorFor(x => x.MapCircleOpacity)
+      @Html.ValidationMessageFor(x => x.MapCircleOpacity)
+   </div>
+   <div class="hint">@T("Map circle opacity is a double betwee 0.0 and 1.0")</div>
+
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
-    <legend>Run Options</legend>
+   <legend>Calendar Options</legend>
 
-    <div class="editor-field">
-        @Html.LabelFor(x => x.Modes, T("Modes"))
-        @Html.TextBoxFor(x => x.Modes)
-        @Html.ValidationMessageFor(x => x.Modes)
-    </div>
-    <div class="hint">@T("Modes available on the pipeline's list page.  An asterisk indicates the default mode.")</div>
+   <div class="editor-field">
+      <table>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.CalendarEnabled)</td>
+            <td>@Html.LabelFor(x => x.CalendarEnabled, T("Calendar Enabled"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.CalendarEnabled)</td>
+         </tr>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.CalendarPaging)</td>
+            <td>@Html.LabelFor(x => x.CalendarPaging, T("Calendar Paging"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.CalendarPaging)</td>
+         </tr>
+      </table>
+   </div>
 
-    <div class="editor-field">
-        <table>
-            <tr>
-                <td style="padding-right: 10px;">@Html.EditorFor(x => x.Runnable)</td>
-                <td>@Html.LabelFor(x => x.Runnable, T("Runnable"))</td>
-                <td> &nbsp;</td>
-                <td><div class="hint"> @T("Let the user run this.")</div></td>
-                <td>@Html.ValidationMessageFor(x => x.Runnable)</td>
-            </tr>
-            <tr>
-                <td style="padding-right: 10px;">@Html.EditorFor(x => x.NeedsInputFile)</td>
-                <td>@Html.LabelFor(x => x.NeedsInputFile, T("Needs Input File"))</td>
-                <td> &nbsp;</td>
-                <td><div class="hint"> @T("Needs an input file to run.")</div></td>
-                <td>@Html.ValidationMessageFor(x => x.NeedsInputFile)</td>
-            </tr>
-        </table>
-    </div>
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarIdField, T("Calendar id Field"))
+      @Html.EditorFor(x => x.CalendarIdField)
+      @Html.ValidationMessageFor(x => x.CalendarIdField)
+   </div>
+   <div class="hint">@T("Calendar id field.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarTitleField, T("Calendar title Field"))
+      @Html.EditorFor(x => x.CalendarTitleField)
+      @Html.ValidationMessageFor(x => x.CalendarTitleField)
+   </div>
+   <div class="hint">@T("Calendar title field.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarUrlField, T("Calendar url Field"))
+      @Html.EditorFor(x => x.CalendarUrlField)
+      @Html.ValidationMessageFor(x => x.CalendarUrlField)
+   </div>
+   <div class="hint">@T("Calendar url field.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarClassField, T("Calendar class Field"))
+      @Html.EditorFor(x => x.CalendarClassField)
+      @Html.ValidationMessageFor(x => x.CalendarClassField)
+   </div>
+   <div class="hint">@T("Calendar class field.  Field should return event-important, event-success, event-warning, event-info, event-inverse or event-special")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarStartField, T("Calendar start Field"))
+      @Html.EditorFor(x => x.CalendarStartField)
+      @Html.ValidationMessageFor(x => x.CalendarStartField)
+   </div>
+   <div class="hint">@T("Calendar start field. Field must return a unix time stamp in milliseconds (usually a long integer)")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.CalendarEndField, T("Calendar end Field"))
+      @Html.EditorFor(x => x.CalendarEndField)
+      @Html.ValidationMessageFor(x => x.CalendarEndField)
+   </div>
+   <div class="hint">@T("Calendar end field. Field must return a unix time stamp in milliseconds (usually a long integer)")</div>
+
+</fieldset>
+
+<fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
+   <legend>Run Options</legend>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.Modes, T("Modes"))
+      @Html.TextBoxFor(x => x.Modes)
+      @Html.ValidationMessageFor(x => x.Modes)
+   </div>
+   <div class="hint">@T("Modes available on the pipeline's list page.  An asterisk indicates the default mode.")</div>
+
+   <div class="editor-field">
+      <table>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.Runnable)</td>
+            <td>@Html.LabelFor(x => x.Runnable, T("Runnable"))</td>
+            <td> &nbsp;</td>
+            <td><div class="hint"> @T("Let the user run this.")</div></td>
+            <td>@Html.ValidationMessageFor(x => x.Runnable)</td>
+         </tr>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.NeedsInputFile)</td>
+            <td>@Html.LabelFor(x => x.NeedsInputFile, T("Needs Input File"))</td>
+            <td> &nbsp;</td>
+            <td><div class="hint"> @T("Needs an input file to run.")</div></td>
+            <td>@Html.ValidationMessageFor(x => x.NeedsInputFile)</td>
+         </tr>
+      </table>
+   </div>
 </fieldset>
 
 <hr />
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
-    <legend>White-list</legend>
-    <table>
-        <tr>
-            <td>
-                <div class="editor-field">
-                    @Html.LabelFor(x => x.StartAddress, T("Start Address"))
-                    @Html.EditorFor(x => x.StartAddress)
-                    @Html.ValidationMessageFor(x => x.StartAddress)
-                </div>
-                <div class="hint">@T("Starting IP Address")</div>
-            </td>
-            <td>
-                <div class="editor-field">
-                    @Html.LabelFor(x => x.EndAddress, T("End Address"))
-                    @Html.EditorFor(x => x.EndAddress)
-                    @Html.ValidationMessageFor(x => x.EndAddress)
-                </div>
-                <div class="hint">@T("Ending IP Address")</div>
-            </td>
-            <td style="width: 100%;">&nbsp;&nbsp;&nbsp;</td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <p>
-                    <strong style="color: red; font-weight: bold;">CAUTION</strong>: You should only white-list internal IP addresses on configurations using trusted authentication. Trusted
-                    authentication does not store the <code>user</code> and <code>password</code> in your connections. Instead, it relies on the credentials
-                    of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br /><br />
-                </p>
+   <legend>White-list</legend>
+   <table>
+      <tr>
+         <td>
+            <div class="editor-field">
+               @Html.LabelFor(x => x.StartAddress, T("Start Address"))
+               @Html.EditorFor(x => x.StartAddress)
+               @Html.ValidationMessageFor(x => x.StartAddress)
+            </div>
+            <div class="hint">@T("Starting IP Address")</div>
+         </td>
+         <td>
+            <div class="editor-field">
+               @Html.LabelFor(x => x.EndAddress, T("End Address"))
+               @Html.EditorFor(x => x.EndAddress)
+               @Html.ValidationMessageFor(x => x.EndAddress)
+            </div>
+            <div class="hint">@T("Ending IP Address")</div>
+         </td>
+         <td style="width: 100%;">&nbsp;&nbsp;&nbsp;</td>
+      </tr>
+      <tr>
+         <td colspan="3">
+            <p>
+               <strong style="color: red; font-weight: bold;">CAUTION</strong>: You should only white-list internal IP addresses on configurations using trusted authentication. Trusted
+               authentication does not store the <code>user</code> and <code>password</code> in your connections. Instead, it relies on the credentials
+               of the account running your website. If you store your credentials in your connections (above), <strong color="style: red;">they are comprimised</strong>.<br /><br />
+            </p>
 
-                <p>
-                    White-listing allows access to <code>~/Pipeline/Api/Cfg</code> so that
-                    other computers on your network can read the configuration (and run them, or not).<br /><br />
-                </p>
+            <p>
+               White-listing allows access to <code>~/Pipeline/Api/Cfg</code> so that
+               other computers on your network can read the configuration (and run them, or not).<br /><br />
+            </p>
 
-                <p>
-                    You can enable <code>~/Pipeline/Api/Run</code> by tagging this configuration as <strong>SERVICE</strong> below. Note: Run removes
-                    the credentials (user, password) from the connections.<br /><br />
-                </p>
-                <p>
-                    @T("Your IP is {0}", Request.UserHostAddress).
-                </p>
-            </td>
-        </tr>
-    </table>
+            <p>
+               You can enable <code>~/Pipeline/Api/Run</code> by tagging this configuration as <strong>SERVICE</strong> below. Note: Run removes
+               the credentials (user, password) from the connections.<br /><br />
+            </p>
+            <p>
+               @T("Your IP is {0}", Request.UserHostAddress).
+            </p>
+         </td>
+      </tr>
+   </table>
 </fieldset>
 
 <input id="PipelineConfiguration_Migrated" name="PipelineConfiguration.Migrated" type="hidden" value="true">

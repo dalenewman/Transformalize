@@ -5,6 +5,7 @@ using Orchard.Tags.Models;
 using Pipeline.Web.Orchard.Services.Contracts;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -31,7 +32,6 @@ namespace Pipeline.Web.Orchard {
         public const string AllTag = "All";
         public const string TagFilterName = "tagFilter";
         public const string BatchValueFieldName = "BatchValue";
-        public const int DefaultPageSize = 15;
 
         public static string CacheKey(int id, string feature) {
             return ModuleName + "." + feature + "." + id;
@@ -48,6 +48,53 @@ namespace Pipeline.Web.Orchard {
             var now = DateTime.UtcNow;
             return Path.Combine(FileFolder, now.Year.ToString(), now.ToString("MM-MMM").ToUpper(), now.ToString("dd"));
         }
+
+        public static T GetStickyParameter<T>(HttpRequestBase request, HttpSessionStateBase session, int partId, string name, Func<T> defaultValue) where T : IConvertible {
+
+            var key = partId + name;
+
+            if (request.QueryString[name] != null) {
+                try {
+                    var tc = TypeDescriptor.GetConverter(typeof(T));
+                    var queryValue = (T)tc.ConvertFromString(request.QueryString[name]);
+                    if (queryValue != null) {
+                        if (!queryValue.Equals(session[key])) {
+                            session[key] = queryValue;
+                        }
+
+                        return queryValue;
+                    }
+                } catch (Exception ex) {
+                    // Logger.Error(exception.Message);
+                }
+            }
+
+            if (request.Form[name] != null) {
+                try {
+                    var tc = TypeDescriptor.GetConverter(typeof(T));
+                    var formValue = (T)tc.ConvertFromString(request.Form[name]);
+                    if (formValue != null) {
+                        if (!formValue.Equals(session[key])) {
+                            session[key] = formValue;
+                        }
+
+                        return formValue;
+                    }
+                } catch (Exception ex) {
+                    // Logger.Error(exception.Message);
+                }
+            }
+
+            if (session[key] != null) {
+                return (T)session[key];
+            }
+
+            var value = defaultValue();
+            session[key] = value;
+            return value;
+
+        }
+
 
         public static IDictionary<string, string> GetParameters(HttpRequestBase request, IOrchardServices orchard, ISecureFileService secureFileService = null) {
 
@@ -760,9 +807,8 @@ namespace Pipeline.Web.Orchard {
                     if (process.Maps.All(m => m.Name != field.Alias)) {
                         process.Maps.Add(new Map { Name = field.Alias });
                     }
-                    var parameters = process.GetActiveParameters();
-                    if (parameters.All(pr => pr.Name != field.Alias)) {
-                        parameters.Add(
+                    if (process.Parameters.All(pr => pr.Name != field.Alias)) {
+                        process.Parameters.Add(
                             new Parameter {
                                 Name = field.Alias,
                                 Type = field.Type,

@@ -23,7 +23,7 @@
     var request = WorkContext.HttpContext.Request;
     var method = request.HttpMethod;
     var orchard = WorkContext.Resolve<IOrchardServices>();
-    var geo = Model.Process.GetActiveParameters().Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
+    var geo = Model.Process.Parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
 }
 
 <style type="text/css">

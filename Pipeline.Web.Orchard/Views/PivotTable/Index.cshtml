@@ -47,7 +47,6 @@
     Style.Include("https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.7/c3.min.css");
 
     var fields = entity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
-    var activeParameters = Model.Process.GetActiveParameters();
     var title = entity.Label == string.Empty ? entity.Alias : entity.Label;
     var runner = orchard.WorkContext.Resolve<IRunTimeRun>();
     var hiddenFromAggregators = fields.Any(f=>f.Measure) ? string.Join(",", fields.Where(f => !f.Measure).Select(f => Newtonsoft.Json.JsonConvert.ToString(f.Alias))) : string.Join(",", fields.Where(f => !f.IsNumeric()).Select(f => Newtonsoft.Json.JsonConvert.ToString(f.Alias)));
@@ -127,7 +126,7 @@
     <input id="id_size" class="bsh" type="hidden" name="size" value="@(entity.Size)" />
     <input id="id_output" class="bsh" type="hidden" name="output" value="@(output == "page" ? string.Empty : output)" />
 
-    @foreach (var parameter in activeParameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
+    @foreach (var parameter in Model.Process.Parameters.Where(p => !p.Prompt && Request.QueryString[p.Name] != null).Select(p => p.Name)) {
         <input type="hidden" name="@parameter" value="@(Request.QueryString[parameter])" />
     }
 
@@ -324,7 +323,7 @@
             return true;
         });
 
-        $('#id_clear').click(function() {
+        $('.clear-button').click(function() {
 
             // set single select back to first
             $('#id_report select:not([multiple])').val($('#id_report select option:first').val());

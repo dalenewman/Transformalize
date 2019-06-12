@@ -294,7 +294,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                 connection.User = string.Empty;
                 connection.Password = string.Empty;
             }
-            foreach (var parameter in process.Environments.SelectMany(environement => environement.Parameters)) {
+            foreach (var parameter in process.Parameters) {
                 if (parameter.Name.Equals("user", StringComparison.OrdinalIgnoreCase)) {
                     parameter.Value = string.Empty;
                 }

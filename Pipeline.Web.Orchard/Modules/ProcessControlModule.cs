@@ -27,6 +27,7 @@ using Transformalize.Providers.Ado;
 using Process = Transformalize.Configuration.Process;
 using Cfg.Net.Contracts;
 using Transformalize.Impl;
+using Pipeline.Web.Orchard.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
     public class ProcessControlModule : Module {
@@ -91,7 +92,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                 // scripts
                 if (_process.Scripts.Any()) {
-                    controller.PreActions.Add(new ScriptLoaderAction(context, ctx.Resolve<IReader>()));
+                    controller.PreActions.Add(new WebScriptLoaderAction(context, ctx.Resolve<IReader>()));
                 }
 
                 // load maps

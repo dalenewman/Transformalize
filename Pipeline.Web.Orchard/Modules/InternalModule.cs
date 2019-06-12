@@ -28,8 +28,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Nulls;
-using Transformalize.Provider.Internal;
 using Transformalize.Providers.File;
+using Transformalize.Providers.Internal;
 
 namespace Pipeline.Web.Orchard.Modules {
 

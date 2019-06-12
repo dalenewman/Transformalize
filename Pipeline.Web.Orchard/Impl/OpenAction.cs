@@ -18,7 +18,7 @@
 
 using System;
 using System.Web;
-using Transformalize.Actions;
+using Transformalize;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 

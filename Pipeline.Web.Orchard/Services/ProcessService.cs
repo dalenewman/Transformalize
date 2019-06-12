@@ -4,7 +4,7 @@ using Cfg.Net.Parsers;
 using Cfg.Net.Serializers;
 using Transformalize.Configuration;
 using Pipeline.Web.Orchard.Models;
-using Transformalize.Transforms.DateMath;
+using Transformalize.Transforms.Dates;
 using Orchard;
 using Orchard.Logging;
 using Pipeline.Web.Orchard.Modules;
@@ -37,7 +37,7 @@ namespace Pipeline.Web.Orchard.Services {
             var marker = part.PlaceHolderStyle[0];
             var prefix = part.PlaceHolderStyle[1];
             var suffix = part.PlaceHolderStyle[2];
-            var modifier = new EnvironmentModifier(new PlaceHolderReplacer(marker, prefix, suffix), "environments", "environment", "name", "parameters", "name", "value");
+            var modifier = new ParameterModifier(new PlaceHolderReplacer(marker, prefix, suffix), "parameters", "name", "value");
 
             switch (input) {
                 case "json":

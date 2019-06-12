@@ -20,49 +20,76 @@ using Orchard.Data.Conventions;
 
 namespace Pipeline.Web.Orchard.Models {
 
-    public class PipelineConfigurationPartRecord : ContentPartRecord {
+   public class PipelineConfigurationPartRecord : ContentPartRecord {
 
-        [StringLength(64)]
-        public virtual string EditorMode { get; set; }
+      [StringLength(64)]
+      public virtual string EditorMode { get; set; }
 
-        [StringLengthMax]
-        public virtual string Configuration { get; set; }
+      [StringLengthMax]
+      public virtual string Configuration { get; set; }
 
-        [StringLength(64)]
-        public virtual string StartAddress { get; set; }
+      [StringLength(64)]
+      public virtual string StartAddress { get; set; }
 
-        [StringLength(64)]
-        public virtual string EndAddress { get; set; }
+      [StringLength(64)]
+      public virtual string EndAddress { get; set; }
 
-        public virtual bool Runnable { get; set; }
+      public virtual bool Runnable { get; set; }
 
-        public virtual bool Reportable { get; set; }
+      public virtual bool Reportable { get; set; }
 
-        public virtual bool ClientSideSorting { get; set; }
+      public virtual bool ClientSideSorting { get; set; }
+      public virtual int ClipTextAt { get; set; }
 
-        public virtual bool NeedsInputFile { get; set; }
+      public virtual bool NeedsInputFile { get; set; }
 
-        [StringLength(128)]
-        public virtual string Modes { get; set; }
+      [StringLength(128)]
+      public virtual string Modes { get; set; }
 
-        [StringLength(128)]
-        public virtual string MapStyle { get; set; }
+      [StringLength(128)]
+      public virtual string MapStyle { get; set; }
 
-        public virtual int MapCircleRadius { get; set; } 
+      public virtual int MapCircleRadius { get; set; }
 
-        public virtual double MapCircleOpacity { get; set; }
-
-
-        [StringLength(3)]
-        public virtual string PlaceHolderStyle { get; set; }
-
-        [StringLength(128)]
-        public virtual string PageSizes { get; set; }
-        [StringLength(128)]
-        public virtual string MapSizes { get; set; }
-
-        public virtual bool EnableInlineParameters { get; set; }
+      public virtual double MapCircleOpacity { get; set; }
 
 
-    }
+      [StringLength(3)]
+      public virtual string PlaceHolderStyle { get; set; }
+
+      [StringLength(128)]
+      public virtual string PageSizes { get; set; }
+      [StringLength(128)]
+      public virtual string MapSizes { get; set; }
+
+      public virtual bool EnableInlineParameters { get; set; }
+
+      public virtual bool CalendarEnabled { get; set; }
+      public virtual bool CalendarPaging { get; set; }
+
+      [StringLength(64)]
+      public virtual string CalendarIdField { get; set; }
+      [StringLength(64)]
+      public virtual string CalendarTitleField { get; set; }
+      [StringLength(64)]
+      public virtual string CalendarUrlField { get; set; }
+      [StringLength(64)]
+      public virtual string CalendarClassField { get; set; }
+      [StringLength(64)]
+      public virtual string CalendarStartField { get; set; }
+      [StringLength(64)]
+      public virtual string CalendarEndField { get; set; }
+
+      public virtual bool MapEnabled { get; set; }
+      public virtual bool MapPaging { get; set; }
+      [StringLength(64)]
+      public virtual string MapColorField { get; set; }
+      [StringLength(64)]
+      public virtual string MapPopUpField { get; set; }
+      [StringLength(64)]
+      public virtual string MapLatitudeField { get; set; }
+      [StringLength(64)]
+      public virtual string MapLongitudeField { get; set; }
+
+   }
 }

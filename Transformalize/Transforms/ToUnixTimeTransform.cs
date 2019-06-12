@@ -71,6 +71,7 @@ namespace Transformalize.Transforms {
                if (date.Kind != DateTimeKind.Utc) {
                   Context.Warn("The date going into the ToUnixTime transform should be set to UTC by a TimeZone or SpecifyKind transform.");
                }
+               kindTested = true;
             }
             yield return Operate(row);
          }

@@ -84,12 +84,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                     process.Load(part.Configuration, parameters);
                     process.Mode = "pivot";
-                    process.Buffer = false; // no buffering for pivot tables
                     process.ReadOnly = true;  // force pivot to omit system fields
 
-                    var reportParameters = process.GetActiveParameters();
-
-                    SetStickyParameters(part.Id, reportParameters);
+                    SetStickyParameters(part.Id, process.Parameters);
 
                     // no paging
                     foreach(var entity in process.Entities) {
@@ -99,7 +96,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                     // no actions
                     process.Actions.Clear();
 
-                    if (IsMissingRequiredParameters(reportParameters, _orchardServices.Notifier)) {
+                    if (IsMissingRequiredParameters(process.Parameters, _orchardServices.Notifier)) {
                         return View(new ReportViewModel(process, part));
                     }
 

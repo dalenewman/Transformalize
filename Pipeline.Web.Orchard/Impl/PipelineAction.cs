@@ -16,11 +16,12 @@
 #endregion
 
 using Autofac;
-using Transformalize.Actions;
+using Transformalize;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Pipeline.Web.Orchard.Impl {
+
     public class PipelineAction : IAction {
         private readonly IContainer _container;
         private readonly Process _process;

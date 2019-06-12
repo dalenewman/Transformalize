@@ -17,8 +17,7 @@
     var request = WorkContext.HttpContext.Request;
     var method = request.HttpMethod;
     var entity = Model.Process.Entities.FirstOrDefault();
-    var parameters = Model.Process.GetActiveParameters();
-    var geo = parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
+    var geo = Model.Process.Parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
     if (geo) {
         latitude = request.Form["Orchard.Latitude"] ?? string.Empty;
         longitude = request.Form["Orchard.Longitude"] ?? string.Empty;

@@ -37,15 +37,13 @@ using Process = Transformalize.Configuration.Process;
 namespace Pipeline.Web.Orchard.Controllers {
 
    [ValidateInput(false), SessionState(SessionStateBehavior.ReadOnly), Themed]
-   public class MapController : BaseController {
-
-      private const string MissingMapboxToken = "Register a MapBox token in settings.";
+   public class CalendarController : BaseController {
 
       private readonly IOrchardServices _orchardServices;
       private readonly IProcessService _processService;
       private readonly ISecureFileService _secureFileService;
 
-      public MapController(
+      public CalendarController(
           IOrchardServices services,
           IProcessService processService,
           ISecureFileService secureFileService
@@ -63,12 +61,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
          var settings = _orchardServices.WorkContext.CurrentSite.As<PipelineSettingsPart>();
 
-         if (string.IsNullOrEmpty(settings.MapBoxToken)) {
-            _orchardServices.Notifier.Add(NotifyType.Warning, T(MissingMapboxToken));
-            return new HttpStatusCodeResult(500, MissingMapboxToken);
-         }
-
-         var process = new Process { Name = "Map" };
+         var process = new Process { Name = "Calendar" };
 
          var part = _orchardServices.ContentManager.Get(id).As<PipelineConfigurationPart>();
 
@@ -96,8 +89,8 @@ namespace Pipeline.Web.Orchard.Controllers {
             return new HttpStatusCodeResult(500, "There are errors in the configuration.");
          }
 
-         process.Mode = "map";
-         process.ReadOnly = true;  // force maps to omit system fields
+         process.Mode = "calendar";
+         process.ReadOnly = true;  // force calendar to omit system fields
          process.Pipeline = "parallel.linq";
 
          SetStickyParameters(part.Id, process.Parameters);
@@ -113,7 +106,7 @@ namespace Pipeline.Web.Orchard.Controllers {
 
          var sizes = new List<int>();
          sizes.AddRange(part.Sizes(part.PageSizes));
-         sizes.AddRange(part.Sizes(part.MapSizes));
+         sizes.AddRange(part.Sizes(part.MapSizes));  // MapSizes is now "Extended" sizes
 
          var stickySize = GetStickyParameter(part.Id, "size", () => sizes.Min());
 

@@ -46,7 +46,7 @@ namespace Pipeline.Web.Orchard.Handlers {
             context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                 {"Area", Common.ModuleName},
                 {"Controller", "File"},
-                {"Action", "File/View"},
+                {"Action", "View"},
                 {"id", context.ContentItem.Id}
             };
         }

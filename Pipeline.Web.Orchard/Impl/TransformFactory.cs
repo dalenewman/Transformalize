@@ -27,90 +27,83 @@ using Transformalize.Transforms.System;
 
 namespace Pipeline.Web.Orchard.Impl {
 
-    public static class TransformFactory {
+   public static class TransformFactory {
 
-        public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
-            var transforms = new List<ITransform>();
+      public static IEnumerable<ITransform> GetTransforms(IComponentContext ctx, IContext context, IEnumerable<Field> fields) {
+         var transforms = new List<ITransform>();
 
-            foreach (var f in fields.Where(f => f.Transforms.Any())) {
-                var field = f;
+         foreach (var f in fields.Where(f => f.Transforms.Any())) {
+            var field = f;
 
-                foreach (var t in field.Transforms) {
+            foreach (var t in field.Transforms) {
 
-                    if (t.Method == "convert" && t.Type == "string" && t.Format != string.Empty) {
-                        t.Method = "tostring";
-                    }
+               if (t.Method == "convert" && t.Type == "string" && t.Format != string.Empty) {
+                  t.Method = "tostring";
+               }
 
-                    var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
-                    ITransform add;
-                    if (TryTransform(ctx, transformContext, out add)) {
-                        transforms.Add(add);
-                    }
-                }
-
-                // add conversion if necessary
-                var lastType = transforms.Last().Returns;
-                if (lastType != null && field.Type != lastType) {
-                    context.Warn(string.Format("The output field {0} is not setup to receive a {1} type. It expects a {2}.  Adding conversion.", field.Alias, lastType, field.Type));
-                    transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
-                }
+               var transformContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, t);
+               ITransform add;
+               if (TryTransform(ctx, transformContext, out add)) {
+                  transforms.Add(add);
+               }
             }
 
-            return transforms;
-        }
+            // add conversion if necessary
+            var lastType = transforms.Last().Returns;
+            if (lastType != null && field.Type != lastType) {
+               context.Warn(string.Format("The output field {0} is not setup to receive a {1} type. It expects a {2}.  Adding conversion.", field.Alias, lastType, field.Type));
+               transforms.Add(new ConvertTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), context.Process, context.Entity, field, new Operation { Method = "convert" })));
+            }
+         }
 
-        public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
-            transform = null;
-            var success = true;
+         return transforms;
+      }
 
-            if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
+      public static bool TryTransform(IComponentContext ctx, IContext context, out ITransform transform) {
+         transform = null;
+         var success = true;
 
-                var t = ShouldRunTransform(ctx, context, context.Operation.Method);
+         if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Method)) {
 
-                foreach (var warning in t.Warnings()) {
-                    context.Warn(warning);
-                }
+            var t = ctx.ResolveNamed<ITransform>(context.Operation.Method, new PositionalParameter(0, context));
 
-                if (t.Errors().Any()) {
-                    foreach (var error in t.Errors()) {
-                        context.Error(error);
-                    }
-                    success = false;
-                } else {
-                    transform = t;
-                }
+            foreach (var warning in t.Warnings()) {
+               context.Warn(warning);
+            }
+
+            if (t.Errors().Any()) {
+               foreach (var error in t.Errors()) {
+                  context.Error(error);
+               }
+               success = false;
             } else {
-
-                if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Key)) {
-                    var t = ShouldRunTransform(ctx, context, context.Operation.Key);
-
-                    foreach (var warning in t.Warnings()) {
-                        context.Warn(warning);
-                    }
-
-                    if (t.Errors().Any()) {
-                        foreach (var error in t.Errors()) {
-                            context.Error(error);
-                        }
-                        success = false;
-                    } else {
-                        transform = t;
-                    }
-                } else {
-                    context.Error("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias);
-                    success = false;
-                }
-
+               transform = t;
             }
-            return success;
-        }
+         } else {
 
-        public static ITransform ShouldRunTransform(IComponentContext ctx, IContext context, string name) {
-            return context.Operation.ShouldRun == null ?
-                ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)) :
-                new ShouldRunTransform(context, ctx.ResolveNamed<ITransform>(name, new PositionalParameter(0, context)));
-        }
+            if (ctx.IsRegisteredWithName<ITransform>(context.Operation.Key)) {
+               var t = ctx.ResolveNamed<ITransform>(context.Operation.Key, new PositionalParameter(0, context));
 
+               foreach (var warning in t.Warnings()) {
+                  context.Warn(warning);
+               }
 
-    }
+               if (t.Errors().Any()) {
+                  foreach (var error in t.Errors()) {
+                     context.Error(error);
+                  }
+                  success = false;
+               } else {
+                  transform = t;
+               }
+            } else {
+               context.Error("The {0} method used in the {1} field is not registered.", context.Operation.Method, context.Field.Alias);
+               success = false;
+            }
+
+         }
+         return success;
+      }
+
+   }
 }

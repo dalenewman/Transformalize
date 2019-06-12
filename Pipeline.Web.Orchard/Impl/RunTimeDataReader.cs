@@ -25,66 +25,74 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
 using Pipeline.Web.Orchard.Modules;
+using Transformalize.Providers.Solr.Autofac;
+using Transformalize.Providers.Elasticsearch.Autofac;
+using Transformalize.Providers.Clevest.Autofac;
+using Transformalize.Providers.Excel.Autofac;
+using Transformalize.Providers.GeoJson.Autofac;
+using Transformalize.Providers.Json.Autofac;
 
 namespace Pipeline.Web.Orchard.Impl {
 
-    public class RunTimeDataReader : IRunTimeRun {
-        private readonly IPipelineLogger _logger;
-        private readonly IAppDataFolder _appDataFolder;
-        private readonly ITemplateProcessor _templateProcessor;
-        private readonly INotifier _notifier;
+   public class RunTimeDataReader : IRunTimeRun {
+      private readonly IPipelineLogger _logger;
+      private readonly IAppDataFolder _appDataFolder;
+      private readonly ITemplateProcessor _templateProcessor;
+      private readonly INotifier _notifier;
 
-        public RunTimeDataReader(
-            IPipelineLogger logger, 
-            IAppDataFolder appDataFolder, 
-            ITemplateProcessor templateProcessor,
-            INotifier notifier) {
-            _logger = logger;
-            _appDataFolder = appDataFolder;
-            _templateProcessor = templateProcessor;
-            _notifier = notifier;
-        }
+      public RunTimeDataReader(
+          IPipelineLogger logger,
+          IAppDataFolder appDataFolder,
+          ITemplateProcessor templateProcessor,
+          INotifier notifier) {
+         _logger = logger;
+         _appDataFolder = appDataFolder;
+         _templateProcessor = templateProcessor;
+         _notifier = notifier;
+      }
 
-        public IEnumerable<IRow> Run(Process process) {
+      public IEnumerable<IRow> Run(Process process) {
 
-            var nested = new ContainerBuilder();
+         var nested = new ContainerBuilder();
 
-            // Register Orchard CMS Stuff
-            nested.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
-            nested.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
-            nested.RegisterInstance(_notifier).As<INotifier>();
+         // Register Orchard CMS Stuff
+         nested.RegisterInstance(_appDataFolder).As<IAppDataFolder>();
+         nested.RegisterInstance(_templateProcessor).As<ITemplateProcessor>();
+         nested.RegisterInstance(_notifier).As<INotifier>();
 
-            var entity = process.Entities.First();
-            nested.RegisterInstance(_logger).As<IPipelineLogger>();
+         var entity = process.Entities.First();
+         nested.RegisterInstance(_logger).As<IPipelineLogger>();
 
-            nested.RegisterCallback(new ContextModule(process).Configure);
+         nested.RegisterCallback(new ContextModule(process).Configure);
 
-            // providers
-            nested.RegisterCallback(new AdoModule(process).Configure);
-            nested.RegisterCallback(new SolrModule(process).Configure);
-            nested.RegisterCallback(new ElasticModule(process).Configure);
-            nested.RegisterCallback(new InternalModule(process).Configure);
-            nested.RegisterCallback(new FileModule(process).Configure);
-            nested.RegisterCallback(new ExcelModule(process).Configure);
-            nested.RegisterCallback(new WebModule(process).Configure);
-            nested.RegisterCallback(new GeoJsonModule(process).Configure);
-            nested.RegisterCallback(new KmlModule(process).Configure);
+         // providers
+         nested.RegisterCallback(new AdoModule(process).Configure);
+         nested.RegisterCallback(new SolrModule(process).Configure);
+         nested.RegisterCallback(new ElasticsearchModule(process).Configure);
+         nested.RegisterCallback(new InternalModule(process).Configure);
+         nested.RegisterCallback(new FileModule(process).Configure);
+         nested.RegisterCallback(new ExcelModule(process).Configure);
+         nested.RegisterCallback(new WebModule(process).Configure);
+         nested.RegisterCallback(new GeoJsonModule(process).Configure);
+         nested.RegisterCallback(new KmlModule(process).Configure);
+         nested.RegisterCallback(new ClevestModule(process).Configure);
+         nested.RegisterCallback(new JsonModule(process).Configure);
 
-            nested.RegisterCallback(new TransformModule().Configure);
-            nested.RegisterCallback(new AdoTransformModule(process).Configure);
-            nested.RegisterCallback(new ValidateModule().Configure);
-            nested.RegisterCallback(new MapModule(process).Configure);
-            nested.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
+         nested.RegisterCallback(new TransformModule().Configure);
+         nested.RegisterCallback(new AdoTransformModule(process).Configure);
+         nested.RegisterCallback(new ValidateModule().Configure);
+         nested.RegisterCallback(new MapModule(process).Configure);
+         nested.RegisterCallback(new TemplateModule(process, _templateProcessor).Configure);
 
-            nested.RegisterType<NullOutputController>().Named<IOutputController>(entity.Key);
-            nested.RegisterType<NullWriter>().Named<IWrite>(entity.Key);
-            nested.RegisterType<NullUpdater>().Named<IUpdate>(entity.Key);
-            nested.RegisterType<NullDeleteHandler>().Named<IEntityDeleteHandler>(entity.Key);
-            nested.RegisterCallback(new EntityPipelineModule(process).Configure);
+         nested.RegisterType<NullOutputController>().Named<IOutputController>(entity.Key);
+         nested.RegisterType<NullWriter>().Named<IWrite>(entity.Key);
+         nested.RegisterType<NullUpdater>().Named<IUpdate>(entity.Key);
+         nested.RegisterType<NullDeleteHandler>().Named<IEntityDeleteHandler>(entity.Key);
+         nested.RegisterCallback(new EntityPipelineModule(process).Configure);
 
-            using (var scope = nested.Build().BeginLifetimeScope()) {
-                return scope.ResolveNamed<IPipeline>(entity.Key).Read();
-            }
-        }
-    }
+         using (var scope = nested.Build().BeginLifetimeScope()) {
+            return scope.ResolveNamed<IPipeline>(entity.Key).Read();
+         }
+      }
+   }
 }
