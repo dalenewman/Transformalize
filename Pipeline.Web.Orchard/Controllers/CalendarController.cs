@@ -106,7 +106,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
          var sizes = new List<int>();
          sizes.AddRange(part.Sizes(part.PageSizes));
-         sizes.AddRange(part.Sizes(part.MapSizes));  // MapSizes is now "Extended" sizes
+         if (part.CalendarPaging) {
+            sizes.AddRange(part.Sizes(part.MapSizes));  // MapSizes is now "Extended" sizes
+         }
 
          var stickySize = GetStickyParameter(part.Id, "size", () => sizes.Min());
 

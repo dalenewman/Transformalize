@@ -119,6 +119,12 @@
             <td> &nbsp;</td>
             <td>@Html.ValidationMessageFor(x => x.MapPaging)</td>
          </tr>
+         <tr>
+            <td style="padding-right: 10px;">@Html.EditorFor(x => x.MapBulkActions)</td>
+            <td>@Html.LabelFor(x => x.MapBulkActions, T("Map Bulk Actions"))</td>
+            <td> &nbsp;</td>
+            <td>@Html.ValidationMessageFor(x => x.MapBulkActions)</td>
+         </tr>
       </table>
    </div>
 

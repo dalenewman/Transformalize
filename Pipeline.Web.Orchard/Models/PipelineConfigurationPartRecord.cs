@@ -82,6 +82,7 @@ namespace Pipeline.Web.Orchard.Models {
 
       public virtual bool MapEnabled { get; set; }
       public virtual bool MapPaging { get; set; }
+      public virtual bool MapBulkActions { get; set; }
       [StringLength(64)]
       public virtual string MapColorField { get; set; }
       [StringLength(64)]

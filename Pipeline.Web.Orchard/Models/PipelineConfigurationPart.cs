@@ -200,7 +200,7 @@ namespace Pipeline.Web.Orchard.Models {
       }
 
       public bool CalendarPaging {
-         get { return this.Retrieve(x => x.CalendarPaging, versioned: true, defaultValue: false); }
+         get { return this.Retrieve(x => x.CalendarPaging, versioned: true, defaultValue: true); }
          set { this.Store(x => x.CalendarPaging, value, true); }
       }
 
@@ -242,6 +242,11 @@ namespace Pipeline.Web.Orchard.Models {
       public bool MapPaging {
          get { return this.Retrieve(x => x.MapPaging, versioned: true, defaultValue: true); }
          set { this.Store(x => x.MapPaging, value, true); }
+      }
+
+      public bool MapBulkActions {
+         get { return this.Retrieve(x => x.MapBulkActions, versioned: true, defaultValue: true); }
+         set { this.Store(x => x.MapBulkActions, value, true); }
       }
 
       public string MapColorField {

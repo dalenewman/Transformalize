@@ -58,6 +58,7 @@ namespace Pipeline.Web.Orchard.Drivers {
 
          part.MapEnabled = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "MapEnabled"));
          part.MapPaging = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "MapPaging"));
+         part.MapBulkActions = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "MapBulkActions"));
          part.MapColorField = context.Attribute(part.PartDefinition.Name, "MapColorField");
          part.MapPopUpField = context.Attribute(part.PartDefinition.Name, "MapPopUpField");
          part.MapLatitudeField = context.Attribute(part.PartDefinition.Name, "MapLatitudeField");
@@ -94,6 +95,7 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("CalendarEndField", part.CalendarEndField);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapEnabled", part.MapEnabled);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapBulkActions", part.MapBulkActions);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPaging", part.MapPaging);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapColorField", part.MapColorField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPopUpField", part.MapPopUpField);
@@ -129,6 +131,7 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("CalendarEndField", part.Record.CalendarEndField);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapEnabled", part.Record.MapEnabled);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapBulkActions", part.Record.MapBulkActions);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPaging", part.Record.MapPaging);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapColorField", part.Record.MapColorField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPopUpField", part.Record.MapPopUpField);

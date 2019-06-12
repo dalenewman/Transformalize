@@ -230,6 +230,11 @@ namespace Pipeline.Web.Orchard {
          SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapPaging", DbType.Boolean));
          return 21;
       }
+
+      public int UpdateFrom21() {
+         SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapBulkActions", DbType.Boolean));
+         return 22;
+      }
    }
 
    public class FileMigrations : DataMigrationImpl {

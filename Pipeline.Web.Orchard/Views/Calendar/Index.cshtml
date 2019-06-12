@@ -179,7 +179,7 @@
    <script>
             /* using calendar from here: https://github.com/Serhioromano/bootstrap-calendar */
             //<!--
-            var dataUrl = '@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "calendar", false))';
+            var dataUrl = '@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "calendar", !Model.Part.CalendarPaging))';
             var templatePath = '@Url.Content("~/Modules/Pipeline.Web.Orchard/Scripts/tmpls/")';
 
             $(document).ready(function() {
