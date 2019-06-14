@@ -43,7 +43,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public ActionResult Upload() {
 
             if (!User.Identity.IsAuthenticated) {
-                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
+                System.Web.Security.FormsAuthentication.RedirectToLoginPage();
             }
 
             if (Request.Files != null && Request.Files.Count > 0) {
@@ -108,7 +108,7 @@ namespace Pipeline.Web.Orchard.Controllers {
         public ActionResult Delete(int id) {
 
             if (!User.Identity.IsAuthenticated) {
-                System.Web.Security.FormsAuthentication.RedirectToLoginPage(Request.RawUrl);
+                System.Web.Security.FormsAuthentication.RedirectToLoginPage();
             }
 
             var part = _fileService.Get(id);

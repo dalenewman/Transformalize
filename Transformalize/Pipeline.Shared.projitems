@@ -149,6 +149,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Impl\ParallelPipeline.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Batch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalKeysReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
@@ -320,7 +321,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ValueComparer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Providers\Internal\" />
     <Folder Include="$(MSBuildThisFileDirectory)Writers\" />
   </ItemGroup>
 </Project>

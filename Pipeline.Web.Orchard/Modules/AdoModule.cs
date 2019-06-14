@@ -287,25 +287,21 @@ namespace Pipeline.Web.Orchard.Modules {
                if (entity.Delete) {
 
                   // register input keys and hashcode reader if necessary
-                  builder.Register<IReadInputKeysAndHashCodes>(ctx => {
-                     var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
-                     var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
-                     var rowFactory = new RowFactory(rowCapacity, false, true);
-
-                     switch (inputContext.Connection.Provider) {
-                        case "mysql":
-                        case "sqlserver":
-                           return new AdoReader(
-                               inputContext,
-                               entity.GetPrimaryKey(),
-                               ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
-                               rowFactory,
-                               ReadFrom.Input
-                           );
-                        default:
-                           return new NullReader(inputContext);
-                     }
-                  }).Named<IReadInputKeysAndHashCodes>(entity.Key);
+                  var provider = _process.Connections.First(c => c.Name == entity.Connection).Provider;
+                  if (_ado.Contains(provider)) {
+                     builder.Register<IReadInputKeysAndHashCodes>(ctx => {
+                        var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
+                        var rowCapacity = inputContext.Entity.GetPrimaryKey().Count();
+                        var rowFactory = new RowFactory(rowCapacity, false, true);
+                        return new AdoReader(
+                            inputContext,
+                            entity.GetPrimaryKey(),
+                            ctx.ResolveNamed<IConnectionFactory>(inputContext.Connection.Key),
+                            rowFactory,
+                            ReadFrom.Input
+                        );
+                     }).Named<IReadInputKeysAndHashCodes>(entity.Key);
+                  }
 
                   // register output keys and hash code reader if necessary
                   builder.Register<IReadOutputKeysAndHashCodes>((ctx => {
@@ -341,7 +337,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                   builder.Register<IEntityDeleteHandler>(ctx => {
                      var context = ctx.ResolveNamed<IContext>(entity.Key);
-                     var primaryKey = entity.GetPrimaryKey();
+                     var primaryKey = entity.GetPrimaryKey().ToArray();
 
                      var handler = new DefaultDeleteHandler(
                          context,
@@ -352,7 +348,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
                      // since the primary keys from the input may have been transformed into the output, you have to transform before comparing
                      // feels a lot like entity pipeline on just the primary keys... may look at consolidating
-                     handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
+                     handler.Register(new DefaultTransform(context, primaryKey));
                      handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
                      handler.Register(new StringTruncateTransfom(context, primaryKey));
 

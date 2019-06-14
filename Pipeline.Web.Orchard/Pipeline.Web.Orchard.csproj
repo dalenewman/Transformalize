@@ -198,13 +198,14 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.6.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.0.6.8-beta\lib\net462\Transformalize.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.0.6.9-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Jint, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.6.4-beta\lib\net462\Transformalize.Jint.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Ado, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.6.4-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Clevest, Version=0.6.10.0, Culture=neutral, processorArchitecture=MSIL">
@@ -256,6 +257,7 @@
       <HintPath>..\..\..\packages\Transformalize.Provider.Solr.Autofac.v3.0.6.8-beta\lib\net462\Transformalize.Provider.Solr.Autofac.v3.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.4-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Web, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -381,6 +383,7 @@
     <Compile Include="Impl\WebScriptLoaderAction.cs" />
     <Compile Include="Impl\ValidateFactory.cs" />
     <Compile Include="Models\ConfigurationListViewModel.cs" />
+    <Compile Include="Models\PipelineView.cs" />
     <Compile Include="Models\FileListViewModel.cs" />
     <Compile Include="Models\FormViewModel.cs" />
     <Compile Include="Models\HandsOnTableViewModel.cs" />

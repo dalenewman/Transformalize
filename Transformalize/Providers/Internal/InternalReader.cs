@@ -31,25 +31,28 @@ namespace Transformalize.Providers.Internal {
       private readonly IRowFactory _rowFactory;
       private readonly HashSet<string> _missing;
       private readonly List<ITransform> _transforms = new List<ITransform>();
+      private readonly Field[] _fields;
 
-      public InternalReader(InputContext input, IRowFactory rowFactory) {
+      public InternalReader(InputContext input, IRowFactory rowFactory) : this(input, input.Entity.Fields, rowFactory) { }
+
+      public InternalReader(InputContext input, IEnumerable<Field> fields, IRowFactory rowFactory) {
          _input = input;
          _rowFactory = rowFactory;
          _missing = new HashSet<string>();
+         _fields = fields.Where(f=>f.Input).ToArray();
 
-         foreach (var field in input.Entity.Fields.Where(f => f.Input && f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
+         foreach (var field in _fields.Where(f => f.Type != "string" && (!f.Transforms.Any() || f.Transforms.First().Method != "convert"))) {
             _transforms.Add(new ConvertTransform(new PipelineContext(input.Logger, input.Process, input.Entity, field, new Operation { Method = "convert" })));
          }
       }
 
       private IEnumerable<IRow> PreRead() {
 
-         var fields = _input.Entity.Fields.Where(f => f.Input).ToArray();
          var rows = new List<IRow>();
          foreach (var row in _input.Entity.Rows) {
 
             var stringRow = _rowFactory.Create();
-            foreach (var field in fields) {
+            foreach (var field in _fields) {
                if (row.Map.ContainsKey(field.Name)) {
                   stringRow[field] = row[field.Name];
                } else {

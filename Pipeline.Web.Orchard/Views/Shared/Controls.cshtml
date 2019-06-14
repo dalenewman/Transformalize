@@ -25,6 +25,8 @@
    var exportXlsxLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "xlsx", true);
    var exportJsonLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "json", true);
 
+   var views = new List<PipelineView>();
+
 }
 
 <!-- controls for bigger screens -->
@@ -118,37 +120,40 @@
             }
 
             if (Model.Part.MapEnabled && hasCoordinates || Model.Part.CalendarEnabled) {
-               var reportLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report", false);
+
+               views.Add(new PipelineView("report") {
+                  Active = Model.Process.Mode == "report",
+                  Glyphicon = "blackboard",
+                  Link = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report", false)
+               });
+               if(Model.Part.MapEnabled && hasCoordinates) {
+                  views.Add(new PipelineView("map") {
+                     Active = Model.Process.Mode == "map",
+                     Glyphicon = "map-marker",
+                     Link =  linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Map", new RouteValueDictionary {{"Id", Model.Part.Id}}), "map", false)
+                  });
+               }
+               if (Model.Part.CalendarEnabled) {
+                  views.Add(new PipelineView("calendar") {
+                     Active = Model.Process.Mode == "calendar",
+                     Glyphicon = "calendar",
+                     Link = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Calendar", new RouteValueDictionary {{"Id", Model.Part.Id}}), "calendar", false)
+                  });
+               }
+               var defaultView = views.First(v => v.Mode != Model.Process.Mode);
+
                <div class="btn-group" role="group">
-                  @if (Model.Process.Mode == "report") {
-                     <button type="button" class="btn btn-primary btn-sm" title="report view" onclick="javascript:void(0);">
-                        <span class="glyphicon glyphicon-blackboard"></span>
-                     </button>
-                  } else {
-                     <button type="button" class="btn btn-primary btn-sm" title="report view" onclick="javascript:window.open('@reportLink','_self');">
-                        <span class="glyphicon glyphicon-blackboard"></span>
-                     </button>
-                  }
+                  <button type="button" class="btn btn-primary btn-sm" title="@defaultView.Title" onclick="javascript:window.open('@defaultView.Link','_self');">
+                     <span class="glyphicon glyphicon-@defaultView.Glyphicon"></span>
+                  </button>
                   <button type="button" class="btn btn-primary btn-sm dropdown-toggle" title="other views" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                      <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
-                     <li title="report view" class="@(Model.Process.Mode == "report" ? "active" : string.Empty)">
-                        <a href="@(reportLink)">
-                           <span class="glyphicon glyphicon-blackboard"></span>&nbsp;&nbsp;REPORT
-                        </a>
-                     </li>
-                     @if (Model.Part.MapEnabled && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken)) {
-                        <li title="map view" class="@(Model.Process.Mode == "map" ? "active" : string.Empty)">
-                           <a href="@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Map", new RouteValueDictionary {{"Id", Model.Part.Id}}), "map", false))">
-                              <span class="glyphicon glyphicon-map-marker"></span>&nbsp;&nbsp;MAP
-                           </a>
-                        </li>
-                     }
-                     @if (Model.Part.CalendarEnabled) {
-                        <li title="calendar view" class="@(Model.Process.Mode == "calendar" ? "active" : string.Empty)">
-                           <a href="@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Calendar", new RouteValueDictionary {{"Id", Model.Part.Id}}), "calendar", false))">
-                              <span class="glyphicon glyphicon-calendar"></span>&nbsp;&nbsp;CALENDAR
+                     @foreach (var export in views) {
+                        <li title="@export.Title" class="@(export.Active ? "active" : string.Empty)">
+                           <a href="@(export.Link)">
+                              <span class="glyphicon glyphicon-@export.Glyphicon"></span>&nbsp;&nbsp;@export.Label
                            </a>
                         </li>
                      }
@@ -182,8 +187,8 @@
                <!-- paging is disabled -->
             } else {
                <div class="btn-group">
-                  <button class="btn btn-sm">Size</button>
-                  <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown" title="set page size">
+                  <button class="btn btn-sm" style="padding-left:6px; padding-right:2px;">Size</button>
+                  <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown" title="set page size" style="padding-left:4px;">
                      <span class="caret"></span>
                   </button>
                   <ul class="dropdown-menu">
@@ -235,89 +240,91 @@
          }
       </div>
 
-      <div class="btn-group" role="group" aria-label="...">
-         <button title="previous page" disabled="@(!entity.Pagination.HasPrevious)" type="button" class="btn btn-default btn-sm" onclick="javascript:controls.submit(@entity.Pagination.Previous);">
-            <span class="glyphicon glyphicon-chevron-left"> </span>
-         </button>
-         <button title="next page" disabled="@(!entity.Pagination.HasNext)" type="button" class="btn btn-default btn-sm" onclick="javascript:controls.submit(@entity.Pagination.Next);">
-            <span class="glyphicon glyphicon-chevron-right"> </span>
-         </button>
-      </div>
-
-      @if (entity.Name != "Missing Entity") {
-
-   <div class="btn-group" role="group" aria-label="...">
-
-      @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-         <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-            <span class="glyphicon glyphicon-edit"></span>
-         </button>
-      }
-
-      @if (Model.Process.Mode == "report" && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken)) {
-         <button title="view on map" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Map", new RouteValueDictionary {{"Id", Model.Part.Id}}), "map", false))', '_self');">
-            <span class="glyphicon glyphicon-map-marker"></span>
-         </button>
-      }
-
-      @if (Model.Process.Mode == "map") {
-
-         <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               Style
-               <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" id="mapStyles">
-               @foreach (var style in PipelineConfigurationPart.MapStyles) {
-                  <li style="cursor: pointer;"><a id="@style.Value">@style.Text</a></li>
-               }
-            </ul>
-         </div>
-
-         <button title="back to data" type="button" class="btn btn-success btn-sm" onclick="window.open('@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Report", new RouteValueDictionary {{"Id", Model.Part.Id}}), "report", false))', '_self');">
-            <span class="glyphicon glyphicon-align-justify"></span>
-         </button>
-      }
-
-      <div class="btn-group">
-         <button class="btn btn-sm btn-info">
-            <span class="glyphicon glyphicon-floppy-disk"></span>
-         </button>
-         <button class="btn dropdown-toggle btn-sm btn-info" data-toggle="dropdown">
-            <span class="caret"></span>
-         </button>
-         <ul class="dropdown-menu">
-            <li><a href="javascript:window.open('@exportCsvLink', '_self');" title="Excel, Notepad, etc.">CSV</a></li>
-            <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
-            @{
-               if (hasCoordinates) {
-                  var exportGeoJsonLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson", true);
-                  var exportKmlLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "kml", true);
-                  <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
-                  <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
-               }
-            }
-         </ul>
-      </div>
-
       @if (pageSizes.Count < 2 || Model.Process.Mode == "map" && !Model.Part.MapPaging || Model.Process.Mode == "calendar" && !Model.Part.CalendarPaging) {
          <!-- paging is disabled -->
       } else {
-         <div class="btn-group">
-            <button class="btn btn-sm">Size</button>
-            <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown">
-               <span class="caret"></span>
+         <div class="btn-group" role="group" aria-label="...">
+            <button title="previous page" disabled="@(!entity.Pagination.HasPrevious)" type="button" class="btn btn-default btn-sm" onclick="javascript:controls.submit(@entity.Pagination.Previous);">
+               <span class="glyphicon glyphicon-chevron-left"> </span>
             </button>
-            <ul class="dropdown-menu">
-               @foreach (var size in pageSizes) {
-                  <li class="@(entity.Size.Equals(size) ? "active" : string.Empty)">
-                     <a href="javascript:controls.setSize(@size);">@size</a>
-                  </li>
-               }
-            </ul>
+            <button title="next page" disabled="@(!entity.Pagination.HasNext)" type="button" class="btn btn-default btn-sm" onclick="javascript:controls.submit(@entity.Pagination.Next);">
+               <span class="glyphicon glyphicon-chevron-right"> </span>
+            </button>
          </div>
       }
-   </div>
+
+      @if (entity.Name != "Missing Entity") {
+
+         <div class="btn-group" role="group" aria-label="...">
+
+            @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+               <button title="edit this report" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+                  <span class="glyphicon glyphicon-edit"></span>
+               </button>
+            }
+
+            @if (Model.Process.Mode == "report") {
+               PipelineView l;
+               if (Model.Part.MapEnabled && hasCoordinates && !string.IsNullOrEmpty(settings.MapBoxToken)) {
+                  l = views.First(v => v.Mode == "map");
+                  <button title="@l.Title" type="button" class="btn btn-success btn-sm" onclick="window.open('@(l.Link)', '_self');">
+                     <span class="glyphicon glyphicon-@l.Glyphicon"></span>
+                  </button>
+               }
+               if (Model.Part.CalendarEnabled) {
+                  l = views.First(v => v.Mode == "calendar");
+                  <button title="@l.Title" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(l.Link)', '_self');">
+                     <span class="glyphicon glyphicon-@l.Glyphicon"></span>
+                  </button>
+               }
+            }
+
+            @if (Model.Process.Mode != "report") {
+               var l = views.First(v => v.Mode == "report");
+               <button title="@l.Title" type="button" class="btn btn-success btn-sm" onclick="window.open('@(l.Link)', '_self');">
+                  <span class="glyphicon glyphicon-@l.Glyphicon"></span>
+               </button>
+            }
+
+            <div class="btn-group">
+               <button class="btn btn-sm btn-info">
+                  <span class="glyphicon glyphicon-floppy-disk"></span>
+               </button>
+               <button class="btn dropdown-toggle btn-sm btn-info" data-toggle="dropdown">
+                  <span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu">
+                  <li><a href="javascript:window.open('@exportCsvLink', '_self');" title="Excel, Notepad, etc.">CSV</a></li>
+                  <li><a href="javascript:window.open('@exportXlsxLink', '_self');" title="Excel">XLSX</a></li>
+                  @{
+                     if (hasCoordinates) {
+                        var exportGeoJsonLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson", true);
+                        var exportKmlLink = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "kml", true);
+                        <li><a href="javascript:window.open('@exportGeoJsonLink', '_self');" title="geojson.io, etc.">GEOJSON</a></li>
+                        <li><a href="javascript:window.open('@exportKmlLink', '_self');" title="Google Earth, etc.">KML</a></li>
+                     }
+                  }
+               </ul>
+            </div>
+
+            @if (pageSizes.Count < 2 || Model.Process.Mode == "map" && !Model.Part.MapPaging || Model.Process.Mode == "calendar" && !Model.Part.CalendarPaging) {
+               <!-- paging is disabled -->
+            } else {
+               <div class="btn-group">
+                  <button class="btn btn-sm" style="padding-left:6px; padding-right:2px;">Size</button>
+                  <button class="btn dropdown-toggle btn-sm" data-toggle="dropdown" title="set page size" style="padding-left:4px;">
+                     <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                     @foreach (var size in pageSizes) {
+                        <li class="@(entity.Size.Equals(size) ? "active" : string.Empty)">
+                           <a href="javascript:controls.setSize(@size);">@size</a>
+                        </li>
+                     }
+                  </ul>
+               </div>
+            }
+         </div>
       }
    </div>
 </div>

@@ -27,81 +27,92 @@ using System.Collections.Generic;
 using Transformalize.Providers.File;
 using Transformalize.Providers.Internal;
 using Transformalize.Providers.Trace;
+using Transformalize.Impl;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class InternalModule : Module {
-        private readonly Process _process;
-        private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
+   public class InternalModule : Module {
+      private readonly Process _process;
+      private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
 
-        public InternalModule() { }
+      public InternalModule() { }
 
-        public InternalModule(Process process) {
-            _process = process;
-        }
+      public InternalModule(Process process) {
+         _process = process;
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+         if (_process == null)
+            return;
 
-            // Connections
-            foreach (var connection in _process.Connections.Where(c => c.Provider == "internal")) {
-                builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
+         // Connections
+         foreach (var connection in _process.Connections.Where(c => c.Provider == "internal")) {
+            builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
+         }
+
+         // Entity input
+         foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
+
+            builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
+
+            // Another provider's delete handler may need this if the consumer has swapped moved the input to internal rows for editing (e.g. HandsOnTable in Orchard CMS Module)
+            if (entity.Delete) {
+               builder.Register<IReadInputKeysAndHashCodes>(ctx => {
+                  // note: i tried to just load keys but had a lot of troubles, this works (for now).
+                  var inputContext = ctx.ResolveNamed<InputContext>(entity.Key);
+                  var rowFactory = new RowFactory(inputContext.RowCapacity, entity.IsMaster, false);
+                  return new InternalKeysReader(new InternalReader(inputContext, rowFactory));
+               }).Named<IReadInputKeysAndHashCodes>(entity.Key);
             }
 
-            // Entity input
-            foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
+            // READER
+            builder.Register<IRead>(ctx => {
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
-                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
+               switch (input.Connection.Provider) {
+                  case Constants.DefaultSetting:
+                  case "internal":
+                     return new InternalReader(input, rowFactory);
+                  default:
+                     return new NullReader(input, false);
+               }
+            }).Named<IRead>(entity.Key);
 
-                // READER
-                builder.Register<IRead>(ctx => {
-                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+         }
 
-                    switch (input.Connection.Provider) {
-                        case Constants.DefaultSetting:
-                        case "internal":
-                            return new InternalReader(input, rowFactory);
-                        default:
-                            return new NullReader(input, false);
-                    }
-                }).Named<IRead>(entity.Key);
+         // Entity Output
+         if (_internal.Contains(_process.Output().Provider)) {
 
+            // PROCESS OUTPUT CONTROLLER
+            builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
+
+            foreach (var entity in _process.Entities) {
+
+               builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+               builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), ctx.ResolveNamed<IWrite>(entity.Key))).Named<IOutputProvider>(entity.Key);
+
+               // WRITER
+               builder.Register<IWrite>(ctx => {
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+
+                  switch (output.Connection.Provider) {
+                     case "trace":
+                        return new TraceWriter(new JsonNetSerializer(output));
+                     case Constants.DefaultSetting:
+                     case "internal":
+                        return new InternalWriter(output);
+                     case "text":
+                        return new FileStreamWriter(output, Console.OpenStandardOutput());
+                     case "log":
+                        return new NLogWriter(output);
+                     default:
+                        return new NullWriter(output);
+                  }
+               }).Named<IWrite>(entity.Key);
             }
-
-            // Entity Output
-            if (_internal.Contains(_process.Output().Provider)) {
-
-                // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
-
-                foreach (var entity in _process.Entities) {
-
-                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
-                    builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), ctx.ResolveNamed<IWrite>(entity.Key))).Named<IOutputProvider>(entity.Key);
-
-                    // WRITER
-                    builder.Register<IWrite>(ctx => {
-                        var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-
-                        switch (output.Connection.Provider) {
-                            case "trace":
-                                return new TraceWriter(new JsonNetSerializer(output));
-                            case Constants.DefaultSetting:
-                            case "internal":
-                                return new InternalWriter(output);
-                            case "text":
-                                return new FileStreamWriter(output, Console.OpenStandardOutput());
-                            case "log":
-                                return new NLogWriter(output);
-                            default:
-                                return new NullWriter(output);
-                        }
-                    }).Named<IWrite>(entity.Key);
-                }
-            }
-        }
-    }
+         }
+      }
+   }
 }

@@ -6,10 +6,10 @@
 
     Script.Require("jQuery").AtHead();
 
-    var root = "https://cdnjs.cloudflare.com/ajax/libs/handsontable/0.28.4/";
-    var pikaday = "https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.4.0/";
+    var root = "https://cdnjs.cloudflare.com/ajax/libs/handsontable/6.2.2/";
+    var pikaday = "https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/";
 
-    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.1/moment.min.js").AtFoot();
+    // Script.Include("https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js").AtFoot();
     Script.Include(pikaday + "pikaday.min.js").AtFoot();
     Script.Include(root + "handsontable.full.min.js").AtFoot();
     Script.Include("jquery.blockUI.min.js").AtFoot();
@@ -43,10 +43,6 @@
 <script>
     //<!--
 
-    function addMinutes(date, minutes) {
-        return new Date(date.getTime() + minutes * 60000);
-    }
-
     $(document).ready(function () {
 
         var settings = {
@@ -58,8 +54,9 @@
         var dateMap = [];
 
         $('#load').click(function () {
+
             $.get(settings.load, function (tfl) {
-                console.log(tfl);
+
                 if (tfl.status === 200) {
                     var dateFormat = 'YYYY-MM-DD';
                     var fields = tfl.entities[0].fields.filter(function (item) {
@@ -67,9 +64,6 @@
                     });
                     var headers = $.map(fields, function (f) {
                         return f.label === undefined ? f.alias : f.label;
-                    });
-                    dateMap = $.map(fields, function (f) {
-                        return f.type != undefined && f.type.indexOf('date') === 0 ? 1 : 0;
                     });
                     var columns = $.map(fields, function (f) {
                         var column = {};
@@ -121,15 +115,6 @@
                     });
                     var data = tfl.entities[0].rows === undefined ? [] : tfl.entities[0].rows;
                     if (data.length > 0) {
-                        
-                        var minutes = new Date().getTimezoneOffset();
-                        for (var i = 0; i < data.length; i++) {
-                            for (var y = 0; y < dateMap.length; y++) {
-                                if (dateMap[y] === 1) {
-                                    data[i][y] = moment(addMinutes(new Date(data[i][y]), minutes)).format(dateFormat);
-                                }
-                            }
-                        }
 
                         var converted = [];
                         for (var d = 0; d < data.length; d++) {
@@ -195,8 +180,9 @@
                     if (tfl.status === 200) {
                         $().toastmessage('showSuccessToast', "Data Saved");
                     } else {
-                        console.log(tfl);
-                        $().toastmessage('showErrorToast', tfl.message);
+                       for (i = 0; i < tfl.log.length; i++) {
+                          $().toastmessage('showErrorToast', tfl.log[i].message);
+                       }
                     }
                 }
             });
