@@ -34,7 +34,6 @@ using Transformalize.Transforms.Dates;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Html;
-using Transformalize.Transforms.Json;
 using Transformalize.Transforms.Xml;
 using Module = Autofac.Module;
 using Parameter = Cfg.Net.Shorthand.Parameter;
@@ -174,7 +173,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new FromSplitTransform(c), new FromSplitTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FromRegexTransform(c), new FromRegexTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
 
          // return true or false transforms
          RegisterTransform(builder, (ctx, c) => new AnyTransform(c), new AnyTransform().GetSignatures());

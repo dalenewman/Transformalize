@@ -222,10 +222,6 @@
       <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
       <Name>Html</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Json\Json.csproj">
-      <Project>{98f2bf35-376a-4dfa-baef-cc491410219f}</Project>
-      <Name>Json</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
       <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>
       <Name>Xml</Name>
