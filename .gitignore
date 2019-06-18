@@ -59,6 +59,7 @@ artifacts/
 *.obj
 *.pch
 *.pdb
+!Pipeline.Command/plugins/*.pdb
 *.pgc
 *.pgd
 *.rsp
