@@ -153,6 +153,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\LengthTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\DateDiffTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\DateMathModifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\DateMathTransform.cs" />

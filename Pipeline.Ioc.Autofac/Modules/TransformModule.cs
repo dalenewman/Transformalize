@@ -77,9 +77,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new DatePartTransform(c), new DatePartTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new DecompressTransform(c), new DecompressTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new CompressTransform(c), new CompressTransform().GetSignatures());
+
          RegisterTransform(builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new FileReadAllBytesTransform(c), new FileReadAllBytesTransform().GetSignatures());
+
          RegisterTransform(builder, (ctx, c) => new LastDayTransform(c), new LastDayTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FloorTransform(c), new FloorTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FormatXmlTransform(c), new FormatXmlTransform().GetSignatures());
@@ -147,6 +150,8 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new StartOfWeekTransform(c), new StartOfWeekTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SpecifyKindTransform(c), new SpecifyKindTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ToUnixTimeTransform(c), new ToUnixTimeTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new LengthTransform(c), new LengthTransform().GetSignatures());
+
 
          // getting properties from the configuration you're running in
          RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());

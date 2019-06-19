@@ -129,6 +129,7 @@
     <Compile Include="Transforms\FileReadAllBytesTransform.cs" />
     <Compile Include="Transforms\FilePathTransform.cs" />
     <Compile Include="FileUtility.cs" />
+    <Compile Include="Transforms\LineTransform.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

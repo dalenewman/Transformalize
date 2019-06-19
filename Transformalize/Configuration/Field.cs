@@ -19,13 +19,11 @@ using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
    public class Field : CfgNode, IField {
 
-      private static readonly string[] ExpressionSplitter = { ")." };
       public static readonly List<string> InvalidNames = new List<string> { Constants.TflHashCode.ToLower(), Constants.TflBatchId.ToLower(), Constants.TflKey.ToLower(), Constants.TflDeleted.ToLower() };
 
       private string _type;
@@ -508,18 +506,6 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = "")]
       public string Expression { get; set; }
-
-      [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true)]
-      public string RunOperator {
-         get => _runOperator;
-         set {
-            value = value?.TrimEnd('s');
-            _runOperator = value;
-         }
-      }
-
-      [Cfg(value = Constants.DefaultSetting)]
-      public string RunValue { get; set; }
 
       public string Source { get; set; }
 

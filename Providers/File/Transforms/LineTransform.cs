@@ -16,36 +16,47 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Providers.File.Transforms {
-
-   public class FileExtTransform : StringTransform {
-        private readonly Field _input;
-
-        public FileExtTransform(IContext context = null) : base(context, "string") {
+   public class LineTransform : StringTransform {
+        private readonly Connection _connection;
+        private readonly int _lineNo;
+        public LineTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
                 return;
             }
 
-            if (IsNotReceiving("string")) {
+            if (IsMissing(Context.Operation.Value)) {
                 return;
             }
-            _input = SingleInput();
+
+            if (!int.TryParse(Context.Operation.Value, out _lineNo)) {
+                Context.Error("A line transform must be provided a line number (an integer).");
+                Run = false;
+                return;
+            }
+
+            _connection = Context.Process.Connections.FirstOrDefault(c => c.Name == Context.Entity.Connection);
+            if (_connection == null) {
+                Run = false;
+            }
         }
 
         public override IRow Operate(IRow row) {
-            var value = (string)row[_input];
-            row[Context.Field] = Path.HasExtension(value) ? Path.GetExtension(value) : string.Empty;
-
+            row[Context.Field] = _connection.Lines.Count >= _lineNo ? _connection.Lines[_lineNo] : string.Empty;
             return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("fileext");
+            yield return new OperationSignature("line") {
+                Parameters = new List<OperationParameter>(1) {
+                    new OperationParameter("value")
+                }
+            };
         }
     }
 }

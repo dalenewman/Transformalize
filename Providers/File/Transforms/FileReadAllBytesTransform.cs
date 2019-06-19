@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
-using System.IO;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Transforms;
@@ -40,7 +39,17 @@ namespace Transformalize.Providers.File.Transforms {
       public override IRow Operate(IRow row) {
 
          var fileName = GetString(row, _input);
-
+         var fileInfo = FileUtility.Find(fileName);
+         if (fileInfo.Exists) {
+            try {
+               row[Context.Field] = System.IO.File.ReadAllBytes(fileInfo.FullName);
+            } catch (System.Exception ex) {
+               Context.Error(ex.Message);
+            }
+         } else {
+            Context.Warn($"The file {fileInfo.Name} doesn't exist.");
+            Context.Debug(() => $"The file {fileInfo.FullName} doesn't exist.");
+         }
 
          return row;
       }
