@@ -28,7 +28,6 @@ namespace Transformalize.Configuration {
 
       private string _type;
       private string _length;
-      private string _runOperator;
       private Func<string, object> _toDateTime;
 
       public Field() {

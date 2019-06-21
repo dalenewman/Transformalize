@@ -26,7 +26,6 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms {
     public class ConnectionTransform : BaseTransform {
 
-        private readonly object _value;
         private readonly string[] _props;
         private readonly Connection _connection;
 

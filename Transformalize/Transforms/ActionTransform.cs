@@ -9,7 +9,6 @@ using Action = Transformalize.Configuration.Action;
 namespace Transformalize.Transforms {
     public class ActionTransform : BaseTransform {
 
-        private readonly object _value;
         private readonly string[] _props;
         private readonly Action _action;
 

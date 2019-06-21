@@ -49,6 +49,7 @@ namespace Transformalize.Transforms.Dates {
 #if NETS10
          Run = false;
          Context.Error($"The timezoneoffset transform in {Context.Field.Alias} is not yet implemented on .net standard 1.0.");
+         _transform = null;
 #else
          var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
          var toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);

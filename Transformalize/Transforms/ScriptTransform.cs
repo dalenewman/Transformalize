@@ -9,7 +9,6 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms {
     public class ScriptTransform : BaseTransform {
 
-        private readonly object _value;
         private readonly string[] _props;
         private readonly Script _parameter;
 

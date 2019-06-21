@@ -180,10 +180,6 @@ namespace Transformalize.Configuration {
       [Cfg(value = "first", domain = "first,all", ignoreCase = true, toLower = true)]
       public string Mode { get; set; }
 
-      [Obsolete("Use Mode instead.")]
-      [Cfg(value = "first", domain = "first,all", ignoreCase = true, toLower = true)]
-      public string XmlMode { get; set; }
-
       [Cfg]
       public List<Parameter> Parameters { get; set; }
 
@@ -282,13 +278,7 @@ namespace Transformalize.Configuration {
          return Method;
       }
 
-      protected override void PreValidate() {
-         // while XmlMode is still available
-         if (XmlMode == "all" && Mode == "first") {
-            Mode = "all";
-            Warn("XmlMode is being phased out.  Please use Mode instead.");
-         }
-      }
+      protected override void PreValidate() { }
 
       protected override void Validate() {
          if (Fields.Any()) {

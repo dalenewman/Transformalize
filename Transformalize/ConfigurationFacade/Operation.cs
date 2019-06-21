@@ -312,7 +312,6 @@ namespace Transformalize.ConfigurationFacade {
             Url = this.Url,
             Value = this.Value,
             WebMethod = this.WebMethod,
-            XmlMode = this.XmlMode,
             Query = this.Query,
             Command = this.Command,
             ApiKey = this.ApiKey

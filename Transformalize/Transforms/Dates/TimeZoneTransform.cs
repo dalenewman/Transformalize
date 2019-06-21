@@ -26,8 +26,6 @@ namespace Transformalize.Transforms.Dates {
 
       private readonly Field _input;
       private readonly Func<DateTime, object> _transform;
-      private readonly TimeZoneInfo _fromTimeZoneInfo;
-      private readonly TimeZoneInfo _toTimeZoneInfo;
 
       public TimeZoneTransform(IContext context = null) : base(context, "datetime") {
          if (IsMissingContext()) {
@@ -51,24 +49,25 @@ namespace Transformalize.Transforms.Dates {
 #if NETS10
          Run = false;
          Context.Error($"The timezone transform in {Context.Field.Alias} is not yet implemented on .net standard 1.0.");
+         _transform = null;
 #else
 
-         _fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
-         _toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
+         var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
+         var toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
 
-         if (_fromTimeZoneInfo.StandardName == "UTC") {
+         if (fromTimeZoneInfo.StandardName == "UTC") {
             _transform = (dt) => {
                if (dt.Kind != DateTimeKind.Utc) {
                   dt = DateTime.SpecifyKind(dt, DateTimeKind.Utc);
                }
-               return TimeZoneInfo.ConvertTimeFromUtc(dt, _toTimeZoneInfo);
+               return TimeZoneInfo.ConvertTimeFromUtc(dt, toTimeZoneInfo);
             };
-         } else if (_toTimeZoneInfo.StandardName == "UTC") {
-            _transform = (dt) => TimeZoneInfo.ConvertTimeToUtc(dt, _fromTimeZoneInfo);
+         } else if (toTimeZoneInfo.StandardName == "UTC") {
+            _transform = (dt) => TimeZoneInfo.ConvertTimeToUtc(dt, fromTimeZoneInfo);
          } else {
             _transform = (dt) => {
-               var utc = TimeZoneInfo.ConvertTimeToUtc(dt, _fromTimeZoneInfo);
-               return TimeZoneInfo.ConvertTimeFromUtc(utc, _toTimeZoneInfo);
+               var utc = TimeZoneInfo.ConvertTimeToUtc(dt, fromTimeZoneInfo);
+               return TimeZoneInfo.ConvertTimeFromUtc(utc, toTimeZoneInfo);
             };
          }
 #endif
