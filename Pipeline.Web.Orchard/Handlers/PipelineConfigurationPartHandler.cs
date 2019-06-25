@@ -134,6 +134,7 @@ namespace Pipeline.Web.Orchard.Handlers {
                foreach (var error in root.Errors()) {
                   _notifier.Add(NotifyType.Error, T(error));
                }
+               
             }
 
             if (root.Warnings().Any()) {

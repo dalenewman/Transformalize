@@ -150,6 +150,7 @@
   <ItemGroup>
     <Compile Include="CancelTransform.cs" />
     <Compile Include="ConfigurationContainer.cs" />
+    <Compile Include="Impl\LogTimerTransform.cs" />
     <Compile Include="Impl\NullPlaceHolderReplacer.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="LibaryVersionChecker.cs" />

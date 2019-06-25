@@ -63,6 +63,10 @@ namespace Pipeline.Web.Orchard.Drivers {
          part.MapPopUpField = context.Attribute(part.PartDefinition.Name, "MapPopUpField");
          part.MapLatitudeField = context.Attribute(part.PartDefinition.Name, "MapLatitudeField");
          part.MapLongitudeField = context.Attribute(part.PartDefinition.Name, "MapLongitudeField");
+         part.MapZoom = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapZoom"));
+
+         part.ReportRowClassField = context.Attribute(part.PartDefinition.Name, "ReportRowClassField");
+         part.ReportRowStyleField = context.Attribute(part.PartDefinition.Name, "ReportRowStyleField");
 
          part.Migrated = true;
       }
@@ -101,6 +105,10 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPopUpField", part.MapPopUpField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLatitudeField", part.MapLatitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLongitudeField", part.MapLongitudeField);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.MapZoom);
+
+            context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.ReportRowClassField);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.ReportRowStyleField);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", true);
          } else {
@@ -137,6 +145,10 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapPopUpField", part.Record.MapPopUpField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLatitudeField", part.Record.MapLatitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLongitudeField", part.Record.MapLongitudeField);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.Record.MapZoom);
+
+            context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.Record.ReportRowClassField);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.Record.ReportRowStyleField);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("Migrated", false);
          }

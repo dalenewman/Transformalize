@@ -73,7 +73,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
              // register transforms
             pipeline.Register(new IncrementTransform(context));
-            pipeline.Register(new LogTransform(context));
+            pipeline.Register(new LogTimerTransform(context));
             pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
             pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
             pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));

@@ -172,7 +172,7 @@
 
    @foreach (var entity in Model.Process.Entities) {
 
-      var fields = firstEntity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName).ToArray();
+      var fields = firstEntity.GetAllOutputFields().Where(f => !f.System && f.Alias != Common.BatchValueFieldName && f.Alias != Model.Part.ReportRowClassField && f.Alias != Model.Part.ReportRowStyleField).ToArray();
       var isSortable = fields.Any(f => f.Sortable == "true");
 
       <div class="row" style="padding-top: 2px;">
@@ -237,7 +237,7 @@
                </thead>
                <tbody>
                   @foreach (var row in entity.Rows) {
-                     <tr>
+                     <tr class="@(Model.Part.ReportRowClassField == string.Empty ? string.Empty : row[Model.Part.ReportRowClassField])" style="@(Model.Part.ReportRowStyleField == string.Empty ? string.Empty : row[Model.Part.ReportRowStyleField])">
                         @if (hasActions) {
                            <td>
                               <div class="checkbox">
@@ -254,7 +254,7 @@
                         }
 
                         @foreach (var field in fields) {
-                           <td>
+                           <td class="@(Model.Part.ReportRowClassField == string.Empty ? string.Empty : row[Model.Part.ReportRowClassField])" style="@(Model.Part.ReportRowStyleField == string.Empty ? string.Empty : row[Model.Part.ReportRowStyleField])">
                               @switch (field.Type) {
                                  case "bool":
                                  case "boolean":

@@ -36,7 +36,7 @@ using Process = Transformalize.Configuration.Process;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-   [ValidateInput(false), Themed]
+   [ValidateInput(false)]
    public class ExportController : Controller {
 
       private readonly IOrchardServices _orchardServices;
@@ -63,7 +63,7 @@ namespace Pipeline.Web.Orchard.Controllers {
          Logger = NullLogger.Instance;
       }
 
-      [Themed(true)]
+      [Themed(false)]
       public ActionResult Index(int id) {
 
          var timer = new Stopwatch();
@@ -164,9 +164,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                o.File = _appDataFolder.MapPath(_appDataFolder.Combine(folder, fileName));
                break;
             case "geojson":
+            case "map":
                o.Stream = true;
                o.Provider = "geojson";
-               o.File = _slugService.Slugify(part.Title()) + ".geojson";
+               o.File = _slugService.Slugify(part.Title()) + ".geo.json";
                var mapFields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
                      { part.MapColorField, "geojson-color" },
                      { part.MapPopUpField, "geojson-description" },
@@ -175,8 +176,14 @@ namespace Pipeline.Web.Orchard.Controllers {
                   };
                foreach (var entity in process.Entities) {
                   foreach (var field in entity.GetAllFields()) {
-                     field.Output = mapFields.ContainsKey(field.Alias);
-                     field.Alias = field.Output ? mapFields[field.Alias] : field.Alias;
+                     if (mapFields.ContainsKey(field.Alias)) {
+                        field.Output = true;
+                        if (!mapFields[field.Alias].Equals(field.Alias, StringComparison.OrdinalIgnoreCase)) {
+                           field.Alias = mapFields[field.Alias];
+                        }
+                     } else {
+                        field.Output = !field.PrimaryKey;
+                     }
                   }
                }
                break;
@@ -200,8 +207,14 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                foreach (var entity in process.Entities) {
                   foreach (var field in entity.GetAllFields()) {
-                     field.Output = calendarFields.ContainsKey(field.Alias);
-                     field.Alias = field.Output ? calendarFields[field.Alias] : field.Alias;
+                     if (calendarFields.ContainsKey(field.Alias)) {
+                        field.Output = true;
+                        if (!calendarFields[field.Alias].Equals(field.Alias, StringComparison.OrdinalIgnoreCase)) {
+                           field.Alias = calendarFields[field.Alias];
+                        }
+                     } else {
+                        field.Output = !field.PrimaryKey;
+                     }
                   }
                }
                break;
@@ -228,7 +241,16 @@ namespace Pipeline.Web.Orchard.Controllers {
                   field.Output = false;
                }
                field.T = string.Empty; // because short-hand has already been expanded
-               field.Output = field.Output && field.Export == "defer" || field.Export == "true";
+               switch (exportType) {
+                  case "map":
+                  case "calendar":
+                     // map and calendar have already been modified
+                     break;
+                  default:
+                     field.Output = field.Output && field.Export == "defer" || field.Export == "true";
+                  break;
+               }
+               
             }
          }
       }

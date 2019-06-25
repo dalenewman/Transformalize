@@ -121,23 +121,41 @@
 
             if (Model.Part.MapEnabled && hasCoordinates || Model.Part.CalendarEnabled) {
 
+               var headless = Request.RawUrl.Contains("Headless");
+
+               // not using Url.Action because I don't want the autoroute (friendly slug name) here
+               var reportUrl = Url.Content("~/Pipeline/Report/" + Model.Part.Id);
+               if (headless) {
+                  reportUrl = reportUrl.Replace("/Pipeline/Report/", "/Pipeline/Headless/Report/");
+               }
                views.Add(new PipelineView("report") {
                   Active = Model.Process.Mode == "report",
                   Glyphicon = "blackboard",
-                  Link = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Report", new RouteValueDictionary { { "Id", Model.Part.Id } }), "report", false)
+                  Link = linkService.Create(Request, Session, Model.Part.Id, reportUrl, "report", false)
                });
+
                if(Model.Part.MapEnabled && hasCoordinates) {
+
+                  var mapUrl = Url.Action("Index", "Map", new RouteValueDictionary { { "Id", Model.Part.Id } });
+                  if (headless) {
+                     mapUrl = mapUrl.Replace("/Pipeline/Map/", "/Pipeline/Headless/Map/");
+                  }
                   views.Add(new PipelineView("map") {
                      Active = Model.Process.Mode == "map",
                      Glyphicon = "map-marker",
-                     Link =  linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Map", new RouteValueDictionary {{"Id", Model.Part.Id}}), "map", false)
+                     Link =  linkService.Create(Request, Session, Model.Part.Id, mapUrl, "map", false)
                   });
                }
                if (Model.Part.CalendarEnabled) {
+
+                  var calendarUrl = Url.Action("Index", "Calendar", new RouteValueDictionary { { "Id", Model.Part.Id } });
+                  if (headless) {
+                     calendarUrl = calendarUrl.Replace("/Pipeline/Calendar/", "/Pipeline/Headless/Calendar/");
+                  }
                   views.Add(new PipelineView("calendar") {
                      Active = Model.Process.Mode == "calendar",
                      Glyphicon = "calendar",
-                     Link = linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Calendar", new RouteValueDictionary {{"Id", Model.Part.Id}}), "calendar", false)
+                     Link = linkService.Create(Request, Session, Model.Part.Id, calendarUrl, "calendar", false)
                   });
                }
                var defaultView = views.First(v => v.Mode != Model.Process.Mode);

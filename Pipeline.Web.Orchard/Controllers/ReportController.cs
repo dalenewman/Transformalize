@@ -113,6 +113,18 @@ namespace Pipeline.Web.Orchard.Controllers {
                   if (process.Entities.Any(e => !e.Fields.Any(f => f.Input))) {
                      _orchardServices.WorkContext.Resolve<ISchemaHelper>().Help(process);
                   }
+                  
+                  if (part.ReportRowClassField != string.Empty || part.ReportRowStyleField != string.Empty) {
+                     var fieldAliases = new HashSet<string>(process.GetAllFields().Select(f => f.Alias));
+                     if (part.ReportRowClassField != string.Empty && !fieldAliases.Contains(part.ReportRowClassField)){
+                        _orchardServices.Notifier.Error(T("Can not find report row class field {0}", part.ReportRowClassField));
+                        return View(new ReportViewModel(process, part));
+                     }
+                     if (part.ReportRowStyleField != string.Empty && !fieldAliases.Contains(part.ReportRowStyleField)) {
+                        _orchardServices.Notifier.Error(T("Can not find report row style field {0}", part.ReportRowStyleField));
+                        return View(new ReportViewModel(process, part));
+                     }
+                  }
 
                   if (!process.Errors().Any()) {
 

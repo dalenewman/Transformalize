@@ -23,7 +23,6 @@ using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Transforms.System;
-using LogTransform = Transformalize.Transforms.System.LogTransform;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
@@ -73,7 +72,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             }
 
-            pipeline.Register(new LogTransform(context));
+            pipeline.Register(new LogTimerTransform(context));
 
             // writer, TODO: rely on IOutputProvider instead
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);

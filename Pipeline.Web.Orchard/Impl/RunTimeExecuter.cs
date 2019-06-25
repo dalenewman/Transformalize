@@ -92,7 +92,7 @@ namespace Pipeline.Web.Orchard.Impl {
          container.RegisterCallback(new GeoJsonModule(process).Configure);
          container.RegisterCallback(new KmlModule(process).Configure);
          container.RegisterCallback(new ClevestModule(process).Configure);
-         container.RegisterCallback(new JsonModule(process).Configure);
+         container.RegisterCallback(new JsonProviderModule(process).Configure);
 
          container.RegisterCallback(new TransformModule().Configure);
          container.RegisterCallback(new AdoTransformModule(process).Configure);

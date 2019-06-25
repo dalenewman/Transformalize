@@ -19,7 +19,6 @@ namespace Pipeline.Web.Orchard.Services {
          }
 
          switch (type) {
-            case "map":
             case "report":
                url.RemoveQueryParam("output");
                return new HtmlString(url);

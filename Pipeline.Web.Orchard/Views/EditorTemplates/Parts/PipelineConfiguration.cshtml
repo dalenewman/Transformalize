@@ -100,6 +100,20 @@
    </div>
    <div class="hint">@T("a comma delimited list of larger page sizes that appear for long-running client-side operations (e.g. maps, calendars, etc).")</div>
 
+   <div class="editor-field">
+      @Html.LabelFor(x => x.ReportRowClassField, T("Row Class Field"))
+      @Html.EditorFor(x => x.ReportRowClassField)
+      @Html.ValidationMessageFor(x => x.ReportRowClassField)
+   </div>
+   <div class="hint">@T("The contents of this field (or calculated field) will be placed in the HTML row's class attribute.")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.ReportRowStyleField, T("Row Style Field"))
+      @Html.EditorFor(x => x.ReportRowStyleField)
+      @Html.ValidationMessageFor(x => x.ReportRowStyleField)
+   </div>
+   <div class="hint">@T("The contents of this field (or calculated field) will be placed in the HTML row's style attribute.")</div>
+
 </fieldset>
 
 <fieldset style="border-color: #6F7E88;border-style: solid; border-width: 1px; padding: 10px;">
@@ -175,6 +189,13 @@
       @Html.ValidationMessageFor(x => x.MapCircleOpacity)
    </div>
    <div class="hint">@T("Map circle opacity is a double betwee 0.0 and 1.0")</div>
+
+   <div class="editor-field">
+      @Html.LabelFor(x => x.MapZoom, T("Map Zoom"))
+      @Html.EditorFor(x => x.MapZoom)
+      @Html.ValidationMessageFor(x => x.MapZoom)
+   </div>
+   <div class="hint">@T("Map zoom is an int betwee 0 and 16")</div>
 
 </fieldset>
 

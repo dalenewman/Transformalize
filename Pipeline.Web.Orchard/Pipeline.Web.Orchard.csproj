@@ -204,9 +204,8 @@
     <Reference Include="Transformalize.Jint, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.6.4-beta\lib\net462\Transformalize.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.6.4-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.6.9-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Clevest, Version=0.6.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Clevest.0.6.10-beta\lib\net462\Transformalize.Provider.Clevest.dll</HintPath>
@@ -238,11 +237,11 @@
     <Reference Include="Transformalize.Provider.GeoJson.Autofac.v3, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.GeoJson.Autofac.v3.0.6.9-beta\lib\net462\Transformalize.Provider.GeoJson.Autofac.v3.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Json, Version=0.6.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Json.0.6.10-beta\lib\net462\Transformalize.Provider.Json.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Json, Version=0.6.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Json.0.6.11-beta\lib\net462\Transformalize.Provider.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Json.Autofac.v3, Version=0.6.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Json.Autofac.v3.0.6.10-beta\lib\net462\Transformalize.Provider.Json.Autofac.v3.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Json.Autofac.v3, Version=0.6.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Json.Autofac.v3.0.6.11-beta\lib\net462\Transformalize.Provider.Json.Autofac.v3.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Kml, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Kml.0.6.4-beta\lib\net462\Transformalize.Provider.Kml.dll</HintPath>
@@ -256,15 +255,14 @@
     <Reference Include="Transformalize.Provider.Solr.Autofac.v3, Version=0.6.8.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Solr.Autofac.v3.0.6.8-beta\lib\net462\Transformalize.Provider.Solr.Autofac.v3.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.4-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
+    <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.9-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Web, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Web.0.6.0-beta\lib\net462\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Ado, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.Ado.0.6.4-beta\lib\net462\Transformalize.Transform.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Ado, Version=0.6.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Ado.0.6.9-beta\lib\net462\Transformalize.Transform.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Compression, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Compression.0.6.4-beta\lib\net462\Transformalize.Transform.Compression.dll</HintPath>
@@ -287,8 +285,8 @@
     <Reference Include="Transformalize.Transform.Jint, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.6.4-beta\lib\net462\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Json, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.Json.0.6.4-beta\lib\net462\Transformalize.Transform.Json.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Json, Version=0.6.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Json.0.6.11-beta\lib\net462\Transformalize.Transform.Json.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.LambdaParser, Version=0.5.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.LambdaParser.0.5.0-beta\lib\net462\Transformalize.Transform.LambdaParser.dll</HintPath>

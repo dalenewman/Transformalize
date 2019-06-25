@@ -161,7 +161,7 @@
       <script>
             //<!--
             mapboxgl.accessToken = '@(settings.MapBoxToken)';
-            var url = '@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "geojson", !Model.Part.MapPaging))';
+            var url = '@(linkService.Create(Request, Session, Model.Part.Id, Url.Action("Index", "Export", new RouteValueDictionary { { "Id", Model.Part.Id } }), "map", !Model.Part.MapPaging))';
 
             $(document).ready(function() {
 
@@ -171,7 +171,7 @@
                     container: 'id_map',
                     style: 'mapbox://styles/mapbox/@(Model.Part.MapStyle)',
                     center: [@settings.StartingLongitude, @settings.StartingLatitude ],
-                    zoom: 6
+                    zoom: @Model.Part.MapZoom
                 });
 
                 function addDataLayer() {
@@ -220,7 +220,7 @@
                     $.getJSON(url, function (data) {
 
                         // filter out zeroes
-                        var zeroes = 0;
+                       var zeroes = 0;
                         data.features = data.features.filter(function (f) {
                             if (f.geometry.coordinates[0] === 0.0 && f.geometry.coordinates[1] === 0.0) {
                                 zeroes++;
@@ -228,7 +228,17 @@
                             } else {
                                 return true;
                             }
-                        });
+                       });
+
+                       @*
+                        var firstLat = 0.0;
+                        var firstLon = 0.0;
+                        if (data.features.length > 0) {
+                           firstLon = data.features[0].geometry.coordinates[0];
+                           firstLat = data.features[0].geometry.coordinates[1];
+                        }
+                        *@
+
                         if (zeroes > 0) {
                             $('#id_map_alert').text(zeroes + ' record(s) are missing coordinates.  They are not displayed on the map below.').show();
                         } else {
@@ -238,6 +248,12 @@
                         window.data = data;
 
                         addDataLayer();
+
+                        @*
+                        if (firstLat !== 0.0) {
+                           map.flyTo({center:[firstLon, firstLat]});
+                        }
+                        *@
 
                         // fit map
                         if (window.data.features.length > 0) {

@@ -140,7 +140,7 @@ namespace Pipeline.Web.Orchard.Modules {
                builder.RegisterCallback(new GeoJsonModule().Configure);
                builder.RegisterCallback(new KmlModule().Configure);
                builder.RegisterCallback(new ClevestModule(root).Configure);
-               builder.RegisterCallback(new JsonModule(root).Configure);
+               builder.RegisterCallback(new JsonProviderModule(root).Configure);
 
                builder.RegisterCallback(new TransformModule().Configure);
                builder.RegisterCallback(new AdoTransformModule(process).Configure);

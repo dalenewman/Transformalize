@@ -119,6 +119,11 @@ namespace Pipeline.Web.Orchard.Models {
          set { this.Store(x => x.MapCircleRadius, value, true); }
       }
 
+      public int MapZoom {
+         get { return this.Retrieve(x => x.MapZoom, versioned: true, defaultValue: () => 6); }
+         set { this.Store(x => x.MapZoom, value, true); }
+      }
+
       public double MapCircleOpacity {
          get { return this.Retrieve(x => x.MapCircleOpacity, versioned: true, defaultValue: () => 1.0); }
          set { this.Store(x => x.MapCircleOpacity, value, true); }
@@ -268,5 +273,16 @@ namespace Pipeline.Web.Orchard.Models {
          get { return this.Retrieve(x => x.MapLongitudeField, versioned: true, defaultValue: "Longitude"); }
          set { this.Store(x => x.MapLongitudeField, value, true); }
       }
+
+      public string ReportRowClassField {
+         get { return this.Retrieve(x => x.ReportRowClassField, versioned: true, defaultValue: ""); }
+         set { this.Store(x => x.ReportRowClassField, value, true); }
+      }
+
+      public string ReportRowStyleField {
+         get { return this.Retrieve(x => x.ReportRowStyleField, versioned: true, defaultValue: ""); }
+         set { this.Store(x => x.ReportRowStyleField, value, true); }
+      }
+
    }
 }

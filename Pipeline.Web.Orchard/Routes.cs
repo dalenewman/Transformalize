@@ -111,13 +111,62 @@ namespace Pipeline.Web.Orchard {
                     )
                 },
 
+                // not url("~/Pipeline/Headless*") in layer rule, set priority lower than the main one
                 new RouteDescriptor {
-                    Priority = 11,
+                    Priority = 10,
                     Route = new Route(
                         "Pipeline/Headless/{id}",
                         new RouteValueDictionary {
                             {"area", Common.ModuleName },
                             {"controller", "Report" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 10,
+                    Route = new Route(
+                        "Pipeline/Headless/Report/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Report" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 10,
+                    Route = new Route(
+                        "Pipeline/Headless/Map/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Map" },
+                            {"action", "Index"},
+                            {"id", 0}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
+                    Priority = 10,
+                    Route = new Route(
+                        "Pipeline/Headless/Calendar/{id}",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Calendar" },
                             {"action", "Index"},
                             {"id", 0}
                         },

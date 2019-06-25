@@ -91,6 +91,11 @@ namespace Pipeline.Web.Orchard.Models {
       public virtual string MapLatitudeField { get; set; }
       [StringLength(64)]
       public virtual string MapLongitudeField { get; set; }
+      public virtual int MapZoom { get; set; }
+      [StringLength(64)]
+      public virtual string ReportRowClassField { get; set; }
+      [StringLength(64)]
+      public virtual string ReportRowStyleField { get; set; }
 
    }
 }
