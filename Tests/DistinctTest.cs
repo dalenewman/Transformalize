@@ -17,16 +17,21 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class DistinctTest {
+   [TestClass]
+   public class DistinctTest {
 
-        [TestMethod]
-        public void TryDistinct() {
-            const string xml = @"
+      [TestMethod]
+      public void TryDistinct() {
+         const string xml = @"
     <add name='TestDistinct'>
       <connections>
         <add name='input' provider='internal' />
@@ -48,18 +53,20 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var process = composer.Process;
-            var row1 = process.Entities.First().Rows[0];
-            var row2 = process.Entities.First().Rows[1];
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual("One Two Three", row1["DistinctWords"]);
-            Assert.AreEqual("111-222-3333 222-333-4444", row2["DistinctWords"]);
+            using (var scope = new Container().CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
+               var row1 = process.Entities.First().Rows[0];
+               var row2 = process.Entities.First().Rows[1];
 
-        }
-
-    }
+               Assert.AreEqual("One Two Three", row1["DistinctWords"]);
+               Assert.AreEqual("111-222-3333 222-333-4444", row2["DistinctWords"]);
+            }
+         }
+      }
+   }
 }

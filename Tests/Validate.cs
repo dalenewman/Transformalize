@@ -16,16 +16,21 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class Validate {
+   [TestClass]
+   public class Validate {
 
-        [TestMethod]
-        public void EqualsValidator() {
-            var xml = @"
+      [TestMethod]
+      public void EqualsValidator() {
+         var xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
@@ -44,20 +49,24 @@ namespace Tests {
           </calculated-fields>
         </add>
       </entities>
-    </add>
-            ".Replace('\'', '"');
+    </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
 
-            var output = controller.Read().ToArray();
-            var process = composer.Process;
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            Assert.AreEqual(false, output[0][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
-            Assert.AreEqual(true, output[1][process.Entities.First().CalculatedFields.First(cf => cf.Name == "AreEqual")]);
+            var process = cfgScope.Resolve<Process>();
 
-            
-        }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
 
-    }
+               Assert.AreEqual(false, output[0][process.GetField("AreEqual")]);
+               Assert.AreEqual(true, output[1][process.GetField("AreEqual")]);
+
+            }
+         }
+
+      }
+
+   }
 }

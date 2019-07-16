@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TestAppend {
+   [TestClass]
+   public class TestAppend {
 
-        [TestMethod]
-        public void AppendWorks() {
+      [TestMethod]
+      public void AppendWorks() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' pipeline='linq'>
@@ -49,16 +54,23 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual("one is 1", output[0][cf[0]]);
-            Assert.AreEqual("2 is two", output[0][cf[1]]);
-            Assert.AreEqual("three2", output[0][cf[2]]);
-            Assert.AreEqual("threethree2", output[0][cf[3]]);
+            var process = cfgScope.Resolve<Process>();
 
-        }
-    }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual("one is 1", output[0][cf[0]]);
+               Assert.AreEqual("2 is two", output[0][cf[1]]);
+               Assert.AreEqual("three2", output[0][cf[2]]);
+               Assert.AreEqual("threethree2", output[0][cf[3]]);
+            }
+         }
+
+
+      }
+   }
 }

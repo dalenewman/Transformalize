@@ -25,36 +25,36 @@ using Transformalize.Logging.NLog;
 using Transformalize.Transforms.Globalization;
 
 namespace Transformalize.Command {
-    public static class ProcessFactory {
+   public static class ProcessFactory {
 
-        public static bool TryCreate(Options options, Dictionary<string, string> parameters, out Process process) {
+      public static bool TryCreate(Options options, Dictionary<string, string> parameters, out Process process) {
 
-            var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(options.Arrangement));
-            using (var scope = ConfigurationContainer.Create(options.Arrangement, logger, parameters, options.PlaceHolderStyle)) {
-                process = scope.Resolve<Process>();
-                var context = new PipelineContext(logger, process);
-                foreach (var warning in process.Warnings()) {
-                    context.Warn(warning);
-                }
-
-                if (process.Errors().Any()) {
-                    foreach (var error in process.Errors()) {
-                        context.Error(error);
-                    }
-                    context.Error("The configuration errors must be fixed before this job will run.");
-                } else {
-                    process.Preserve = true;
-                }
-
+         var logger = new NLogPipelineLogger(SlugifyTransform.Slugify(options.Arrangement));
+         using (var scope = ConfigurationContainer.Create(options.Arrangement, logger, parameters, options.PlaceHolderStyle)) {
+            process = scope.Resolve<Process>();
+            var context = new PipelineContext(logger, process);
+            foreach (var warning in process.Warnings()) {
+               context.Warn(warning);
             }
 
-            return process != null && process.Errors().Length == 0;
+            if (process.Errors().Any()) {
+               foreach (var error in process.Errors()) {
+                  context.Error(error);
+               }
+               context.Error("The configuration errors must be fixed before this job will run.");
+            } else {
+               process.Preserve = true;
+            }
 
-        }
+         }
 
-        public static Process Create(Options options, Dictionary<string, string> parameters) {
-            TryCreate(options, parameters, out var process);
-            return process;
-        }
-    }
+         return process != null && process.Errors().Length == 0;
+
+      }
+
+      public static Process Create(Options options, Dictionary<string, string> parameters) {
+         TryCreate(options, parameters, out var process);
+         return process;
+      }
+   }
 }

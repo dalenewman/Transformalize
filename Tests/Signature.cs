@@ -17,16 +17,21 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TestSignature {
+   [TestClass]
+   public class TestSignature {
 
-        [TestMethod]
-        public void Validator() {
-            const string xml = @"
+      [TestMethod]
+      public void Validator() {
+         const string xml = @"
     <add name='TestSignature'>
       <entities>
         <add name='TestData'>
@@ -53,17 +58,23 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var process = composer.Process;
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var field = process.Entities.First().CalculatedFields.First(cf => cf.Name == "length");
-            Assert.AreEqual(2, output[0][field]);
+            var process = cfgScope.Resolve<Process>();
 
-            foreach (var row in output) {
-                Console.WriteLine(row);
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+
+               var field = process.Entities.First().CalculatedFields.First(cf => cf.Name == "length");
+               Assert.AreEqual(2, output[0][field]);
+
+               foreach (var row in output) {
+                  Console.WriteLine(row);
+               }
             }
-        }
-    }
+         }
+      }
+   }
 }

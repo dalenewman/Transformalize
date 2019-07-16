@@ -17,16 +17,21 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class ReadOnlyNoPrimaryKey {
+   [TestClass]
+   public class ReadOnlyNoPrimaryKey {
 
-        [TestMethod]
-        public void ItWorks() {
-            const string xml = @"
+      [TestMethod]
+      public void ItWorks() {
+         const string xml = @"
     <add name='Test' read-only='true'>
       <entities>
         <add name='Data'>
@@ -42,18 +47,22 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var process = composer.Process;
-            var row1 = process.Entities.First().Rows[0];
-            //var row2 = process.Entities.First().Rows[1];
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual(new DateTime(2017, 1, 1, 9, 0, 0), row1["Date"]);
-            Assert.AreEqual((short)1, row1["Number"]);
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
 
-        }
+               Assert.AreEqual(new DateTime(2017, 1, 1, 9, 0, 0), output[0][process.GetField("Date")]);
+               Assert.AreEqual((short)1, output[0][process.GetField("Number")]);
+            }
+         }
 
-    }
+
+
+      }
+
+   }
 }

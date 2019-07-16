@@ -33,6 +33,8 @@ namespace Transformalize.Configuration {
    [Cfg(name = "cfg")]
    public class Process : CfgNode, IDisposable {
 
+      private static Dictionary<string, IEnumerable<Field>> _fieldMatchCache = new Dictionary<string, IEnumerable<Field>>();
+
       /// <summary>
       /// The default shorthand configuration for children processes
       /// </summary>
@@ -558,41 +560,50 @@ namespace Transformalize.Configuration {
          }
 
          if (CalculatedFields.Any()) {
+
             Regex matcher;
-            var regex = @"\b"+ string.Join(@"\b|\b", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
+            var regex = @"\b" + string.Join(@"\b|\b", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
 #if NETS10
             matcher = new Regex(regex);
 #else
             matcher = new Regex(regex, RegexOptions.Compiled);
 #endif
-            var found = new List<Field>();
-            // get the fields necessary for the calculated fields process
-            // in format's format attr
-            // in eval's expression attr
-            // in cs, js, csscript, and jint's script attr
-            // in copy's value attr
+            var key = Name;
 
-            foreach (var cf in entity.CalculatedFields) {
-               foreach (Match match in matcher.Matches(cf.T)) {
-                  if (TryGetField(match.Value, out var field)) {
-                     if (field.Output) {
-                        found.Add(field.Clone());
-                     }
-                  }
-               }
-               foreach (var t in cf.Transforms) {
-                  foreach (Match match in matcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
+            if (!_fieldMatchCache.ContainsKey(key)) {
+
+               // get the fields necessary for the calculated fields process
+               // in format's format attr
+               // in eval's expression attr
+               // in cs, js, csscript, and jint's script attr
+               // in copy's value attr
+
+               var found = new List<Field>();
+
+               foreach (var cf in entity.CalculatedFields) {
+
+                  foreach (Match match in matcher.Matches(cf.T)) {
                      if (TryGetField(match.Value, out var field)) {
                         if (field.Output) {
                            found.Add(field.Clone());
                         }
                      }
                   }
+                  foreach (var t in cf.Transforms) {
+                     foreach (Match match in matcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
+                        if (TryGetField(match.Value, out var field)) {
+                           if (field.Output) {
+                              found.Add(field.Clone());
+                           }
+                        }
+                     }
+                  }
                }
+               _fieldMatchCache[key] = found.Distinct().Except(entity.Fields).ToList();
             }
 
-            if (found.Any()) {
-               entity.Fields.AddRange(found.Distinct().Except(entity.Fields));
+            if (_fieldMatchCache[key].Any()) {
+               entity.Fields.AddRange(_fieldMatchCache[key]);
             }
          }
 
@@ -627,6 +638,18 @@ namespace Transformalize.Configuration {
          }
          field = null;
          return false;
+      }
+
+      /// <summary>
+      /// this method gets a field or calculated field by alias or name anywhere in the process
+      /// </summary>
+      /// <param name="aliasOrName">an alias or name of the field</param>
+      /// <returns>a field or null if not found</returns>
+      public Field GetField(string aliasOrName) {
+         if (TryGetField(aliasOrName, out Field field)) {
+            return field;
+         }
+         return null;
       }
 
       [Cfg(value = "")]

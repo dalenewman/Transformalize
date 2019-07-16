@@ -17,16 +17,21 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TestFromRegex {
+   [TestClass]
+   public class TestFromRegex {
 
-        [TestMethod]
-        public void FromRegexWorks() {
-            const string xml = @"
+      [TestMethod]
+      public void FromRegexWorks() {
+         const string xml = @"
     <add name='Test'>
       <entities>
         <add name='Test'>
@@ -54,20 +59,28 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
-            var flipped = composer.Process.Entities.First().CalculatedFields.Last();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            Assert.AreEqual(3, output.Length);
-            
-            Assert.AreEqual("1011 1ST AV", output[0][flipped]);
-            Assert.AreEqual("402 1ST AV APT 1", output[1][flipped]);
-            Assert.AreEqual("101 ABLE RD LOT 3", output[2][flipped]);
+            var process = cfgScope.Resolve<Process>();
 
-            foreach (var row in output) {
-                Console.WriteLine(row);
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               var flipped = process.GetField("flipped");
+
+               Assert.AreEqual(3, output.Length);
+
+               Assert.AreEqual("1011 1ST AV", output[0][flipped]);
+               Assert.AreEqual("402 1ST AV APT 1", output[1][flipped]);
+               Assert.AreEqual("101 ABLE RD LOT 3", output[2][flipped]);
+
+               foreach (var row in output) {
+                  Console.WriteLine(row);
+               }
             }
-        }
-    }
+         }
+
+      }
+   }
 }

@@ -17,16 +17,21 @@
 #endregion
 using System;
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class SubstringTest {
+   [TestClass]
+   public class SubstringTest {
 
-        [TestMethod]
-        public void TrySubstring() {
-            const string xml = @"
+      [TestMethod]
+      public void TrySubstring() {
+         const string xml = @"
     <add name='TestDistinct'>
       <entities>
         <add name='Dates'>
@@ -48,20 +53,24 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var process = composer.Process;
-            var row = process.Entities.First().Rows[0];
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual("newman", row["t1"], "should skip dale and return newman (the remaining part of the string)");
-            Assert.AreEqual("new", row["t2"], "should skip dale and return new (3 chars)");
-            Assert.AreEqual("newman", row["t3"], "should skip dale and return newman (6 characters)");
-            Assert.AreEqual("newman", row["t4"], "should skip dale and return newman (7 characters, but only 6 available)");
-            Assert.AreEqual("", row["t5"],"should skip dalenewman and return blank");
-            Assert.AreEqual("", row["t6"],"should skip more than dalenewman and return blank");
-        }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
 
-    }
+               var row = process.Entities.First().Rows[0];
+
+               Assert.AreEqual("newman", row["t1"], "should skip dale and return newman (the remaining part of the string)");
+               Assert.AreEqual("new", row["t2"], "should skip dale and return new (3 chars)");
+               Assert.AreEqual("newman", row["t3"], "should skip dale and return newman (6 characters)");
+               Assert.AreEqual("newman", row["t4"], "should skip dale and return newman (7 characters, but only 6 available)");
+               Assert.AreEqual("", row["t5"], "should skip dalenewman and return blank");
+               Assert.AreEqual("", row["t6"], "should skip more than dalenewman and return blank");
+            }
+         }
+      }
+   }
 }

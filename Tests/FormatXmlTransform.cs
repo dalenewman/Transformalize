@@ -17,8 +17,12 @@
 #endregion
 using System.Linq;
 using System.Xml.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Transformalize.Extensions;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
@@ -67,17 +71,23 @@ namespace Tests {
     </entities>
 </add>";
 
-         var composer = new CompositionRoot();
-         var controller = composer.Compose(xml);
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-         var output = controller.Read().ToArray();
+            var process = cfgScope.Resolve<Process>();
 
-         Assert.AreEqual(@"<stuff value=""1"">
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+               Assert.AreEqual(@"<stuff value=""1"">
   <things>
     <add item=""1"" />
     <add item=""2"" />
   </things>
-</stuff>", output[0][composer.Process.Entities.First().CalculatedFields.First()]);
+</stuff>", output[0][process.Entities.First().CalculatedFields.First()]);
+            }
+         }
+
+
 
 
       }

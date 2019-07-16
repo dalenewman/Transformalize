@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TestFormat {
+   [TestClass]
+   public class TestFormat {
 
-        [TestMethod]
-        public void FormatTransformer() {
+      [TestMethod]
+      public void FormatTransformer() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
@@ -49,16 +54,25 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            Assert.AreEqual("1-2+3", output[0][composer.Process.Entities.First().CalculatedFields.First(f=>f.Name == "Format")]);
-            Assert.AreEqual("1-2+3", output[0][composer.Process.Entities.First().CalculatedFields.First(f=>f.Name == "BetterFormat")]);
-            Assert.AreEqual("1-2+3_2", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "FormatRepeats")]);
-            Assert.AreEqual("1-2+3_2", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "BetterFormatRepeats")]);
-            Assert.AreEqual("1 and 003.0000", output[0][composer.Process.Entities.First().CalculatedFields.First(f => f.Name == "WithFormat")]);
+            var process = cfgScope.Resolve<Process>();
 
-        }
-    }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               Assert.AreEqual("1-2+3", output[0][process.GetField("Format")]);
+               Assert.AreEqual("1-2+3", output[0][process.GetField("BetterFormat")]);
+               Assert.AreEqual("1-2+3_2", output[0][process.GetField("FormatRepeats")]);
+               Assert.AreEqual("1-2+3_2", output[0][process.GetField("BetterFormatRepeats")]);
+               Assert.AreEqual("1 and 003.0000", output[0][process.GetField("WithFormat")]);
+
+            }
+         }
+
+
+
+      }
+   }
 }

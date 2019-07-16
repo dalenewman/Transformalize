@@ -61,7 +61,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             }
 
-            pipeline.Register(new CancelTransform(context));
+            // pipeline.Register(new CancelTransform(context));  may create a problem when canceling without the intention to run full init afterwards
             pipeline.Register(new IncrementTransform(context));
             pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
 
@@ -72,7 +72,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             }
 
-            pipeline.Register(new LogTimerTransform(context));
+            pipeline.Register(new LogTransform(context));
 
             // writer, TODO: rely on IOutputProvider instead
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);

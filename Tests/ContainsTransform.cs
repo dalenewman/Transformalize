@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class ContainsTransform {
+   [TestClass]
+   public class ContainsTransform {
 
-        [TestMethod]
-        public void Contains() {
+      [TestMethod]
+      public void Contains() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <maps>
         <add name='Map'>
@@ -56,20 +61,26 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger();
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = new Container().CreateScope(process, logger)) {
+               var output = inner.Resolve<IProcessController>().Read().ToArray();
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual(true, output[0][cf[0]]);
-            Assert.AreEqual(true, output[0][cf[1]]);
-            Assert.AreEqual(false, output[0][cf[2]]);
-            Assert.AreEqual("It is False", output[0][cf[3]]);
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual(true, output[0][cf[0]]);
+               Assert.AreEqual(true, output[0][cf[1]]);
+               Assert.AreEqual(false, output[0][cf[2]]);
+               Assert.AreEqual("It is False", output[0][cf[3]]);
 
-            Assert.AreEqual(false, output[1][cf[0]]);
-            Assert.AreEqual(true, output[1][cf[1]]);
-            Assert.AreEqual(true, output[1][cf[2]]);
-            Assert.AreEqual("It is True", output[1][cf[3]]);
-        }
-    }
+               Assert.AreEqual(false, output[1][cf[0]]);
+               Assert.AreEqual(true, output[1][cf[1]]);
+               Assert.AreEqual(true, output[1][cf[2]]);
+               Assert.AreEqual("It is True", output[1][cf[3]]);
+
+            }
+         }
+
+      }
+   }
 }

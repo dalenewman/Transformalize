@@ -26,24 +26,30 @@ using Transformalize.Providers.Console;
 namespace Tests {
 
    [TestClass]
-   public class CopyTransform {
+   public class TestIssues {
 
       [TestMethod]
-      public void CopyTransform1() {
+      public void TestIssue1() {
 
          const string xml = @"
 <add name='TestProcess'>
     <entities>
         <add name='TestData'>
             <rows>
-                <add Field1='1' Field2='2' />
+                <add Pile='1Stories: 2Installed on: 09/14/2016 FSO: scpActual Appoi' />
             </rows>
             <fields>
-                <add name='Field1' type='int'/>
-                <add name='Field2' type='int'/>
+                <add name='Pile' length='max'/>
             </fields>
             <calculated-fields>
-                <add name='Field3' type='int' t='copy(Field2)' />
+                <add name='WithShorthand' t='copy(Pile).tolower().matching(installed on:\s*\d{1,2}\/\d{1,2}\/\d{2,4})' />
+                <add name='WithLonghand'>
+                  <transforms>
+                     <add method='copy' value='Pile' />
+                     <add method='tolower' />
+                     <add method='matching' pattern='installed on:\s*\d{1,2}\/\d{1,2}\/\d{2,4}' />
+                  </transforms>
+                </add>
             </calculated-fields>
         </add>
     </entities>
@@ -53,8 +59,11 @@ namespace Tests {
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container().CreateScope(process, logger)) {
-               var output = inner.Resolve<IProcessController>().Read().ToArray();
-               Assert.AreEqual(2, output[0][process.Entities.First().CalculatedFields.First()]);
+               var row = inner.Resolve<IProcessController>().Read().ToArray()[0];
+               var withShorthand = process.Entities[0].CalculatedFields[0];
+               var withLonghand = process.Entities[0].CalculatedFields[1];
+               Assert.AreEqual("installed on: 09/14/2016", row[withShorthand]);
+               Assert.AreEqual("installed on: 09/14/2016", row[withLonghand]);
 
             }
          }

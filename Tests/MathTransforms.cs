@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class MathTransforms {
+   [TestClass]
+   public class MathTransforms {
 
-        [TestMethod]
-        public void DoMath() {
+      [TestMethod]
+      public void DoMath() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' pipeline='linq'>
@@ -56,28 +61,30 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            var row = output.First();
-            Assert.AreEqual(11d, row[cf[0]]);
-            Assert.AreEqual(10d, row[cf[1]]);
-            Assert.AreEqual((decimal)130.00, row[cf[2]]);
-            Assert.AreEqual((decimal)129.992, row[cf[3]]);
-            Assert.AreEqual(147.6874m, row[cf[4]]);
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual(10, row[cf[5]]);
-            Assert.AreEqual(10d, row[cf[6]],"nearest 5 is 10");
-            Assert.AreEqual(12d, row[cf[7]], "nearest 3 is 12");
-            Assert.AreEqual(133m, row[cf[8]], "nearest 7 is 133");
-            Assert.AreEqual(15d, row[cf[9]], "next 5 is 15");
-            Assert.AreEqual(4, row[cf[10]], "previous 4 is 4");
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
 
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               var row = output.First();
+               Assert.AreEqual(11d, row[cf[0]]);
+               Assert.AreEqual(10d, row[cf[1]]);
+               Assert.AreEqual((decimal)130.00, row[cf[2]]);
+               Assert.AreEqual((decimal)129.992, row[cf[3]]);
+               Assert.AreEqual(147.6874m, row[cf[4]]);
 
-
-
-        }
-    }
+               Assert.AreEqual(10, row[cf[5]]);
+               Assert.AreEqual(10d, row[cf[6]], "nearest 5 is 10");
+               Assert.AreEqual(12d, row[cf[7]], "nearest 3 is 12");
+               Assert.AreEqual(133m, row[cf[8]], "nearest 7 is 133");
+               Assert.AreEqual(15d, row[cf[9]], "next 5 is 15");
+               Assert.AreEqual(4, row[cf[10]], "previous 4 is 4");
+            }
+         }
+      }
+   }
 }

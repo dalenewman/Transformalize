@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TagTransform {
+   [TestClass]
+   public class TagTransform {
 
-        [TestMethod]
-        public void Tag() {
+      [TestMethod]
+      public void Tag() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' pipeline='linq'>
@@ -45,15 +50,22 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual("<span>1</span>", output[0][cf[0]]);
-            Assert.AreEqual("<div class=\"fun\">1</div>", output[0][cf[1]]);
-            Assert.AreEqual("<span>5</span>", output[1][cf[0]]);
-            Assert.AreEqual("<div class=\"fun\">5</div>", output[1][cf[1]]);
-        }
-    }
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual("<span>1</span>", output[0][cf[0]]);
+               Assert.AreEqual("<div class=\"fun\">1</div>", output[0][cf[1]]);
+               Assert.AreEqual("<span>5</span>", output[1][cf[0]]);
+               Assert.AreEqual("<div class=\"fun\">5</div>", output[1][cf[1]]);
+            }
+         }
+
+      }
+   }
 }

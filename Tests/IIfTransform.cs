@@ -16,19 +16,24 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    // ReSharper disable once InconsistentNaming
-    public class IIfTransform {
+   [TestClass]
+   // ReSharper disable once InconsistentNaming
+   public class IIfTransform {
 
-        [TestMethod]
-        // ReSharper disable once InconsistentNaming
-        public void IIfTransform1() {
+      [TestMethod]
+      // ReSharper disable once InconsistentNaming
+      public void IIfTransform1() {
 
-            const string xml = @"
+         const string xml = @"
 <add name='TestProcess'>
     <entities>
         <add name='TestData'>
@@ -47,6 +52,7 @@ namespace Tests {
             <calculated-fields>
                 <add name='Equal' type='int' t='iif(Field1=Field2,Field3,Field4)' />
                 <add name='GreaterThan' type='int' t='iif(Field1 > Field2,Field3,Field4)' />
+                <add name='GreaterThanValue' type='int' t='iif(Field2 > 1,Field3,Field4)' />
                 <add name='StartsWith' type='int' t='iif(Field5 ^= Field6,Field3,Field4)' />
                 <add name='Contains' type='int' t='iif(Field5*=Field6,Field3,Field4)' />
             </calculated-fields>
@@ -54,21 +60,30 @@ namespace Tests {
     </entities>
 </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var output = controller.Read().ToArray();
-            var cf = composer.Process.Entities.First().CalculatedFields;
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual(4, output[0][cf.First(f=>f.Name=="Equal")], "Should be 4 because Field1 and Field2 are not equal.");
-            Assert.AreEqual(3, output[1][cf.First(f => f.Name == "Equal")], "Should be 3 because Field1 and Field2 are equal.");
-            Assert.AreEqual(3, output[0][cf.First(f => f.Name == "GreaterThan")], "Should be 3 because Field1 is greater than Field2.");
-            Assert.AreEqual(4, output[1][cf.First(f => f.Name == "GreaterThan")], "Should be 4 because Field1 is NOT greater than Field2.");
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
 
-            Assert.AreEqual(3, output[0][cf.First(f => f.Name == "StartsWith")], "Should be 3 because Field5 starts with Field6.");
-            Assert.AreEqual(4, output[1][cf.First(f => f.Name == "StartsWith")], "Should be 4 because Field5 does not start with Field6.");
+               var cf = process.Entities.First().CalculatedFields;
 
-        }
+               Assert.AreEqual(4, output[0][cf.First(f => f.Name == "Equal")], "Should be 4 because Field1 and Field2 are not equal.");
+               Assert.AreEqual(3, output[1][cf.First(f => f.Name == "Equal")], "Should be 3 because Field1 and Field2 are equal.");
+               Assert.AreEqual(3, output[0][cf.First(f => f.Name == "GreaterThan")], "Should be 3 because Field1 is greater than Field2.");
+               Assert.AreEqual(4, output[1][cf.First(f => f.Name == "GreaterThan")], "Should be 4 because Field1 is NOT greater than Field2.");
 
-    }
+               Assert.AreEqual(3, output[0][cf.First(f => f.Name == "GreaterThan")], "Should be 3 because Field2 is NOT greater than 1.");
+               Assert.AreEqual(4, output[1][cf.First(f => f.Name == "GreaterThan")], "Should be 4 because Field2 is greater than 1.");
+
+
+               Assert.AreEqual(3, output[0][cf.First(f => f.Name == "StartsWith")], "Should be 3 because Field5 starts with Field6.");
+               Assert.AreEqual(4, output[1][cf.First(f => f.Name == "StartsWith")], "Should be 4 because Field5 does not start with Field6.");
+
+            }
+         }
+      }
+   }
 }

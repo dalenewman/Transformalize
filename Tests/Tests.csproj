@@ -96,6 +96,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="TestIssues.cs" />
     <Compile Include="TestToUnixTime.cs" />
     <Compile Include="TestSpecifyKind.cs" />
     <Compile Include="PaginationTest.cs" />
@@ -112,7 +113,6 @@
     <Compile Include="TestXmlDecode.cs" />
     <Compile Include="TestSlice.cs" />
     <Compile Include="TestAny.cs" />
-    <Compile Include="CompositionRoot.cs" />
     <Compile Include="ConnectionTransform.cs" />
     <Compile Include="CopyTransform.cs" />
     <Compile Include="DateDiffTransform.cs" />

@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class FromLengthsTransform {
+   [TestClass]
+   public class FromLengthsTransform {
 
-        [TestMethod]
-        public void FromLengths() {
+      [TestMethod]
+      public void FromLengths() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
@@ -54,28 +59,31 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using(var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using(var inner = new Container().CreateScope(process, logger)) {
+               var output = inner.Resolve<IProcessController>().Read().ToArray();
+               var cf = process.Entities.First().CalculatedFields.ToArray();
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
+               var first = output[0];
+               Assert.AreEqual("1", first[cf[0]]);
+               Assert.AreEqual("22", first[cf[1]]);
+               Assert.AreEqual(333, first[cf[2]]);
+               Assert.AreEqual("4444", first[cf[3]]);
+               Assert.AreEqual("55555", first[cf[4]]);
+               Assert.AreEqual("666666", first[cf[5]]);
 
-            var first = output[0];
-            Assert.AreEqual("1", first[cf[0]]);
-            Assert.AreEqual("22", first[cf[1]]);
-            Assert.AreEqual(333, first[cf[2]]);
-            Assert.AreEqual("4444", first[cf[3]]);
-            Assert.AreEqual("55555", first[cf[4]]);
-            Assert.AreEqual("666666", first[cf[5]]);
+               var second = output[1];
+               Assert.AreEqual("1", second[cf[0]]);
+               Assert.AreEqual("11", second[cf[1]]);
+               Assert.AreEqual(111, second[cf[2]]);
+               Assert.AreEqual("2222", second[cf[3]]);
+               Assert.AreEqual("23333", second[cf[4]]);
+               Assert.AreEqual("444556", second[cf[5]]);
 
-            var second = output[1];
-            Assert.AreEqual("1", second[cf[0]]);
-            Assert.AreEqual("11", second[cf[1]]);
-            Assert.AreEqual(111, second[cf[2]]);
-            Assert.AreEqual("2222", second[cf[3]]);
-            Assert.AreEqual("23333", second[cf[4]]);
-            Assert.AreEqual("444556", second[cf[5]]);
-
-        }
-    }
+            }
+         }
+      }
+   }
 }

@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class MapTransformTester {
+   [TestClass]
+   public class MapTransformTester {
 
-        [TestMethod]
-        public void MapTransformAdd() {
+      [TestMethod]
+      public void MapTransformAdd() {
 
-            const string xml = @"
+         const string xml = @"
 <add name='TestProcess'>
 
     <maps>
@@ -59,15 +64,20 @@ namespace Tests {
 
 </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var field = composer.Process.Entities.First().CalculatedFields.First();
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            Assert.AreEqual("One", output[0][field]);
-            Assert.AreEqual("Two", output[1][field]);
-            Assert.AreEqual("$THREE$", output[2][field]);
-            Assert.AreEqual("None", output[3][field]);
-        }
-    }
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+               var field = process.Entities.First().CalculatedFields.First();
+               Assert.AreEqual("One", output[0][field]);
+               Assert.AreEqual("Two", output[1][field]);
+               Assert.AreEqual("$THREE$", output[2][field]);
+               Assert.AreEqual("None", output[3][field]);
+            }
+         }
+      }
+   }
 }

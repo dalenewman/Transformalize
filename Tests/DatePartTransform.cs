@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class DatePartTransform {
+   [TestClass]
+   public class DatePartTransform {
 
-        [TestMethod]
-        public void DatePart1() {
+      [TestMethod]
+      public void DatePart1() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' >
@@ -47,15 +52,24 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual(2016, output[0][cf[0]]);
-            Assert.AreEqual(2016, output[0][cf[1]]);
-            Assert.AreEqual(23, output[0][cf[2]]);
-            Assert.AreEqual(32, output[0][cf[3]]);
-        }
-    }
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual(2016, output[0][cf[0]]);
+               Assert.AreEqual(2016, output[0][cf[1]]);
+               Assert.AreEqual(23, output[0][cf[2]]);
+               Assert.AreEqual(32, output[0][cf[3]]);
+            }
+         }
+
+
+
+      }
+   }
 }

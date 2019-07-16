@@ -26,6 +26,7 @@ namespace Transformalize.Configuration {
    public class Entity : CfgNode {
 
       private Pagination _pagination;
+      private static Dictionary<string, IEnumerable<Field>> _fieldMatchCache = new Dictionary<string, IEnumerable<Field>>();
 
       public bool IsMaster { get; set; }
 
@@ -632,23 +633,32 @@ namespace Transformalize.Configuration {
       public Pagination Pagination => _pagination ?? (_pagination = new Pagination(Hits, Page, Size));
 
       internal Regex FieldMatcher { get; set; }
+
       public IEnumerable<Field> GetFieldMatches(string content) {
-         var matches = FieldMatcher.Matches(content);
+         var key = $"{Key}:{content}";
 
-         var names = new HashSet<string>();
-         foreach (Match match in matches) {
-            names.Add(match.Value);
-         }
+         if (_fieldMatchCache.ContainsKey(key)) {
+            return _fieldMatchCache[key];
+         } else {
+            var matches = FieldMatcher.Matches(content);
 
-         var fields = new List<Field>();
-
-         foreach (var name in names) {
-            if (TryGetField(name, out var newField)) {
-               fields.Add(newField);
+            var names = new HashSet<string>();
+            foreach (Match match in matches) {
+               names.Add(match.Value);
             }
 
+            var fields = new List<Field>();
+
+            foreach (var name in names) {
+               if (TryGetField(name, out var newField)) {
+                  fields.Add(newField);
+               }
+
+            }
+            _fieldMatchCache[key] = fields;
+            return fields;
          }
-         return fields;
+
       }
 
       [Cfg(value = false)]

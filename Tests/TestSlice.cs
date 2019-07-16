@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class TestSlice {
+   [TestClass]
+   public class TestSlice {
 
-        [TestMethod]
-        public void SliceWorks() {
+      [TestMethod]
+      public void SliceWorks() {
 
-            const string xml = @"
+         const string xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData' pipeline='linq'>
@@ -52,20 +57,27 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            var output = controller.Read().ToArray();
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var cf = composer.Process.Entities.First().CalculatedFields.ToArray();
-            Assert.AreEqual("things in", output[0][cf[0]]);
-            Assert.AreEqual("2", output[0][cf[1]]);
-            Assert.AreEqual("jobs", output[0][cf[2]]);
-            Assert.AreEqual("in the upside down", output[0][cf[3]]);
-            Assert.AreEqual("mineplex.com", output[0][cf[4]]);
-            Assert.AreEqual("stranger in upside", output[0][cf[5]]);
-            Assert.AreEqual("the in things", output[0][cf[6]]);
-            Assert.AreEqual("10", output[0][cf[7]]);
+            var process = cfgScope.Resolve<Process>();
 
-        }
-    }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual("things in", output[0][cf[0]]);
+               Assert.AreEqual("2", output[0][cf[1]]);
+               Assert.AreEqual("jobs", output[0][cf[2]]);
+               Assert.AreEqual("in the upside down", output[0][cf[3]]);
+               Assert.AreEqual("mineplex.com", output[0][cf[4]]);
+               Assert.AreEqual("stranger in upside", output[0][cf[5]]);
+               Assert.AreEqual("the in things", output[0][cf[6]]);
+               Assert.AreEqual("10", output[0][cf[7]]);
+            }
+         }
+
+
+      }
+   }
 }

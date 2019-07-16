@@ -16,17 +16,22 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
-    [TestClass]
-    public class FilterTransform {
+   [TestClass]
+   public class FilterTransform {
 
-        [TestMethod]
-        public void IncludeTransform() {
+      [TestMethod]
+      public void IncludeTransform() {
 
-            const string xml = @"
+         const string xml = @"
 <add name='TestProcess'>
     <entities>
         <add name='TestData'>
@@ -42,21 +47,24 @@ namespace Tests {
 </add>";
 
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var output = controller.Read().ToArray();
+            var process = cfgScope.Resolve<Process>();
 
-            Assert.AreEqual(1, output.Length);
-            Assert.AreEqual(1, output[0][composer.Process.Entities.First().Fields.First()]);
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+               Assert.AreEqual(1, output.Length);
+               Assert.AreEqual(1, output[0][process.Entities.First().Fields.First()]);
+            }
+         }
+      }
 
-        }
 
+      [TestMethod]
+      public void ExcludeTransform() {
 
-        [TestMethod]
-        public void ExcludeTransform() {
-
-            const string xml = @"
+         const string xml = @"
 <add name='TestProcess'>
     <entities>
         <add name='TestData'>
@@ -71,16 +79,17 @@ namespace Tests {
     </entities>
 </add>";
 
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
+            var process = cfgScope.Resolve<Process>();
 
-            var output = controller.Read().ToArray();
-
-            Assert.AreEqual(1, output.Length);
-            Assert.AreEqual(2, output[0][composer.Process.Entities.First().Fields.First(f=>!f.System)]);
-
-        }
-
-    }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+               Assert.AreEqual(1, output.Length);
+               Assert.AreEqual(2, output[0][process.Entities.First().Fields.First(f => !f.System)]);
+            }
+         }
+      }
+   }
 }

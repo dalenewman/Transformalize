@@ -16,7 +16,12 @@
 // limitations under the License.
 #endregion
 using System.Linq;
+using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Transformalize.Configuration;
+using Transformalize.Containers.Autofac;
+using Transformalize.Contracts;
+using Transformalize.Providers.Console;
 
 namespace Tests {
 
@@ -47,17 +52,22 @@ namespace Tests {
       </entities>
     </add>";
 
-            var composer = new CompositionRoot();
-            var controller = composer.Compose(xml);
-            controller.Execute();
 
-            var process = composer.Process;
-            var output = process.Entities.First().Rows;
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
-            Assert.AreEqual(true, output[0]["output"]);
-            Assert.AreEqual(false, output[1]["output"]);
+            var process = cfgScope.Resolve<Process>();
 
-        }
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+
+               Assert.AreEqual(true, output[0][process.GetField("output")]);
+               Assert.AreEqual(false, output[1][process.GetField("output")]);
+            }
+         }
+
+
+      }
 
     }
 }
