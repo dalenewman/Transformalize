@@ -63,7 +63,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          builder.Properties["Methods"] = _methods;
          builder.Properties["Process"] = _process;
 
-         // new method so transform author can define shorthand signature(s)
          RegisterTransform(builder, (ctx, c) => new AbsTransform(c), new AbsTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SliceTransform(c), new SliceTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FormatTransform(c), new FormatTransform().GetSignatures());
@@ -92,7 +91,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new InsertTransform(c), new InsertTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new InvertTransform(c), new InvertTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new JoinTransform(c), new JoinTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new LeftTransform(c), new LeftTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new RightTransform(c), new RightTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ToLowerTransform(c), new ToLowerTransform().GetSignatures());
@@ -140,7 +138,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new DistanceTransform(c), new DistanceTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SlugifyTransform(c), new SlugifyTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new DateMathTransform(c), new DateMathTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new RegexMatchCountTransform(c), new RegexMatchCountTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new CondenseTransform(c), new CondenseTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new RandomTransform(c), new RandomTransform().GetSignatures());
@@ -150,8 +147,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new StartOfWeekTransform(c), new StartOfWeekTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SpecifyKindTransform(c), new SpecifyKindTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ToUnixTimeTransform(c), new ToUnixTimeTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new LengthTransform(c), new LengthTransform().GetSignatures());
-
 
          // getting properties from the configuration you're running in
          RegisterTransform(builder, (ctx, c) => new ConnectionTransform(c), new ConnectionTransform().GetSignatures());
@@ -159,15 +154,21 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new ActionTransform(c), new ActionTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ScriptTransform(c), new ScriptTransform().GetSignatures());
 
-         // split
+         // produces string array
          RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SortTransform(c), new SortTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ReverseTransform(c), new ReverseTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new DistinctTransform(c), new DistinctTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new ToArrayTransform(c), new ToArrayTransform().GetSignatures());
+         
+         // can work with string arrays
+         RegisterTransform(builder, (ctx, c) => new LastTransform(c), new LastTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new FirstTransform(c), new FirstTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new GetTransform(c), new GetTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new LengthTransform(c), new LengthTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new JoinTransform(c), new JoinTransform().GetSignatures());
 
-         // row producing
+         // row producing and expects string array
          RegisterTransform(builder, (ctx, c) => new ToRowTransform(c, ctx.ResolveNamed<IRowFactory>(c.Entity.Key, new NamedParameter("capacity", c.GetAllEntityFields().Count()))), new ToRowTransform().GetSignatures());
 
          // row filtering

@@ -26,7 +26,7 @@ using Transformalize.Providers.Console;
 namespace Tests {
 
     [TestClass]
-    public class CondenseTransform {
+    public class TestCondense {
 
         [TestMethod]
         public void Condense() {

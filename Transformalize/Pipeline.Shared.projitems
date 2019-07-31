@@ -162,6 +162,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\SpecifyKindTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\TimeZoneOffsetTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\TimeZoneTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToArrayTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\StartOfWeekTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\HexTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ActionTransform.cs" />

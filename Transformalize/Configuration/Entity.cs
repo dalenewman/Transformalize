@@ -217,14 +217,20 @@ namespace Transformalize.Configuration {
 
          for (var i = 0; i < Filter.Count; i++) {
             var filter = Filter[i];
-            if (TryGetField(filter.Field, out var field)) {
-               filter.LeftField = field;
-               filter.IsField = true;
-               filter.Key = field.Name + "_filter_" + i;
+            if(filter.Field != string.Empty) {
+               if (TryGetField(filter.Field, out var field)) {
+                  filter.LeftField = field;
+                  filter.IsField = true;
+                  filter.Key = field.Name + "_filter_" + i;
+               } else {
+                  Error("Filter field {0} does not exist.", filter.Field);
+               }
             }
-            if (TryGetField(filter.Value, out field)) {
-               filter.ValueField = field;
-               filter.ValueIsField = true;
+            if(filter.Value != string.Empty) {
+               if (TryGetField(filter.Value, out var field)) {
+                  filter.ValueField = field;
+                  filter.ValueIsField = true;
+               }
             }
          }
       }

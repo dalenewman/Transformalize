@@ -74,10 +74,6 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.6.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Compatibility\Transformalize.462\bin\Debug\Transformalize.dll</HintPath>
-    </Reference>
     <Reference Include="Transformalize.Container.Autofac, Version=0.5.9.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Transformalize.Container.Autofac\src\Transformalize.Container.Autofac\bin\Debug\Transformalize.Container.Autofac.dll</HintPath>
@@ -97,6 +93,10 @@
   </Choose>
   <ItemGroup>
     <Compile Include="TestIssues.cs" />
+    <Compile Include="TestToRow.cs" />
+    <Compile Include="TestToArrayAndJoin.cs" />
+    <Compile Include="TestSplitAndJoin.cs" />
+    <Compile Include="TestLength.cs" />
     <Compile Include="TestToUnixTime.cs" />
     <Compile Include="TestSpecifyKind.cs" />
     <Compile Include="PaginationTest.cs" />
@@ -104,20 +104,20 @@
     <Compile Include="TestCalculatedFieldProcess.cs" />
     <Compile Include="TransformParameters.cs" />
     <Compile Include="LogTransform.cs" />
-    <Compile Include="ContainsTransform.cs" />
+    <Compile Include="TestContains.cs" />
     <Compile Include="DateConvert.cs" />
-    <Compile Include="CondenseTransform.cs" />
+    <Compile Include="TestCondense.cs" />
     <Compile Include="ReadOnlyNoPrimaryKey.cs" />
     <Compile Include="TestFromRegex.cs" />
     <Compile Include="TestAppend.cs" />
     <Compile Include="TestXmlDecode.cs" />
     <Compile Include="TestSlice.cs" />
     <Compile Include="TestAny.cs" />
-    <Compile Include="ConnectionTransform.cs" />
-    <Compile Include="CopyTransform.cs" />
+    <Compile Include="TestConnection.cs" />
+    <Compile Include="TestCopy.cs" />
     <Compile Include="DateDiffTransform.cs" />
-    <Compile Include="SubstringTest.cs" />
-    <Compile Include="DistinctTest.cs" />
+    <Compile Include="TestSubstring.cs" />
+    <Compile Include="TestDistinct.cs" />
     <Compile Include="DateMath.cs" />
     <Compile Include="DatePartTransform.cs" />
     <Compile Include="DeleteHandler.cs" />
@@ -126,9 +126,9 @@
     <Compile Include="FromLengthsTransform.cs" />
     <Compile Include="FromXmlTransform.cs" />
     <Compile Include="IIfTransform.cs" />
-    <Compile Include="InTransform.cs" />
-    <Compile Include="MapTransform.cs" />
-    <Compile Include="MatchTransform.cs" />
+    <Compile Include="TestIn.cs" />
+    <Compile Include="TestMap.cs" />
+    <Compile Include="TestMatch.cs" />
     <Compile Include="MathTransforms.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Signature.cs" />
@@ -140,6 +140,10 @@
     <Compile Include="Validate.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Compatibility\Transformalize.462\Transformalize.462.csproj">
+      <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
+      <Name>Transformalize.462</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Pipeline.Logging.NLog</Name>

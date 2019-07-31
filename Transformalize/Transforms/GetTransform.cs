@@ -21,41 +21,50 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class GetTransform : BaseTransform {
+   public class GetTransform : BaseTransform {
 
-        private readonly Field _input;
-        private readonly int _index;
+      private readonly Field _input;
+      private readonly int _index;
 
-        public GetTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext()) {
-                return;
-            }
+      public GetTransform(IContext context = null) : base(context, "string") {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (LastMethodIsNot("split", "sort", "reverse")) {
-                return;
-            }
+         var lastOperation = LastOperation();
+         if (lastOperation == null) {
+            Error($"The get operation should receive an array. You may want proceed it with a split operation.");
+            Run = false;
+            return;
+         }
 
-            if (IsMissing(Context.Operation.Value)) {
-                return;
-            }
+         if (!lastOperation.ProducesArray) {
+            Error($"The get operation should receive an array. The {lastOperation.Method} is not producing an array.");
+            Run = false;
+            return;
+         }
 
-            if (int.TryParse(Context.Operation.Value, out var index)) {
-                _index = index;
-            } else {
-                Context.Error($"The parameter {Context.Operation.Value} in invalid. The get() transform only accepts an integer.");
-                Run = false;
-            }
+         if (IsMissing(Context.Operation.Value)) {
+            return;
+         }
 
-            _input = SingleInput();
-        }
+         if (int.TryParse(Context.Operation.Value, out var index)) {
+            _index = index;
+         } else {
+            Context.Error($"The parameter {Context.Operation.Value} in invalid. The get() transform only accepts an integer.");
+            Run = false;
+         }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = ((string[])row[_input]).ElementAtOrDefault(_index) ?? string.Empty;
-            return row;
-        }
+         _input = SingleInput();
+      }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("get") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
-        }
-    }
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = ((string[])row[_input]).ElementAtOrDefault(_index) ?? string.Empty;
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("get") { Parameters = new List<OperationParameter>(1) { new OperationParameter("value") } };
+      }
+   }
 }

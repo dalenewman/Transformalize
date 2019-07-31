@@ -15,47 +15,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-   public class ReverseTransform : BaseTransform {
-      private readonly Field _input;
-      private readonly Func<object, string[]> _sort;
-      public ReverseTransform(IContext context = null) : base(context, "object") {
+
+   public class ToArrayTransform: BaseTransform {
+      private readonly Field[] _input;
+
+      public ToArrayTransform(IContext context = null) : base(context, "object") {
          if (IsMissingContext()) {
             return;
          }
 
          Context.Operation.ProducesArray = true;
 
-         var lastOperation = LastOperation();
-         if (lastOperation == null) {
-            Error($"The reverse operation should receive an array. You may want proceed it with a split operation.");
-            Run = false;
-            return;
-         }
-
-         if (!lastOperation.ProducesArray) {
-            Error($"The reverse operation should receive an array. The {lastOperation.Method} method is not producing an array.");
-            Run = false;
-            return;
-         }
-
-         _input = SingleInput();
-         _sort = o => ((string[])o).Reverse().ToArray();
+         _input = MultipleInput();
       }
 
       public override IRow Operate(IRow row) {
-         row[Context.Field] = _sort(row[_input]);
+         row[Context.Field] = _input.Select(f => row[f].ToString()).ToArray();
          return row;
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
-         yield return new OperationSignature("reverse");
+         yield return new OperationSignature("toarray");
       }
    }
+
+
 }

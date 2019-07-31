@@ -23,40 +23,38 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Transforms.System {
-    public class StringTruncateTransfom : BaseTransform {
-        private readonly StringLength[] _strings;
+   public class StringTruncateTransfom : BaseTransform {
+      private readonly StringLength[] _strings;
 
-        internal class StringLength : IField {
-            public string Name { get; }
-            public string Alias { get; }
-            public short Index { get; set; }
-            public short MasterIndex { get; set; }
-            public short KeyIndex { get; set; }
-            public int Length { get; set; }
+      internal class StringLength : IField {
+         public string Name { get; }
+         public string Alias { get; }
+         public short Index { get; set; }
+         public short MasterIndex { get; set; }
+         public short KeyIndex { get; set; }
+         public int Length { get; set; }
+         public string Type => "string";
 
-            public string Type => "string";
+         public StringLength(string name, string alias, short index, short masterIndex, int length, bool split) {
+            Name = name;
+            Alias = alias;
+            Index = index;
+            MasterIndex = masterIndex;
+            Length = length;
+         }
+      }
 
-            public StringLength(string name, string alias, short index, short masterIndex, int length)
-            {
-                Name = name;
-                Alias = alias;
-                Index = index;
-                MasterIndex = masterIndex;
-                Length = length;
-            }
-        }
+      public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
+         fields = fields ?? context.Entity.GetAllFields();
+         _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output && (f.Transforms.Count == 0 || !f.Transforms.Last().ProducesArray)).Select(f => new StringLength(f.Name, f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length), f.Transforms.Any())).ToArray();
+      }
 
-        public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
-            fields = fields ?? context.Entity.GetAllFields();
-            _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output).Select(f => new StringLength(f.Name, f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length))).ToArray();
-        }
+      public override IRow Operate(IRow row) {
+         foreach (var field in _strings) {
+            row[field] = row[field].ToString().Left(field.Length);
+         }
+         return row;
+      }
 
-        public override IRow Operate(IRow row) {
-            foreach (var field in _strings) {
-                row[field] = row[field].ToString().Left(field.Length);
-            }
-            return row;
-        }
-
-    }
+   }
 }

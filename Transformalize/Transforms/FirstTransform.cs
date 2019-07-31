@@ -29,11 +29,20 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-            if (LastMethodIsNot("split","sort","reverse")) {
-                return;
-            }
+         var lastOperation = LastOperation();
+         if (lastOperation == null) {
+            Error($"The first operation should receive an array. You may want proceed it with a split operation.");
+            Run = false;
+            return;
+         }
 
-            _input = SingleInput();
+         if (!lastOperation.ProducesArray) {
+            Error($"The first operation should receive an array. The {lastOperation.Method} is not producing an array.");
+            Run = false;
+            return;
+         }
+
+         _input = SingleInput();
         }
 
         public override IRow Operate(IRow row) {

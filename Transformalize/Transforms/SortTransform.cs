@@ -22,33 +22,44 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class SortTransform : BaseTransform {
-        private readonly Field _input;
-        private readonly Func<object, string[]> _sort;
-        public SortTransform(IContext context = null) : base(context, "object") {
-            if (IsMissingContext()) {
-                return;
-            }
+   public class SortTransform : BaseTransform {
+      private readonly Field _input;
+      private readonly Func<object, string[]> _sort;
+      public SortTransform(IContext context = null) : base(context, "object") {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (LastMethodIsNot("split")) {
-                return;
-            }
+         Context.Operation.ProducesArray = true;
 
-            _input = SingleInput();
-            if (Context.Operation.Direction == ("asc")) {
-                _sort = o => ((string[])o).OrderBy(s => s).ToArray();
-            } else {
-                _sort = o => ((string[])o).OrderByDescending(s => s).ToArray();
-            }
-        }
+         var lastOperation = LastOperation();
+         if (lastOperation == null) {
+            Error($"The sort operation should receive an array. You may want proceed it with a split operation.");
+            Run = false;
+            return;
+         }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = _sort(row[_input]);
-            return row;
-        }
+         if (!lastOperation.ProducesArray) {
+            Error($"The sort operation should receive an array. The {lastOperation.Method} method is not producing an array.");
+            Run = false;
+            return;
+         }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("sort") { Parameters = new List<OperationParameter>(1) { new OperationParameter("direction", "asc") } };
-        }
-    }
+         _input = SingleInput();
+         if (Context.Operation.Direction == ("asc")) {
+            _sort = o => ((string[])o).OrderBy(s => s).ToArray();
+         } else {
+            _sort = o => ((string[])o).OrderByDescending(s => s).ToArray();
+         }
+      }
+
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = _sort(row[_input]);
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("sort") { Parameters = new List<OperationParameter>(1) { new OperationParameter("direction", "asc") } };
+      }
+   }
 }

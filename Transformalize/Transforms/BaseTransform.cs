@@ -158,12 +158,12 @@ namespace Transformalize.Transforms {
          return index == 0;
       }
 
-      public string LastMethod() {
+      public Operation LastOperation() {
          var index = Context.Field.Transforms.IndexOf(Context.Operation);
-         return index <= 0 ? "none" : Context.Field.Transforms[index - 1].Method;
+         return index <= 0 ? null : Context.Field.Transforms[index - 1];
       }
 
-      public Operation NextMethod() {
+      public Operation NextOperation() {
          var index = Context.Field.Transforms.IndexOf(Context.Operation);
          if (index + 1 < Context.Field.Transforms.Count) {
             return Context.Field.Transforms[index + 1];
@@ -225,16 +225,6 @@ namespace Transformalize.Transforms {
             return true;
          }
 
-      }
-
-      protected bool LastMethodIsNot(params string[] args) {
-         var lastMethod = LastMethod();
-         if (!lastMethod.In(args)) {
-            Error($"The {Context.Operation.Method} method expects an input from: {Utility.ReadableDomain(args)}, but it's last method was {lastMethod} instead.");
-            Run = false;
-            return true;
-         }
-         return false;
       }
 
       protected bool IsMissing(string value) {

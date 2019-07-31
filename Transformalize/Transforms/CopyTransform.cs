@@ -40,7 +40,7 @@ namespace Transformalize.Transforms {
             return;
          }
 
-         var nextMethod = NextMethod();
+         var nextMethod = NextOperation();
 
          if (Context.Operation.Value.Contains(",")) {
 

@@ -26,7 +26,7 @@ using Transformalize.Providers.Console;
 namespace Tests {
 
    [TestClass]
-   public class CopyTransform {
+   public class TestCopy {
 
       [TestMethod]
       public void CopyTransform1() {

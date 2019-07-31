@@ -15,49 +15,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class DistinctTransform : BaseTransform {
-        private readonly Field _input;
-        private readonly char[] _sep;
 
-        public DistinctTransform(IContext context = null) : base(context, "string") {
+   public class DistinctTransform : BaseTransform {
 
-            //TODO: should it presume to join bact to string?
+      private readonly Field _input;
 
-            if (IsMissingContext()) {
-                return;
-            }
-            _input = SingleInput();
+      public DistinctTransform(IContext context = null) : base(context, "object") {
 
-            // check input type
-            var typeReceived = Received();
-            if (typeReceived != "string") {
-                Error($"The distinct transform takes a string input.  You have a {typeReceived} input.");
-            }
+         if (IsMissingContext()) {
+            return;
+         }
 
-            // check separator
-            if (Context.Operation.Separator == Constants.DefaultSetting) {
-                Context.Operation.Separator = " ";
-            }
+         Context.Operation.ProducesArray = true;
 
-            _sep = Context.Operation.Separator.ToCharArray();
+         _input = SingleInput();
 
-        }
+         var lastOperation = LastOperation();
+         if(lastOperation == null) {
+            Error($"The distinct operation should receive an array. You may want proceed distinct with a split operation.");
+            Run = false;
+            return;
+         }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = string.Join(Context.Operation.Separator, ((string)row[_input]).Split(_sep, StringSplitOptions.RemoveEmptyEntries).Distinct());
+         if (!lastOperation.ProducesArray) {
+            Error($"The distinct operation should receive an array. The {lastOperation.Method} method is not producing an array.");
+            Run = false;
+            return;
+         }
+      }
 
-            return row;
-        }
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = ((string[])row[_input]).Distinct().ToArray();
+         return row;
+      }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("distinct") { Parameters = new List<OperationParameter>(1) { new OperationParameter("separator", " ") } };
-        }
-    }
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("distinct");
+      }
+   }
 }

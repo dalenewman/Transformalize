@@ -32,16 +32,16 @@ namespace Transformalize.Transforms {
 
             switch (Context.Operation.Level) {
                 case "debug":
-                    _logger = o => Context.Debug(() => $"{LastMethod()} => {o}");
+                    _logger = o => Context.Debug(() => $"{LastOperation()} => {o}");
                     break;
                 case "error":
-                    _logger = o => Context.Error($"{LastMethod()} => {o}");
+                    _logger = o => Context.Error($"{LastOperation()} => {o}");
                     break;
                 case "warn":
-                    _logger = o => Context.Warn($"{LastMethod()} => {o}");
+                    _logger = o => Context.Warn($"{LastOperation()} => {o}");
                     break;
                 default:
-                    _logger = o => Context.Info($"{LastMethod()} => {o}");
+                    _logger = o => Context.Info($"{LastOperation()} => {o}");
                     break;
             }
 

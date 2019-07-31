@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -23,48 +23,49 @@ using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
 using Transformalize.Providers.Console;
+using Transformalize.Transforms;
 
 namespace Tests {
 
    [TestClass]
-   public class DistinctTest {
+   public class TestToArrayAndJoin {
 
       [TestMethod]
-      public void TryDistinct() {
+      public void Join() {
+
          const string xml = @"
-    <add name='TestDistinct'>
-      <connections>
-        <add name='input' provider='internal' />
-        <add name='output' provider='internal' />
-      </connections>
+    <add name='TestProcess'>
       <entities>
-        <add name='Dates'>
+        <add name='TestData'>
           <rows>
-            <add Words='One Two Three One' />
-            <add Words='111-222-3333 222-333-4444' />
+            <add Input1='2' Input2='4' Input3='6' />
           </rows>
           <fields>
-            <add name='Words' />
+            <add name='Input1' />
+            <add name='Input2' />
+            <add name='Input3' />
           </fields>
           <calculated-fields>
-            <add name='DistinctWords' t='copy(Words).distinct()' />
+            <add name='Joined' t='copy(Input1,Input2,Input3).toArray().join(-)' />
           </calculated-fields>
         </add>
       </entities>
     </add>";
 
          var logger = new ConsoleLogger(LogLevel.Debug);
-         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
+         var transforms = new List<TransformHolder>() {
+            new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
+            new TransformHolder((c) => new ToArrayTransform(c), new ToArrayTransform().GetSignatures())
+         }.ToArray();
+
+         using (var cfgScope = new ConfigurationContainer(transforms).CreateScope(xml, logger)) {
 
             var process = cfgScope.Resolve<Process>();
 
-            using (var scope = new Container().CreateScope(process, logger)) {
+            using (var scope = new Container(transforms).CreateScope(process, logger)) {
                scope.Resolve<IProcessController>().Execute();
-               var row1 = process.Entities.First().Rows[0];
-               var row2 = process.Entities.First().Rows[1];
-
-               Assert.AreEqual("One Two Three", row1["DistinctWords"]);
-               Assert.AreEqual("111-222-3333 222-333-4444", row2["DistinctWords"]);
+               var output = process.Entities.First().Rows;
+               Assert.AreEqual("2-4-6", output[0]["Joined"]);
             }
          }
       }

@@ -26,49 +26,61 @@ using Transformalize.Providers.Console;
 namespace Tests {
 
    [TestClass]
-   public class MatchTransform {
+   public class TestContains {
 
       [TestMethod]
-      public void Match() {
+      public void Contains() {
 
          const string xml = @"
     <add name='TestProcess'>
+      <maps>
+        <add name='Map'>
+            <items>
+                <add from='true' to='It is True' />
+                <add from='false' to='It is False' />
+                <add from='*' to='It is Unknown' />
+            </items>
+        </add>
+      </maps>
       <entities>
         <add name='TestData' pipeline='linq'>
           <rows>
-            <add Field1='Local/3114@tolocalext-fc5d,1' />
-            <add Field1='SIP/Generic-Vitel_Outbound-0002b45a' />
+            <add Tags='Tag1 Tag2' />
+            <add Tags='Tag2 Tag3' />
           </rows>
           <fields>
-            <add name='Field1' />
-            <add name='Field2' />
+            <add name='Tags' />
           </fields>
           <calculated-fields>
-            <add name='MatchField1' t='copy(Field1).match(3[0-9]{3}(?=@))' default='None' />
-            <add name='MatchAnyField' t='copy(Field1,Field2).match(3[0-9]{3}(?=@))' default='None' />
-            <add name='MatchCount' type='int' t='copy(Field1).matchCount(Vitel)' />
-            <add name='Matching' t='copy(Field1).matching([0-9a-zA-Z])' />
+            <add name='IsTag1' type='bool' t='copy(Tags).contains(Tag1)' />
+            <add name='IsTag2' type='bool' t='copy(Tags).contains(Tag2)' />
+            <add name='IsTag3' type='bool' t='copy(Tags).contains(Tag3)' />
+            <add name='IsTag3Map' t='copy(Tags).contains(Tag3).map(Map)' />
           </calculated-fields>
         </add>
       </entities>
     </add>";
 
          var logger = new ConsoleLogger();
-
-         using(var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
-            using(var inner = new Container().CreateScope(process, logger)) {
+            using (var inner = new Container().CreateScope(process, logger)) {
                var output = inner.Resolve<IProcessController>().Read().ToArray();
-               var cf = process.Entities.First().CalculatedFields.ToArray();
-               Assert.AreEqual("3114", output[0][cf[0]]);
-               Assert.AreEqual("3114", output[0][cf[1]]);
-               Assert.AreEqual("None", output[1][cf[0]]);
-               Assert.AreEqual("None", output[1][cf[1]]);
 
-               Assert.AreEqual(1, output[1][cf[2]]);
-               Assert.AreEqual("Local3114tolocalextfc5d1", output[0][cf[3]]);
+               var cf = process.Entities.First().CalculatedFields.ToArray();
+               Assert.AreEqual(true, output[0][cf[0]]);
+               Assert.AreEqual(true, output[0][cf[1]]);
+               Assert.AreEqual(false, output[0][cf[2]]);
+               Assert.AreEqual("It is False", output[0][cf[3]]);
+
+               Assert.AreEqual(false, output[1][cf[0]]);
+               Assert.AreEqual(true, output[1][cf[1]]);
+               Assert.AreEqual(true, output[1][cf[2]]);
+               Assert.AreEqual("It is True", output[1][cf[3]]);
+
             }
          }
+
       }
    }
 }

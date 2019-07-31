@@ -22,28 +22,37 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
-    public class LastTransform : BaseTransform {
-        private readonly Field _input;
+   public class LastTransform : BaseTransform {
+      private readonly Field _input;
 
-        public LastTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext()) {
-                return;
-            }
+      public LastTransform(IContext context = null) : base(context, "string") {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (LastMethodIsNot("split","sort","reverse")) {
-                return;
-            }
-          
-            _input = SingleInput();
-        }
+         var lastOperation = LastOperation();
+         if (lastOperation == null) {
+            Error($"The last operation should receive an array. You may want proceed it with a split operation.");
+            Run = false;
+            return;
+         }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = ((string[])row[_input]).LastOrDefault() ?? string.Empty;
-            return row;
-        }
+         if (!lastOperation.ProducesArray) {
+            Error($"The last operation should receive an array. The {lastOperation.Method} is not producing an array.");
+            Run = false;
+            return;
+         }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("last");
-        }
-    }
+         _input = SingleInput();
+      }
+
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = ((string[])row[_input]).LastOrDefault() ?? string.Empty;
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("last");
+      }
+   }
 }

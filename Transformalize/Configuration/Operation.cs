@@ -32,6 +32,7 @@ namespace Transformalize.Configuration {
       private static HashSet<string> _transformProducerSet;
 
       public bool ProducesFields { get; private set; }
+      public bool ProducesArray { get; set; }
 
       [Cfg(value = "")]
       public string Connection { get; set; }

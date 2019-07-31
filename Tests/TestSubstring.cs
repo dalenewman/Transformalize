@@ -27,7 +27,7 @@ using Transformalize.Providers.Console;
 namespace Tests {
 
    [TestClass]
-   public class SubstringTest {
+   public class TestSubstring {
 
       [TestMethod]
       public void TrySubstring() {

@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,51 +23,49 @@ using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
 using Transformalize.Providers.Console;
+using Transformalize.Transforms;
 
 namespace Tests {
 
    [TestClass]
-   public class InTransform {
+   public class TestSplitAndJoin {
 
       [TestMethod]
-      public void In() {
+      public void Join() {
 
          const string xml = @"
     <add name='TestProcess'>
       <entities>
-        <add name='TestData' pipeline='linq'>
+        <add name='TestData'>
           <rows>
-            <add Field1='1' />
-            <add Field1='5' />
+            <add Input='1 2 3 4' />
           </rows>
           <fields>
-            <add name='Field1' />
+            <add name='Input' />
           </fields>
           <calculated-fields>
-            <add name='In123' type='bool' t='copy(Field1).in(1,2,3)' />
-            <add name='In456' type='bool' t='copy(Field1).in(4,5,6)' />
+            <add name='Joined' t='copy(Input).split( ).join(-)' />
           </calculated-fields>
         </add>
       </entities>
     </add>";
 
          var logger = new ConsoleLogger(LogLevel.Debug);
-         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
+         var transforms = new List<TransformHolder>() {
+            new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
+            new TransformHolder((c) => new SplitTransform(c), new SplitTransform().GetSignatures())
+         }.ToArray();
+
+         using (var cfgScope = new ConfigurationContainer(transforms).CreateScope(xml, logger)) {
 
             var process = cfgScope.Resolve<Process>();
 
-            using (var scope = new Container().CreateScope(process, logger)) {
-               var output = scope.Resolve<IProcessController>().Read().ToArray();
-
-               var cf = process.Entities.First().CalculatedFields.ToArray();
-               Assert.AreEqual(true, output[0][cf[0]]);
-               Assert.AreEqual(false, output[0][cf[1]]);
-               Assert.AreEqual(false, output[1][cf[0]]);
-               Assert.AreEqual(true, output[1][cf[1]]);
+            using (var scope = new Container(transforms).CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
+               var output = process.Entities.First().Rows;
+               Assert.AreEqual("1-2-3-4", output[0]["Joined"]);
             }
          }
-
-
       }
    }
 }

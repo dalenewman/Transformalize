@@ -32,16 +32,21 @@ namespace Transformalize.Transforms {
          }
 
          var input = SingleInput();
+         var lastOperation = LastOperation();
 
-         var typeReceived = Received();
+         if (lastOperation != null && lastOperation.ProducesArray) {
+            _transform = row => ((string[])row[input]).Length;
+         } else {
+            var typeReceived = Received();
 
-         switch (typeReceived) {
-            case "byte[]":
-               _transform = row => ((byte[])row[input]).Length;
-               break;
-            default:
-               _transform = row => row[input].ToString().Length;
-               break;
+            switch (typeReceived) {
+               case "byte[]":
+                  _transform = row => ((byte[])row[input]).Length;
+                  break;
+               default:
+                  _transform = row => row[input].ToString().Length;
+                  break;
+            }
          }
       }
 
