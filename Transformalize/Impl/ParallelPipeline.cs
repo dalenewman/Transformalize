@@ -17,10 +17,12 @@
 #endregion
 using System.Collections.Generic;
 using Transformalize.Contracts;
-using System.Linq;
+using System;
 
 namespace Transformalize.Impl {
-    public class ParallelPipeline : IPipeline {
+
+   [Obsolete("No longer necessary.  AsParallel() is now applied in DefaultPipeline.")]
+   public class ParallelPipeline : IPipeline {
         private readonly IPipeline _pipeline;
 
         public IContext Context => _pipeline.Context;
@@ -70,11 +72,7 @@ namespace Transformalize.Impl {
         }
 
         public IEnumerable<IRow> Read() {
-#if NETS10
             return _pipeline.Read();
-#else
-            return _pipeline.Read().AsParallel();
-#endif
         }
 
         /// <inheritdoc />

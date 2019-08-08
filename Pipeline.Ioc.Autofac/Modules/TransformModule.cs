@@ -179,6 +179,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new FromSplitTransform(c), new FromSplitTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FromRegexTransform(c), new FromRegexTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new FromLengthsTransform(c), new FromLengthsTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" ? new Transforms.Xml.FromXmlTransform(c) : new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") });
 
          // return true or false transforms
          RegisterTransform(builder, (ctx, c) => new AnyTransform(c), new AnyTransform().GetSignatures());
@@ -200,9 +201,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
          // new
          RegisterTransform(builder, (ctx, c) => new CountTransform(c), new CountTransform().GetSignatures());
-
-         // xml
-         RegisterTransform(builder, (ctx, c) => c.Operation.Mode == "all" ? new Transforms.Xml.FromXmlTransform(c) : new Transforms.FromXmlTransform(c) as ITransform, new[] { new OperationSignature("fromxml") });
+         RegisterTransform(builder, (ctx, c) => new SleepTransform(c), new SleepTransform().GetSignatures());
 
          var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
          if (Directory.Exists(pluginsFolder)) {

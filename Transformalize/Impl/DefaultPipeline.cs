@@ -126,6 +126,15 @@ namespace Transformalize.Impl {
                }
             }
             var data = Reader == null ? InputProvider.Read() : Reader.Read();
+
+#if NETS10
+            // no PLINQ
+#else
+            if(Context.Entity.Pipeline == "parallel.linq") {
+               data = data.AsParallel();
+            }
+#endif
+
             if (Transforms.Any()) {
                data = Transforms.Aggregate(data, (rows, t) => t.Operate(rows));
             }

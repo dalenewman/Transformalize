@@ -339,6 +339,13 @@ namespace Transformalize.Configuration {
       [Cfg(value = 1)]
       public short Replicas { get; set; }
 
+      /// <summary>
+      /// If you want to read data as fast as you can consume it, leave Buffer false. 
+      /// If you want to read all the data into memory, set Buffer true.
+      /// </summary>
+      [Cfg(value=false)]
+      public bool Buffer { get; set; }
+
       public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 
       protected override void PostValidate() {

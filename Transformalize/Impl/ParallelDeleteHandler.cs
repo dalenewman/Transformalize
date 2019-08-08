@@ -15,28 +15,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
-    public class ParallelDeleteHandler : IEntityDeleteHandler {
-        private readonly IEntityDeleteHandler _deleteHandler;
 
-        public ParallelDeleteHandler(IEntityDeleteHandler deleteHandler) {
-            _deleteHandler = deleteHandler;
-        }
+   [Obsolete("No longer necessary.  AsParallel() is not applied in DefaultDeleteHandler.")]
+   public class ParallelDeleteHandler : IEntityDeleteHandler {
+      private readonly IEntityDeleteHandler _deleteHandler;
 
-        public IEnumerable<IRow> DetermineDeletes() {
-#if NETS10
-            return _deleteHandler.DetermineDeletes();
-#else
-            return _deleteHandler.DetermineDeletes().AsParallel();
-#endif
-        }
+      public ParallelDeleteHandler(IEntityDeleteHandler deleteHandler) {
+         _deleteHandler = deleteHandler;
+      }
 
-        public void Delete() {
-            _deleteHandler.Delete();
-        }
-    }
+      public IEnumerable<IRow> DetermineDeletes() {
+         return _deleteHandler.DetermineDeletes();
+      }
+
+      public void Delete() {
+         _deleteHandler.Delete();
+      }
+   }
 }

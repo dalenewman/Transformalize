@@ -21,47 +21,66 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
-    public class DefaultDeleteHandler : IEntityDeleteHandler {
+   public class DefaultDeleteHandler : IEntityDeleteHandler {
 
-        private readonly IContext _context;
-        private readonly IRead _inputReader;
-        private readonly IRead _outputReader;
-        private readonly IDelete _outputDeleter;
-        private readonly List<ITransform> _transforms = new List<ITransform>();
+      private readonly IContext _context;
+      private readonly IRead _inputReader;
+      private readonly IRead _outputReader;
+      private readonly IDelete _outputDeleter;
+      private readonly List<ITransform> _transforms = new List<ITransform>();
 
-        public DefaultDeleteHandler(
-            IContext context,
-            IRead inputReader,
-            IRead outputReader,
-            IDelete outputDeleter
-            ) {
-            _context = context;
-            _inputReader = inputReader;
-            _outputReader = outputReader;
-            _outputDeleter = outputDeleter;
-        }
+      public DefaultDeleteHandler(
+          IContext context,
+          IRead inputReader,
+          IRead outputReader,
+          IDelete outputDeleter
+          ) {
+         _context = context;
+         _inputReader = inputReader;
+         _outputReader = outputReader;
+         _outputDeleter = outputDeleter;
+      }
 
-        public IEnumerable<IRow> DetermineDeletes() {
-            var input = _transforms.Aggregate(_inputReader.Read(), (current, transform) => current.Select(transform.Operate));
-            return _outputReader.Read().Except(input, new KeyComparer(_context.Entity.GetPrimaryKey()));
-        }
+      public IEnumerable<IRow> DetermineDeletes() {
+         var input = _inputReader.Read();
+#if NETS10
+            // no PLINQ
+#else
+         if (_context.Entity.Pipeline == "parallel.linq") {
+            input = input.AsParallel();
+         }
+#endif
 
-        public void Delete() {
-            if (_context.Process.Mode != "init") {
-                _outputDeleter.Delete(DetermineDeletes());
-            }
-        }
+         var transformed = _transforms.Aggregate(input, (current, transform) => current.Select(transform.Operate));
 
-        public void Register(ITransform transform) {
-            _context.Debug(() => $"Registering {transform.GetType().Name}.");
-            _transforms.Add(transform);
-        }
+         var output = _outputReader.Read();
+#if NETS10
+            // no PLINQ
+#else
+         if (_context.Entity.Pipeline == "parallel.linq") {
+            output = output.AsParallel();
+         }
+#endif
 
-        public void Register(IEnumerable<ITransform> transforms) {
-            foreach (var transform in transforms) {
-                Register(transform);
-            }
-        }
-    }
+         return output.Except(transformed, new KeyComparer(_context.Entity.GetPrimaryKey()));
+      }
+
+      public void Delete() {
+         if (_context.Process.Mode != "init") {
+            _outputDeleter.Delete(DetermineDeletes());
+         }
+      }
+
+      public void Register(ITransform transform) {
+         _context.Debug(() => $"Registering {transform.GetType().Name}.");
+         _transforms.Add(transform);
+      }
+
+      public void Register(IEnumerable<ITransform> transforms) {
+         foreach (var transform in transforms) {
+            Register(transform);
+         }
+      }
+   }
 }
 
