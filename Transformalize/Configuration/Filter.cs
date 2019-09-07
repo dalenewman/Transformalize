@@ -19,82 +19,85 @@ using Cfg.Net;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
-    public class Filter : CfgNode, IHasField {
-        string _continuation;
+   public class Filter : CfgNode, IHasField {
+      string _continuation;
 
-        /// <summary>
-        /// Optional.  Default is `And`
-        /// 
-        /// A continuation operator.  Valid values are:
-        /// 
-        /// * And
-        /// * Or
-        /// </summary>
-        [Cfg(value = "And", domain = "And,Or", ignoreCase = true)]
-        public string Continuation {
-            get => _continuation;
-            set {
-                if (value != null)
-                    _continuation = value.ToUpper();
-            }
-        }
+      /// <summary>
+      /// Optional.  Default is `And`
+      /// 
+      /// A continuation operator.  Valid values are:
+      /// 
+      /// * And
+      /// * Or
+      /// </summary>
+      [Cfg(value = "And", domain = "And,Or", ignoreCase = true)]
+      public string Continuation {
+         get => _continuation;
+         set {
+            if (value != null)
+               _continuation = value.ToUpper();
+         }
+      }
 
-        /// <summary>
-        /// Optional
-        /// 
-        /// A free-form, un-checked expression.  This is passed directly into a generated query.
-        /// </summary>
-        [Cfg(value = "")]
-        public string Expression { get; set; }
+      /// <summary>
+      /// Optional
+      /// 
+      /// A free-form, un-checked expression.  This is passed directly into a generated query.
+      /// </summary>
+      [Cfg(value = "")]
+      public string Expression { get; set; }
 
-        /// <summary>
-        /// Optional
-        /// 
-        /// A reference to an entity field's name\alias or a literal on the left side of an expression.
-        /// </summary>
-        [Cfg(value = "")]
-        public string Field { get; set; }
+      /// <summary>
+      /// Optional
+      /// 
+      /// A reference to an entity field's name\alias or a literal on the left side of an expression.
+      /// </summary>
+      [Cfg(value = "")]
+      public string Field { get; set; }
 
-        /// <summary>
-        /// Optional
-        /// 
-        /// A reference to an entity field's name\alias or a literal on the right side of an expression.
-        /// </summary>
-        [Cfg(value = "")]
-        public string Value { get; set; }
+      /// <summary>
+      /// Optional
+      /// 
+      /// A reference to an entity field's name\alias or a literal on the right side of an expression.
+      /// </summary>
+      [Cfg(value = "")]
+      public string Value { get; set; }
 
-        /// <summary>
-        /// Optional.  Default is `equal`
-        /// 
-        /// A comparison operator.
-        /// </summary>
-        [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true, ignoreCase = true)]
-        public string Operator { get; set; }
+      /// <summary>
+      /// Optional.  Default is `equal`
+      /// 
+      /// A comparison operator.
+      /// </summary>
+      [Cfg(value = "equal", domain = Constants.ComparisonDomain, toLower = true, ignoreCase = true)]
+      public string Operator { get; set; }
 
-        public bool IsField { get; set; }
-        public bool ValueIsField { get; set; }
-        public Field LeftField { get; set; }
-        public Field ValueField { get; set; }
+      public bool IsField { get; set; }
+      public bool ValueIsField { get; set; }
+      public Field LeftField { get; set; }
+      public Field ValueField { get; set; }
 
-        [Cfg(value = "filter", domain = "search,facet,range,filter", ignoreCase = true, toLower = true)]
-        public string Type { get; set; }
+      [Cfg(value = "filter", domain = "search,facet,range,filter", ignoreCase = true, toLower = true)]
+      public string Type { get; set; }
 
-        [Cfg(value = 100)]
-        public int Size { get; set; }
+      [Cfg(value = 100)]
+      public int Size { get; set; }
 
-        [Cfg(value = "_term")]
-        public string OrderBy { get; set; }
+      [Cfg(value = "_term")]
+      public string OrderBy { get; set; }
 
-        [Cfg(value = "asc", domain = "asc,desc", toLower = true)]
-        public string Order { get; set; }
+      [Cfg(value = "asc", domain = "asc,desc", toLower = true)]
+      public string Order { get; set; }
 
-        [Cfg(value = 1)]
-        public int Min { get; set; }
+      [Cfg(value = 1)]
+      public int Min { get; set; }
 
-        public string Key { get; set; }
+      public string Key { get; set; }
 
-        [Cfg(value = "", toLower = true)]
-        public string Map { get; set; }
+      [Cfg(value = "", toLower = true)]
+      public string Map { get; set; }
 
-    }
+      [Cfg(value ="*")]
+      public string IgnoreValue { get; set; }
+
+   }
 }

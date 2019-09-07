@@ -18,40 +18,43 @@
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
-    public class Filter : CfgNode {
+   public class Filter : CfgNode {
 
-        [Cfg]
-        public string Continuation { get; set; }
+      [Cfg]
+      public string Continuation { get; set; }
 
-        [Cfg]
-        public string Expression { get; set; }
+      [Cfg]
+      public string Expression { get; set; }
 
-        [Cfg]
-        public string Field { get; set; }
+      [Cfg]
+      public string Field { get; set; }
 
-        [Cfg]
-        public string Value { get; set; }
+      [Cfg]
+      public string Value { get; set; }
 
-        [Cfg]
-        public string Operator { get; set; }
+      [Cfg]
+      public string Operator { get; set; }
 
-        [Cfg]
-        public string Type { get; set; }
+      [Cfg]
+      public string Type { get; set; }
 
-        [Cfg]
-        public string Size { get; set; }
+      [Cfg]
+      public string Size { get; set; }
 
-        [Cfg]
-        public string OrderBy { get; set; }
+      [Cfg]
+      public string OrderBy { get; set; }
 
-        [Cfg]
-        public string Order { get; set; }
+      [Cfg]
+      public string Order { get; set; }
 
-        [Cfg]
-        public string Min { get; set; }
+      [Cfg]
+      public string Min { get; set; }
 
-        [Cfg]
-        public string Map { get; set; }
+      [Cfg]
+      public string Map { get; set; }
 
-    }
+      [Cfg]
+      public string IgnoreValue { get; set; }
+
+   }
 }

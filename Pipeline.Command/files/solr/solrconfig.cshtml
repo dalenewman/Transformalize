@@ -304,7 +304,8 @@
          have some sort of hard autoCommit to limit the log size.
       -->
      <autoCommit>
-        <maxTime>60000</maxTime>
+        <maxTime>-1</maxTime>
+        <maxDocs>-1</maxDocs>
         <openSearcher>false</openSearcher>
      </autoCommit>
 
@@ -314,9 +315,10 @@
          faster and more near-realtime friendly than a hard commit.
       -->
     
-      <!--<autoSoftCommit>
-        <maxTime>15000</maxTime>
-      </autoSoftCommit>-->
+      <autoSoftCommit>
+        <maxTime>-1</maxTime>
+        <maxDocs>-1</maxDocs>
+      </autoSoftCommit>
 
     <!-- Update Related Event Listeners
 

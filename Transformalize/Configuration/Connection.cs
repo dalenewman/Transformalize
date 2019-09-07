@@ -38,7 +38,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Core { get; set; }
 
-      [Cfg(value ="")]
+      [Cfg(value = "")]
       public string Cube { get; set; }
 
       [Cfg(value = "", toLower = true)]
@@ -49,6 +49,9 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = "")]
       public string Delimiter { get; set; }
+
+      [Cfg(value = 1)]
+      public int MaxDegreeOfParallelism { get; set; }
 
       // "ASCII,BigEndianUnicode,Default,UTF32,UTF7,UTF8,Unicode"
       [Cfg(value = "utf-8", domain = "UTF-16LE,utf-16,ucs-2,unicode,ISO-10646-UCS-2,UTF-16BE,unicodeFFFE,windows-1252,utf-7,csUnicode11UTF7,unicode-1-1-utf-7,unicode-2-0-utf-7,x-unicode-1-1-utf-7,x-unicode-2-0-utf-7,utf-8,unicode-1-1-utf-8,unicode-2-0-utf-8,x-unicode-1-1-utf-8,x-unicode-2-0-utf-8,us-ascii,us,ascii,ANSI_X3.4-1968,ANSI_X3.4-1986,cp367,csASCII,IBM367,iso-ir-6,ISO646-US,ISO_646.irv:1991,GB18030")]
@@ -343,7 +346,7 @@ namespace Transformalize.Configuration {
       /// If you want to read data as fast as you can consume it, leave Buffer false. 
       /// If you want to read all the data into memory, set Buffer true.
       /// </summary>
-      [Cfg(value=false)]
+      [Cfg(value = false)]
       public bool Buffer { get; set; }
 
       public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();

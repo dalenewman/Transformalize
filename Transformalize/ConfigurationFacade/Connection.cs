@@ -187,6 +187,8 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Replicas { get; set; }
 
+      [Cfg]
+      public string MaxDegreeOfParallism { get; set; }
 
    }
 }

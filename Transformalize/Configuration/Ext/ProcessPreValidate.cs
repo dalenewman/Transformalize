@@ -173,10 +173,6 @@ namespace Transformalize.Configuration.Ext {
             }
          }
 
-         if (!p.Connections.Any(c => c.Provider.In("elasticsearch", "solr"))) {
-            return;
-         }
-
          foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
             var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
             if (connection != null) {
