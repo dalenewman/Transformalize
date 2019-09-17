@@ -1,4 +1,4 @@
-nuget push "c:\temp\modules\Transformalize.0.6.15-beta.nupkg" -source https://api.nuget.org/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.6.17-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM 
 REM nuget push "c:\temp\modules\Transformalize.Scheduler.Quartz.0.5.0-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.5.0-beta.nupkg" -source https://api.nuget.org/v3/index.json

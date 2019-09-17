@@ -99,5 +99,8 @@ namespace Transformalize.Configuration {
       [Cfg(value ="*")]
       public string IgnoreValue { get; set; }
 
+      [Cfg(value =",")]
+      public string Delimiter { get; set; }
+
    }
 }

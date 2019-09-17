@@ -49,14 +49,14 @@ namespace Transformalize {
       public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
       public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,object,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
 
-      public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=";
+      public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=,in,notin";
       public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;
 
       public const string TflHashCode = "TflHashCode";
       public const string TflKey = "TflKey";
       public const string TflDeleted = "TflDeleted";
       public const string TflBatchId = "TflBatchId";
-      public static string ApplicationFolder = @"Transformalize";
+      public static string ApplicationFolder = "Transformalize";
 
       public static HashSet<string> TypeSet() {
          return _types ?? (_types = new HashSet<string>(TypeDomain.Split(',')));
