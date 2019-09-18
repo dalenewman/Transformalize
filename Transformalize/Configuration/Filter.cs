@@ -97,7 +97,7 @@ namespace Transformalize.Configuration {
       public string Map { get; set; }
 
       [Cfg(value ="*")]
-      public string IgnoreValue { get; set; }
+      public string WildCard { get; set; }
 
       [Cfg(value =",")]
       public string Delimiter { get; set; }

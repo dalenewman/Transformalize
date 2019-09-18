@@ -173,19 +173,24 @@ namespace Transformalize.Configuration.Ext {
             }
          }
 
+         var autoMapCounter = 0;
          foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
             var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
             if (connection != null) {
                foreach (var filter in entity.Filter.Where(QualifiesForAutomaticMap())) {
                   var parameter = p.Parameters.FirstOrDefault(pr => string.IsNullOrEmpty(pr.Map) && pr.Name == filter.Field && pr.Value == filter.Value);
                   if (parameter != null) {
-                     var mapName = filter.Field.GetHashCode().ToString();
+
+                     // create map
+                     autoMapCounter++;
+                     var mapName = $"map-{filter.Field}-{autoMapCounter}";
                      parameter.Map = mapName;
                      filter.Map = mapName;
                      if (p.Maps == null) {
                         p.Maps = new List<Map>();
                      }
                      p.Maps.Add(new Map { Name = mapName });
+
                   }
                }
             }

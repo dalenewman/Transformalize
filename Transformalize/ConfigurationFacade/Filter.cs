@@ -54,7 +54,7 @@ namespace Transformalize.ConfigurationFacade {
       public string Map { get; set; }
 
       [Cfg]
-      public string IgnoreValue { get; set; }
+      public string WildCard { get; set; }
 
       [Cfg]
       public string Delimiter { get; set; }
