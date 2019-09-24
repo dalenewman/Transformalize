@@ -641,7 +641,7 @@ namespace Transformalize.Configuration {
       internal Regex FieldMatcher { get; set; }
 
       public IEnumerable<Field> GetFieldMatches(string content) {
-         var key = $"{Key}:{content}";
+         var key = $"{Key}:{Fields.Count + CalculatedFields.Count}:{content}";
 
          if (_fieldMatchCache.ContainsKey(key)) {
             return _fieldMatchCache[key];
