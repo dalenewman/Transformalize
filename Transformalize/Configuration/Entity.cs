@@ -162,7 +162,14 @@ namespace Transformalize.Configuration {
 
       public int BatchId { get; set; }
 
+      /// <summary>
+      /// This minimum version we want to query from the input (which is the maximum value already in the output)
+      /// </summary>
       public object MinVersion { get; set; }
+
+      /// <summary>
+      /// This is the maximum version we want to query from the input
+      /// </summary>
       public object MaxVersion { get; set; }
 
       public bool NeedsUpdate() {
