@@ -53,14 +53,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             IPipeline pipeline;
             context.Debug(() => $"Registering {_process.Pipeline} pipeline.");
             var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
-            switch (_process.Pipeline) {
-               case "parallel.linq":
-                  pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                  break;
-               default:
-                  pipeline = new DefaultPipeline(outputController, context);
-                  break;
-            }
+            pipeline = new DefaultPipeline(outputController, context);
 
             // no updater necessary
             pipeline.Register(new NullUpdater(context, false));
@@ -71,7 +64,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                return pipeline;
             }
 
-             // register transforms
+            // register transforms
             pipeline.Register(new IncrementTransform(context));
             pipeline.Register(new LogTransform(context));
             pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));

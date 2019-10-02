@@ -43,14 +43,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             IPipeline pipeline;
             context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
             var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
-            switch (type) {
-               case "parallel.linq":
-                  pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                  break;
-               default:
-                  pipeline = new DefaultPipeline(outputController, context);
-                  break;
-            }
+            pipeline = new DefaultPipeline(outputController, context);
 
             // TODO: rely on IInputProvider's Read method instead (after every provider has one)
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
