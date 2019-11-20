@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DateMathModifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormParameterModifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\InternalModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NullPlaceHolderReplacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformHolder.cs" />
@@ -22,8 +23,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)ValidateBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\ValidateModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValidatorHolder.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Modules\" />
   </ItemGroup>
 </Project>

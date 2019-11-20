@@ -27,7 +27,6 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Nulls;
-using Transformalize.Providers.Internal;
 using Transformalize.Transforms.System;
 using LogTransform = Transformalize.Transforms.System.LogTransform;
 using Process = Transformalize.Configuration.Process;
@@ -78,11 +77,14 @@ namespace Transformalize.Containers.Autofac {
          }
          builder.RegisterModule(validateModule);
 
+         builder.RegisterModule(new InternalModule(process));
+
 #if PLUGINS
          // just in case other modules need to see these
          builder.Properties["ShortHand"] = _shortHand;
          builder.Properties["Methods"] = _methods;
 #endif
+
          // allowing for additional modules
          foreach (var module in _modules) {
             builder.RegisterModule(module);
@@ -132,37 +134,6 @@ namespace Transformalize.Containers.Autofac {
             var connection = process.Connections.First(c => c.Name == entity.Connection);
             builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
 
-         }
-
-         // internal entity input 
-         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "internal")) {
-
-            builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
-
-            // READER
-            builder.Register<IRead>(ctx => {
-               var input = ctx.ResolveNamed<InputContext>(entity.Key);
-               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-
-               return new InternalReader(input, rowFactory);
-            }).Named<IRead>(entity.Key);
-
-         }
-
-         // Internal Entity Output
-         if (process.Output().Provider == "internal") {
-
-            // PROCESS OUTPUT CONTROLLER
-            builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
-
-            foreach (var entity in process.Entities) {
-
-               builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
-               builder.Register<IOutputProvider>(ctx => new InternalOutputProvider(ctx.ResolveNamed<OutputContext>(entity.Key), ctx.ResolveNamed<IWrite>(entity.Key))).Named<IOutputProvider>(entity.Key);
-
-               // WRITER
-               builder.Register<IWrite>(ctx => new InternalWriter(ctx.ResolveNamed<OutputContext>(entity.Key))).Named<IWrite>(entity.Key);
-            }
          }
 
          // entity pipelines
