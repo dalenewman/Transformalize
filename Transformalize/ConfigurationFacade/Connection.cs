@@ -15,6 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
 using System.Collections.Generic;
 using Cfg.Net;
 
@@ -189,6 +190,13 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string MaxDegreeOfParallism { get; set; }
+
+      public Configuration.Connection ToConnection() {
+         var map = new Configuration.Connection {
+            Name = this.Name
+         };
+         return map;
+      }
 
    }
 }

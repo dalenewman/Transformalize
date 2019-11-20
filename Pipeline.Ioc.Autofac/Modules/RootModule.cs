@@ -147,15 +147,16 @@ namespace Transformalize.Ioc.Autofac.Modules {
             Name = "ParameterTransform",
             ReadOnly = true,
             Entities = new List<Entity> { entity },
+            Connections = preProcess.Connections.Select(c=> c.ToConnection()).ToList(),  // for map transforms that need connections
             Maps = preProcess.Maps.Select(m => m.ToMap()).ToList(), // for map transforms
             Scripts = preProcess.Scripts.Select(s => s.ToScript()).ToList() // for transforms that use scripts (e.g. js)
          };
 
-         mini.Check(); // very important to check after creating, as it runs validation and even modifies!
+         mini.Load(); // very important to check after creating, as it runs validation and even modifies!
 
          if (!mini.Errors().Any()) {
 
-            // modification in Check() do not make it out to local variables so overwrite them
+            // modification in Load() do not make it out to local variables so overwrite them
             fields = mini.Entities.First().Fields;
             entity = mini.Entities.First();
 

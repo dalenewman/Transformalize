@@ -67,7 +67,7 @@ namespace Transformalize.Transforms {
             }
          }
          if (_catchAll == null) {
-            _catchAll = Context.Field.Convert(Context.Field.Default);
+            _catchAll = Context.Field.DefaultValue();
          }
 
          foreach (var row in rows) {

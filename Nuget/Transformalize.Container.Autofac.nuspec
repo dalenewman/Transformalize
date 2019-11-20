@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Container.Autofac</id>
+      <version>0.6.15-beta</version>
+      <title>basic autofac work for transformalize</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <licenseUrl>https://github.com/dalenewman/Transformalize.Provider.Lucene/blob/master/LICENSE.md</licenseUrl>
+      <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Lucene</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>basic autofac work for transformalize</description>
+      <releaseNotes>updated transformalize dependency</releaseNotes>
+      <copyright>Copyright 2018-2019</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="net462">
+            <dependency id="Autofac" version="4.6.2" />
+            <dependency id="Transformalize" version="0.6.15-beta" />
+            <dependency id="Cfg-NET.Environment" version="0.3.4" />
+            <dependency id="Cfg-NET.Reader" version="0.3.3" />
+            <dependency id="Cfg-NET.Shorthand" version="0.2.11" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\Containers\Autofac\Transformalize.Container.Autofac\bin\Release\Transformalize.Container.Autofac.dll" target="lib\net462\Transformalize.Container.Autofac.dll" />
+   </files>
+</package>

@@ -45,7 +45,7 @@ namespace Transformalize.Command {
                 if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != Constants.DefaultSetting && !e.Fields.Any(f => f.Input))) {
                     log.Debug(() => "Detecting schema...");
                     if (_schemaHelper.Help(process)) {
-                        process.Check();
+                        process.Load();
                     }
                 }
 

@@ -112,7 +112,7 @@ namespace Tests {
                     new Field { Index = 1, Name="f2", Type="string", Length = "64"}
                 }
             };
-            entity.Check();
+            entity.Load();
             return entity;
         }
     }

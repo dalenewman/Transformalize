@@ -50,7 +50,7 @@ namespace Tests {
                 Assert.AreEqual(0, process.Errors().Length);
                 Assert.AreEqual(true, process.CalculatedFields.First().Transforms.First().Method == "format");
                 var cfp = process.ToCalculatedFieldsProcess();
-                cfp.Check();
+                cfp.Load();
                 Assert.AreEqual(0, cfp.Errors().Length);
                 Assert.IsTrue(cfp.Entities.First().TryGetField("f1",out var f1),"f1 is not in the calculated entity");
                 Assert.IsTrue(cfp.Entities.First().TryGetField("f2", out var f2),"f2 is not in the calculated entity");
