@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Container.Autofac</id>
-      <version>0.6.15-beta</version>
+      <version>0.6.20-beta</version>
       <title>basic autofac work for transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -16,10 +16,10 @@
       <dependencies>
          <group targetFramework="net462">
             <dependency id="Autofac" version="4.6.2" />
-            <dependency id="Transformalize" version="0.6.15-beta" />
-            <dependency id="Cfg-NET.Environment" version="0.3.4" />
-            <dependency id="Cfg-NET.Reader" version="0.3.3" />
-            <dependency id="Cfg-NET.Shorthand" version="0.2.11" />
+            <dependency id="Transformalize" version="0.6.20-beta" />
+            <dependency id="Cfg-NET.Environment" version="0.3.5" />
+            <dependency id="Cfg-NET.Reader" version="0.3.4" />
+            <dependency id="Cfg-NET.Shorthand" version="0.2.12" />
          </group>
       </dependencies>
    </metadata>

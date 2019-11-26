@@ -15,8 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -26,59 +28,87 @@ using Transformalize.Providers.Console;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
-    public class ConsoleModule : Module {
-        private readonly Process _process;
+   public class ConsoleModule : Module {
+      private readonly Process _process;
+      private readonly HashSet<string> _consoleActions = new HashSet<string> { "print" };
 
-        public ConsoleModule() { }
+      public ConsoleModule() { }
 
-        public ConsoleModule(Process process) {
-            _process = process;
-        }
+      public ConsoleModule(Process process) {
+         _process = process;
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+         if (_process == null)
+            return;
 
-            // Connections
-            foreach (var connection in _process.Connections.Where(c => c.Provider == "console")) {
-                builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
+         foreach (var action in _process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_consoleActions.Contains(action.Type)) {
+               builder.Register(ctx => {
+                  return SwitchAction(ctx, action);
+               }).Named<IAction>(action.Key);
             }
-
-            // Entity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "console")) {
-
-                builder.Register(ctx => {
-                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                    return input.Connection.Command == string.Empty ? (IRead) new ConsoleInputReader(input, rowFactory) : new ConsoleCommandReader(input, rowFactory);
-                }).Named<IRead>(entity.Key);
-
-                builder.Register<IInputProvider>(ctx => new ConsoleInputProvider(ctx.ResolveNamed<IRead>(entity.Key))).Named<IInputProvider>(entity.Key);
+         }
+         foreach (var action in _process.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_consoleActions.Contains(action.Type)) {
+               builder.Register(ctx => {
+                  return SwitchAction(ctx, action);
+               }).Named<IAction>(action.Key);
             }
+         }
 
-            // Entity Output
-            var output = _process.Output();
-            if (output.Provider == "console") {
+         // Connections
+         foreach (var connection in _process.Connections.Where(c => c.Provider == "console")) {
+            builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
+         }
 
-                // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
+         // Entity input
+         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "console")) {
 
-                foreach (var entity in _process.Entities) {
-                    builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+            builder.Register(ctx => {
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+               return input.Connection.Command == string.Empty ? (IRead)new ConsoleInputReader(input, rowFactory) : new ConsoleCommandReader(input, rowFactory);
+            }).Named<IRead>(entity.Key);
 
-                    builder.Register<IWrite>(ctx => {
-                        var serializer = output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize;
-                        return new ConsoleWriter(serializer);
-                    }).Named<IWrite>(entity.Key);
+            builder.Register<IInputProvider>(ctx => new ConsoleInputProvider(ctx.ResolveNamed<IRead>(entity.Key))).Named<IInputProvider>(entity.Key);
+         }
 
-                    builder.Register<IOutputProvider>(ctx => {
-                        var context = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new ConsoleOutputProvider(context, ctx.ResolveNamed<IWrite>(entity.Key));
-                    })
-                    .Named<IOutputProvider>(entity.Key);
-                }
+         // Entity Output
+         var output = _process.Output();
+         if (output.Provider == "console") {
+
+            // PROCESS OUTPUT CONTROLLER
+            builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
+
+            foreach (var entity in _process.Entities) {
+               builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
+
+               builder.Register<IWrite>(ctx => {
+                  var serializer = output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize;
+                  return new ConsoleWriter(serializer);
+               }).Named<IWrite>(entity.Key);
+
+               builder.Register<IOutputProvider>(ctx => {
+                  var context = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  return new ConsoleOutputProvider(context, ctx.ResolveNamed<IWrite>(entity.Key));
+               })
+               .Named<IOutputProvider>(entity.Key);
             }
-        }
-    }
+         }
+      }
+
+      private IAction SwitchAction(IComponentContext ctx, Action action) {
+         var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
+         switch (action.Type) {
+            case "print":
+               return new PrintAction(action);
+            default:
+               context.Error($"Attempting to register unsupported file sytem action: {action.Type}");
+               return new NullAction();
+         }
+      }
+
+   }
 }

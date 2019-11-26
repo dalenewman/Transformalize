@@ -28,12 +28,15 @@ using Transformalize.Providers.File;
 using Transformalize.Providers.Internal;
 using Transformalize.Providers.Trace;
 using Transformalize.Impl;
+using Transformalize.Actions;
+using Transformalize.Extensions;
 
 namespace Transformalize.Ioc.Autofac.Modules {
 
    public class InternalModule : Module {
       private readonly Process _process;
-      private readonly HashSet<string> _internal = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
+      private readonly HashSet<string> _internalActions = new HashSet<string> { "log", "web", "wait", "sleep", "tfl", "exit" };
+      private readonly HashSet<string> _internalProviders = new HashSet<string>(new[] { "internal", "trace", "log", "text", Constants.DefaultSetting });
 
       public InternalModule() { }
 
@@ -46,13 +49,24 @@ namespace Transformalize.Ioc.Autofac.Modules {
          if (_process == null)
             return;
 
+         foreach (var action in _process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_internalActions.Contains(action.Type)) {
+               builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+            }
+         }
+         foreach (var action in _process.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_internalActions.Contains(action.Type)) {
+               builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+            }
+         }
+
          // Connections
          foreach (var connection in _process.Connections.Where(c => c.Provider == "internal")) {
             builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
          }
 
          // Entity input
-         foreach (var entity in _process.Entities.Where(e => _internal.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
+         foreach (var entity in _process.Entities.Where(e => _internalProviders.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
 
             builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
@@ -83,7 +97,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
 
          // Entity Output
-         if (_internal.Contains(_process.Output().Provider)) {
+         if (_internalProviders.Contains(_process.Output().Provider)) {
 
             // PROCESS OUTPUT CONTROLLER
             builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
@@ -112,6 +126,43 @@ namespace Transformalize.Ioc.Autofac.Modules {
                   }
                }).Named<IWrite>(entity.Key);
             }
+         }
+      }
+
+      private static IAction SwitchAction(IComponentContext ctx, Process process, Configuration.Action action) {
+
+         var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process);
+         switch (action.Type) {
+            case "log":
+               return new LogAction(context, action);
+            case "wait":
+            case "sleep":
+               return new WaitAction(action);
+            case "tfl":
+               var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
+               if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Body)) {
+                  cfg = action.Body;
+               }
+
+               var root = ctx.Resolve<Process>(new NamedParameter("cfg", cfg));
+
+               foreach (var warning in root.Warnings()) {
+                  context.Warn(warning);
+               }
+               if (root.Errors().Any()) {
+                  context.Error($"TFL Pipeline Action '{cfg.Left(30)}'... has errors!");
+                  foreach (var error in root.Errors()) {
+                     context.Error(error);
+                  }
+                  return new NullAction();
+               }
+               return new PipelineAction(DefaultContainer.Create(root, ctx.Resolve<IPipelineLogger>(), action.PlaceHolderStyle));
+
+            case "exit":
+               return new ExitAction(context, action);
+            default:
+               context.Error("{0} action is not registered.", action.Type);
+               return new NullAction();
          }
       }
    }

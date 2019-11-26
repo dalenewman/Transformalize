@@ -154,8 +154,8 @@
     <Compile Include="Impl\NullPlaceHolderReplacer.cs" />
     <Compile Include="JsonNetSerializer.cs" />
     <Compile Include="LibaryVersionChecker.cs" />
-    <Compile Include="Modules\ActionModule.cs" />
     <Compile Include="Modules\ConsoleModule.cs" />
+    <Compile Include="Modules\FileModule.cs" />
     <Compile Include="Modules\ValidateModule.cs" />
     <Compile Include="Modules\FileSystemModule.cs" />
     <Compile Include="Modules\TransformModule.cs" />

@@ -27,92 +27,89 @@ using Transformalize.Ioc.Autofac.Modules;
 using Process = Transformalize.Configuration.Process;
 
 namespace Transformalize.Ioc.Autofac {
-    public static class DefaultContainer {
+   public static class DefaultContainer {
 
-        public static ILifetimeScope Create(Process process, IPipelineLogger logger, string placeHolderStyle) {
+      public static ILifetimeScope Create(Process process, IPipelineLogger logger, string placeHolderStyle) {
 
-            var loadContext = new PipelineContext(logger, process);
+         var loadContext = new PipelineContext(logger, process);
 
-            if (process.OutputIsConsole()) {
-                logger.SuppressConsole();
+         if (process.OutputIsConsole()) {
+            logger.SuppressConsole();
+         }
+
+         var builder = new ContainerBuilder();
+         builder.Properties["Process"] = process;
+
+         builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
+         builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
+
+         /* this stuff is loaded (again) because tfl actions can create processes, which will need short-hand to expand configuration in advance */
+         builder.RegisterCallback(new TransformModule(process, logger).Configure);
+         builder.RegisterCallback(new ValidateModule(process, logger).Configure);
+         builder.RegisterCallback(new RootModule().Configure);
+         builder.RegisterCallback(new ContextModule(process).Configure);
+
+         // provider loading section
+         var providers = new HashSet<string>(process.Connections.Select(c => c.Provider).Distinct(), StringComparer.OrdinalIgnoreCase);
+
+         builder.RegisterCallback(new InternalModule(process).Configure);
+         builder.RegisterCallback(new FileModule(process).Configure);
+
+         if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
+         if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
+         if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
+
+         var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
+         if (Directory.Exists(pluginsFolder)) {
+
+            var assemblies = new List<Assembly>();
+            foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+               var info = new FileInfo(file);
+               var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
+
+               switch (name) {
+                  case "filehelpers" when (providers.Contains("file") || providers.Contains("folder")):
+                     loadContext.Debug(() => "Loading filehelpers provider");
+                     assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
+                     break;
+                  case "ado":
+                     loadContext.Debug(() => "Loading ADO provider");
+                     assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
+                     break;
+                  default:
+                     if (providers.Contains(name)) {
+                        loadContext.Debug(() => $"Loading {name} provider.");
+                        var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                        assemblies.Add(assembly);
+                     } else {
+                        loadContext.Debug(() => $"Loading {name} isn't necessary for this arrangement.");
+                     }
+                     break;
+               }
             }
-
-            var builder = new ContainerBuilder();
-            builder.Properties["Process"] = process;
-
-            builder.Register(ctx => placeHolderStyle).Named<string>("placeHolderStyle");
-            builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
-
-            /* this stuff is loaded (again) because tfl actions can create processes, which will need short-hand to expand configuration in advance */
-            builder.RegisterCallback(new TransformModule(process, logger).Configure);
-            builder.RegisterCallback(new ValidateModule(process, logger).Configure);
-            builder.RegisterCallback(new RootModule().Configure);
-            builder.RegisterCallback(new ContextModule(process).Configure);
-
-            // provider loading section
-            var providers = new HashSet<string>(process.Connections.Select(c => c.Provider).Distinct(), StringComparer.OrdinalIgnoreCase);
-
-            builder.RegisterCallback(new InternalModule(process).Configure);
-
-            if (providers.Contains("console")) { builder.RegisterCallback(new ConsoleModule(process).Configure); }
-            if (providers.Contains("kml")) { builder.RegisterCallback(new KmlModule(process).Configure); }
-            if (providers.Contains("filesystem")) { builder.RegisterCallback(new FileSystemModule(process).Configure); }
-
-            //builder.RegisterCallback(new FileHelpersModule().Configure);
-
-            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
-            if (Directory.Exists(pluginsFolder)) {
-
-                var assemblies = new List<Assembly>();
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
-                    var info = new FileInfo(file);
-                    var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
-
-                    switch (name) {
-                        case "filehelpers" when (providers.Contains("file") || providers.Contains("folder")):
-                            loadContext.Debug(() => "Loading filehelpers provider");
-                            assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
-                            break;
-                        case "ado":
-                            loadContext.Debug(() => "Loading ADO provider");
-                            assemblies.Add(Assembly.LoadFile(new FileInfo(file).FullName));
-                            break;
-                        default:
-                            if (providers.Contains(name)) {
-                                loadContext.Debug(() => $"Loading {name} provider.");
-                                var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-                                assemblies.Add(assembly);
-                            } else {
-                                loadContext.Debug(() => $"Loading {name} isn't necessary for this arrangement.");
-                            }
-                            break;
-                    }
-                }
-                if (assemblies.Any()) {
-                    builder.RegisterAssemblyModules(assemblies.ToArray());
-                }
+            if (assemblies.Any()) {
+               builder.RegisterAssemblyModules(assemblies.ToArray());
             }
+         }
 
-            // etc
-            builder.RegisterCallback(new ActionModule(process).Configure);
+         // etc
+         builder.RegisterCallback(new EntityPipelineModule(process).Configure);
+         builder.RegisterCallback(new ProcessPipelineModule(process).Configure);
+         builder.RegisterCallback(new ProcessControlModule(process).Configure);
 
-            builder.RegisterCallback(new EntityPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessPipelineModule(process).Configure);
-            builder.RegisterCallback(new ProcessControlModule(process).Configure);
+         return builder.Build().BeginLifetimeScope();
 
-            return builder.Build().BeginLifetimeScope();
+      }
 
-        }
-
-        public static string AssemblyDirectory {
-            get {
-                var codeBase = typeof(Process).Assembly.CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
+      public static string AssemblyDirectory {
+         get {
+            var codeBase = typeof(Process).Assembly.CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
+         }
+      }
 
 
-    }
+   }
 }

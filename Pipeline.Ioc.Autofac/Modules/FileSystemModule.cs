@@ -24,51 +24,51 @@ using Transformalize.Nulls;
 using Transformalize.Providers.File;
 
 namespace Transformalize.Ioc.Autofac.Modules {
-    public class FileSystemModule : Module {
-        private const string FileSystem = "filesystem";
-        private readonly Process _process;
+   public class FileSystemModule : Module {
+      private const string FileSystem = "filesystem";
+      private readonly Process _process;
 
-        public FileSystemModule() { }
+      public FileSystemModule() { }
 
-        public FileSystemModule(Process process) {
-            _process = process;
-        }
+      public FileSystemModule(Process process) {
+         _process = process;
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+         if (_process == null)
+            return;
 
-            // enitity input
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == FileSystem)) {
+         // enitity input
+         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == FileSystem)) {
 
-                // no input version detector for now
-                builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
+            // no input version detector for now
+            builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
-                builder.Register<IRead>(ctx => {
-                    var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                    var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                    return new FileSystemReader(input, rowFactory);
-                }).Named<IRead>(entity.Key);
+            builder.Register<IRead>(ctx => {
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+               return new FileSystemReader(input, rowFactory);
+            }).Named<IRead>(entity.Key);
 
-                if (entity.Delete) {
-                    builder.Register<IReadInputKeysAndHashCodes>((ctx) => {
-                        var input = ctx.ResolveNamed<InputContext>(entity.Key);
-                        var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
-                        return new FileSystemReader(input, rowFactory);
-                    }).Named<IReadInputKeysAndHashCodes>(entity.Key);
-                }
-
+            if (entity.Delete) {
+               builder.Register<IReadInputKeysAndHashCodes>((ctx) => {
+                  var input = ctx.ResolveNamed<InputContext>(entity.Key);
+                  var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+                  return new FileSystemReader(input, rowFactory);
+               }).Named<IReadInputKeysAndHashCodes>(entity.Key);
             }
 
-            if (_process.Output().Provider == FileSystem) {
-                // PROCESS OUTPUT CONTROLLER
-                builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
+         }
 
-                foreach (var entity in _process.Entities) {
-                    // todo
-                }
+         if (_process.Output().Provider == FileSystem) {
+            // PROCESS OUTPUT CONTROLLER
+            builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
+
+            foreach (var entity in _process.Entities) {
+               // todo
             }
-        }
-    }
+         }
+      }
+   }
 }
