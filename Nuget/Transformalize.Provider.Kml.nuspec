@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Kml</id>
-    <version>0.6.4-beta</version>
+    <version>0.6.20-beta</version>
     <title>Transformalize Provider KML</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.6.4-beta" />
+        <dependency id="Transformalize" version="0.6.20-beta" />
       </group>
     </dependencies>
   </metadata>

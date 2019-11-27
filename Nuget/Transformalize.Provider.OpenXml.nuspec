@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.6.7-beta</version>
+    <version>0.6.21-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,8 +15,9 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.6.6-beta" />
+        <dependency id="Transformalize" version="0.6.20-beta" />
         <dependency id="OpenXmlPowerTools" version="4.5.3.2" />
+        <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
       </group>
     </dependencies>
   </metadata>
