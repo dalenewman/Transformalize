@@ -23,33 +23,36 @@ using Transformalize.Contracts;
 using Transformalize.Impl;
 
 namespace Transformalize.Providers.Console {
-    public class ConsoleCommandReader : IRead {
-        private readonly InputContext _input;
-        private readonly IRowFactory _rowFactory;
-        private readonly IField _inputField;
+   public class ConsoleCommandReader : IRead {
+      private readonly InputContext _input;
+      private readonly IRowFactory _rowFactory;
+      private readonly IField _inputField;
 
-        public ConsoleCommandReader(InputContext input, IRowFactory rowFactory) {
-            _rowFactory = rowFactory;
-            _input = input;
-            _inputField = input.InputFields.FirstOrDefault();
-        }
+      public ConsoleCommandReader(InputContext input, IRowFactory rowFactory) {
+         _rowFactory = rowFactory;
+         _input = input;
+         _inputField = input.InputFields.FirstOrDefault();
+      }
 
-        public IEnumerable<IRow> Read() {
+      public IEnumerable<IRow> Read() {
 
-            if (_inputField == null) {
-                _input.Error("You must have one input field for console provider input.");
-                yield break;
-            }
+         if (_inputField == null) {
+            _input.Error("You must have one input field for console provider input.");
+            yield break;
+         }
 
-            // Start the child process.
-            var p = new Process {
-                StartInfo = {
+         // Start the child process.
+         using (var p = new Process {
+            StartInfo = {
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
                     FileName = _input.Connection.Command,
                     Arguments = _input.Connection.Arguments
                 }
-            };
+         }) {
+            if(_input.Connection.Folder != string.Empty) {
+               p.StartInfo.WorkingDirectory = _input.Connection.Folder;
+            }            
 
             // Redirect the output stream of the child process.
             p.Start();
@@ -63,24 +66,28 @@ namespace Transformalize.Providers.Console {
             var lineNumber = 1;
             foreach (var line in new LineReader(output).Read()) {
 
-                if (line == string.Empty || lineNumber < _input.Connection.Start) {
-                    lineNumber++;
-                    continue;
-                }
+               if (line == string.Empty || lineNumber < _input.Connection.Start) {
+                  lineNumber++;
+                  continue;
+               }
 
-                if (_input.Connection.End > 0 && lineNumber > _input.Connection.End) {
-                    yield break;
-                }
+               if (_input.Connection.End > 0 && lineNumber > _input.Connection.End) {
+                  yield break;
+               }
 
-                var row = _rowFactory.Create();
-                row[_inputField] = line;
-                lineNumber++;
-                yield return row;
+               var row = _rowFactory.Create();
+               row[_inputField] = line;
+               lineNumber++;
+               yield return row;
             }
 
 
             p.WaitForExit();
-        }
 
-    }
+
+         };
+
+      }
+
+   }
 }
