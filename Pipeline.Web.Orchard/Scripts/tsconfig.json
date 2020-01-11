@@ -1,0 +1,10 @@
+{
+   "compilerOptions": {
+      "module": "none",
+      "moduleResolution": "classic",
+      "sourceMap": false,
+      "strict": false,
+      "target": "es5"
+   }
+ }
+ 

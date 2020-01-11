@@ -84,6 +84,8 @@ namespace Pipeline.Web.Orchard.Modules {
                return action.InTemplate ? (IAction)
                    new ContentToFileAction(context, action) :
                    new FileCopyAction(context, action);
+            case "archive":
+               return new FileArchiveAction(context, action);
             case "move":
                return new FileMoveAction(context, action);
             case "replace":

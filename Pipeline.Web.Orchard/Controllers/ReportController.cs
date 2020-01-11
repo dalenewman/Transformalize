@@ -58,6 +58,9 @@ namespace Pipeline.Web.Orchard.Controllers {
 
          var timer = new Stopwatch();
          timer.Start();
+         var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
+
+         Logger.Information("User {0} has requested report id {1}", user, id);
 
          var process = new Process { Name = "Report" };
 
@@ -66,11 +69,14 @@ namespace Pipeline.Web.Orchard.Controllers {
             process.Name = "Not Found";
          } else {
 
-            var user = _orchardServices.WorkContext.CurrentUser == null ? "Anonymous" : _orchardServices.WorkContext.CurrentUser.UserName ?? "Anonymous";
-
             if (_orchardServices.Authorizer.Authorize(Permissions.ViewContent, part)) {
 
+               var title = part.Title();
+               Logger.Information("User {0} is authorized to view report {1}", user, title);
+
                process = _processService.Resolve(part);
+
+               Logger.Information("User {0} has resolved process for {1}", user, title);               
 
                var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
                if (part.NeedsInputFile && Convert.ToInt32(parameters[Common.InputFileIdName]) == 0) {
@@ -79,12 +85,16 @@ namespace Pipeline.Web.Orchard.Controllers {
                }
 
                GetStickyParameters(part.Id, parameters);
+               Logger.Information("User {0} has gathered parameters for {1}", user, title);
 
                process.Load(part.Configuration, parameters);
+               Logger.Information("User {0} has has loaded process for {1}", user, title);
+
                process.Mode = "report";
                process.ReadOnly = true;  // force reporting to omit system fields
 
                SetStickyParameters(part.Id, process.Parameters);
+               Logger.Information("User {0} has set sticky parameters for {1}", user, title);
 
                // secure actions
                var actions = process.Actions.Where(a => !a.Before && !a.After && !a.Description.StartsWith("Batch", StringComparison.OrdinalIgnoreCase));
@@ -94,6 +104,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                      action.Description = "BatchUnauthorized";
                   }
                }
+               Logger.Information("User {0} has has secured actions for {1}", user, title);
 
                var sizes = new List<int>();
                sizes.AddRange(part.Sizes(part.PageSizes));
@@ -101,8 +112,11 @@ namespace Pipeline.Web.Orchard.Controllers {
 
                Common.SetPageSize(process, parameters, sizes.Min(), stickySize, sizes.Max());
 
+               Logger.Information("User {0} has resolved page sizes for {1}", user, title);
+
                if (Request["sort"] != null) {
                   _sortService.AddSortToEntity(process.Entities.First(), Request["sort"]);
+                  Logger.Information("User {0} has resolved sorting for {1}", user, title);
                }
 
                if (process.Errors().Any()) {
@@ -125,6 +139,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                         return View(new ReportViewModel(process, part));
                      }
                   }
+                  Logger.Information("User {0} has resolved row class and style for {1}", user, title);
 
                   if (!process.Errors().Any()) {
 
@@ -133,9 +148,14 @@ namespace Pipeline.Web.Orchard.Controllers {
                      }
 
                      var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
+
+                     Logger.Information("User {0} has resolved runner for {1}", user, title);
+
                      try {
 
                         runner.Execute(process);
+                        Logger.Information("User {0} has executed runner for {1}", user, title);
+
                         process.Request = "Run";
                         process.Time = timer.ElapsedMilliseconds;
 
@@ -163,7 +183,11 @@ namespace Pipeline.Web.Orchard.Controllers {
             }
          }
 
-         return View(new ReportViewModel(process, part));
+         if(Request.QueryString["Style"] == "ajax") {
+            return View("Ajax", new ReportViewModel(process, part));
+         } else {
+            return View(new ReportViewModel(process, part));
+         }
 
       }
    }

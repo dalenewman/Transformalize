@@ -75,7 +75,7 @@ namespace Pipeline.Web.Orchard.Modules {
                     process.Name = "Error";
                     process.Status = 500;
                     process.Message = "The configuration (cfg) is not registered in the container.";
-                    process.Check();
+                    process.Load();
                     return process;
                 }
 

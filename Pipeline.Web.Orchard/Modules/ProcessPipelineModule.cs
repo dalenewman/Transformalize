@@ -29,82 +29,74 @@ using Transformalize.Impl;
 
 namespace Pipeline.Web.Orchard.Modules {
 
-    public class ProcessPipelineModule : Module {
-        private readonly Process _process;
+   public class ProcessPipelineModule : Module {
+      private readonly Process _process;
 
-        public ProcessPipelineModule() { }
+      public ProcessPipelineModule() { }
 
-        public ProcessPipelineModule(Process process) {
-            _process = process;
-        }
+      public ProcessPipelineModule(Process process) {
+         _process = process;
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            if (_process == null)
-                return;
+         if (_process == null)
+            return;
+
+         if (!_process.CalculatedFields.Any()) {
+            return;
+         }
+
+         var calc = _process.ToCalculatedFieldsProcess();
+         var entity = calc.Entities.First();
+
+         // I need a process keyed pipeline
+         builder.Register(ctx => {
+
+            var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
+            var outputContext = new OutputContext(context);
+
+            context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
+            var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
+            var pipeline = new DefaultPipeline(outputController, context);
+
+            // no updater necessary
+            pipeline.Register(new NullUpdater(context, false));
 
             if (!_process.CalculatedFields.Any()) {
-                return;
+               pipeline.Register(new NullReader(context, false));
+               pipeline.Register(new NullWriter(context, false));
+               return pipeline;
             }
 
-            var calc = _process.ToCalculatedFieldsProcess();
-            var entity = calc.Entities.First();
+            // register transforms
+            pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
+            pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
+            pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
-            // I need a process keyed pipeline
-            builder.Register(ctx => {
+            // register input and output
+            switch (outputContext.Connection.Provider) {
+               case "sqlserver":
+                  pipeline.Register(ctx.Resolve<IRead>());
+                  pipeline.Register(ctx.Resolve<IWrite>());
+                  pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), new DateTime(1753, 1, 1)));
+                  break;
+               case "mysql":
+               case "postgresql":
+               case "sqlce":
+               case "sqlite":
+                  pipeline.Register(ctx.Resolve<IRead>());
+                  pipeline.Register(ctx.Resolve<IWrite>());
+                  break;
+               default:
+                  pipeline.Register(new NullReader(context));
+                  pipeline.Register(new NullWriter(context));
+                  break;
+            }
 
-                var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity);
-                var outputContext = new OutputContext(context);
+            return pipeline;
+         }).As<IPipeline>();
 
-                IPipeline pipeline;
-                context.Debug(() => string.Format("Registering {0} pipeline.", _process.Pipeline));
-                var outputController = ctx.IsRegistered<IOutputController>() ? ctx.Resolve<IOutputController>() : new NullOutputController();
-                switch (_process.Pipeline) {
-                    case "parallel.linq":
-                        pipeline = new ParallelPipeline(new DefaultPipeline(outputController, context));
-                        break;
-                    default:
-                        pipeline = new DefaultPipeline(outputController, context);
-                        break;
-                }
-
-                // no updater necessary
-                pipeline.Register(new NullUpdater(context, false));
-
-                if (!_process.CalculatedFields.Any()) {
-                    pipeline.Register(new NullReader(context, false));
-                    pipeline.Register(new NullWriter(context, false));
-                    return pipeline;
-                }
-
-                // register transforms
-                pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
-                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
-                pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
-
-                // register input and output
-                switch (outputContext.Connection.Provider) {
-                    case "sqlserver":
-                        pipeline.Register(ctx.Resolve<IRead>());
-                        pipeline.Register(ctx.Resolve<IWrite>());
-                        pipeline.Register(new MinDateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), new DateTime(1753, 1, 1)));
-                        break;
-                    case "mysql":
-                    case "postgresql":
-                    case "sqlce":
-                    case "sqlite":
-                        pipeline.Register(ctx.Resolve<IRead>());
-                        pipeline.Register(ctx.Resolve<IWrite>());
-                        break;
-                    default:
-                        pipeline.Register(new NullReader(context));
-                        pipeline.Register(new NullWriter(context));
-                        break;
-                }
-
-                return pipeline;
-            }).As<IPipeline>();
-
-        }
-    }
+      }
+   }
 }

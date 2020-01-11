@@ -38,20 +38,17 @@ namespace Pipeline.Web.Orchard.Models {
         };
 
       public static List<SelectListItem> MapStyles = new List<SelectListItem> {
-            new SelectListItem {Selected = false, Text = "Streets", Value = "streets-v10"},
-            new SelectListItem {Selected = false, Text = "Outdoors", Value = "outdoors-v10"},
-            new SelectListItem {Selected = false, Text = "Light", Value = "light-v9"},
-            new SelectListItem {Selected = false, Text = "Dark", Value = "dark-v9"},
-            new SelectListItem {Selected = false, Text = "Satellite", Value = "satellite-v9"},
-            new SelectListItem {Selected = false, Text = "Satellite Streets", Value = "satellite-streets-v10"},
-            new SelectListItem {Selected = false, Text = "Navigation Preview Day", Value = "navigation-preview-day-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Preview Night", Value = "navigation-preview-night-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Guidance Day", Value = "navigation-guidance-day-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Guidance Night", Value = "navigation-guidance-night-v4"}
-
-        };
-
-
+            new SelectListItem {Selected = false, Text = "Streets", Value = "mapbox://styles/mapbox/streets-v10"},
+            new SelectListItem {Selected = false, Text = "Outdoors", Value = "mapbox://styles/mapbox/outdoors-v10"},
+            new SelectListItem {Selected = false, Text = "Light", Value = "mapbox://styles/mapbox/light-v9"},
+            new SelectListItem {Selected = false, Text = "Dark", Value = "mapbox://styles/mapbox/dark-v9"},
+            new SelectListItem {Selected = false, Text = "Satellite", Value = "mapbox://styles/mapbox/satellite-v9"},
+            new SelectListItem {Selected = false, Text = "Satellite Streets", Value = "mapbox://styles/mapbox/satellite-streets-v10"},
+            new SelectListItem {Selected = false, Text = "Navigation Preview Day", Value = "mapbox://styles/mapbox/navigation-preview-day-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Preview Night", Value = "mapbox://styles/mapbox/navigation-preview-night-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Guidance Day", Value = "mapbox://styles/mapbox/navigation-guidance-day-v4"},
+            new SelectListItem {Selected = false, Text = "Navigation Guidance Night", Value = "mapbox://styles/mapbox/navigation-guidance-night-v4"}
+      };
 
       public string Configuration {
          get {
@@ -110,7 +107,10 @@ namespace Pipeline.Web.Orchard.Models {
       }
 
       public string MapStyle {
-         get { return this.Retrieve(x => x.MapStyle, versioned: true) ?? "streets-v10"; }
+         get { 
+            var mapStyle = this.Retrieve(x => x.MapStyle, versioned: true) ?? "mapbox://styles/mapbox/streets-v10";
+            return mapStyle.Contains("/") ? mapStyle : "mapbox://styles/mapbox/" + mapStyle;
+         }
          set { this.Store(x => x.MapStyle, value, true); }
       }
 
@@ -252,6 +252,11 @@ namespace Pipeline.Web.Orchard.Models {
       public bool MapBulkActions {
          get { return this.Retrieve(x => x.MapBulkActions, versioned: true, defaultValue: true); }
          set { this.Store(x => x.MapBulkActions, value, true); }
+      }
+
+      public bool MapRefresh {
+         get { return this.Retrieve(x => x.MapRefresh, versioned: true, defaultValue: false); }
+         set { this.Store(x => x.MapRefresh, value, true); }
       }
 
       public string MapColorField {

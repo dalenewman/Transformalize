@@ -17,6 +17,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using Orchard.Templates.Services;
 using Transformalize;
@@ -25,32 +26,48 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Pipeline.Web.Orchard.Impl {
-    public class OrchardRazorTransform : BaseTransform {
-        private readonly ITemplateProcessor _processor;
+   public class OrchardRazorTransform : BaseTransform {
+      private readonly ITemplateProcessor _processor;
 
-        private readonly Field[] _input;
+      private readonly Field[] _input;
+  
+      public OrchardRazorTransform(ITemplateProcessor processor, IContext context = null) : base(context, null) {
 
-        public OrchardRazorTransform(ITemplateProcessor processor, IContext context = null) : base(context, null) {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (IsMissingContext()) {
-                return;
-            }
+         Returns = Context.Field.Type;
 
-            Returns = Context.Field.Type;
+         _processor = processor;
 
-            _processor = processor;
+         var fields = MultipleInput().ToList();
+         _input = fields.Union(Context.Entity.GetFieldMatches(Context.Operation.Template)).ToArray();
 
-            var fields = MultipleInput().ToList();
-            _input = fields.Union(Context.Entity.GetFieldMatches(Context.Operation.Template)).ToArray();
-        }
+         // test it out
+         var testObject = new ExpandoObject();
+         var dict = (IDictionary<string, object>)testObject;
+         foreach (var field in _input) {
+            dict[field.Alias] = field.DefaultValue();
+         }
+         try {
+            _processor.Process(Context.Operation.Template, Context.Key, null, testObject);
+         } catch (System.Exception ex) {
+            Context.Error("Razor error parsing script in {0} field.", Context.Field.Alias);
+            Context.Error(ex.Message);
+            Utility.CodeToError(Context, Context.Operation.Template);
+            Run = false;
+         }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = Context.Field.Convert(_processor.Process(Context.Operation.Template, Context.Key, null, row.ToFriendlyExpandoObject(_input)).Trim(' ', '\n', '\r'));
-            return row;
-        }
+      }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("razor") { Parameters = new List<OperationParameter>(1) { new OperationParameter("template") } };
-        }
-    }
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = Context.Field.Convert(_processor.Process(Context.Operation.Template, Context.Key, null, row.ToFriendlyExpandoObject(_input)).Trim(' ', '\n', '\r'));
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("razor") { Parameters = new List<OperationParameter>(1) { new OperationParameter("template") } };
+      }
+   }
 }

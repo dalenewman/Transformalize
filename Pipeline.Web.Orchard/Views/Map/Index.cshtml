@@ -30,8 +30,8 @@
    Script.Require("jQueryUI").AtHead();
    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/js/bootstrap-multiselect.min.js");
 
-   Script.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js").AtHead();
-   Script.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.js");
+   Script.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.js").AtHead();
+   Script.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.1.2/mapbox-gl-draw.js");
    Script.Include("https://cdnjs.cloudflare.com/ajax/libs/Turf.js/5.1.6/turf.min.js");
 
    foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "js" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".js", StringComparison.OrdinalIgnoreCase)))) {
@@ -44,8 +44,8 @@
 
    Style.Require("jQueryUI_Orchard");
    Style.Include("https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.15/css/bootstrap-multiselect.css");
-   Style.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css");
-   Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.0.9/mapbox-gl-draw.css");
+   Style.Include("https://api.tiles.mapbox.com/mapbox-gl-js/v1.6.1/mapbox-gl.css");
+   Style.Include("https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.1.2/mapbox-gl-draw.css");
 
    foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "css" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".css", StringComparison.OrdinalIgnoreCase)))) {
       Style.Include(script.File);
@@ -167,20 +167,23 @@
 
                 $('#id_map').height(Math.round($(window).height() * .71));
 
+                console.log('starting out with style ' + '@(Model.Part.MapStyle)');
+
                 var map = new mapboxgl.Map({
                     container: 'id_map',
-                    style: 'mapbox://styles/mapbox/@(Model.Part.MapStyle)',
+                    style: '@(Model.Part.MapStyle)',
                     center: [@settings.StartingLongitude, @settings.StartingLatitude ],
                     zoom: @Model.Part.MapZoom
                 });
 
-                function addDataLayer() {
-                    map.addSource("orders-data", { type: "geojson", data: window.data });
+               function addDataLayer(layerId, fitBounds) {
+                  // using layerId as layer id and data source name
+                    map.addSource(layerId, { type: "geojson", data: window.data });
 
                     map.addLayer({
-                        id: "circle-layer",
+                        id: layerId,
                         type: "circle",
-                        source: "orders-data",
+                        source: layerId,
                         paint: {
                             "circle-color": { "type": "identity", "property": "marker-color" },
                             "circle-radius": @Model.Part.MapCircleRadius,
@@ -190,15 +193,43 @@
                             "circle-stroke-opacity": 0.9
                         }
                     });
+
+                  console.log('fitting bounds');
+                  if (fitBounds) {
+                     if (window.data.features.length > 0) {
+                           var bounds = new mapboxgl.LngLatBounds();
+                           window.data.features.forEach(function(feature) {
+                              bounds.extend(feature.geometry.coordinates);
+                           });
+                           map.fitBounds(bounds, { padding: 100 });
+                     }
+                  }
+
+                  console.log('setting up popups');
+                  map.on('click', layerId, function (e) {
+                        var coordinates = e.features[0].geometry.coordinates.slice();
+                        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                           coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                        }
+                        new mapboxgl.Popup().setLngLat(coordinates).setHTML(e.features[0].properties.description).addTo(map);
+                  });
+
+                  map.on('mouseenter', layerId, function () {
+                        map.getCanvas().style.cursor = 'pointer';
+                  });
+                  map.on('mouseleave', layerId, function () {
+                        map.getCanvas().style.cursor = '';
+                  });
+
                 }
 
                 // map style switcher
                 var layerList = document.getElementById('mapStyles');
                 var inputs = layerList.getElementsByTagName('a');
 
-                function switchLayer(layer) {
-                    var layerId = layer.target.id;
-                    map.setStyle('mapbox://styles/mapbox/' + layerId);
+               function switchLayer(layer) {
+                  console.log('switching style to ' + layer.target.id);
+                    map.setStyle(layer.target.id);
                 }
 
                 for (var i = 0; i < inputs.length; i++) {
@@ -207,150 +238,107 @@
 
                 map.on('style.load', function () {
                     // Triggered when `setStyle` is called.
-                    if (window.data) addDataLayer();
+                   if (window.data) {
+                      addDataLayer("circle-layer", false);
+                   } 
                 });
 
-                $('#busy').show();
+               var loadData = function (fitBounds) {
+                  $('#busy').show();
+                  $.getJSON(url + '&random=' + Math.random(), function (data) {
 
+                     // filter out zeroes
+                     var zeroes = 0;
+                     data.features = data.features.filter(function (f) {
+                           if (f.geometry.coordinates[0] === 0.0 && f.geometry.coordinates[1] === 0.0) {
+                              zeroes++;
+                              return false;
+                           } else {
+                              return true;
+                           }
+                     });
+
+                     if (zeroes > 0) {
+                        $('#id_map_alert').text(zeroes + ' record(s) are missing coordinates.  They are not displayed on the map below.').show();
+                     } else {
+                        $('#id_map_alert').hide();
+                     }
+
+                     window.data = data;
+                     addDataLayer("circle-layer", fitBounds);
+
+                     $('#busy').hide();
+                  });
+               };
+
+               var refreshButton = document.getElementById('mapRefresh');
+               if (refreshButton) {
+                  refreshButton.onclick = function () {
+                  map.removeLayer("circle-layer");
+                  map.removeSource("circle-layer");
+                  loadData(false);
+                  }
+               }
+               
                 map.on('load', function () {
 
-                    map.addControl(new mapboxgl.FullscreenControl());
-                    map.addControl(new mapboxgl.NavigationControl());
+                  map.addControl(new mapboxgl.FullscreenControl());
+                  map.addControl(new mapboxgl.NavigationControl());
+                  map.addControl(new mapboxgl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: true }));
 
-                    $.getJSON(url, function (data) {
+                  @if (Model.Part.MapBulkActions) {
+                     <text>
+                  var draw = new MapboxDraw({ displayControlsDefault: false, controls: { polygon: true, trash: true } });
+                  map.addControl(draw);
 
-                        // filter out zeroes
-                       var zeroes = 0;
-                        data.features = data.features.filter(function (f) {
-                            if (f.geometry.coordinates[0] === 0.0 && f.geometry.coordinates[1] === 0.0) {
-                                zeroes++;
-                                return false;
-                            } else {
-                                return true;
-                            }
-                       });
+                  function updateArea(e) {
 
-                       @*
-                        var firstLat = 0.0;
-                        var firstLon = 0.0;
-                        if (data.features.length > 0) {
-                           firstLon = data.features[0].geometry.coordinates[0];
-                           firstLat = data.features[0].geometry.coordinates[1];
-                        }
-                        *@
+                     var shape = draw.getAll();
+                     $('input.bulk-action').remove();
 
-                        if (zeroes > 0) {
-                            $('#id_map_alert').text(zeroes + ' record(s) are missing coordinates.  They are not displayed on the map below.').show();
-                        } else {
-                            $('#id_map_alert').hide();
-                        }
+                     if (shape.features.length > 0) {
+                        var selected = turf.pointsWithinPolygon(window.data, shape);
 
-                        window.data = data;
-
-                        addDataLayer();
-
-                        @*
-                        if (firstLat !== 0.0) {
-                           map.flyTo({center:[firstLon, firstLat]});
-                        }
-                        *@
-
-                        // fit map
-                        if (window.data.features.length > 0) {
-                            var bounds = new mapboxgl.LngLatBounds();
-                            window.data.features.forEach(function(feature) {
-                                bounds.extend(feature.geometry.coordinates);
-                            });
-                            map.fitBounds(bounds, { padding: 100 });
-                        }
-
-                       // Add geolocate control to the map.
-                       map.addControl(new mapboxgl.GeolocateControl({
-                          positionOptions: {
-                             enableHighAccuracy: true
-                          },
-                          trackUserLocation: true
-                        }));
-
-                       @if (Model.Part.MapBulkActions) {
-                           <text>
-                       // for drawing polygons and selecting points
-                       var draw = new MapboxDraw({
-                          displayControlsDefault: false,
-                          controls: {
-                             polygon: true,
-                             trash: true
-                          }
-                       });
-                       map.addControl(draw);
-
-                       function updateArea(e) {
-
-                          var data = draw.getAll();
-                          $('input.bulk-action').remove();
-
-                          if (data.features.length > 0) {
-                             var selected = turf.pointsWithinPolygon(window.data, data);
-
-                             selected.features.forEach(function (feature) {
-                                $("<input>").attr({
-                                   type: "checkbox",
-                                   checked: "checked",
-                                   "class": "bulk-action",
-                                   style: "visibility: hidden",
-                                   name: "row",
-                                   value: feature.properties["batch-value"]
-                                }).appendTo("#id_report");
-                             });
-
-                             // update the little badges
-                             $(".bulk-action-link").each(function () {
-                                var link = $(this);
-                                $("input[name=bulk-action-length]").val(selected.features.length);
-                                link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + selected.features.length + "</span>");
-                             });
-                          } else {
-                             // update the little badges
-                             $(".bulk-action-link").each(function () {
-                                var link = $(this);
-                                $("input[name=bulk-action-length]").val(0);
-                                link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge"></span>');
-                             });
-                          }
-                       }
-
-                       map.on('draw.create', updateArea);
-                       map.on('draw.delete', updateArea);
-                       map.on('draw.update', updateArea);
-                           </text>
-                       }
-
-
-                        // popup on click
-                        map.on('click', 'circle-layer', function (e) {
-                            var coordinates = e.features[0].geometry.coordinates.slice();
-                            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                            }
-                            new mapboxgl.Popup().setLngLat(coordinates).setHTML(e.features[0].properties.description).addTo(map);
+                        selected.features.forEach(function (feature) {
+                           $("<input>").attr({
+                              type: "checkbox",
+                              checked: "checked",
+                              "class": "bulk-action",
+                              style: "visibility: hidden",
+                              name: "row",
+                              value: feature.properties["batch-value"]
+                           }).appendTo("#id_report");
                         });
 
-                        map.on('mouseenter', 'circle-layer', function () {
-                            map.getCanvas().style.cursor = 'pointer';
+                        // update the little badges
+                        $(".bulk-action-link").each(function () {
+                           var link = $(this);
+                           $("input[name=bulk-action-length]").val(selected.features.length);
+                           link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge">' + selected.features.length + "</span>");
                         });
-                        map.on('mouseleave', 'circle-layer', function () {
-                            map.getCanvas().style.cursor = '';
+                     } else {
+                        // update the little badges
+                        $(".bulk-action-link").each(function () {
+                           var link = $(this);
+                           $("input[name=bulk-action-length]").val(0);
+                           link.html(link.attr('rel') + '&nbsp;&nbsp;<span class="badge"></span>');
                         });
+                     }
+                  }
 
-                        $('#busy').hide();
+                  map.on('draw.create', updateArea);
+                  map.on('draw.delete', updateArea);
+                  map.on('draw.update', updateArea);
+                     </text>
+                  }
 
-                        @foreach (var script in Model.Process.Scripts.Where(s => s.Global && string.IsNullOrEmpty(s.File) && s.Language == "js")) {
-                        <text>/* @script.Name */</text>
-                        @Html.Raw(script.Content)
+                  @foreach (var script in Model.Process.Scripts.Where(s => s.Global && string.IsNullOrEmpty(s.File) && s.Language == "js")) {
+                  <text>/* @script.Name */</text>
+                  @Html.Raw(script.Content)
 
-                        }
+                  }
 
-                    });
+                  loadData(true);
                 });
             });
             //-->

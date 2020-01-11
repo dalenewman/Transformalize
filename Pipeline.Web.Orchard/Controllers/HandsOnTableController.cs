@@ -44,7 +44,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                return new HttpUnauthorizedResult();
             }
          } else {
-            System.Web.Security.FormsAuthentication.RedirectToLoginPage();
+            return RedirectToLoginResult(Request);
          }
 
          var showEditButton = _orchardServices.Authorizer.Authorize(global::Orchard.Core.Contents.Permissions.EditContent, part);
@@ -54,6 +54,8 @@ namespace Pipeline.Web.Orchard.Controllers {
       [Themed(false)]
       public ActionResult Load(int id) {
          Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+         _query["mode"] = "load";
 
          if (!User.Identity.IsAuthenticated) {
             return new HttpUnauthorizedResult();
@@ -100,6 +102,8 @@ namespace Pipeline.Web.Orchard.Controllers {
       [Themed(false)]
       public ActionResult Save(int id) {
          Response.AddHeader("Access-Control-Allow-Origin", "*");
+
+         _query["mode"] = "save";
 
          if (!User.Identity.IsAuthenticated) {
             return new HttpUnauthorizedResult();

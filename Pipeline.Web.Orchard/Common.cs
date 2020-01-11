@@ -145,6 +145,7 @@ namespace Pipeline.Web.Orchard {
             parameters["Orchard.User"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.UserName;
             parameters["Orchard.Email"] = orchard.WorkContext.CurrentUser == null ? string.Empty : orchard.WorkContext.CurrentUser.Email;
             parameters["Orchard.Url"] = HttpContext.Current.Request.Url.PathAndQuery;
+            parameters["Orchard.Root"] = VirtualPathUtility.ToAbsolute("~");
             string returnUrl;
             if (request != null && request.UrlReferrer != null) {
                 returnUrl = request.UrlReferrer.ToString();

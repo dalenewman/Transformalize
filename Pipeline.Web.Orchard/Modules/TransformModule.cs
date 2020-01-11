@@ -156,8 +156,7 @@ namespace Pipeline.Web.Orchard.Modules {
 
          RegisterTransform(builder, (ctx, c) => new SpecifyKindTransform(c), new SpecifyKindTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new ToUnixTimeTransform(c), new ToUnixTimeTransform().GetSignatures());
-
-
+         RegisterTransform(builder, (ctx, c) => new IdentityTransform(c), new IdentityTransform().GetSignatures());
 
          // Split
          RegisterTransform(builder, (ctx, c) => new SplitTransform(c), new SplitTransform().GetSignatures());
@@ -234,6 +233,8 @@ namespace Pipeline.Web.Orchard.Modules {
 
          // Orchard
          RegisterTransform(builder, (ctx, c) => new ResolveUrlTransform(c), new ResolveUrlTransform().GetSignatures());
+         
+
 
          // register the short hand
          builder.Register((c, p) => new FieldTransformShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).As<FieldTransformShorthandCustomizer>().SingleInstance();

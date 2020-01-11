@@ -5,80 +5,87 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
-    public class BaseController : Controller {
+   public class BaseController : Controller {
 
-        public ILogger Logger { get; set; }
-        public Localizer T { get; set; }
+      public ILogger Logger { get; set; }
+      public Localizer T { get; set; }
 
-        public BaseController() {
-            T = NullLocalizer.Instance;
-            Logger = NullLogger.Instance;
+      public BaseController() {
+         T = NullLocalizer.Instance;
+         Logger = NullLogger.Instance;
 
-        }
+      }
 
-        public bool IsMissingRequiredParameters(List<Transformalize.Configuration.Parameter> parameters, INotifier notifier) {
+      public bool IsMissingRequiredParameters(List<Transformalize.Configuration.Parameter> parameters, INotifier notifier) {
 
-            var hasRequiredParameters = true;
-            foreach (var parameter in parameters.Where(p => p.Required)) {
+         var hasRequiredParameters = true;
+         foreach (var parameter in parameters.Where(p => p.Required)) {
 
-                var value = Request.QueryString[parameter.Name];
-                if (value != null && value != "*") {
-                    continue;
-                }
-
-                if (parameter.Sticky && parameter.Value != "*") {
-                    continue;
-                }
-
-                notifier.Add(NotifyType.Warning, T("{0} is required. To continue, please choose a {0}.", parameter.Label));
-                if (hasRequiredParameters) {
-                    hasRequiredParameters = false;
-                }
+            var value = Request.QueryString[parameter.Name];
+            if (value != null && value != "*") {
+               continue;
             }
 
-            return !hasRequiredParameters;
-        }
-
-        public T GetStickyParameter<T>(int partId, string name, Func<T> defaultValue) where T : IConvertible {
-            return Common.GetStickyParameter(Request, Session, partId, name, defaultValue);
-        }
-
-        public void SetStickyParameters(int id, List<Transformalize.Configuration.Parameter> parameters) {
-            foreach (var parameter in parameters.Where(p => p.Sticky)) {
-                var key = id + parameter.Name;
-                if (Request.QueryString[parameter.Name] == null) {
-                    if (Session[key] != null) {
-                        parameter.Value = Session[key].ToString();
-                    }
-                } else {  // A parameter is set
-                    var value = Request.QueryString[parameter.Name];
-                    if (Session[key] == null) {
-                        Session[key] = value;  // for the next time
-                        parameter.Value = value; // for now
-                    } else {
-                        if (Session[key].ToString() != value) {
-                            Session[key] = value; // for the next time
-                            parameter.Value = value; // for now
-                        }
-                    }
-                }
+            if (parameter.Sticky && parameter.Value != "*") {
+               continue;
             }
-        }
 
-        public void GetStickyParameters(int id, IDictionary<string, string> parameters) {
-            var prefix = id.ToString();
-            foreach (string key in Session.Keys) {
-                if (key.StartsWith(prefix)) {
-                    var name = key.Substring(prefix.Length);
-                    if (!parameters.ContainsKey(name) && Session[key] != null) {
-                        parameters[name] = Session[key].ToString();
-                    }
-                }
+            notifier.Add(NotifyType.Warning, T("{0} is required. To continue, please choose a {0}.", parameter.Label));
+            if (hasRequiredParameters) {
+               hasRequiredParameters = false;
             }
-        }
-    }
+         }
+
+         return !hasRequiredParameters;
+      }
+
+      public T GetStickyParameter<T>(int partId, string name, Func<T> defaultValue) where T : IConvertible {
+         return Common.GetStickyParameter(Request, Session, partId, name, defaultValue);
+      }
+
+      public void SetStickyParameters(int id, List<Transformalize.Configuration.Parameter> parameters) {
+         foreach (var parameter in parameters.Where(p => p.Sticky)) {
+            var key = id + parameter.Name;
+            if (Request.QueryString[parameter.Name] == null) {
+               if (Session[key] != null) {
+                  parameter.Value = Session[key].ToString();
+               }
+            } else {  // A parameter is set
+               var value = Request.QueryString[parameter.Name];
+               if (Session[key] == null) {
+                  Session[key] = value;  // for the next time
+                  parameter.Value = value; // for now
+               } else {
+                  if (Session[key].ToString() != value) {
+                     Session[key] = value; // for the next time
+                     parameter.Value = value; // for now
+                  }
+               }
+            }
+         }
+      }
+
+      public void GetStickyParameters(int id, IDictionary<string, string> parameters) {
+         var prefix = id.ToString();
+         foreach (string key in Session.Keys) {
+            if (key.StartsWith(prefix)) {
+               var name = key.Substring(prefix.Length);
+               if (!parameters.ContainsKey(name) && Session[key] != null) {
+                  parameters[name] = Session[key].ToString();
+               }
+            }
+         }
+      }
+
+      public ActionResult RedirectToLoginResult(HttpRequestBase request) {
+         return new RedirectToRouteResult(new RouteValueDictionary { { "area", "Orchard.Users" }, { "controller", "Account" }, { "action", "LogOn" }, { "ReturnUrl", request.RawUrl } });
+      }
+
+   }
 }

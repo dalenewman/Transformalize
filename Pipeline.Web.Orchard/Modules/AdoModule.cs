@@ -260,7 +260,7 @@ namespace Pipeline.Web.Orchard.Modules {
                builder.Register<IWriteMasterUpdateQuery>(ctx => {
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   var factory = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
-                  return new SqlServerUpdateMasterKeysQueryWriter(output, factory);
+                  return new AdoUpdateMasterKeysQueryWriter(output, factory);
                }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
 
                // MASTER UPDATER
@@ -352,7 +352,7 @@ namespace Pipeline.Web.Orchard.Modules {
                      handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
                      handler.Register(new StringTruncateTransfom(context, primaryKey));
 
-                     return new ParallelDeleteHandler(handler);
+                     return handler;
                   }).Named<IEntityDeleteHandler>(entity.Key);
                }
 

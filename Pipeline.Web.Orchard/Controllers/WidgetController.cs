@@ -11,12 +11,9 @@ using Transformalize.Configuration;
 namespace Pipeline.Web.Orchard.Controllers {
 
    [Themed, SessionState(SessionStateBehavior.ReadOnly)]
-   public class WidgetController : Controller {
+   public class WidgetController : BaseController {
 
       private readonly Stopwatch _stopwatch = new Stopwatch();
-
-      protected Localizer T { get; set; }
-      protected ILogger Logger { get; set; }
 
       public WidgetController(
       ) {

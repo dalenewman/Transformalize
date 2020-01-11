@@ -43,7 +43,6 @@ namespace Pipeline.Web.Orchard.Drivers {
          part.MapCircleRadius = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapCircleRadius"));
          part.MapCircleOpacity = Convert.ToDouble(context.Attribute(part.PartDefinition.Name, "MapCircleOpacity"));
          part.PageSizes = context.Attribute(part.PartDefinition.Name, "PageSizes");
-         part.MapSizes = context.Attribute(part.PartDefinition.Name, "MapSizes");
          part.EnableInlineParameters = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "EnableInlineParameters"));
          part.ClipTextAt = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "ClipTextAt"));
 
@@ -64,6 +63,8 @@ namespace Pipeline.Web.Orchard.Drivers {
          part.MapLatitudeField = context.Attribute(part.PartDefinition.Name, "MapLatitudeField");
          part.MapLongitudeField = context.Attribute(part.PartDefinition.Name, "MapLongitudeField");
          part.MapZoom = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapZoom"));
+         part.MapSizes = context.Attribute(part.PartDefinition.Name, "MapSizes");
+         part.MapRefresh = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "MapRefresh"));
 
          part.ReportRowClassField = context.Attribute(part.PartDefinition.Name, "ReportRowClassField");
          part.ReportRowStyleField = context.Attribute(part.PartDefinition.Name, "ReportRowStyleField");
@@ -85,7 +86,6 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Modes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.PlaceHolderStyle);
             context.Element(part.PartDefinition.Name).SetAttributeValue("PageSizes", part.PageSizes);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.MapSizes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("EnableInlineParameters", part.EnableInlineParameters);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ClipTextAt", part.ClipTextAt);
 
@@ -106,6 +106,8 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLatitudeField", part.MapLatitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLongitudeField", part.MapLongitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.MapZoom);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.MapSizes);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapRefresh", part.MapRefresh);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.ReportRowClassField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.ReportRowStyleField);
@@ -125,7 +127,6 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("Modes", part.Record.Modes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("PlaceHolderStyle", part.Record.PlaceHolderStyle);
             context.Element(part.PartDefinition.Name).SetAttributeValue("PageSizes", part.Record.PageSizes);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.Record.MapSizes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("EnableInlineParameters", part.Record.EnableInlineParameters);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ClipTextAt", part.Record.ClipTextAt);
 
@@ -146,6 +147,8 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLatitudeField", part.Record.MapLatitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapLongitudeField", part.Record.MapLongitudeField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.Record.MapZoom);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.Record.MapSizes);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapRefresh", part.Record.MapRefresh);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.Record.ReportRowClassField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.Record.ReportRowStyleField);

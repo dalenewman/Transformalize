@@ -1,6 +1,6 @@
 ﻿@using Pipeline.Web.Orchard.Models
 @model ReportViewModel
-<div class="row" style="margin-bottom: 4px;">
+<div id="id-parameters" class="row" style="margin-bottom: 4px; margin-right:200px;">
     <div class="col-md-12">
         @if (Model.Part.EnableInlineParameters) {
             foreach (var parameter in Model.ActiveParameters.Where(p => p.Prompt)) {

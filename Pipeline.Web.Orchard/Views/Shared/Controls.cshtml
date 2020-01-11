@@ -117,6 +117,11 @@
                      }
                   </ul>
                </div>
+               if (Model.Part.MapRefresh) {
+                  <button title="refresh map" type="button" class="btn btn-danger btn-sm" id="mapRefresh">
+                     <span class="glyphicon glyphicon-refresh"></span>
+                  </button>
+               }
             }
 
             if (Model.Part.MapEnabled && hasCoordinates || Model.Part.CalendarEnabled) {
@@ -134,7 +139,7 @@
                   Link = linkService.Create(Request, Session, Model.Part.Id, reportUrl, "report", false)
                });
 
-               if(Model.Part.MapEnabled && hasCoordinates) {
+               if (Model.Part.MapEnabled && hasCoordinates) {
 
                   var mapUrl = Url.Action("Index", "Map", new RouteValueDictionary { { "Id", Model.Part.Id } });
                   if (headless) {
@@ -143,7 +148,7 @@
                   views.Add(new PipelineView("map") {
                      Active = Model.Process.Mode == "map",
                      Glyphicon = "map-marker",
-                     Link =  linkService.Create(Request, Session, Model.Part.Id, mapUrl, "map", false)
+                     Link = linkService.Create(Request, Session, Model.Part.Id, mapUrl, "map", false)
                   });
                }
                if (Model.Part.CalendarEnabled) {

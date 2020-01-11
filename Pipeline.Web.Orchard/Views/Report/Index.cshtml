@@ -237,7 +237,7 @@
                </thead>
                <tbody>
                   @foreach (var row in entity.Rows) {
-                     <tr class="@(Model.Part.ReportRowClassField == string.Empty ? string.Empty : row[Model.Part.ReportRowClassField])" style="@(Model.Part.ReportRowStyleField == string.Empty ? string.Empty : row[Model.Part.ReportRowStyleField])">
+                     <tr>
                         @if (hasActions) {
                            <td>
                               <div class="checkbox">

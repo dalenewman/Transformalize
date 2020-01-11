@@ -246,6 +246,12 @@ namespace Pipeline.Web.Orchard {
          SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("ReportRowStyleField", DbType.String));
          return 24;
       }
+
+      public int UpdateFrom24() {
+         SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapRefresh", DbType.Boolean));
+         return 25;
+      }
+
    }
 
    public class FileMigrations : DataMigrationImpl {
