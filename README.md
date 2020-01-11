@@ -1089,10 +1089,5 @@ Without paging, web-based reporting gets too big for
 the browser.  All providers are capable of paging, 
 but SOLR and Elasticsearch do it the best.
 
-#### Credits &amp; Thanks
-
-**TODO**: list open source projects
-
-<a href="https://www.jetbrains.com/resharper">
-    <img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/resharper-logo.png" alt="Resharper" width="100px" style="width: 100;"/>
-</a>
+### Build Notes
+Clone.  Build with Visual Studio 2019.  You'll need the SlowCheetah extension.
