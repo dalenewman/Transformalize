@@ -224,7 +224,7 @@ namespace Transformalize.Configuration {
 
          for (var i = 0; i < Filter.Count; i++) {
             var filter = Filter[i];
-            if(filter.Field != string.Empty) {
+            if (filter.Field != string.Empty) {
                if (TryGetField(filter.Field, out var field)) {
                   filter.LeftField = field;
                   filter.IsField = true;
@@ -233,7 +233,7 @@ namespace Transformalize.Configuration {
                   Error("Filter field {0} does not exist.", filter.Field);
                }
             }
-            if(filter.Value != string.Empty) {
+            if (filter.Value != string.Empty) {
                if (TryGetField(filter.Value, out var field)) {
                   filter.ValueField = field;
                   filter.ValueIsField = true;
@@ -697,57 +697,81 @@ namespace Transformalize.Configuration {
          return Alias.GetHashCode();
       }
 
+
       /// <summary>
-      /// find fields that are required to produce a given set of fields 
+      /// Find fields that are required to produce a given field.
+      /// NOTE: This does not look at short-hand. It is expected that shorthand has already been translated.
       /// </summary>
-      /// <param name="fields">given set of fields</param>
+      /// <param name="field">given field</param>
       /// <param name="maps">maps may contain field references</param>
       /// <returns></returns>
-      public IEnumerable<Field> FindRequiredFields(IEnumerable<Field> fields, IEnumerable<Map> maps) {
-         var dependents = new HashSet<Field>();
+      public IEnumerable<Field> FindRequiredFields(Field field, IEnumerable<Map> maps) {
+         var dependents = new HashSet<Field> { field };
 
          /* get all defined parameter fields */
-         var parameters = fields.SelectMany(f => f.Transforms)
+         var parameters = field.Transforms
              .SelectMany(t => t.Parameters)
              .Where(p => !p.HasValue() && p.IsField(this))
-             .Select(p => p.AsField(this))
-             .Except(fields);
+             .Select(p => p.AsField(this));
 
-         foreach(var field in parameters) {
-            dependents.Add(field);
+         foreach (var f in parameters) {
+            if (dependents.Add(f)) {
+               foreach (var nested in FindRequiredFields(f, maps)) {
+                  dependents.Add(nested);
+               }
+            };
          }
 
          /* get all map transform related fields */
-         var mapFields = fields
-             .SelectMany(cf => cf.Transforms)
+         var mapFields = field.Transforms
              .Where(t => t.Method == "map")
              .Select(t => maps.First(m => m.Name == t.Map))
              .SelectMany(m => m.Items)
              .Where(i => i.Parameter != string.Empty)
-             .Select(i => i.AsParameter().AsField(this))
-             .Except(dependents);
+             .Select(i => i.AsParameter().AsField(this));
 
-         foreach(var field in mapFields) {
-            dependents.Add(field);
+         foreach (var f in mapFields) {
+            if (dependents.Add(f)) {
+               foreach (var nested in FindRequiredFields(f, maps)) {
+                  dependents.Add(nested);
+               }
+            }
          }
 
          /* get all fields defined by name in Value, NewValue, OldValue, Expression, Script, Format, and Template fields */
-         foreach (var f in fields) {
-            foreach (Match match in this.FieldMatcher.Matches(f.T)) {
-               if (TryGetField(match.Value, out var field)) {
-                    dependents.Add(field);
-               }
-            }
-            foreach (var t in f.Transforms) {
-               foreach (Match match in this.FieldMatcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
-                  if (TryGetField(match.Value, out var field)) {
-                     dependents.Add(field);
+         foreach (var t in field.Transforms) {
+            foreach (Match match in FieldMatcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
+               if (TryGetField(match.Value, out var f)) {
+                  if (dependents.Add(f)) {
+                     foreach (var nested in FindRequiredFields(f, maps)) {
+                        dependents.Add(nested);
+                     }
                   }
                }
             }
          }
 
-         return dependents;
+         return dependents.Except(new[] { field });
+
+      }
+
+      /// <summary>
+      /// Find fields that are required to produce a given set of fields.
+      /// NOTE: This does not look at short-hand. It is expected that shorthand has already been translated.
+      /// </summary>
+      /// <param name="fields">given set of fields</param>
+      /// <param name="maps">maps may contain field references</param>
+      /// <returns></returns>
+      public IEnumerable<Field> FindRequiredFields(IEnumerable<Field> fields, IEnumerable<Map> maps) {
+         var dependents = new HashSet<Field>(fields);
+
+         foreach(var field in fields) {
+            foreach(var f in FindRequiredFields(field, maps)) {
+               dependents.Add(f);
+            }
+         }
+
+         return dependents.Except(fields);
       }
    }
 }

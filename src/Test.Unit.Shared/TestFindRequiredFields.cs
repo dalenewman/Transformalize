@@ -116,6 +116,54 @@ namespace Tests {
 
          }
       }
+
+      [TestMethod]
+      public void TestNestedRequiredFields() {
+
+         const string xml = @"
+    <add name='TestProcess'>
+      <entities>
+        <add name='TestData'>
+          <rows>
+            <add Input1='2' Input2='4' />
+          </rows>
+          <fields>
+            <add name='Input1' />
+            <add name='Input2' />
+            <add name='Input3' input='false' t='copy(Input1,Input2).concat()' />
+          </fields>
+          <calculated-fields>
+            <add name='Value'>
+               <transforms>
+                  <add method='format' format='{0} and {1}'>
+                     <parameters>
+                        <add field='Input1' />
+                        <add field='Input3' />
+                     </parameters>
+                  </add>
+               </transforms>
+            </add>
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>";
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+
+         using (var scope = new ConfigurationContainer().CreateScope(xml, logger)) {
+
+            var process = scope.Resolve<Process>();
+            var targetFields = new List<Field> {
+               process.Entities[0].CalculatedFields.First(f => f.Name == "Value")
+            };
+            var required = process.Entities[0].FindRequiredFields(targetFields, process.Maps);
+            Assert.AreEqual(3, required.Count());
+            Assert.IsTrue(required.Any(f => f.Name == "Input1"));
+            Assert.IsTrue(required.Any(f => f.Name == "Input2"));
+            Assert.IsTrue(required.Any(f => f.Name == "Input3"));
+
+         }
+      }
    }
 }
 
