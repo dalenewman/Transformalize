@@ -696,5 +696,58 @@ namespace Transformalize.Configuration {
       public override int GetHashCode() {
          return Alias.GetHashCode();
       }
+
+      /// <summary>
+      /// find fields that are required to produce a given set of fields 
+      /// </summary>
+      /// <param name="fields">given set of fields</param>
+      /// <param name="maps">maps may contain field references</param>
+      /// <returns></returns>
+      public IEnumerable<Field> FindRequiredFields(IEnumerable<Field> fields, IEnumerable<Map> maps) {
+         var dependents = new HashSet<Field>();
+
+         /* get all defined parameter fields */
+         var parameters = fields.SelectMany(f => f.Transforms)
+             .SelectMany(t => t.Parameters)
+             .Where(p => !p.HasValue() && p.IsField(this))
+             .Select(p => p.AsField(this))
+             .Except(fields);
+
+         foreach(var field in parameters) {
+            dependents.Add(field);
+         }
+
+         /* get all map transform related fields */
+         var mapFields = fields
+             .SelectMany(cf => cf.Transforms)
+             .Where(t => t.Method == "map")
+             .Select(t => maps.First(m => m.Name == t.Map))
+             .SelectMany(m => m.Items)
+             .Where(i => i.Parameter != string.Empty)
+             .Select(i => i.AsParameter().AsField(this))
+             .Except(dependents);
+
+         foreach(var field in mapFields) {
+            dependents.Add(field);
+         }
+
+         /* get all fields defined by name in Value, NewValue, OldValue, Expression, Script, Format, and Template fields */
+         foreach (var f in fields) {
+            foreach (Match match in this.FieldMatcher.Matches(f.T)) {
+               if (TryGetField(match.Value, out var field)) {
+                    dependents.Add(field);
+               }
+            }
+            foreach (var t in f.Transforms) {
+               foreach (Match match in this.FieldMatcher.Matches(string.Join(" ", t.Value, t.OldValue, t.NewValue, t.Format, t.Script, t.Expression, t.Template))) {
+                  if (TryGetField(match.Value, out var field)) {
+                     dependents.Add(field);
+                  }
+               }
+            }
+         }
+
+         return dependents;
+      }
    }
 }
