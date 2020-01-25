@@ -173,8 +173,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             var output = transforms.Aggregate(input.AsEnumerable(), (rows, t) => t.Operate(rows)).ToList().First();
 
-
-
             for (var i = 0; i < len; i++) {
                var parameter = preProcess.Parameters[i];
                parameter.Value = output[fields[i]].ToString();

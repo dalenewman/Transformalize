@@ -80,6 +80,8 @@ namespace Transformalize.Containers.Autofac {
          builder.RegisterModule(new InternalModule(process));
 
 #if PLUGINS
+         builder.RegisterModule(new ProviderPlugInModule(process));
+
          // just in case other modules need to see these
          builder.Properties["ShortHand"] = _shortHand;
          builder.Properties["Methods"] = _methods;

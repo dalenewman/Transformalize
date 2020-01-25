@@ -727,7 +727,7 @@ namespace Transformalize.Configuration {
              .Where(t => t.Method == "map")
              .Select(t => maps.First(m => m.Name == t.Map))
              .SelectMany(m => m.Items)
-             .Where(i => i.Parameter != string.Empty)
+             .Where(i => i.Parameter != string.Empty)  // because parameter may reference a field
              .Select(i => i.AsParameter().AsField(this));
 
          foreach (var f in mapFields) {
@@ -765,8 +765,8 @@ namespace Transformalize.Configuration {
       public IEnumerable<Field> FindRequiredFields(IEnumerable<Field> fields, IEnumerable<Map> maps) {
          var dependents = new HashSet<Field>(fields);
 
-         foreach(var field in fields) {
-            foreach(var f in FindRequiredFields(field, maps)) {
+         foreach (var field in fields) {
+            foreach (var f in FindRequiredFields(field, maps)) {
                dependents.Add(f);
             }
          }

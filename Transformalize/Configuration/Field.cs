@@ -568,5 +568,8 @@ namespace Transformalize.Configuration {
       [Cfg(unique = true)]
       public string Parameter { get; set; }
 
+      [Cfg(value =false)]
+      public bool Property { get; set; }
+
    }
 }
