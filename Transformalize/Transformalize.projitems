@@ -252,7 +252,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validators\MinLengthValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\NotEqualValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\RequiredValidator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validators\ShouldRunValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\StringValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Writers\StringWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\AbsTransform.cs" />

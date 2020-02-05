@@ -38,7 +38,7 @@ namespace Transformalize.Validators {
             }
             var defaults = Constants.TypeDefaults();
             _input = SingleInput();
-            _default = _input.Default == Constants.DefaultSetting ? defaults[_input.Type] : _input.Convert(_input.Default);
+            _default = defaults[_input.Type];
 
             var help = Context.Field.Help;
             if (help == string.Empty) {

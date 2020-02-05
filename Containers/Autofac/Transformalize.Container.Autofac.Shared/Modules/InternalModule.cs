@@ -17,10 +17,13 @@
 #endregion
 
 using Autofac;
+using System.Collections.Generic;
 using System.Linq;
+using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 using Transformalize.Impl;
 using Transformalize.Nulls;
 using Transformalize.Providers.Internal;
@@ -34,6 +37,7 @@ namespace Transformalize.Containers.Autofac.Modules {
    /// </summary>
    public class InternalModule : Module {
 
+      private readonly HashSet<string> _internalActions = new HashSet<string> { "log", "web", "wait", "sleep", "tfl", "exit" };
       private const string Internal = "internal";
       private readonly Process _process;
 
@@ -46,7 +50,18 @@ namespace Transformalize.Containers.Autofac.Modules {
          if (_process == null)
             return;
 
-         if(_process.Connections.All(c=>c.Provider != Internal)) {
+         foreach (var action in _process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_internalActions.Contains(action.Type)) {
+               builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+            }
+         }
+         foreach (var action in _process.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+            if (_internalActions.Contains(action.Type)) {
+               builder.Register(ctx => SwitchAction(ctx, _process, action)).Named<IAction>(action.Key);
+            }
+         }
+
+         if (_process.Connections.All(c=>c.Provider != Internal)) {
             return;
          }
 
@@ -98,5 +113,30 @@ namespace Transformalize.Containers.Autofac.Modules {
 
          }
       }
+
+      private static IAction SwitchAction(IComponentContext ctx, Process process, Configuration.Action action) {
+
+         var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process);
+
+         switch (action.Type) {
+            case "log":
+               return new LogAction(context, action);
+            case "wait":
+            case "sleep":
+               return new WaitAction(action);
+            case "tfl":
+               var cfg = string.IsNullOrEmpty(action.Url) ? action.File : action.Url;
+               if (string.IsNullOrEmpty(cfg) && !string.IsNullOrEmpty(action.Body)) {
+                  cfg = action.Body;
+               }
+               return new PipelineAction(context, action, cfg);
+            case "exit":
+               return new ExitAction(context, action);
+            default:
+               context.Error("{0} action is not registered.", action.Type);
+               return new NullAction();
+         }
+      }
+
    }
 }

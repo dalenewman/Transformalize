@@ -51,6 +51,7 @@ namespace Transformalize.Impl {
          }
 #endif
 
+         // I believe this is here in case the primary key depends on transformations
          var transformed = _transforms.Aggregate(input, (current, transform) => current.Select(transform.Operate));
 
          var output = _outputReader.Read();

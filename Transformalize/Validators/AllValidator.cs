@@ -99,7 +99,7 @@ namespace Transformalize.Validators {
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("all") { Parameters = new List<OperationParameter>(2) { new OperationParameter("operator"), new OperationParameter("value") } };
+            yield return new OperationSignature("all") { Parameters = new List<OperationParameter>(2) { new OperationParameter("value"), new OperationParameter("operator","equals") } };
         }
     }
 }

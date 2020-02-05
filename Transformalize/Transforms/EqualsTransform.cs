@@ -74,12 +74,6 @@ namespace Transformalize.Transforms {
 
         public new IEnumerable<OperationSignature> GetSignatures() {
             yield return new OperationSignature {
-                Method = "all",
-                Parameters = new List<OperationParameter>{
-                    new OperationParameter("value", Constants.DefaultSetting)
-                }
-            };
-            yield return new OperationSignature {
                 Method = "equals",
                 Parameters = new List<OperationParameter>{
                     new OperationParameter("value", Constants.DefaultSetting)

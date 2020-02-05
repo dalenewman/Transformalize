@@ -20,6 +20,7 @@ using Autofac;
 using Cfg.Net.Shorthand;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -42,6 +43,7 @@ namespace Transformalize.Containers.Autofac {
       private readonly Process _process;
       private readonly IPipelineLogger _logger;
       private readonly ContainerBuilder _builder;
+      private IContext _context;
 
       public ValidateBuilder(Process process, ContainerBuilder builder, IPipelineLogger logger) {
          _process = process;
@@ -63,7 +65,7 @@ namespace Transformalize.Containers.Autofac {
 
       public void Build() {
 
-         var loadContext = new PipelineContext(_logger, _process);
+         _context = new PipelineContext(_logger, _process);
 
          // return true or false, validators
 
@@ -116,6 +118,16 @@ namespace Transformalize.Containers.Autofac {
                   });
                }
                _shortHand.Signatures.Add(signature);
+            } else {
+               var existingParameters = _shortHand.Signatures.First(sg => sg.Name == s.Method).Parameters;
+               if (existingParameters.Count == s.Parameters.Count) {
+                  for (int i = 0; i < existingParameters.Count; i++) {
+                     if (existingParameters[i].Name != s.Parameters[i].Name) {
+                        _context.Warn($"There are multiple {s.Method} operations with conflicting parameters trying to register.");
+                        break;
+                     }
+                  }
+               }
             }
 
             builder.Register((ctx, p) => getValidator(ctx, p.Positional<IContext>(0))).Named<IValidate>(s.Method);

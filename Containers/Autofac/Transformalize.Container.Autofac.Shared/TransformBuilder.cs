@@ -240,7 +240,15 @@ namespace Transformalize.Containers.Autofac {
                }
                _shortHand.Signatures.Add(signature);
             } else {
-               _context.Warn($"There are multiple {s.Method} transforms trying to register.");
+               var existingParameters = _shortHand.Signatures.First(sg => sg.Name == s.Method).Parameters;
+               if(existingParameters.Count == s.Parameters.Count) {
+                  for (int i = 0; i < existingParameters.Count; i++) {
+                     if(existingParameters[i].Name != s.Parameters[i].Name) {
+                        _context.Warn($"There are multiple {s.Method} operations with conflicting parameters trying to register.");
+                        break;
+                     }
+                  }
+               }
             }
 
             builder.Register((ctx, p) => getTransform(ctx, p.Positional<IContext>(0))).Named<ITransform>(s.Method);

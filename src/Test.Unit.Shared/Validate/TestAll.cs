@@ -23,20 +23,20 @@ using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
 using Transformalize.Providers.Console;
 
-namespace Tests {
+namespace Tests.Validate {
 
    [TestClass]
-   public class Validate {
+   public class TestAll {
 
       [TestMethod]
-      public void EqualsValidator() {
+      public void Run() {
          var xml = @"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
           <rows>
-            <add Field1='11' Field2='12' Field3='13' />
-            <add Field1='11' Field2='11' Field3='11' />
+            <add Field1='9' Field2='10' Field3='11' />
+            <add Field1='9' Field2='9' Field3='9' />
           </rows>
           <fields>
             <add name='Field1' />
@@ -44,8 +44,7 @@ namespace Tests {
             <add name='Field3' />
           </fields>
           <calculated-fields>
-            <add name='AreEqual' type='bool' t='copy(Field1,Field2,Field3).equals()' />
-            
+            <add name='All9' type='bool' t='copy(Field1,Field2,Field3)' v='all(9)' valid-field='All9' />
           </calculated-fields>
         </add>
       </entities>
@@ -60,8 +59,8 @@ namespace Tests {
             using (var scope = new Container().CreateScope(process, logger)) {
                var output = scope.Resolve<IProcessController>().Read().ToArray();
 
-               Assert.AreEqual(false, output[0][process.GetField("AreEqual")]);
-               Assert.AreEqual(true, output[1][process.GetField("AreEqual")]);
+               Assert.AreEqual(false, output[0][process.GetField("All9")]);
+               Assert.AreEqual(true, output[1][process.GetField("All9")]);
 
             }
          }

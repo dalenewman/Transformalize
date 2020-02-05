@@ -19,6 +19,7 @@ using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
@@ -368,7 +369,7 @@ namespace Transformalize.Configuration {
       public bool System { get; set; }
 
       protected override void Validate() {
-         if (!string.IsNullOrEmpty(V)) {
+         if (!string.IsNullOrEmpty(V) || Validators.Any()) {
             if (ValidField == string.Empty) {
                ValidField = Alias + "Valid";
             }

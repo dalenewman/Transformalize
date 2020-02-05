@@ -199,8 +199,6 @@ namespace Transformalize.Configuration {
       [Cfg]
       public string Property { get; set; }
 
-      public Func<IRow, bool> ShouldRun { get; set; }
-
       [Cfg(value = true)]
       public bool Extension { get; set; }
 

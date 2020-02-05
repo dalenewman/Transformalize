@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -40,12 +41,17 @@ namespace Transformalize.Transforms {
             return;
          }
 
-         var nextMethod = NextOperation();
+         var isValidator = false;
+         var nextOperation = NextOperation();
+         if (nextOperation == null && Context.Field.Validators.Any()) {
+            isValidator = true;
+            nextOperation = Context.Field.Validators.First();
+         };
 
          if (Context.Operation.Value.Contains(",")) {
 
-            if (nextMethod == null) {
-               Context.Error($"A copy transform with multiple parameters in {Context.Entity.Alias}.{Context.Field.Alias} must have an operation after it.");
+            if (nextOperation == null) {
+               Context.Error($"A copy transform with multiple parameters in {Context.Entity.Alias}.{Context.Field.Alias} must have a transform or validator after it.");
             } else {
                var fields = new List<Field>();
                foreach (var item in Context.Operation.Value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)) {
@@ -59,27 +65,27 @@ namespace Transformalize.Transforms {
                   }
                }
                foreach (var field in fields) {
-                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
+                  nextOperation.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
                }
             }
          } else {
 
-            if (Context.Operation.Value == "*" && nextMethod != null) {
+            if (Context.Operation.Value == "*" && nextOperation != null) {
                foreach (var field in Context.Entity.GetAllFields()) {
-                  nextMethod.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
+                  nextOperation.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
                }
             } else {
                // simple copy
                if (Context.Entity.TryGetField(Context.Operation.Value, out _singleInput)) {
                   Returns = _singleInput.Type;
-                  if (nextMethod == null) {
+                  if (nextOperation == null || isValidator) {
                      Run = true;
                      _transform = (row) => {
                         row[Context.Field] = row[_singleInput];
                         return row;
                      };
                   } else {
-                     nextMethod.Parameters.Add(new Parameter() { Field = _singleInput.Alias, Entity = Context.Entity.Alias });
+                     nextOperation.Parameters.Add(new Parameter() { Field = _singleInput.Alias, Entity = Context.Entity.Alias });
                   }
                } else {
                   Context.Error($"Could not find {Context.Operation.Value} for copy transform in {Context.Field.Alias}.");

@@ -48,7 +48,7 @@ namespace Transformalize.Containers.Autofac {
          var result = true;
 
          if (ctx.IsRegisteredWithName<IValidate>(context.Operation.Method)) {
-            var v = ShouldRunValidator(ctx, context);
+            var v = ctx.ResolveNamed<IValidate>(context.Operation.Method, new PositionalParameter(0, context));
 
             foreach (var warning in v.Warnings()) {
                context.Warn(warning);
@@ -68,12 +68,5 @@ namespace Transformalize.Containers.Autofac {
          }
          return result;
       }
-
-      public static IValidate ShouldRunValidator(IComponentContext ctx, IContext context) {
-         return context.Operation.ShouldRun == null ?
-             ctx.ResolveNamed<IValidate>(context.Operation.Method, new PositionalParameter(0, context)) :
-             new ShouldRunValidator(context, ctx.ResolveNamed<IValidate>(context.Operation.Method, new PositionalParameter(0, context)));
-      }
-
    }
 }

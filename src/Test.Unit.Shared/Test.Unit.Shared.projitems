@@ -51,11 +51,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestFindRequiredFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToUnixTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validate\TestRequired.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validate\TestAll.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestXmlDecode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrimThenStartsWith.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TwoEntitiesReadOnly.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestTransformEquals.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ValidationMessages.cs" />
   </ItemGroup>
   <ItemGroup>
