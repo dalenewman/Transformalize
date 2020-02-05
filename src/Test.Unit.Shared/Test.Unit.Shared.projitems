@@ -51,6 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestFindRequiredFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToUnixTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestRequired.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestAll.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestXmlDecode.cs" />

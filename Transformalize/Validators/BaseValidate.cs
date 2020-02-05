@@ -184,9 +184,9 @@ namespace Transformalize.Validators {
       }
 
       public Operation NextOperation() {
-         var index = Context.Field.Transforms.IndexOf(Context.Operation);
-         if (index + 1 < Context.Field.Transforms.Count) {
-            return Context.Field.Transforms[index + 1];
+         var index = Context.Field.Validators.IndexOf(Context.Operation);
+         if (index + 1 < Context.Field.Validators.Count) {
+            return Context.Field.Validators[index + 1];
          } else {
             return null;
          }
