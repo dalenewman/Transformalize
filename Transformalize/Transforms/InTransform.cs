@@ -17,44 +17,83 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class InTransform : BaseTransform {
+   public class InTransform : BaseTransform {
 
-        private readonly Field _input;
-        private readonly HashSet<object> _set = new HashSet<object>();
+      private readonly bool _inMap;
+      private readonly Field _input;
+      private readonly HashSet<object> _map = new HashSet<object>();
 
-        public InTransform(IContext context = null) : base(context, "bool") {
+      public InTransform(IContext context = null) : base(context, "bool") {
 
-            if (IsMissingContext()) {
-                return;
-            }
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (IsMissing(Context.Operation.Domain)) {
-                return;
-            }
+         if (!Run)
+            return;
 
-            _input = SingleInput();
-            var items = Utility.Split(Context.Operation.Domain, ',');
-            foreach (var item in items) {
-                try {
-                    _set.Add(_input.Convert(item));
-                } catch (Exception ex) {
-                    Context.Warn($"In transform can't convert {item} to {_input.Type} {ex.Message}.");
-                }
-            }
-        }
+         var nextOperation = NextOperation();
+         _inMap = nextOperation == null || nextOperation.Method != "invert";
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = _set.Contains(row[_input]);
+         if (Context.Operation.Map == string.Empty) {
+            Error("The map method requires a map name or comma delimited list of values.");
+            Run = false;
+            return;
+         }
 
-            return row;
-        }
+         _input = SingleInput();
+      }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("domain") } };
-        }
-    }
+      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+
+         /* Override Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
+
+         foreach (var item in CreateMap().Items) {
+            _map.Add(_input.Convert(item.From));
+         }
+
+         Func<object, bool> transform;
+         if (_inMap) {
+            transform = o => _map.Contains(o);
+         } else {
+            transform = o => !_map.Contains(o);
+         }
+
+         foreach(var row in rows) {
+            row[Context.Field] = transform(row[_input]);
+            yield return row;
+         }
+      }
+
+      private Map CreateMap() {
+
+         var map = Context.Process.Maps.FirstOrDefault(m => m.Name == Context.Operation.Map);
+
+         if (map != null)
+            return map;
+
+         // auto map
+         map = new Map { Name = Context.Operation.Map };
+         var split = Context.Operation.Map.Split(',');
+         foreach (var item in split) {
+            map.Items.Add(new MapItem { From = item, To = item });
+         }
+         Context.Process.Maps.Add(map);
+
+         return map;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
+      }
+
+      public override IRow Operate(IRow row) {
+         throw new NotImplementedException();
+      }
+   }
 }

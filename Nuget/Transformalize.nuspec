@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.6.24-beta</version>
+      <version>0.6.25-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -11,7 +11,7 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
       <releaseNotes>change field validate method to check for any validators when defaulting ValidField property</releaseNotes>
-      <copyright>Copyright 2013-2019</copyright>
+      <copyright>Copyright © 2013-2020</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="portable-net45+win8+wpa81+wp8" />

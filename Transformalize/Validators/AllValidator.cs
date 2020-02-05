@@ -24,82 +24,82 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
 
-    public class AllValidator : StringValidate {
+   public class AllValidator : StringValidate {
 
-        private class FieldWithValue {
-            public Field Field { get; set; }
-            public object Value { get; set; }
-        }
+      private class FieldWithValue {
+         public Field Field { get; set; }
+         public object Value { get; set; }
+      }
 
-        private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
-        private readonly Func<IRow, bool> _func;
-        private readonly BetterFormat _betterFormat;
+      private readonly List<FieldWithValue> _input = new List<FieldWithValue>();
+      private readonly Func<IRow, bool> _func;
+      private readonly BetterFormat _betterFormat;
 
-        public AllValidator(IContext context = null) : base(context) {
+      public AllValidator(IContext context = null) : base(context) {
 
-            if (IsMissingContext()) {
-                return;
+         if (IsMissingContext()) {
+            return;
+         }
+
+         if (!Run)
+            return;
+
+         if (IsMissing(Context.Operation.Operator)) {
+            return;
+         }
+
+         if (IsMissing(Context.Operation.Value)) {
+            return;
+         }
+
+         foreach (var field in MultipleInput()) {
+            if (Constants.CanConvert()[field.Type](Context.Operation.Value)) {
+               _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Operation.Value) });
             }
+         }
 
-            if (!Run)
-                return;
+         _func = GetFunc(Context.Operation.Operator);
+         var help = Context.Field.Help;
+         if (help == string.Empty) {
+            help = $"All of the field(s): {Utility.ReadableDomain(_input.Select(f => f.Field.Alias))} must be {Context.Operation.Operator.TrimEnd('s')} to {Context.Operation.Value}.";
+         }
+         _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
+      }
 
-            if (IsMissing(Context.Operation.Operator)) {
-                return;
-            }
+      /// <summary>
+      /// TODO: Implement lessthan,lessthanequal,greaterthan,greaterthanequal
+      /// WARNING: Currently only support equal and notequal.
+      /// </summary>
+      /// <param name="operator"></param>
+      /// <returns></returns>
+      private Func<IRow, bool> GetFunc(string @operator) {
+         // equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=
+         switch (@operator) {
+            case "notequal":
+            case "!=":
+               return row => _input.All(f => !row[f.Field].Equals(f.Value));
+            case "lessthan":
+            case "<":
+            case "lessthanequal":
+            case "<=":
+            case "greaterthan":
+            case ">":
+            case "greaterthanequal":
+            case ">=":
+            default:
+               return row => _input.All(f => row[f.Field].Equals(f.Value));
+         }
+      }
 
-            if (IsMissing(Context.Operation.Value)) {
-                return;
-            }
+      public override IRow Operate(IRow row) {
+         if (IsInvalid(row, _func(row))) {
+            AppendMessage(row, _betterFormat.Format(row));
+         }
+         return row;
+      }
 
-            foreach (var field in MultipleInput()) {
-                if (Constants.CanConvert()[field.Type](Context.Operation.Value)) {
-                    _input.Add(new FieldWithValue { Field = field, Value = field.Convert(Context.Operation.Value) });
-                }
-            }
-
-            _func = GetFunc(Context.Operation.Operator);
-            var help = Context.Field.Help;
-            if (help == string.Empty) {
-                help = $"All of the field(s): {Utility.ReadableDomain(_input.Select(f => f.Field.Alias))} must be {Context.Operation.Operator.TrimEnd('s')} to {Context.Operation.Value}.";
-            }
-            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
-        }
-
-        /// <summary>
-        /// TODO: Implement lessthan,lessthanequal,greaterthan,greaterthanequal
-        /// WARNING: Currently only support equal and notequal.
-        /// </summary>
-        /// <param name="operator"></param>
-        /// <returns></returns>
-        private Func<IRow, bool> GetFunc(string @operator) {
-            // equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=
-            switch (@operator) {
-                case "notequal":
-                case "!=":
-                    return row => _input.All(f => !row[f.Field].Equals(f.Value));
-                case "lessthan":
-                case "<":
-                case "lessthanequal":
-                case "<=":
-                case "greaterthan":
-                case ">":
-                case "greaterthanequal":
-                case ">=":
-                default:
-                    return row => _input.All(f => row[f.Field].Equals(f.Value));
-            }
-        }
-
-        public override IRow Operate(IRow row) {
-            if (IsInvalid(row, _func(row))) {
-                AppendMessage(row, _betterFormat.Format(row));
-            }
-            return row;
-        }
-
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("all") { Parameters = new List<OperationParameter>(2) { new OperationParameter("value"), new OperationParameter("operator","equals") } };
-        }
-    }
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("all") { Parameters = new List<OperationParameter>(2) { new OperationParameter("value"), new OperationParameter("operator", "equals") } };
+      }
+   }
 }

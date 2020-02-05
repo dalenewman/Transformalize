@@ -31,111 +31,121 @@ using Module = Autofac.Module;
 using Parameter = Cfg.Net.Shorthand.Parameter;
 
 namespace Transformalize.Ioc.Autofac.Modules {
-    public class ValidateModule : Module {
+   public class ValidateModule : Module {
 
-        public const string Name = "shorthand-v";
-        private readonly HashSet<string> _methods = new HashSet<string>();
-        private readonly ShorthandRoot _shortHand = new ShorthandRoot();
-        private readonly Process _process;
-        private readonly IPipelineLogger _logger;
+      public const string Name = "shorthand-v";
+      private readonly HashSet<string> _methods = new HashSet<string>();
+      private readonly ShorthandRoot _shortHand = new ShorthandRoot();
+      private readonly Process _process;
+      private readonly IPipelineLogger _logger;
+      private readonly IContext _context;
 
-        public ValidateModule(Process process, IPipelineLogger logger) {
-            _process = process;
-            _logger = logger;
-        }
+      public ValidateModule(Process process, IPipelineLogger logger) {
+         _process = process;
+         _logger = logger;
+         _context = new PipelineContext(_logger, _process);
+      }
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            var loadContext = new PipelineContext(_logger, _process);
+         builder.Properties["ShortHand"] = _shortHand;
+         builder.Properties["Methods"] = _methods;
+         builder.Properties["Process"] = _process;
 
-            builder.Properties["ShortHand"] = _shortHand;
-            builder.Properties["Methods"] = _methods;
-            builder.Properties["Process"] = _process;
+         // return true or false, validators
 
-            // return true or false, validators
+         // new style
+         RegisterValidator(builder, (ctx, c) => new AnyValidator(c), new AnyValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new AllValidator(c), new AllValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new StartsWithValidator(c), new StartsWithValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EndsWithValidator(c), new EndsWithValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MapValidator(c), new MapValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new ContainsValidator(c), new ContainsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new IsValidator(c), new IsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EqualsValidator(c), new EqualsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new NotEqualValidator(c), new NotEqualValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EmptyValidator(c), new EmptyValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new DefaultValidator(c), new DefaultValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new NumericValidator(c), new NumericValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MatchValidator(c), new MatchValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new RequiredValidator(c), new RequiredValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new LengthValidator(c), new LengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MinLengthValidator(c), new MinLengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MaxLengthValidator(c), new MaxLengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new CompareValidator("min", c), new CompareValidator("min").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new InvertValidator(c), new InvertValidator().GetSignatures());
 
-            // new style
-            RegisterValidator(builder, (ctx, c) => new AnyValidator(c), new AnyValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new AllValidator(c), new AllValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new StartsWithValidator(c), new StartsWithValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EndsWithValidator(c), new EndsWithValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MapValidator(true, c), new MapValidator(inMap:true).GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MapValidator(false, c), new MapValidator(inMap: false).GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new ContainsValidator(c), new ContainsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new IsValidator(c), new IsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EqualsValidator(c), new EqualsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new NotEqualValidator(c), new NotEqualValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EmptyValidator(c), new EmptyValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new DefaultValidator(c), new DefaultValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new NumericValidator(c), new NumericValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MatchValidator(c), new MatchValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new RequiredValidator(c), new RequiredValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new LengthValidator(c), new LengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MinLengthValidator(c), new MinLengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MaxLengthValidator(c), new MaxLengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new CompareValidator("min",c), new CompareValidator("min").GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
+         if (Directory.Exists(pluginsFolder)) {
 
-            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
-            if (Directory.Exists(pluginsFolder)) {
+            var assemblies = new List<Assembly>();
 
-                var assemblies = new List<Assembly>();
-
-                foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Validate.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
-                    var info = new FileInfo(file);
-                    var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "validate" && f != "autofac");
-                    loadContext.Debug(() => $"Loading {name} validator(s)");
-                    var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-                    assemblies.Add(assembly);
-                }
-
-                if (assemblies.Any()) {
-                    builder.RegisterAssemblyModules(assemblies.ToArray());
-                }
+            foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Validate.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+               var info = new FileInfo(file);
+               var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "validate" && f != "autofac");
+               _context.Debug(() => $"Loading {name} validator(s)");
+               var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+               assemblies.Add(assembly);
             }
 
-            // register the short hand
-            builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
-            builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(Name), new[] { "fields", "calculated-fields" }, "v", "validators", "method")).Named<IDependency>(Name).InstancePerLifetimeScope();
+            if (assemblies.Any()) {
+               builder.RegisterAssemblyModules(assemblies.ToArray());
+            }
+         }
 
-        }
+         // register the short hand
+         builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(Name).InstancePerLifetimeScope();
+         builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(Name), new[] { "fields", "calculated-fields" }, "v", "validators", "method")).Named<IDependency>(Name).InstancePerLifetimeScope();
 
-        private void RegisterValidator(ContainerBuilder builder, Func<IComponentContext, IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
+      }
 
-            foreach (var s in signatures) {
-                if (_methods.Add(s.Method)) {
+      private void RegisterValidator(ContainerBuilder builder, Func<IComponentContext, IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
 
-                    var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
-                    _shortHand.Methods.Add(method);
+         foreach (var s in signatures) {
+            if (_methods.Add(s.Method)) {
 
-                    var signature = new Signature {
-                        Name = s.Method,
-                        NamedParameterIndicator = s.NamedParameterIndicator
-                    };
+               var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
+               _shortHand.Methods.Add(method);
 
-                    foreach (var parameter in s.Parameters) {
-                        signature.Parameters.Add(new Parameter {
-                            Name = parameter.Name,
-                            Value = parameter.Value
-                        });
-                    }
-                    _shortHand.Signatures.Add(signature);
-                }
+               var signature = new Signature {
+                  Name = s.Method,
+                  NamedParameterIndicator = s.NamedParameterIndicator
+               };
 
-                builder.Register((ctx, p) => getValidator(ctx, p.Positional<IContext>(0))).Named<IValidate>(s.Method);
+               foreach (var parameter in s.Parameters) {
+                  signature.Parameters.Add(new Parameter {
+                     Name = parameter.Name,
+                     Value = parameter.Value
+                  });
+               }
+               _shortHand.Signatures.Add(signature);
+            } else {
+               var existingParameters = _shortHand.Signatures.First(sg => sg.Name == s.Method).Parameters;
+               if (existingParameters.Count == s.Parameters.Count) {
+                  for (int i = 0; i < existingParameters.Count; i++) {
+                     if (existingParameters[i].Name != s.Parameters[i].Name) {
+                        _context.Warn($"There are multiple {s.Method} operations with conflicting parameters trying to register.");
+                        break;
+                     }
+                  }
+               }
             }
 
-        }
+            builder.Register((ctx, p) => getValidator(ctx, p.Positional<IContext>(0))).Named<IValidate>(s.Method);
+         }
 
-        public static string AssemblyDirectory {
-            get {
-                var codeBase = typeof(Process).Assembly.CodeBase;
-                var uri = new UriBuilder(codeBase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                return Path.GetDirectoryName(path);
-            }
-        }
+      }
 
-    }
+      public static string AssemblyDirectory {
+         get {
+            var codeBase = typeof(Process).Assembly.CodeBase;
+            var uri = new UriBuilder(codeBase);
+            var path = Uri.UnescapeDataString(uri.Path);
+            return Path.GetDirectoryName(path);
+         }
+      }
+
+   }
 }

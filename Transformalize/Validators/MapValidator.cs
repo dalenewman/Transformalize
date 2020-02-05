@@ -33,8 +33,7 @@ namespace Transformalize.Validators {
       private Action<IRow> _validate;
       private bool _autoMap;
 
-      public MapValidator(bool inMap, IContext context = null) : base(context) {
-         _inMap = inMap;
+      public MapValidator(IContext context = null) : base(context) {
 
          if (IsMissingContext()) {
             return;
@@ -42,6 +41,9 @@ namespace Transformalize.Validators {
 
          if (!Run)
             return;
+
+         var nextOperation = NextOperation();
+         _inMap = nextOperation == null || nextOperation.Method != "invert";
 
          if (Context.Operation.Map == string.Empty) {
             Error("The map method requires a map name or comma delimited list of values.");
@@ -118,12 +120,8 @@ namespace Transformalize.Validators {
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
-         if (_inMap) {
-            yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
-            yield return new OperationSignature("map") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
-         } else {
-            yield return new OperationSignature("notin") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
-         }
+         yield return new OperationSignature("in") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
+         yield return new OperationSignature("map") { Parameters = new List<OperationParameter>(1) { new OperationParameter("map") } };
       }
    }
 

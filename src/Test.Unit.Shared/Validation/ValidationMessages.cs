@@ -23,7 +23,7 @@ using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
 using Transformalize.Providers.Console;
 
-namespace Tests {
+namespace Tests.Validation {
 
    [TestClass]
    public class ValidationMessages {

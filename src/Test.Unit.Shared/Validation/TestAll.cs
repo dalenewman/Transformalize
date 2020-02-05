@@ -23,7 +23,7 @@ using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
 using Transformalize.Providers.Console;
 
-namespace Tests.Validate {
+namespace Tests.Validation {
 
    [TestClass]
    public class TestAll {
@@ -64,8 +64,6 @@ namespace Tests.Validate {
 
             }
          }
-
       }
-
    }
 }

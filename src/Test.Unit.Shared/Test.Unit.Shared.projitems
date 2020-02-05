@@ -51,14 +51,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestFindRequiredFields.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToRow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToUnixTime.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validate\TestRequired.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Validate\TestAll.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\TestRequired.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\TestAll.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestXmlDecode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformParameters.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrimThenStartsWith.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TwoEntitiesReadOnly.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestTransformEquals.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ValidationMessages.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\ValidationMessages.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Files\access\empty.mdb">

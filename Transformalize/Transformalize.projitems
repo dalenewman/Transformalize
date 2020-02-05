@@ -210,6 +210,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\FormatPhoneTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\RegexIsMatchTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\StartsWithTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validators\InvertValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\LengthValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\MapValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\MatchValidator.cs" />

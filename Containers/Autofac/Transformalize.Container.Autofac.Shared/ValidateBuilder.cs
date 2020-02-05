@@ -74,8 +74,7 @@ namespace Transformalize.Containers.Autofac {
          RegisterValidator(_builder, (ctx, c) => new AllValidator(c), new AllValidator().GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new StartsWithValidator(c), new StartsWithValidator().GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new EndsWithValidator(c), new EndsWithValidator().GetSignatures());
-         RegisterValidator(_builder, (ctx, c) => new MapValidator(true, c), new MapValidator(inMap: true).GetSignatures());
-         RegisterValidator(_builder, (ctx, c) => new MapValidator(false, c), new MapValidator(inMap: false).GetSignatures());
+         RegisterValidator(_builder, (ctx, c) => new MapValidator(c), new MapValidator().GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new ContainsValidator(c), new ContainsValidator().GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new IsValidator(c), new IsValidator().GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new EqualsValidator(c), new EqualsValidator().GetSignatures());
@@ -91,6 +90,7 @@ namespace Transformalize.Containers.Autofac {
          RegisterValidator(_builder, (ctx, c) => new CompareValidator("min", c), new CompareValidator("min").GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
          RegisterValidator(_builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         RegisterValidator(_builder, (ctx, c) => new InvertValidator(c), new InvertValidator().GetSignatures());
 
          foreach (var v in _validators) {
             RegisterValidator(_builder, (ctx, c) => v.GetValidator(c), v.Signatures);
