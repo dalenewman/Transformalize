@@ -33,7 +33,7 @@ namespace Transformalize.Configuration {
    [Cfg(name = "cfg")]
    public class Process : CfgNode, IDisposable {
 
-      private static Dictionary<string, IEnumerable<Field>> _fieldMatchCache = new Dictionary<string, IEnumerable<Field>>();
+      private static readonly Dictionary<string, IEnumerable<Field>> _fieldMatchCache = new Dictionary<string, IEnumerable<Field>>();
 
       /// <summary>
       /// The default shorthand configuration for children processes

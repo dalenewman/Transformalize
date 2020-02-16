@@ -26,10 +26,12 @@ namespace Pipeline.Web.Orchard.Models {
       }
 
       public PipelineConfigurationPart Part { get; set; }
+      public MapCfg MapCfg { get; private set; }
 
-      public ReportViewModel(Process process, PipelineConfigurationPart part) {
+      public ReportViewModel(Process process, PipelineConfigurationPart part, MapCfg mapCfg = null) {
          Process = process;
          Part = part;
+         MapCfg = mapCfg;
       }
 
       public Parameter[] ActiveParameters {

@@ -60,6 +60,7 @@ namespace Pipeline.Web.Orchard.Handlers {
          base.GetItemMetadata(context);
 
          switch (part.GetDefaultMode()) {
+            case "action":
             case "data":
                context.Metadata.DisplayRouteValues = new RouteValueDictionary {
                         {"Area", Common.ModuleName},
@@ -98,14 +99,6 @@ namespace Pipeline.Web.Orchard.Handlers {
                         {"Area", Common.ModuleName},
                         {"Controller", "HandsOnTable"},
                         {"Action", "Index"},
-                        {"id", context.ContentItem.Id}
-                    };
-               break;
-            case "action":
-               context.Metadata.DisplayRouteValues = new RouteValueDictionary {
-                        {"Area", Common.ModuleName},
-                        {"Controller", "Api"},
-                        {"Action", "Run"},
                         {"id", context.ContentItem.Id}
                     };
                break;

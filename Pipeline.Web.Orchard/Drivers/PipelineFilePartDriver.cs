@@ -21,42 +21,44 @@ using Pipeline.Web.Orchard.Models;
 
 namespace Pipeline.Web.Orchard.Drivers {
 
-    public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
+   public class PipelineFilePartDriver : ContentPartDriver<PipelineFilePart> {
 
-        protected new string Prefix = Common.PipelineFileName;
+      protected new string Prefix = Common.PipelineFileName;
 
-        //IMPORT, EXPORT
-        protected override void Importing(PipelineFilePart part, ImportContentContext context) {
-            part.Record.FullPath = context.Attribute(part.PartDefinition.Name, "FullPath");
-            part.Record.Direction = context.Attribute(part.PartDefinition.Name, "Direction");
-        }
+      //IMPORT, EXPORT
+      protected override void Importing(PipelineFilePart part, ImportContentContext context) {
+         part.Record.FullPath = context.Attribute(part.PartDefinition.Name, "FullPath");
+         part.Record.Direction = context.Attribute(part.PartDefinition.Name, "Direction");
+         part.Record.OriginalName = context.Attribute(part.PartDefinition.Name, "OriginalName");
+      }
 
-        protected override void Exporting(PipelineFilePart part, ExportContentContext context) {
-            context.Element(part.PartDefinition.Name).SetAttributeValue("FullPath", part.Record.FullPath);
-            context.Element(part.PartDefinition.Name).SetAttributeValue("Direction", part.Record.Direction);
-        }
+      protected override void Exporting(PipelineFilePart part, ExportContentContext context) {
+         context.Element(part.PartDefinition.Name).SetAttributeValue("FullPath", part.Record.FullPath);
+         context.Element(part.PartDefinition.Name).SetAttributeValue("Direction", part.Record.Direction);
+         context.Element(part.PartDefinition.Name).SetAttributeValue("OriginalName", part.Record.OriginalName);
+      }
 
-        //GET EDITOR
-        protected override DriverResult Editor(PipelineFilePart part, dynamic shapeHelper) {
-            return ContentShape("Parts_" + Prefix + "_Edit", () => shapeHelper
-                .EditorTemplate(TemplateName: "Parts/" + Prefix, Model: part, Prefix: Prefix));
-        }
+      //GET EDITOR
+      protected override DriverResult Editor(PipelineFilePart part, dynamic shapeHelper) {
+         return ContentShape("Parts_" + Prefix + "_Edit", () => shapeHelper
+             .EditorTemplate(TemplateName: "Parts/" + Prefix, Model: part, Prefix: Prefix));
+      }
 
-        //POST EDITOR
-        protected override DriverResult Editor(PipelineFilePart part, IUpdateModel updater, dynamic shapeHelper) {
-            updater.TryUpdateModel(part, Prefix, null, null);
-            return Editor(part, shapeHelper);
-        }
+      //POST EDITOR
+      protected override DriverResult Editor(PipelineFilePart part, IUpdateModel updater, dynamic shapeHelper) {
+         updater.TryUpdateModel(part, Prefix, null, null);
+         return Editor(part, shapeHelper);
+      }
 
-        // FOR ADMIN LIST RESULTS
-        protected override DriverResult Display(PipelineFilePart part, string displayType, dynamic shapeHelper) {
-            if (displayType.StartsWith("Summary")) {
-                return Combined(
-                    ContentShape("Parts_" + Prefix + "_SummaryAdmin", () => shapeHelper.Parts_PipelineFile_SummaryAdmin(Part: part))
-                );
-            }
-            return null;
-        }
+      // FOR ADMIN LIST RESULTS
+      protected override DriverResult Display(PipelineFilePart part, string displayType, dynamic shapeHelper) {
+         if (displayType.StartsWith("Summary")) {
+            return Combined(
+                ContentShape("Parts_" + Prefix + "_SummaryAdmin", () => shapeHelper.Parts_PipelineFile_SummaryAdmin(Part: part))
+            );
+         }
+         return null;
+      }
 
-    }
+   }
 }

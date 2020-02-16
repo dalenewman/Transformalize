@@ -2,44 +2,46 @@
 
 @{
 
-    Script.Require("jQuery").AtHead();
+   Script.Require("jQuery").AtHead();
 
-    var root = Model.Library.EndsWith("/") ? Model.Library : Model.Library + "/";
+   if(Model.Library != null) {
+      var root = Model.Library.EndsWith("/") ? Model.Library : Model.Library + "/";
 
-    Style.Include(root + "codemirror.min.css").AtHead();
-    Style.Include(root + "addon/display/fullscreen.min.css").AtHead();
-    Style.Include(root + "addon/fold/foldgutter.min.css").AtHead();
-    Style.Include(root + "addon/dialog/dialog.css").AtHead();
-    Style.Include(root + "addon/hint/show-hint.min.css").AtHead();
-    Style.Include(root + "theme/" + Model.Theme + ".min.css").AtHead();
+      Style.Include(root + "codemirror.min.css").AtHead();
+      Style.Include(root + "addon/display/fullscreen.min.css").AtHead();
+      Style.Include(root + "addon/fold/foldgutter.min.css").AtHead();
+      Style.Include(root + "addon/dialog/dialog.css").AtHead();
+      Style.Include(root + "addon/hint/show-hint.min.css").AtHead();
+      Style.Include(root + "theme/" + Model.Theme + ".min.css").AtHead();
 
-    Script.Include(root + "codemirror.min.js").AtHead();
-    Script.Include(root + "addon/display/fullscreen.min.js").AtHead();
+      Script.Include(root + "codemirror.min.js").AtHead();
+      Script.Include(root + "addon/display/fullscreen.min.js").AtHead();
 
-    switch (Model.Mode) {
-        case "json":
+      switch (Model.Mode) {
+         case "json":
             Script.Include(root + "mode/javascript/javascript.min.js").AtHead();
             break;
-        case "yaml":
+         case "yaml":
             Script.Include(root + "mode/yaml/yaml.min.js").AtHead();
             break;
-        default:
-            Script.Include(root + "mode/xml/xml.min.js").AtHead(); 
+         default:
+            Script.Include(root + "mode/xml/xml.min.js").AtHead();
             Script.Include(root + "addon/fold/xml-fold.min.js").AtHead();
             Script.Include(root + "addon/edit/closetag.min.js").AtHead();
             Script.Include(root + "addon/edit/matchtags.min.js").AtHead();
             break;
-    }
+      }
 
-    Script.Include(root + "addon/fold/foldcode.min.js").AtHead();
-    Script.Include(root + "addon/fold/foldgutter.min.js").AtHead();
-    Script.Include(root + "addon/dialog/dialog.min.js").AtHead();
-    Script.Include(root + "addon/search/search.min.js").AtHead();
-    Script.Include(root + "addon/search/searchcursor.min.js").AtHead();
-    Script.Include(root + "addon/search/jump-to-line.min.js").AtHead();
-    Script.Include(root + "addon/search/match-highlighter.min.js").AtHead();
-    Script.Include(root + "addon/hint/show-hint.min.js").AtHead();
-    Script.Include(root + "addon/hint/anyword-hint.min.js").AtHead();
+      Script.Include(root + "addon/fold/foldcode.min.js").AtHead();
+      Script.Include(root + "addon/fold/foldgutter.min.js").AtHead();
+      Script.Include(root + "addon/dialog/dialog.min.js").AtHead();
+      Script.Include(root + "addon/search/search.min.js").AtHead();
+      Script.Include(root + "addon/search/searchcursor.min.js").AtHead();
+      Script.Include(root + "addon/search/jump-to-line.min.js").AtHead();
+      Script.Include(root + "addon/search/match-highlighter.min.js").AtHead();
+      Script.Include(root + "addon/hint/show-hint.min.js").AtHead();
+      Script.Include(root + "addon/hint/anyword-hint.min.js").AtHead();
+   }
 }
 
 <script>

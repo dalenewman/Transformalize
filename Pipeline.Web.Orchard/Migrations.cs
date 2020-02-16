@@ -176,7 +176,7 @@ namespace Pipeline.Web.Orchard {
       }
 
       public int UpdateFrom13() {
-         SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapStyle", DbType.String));
+         // SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapStyle", DbType.String));
          return 14;
       }
 
@@ -250,6 +250,16 @@ namespace Pipeline.Web.Orchard {
       public int UpdateFrom24() {
          SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapRefresh", DbType.Boolean));
          return 25;
+      }
+
+      public int UpdateFrom25() {
+         SchemaBuilder.AlterTable(Common.PipelineConfigurationName + "PartRecord", table => table.AddColumn("MapConfiguration", DbType.String));
+         return 26;
+      }
+
+      public int UpdateFrom26() {
+         SchemaBuilder.AlterTable(Common.PipelineFileName + "PartRecord", table => table.AddColumn("OriginalName", DbType.String));
+         return 27;
       }
 
    }

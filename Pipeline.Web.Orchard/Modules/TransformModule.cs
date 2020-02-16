@@ -233,13 +233,12 @@ namespace Pipeline.Web.Orchard.Modules {
 
          // Orchard
          RegisterTransform(builder, (ctx, c) => new ResolveUrlTransform(c), new ResolveUrlTransform().GetSignatures());
-         
-
+         RegisterTransform(builder, (ctx, c) => new MapPathTransform(c), new MapPathTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new RawUrlTransform(c), new RawUrlTransform().GetSignatures());
 
          // register the short hand
          builder.Register((c, p) => new FieldTransformShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "t", "transforms", "method")).As<FieldTransformShorthandCustomizer>().SingleInstance();
          builder.Register((c, p) => new ParameterTransformShorthandCustomizer(_shortHand, new[] { "parameters" }, "t", "transforms", "method")).As<ParameterTransformShorthandCustomizer>().SingleInstance();
-
 
       }
 

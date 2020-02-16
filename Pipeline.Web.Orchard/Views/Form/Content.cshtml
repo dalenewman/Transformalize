@@ -1,263 +1,343 @@
-﻿@using Transformalize.Configuration
-@using Orchard.ContentManagement
-@using Pipeline.Web.Orchard.Ext
+﻿@using Pipeline.Web.Orchard.Ext
 @using Pipeline.Web.Orchard.Models
-@using Transformalize.Impl
 @using System.Linq
 @model FormViewModel
-@{
-    var focus = string.Empty;
-    CfgRow row = null;
-    Field[] fields = null;
-    var valid = false;
-    var latitude = "";
-    var longitude = "";
-    var accuracy = "";
 
-    var request = WorkContext.HttpContext.Request;
-    var method = request.HttpMethod;
-    var entity = Model.Process.Entities.FirstOrDefault();
-    var geo = Model.Process.Parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
-    if (geo) {
-        latitude = request.Form["Orchard.Latitude"] ?? string.Empty;
-        longitude = request.Form["Orchard.Longitude"] ?? string.Empty;
-        accuracy = request.Form["Orchard.Accuracy"] ?? string.Empty;
-    }
-    var sectionsDisplayed = new HashSet<string>();
-
-    if (entity != null) {
-        row = entity.Rows.FirstOrDefault();
-        fields = entity.Fields.Where(f => f.Input).ToArray();
-
-        // determine focus
-        if (method == "GET") {
-            focus = fields.First(f => !f.PrimaryKey).Alias;
-        } else {
-            var previous = request.Form["Orchard.Focus"] == "Orchard.Submit" ? fields.Last() : fields.First(f => f.Name == request.Form["Orchard.Focus"]);
-            var maxIndex = fields.Where(f => !f.PrimaryKey).Max(f => f.Index);
-            if (previous.Index < maxIndex) {
-                focus = fields.First(f => f.Index == previous.Index + 1).Alias;
-            } else {
-                var invalid = fields.FirstOrDefault(f => f.ValidField != string.Empty && !(bool)row[f.ValidField]);
-                focus = invalid == null ? "Orchard.Submit" : invalid.Alias;
-            }
-        }
-
-        valid = entity.ValidField != string.Empty && (row != null && (bool)row[entity.ValidField]);
-    }
-
-}
-
-@functions {
-    private bool IsValid(CfgRow row, Field field) {
-        return WorkContext.HttpContext.Request.HttpMethod == "GET" || field.ValidField == string.Empty || (bool)row[field.ValidField];
-    }
-
-    private string Status(CfgRow row, Field field) {
-        return IsValid(row, field) ? string.Empty : "has-error";
-    }
-}
-
-@if (entity == null) {
-    <div class="alert alert-danger" role="alert">@Model.Process.Message</div>
+@if (Model.Entity == null) {
+   <div class="alert alert-danger" role="alert">@Model.Process.Message</div>
 }
 
 @foreach (var error in Model.Process.Errors()) {
-    <div class="alert alert-danger" role="alert">@error</div>
+   <div class="alert alert-danger" role="alert">@error</div>
 }
 
 @foreach (var warning in Model.Process.Warnings()) {
-    <div class="alert alert-warning" role="alert">@warning</div>
+   <div class="alert alert-warning" role="alert">@warning</div>
 }
 
-@if (entity != null && entity.Label != string.Empty) {
-    <h2>@entity.Label</h2>
+@if (Model.Entity != null && Model.Entity.Label != string.Empty) {
+   <h2>@Model.Entity.Label</h2>
 }
 
-@using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
+<input type="hidden" id="id_focus" name="Orchard.Focus" value="@Model.Focus" />
 
-    <input type="hidden" id="id_focus" name="Orchard.Focus" value="@focus" />
-    if (geo) {
-        <input type="hidden" id="id_geo_latitude" name="Orchard.Latitude" value="@latitude" />
-        <input type="hidden" id="id_geo_longitude" name="Orchard.Longitude" value="@longitude" />
-        <input type="hidden" id="id_geo_accuracy" name="Orchard.Accuracy" value="@accuracy" />
-    }
+@if (Model.Row != null) {
 
-    if (row != null) {
+   foreach (var field in Model.InputFields.Where(f => f.Output)) {
 
-        foreach (var field in fields.Where(f=>f.Output)) {
+      var value = Model.Row[field.Alias] ?? string.Empty;
 
-            var value = row[field.Alias] ?? string.Empty;
+      if (field.Type.StartsWith("date") && field.Format != string.Empty) {
+         value = ((DateTime)value).ToString(field.Format);
+      }
 
-            if (field.Type.StartsWith("date") && field.Format != string.Empty) {
-                value = ((DateTime)value).ToString(field.Format);
-            }
+      if (Model.SectionsDisplayed.Add(field.Section)) {
+         <h3>@field.Section</h3>
+      }
 
-            if (sectionsDisplayed.Add(field.Section)) {
-                <h3>@field.Section</h3>
-            }
+      if (field.PrimaryKey) {
+         <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
+      } else {
+         var map = Model.Process.Maps.FirstOrDefault(m => m.Name == field.Map);
+         if (map != null) {
 
-            if (field.PrimaryKey) {
-                <input type="hidden" name="@field.Alias" id="@field.Alias" value="@value" />
-            } else {
-                var map = Model.Process.Maps.FirstOrDefault(m => m.Name == field.Map);
-                if (map != null) {
+            <div class="form-group @(Model.Status(Model.Row,field))">
+               <label for="@field.Alias">@field.Label</label>
+               @if (field.Hint != string.Empty) {
+                  <br /><span class="text-muted">@field.Hint</span>
+               }
+               @if (map.Items.All(i => !i.To.Equals(value))) {
+                  value = map.Items.First().To;
+               }
+               @if (map.Items.Count > 3) {
+                  <select class="form-control @field.Class"
+                          name="@field.Alias"
+                          id="id_@field.Alias"
+                          data-tfl-post-back="@field.PostBack">
+                     @foreach (var item in map.Items) {
+                        <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
+                     }
+                  </select>
+               } else {
+                  if (map.Items.Count > 2) {
+                     foreach (var item in map.Items) {
+                        <div class="radio">
+                           <label><input class="@field.Class" type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" />@item.From</label>
+                        </div>
+                     }
+                  } else {
+                     <br />
+                     foreach (var item in map.Items) {
+                        <label class="radio-inline"><input class="@field.Class" type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" /> &nbsp;@item.From</label>
+                     }
+                  }
+               }
+               <span class="help-container">
+                  @if (!Model.IsValid(Model.Row, field)) {
+                     <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                  }
+               </span>
+            </div>
 
-                    <div class="form-group @(Status(row,field))">
-                        <label for="@field.Alias">@field.Label</label>
-                        @if (field.Hint != string.Empty) {
-                            <br/><span class="text-muted">@field.Hint</span>
-                        }
-                        @if (map.Items.All(i => !i.To.Equals(value))) {
-                            value = map.Items.First().To;
-                        }
-                        @if (map.Items.Count > 3) {
-                            <select class="form-control @field.Class"
-                                    name="@field.Alias"
-                                    id="id_@field.Alias"
-                                    data-tfl-post-back="@field.PostBack">
-                                @foreach (var item in map.Items) {
-                                    <option value="@item.To" selected="@(value.Equals(item.To))">@item.From</option>
-                                }
-                            </select>
-                        } else {
-                            if (map.Items.Count > 2) {
-                                foreach (var item in map.Items) {
-                                    <div class="radio">
-                                        <label>
-                                            <input class="@field.Class"
-                                                    type="radio" name="@field.Alias"
-                                                    id="id_@field.Alias"
-                                                    value="@item.To"
-                                                    checked="@(value.Equals(item.To))"
-                                                    data-tfl-post-back="@field.PostBack" />@item.From
-                                            </label>
-                                        </div>
-                                    }
-                                } else {
-                                    <br />
-                                    foreach (var item in map.Items) {
-                                        <label class="radio-inline">
-                                            <input class="@field.Class"
-                                                    type="radio" name="@field.Alias"
-                                                    id="id_@field.Alias"
-                                                    value="@item.To"
-                                                    checked="@(value.Equals(item.To))"
-                                                    data-tfl-post-back="@field.PostBack" /> &nbsp;@item.From
-                                            </label>
+         } else {
+            var type = field.InputType == "defer" ? field.Type : field.InputType;
+            switch (type) {
+               case "bool":
+               case "boolean":
+                  <div class="@(Model.Status(Model.Row, field))">
+                     <div class="checkbox">
+                        <label for="@field.Alias">
+                           <input name="@field.Alias"
+                                  id="id_@field.Alias"
+                                  type="checkbox"
+                                  checked="@((bool)value)"
+                                  data-tfl-post-back="@field.PostBack" /> @field.Label
+                              </label>
+                           </div>
+                        </div>
+                        break;
+                     case "date":
+                        <div class="form-group @(Model.Status(Model.Row,field))">
+                           <label for="@field.Alias">@field.Label</label>
+                           @if (field.Hint != string.Empty) {
+                              <br /><span class="text-muted">@field.Hint</span>
+                           }
+                           <div class="input-group">
+                              <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
+                                 <span class="glyphicon glyphicon-calendar"></span>
+                              </div>
+                              <input type="text"
+                                     class="form-control @field.Class"
+                                     maxlength="@field.Length"
+                                     name="@field.Alias"
+                                     id="id_@field.Alias"
+                                     placeholder="@field.Label"
+                                     value="@value"
+                                     data-tfl-post-back="@field.PostBack"
+                                     @Html.Raw(field.ToParsley()) />
+                              <script language="javascript">
+                                 $(document).ready(function () {
+                                    var input = $('#id_@field.Alias').pickadate({ editable: true, format: 'yyyy-mm-dd' });
+                                    var picker = input.pickadate('picker');
+                                    $('#id_@field.Alias').off('click');
+                                    $('#id_dp_@field.Alias').click(function (e) {
+                                        // stop the click from bubbling
+                                        e.stopPropagation();
+                                        // prevent the default click action
+                                        e.preventDefault();
+                                        // open the date picker
+                                        if (picker.get('open')) {
+                                           picker.close()
+                                        } else {
+                                          picker.open()
                                         }
-                                    }
-                                }
-                    </div>
-                } else {
-                    var type = field.InputType == "defer" ? field.Type : field.InputType;
-                    switch (type) {
-                        case "file":
-                            PipelineFilePart filePart = null;
+                                    });
+                                 });
+                              </script>
+                           </div>
 
-                            var str = value.ToString();
-                            var hasFile = false;
-                            if (str != string.Empty) {
-                                var id = str.Split(new[] { '/' }, StringSplitOptions.None).LastOrDefault();
-                                if (id != null) {
-                                    int cid;
-                                    if (int.TryParse(id, out cid)) {
-                                        filePart = WorkContext.Resolve<IContentManager>().Get(cid).As<PipelineFilePart>();
-                                        hasFile = filePart != null;
-                                    }
-                                }
-                            }
+                           <span class="help-container">
+                              @if (!Model.IsValid(Model.Row, field)) {
+                                 <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                              }
+                           </span>
 
-                    <div class="form-group @(Status(row,field))">
+                        </div>
+                        break;
+                     case "time":
+                        <div class="form-group @(Model.Status(Model.Row,field))">
+                           <label for="@field.Alias">@field.Label</label>
+                           @if (field.Hint != string.Empty) {
+                              <br /><span class="text-muted">@field.Hint</span>
+                           }
+                           <div class="input-group">
+                              <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
+                                 <span class="glyphicon glyphicon-time"></span>
+                              </div>
+                              <input type="time"
+                                     class="form-control @field.Class"
+                                     maxlength="@field.Length"
+                                     name="@field.Alias"
+                                     id="id_@field.Alias"
+                                     placeholder="@field.Label"
+                                     value="@value"
+                                     data-tfl-post-back="@field.PostBack"
+                                     @Html.Raw(field.ToParsley()) />
+                              <script language="javascript">
+                                 $(document).ready(function () {
+                                    // plugin code goes here
+                                 });
+                              </script>
+                           </div>
+
+                           <span class="help-container">
+                              @if (!Model.IsValid(Model.Row, field)) {
+                                 <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                              }
+                           </span>
+
+                        </div>
+
+                  break;
+               case "file":
+
+                  var file = Model.GetFile(field, value);
+
+                     <div class="form-group @(Model.Status(Model.Row,field))">
+
                         <label for="@field.Alias">@field.Label</label>
                         @if (field.Hint != string.Empty) {
-                            <br/><span class="text-muted">@field.Hint</span>
+                           <br /><span class="text-muted">@field.Hint</span>
                         }
-                        <input class="form-control @field.Class"
-                               id="id_@(field.Alias)"
-                               name="@(field.Alias)"
-                               type="file"
-                               data-tfl-post-back="@field.PostBack"
-                               @(field.InputAccept == "" ? string.Empty : "accept=\"" + field.InputAccept + "\"")
-                               @(field.InputCapture == "" ? string.Empty : "capture=\"" + field.InputCapture + "\"")
-                               @Html.Raw(field.ToParsley()) />
-                        @if (hasFile) {
-                            <span class="text-muted"><strong>Caution</strong>: File <strong>@filePart.FileName()</strong> is saved in @field.Label.</span>
-                        }
+
+                        <div id="id_@(field.Alias)">
+                           <div class="has-file" style="@(file == null ? "display:none" : string.Empty)">
+                              <div class="input-group">
+                                 <div class="input-group-addon removeButton" style="cursor: pointer;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                 </div>
+                                 <input type="text"
+                                          class="form-control @field.Class"
+                                          name="@field.Alias"
+                                          id="id_@field.Alias"
+                                          value="@(file == null ? string.Empty : file.OriginalName)"
+                                          readonly="readonly" />
+                              </div>
+                           </div>
+                           <div class="expecting-file" style="@(file == null ? string.Empty: "display:none")">
+                              <span class="btn btn-primary btn-xs fileinput-button" style="margin-right: 5px;">
+                                 <i class="glyphicon glyphicon-plus"></i>
+                                 <span>Upload</span>
+                                 <input name="@(field.Alias)"
+                                          type="file"
+                                          data-tfl-post-back="@field.PostBack"
+                                          @(field.InputAccept == "" ? string.Empty : "accept=\"" + field.InputAccept + "\"")
+                                          @(field.InputCapture == "" ? string.Empty : "capture=\"" + field.InputCapture + "\"")
+                                          @Html.Raw(field.ToParsley()) />
+                              </span>
+
+                              <div class="progress" style="margin-bottom: 10px; margin-top: 1px;">
+                                 <div class="progress-bar progress-bar-striped progress-bar-success"></div>
+                              </div>
+                           </div>
+                        </div>
+
                         <span class="help-container">
-                            @if (!IsValid(row, field)) {
-                                <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
-                            }
+                           @if (!Model.IsValid(Model.Row, field)) {
+                              <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                           }
                         </span>
-                        <input type="hidden" name="@(field.Alias)_Old" value="@value" />
-                    </div>
-                            break;
-                        case "bool":
-                        case "boolean":
-                            <div class="@(Status(row, field))">
-                                <div class="checkbox">
-                                    <label for="@field.Alias">
-                                        <input name="@field.Alias"
-                                               id="id_@field.Alias"
-                                               type="checkbox"
-                                               checked="@((bool)value)"
-                                               data-tfl-post-back="@field.PostBack" /> @field.Label
-                                        </label>
-                                    </div>
-                                </div>
-                                break;
-                            default:
-                            <div class="form-group @(Status(row,field))">
-                                <label for="@field.Alias">@field.Label</label>
-                                @if (field.Hint != string.Empty) {
-                                    <br/><span class="text-muted">@field.Hint</span>
-                                }
-                                @{
-                                    var useTextArea = field.Length == "max";
-                                    int length = 4000;
-                                    if (!useTextArea) {
-                                        if (int.TryParse(field.Length, out length)) {
-                                            useTextArea = length >= 255;
-                                        }
-                                    }
-                                }
-                                @if (useTextArea) {
-                                    <textarea class="form-control @field.Class"
-                                              name="@field.Alias"
-                                              id="id_@field.Alias"
-                                              rows="3"
-                                              placeholder="@field.Label"
-                                              maxlength="@length"
-                                              data-tfl-post-back="@field.PostBack"
-                                              @Html.Raw(field.ToParsley())>@value.ToString().Trim()</textarea>
-                                } else {
-                                    <input type="text"
-                                           class="form-control @(field.InputType == "date" ? "pickadate " + field.Class : field.Class)"
-                                           maxlength="@field.Length"
-                                           name="@field.Alias"
-                                           id="id_@field.Alias"
-                                           placeholder="@field.Label"
-                                           value="@value"
-                                           data-tfl-post-back="@field.PostBack"
-                                           @Html.Raw(field.ToParsley()) />
-                                }
-                                <span class="help-container">
-                                    @if (!IsValid(row, field)) {
-                                        <span class="help-block">@(row[field.MessageField].ToString().Replace('|', ' '))</span>
-                                    }
-                                </span>
+                        <input type="hidden" name="@(field.Alias)_Old" id="id_@(field.Alias)_Old" value="@(string.IsNullOrEmpty(Request.Form[field.Alias + "_Old"]) ? value : Request.Form[field.Alias + "_Old"])" />
+                        <script language="javascript">
+$(document).ready(function () {
 
-                            </div>
-                                break;
-                        }
-                    }
-                }
+   var container = $('#id_@(field.Alias)');
+   var model = {
+      expectingFile: container.find('.expecting-file'),
+      hidden: $('#id_@(field.Alias)_Old'),
+      fileInput: container.find('input[type="file"]'),
+      progressBar: container.find('.progress-bar'),
+      addButton: container.find('.fileinput-button'),
+      label: '@(field.Label)',
+      hasFile: container.find('.has-file'),
+      removeButton: container.find('.removeButton'),
+      fileReceived: function (result) {
+         this.hidden.val(result.id);
+         this.hasFile.find('input').val(result.message);
+         this.hasFile.show();
+         this.fileInput.prop('disabled', true);
+         this.expectingFile.hide();
+      }
+   };
+
+   model.removeButton.click(function () {
+      model.progressBar.css('width', "0%");
+      model.expectingFile.show();
+      model.hidden.val('');
+      model.hasFile.hide();
+      model.fileInput.prop('disabled', false);
+   });
+
+   var ajaxTime= new Date().getTime();
+   model.expectingFile.fileupload({
+      url: settings.uploadUrl,
+      maxNumberOfFiles: 1,
+      done: function (e, data) {
+         var totalTime = new Date().getTime() - ajaxTime;
+         if (totalTime < 200) {
+            setTimeout(function () {
+               model.fileReceived(data.result);
+            }, 150);
+         } else {
+            model.fileReceived(data.result);
+         }
+      },
+      progressall: function (e, data) {
+         var progress = data.loaded / data.total * 100;
+         model.progressBar.css('width', progress + "%");
+      },
+      start: function () {
+         ajaxTime= new Date().getTime();
+         model.progressBar.addClass('active');
+      },
+      stop: function () {
+         model.progressBar.removeClass('active');
+      }
+   });
+
+});
+                        </script>
+                     </div>
+
+                        break;
+                     default:
+                        <div class="form-group @(Model.Status(Model.Row,field))">
+                           <label for="@field.Alias">@field.Label</label>
+                           @if (field.Hint != string.Empty) {
+                              <br /><span class="text-muted">@field.Hint</span>
+                           }
+                           @{
+                              var useTextArea = field.Length == "max";
+                              int length = 4000;
+                              if (!useTextArea) {
+                                 if (int.TryParse(field.Length, out length)) {
+                                    useTextArea = length >= 255;
+                                 }
+                              }
+                           }
+                           @if (useTextArea) {
+                              <textarea class="form-control @field.Class"
+                                        name="@field.Alias"
+                                        id="id_@field.Alias"
+                                        rows="3"
+                                        placeholder="@field.Label"
+                                        maxlength="@length"
+                                        data-tfl-post-back="@field.PostBack"
+                                        @Html.Raw(field.ToParsley())>@value.ToString().Trim()</textarea>
+                           } else {
+                              <input type="text"
+                                     class="form-control @(field.Class)"
+                                     maxlength="@field.Length"
+                                     name="@field.Alias"
+                                     id="id_@field.Alias"
+                                     placeholder="@field.Label"
+                                     value="@value"
+                                     data-tfl-post-back="@field.PostBack"
+                                     @Html.Raw(field.ToParsley()) />
+                           }
+                           <span class="help-container">
+                              @if (!Model.IsValid(Model.Row, field)) {
+                                 <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                              }
+                           </span>
+
+                        </div>
+                        break;
+                  }
+               }
             }
-        }
+         }
+      }
 
-        <input name="Orchard.Submit"
-               id="id_submit"
-               type="submit"
-               value="Submit"
-               class="btn btn-primary" />
-    }
+
+

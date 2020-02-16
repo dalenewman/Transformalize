@@ -167,11 +167,11 @@
 
                 $('#id_map').height(Math.round($(window).height() * .71));
 
-                console.log('starting out with style ' + '@(Model.Part.MapStyle)');
+                console.log('starting out with style ' + '@(Model.MapCfg.DefaultStyleUrl)');
 
                 var map = new mapboxgl.Map({
                     container: 'id_map',
-                    style: '@(Model.Part.MapStyle)',
+                    style: '@(Model.MapCfg.DefaultStyleUrl)',
                     center: [@settings.StartingLongitude, @settings.StartingLatitude ],
                     zoom: @Model.Part.MapZoom
                 });

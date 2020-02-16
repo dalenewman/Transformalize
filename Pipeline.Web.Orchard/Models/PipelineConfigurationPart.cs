@@ -37,19 +37,6 @@ namespace Pipeline.Web.Orchard.Models {
             new SelectListItem {Selected = false, Text = "@[parameter]", Value = "@[]"}
         };
 
-      public static List<SelectListItem> MapStyles = new List<SelectListItem> {
-            new SelectListItem {Selected = false, Text = "Streets", Value = "mapbox://styles/mapbox/streets-v10"},
-            new SelectListItem {Selected = false, Text = "Outdoors", Value = "mapbox://styles/mapbox/outdoors-v10"},
-            new SelectListItem {Selected = false, Text = "Light", Value = "mapbox://styles/mapbox/light-v9"},
-            new SelectListItem {Selected = false, Text = "Dark", Value = "mapbox://styles/mapbox/dark-v9"},
-            new SelectListItem {Selected = false, Text = "Satellite", Value = "mapbox://styles/mapbox/satellite-v9"},
-            new SelectListItem {Selected = false, Text = "Satellite Streets", Value = "mapbox://styles/mapbox/satellite-streets-v10"},
-            new SelectListItem {Selected = false, Text = "Navigation Preview Day", Value = "mapbox://styles/mapbox/navigation-preview-day-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Preview Night", Value = "mapbox://styles/mapbox/navigation-preview-night-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Guidance Day", Value = "mapbox://styles/mapbox/navigation-guidance-day-v4"},
-            new SelectListItem {Selected = false, Text = "Navigation Guidance Night", Value = "mapbox://styles/mapbox/navigation-guidance-night-v4"}
-      };
-
       public string Configuration {
          get {
             var cfg = this.Retrieve(x => x.Configuration, versioned: true);
@@ -106,12 +93,28 @@ namespace Pipeline.Web.Orchard.Models {
          set { this.Store(x => x.EditorMode, value, true); }
       }
 
-      public string MapStyle {
-         get { 
-            var mapStyle = this.Retrieve(x => x.MapStyle, versioned: true) ?? "mapbox://styles/mapbox/streets-v10";
-            return mapStyle.Contains("/") ? mapStyle : "mapbox://styles/mapbox/" + mapStyle;
+      public string MapConfiguration {
+         get {
+            var cfg = this.Retrieve(x => x.MapConfiguration, versioned: true);
+            if (string.IsNullOrEmpty(cfg)) {
+               return @"<cfg>
+   <styles>
+      <add name=""Streets"" url=""mapbox://styles/mapbox/streets-v10"" />
+      <add name=""Outdoors"" url=""mapbox://styles/mapbox/outdoors-v10"" />
+      <add name=""Light"" url=""mapbox://styles/mapbox/light-v9"" />
+      <add name=""Dark"" url=""mapbox://styles/mapbox/dark-v9"" />
+      <add name=""Satellite"" url=""mapbox://styles/mapbox/satellite-v9"" />
+      <add name=""Satellite Streets"" url=""mapbox://styles/mapbox/satellite-streets-v10"" />
+      <add name=""Navigation Preview Day"" url=""mapbox://styles/mapbox/navigation-preview-day-v4"" />
+      <add name=""Navigation Preview Night"" url=""mapbox://styles/mapbox/navigation-preview-night-v4"" />
+      <add name=""Navigation Guidance Day"" url=""mapbox://styles/mapbox/navigation-guidance-day-v4"" />
+      <add name=""Navigation Guidance Night"" url=""mapbox://styles/mapbox/navigation-guidance-night-v4"" />
+   </styles>
+</cfg>";
+            }
+            return cfg;
          }
-         set { this.Store(x => x.MapStyle, value, true); }
+         set { this.Store(x => x.MapConfiguration, value, true); }
       }
 
       public int MapCircleRadius {

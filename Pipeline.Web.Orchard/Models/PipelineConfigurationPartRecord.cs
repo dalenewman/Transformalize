@@ -46,8 +46,8 @@ namespace Pipeline.Web.Orchard.Models {
       [StringLength(128)]
       public virtual string Modes { get; set; }
 
-      [StringLength(128)]
-      public virtual string MapStyle { get; set; }
+      [StringLengthMax]
+      public virtual string MapConfiguration { get; set; }
 
       public virtual int MapCircleRadius { get; set; }
 

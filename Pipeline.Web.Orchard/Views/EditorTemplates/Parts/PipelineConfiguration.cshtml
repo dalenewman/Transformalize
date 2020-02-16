@@ -17,6 +17,7 @@
    }
 
    Html.RenderPartial("Shared/ConfigurationEditor", new Editor { TextAreaId = "PipelineConfiguration_Configuration", Theme = theme, Portion = 0.6, Library = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.12.0/", Mode = Model.EditorMode });
+   Html.RenderPartial("Shared/ConfigurationEditor", new Editor { TextAreaId = "PipelineConfiguration_MapConfiguration", Theme = theme, Portion = 0.3, Mode = Model.EditorMode });
 }
 
 
@@ -177,9 +178,20 @@
    <div class="hint">@T("Map longitude field.")</div>
 
    <div class="editor-field">
-      @Html.LabelFor(x => x.MapStyle, T("Map Style"))
-      @Html.DropDownListFor(x => x.MapStyle, PipelineConfigurationPart.MapStyles)
-      @Html.ValidationMessageFor(x => x.MapStyle)
+      @Html.LabelFor(x => x.MapConfiguration, T("Map Configuration"))
+      @Html.TextAreaFor(x => x.MapConfiguration)
+   </div>
+
+   <div class="hint" style="font-size: smaller;">
+      <strong>F11</strong>: <span>Full Screen</span>,
+      <strong>Esc</strong>: <span>Exit Full Screen</span>,
+      <strong>Ctrl-S</strong>: <span>Save</span>,
+      <strong>Ctrl-Space</strong>: <span>Auto Complete</span>,
+      <strong>Ctrl-F</strong>: <span>Find</span>,
+      <strong>Ctrl-G</strong>: <span>Find next</span>,
+      <strong>Shift-Ctrl-G</strong>: <span>Find previous</span>,
+      <strong>Shift-Ctrl-F</strong>: <span>Replace</span>,
+      <strong>Shift-Ctrl-R</strong>: <span>Replace all</span>.
    </div>
 
    <div class="editor-field">

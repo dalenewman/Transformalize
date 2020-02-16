@@ -31,6 +31,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web.Mvc;
 using Transformalize.Contracts;
+using Transformalize.Configuration;
 using Permissions = Orchard.Core.Contents.Permissions;
 using Process = Transformalize.Configuration.Process;
 
@@ -122,8 +123,10 @@ namespace Pipeline.Web.Orchard.Controllers {
                         Response.ContentType = "application/vnd.google-earth.kml+xml";
                         break;
                      case "geojson":
-                     case "json":
                         Response.ContentType = "application/vnd.geo+json";
+                        break;
+                     case "json":
+                        Response.ContentType = "application/json";
                         break;
                      default:
                         Response.ContentType = "application/csv";
@@ -164,28 +167,41 @@ namespace Pipeline.Web.Orchard.Controllers {
                o.File = _appDataFolder.MapPath(_appDataFolder.Combine(folder, fileName));
                break;
             case "geojson":
+               o.Stream = true;
+               o.Provider = "geojson";
+               o.File = _slugService.Slugify(part.Title()) + ".geo.json";
+
+               var suppress = new HashSet<string>() { Common.BatchValueFieldName, part.MapColorField, part.MapPopUpField };
+               var coordinates = new HashSet<string>() { part.MapLatitudeField, part.MapLongitudeField };
+               foreach (var entity in process.Entities) {
+                  foreach (var field in entity.GetAllFields()) {
+                     if (suppress.Contains(field.Alias)) {
+                        field.Output = false;
+                        field.Property = false;
+                        field.Alias += "Suppressed";
+                     } else if (coordinates.Contains(field.Alias)) {
+                        field.Property = field.Export == "true";
+                     } else { 
+                        field.Property = field.Property || field.Output && field.Export == "defer" || field.Export == "true";
+                     }
+                  }
+               }
+
+               break;
             case "map":
                o.Stream = true;
                o.Provider = "geojson";
                o.File = _slugService.Slugify(part.Title()) + ".geo.json";
+
                var mapFields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                     { part.MapColorField, "geojson-color" },
-                     { part.MapPopUpField, "geojson-description" },
-                     { part.MapLatitudeField, "latitude" },
-                     { part.MapLongitudeField, "longitude" }
-                  };
-               foreach (var entity in process.Entities) {
-                  foreach (var field in entity.GetAllFields()) {
-                     if (mapFields.ContainsKey(field.Alias)) {
-                        field.Output = true;
-                        if (!mapFields[field.Alias].Equals(field.Alias, StringComparison.OrdinalIgnoreCase)) {
-                           field.Alias = mapFields[field.Alias];
-                        }
-                     } else {
-                        field.Output = !field.PrimaryKey;
-                     }
-                  }
-               }
+                  { part.MapColorField, "geojson-color" },
+                  { part.MapPopUpField, "geojson-description" },
+                  { part.MapLatitudeField, "latitude" },
+                  { part.MapLongitudeField, "longitude" },
+                  { Common.BatchValueFieldName, Common.BatchValueFieldName }
+               };
+
+               ConfineData(process, mapFields);
                break;
             case "json":
                o.Stream = true;
@@ -197,26 +213,15 @@ namespace Pipeline.Web.Orchard.Controllers {
                o.Provider = "json";
                o.File = _slugService.Slugify(part.Title()) + ".json";
                var calendarFields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
-                     { part.CalendarIdField, "id" },
-                     { part.CalendarTitleField, "title" },
-                     { part.CalendarUrlField, "url" },
-                     { part.CalendarClassField, "class" },
-                     { part.CalendarStartField, "start" },
-                     { part.CalendarEndField, "end" },
-                  };
-
-               foreach (var entity in process.Entities) {
-                  foreach (var field in entity.GetAllFields()) {
-                     if (calendarFields.ContainsKey(field.Alias)) {
-                        field.Output = true;
-                        if (!calendarFields[field.Alias].Equals(field.Alias, StringComparison.OrdinalIgnoreCase)) {
-                           field.Alias = calendarFields[field.Alias];
-                        }
-                     } else {
-                        field.Output = !field.PrimaryKey;
-                     }
-                  }
-               }
+                  { part.CalendarIdField, "id" },
+                  { part.CalendarTitleField, "title" },
+                  { part.CalendarUrlField, "url" },
+                  { part.CalendarClassField, "class" },
+                  { part.CalendarStartField, "start" },
+                  { part.CalendarEndField, "end" },
+                  { Common.BatchValueFieldName, Common.BatchValueFieldName }
+               };
+               ConfineData(process, calendarFields);
                break;
             case "kml":
                o.Stream = true;
@@ -232,25 +237,58 @@ namespace Pipeline.Web.Orchard.Controllers {
                break;
          }
 
+         // common
          foreach (var entity in process.Entities) {
 
             entity.Fields.RemoveAll(f => f.System);
 
             foreach (var field in entity.GetAllFields()) {
-               if (field.Alias == Common.BatchValueFieldName) {
-                  field.Output = false;
-               }
                field.T = string.Empty; // because short-hand has already been expanded
                switch (exportType) {
                   case "map":
                   case "calendar":
-                     // map and calendar have already been modified
+                  case "geojson":
+                     // already been modified
                      break;
                   default:
+                     if (field.Alias == Common.BatchValueFieldName) {
+                        field.Output = false;
+                     }
                      field.Output = field.Output && field.Export == "defer" || field.Export == "true";
-                  break;
+                     break;
                }
-               
+
+            }
+         }
+      }
+
+      public void ConfineData(Process process, IDictionary<string, string> required) {
+
+         foreach (var entity in process.Entities) {
+            var all = entity.GetAllFields().ToArray();
+            var dependencies = new HashSet<Field>();
+            foreach (var field in all) {
+               if (required.ContainsKey(field.Alias)) {
+                  dependencies.Add(field);
+                  field.Output = true;
+                  if (!required[field.Alias].Equals(field.Alias, StringComparison.OrdinalIgnoreCase)) {
+                     field.Alias = required[field.Alias];
+                  }
+               } else if (field.Property) {
+                  dependencies.Add(field);
+                  field.Output = true;
+               }
+            }
+            // optimize download if it's not a manually written query
+            if(entity.Query == string.Empty) {
+               foreach (var field in entity.FindRequiredFields(dependencies, process.Maps)) {
+                  dependencies.Add(field);
+               }
+               foreach (var unnecessary in all.Except(dependencies)) {
+                  unnecessary.Input = false;
+                  unnecessary.Output = false;
+                  unnecessary.Transforms.Clear();
+               }
             }
          }
       }

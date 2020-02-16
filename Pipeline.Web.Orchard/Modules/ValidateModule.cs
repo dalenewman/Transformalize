@@ -17,84 +17,90 @@
 #endregion
 
 using Autofac;
+using Cfg.Net.Contracts;
+using Cfg.Net.Reader;
 using Cfg.Net.Shorthand;
 using System;
 using System.Collections.Generic;
 using Transformalize;
-using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Validators;
+using Transformalize.Validators.Jint;
 using CompareValidator = Transformalize.Validators.CompareValidator;
 using Parameter = Cfg.Net.Shorthand.Parameter;
 using RegularExpressionValidator = Transformalize.Validators.RegularExpressionValidator;
 
 namespace Pipeline.Web.Orchard.Modules {
 
-    public class ValidateShorthandCustomizer : ShorthandCustomizer {
-        public ValidateShorthandCustomizer(ShorthandRoot root, IEnumerable<string> shortHandCollections, string shortHandProperty, string longHandCollection, string longHandProperty) : base(root, shortHandCollections, shortHandProperty, longHandCollection, longHandProperty) { }
-    }
+   public class ValidateShorthandCustomizer : ShorthandCustomizer {
+      public ValidateShorthandCustomizer(ShorthandRoot root, IEnumerable<string> shortHandCollections, string shortHandProperty, string longHandCollection, string longHandProperty) : base(root, shortHandCollections, shortHandProperty, longHandCollection, longHandProperty) { }
+   }
 
-    public class ValidateModule : Module {
+   public class ValidateModule : Module {
 
-        private readonly HashSet<string> _methods = new HashSet<string>();
-        private readonly ShorthandRoot _shortHand = new ShorthandRoot();
+      private readonly HashSet<string> _methods = new HashSet<string>();
+      private readonly ShorthandRoot _shortHand = new ShorthandRoot();
 
-        protected override void Load(ContainerBuilder builder) {
+      protected override void Load(ContainerBuilder builder) {
 
-            // new style
-            RegisterValidator(builder, (ctx, c) => new AnyValidator(c), new AnyValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new AllValidator(c), new AllValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new StartsWithValidator(c), new StartsWithValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EndsWithValidator(c), new EndsWithValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MapValidator(true, c), new MapValidator(inMap: true).GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MapValidator(false, c), new MapValidator(inMap: false).GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new ContainsValidator(c), new ContainsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new IsValidator(c), new IsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EqualsValidator(c), new EqualsValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new NotEqualValidator(c), new NotEqualValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new EmptyValidator(c), new EmptyValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new DefaultValidator(c), new DefaultValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new NumericValidator(c), new NumericValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MatchValidator(c), new MatchValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new RequiredValidator(c), new RequiredValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new LengthValidator(c), new LengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MinLengthValidator(c), new MinLengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new MaxLengthValidator(c), new MaxLengthValidator().GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new CompareValidator("min", c), new CompareValidator("min").GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
-            RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         // This reader is used to load the initial configuration and nested resources for tfl actions, etc.
+         builder.Register(c => new DefaultReader(new FileReader(), new WebReader())).As<IReader>();
 
-            // register the short hand
-            builder.Register((c, p) => new ValidateShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "v", "validators", "method")).As<ValidateShorthandCustomizer>().SingleInstance();
+         // new style
+         RegisterValidator(builder, (ctx, c) => new AnyValidator(c), new AnyValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new AllValidator(c), new AllValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new StartsWithValidator(c), new StartsWithValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EndsWithValidator(c), new EndsWithValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MapValidator(c), new MapValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new ContainsValidator(c), new ContainsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new IsValidator(c), new IsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EqualsValidator(c), new EqualsValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new NotEqualValidator(c), new NotEqualValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EmptyValidator(c), new EmptyValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new DefaultValidator(c), new DefaultValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new NumericValidator(c), new NumericValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MatchValidator(c), new MatchValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new RequiredValidator(c), new RequiredValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new LengthValidator(c), new LengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MinLengthValidator(c), new MinLengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new MaxLengthValidator(c), new MaxLengthValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new CompareValidator("min", c), new CompareValidator("min").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new JintValidator(ctx.Resolve<IReader>(), c), new JintValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new InvertValidator(c), new InvertValidator().GetSignatures());
 
-        }
+         // register the short hand
+         builder.Register((c, p) => new ValidateShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "v", "validators", "method")).As<ValidateShorthandCustomizer>().SingleInstance();
 
-        private void RegisterValidator(ContainerBuilder builder, Func<IComponentContext, IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
+      }
 
-            foreach (var s in signatures) {
-                if (_methods.Add(s.Method)) {
+      private void RegisterValidator(ContainerBuilder builder, Func<IComponentContext, IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
 
-                    var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
-                    _shortHand.Methods.Add(method);
+         foreach (var s in signatures) {
+            if (_methods.Add(s.Method)) {
 
-                    var signature = new Signature {
-                        Name = s.Method,
-                        NamedParameterIndicator = s.NamedParameterIndicator
-                    };
+               var method = new Method { Name = s.Method, Signature = s.Method, Ignore = s.Ignore };
+               _shortHand.Methods.Add(method);
 
-                    foreach (var parameter in s.Parameters) {
-                        signature.Parameters.Add(new Parameter {
-                            Name = parameter.Name,
-                            Value = parameter.Value
-                        });
-                    }
-                    _shortHand.Signatures.Add(signature);
-                }
+               var signature = new Signature {
+                  Name = s.Method,
+                  NamedParameterIndicator = s.NamedParameterIndicator
+               };
 
-                builder.Register((ctx, p) => getValidator(ctx, p.Positional<IContext>(0))).Named<IValidate>(s.Method);
+               foreach (var parameter in s.Parameters) {
+                  signature.Parameters.Add(new Parameter {
+                     Name = parameter.Name,
+                     Value = parameter.Value
+                  });
+               }
+               _shortHand.Signatures.Add(signature);
             }
 
-        }
+            builder.Register((ctx, p) => getValidator(ctx, p.Positional<IContext>(0))).Named<IValidate>(s.Method);
+         }
 
-    }
+      }
+
+   }
 }

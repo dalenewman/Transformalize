@@ -106,17 +106,19 @@
             }
 
             if (Model.Process.Mode == "map") {
-               <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     Style
-                     <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu" id="mapStyles">
-                     @foreach (var style in PipelineConfigurationPart.MapStyles) {
-                        <li style="cursor: pointer;"><a id="@style.Value">@style.Text</a></li>
-                     }
-                  </ul>
-               </div>
+               if(Model.MapCfg != null) { 
+                  <div class="btn-group" role="group">
+                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Style
+                        <span class="caret"></span>
+                     </button>
+                     <ul class="dropdown-menu" id="mapStyles">
+                        @foreach (var style in Model.MapCfg.Styles) {
+                           <li style="cursor: pointer;"><a id="@style.Url">@style.Name</a></li>
+                        }
+                     </ul>
+                  </div>
+               }
                if (Model.Part.MapRefresh) {
                   <button title="refresh map" type="button" class="btn btn-danger btn-sm" id="mapRefresh">
                      <span class="glyphicon glyphicon-refresh"></span>

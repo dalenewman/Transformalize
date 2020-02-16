@@ -8,49 +8,54 @@ using Orchard.Tags.Models;
 
 namespace Pipeline.Web.Orchard.Models {
 
-    public class PipelineFilePart : ContentPart<PipelineFilePartRecord> {
+   public class PipelineFilePart : ContentPart<PipelineFilePartRecord> {
 
-        public string Title() {
-            return this.As<TitlePart>().Title;
-        }
+      public string Title() {
+         return this.As<TitlePart>().Title;
+      }
 
-        public string FullPath {
-            get { return Record.FullPath; }
-            set { Record.FullPath = value; }
-        }
+      public string FullPath {
+         get { return Record.FullPath; }
+         set { Record.FullPath = value; }
+      }
 
-        public string Direction {
-            get { return Record.Direction; }
-            set { Record.Direction = value; }
-        }
+      public string OriginalName {
+         get { return Record.OriginalName; }
+         set { Record.OriginalName = value; }
+      }
 
-        public string FileName() {
-            return string.IsNullOrEmpty(Record.FullPath) ? string.Empty : Path.GetFileName(Record.FullPath);
-        }
+      public string Direction {
+         get { return Record.Direction; }
+         set { Record.Direction = value; }
+      }
 
-        public bool IsValid() {
-            return !string.IsNullOrEmpty(FullPath);
-        }
+      public string FileName() {
+         return string.IsNullOrEmpty(Record.FullPath) ? string.Empty : Path.GetFileName(Record.FullPath);
+      }
 
-        public DateTime CreatedUtc() {
-            return this.As<CommonPart>().CreatedUtc ?? DateTime.UtcNow;
-        }
+      public bool IsValid() {
+         return !string.IsNullOrEmpty(FullPath);
+      }
 
-        public string Extension() {
-            return Path.GetExtension(FileName());
-        }
+      public DateTime CreatedUtc() {
+         return this.As<CommonPart>().CreatedUtc ?? DateTime.UtcNow;
+      }
 
-        public string MimeType() {
-            return Common.GetMimeType(Extension());
-        }
+      public string Extension() {
+         return Path.GetExtension(FileName());
+      }
 
-        public IEnumerable<string> Tags() {
-            return this.As<TagsPart>().CurrentTags;
-        }
+      public string MimeType() {
+         return Common.GetMimeType(Extension());
+      }
 
-        public bool IsOnDisk() {
-            return FullPath != string.Empty && File.Exists(FullPath);
-        }
+      public IEnumerable<string> Tags() {
+         return this.As<TagsPart>().CurrentTags;
+      }
 
-    }
+      public bool IsOnDisk() {
+         return FullPath != string.Empty && File.Exists(FullPath);
+      }
+
+   }
 }

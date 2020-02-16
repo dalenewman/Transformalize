@@ -5,25 +5,27 @@
 @model FormViewModel
 
 @{
-    AppendMeta("description", Model.Part.Title(), ",");
-    Layout.Title = Model.Part.Title();
+   AppendMeta("description", Model.Part.Title(), ",");
+   Layout.Title = Model.Part.Title();
 
-    Script.Require("jQuery").AtHead();
-    Script.Require("Moment").AtHead();
-    Script.Require("BlockUI").AtHead();
-    Script.Require("jQueryUI_Autocomplete").AtHead();
+   Script.Require("jQuery").AtHead();
+   Script.Require("Moment").AtHead();
+   Script.Require("BlockUI").AtHead();
+   Script.Require("jQueryUI_Autocomplete").AtHead();
 
-    Script.Include("parsley.min.js").AtHead();
-    Script.Include(@"pickadate\picker.js").AtHead();
-    Script.Include(@"pickadate\picker.date.js").AtHead();
+   Script.Include("parsley.min.js").AtHead();
+   Script.Include(@"pickadate\picker.js").AtHead();
+   Script.Include(@"pickadate\picker.date.js").AtHead();
+   Script.Include("jquery.iframe-transport.min.js").AtHead();
+   Script.Include("jquery.fileupload.min.js").AtHead();
 
-    Style.Include(@"pickadate\themes\default.css").AtHead();
-    Style.Include(@"pickadate\themes\default.date.css").AtHead();
+   Style.Include(@"pickadate\themes\default.css").AtHead();
+   Style.Include(@"pickadate\themes\default.date.css").AtHead();
 
-    var request = WorkContext.HttpContext.Request;
-    var method = request.HttpMethod;
-    var orchard = WorkContext.Resolve<IOrchardServices>();
-    var geo = Model.Process.Parameters.Any(p => p.Name.EndsWith(".Latitude", StringComparison.OrdinalIgnoreCase));
+   var request = WorkContext.HttpContext.Request;
+   var method = request.HttpMethod;
+   var orchard = WorkContext.Resolve<IOrchardServices>();
+
 }
 
 <style type="text/css">
@@ -47,52 +49,87 @@
         height: 100%;
     }
 
-    .form-control:focus {
-        border-color: #66AFE9;
-    }
+    .form-control:focus { border-color: #66AFE9; }
+
+   .fileinput-button {
+      position: relative;
+      overflow: hidden;
+      display: inline-block
+   }
+
+   .fileinput-button input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      opacity: 0;
+      -ms-filter: 'alpha(opacity=0)';
+      font-size: 200px;
+      direction: ltr;
+      cursor: pointer;
+   }
+
+   .progress { background-color: #dddddd; }
+
+   .some-margin {
+      margin-left:10px;
+      margin-right:10px;
+   }
 </style>
 
-<div class="btn-group pull-right">
-    @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
-        <button title="change this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
-            <span class="glyphicon glyphicon-edit"></span>
-        </button>
-    }
-    <button id="id_validate_button" title="validate this form" type="button" class="btn btn-info btn-sm">
-        <span class="glyphicon glyphicon-check"></span>
-    </button>
+<div class="btn-group pull-right some-margin">
+   @if (orchard.Authorizer.Authorize(Permissions.EditContent)) {
+      <button title="change this form" type="button" class="btn btn-warning btn-sm" onclick="window.open('@(Url.Content("~/Admin/Contents/Edit/" + Model.Part.Id + "?" + Common.ReturnUrlName + "=" + Url.Encode(Request.RawUrl)))', '_self');">
+         <span class="glyphicon glyphicon-edit"></span>
+      </button>
+   }
+   <button id="id_validate_button" title="validate this form" type="button" class="btn btn-info btn-sm">
+      <span class="glyphicon glyphicon-check"></span>
+   </button>
 </div>
 
-<div id="id_content">@{
-    Html.RenderPartial("Content", Model);    
-}</div>
+@using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
+   if (Model.Geo) {
+      <input type="hidden" id="id_geo_latitude" name="Orchard.Latitude" value="@Model.Latitude" />
+      <input type="hidden" id="id_geo_longitude" name="Orchard.Longitude" value="@Model.Longitude" />
+      <input type="hidden" id="id_geo_accuracy" name="Orchard.Accuracy" value="@Model.Accuracy" />
+   }
+   <div id="id_content" class="some-margin">@{ Html.RenderPartial("Content", Model); }</div>
+   <input name="Orchard.Submit" id="id_submit" type="submit" value="Submit" class="btn btn-primary some-margin" />
+}
 
 <div id="busy_holder">
-    <div id="id_busy"></div>
+   <div id="id_busy"></div>
 </div>
 
 <script type="text/javascript" language="javascript">
     //<!--
-    var method = '@method';
+   var settings = {
+      method: "@(method)",
+      geo: @Model.Geo.ToString().ToLower(),
+      ajaxUrl: "@(Url.Action("Content", "Form", new RouteValueDictionary { {"area", Common.ModuleName }, { "id", Model.Part.Id } }))" + window.location.search,
+      saveUrl: "@(Url.Action("Index", "Form", new RouteValueDictionary { {"area", Common.ModuleName }, { "id", Model.Part.Id } }))" + window.location.search,
+      uploadUrl: "@(Url.Action("Upload","Form", new RouteValueDictionary { {"area", Common.ModuleName }}))"
+   }
 
-    $(document).ready(function () {
+   $(document).ready(function () {
 
-        window.Parsley.on('field:error', function() {
-            this.$element.parent().addClass("has-error");
-        });
-        window.Parsley.on('field:success', function() {
-            this.$element.parent().removeClass("has-error");
-        });
-        window.Parsley
-            .addValidator('string', {
-                requirementType: 'date',
-                validateString: function(value, requirement) {
-                    return moment(value).isValid();
-                },
-                messages: {
-                    en: 'This value should be a date'
-                }
-            });
+      window.Parsley.on('field:error', function() {
+         this.$element.parent().addClass("has-error");
+      });
+      window.Parsley.on('field:success', function() {
+         this.$element.parent().removeClass("has-error");
+      });
+      window.Parsley
+         .addValidator('string', {
+               requirementType: 'date',
+               validateString: function(value, requirement) {
+                  return moment(value).isValid();
+               },
+               messages: {
+                  en: 'This value should be a date'
+               }
+         });
 
         $(document).bind("ajaxSend", function () {
             block();
@@ -101,17 +138,14 @@
             $.unblockUI();
         });
 
-        var ajaxUrl = "@(Url.Action("Content", new { Model.Part.Id }))" + window.location.search;
-        var saveUrl = "@(Url.Action("Index", new { Model.Part.Id }))" + window.location.search;
-
-        $('#id_validate_button').bind('click', function() {
+       $('#id_validate_button').bind('click', function () {
             post();
         });
 
         function bind(html) {
 
             $("#id_content").html(html);
-            $("#id_form").attr("action", saveUrl);
+            $("#id_form").attr("action", settings.saveUrl);
             $("#id_form").parsley({
                 errorsContainer: function(e) {
                     return e.$element.siblings('.help-container');
@@ -120,14 +154,10 @@
                 errorTemplate: '<span class="help-block"></span> '
             });
 
-            @if (geo) {
-                <text>
-                getLocation();
-                </text>
+            if (settings.geo) {
+               getLocation();
             }
             setFocus();
-
-            $(".pickadate").pickadate({ format: 'yyyy-mm-dd'});
 
             $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
                 if ($(this).parsley().isValid()) {
@@ -157,14 +187,14 @@
             });
 
             $("#id_form").submit(function (e) {
-                block();
+               block();
             });
 
         }
 
         function post() {
             $.ajax({
-                url: ajaxUrl,
+                url: settings.ajaxUrl,
                 type: "POST",
                 data: $("#id_form").serialize(),
                 success: function (html) {
@@ -231,27 +261,31 @@
             }
         }
 
-        function block() {
+         function block() {
             $('#id_busy').show();
             $.blockUI({
-                message: null,
-                css: {
-                    border: 'none',
-                    padding: '15px',
-                    backgroundColor: '#000',
-                    '-webkit-border-radius': '10px',
-                    '-moz-border-radius': '10px',
-                    opacity: .5,
-                    color: '#fff',
-                    baseZ: 1021
-                }
+                  message: null,
+                  css: {
+                     border: 'none',
+                     padding: '15px',
+                     backgroundColor: '#000',
+                     '-webkit-border-radius': '10px',
+                     '-moz-border-radius': '10px',
+                     opacity: .5,
+                     color: '#fff',
+                     baseZ: 1021
+                  }
             });
-        }
+         }
 
         setTimeout(function () { $(".zone-messages").fadeOut(); }, 5000);
 
-        bind();
+      bind();
+   });
 
-    });
-    //-->
+
+   //-->
 </script>
+
+
+

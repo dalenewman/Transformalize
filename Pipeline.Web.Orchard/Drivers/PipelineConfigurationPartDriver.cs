@@ -65,6 +65,7 @@ namespace Pipeline.Web.Orchard.Drivers {
          part.MapZoom = Convert.ToInt32(context.Attribute(part.PartDefinition.Name, "MapZoom"));
          part.MapSizes = context.Attribute(part.PartDefinition.Name, "MapSizes");
          part.MapRefresh = Convert.ToBoolean(context.Attribute(part.PartDefinition.Name, "MapRefresh"));
+         part.MapConfiguration = context.Attribute(part.PartDefinition.Name, "MapConfiguration");
 
          part.ReportRowClassField = context.Attribute(part.PartDefinition.Name, "ReportRowClassField");
          part.ReportRowStyleField = context.Attribute(part.PartDefinition.Name, "ReportRowStyleField");
@@ -108,6 +109,7 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.MapZoom);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.MapSizes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapRefresh", part.MapRefresh);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapConfiguration", part.MapConfiguration);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.ReportRowClassField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.ReportRowStyleField);
@@ -149,6 +151,7 @@ namespace Pipeline.Web.Orchard.Drivers {
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapZoom", part.Record.MapZoom);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapSizes", part.Record.MapSizes);
             context.Element(part.PartDefinition.Name).SetAttributeValue("MapRefresh", part.Record.MapRefresh);
+            context.Element(part.PartDefinition.Name).SetAttributeValue("MapConfiguration", part.Record.MapConfiguration);
 
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowClassField", part.Record.ReportRowClassField);
             context.Element(part.PartDefinition.Name).SetAttributeValue("ReportRowStyleField", part.Record.ReportRowStyleField);

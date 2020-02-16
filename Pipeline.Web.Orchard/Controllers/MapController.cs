@@ -96,6 +96,17 @@ namespace Pipeline.Web.Orchard.Controllers {
             return new HttpStatusCodeResult(500, "There are errors in the configuration.");
          }
 
+         MapCfg mapCfg = new MapCfg();
+         if (!string.IsNullOrEmpty(part.MapConfiguration)) {
+            mapCfg.Load(part.MapConfiguration);
+            if (mapCfg.Errors().Any()) {
+               foreach (var error in mapCfg.Errors()) {
+                  _orchardServices.Notifier.Add(NotifyType.Error, T(error));
+               }
+               return new HttpStatusCodeResult(500, "There are errors in the map configuration.");
+            }
+         }
+
          process.Mode = "map";
          process.ReadOnly = true;  // force maps to omit system fields
          process.Pipeline = "parallel.linq";
@@ -122,7 +133,7 @@ namespace Pipeline.Web.Orchard.Controllers {
          Common.SetPageSize(process, parameters, sizes.Min(), stickySize, sizes.Max());
 
          if (IsMissingRequiredParameters(process.Parameters, _orchardServices.Notifier)) {
-            return View(new ReportViewModel(process, part));
+            return View(new ReportViewModel(process, part, mapCfg));
          }
 
          try {
@@ -145,7 +156,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             _orchardServices.Notifier.Error(T(ex.Message));
          }
 
-         return View(new ReportViewModel(process, part));
+         return View(new ReportViewModel(process, part, mapCfg));
 
       }
 

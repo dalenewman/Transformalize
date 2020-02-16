@@ -43,7 +43,7 @@ namespace Pipeline.Web.Orchard.Controllers {
       public ActionResult Upload() {
 
          if (!User.Identity.IsAuthenticated) {
-            return RedirectToLoginResult(Request);
+            return new HttpUnauthorizedResult();
          }
 
          if (Request.Files != null && Request.Files.Count > 0) {
