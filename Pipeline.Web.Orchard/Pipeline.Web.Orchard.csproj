@@ -324,13 +324,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\calendar.js" />
+    <Content Include="Scripts\canvas-to-blob.min.js" />
     <Content Include="Scripts\common.ajax.js" />
     <Content Include="Scripts\common.ajax.min.js">
       <DependentUpon>common.ajax.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\file.handler.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
     <Content Include="Scripts\jquery.blockUI.min.js">
       <DependentUpon>jquery.blockUI.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.fileupload-image.js" />
+    <Content Include="Scripts\jquery.fileupload-image.min.js">
+      <DependentUpon>jquery.fileupload-image.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.fileupload-process.js" />
+    <Content Include="Scripts\jquery.fileupload-process.min.js">
+      <DependentUpon>jquery.fileupload-process.js</DependentUpon>
     </Content>
     <Content Include="Scripts\jquery.fileupload.js" />
     <Content Include="Scripts\jquery.fileupload.min.js">
@@ -350,6 +360,7 @@
     <Content Include="Scripts\jquery.ui.widget.min.js">
       <DependentUpon>jquery.ui.widget.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\load-image.all.min.js" />
     <Content Include="Scripts\moment.min.js" />
     <Content Include="Scripts\parsley.min.js" />
     <Content Include="Scripts\pickadate\legacy.js" />
