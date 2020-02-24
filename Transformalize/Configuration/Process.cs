@@ -350,7 +350,7 @@ namespace Transformalize.Configuration {
 
                foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
 
-                  field.PostBack = field.InputType == "file" || field.V == string.Empty ? "false" : "true";
+                  field.PostBack = field.Validators.Any() ? "true" : "false";
 
                   if (field.Map == string.Empty)
                      continue;
@@ -375,7 +375,6 @@ namespace Transformalize.Configuration {
                   field.PostBack = "false";
                }
 
-               lastField.PostBack = "true";
             }
          }
 

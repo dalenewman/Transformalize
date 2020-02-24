@@ -80,8 +80,6 @@ namespace Pipeline.Web.Orchard.Services {
          input.SaveAs(part.FullPath);
          _orchardServices.ContentManager.Create(part);
 
-         _orchardServices.Notifier.Information(T("{0} uploaded successfully.", Path.GetFileName(input.FileName)));
-
          return part;
       }
 

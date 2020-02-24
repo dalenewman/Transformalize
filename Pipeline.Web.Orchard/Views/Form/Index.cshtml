@@ -16,16 +16,26 @@
    Script.Include("parsley.min.js").AtHead();
    Script.Include(@"pickadate\picker.js").AtHead();
    Script.Include(@"pickadate\picker.date.js").AtHead();
-   Script.Include("load-image.all.min.js").AtHead();
-   Script.Include("canvas-to-blob.min.js").AtHead();
-   Script.Include("jquery.iframe-transport.min.js").AtHead();
-   Script.Include("jquery.fileupload.min.js").AtHead();
-   Script.Include("jquery.fileupload-process.min.js").AtHead();
-   Script.Include("jquery.fileupload-image.min.js").AtHead();
-   Script.Include("file.handler.js").AtHead();
+   if (Model.HasFile) {
+      Script.Include("load-image.all.min.js").AtHead();
+      Script.Include("canvas-to-blob.min.js").AtHead();
+      Script.Include("jquery.iframe-transport.min.js").AtHead();
+      Script.Include("jquery.fileupload.min.js").AtHead();
+      Script.Include("jquery.fileupload-process.min.js").AtHead();
+      Script.Include("jquery.fileupload-image.min.js").AtHead();
+      Script.Include("file.handler.js?v=4").AtHead();
+   }
+
+   foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "js" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".js", StringComparison.OrdinalIgnoreCase)))) {
+      Script.Include(script.File);
+   }
 
    Style.Include(@"pickadate\themes\default.css").AtHead();
    Style.Include(@"pickadate\themes\default.date.css").AtHead();
+
+   foreach (var script in Model.Process.Scripts.Where(s => s.Global && !string.IsNullOrEmpty(s.File) && (s.Language == "css" || s.Language == Transformalize.Constants.DefaultSetting && s.File.EndsWith(".css", StringComparison.OrdinalIgnoreCase)))) {
+      Style.Include(script.File);
+   }
 
    var request = WorkContext.HttpContext.Request;
    var method = request.HttpMethod;
@@ -34,6 +44,8 @@
 }
 
 <style type="text/css">
+
+    body { font-size:16px; } /* to stop ios from zooming in on inputs */
 
     #id_busy {
         position: fixed;
@@ -54,12 +66,19 @@
         height: 100%;
     }
 
-    .form-control:focus { border-color: #66AFE9; }
+   .form-control:focus { border-color: #66AFE9; }
+   .form-control { 
+      height: 34px; 
+      font-size:16px; 
+      padding: 6px 12px; 
+   }
 
-   .fileinput-button {
+   span.fileinput-button {
       position: relative;
       overflow: hidden;
-      display: inline-block
+      display: inline-block;
+      margin-right: 5px;
+      width: 77px;
    }
 
    .fileinput-button input {
@@ -74,12 +93,34 @@
       cursor: pointer;
    }
 
-   .progress { background-color: #dddddd; }
+   .progress { 
+      background-color: #dddddd; 
+      height: 30px;
+      margin-bottom: -1px;
+   }
 
    .some-margin {
       margin-left:10px;
       margin-right:10px;
    }
+
+   div.form-group.has-error > div.file-options {
+      border: 1px solid #A94442;
+      border-radius: 2px;
+   }
+
+   span.focus {
+     border-color: #66afe9;
+     outline: 0;
+     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
+   }
+
+   @foreach (var script in Model.Process.Scripts.Where(s => s.Global && s.Language == "css" && string.IsNullOrEmpty(s.File))) {
+   <text>/* @script.Name css script */</text>
+   @Html.Raw(script.Content)
+
+   }
+
 </style>
 
 <div class="btn-group pull-right some-margin">
@@ -93,15 +134,7 @@
    </button>
 </div>
 
-@using (Html.BeginFormAntiForgeryPost("Form", FormMethod.Post, new { role = "form", enctype = "multipart/form-data", id = "id_form" })) {
-   if (Model.Geo) {
-      <input type="hidden" id="id_geo_latitude" name="Orchard.Latitude" value="@Model.Latitude" />
-      <input type="hidden" id="id_geo_longitude" name="Orchard.Longitude" value="@Model.Longitude" />
-      <input type="hidden" id="id_geo_accuracy" name="Orchard.Accuracy" value="@Model.Accuracy" />
-   }
-   <div id="id_content" class="some-margin">@{ Html.RenderPartial("Content", Model); }</div>
-   <input name="Orchard.Submit" id="id_submit" type="submit" value="Submit" class="btn btn-primary some-margin" />
-}
+<div id="id_content" class="some-margin">@{ Html.RenderPartial("Content", Model); }</div>
 
 <div id="busy_holder">
    <div id="id_busy"></div>
@@ -114,49 +147,53 @@
       geo: @Model.Geo.ToString().ToLower(),
       ajaxUrl: "@(Url.Action("Content", "Form", new RouteValueDictionary { {"area", Common.ModuleName }, { "id", Model.Part.Id } }))" + window.location.search,
       saveUrl: "@(Url.Action("Index", "Form", new RouteValueDictionary { {"area", Common.ModuleName }, { "id", Model.Part.Id } }))" + window.location.search,
-      uploadUrl: "@(Url.Action("Upload","Form", new RouteValueDictionary { {"area", Common.ModuleName }}))"
+      uploadUrl: "@(Url.Action("Upload","Form", new RouteValueDictionary { {"area", Common.ModuleName }}))",
+      scanUrl: "@(Url.Action("Scan","Form", new RouteValueDictionary { {"area", Common.ModuleName }}))"
    }
 
    $(document).ready(function () {
 
       window.Parsley.on('field:error', function() {
-         this.$element.parent().addClass("has-error");
+         this.$element.closest('div.form-group').addClass("has-error");
       });
-      window.Parsley.on('field:success', function() {
-         this.$element.parent().removeClass("has-error");
+      window.Parsley.on('field:success', function () {
+         var target = this.$element.closest('div.form-group');
+         target.removeClass("has-error");
+         target.find('.help-block').empty();
       });
-      window.Parsley
-         .addValidator('string', {
-               requirementType: 'date',
-               validateString: function(value, requirement) {
-                  return moment(value).isValid();
-               },
-               messages: {
-                  en: 'This value should be a date'
-               }
-         });
+      window.Parsley.addValidator('string', {
+         requirementType: 'date',
+         validateString: function(value, requirement) {
+            return moment(value).isValid();
+         },
+         messages: {
+            en: 'This value should be a date'
+         }
+      });
 
-        $(document).bind("ajaxSend", function () {
-            block();
-        }).bind("ajaxComplete", function () {
-            $("#id_busy").hide();
-            $.unblockUI();
-        });
+      $(document).bind("ajaxSend", function () {
+         block();
+      }).bind("ajaxComplete", function () {
+         $("#id_busy").hide();
+         $.unblockUI();
+      });
 
-       $('#id_validate_button').bind('click', function () {
-            post();
-        });
+      $('#id_validate_button').bind('click', function () {
+         post();
+      });
 
         function bind(html) {
 
             $("#id_content").html(html);
             $("#id_form").attr("action", settings.saveUrl);
             $("#id_form").parsley({
-                errorsContainer: function(e) {
-                    return e.$element.siblings('.help-container');
-                },
-                errorsWrapper: '<span class="help-container"></span>',
-                errorTemplate: '<span class="help-block"></span> '
+               errorsContainer: function(e) {
+                   return e.$element.closest('div.form-group').find('span.help-container');
+               },
+               errorsWrapper: '<span class="help-container"></span>',
+               errorTemplate: '<span class="help-block"></span> ',
+               excluded: 'input[type=button], input[type=submit], input[type=reset], input[type=file]',
+               inputs: 'input, textarea, select, input[type=hidden]'
             });
 
             if (settings.geo) {
@@ -164,12 +201,18 @@
             }
             setFocus();
 
+           // if it is post back, then validate field and post back
             $("select[data-tfl-post-back='true'],input[data-tfl-post-back='true'],textarea[data-tfl-post-back='true']").change(function () {
                 if ($(this).parsley().isValid()) {
                     post();
                 } else {
                     $(this).parsley().validate();
                 }
+            });
+
+           // if it's not post back, just validate the field
+            $("select[data-tfl-post-back='false'],input[data-tfl-post-back='false'],textarea[data-tfl-post-back='false']").change(function () {
+               $(this).parsley().validate();
             });
 
             // block automatic form submit on enter
@@ -185,10 +228,21 @@
                 return true;
             });
 
-            // track focus for back-end
+           // track focus for back-end
+           // file input focus needs help since jquery file upload hides it
             $("select,input,textarea").focusin(function () {
-                $("#id_focus").val($(this).attr("name"));
+               $("#id_focus").val($(this).attr("name"));
+               if ($(this).attr('type') === 'file') {
+                  $(this).parent().addClass('focus');
+               }
                 console.log($(this).attr("name") + " has focus");
+            });
+
+            // file input needs help since jquery file upload hides it
+            $("input").focusout(function () {
+               if ($(this).attr('type') === 'file') {
+                  $(this).parent().removeClass('focus');
+               }
             });
 
             $("#id_form").submit(function (e) {
@@ -287,7 +341,6 @@
 
       bind();
    });
-
 
    //-->
 </script>

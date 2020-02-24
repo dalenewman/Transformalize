@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using Transformalize;
 using Transformalize.Contracts;
+using Transformalize.Validate.Web;
 using Transformalize.Validators;
 using Transformalize.Validators.Jint;
 using CompareValidator = Transformalize.Validators.CompareValidator;
@@ -67,8 +68,12 @@ namespace Pipeline.Web.Orchard.Modules {
          RegisterValidator(builder, (ctx, c) => new CompareValidator("min", c), new CompareValidator("min").GetSignatures());
          RegisterValidator(builder, (ctx, c) => new CompareValidator("max", c), new CompareValidator("max").GetSignatures());
          RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric", c), new RegularExpressionValidator("alphanum", "^[a-zA-Z0-9]*$", "must be alphanumeric").GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new RegularExpressionValidator("digits", "^[0-9]*$", "must be digits", c), new RegularExpressionValidator("digits", "^[0-9]*$", "must be digits").GetSignatures());
          RegisterValidator(builder, (ctx, c) => new JintValidator(ctx.Resolve<IReader>(), c), new JintValidator().GetSignatures());
          RegisterValidator(builder, (ctx, c) => new InvertValidator(c), new InvertValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new EmailValidator(c), new EmailValidator().GetSignatures());
+         RegisterValidator(builder, (ctx, c) => new UrlValidator(c), new UrlValidator().GetSignatures());
+
 
          // register the short hand
          builder.Register((c, p) => new ValidateShorthandCustomizer(_shortHand, new[] { "fields", "calculated-fields" }, "v", "validators", "method")).As<ValidateShorthandCustomizer>().SingleInstance();

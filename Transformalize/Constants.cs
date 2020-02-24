@@ -27,6 +27,7 @@ namespace Transformalize {
 
       private static HashSet<string> _types;
       private static HashSet<string> _numericTypes;
+      private static HashSet<string> _decimalTypes;
       private static HashSet<string> _providers;
       private static HashSet<string> _adoProviders;
       private static Dictionary<string, object> _typeDefaults;
@@ -48,6 +49,7 @@ namespace Transformalize {
 
       public const string TypeDomain = @"bool,boolean,byte,byte[],char,date,datetime,decimal,double,float,guid,int,int16,int32,int64,long,object,real,short,single,string,uint16,uint32,uint64,uint,ushort,ulong";
       public const string NumericTypeDomain = @"byte,decimal,double,float,int,int16,int32,int64,long,object,real,short,single,uint16,uint32,uint64,uint,ushort,ulong";
+      public const string DecimalTypeDomain = @"decimal,double,float,object,real,single";
 
       public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=,in,notin,like,notlike";
       public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;
@@ -66,8 +68,16 @@ namespace Transformalize {
          return _numericTypes ?? (_numericTypes = new HashSet<string>(NumericTypeDomain.Split(',')));
       }
 
+      public static HashSet<string> DecimalTypeSet() {
+         return _decimalTypes ?? (_decimalTypes = new HashSet<string>(DecimalTypeDomain.Split(',')));
+      }
+
       public static bool IsNumericType(string type) {
          return NumericTypeSet().Contains(type);
+      }
+
+      public static bool IsDecimalType(string type) {
+         return DecimalTypeSet().Contains(type);
       }
 
       public static HashSet<string> ProviderSet() {

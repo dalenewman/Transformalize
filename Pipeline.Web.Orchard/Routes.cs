@@ -111,6 +111,21 @@ namespace Pipeline.Web.Orchard {
                 },
 
                 new RouteDescriptor {
+                    Priority = 12,
+                    Route = new Route(
+                        "Pipeline/Form/Scan",
+                        new RouteValueDictionary {
+                            {"area", Common.ModuleName },
+                            {"controller", "Form" },
+                            {"action", "Scan"}
+                        },
+                        new RouteValueDictionary(),
+                        new RouteValueDictionary { { "area", Common.ModuleName } },
+                        new MvcRouteHandler()
+                    )
+                },
+
+                new RouteDescriptor {
                     Priority = 11,
                     Route = new Route(
                         "Pipeline/Export/{id}",

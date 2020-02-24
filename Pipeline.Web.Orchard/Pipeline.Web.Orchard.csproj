@@ -218,8 +218,8 @@
     </Reference>
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="Transformalize, Version=0.6.25.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.0.6.25-beta\lib\net462\Transformalize.dll</HintPath>
+    <Reference Include="Transformalize, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.0.6.28-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Validate.Jint.0.6.24-beta\lib\net462\Transformalize.Jint.dll</HintPath>
@@ -278,8 +278,8 @@
     <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.24-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.Web, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Web.0.6.20-beta\lib\net462\Transformalize.Provider.Web.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Web, Version=0.6.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Web.0.6.27-beta\lib\net462\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Ado, Version=0.6.26.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Ado.0.6.26-beta\lib\net462\Transformalize.Transform.Ado.dll</HintPath>
@@ -311,8 +311,8 @@
     <Reference Include="Transformalize.Transform.LambdaParser, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.LambdaParser.0.6.20-beta\lib\net462\Transformalize.Transform.LambdaParser.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Web, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.Web.0.6.20-beta\lib\net462\Transformalize.Transform.Web.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Web, Version=0.6.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Web.0.6.27-beta\lib\net462\Transformalize.Transform.Web.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Xml, Version=0.6.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Xml.0.6.5-beta\lib\net462\Transformalize.Transform.Xml.dll</HintPath>
@@ -320,7 +320,16 @@
     <Reference Include="Transformalize.Validate.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Validate.Jint.0.6.24-beta\lib\net462\Transformalize.Validate.Jint.dll</HintPath>
     </Reference>
+    <Reference Include="Transformalize.Validate.Web, Version=0.6.27.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Validate.Web.0.6.27-beta\lib\net462\Transformalize.Validate.Web.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
+    <Reference Include="zxing, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ZXing.Net.0.16.5\lib\net461\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.5.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\ZXing.Net.0.16.5\lib\net461\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\calendar.js" />
@@ -382,8 +391,6 @@
     <Content Include="Styles\busy.gif" />
     <Content Include="Styles\calendar.css" />
     <Content Include="Styles\desc.gif" />
-    <Content Include="Styles\dropzone.css" />
-    <Content Include="Styles\filepond.min.css" />
     <Content Include="Styles\jquery.toastmessage.css" />
     <Content Include="Styles\jquery.toastmessage.min.css">
       <DependentUpon>jquery.toastmessage.css</DependentUpon>
@@ -523,6 +530,9 @@
     </Content>
     <Content Include="libman.json" />
     <None Include="bundleconfig.json" />
+    <Content Include="bundleconfig.json.bindings">
+      <DependentUpon>bundleconfig.json</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\local.pubxml" />
     <Content Include="Views\EditorTemplates\Parts\PipelineSettings.cshtml" />

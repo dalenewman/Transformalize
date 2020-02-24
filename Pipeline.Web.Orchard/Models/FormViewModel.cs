@@ -11,8 +11,7 @@ namespace Pipeline.Web.Orchard.Models {
    public class FormViewModel {
 
       private readonly IOrchardServices _orchard;
-      public PipelineConfigurationPart Part { get; set; }
-      public Process Process { get; set; }
+
       public FormViewModel(HttpRequestBase request, IOrchardServices orchard, PipelineConfigurationPart part, Process process) {
 
          _orchard = orchard;
@@ -24,11 +23,14 @@ namespace Pipeline.Web.Orchard.Models {
          Accuracy = string.Empty;
          Request = request;
          Entity = process.Entities.FirstOrDefault();
-         Row = Entity == null ? null : Entity.Rows.FirstOrDefault();
-         InputFields = Entity == null ? null : Entity.Fields.Where(f => f.Input).ToArray();
+
          SectionsDisplayed = new HashSet<string>();
 
          if (Entity != null) {
+
+            Row = Entity.Rows.FirstOrDefault();
+            InputFields = Entity.Fields.Where(f => f.Input).ToArray();
+            HasFile = Entity.Fields.Any(f => f.InputType == "file");
 
             // determine focus
             if (Request.HttpMethod == "GET") {
@@ -53,6 +55,10 @@ namespace Pipeline.Web.Orchard.Models {
             Valid = Entity.ValidField != string.Empty && (Row != null && (bool)Row[Entity.ValidField]);
          }
       }
+
+      public bool HasFile { get; set; }
+      public PipelineConfigurationPart Part { get; set; }
+      public Process Process { get; set; }
       public bool Geo { get; set; }
       public string Latitude { get; set; }
       public string Longitude { get; set; }
@@ -70,6 +76,20 @@ namespace Pipeline.Web.Orchard.Models {
 
       public string Status(CfgRow row, Field field) {
          return IsValid(row, field) ? string.Empty : "has-error";
+      }
+
+      public bool UseTextArea(Field field, out int length) {
+         var useTextArea = field.Length == "max";
+         length = 4000;
+         if (!useTextArea) {
+            if (int.TryParse(field.Length, out length)) {
+               useTextArea = length >= 255;
+            }
+         }
+         if(length == 0) {
+            length = 4000;
+         }
+         return useTextArea;
       }
 
       public PipelineFilePart GetFile(Field field, object value) {

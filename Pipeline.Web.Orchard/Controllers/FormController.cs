@@ -30,6 +30,12 @@ using Pipeline.Web.Orchard.Services;
 using Pipeline.Web.Orchard.Services.Contracts;
 using Process = Transformalize.Configuration.Process;
 using Permissions = Orchard.Core.Contents.Permissions;
+using System.Collections.Generic;
+using ZXing;
+using System.Drawing;
+using ZXing.Multi;
+using ZXing.Common;
+using ZXing.QrCode;
 
 namespace Pipeline.Web.Orchard.Controllers {
 
@@ -71,14 +77,7 @@ namespace Pipeline.Web.Orchard.Controllers {
             var process = _processService.Resolve(part);
             var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
 
-            // so file required() validator is fooled
-            if (Request.Files != null && Request.Files.Count > 0) {
-               foreach (var key in Request.Files.AllKeys) {
-                  if (Request.Files[key] != null && Request.Files[key].ContentLength > 0) {
-                     parameters[key] = "file.tmp";
-                  }
-               }
-            }
+            SwapFileParamaters(parameters);
 
             process.Load(part.Configuration, parameters);
 
@@ -111,26 +110,6 @@ namespace Pipeline.Web.Orchard.Controllers {
                      ErrorMode = "exception"
                   });
 
-                  // files
-                  if (Request.Files != null && Request.Files.Count > 0) {
-                     var files = entity.Fields.Where(f => f.Input && f.InputType == "file").ToArray();
-                     for (var i = 0; i < files.Length; i++) {
-                        var field = files[i];
-                        var input = Request.Files.Get(field.Alias);
-                        var parameter = process.Parameters.FirstOrDefault(p => p.Name == field.Alias);
-                        if (input != null && input.ContentLength > 0) {
-                           var filePart = _fileService.Upload(input, "Authenticated", "Forms", i + 1);
-                           if (parameter != null) {
-                              parameter.Value = Url.Action("View", "File", new { id = filePart.Id }) ?? string.Empty;
-                           }
-                        } else {
-                           if (parameter != null && parameters.ContainsKey(field.Alias + "_Old")) {
-                              parameter.Value = parameters[field.Alias + "_Old"];
-                           }
-                        }
-                     }
-                  }
-
                   try {
                      runner.Execute(process);
                      _orchardServices.Notifier.Information(insert ? T("{0} inserted", process.Name) : T("{0} updated", process.Name));
@@ -162,6 +141,19 @@ namespace Pipeline.Web.Orchard.Controllers {
          return new HttpUnauthorizedResult();
       }
 
+      /// <summary>
+      /// file fields actually store the content item id stored in the _Old input
+      /// so we have to swap them into the file field for validation and storage
+      /// </summary>
+      /// <param name="parameters"></param>
+      private void SwapFileParamaters(IDictionary<string, string> parameters) {
+         var swaps = parameters.Where(i => i.Key.EndsWith("_Old")).ToArray();
+         foreach (var swap in swaps) {
+            var key = swap.Key.Substring(0, swap.Key.Length - 4);
+            parameters[key] = swap.Value;
+         }
+      }
+
       [Themed(false)]
       public ActionResult Content(int id) {
 
@@ -176,6 +168,7 @@ namespace Pipeline.Web.Orchard.Controllers {
                var runner = _orchardServices.WorkContext.Resolve<IRunTimeExecute>();
                process = _processService.Resolve(part);
                var parameters = Common.GetParameters(Request, _orchardServices, _secureFileService);
+               SwapFileParamaters(parameters);
                process.Load(part.Configuration, parameters);
                runner.Execute(process);
             } else {
@@ -198,6 +191,48 @@ namespace Pipeline.Web.Orchard.Controllers {
             if (file != null && file.ContentLength > 0) {
                var filePart = _fileService.Upload(file, "Authenticated", "Forms", 1);
                return GetResult(filePart.Id, file.FileName);
+            }
+         }
+
+         return GetResult(0, "Error");
+      }
+
+      [Themed(false), HttpPost]
+      public ContentResult Scan() {
+
+         if (!User.Identity.IsAuthenticated) {
+            return GetResult(0, "Unauthorized");
+         }
+
+         if (Request.Files != null && Request.Files.Count > 0) {
+            var file = Request.Files[0];
+            if (file != null && file.ContentLength > 0) {
+
+               var bitMap = (Bitmap)Image.FromStream(file.InputStream);
+               var source = new BitmapLuminanceSource(bitMap);
+               var binarizer = (Binarizer) new HybridBinarizer(source);
+               var binaryBitMap = new BinaryBitmap(binarizer);
+
+               var reader = new MultiFormatReader();
+               // if you need to find multiple barcodes in same images, var reader = new GenericMultipleBarcodeReader(multiFormatReader);
+               
+               var hints = new Dictionary<DecodeHintType, object>() {
+                  {DecodeHintType.PURE_BARCODE, false},
+                  {DecodeHintType.TRY_HARDER, true }
+               };
+               var result = reader.decode(binaryBitMap, hints);
+               if (result == null) {
+                  binarizer = new GlobalHistogramBinarizer(source);
+                  binaryBitMap = new BinaryBitmap(binarizer);
+                  result = reader.decode(binaryBitMap, hints);
+                  if (result == null) {
+                     return GetResult(0, string.Empty);
+                  } else {
+                     return GetResult(1, result.Text);
+                  }
+               } else {
+                  return GetResult(1, result.Text);
+               }
             }
          }
 

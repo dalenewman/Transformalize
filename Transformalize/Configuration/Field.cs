@@ -114,7 +114,7 @@ namespace Transformalize.Configuration {
          }
       }
 
-      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,search,submit,tel,text,time,url,week", toLower = true)]
+      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
       public string InputType { get; set; }
 
       [Cfg(value = "", toLower = true)]
@@ -462,8 +462,17 @@ namespace Transformalize.Configuration {
 
       public int Ordinal { get; set; }
 
+      [Obsolete("Use IsNumericType instead.")]
       public bool IsNumeric() {
-         return Constants.NumericTypeSet().Contains(Type);
+         return Constants.IsNumericType(Type);
+      }
+
+      public bool IsNumericType() {
+         return Constants.IsNumericType(Type);
+      }
+
+      public bool IsDecimalType() {
+         return Constants.IsDecimalType(Type);
       }
 
       [Cfg(value = "")]
