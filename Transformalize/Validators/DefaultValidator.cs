@@ -21,40 +21,49 @@ using Transformalize.Contracts;
 using Transformalize.Transforms;
 
 namespace Transformalize.Validators {
-    public class DefaultValidator : BaseValidate {
-        private readonly Field _input;
-        private readonly object _default;
-        private readonly BetterFormat _betterFormat;
+   public class DefaultValidator : BaseValidate {
+      private readonly Field _input;
+      private readonly object _default;
+      private readonly BetterFormat _betterFormat;
+      private readonly bool _isDefault;
 
-        public DefaultValidator(IContext context = null) : base(context) {
-            if (IsMissingContext()) {
-                return;
+      public DefaultValidator(IContext context = null) : base(context) {
+         if (IsMissingContext()) {
+            return;
+         }
+
+         if (!Run)
+            return;
+
+         var nextOperation = NextOperation();
+         _isDefault = nextOperation == null || nextOperation.Method != "invert";
+
+         _input = SingleInput();
+         var types = Constants.TypeDefaults();
+         _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
+
+         var help = Context.Field.Help;
+         if (help == string.Empty) {
+            if (_isDefault) {
+               help = $"{Context.Field.Label} must be the default value of {_default}.";
+            } else {
+               help = $"{Context.Field.Label} must not be the default value of {_default}.";
             }
+            
+         }
+         _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
+      }
 
-            if (!Run)
-                return;
+      public override IRow Operate(IRow row) {
+         if (IsInvalid(row, _isDefault ? row[_input].Equals(_default) : !row[_input].Equals(_default))) {
+            AppendMessage(row, _betterFormat.Format(row));
+         }
 
-            _input = SingleInput();
-            var types = Constants.TypeDefaults();
-            _default = _input.Default == Constants.DefaultSetting ? types[_input.Type] : _input.Convert(_input.Default);
+         return row;
+      }
 
-            var help = Context.Field.Help;
-            if (help == string.Empty) {
-                help = $"{Context.Field.Label} must be the default value of {_default}.";
-            }
-            _betterFormat = new BetterFormat(context, help, Context.Entity.GetAllFields);
-        }
-
-        public override IRow Operate(IRow row) {
-            if (IsInvalid(row, row[_input].Equals(_default))) {
-                AppendMessage(row, _betterFormat.Format(row));
-            }
-
-            return row;
-        }
-
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("default");
-        }
-    }
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("default");
+      }
+   }
 }

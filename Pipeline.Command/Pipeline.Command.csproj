@@ -238,13 +238,13 @@
       <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
       <Name>Transformalize.462</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logging\NLog\Transformalize.Logging.NLog\Transformalize.Logging.NLog.csproj">
+      <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
+      <Name>Transformalize.Logging.NLog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Pipeline.Ioc.Autofac\Pipeline.Ioc.Autofac.csproj">
       <Project>{58FF362E-4A8D-459E-A174-5AAAE7EA8953}</Project>
       <Name>Pipeline.Ioc.Autofac</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
-      <Project>{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}</Project>
-      <Name>Pipeline.Logging.NLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24f88aaf-2dc3-4aa1-b385-c6c7748cbe77}</Project>

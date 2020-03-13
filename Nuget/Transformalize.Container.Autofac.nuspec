@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Container.Autofac</id>
-      <version>0.6.25-beta</version>
+      <version>0.6.28-beta</version>
       <title>basic autofac work for transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,13 +10,20 @@
       <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Lucene</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>basic autofac work for transformalize</description>
-      <releaseNotes>updated transformalize dependency</releaseNotes>
+      <releaseNotes>added .net standard 2.0 target</releaseNotes>
       <copyright>Copyright 2018-2020</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
-            <dependency id="Autofac" version="4.6.2" />
-            <dependency id="Transformalize" version="0.6.25-beta" />
+            <dependency id="Autofac" version="4.9.4" />
+            <dependency id="Transformalize" version="0.6.28-beta" />
+            <dependency id="Cfg-NET.Environment" version="0.3.5" />
+            <dependency id="Cfg-NET.Reader" version="0.3.4" />
+            <dependency id="Cfg-NET.Shorthand" version="0.2.12" />
+         </group>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Autofac" version="4.9.4" />
+            <dependency id="Transformalize" version="0.6.28-beta" />
             <dependency id="Cfg-NET.Environment" version="0.3.5" />
             <dependency id="Cfg-NET.Reader" version="0.3.4" />
             <dependency id="Cfg-NET.Shorthand" version="0.2.12" />
@@ -25,5 +32,7 @@
    </metadata>
    <files>
       <file src="..\Containers\Autofac\Transformalize.Container.Autofac\bin\Release\Transformalize.Container.Autofac.dll" target="lib\net462\Transformalize.Container.Autofac.dll" />
+      <file src="..\Containers\Autofac\Transformalize.Container.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Container.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Container.Autofac.deps.json" />
+      <file src="..\Containers\Autofac\Transformalize.Container.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Container.Autofac.dll" target="lib\netstandard2.0\Transformalize.Container.Autofac.dll" />
    </files>
 </package>

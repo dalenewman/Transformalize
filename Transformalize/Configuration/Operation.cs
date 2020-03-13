@@ -70,7 +70,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = 0)]
       public int Length { get; set; }
 
-      [Cfg(value = "", toLower = true)]
+      [Cfg(value = "")]
       public string Map { get; set; }
 
       [Cfg(required = true, toLower = true)]
@@ -277,9 +277,11 @@ namespace Transformalize.Configuration {
          return Method;
       }
 
-      protected override void PreValidate() { }
-
       protected override void Validate() {
+         // initial map property was toLower() automatically, if it's a comma delimited list, we don't want to do this anymore
+         if (!Map.Contains(",")) {
+            Map = Map.ToLower();
+         }
          if (Fields.Any()) {
             ProducesFields = true;
          }

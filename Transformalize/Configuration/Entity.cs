@@ -408,14 +408,18 @@ namespace Transformalize.Configuration {
                   vf.Default = "true"; // innocent until proven guilty
                }
             } else {
-               CalculatedFields.Add(new Field {
-                  Name = field.ValidField,
-                  Alias = field.ValidField,
-                  Input = false,
-                  Type = "bool",
-                  Default = "true",  // innocent until proven guilty
-                  IsCalculated = true
-               });
+               if (!field.Input && field.Type.StartsWith("bool") && field.ValidField == field.Alias + "Valid") {
+                  field.ValidField = field.Alias;  // it will store the validness to itself
+               } else {
+                  CalculatedFields.Add(new Field {
+                     Name = field.ValidField,
+                     Alias = field.ValidField,
+                     Input = false,
+                     Type = "bool",
+                     Default = "true",  // innocent until proven guilty
+                     IsCalculated = true
+                  });
+               }
             }
 
             if (!keys.Contains(field.MessageField)) {

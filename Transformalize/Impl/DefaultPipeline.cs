@@ -17,7 +17,9 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
+using Transformalize.Extensions;
 
 namespace Transformalize.Impl {
    public class DefaultPipeline : IPipeline {
@@ -127,37 +129,16 @@ namespace Transformalize.Impl {
             }
             var data = Reader == null ? InputProvider.Read() : Reader.Read();
 
-#if NETS10
-            // no PLINQ
-#else
-            if (Context.Entity.Pipeline == "parallel.linq") {
-               data = data.AsParallel();
-            }
-#endif
-
             if (Transforms.Any()) {
-#if NETS10
                data = Transforms.Aggregate(data, (rows, t) => t.Operate(rows));
-#else
-               if (Context.Entity.Pipeline == "parallel.linq") {
-                  data = Transforms.AsParallel().Aggregate(data, (rows, t) => t.Operate(rows));
-               } else {
-                  data = Transforms.Aggregate(data, (rows, t) => t.Operate(rows));
-               }
-#endif
             }
+
             if (Validators.Any()) {
-#if NETS10
                data = Validators.Aggregate(data, (rows, v) => v.Operate(rows));
-#else
-               if (Context.Entity.Pipeline == "parallel.linq") {
-                  data = Validators.AsParallel().Aggregate(data, (rows, v) => v.Operate(rows));
-               } else {
-                  data = Validators.Aggregate(data, (rows, v) => v.Operate(rows));
-               }
-#endif
             }
+
             return data;
+
          }
          Context.Info("Change Detected: No.");
          return Enumerable.Empty<IRow>();

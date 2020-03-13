@@ -369,6 +369,8 @@ namespace Transformalize.Configuration {
       public bool System { get; set; }
 
       protected override void Validate() {
+
+         // handle missing valid fields
          if (!string.IsNullOrEmpty(V) || Validators.Any()) {
             if (ValidField == string.Empty) {
                ValidField = Alias + "Valid";
@@ -377,6 +379,7 @@ namespace Transformalize.Configuration {
                MessageField = Alias + "Message";
             }
          }
+
          if (!Map.Contains(",")) {
             Map = Map.ToLower();
          }
@@ -578,7 +581,7 @@ namespace Transformalize.Configuration {
       [Cfg(unique = true)]
       public string Parameter { get; set; }
 
-      [Cfg(value =false)]
+      [Cfg(value = false)]
       public bool Property { get; set; }
 
    }

@@ -25,17 +25,17 @@ namespace Transformalize.Transforms {
 
     public class HashcodeTransform : BaseTransform {
         private readonly Field[] _input;
-        private readonly StringBuilder _builder;
+        //private readonly StringBuilder _builder;
         public HashcodeTransform(IContext context = null) : base(context, "int") {
             if (IsMissingContext()) {
                 return;
             }
             _input = MultipleInput();
-            _builder = new StringBuilder();
+            //_builder = new StringBuilder();
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = GetStringHashCode(_input.Select(f => row[f]));
+            row[Context.Field] = GetHashCode(_input.Select(f => row[f]));
             return row;
         }
 
@@ -52,13 +52,13 @@ namespace Transformalize.Transforms {
             }
         }
 
-        private int GetStringHashCode(IEnumerable<object> values) {
-            _builder.Clear();
-            foreach (var value in values) {
-                _builder.Append(value ?? string.Empty);
-            }
-            return _builder.ToString().GetHashCode();
-        }
+        //private int GetStringHashCode(IEnumerable<object> values) {
+        //    _builder.Clear();
+        //    foreach (var value in values) {
+        //        _builder.Append(value ?? string.Empty);
+        //    }
+        //    return _builder.ToString().GetHashCode();
+        //}
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             return new[] { new OperationSignature("hashcode") };

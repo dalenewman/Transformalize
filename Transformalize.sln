@@ -13,8 +13,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		WE-Markdown.css = WE-Markdown.css
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Logging.NLog", "Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj", "{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Scheduler.Quartz", "Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj", "{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}"
@@ -125,6 +123,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.20"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Test.Unit.Shared", "src\Test.Unit.Shared\Test.Unit.Shared.shproj", "{CC0D9D4A-1DF1-4CBC-940E-ECFD16030932}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Container.Autofac.Standard.20", "Containers\Autofac\Transformalize.Container.Autofac.Standard.20\Transformalize.Container.Autofac.Standard.20.csproj", "{BEB86E66-7307-471F-A413-EB562EB19755}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{FE37F2CE-75CB-4EFE-96D4-28B60B3C525A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NLog", "NLog", "{95250A69-B8F2-4181-9708-03048C08BB32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Logging.NLog", "Logging\NLog\Transformalize.Logging.NLog\Transformalize.Logging.NLog.csproj", "{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Transformalize\Transformalize.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
@@ -145,10 +151,6 @@ Global
 		Description = A Configurable ETL Solution Specializing in Incremental Denormalization
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -237,6 +239,14 @@ Global
 		{EDEF18F3-B55C-4DE7-8F09-C07AAA2BE2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDEF18F3-B55C-4DE7-8F09-C07AAA2BE2D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDEF18F3-B55C-4DE7-8F09-C07AAA2BE2D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEB86E66-7307-471F-A413-EB562EB19755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEB86E66-7307-471F-A413-EB562EB19755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEB86E66-7307-471F-A413-EB562EB19755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEB86E66-7307-471F-A413-EB562EB19755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -265,6 +275,9 @@ Global
 		{C41EFBE7-25D0-4608-A37A-456E705A97E3} = {B5882853-4EEA-4780-9AD5-8465603A710E}
 		{54D882EC-0422-44F1-BD19-74BF346BFF4F} = {B5882853-4EEA-4780-9AD5-8465603A710E}
 		{EDEF18F3-B55C-4DE7-8F09-C07AAA2BE2D1} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
+		{BEB86E66-7307-471F-A413-EB562EB19755} = {B5882853-4EEA-4780-9AD5-8465603A710E}
+		{95250A69-B8F2-4181-9708-03048C08BB32} = {FE37F2CE-75CB-4EFE-96D4-28B60B3C525A}
+		{5F5DC0B4-2AB2-4933-A2C6-D0EB89FDFF53} = {95250A69-B8F2-4181-9708-03048C08BB32}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

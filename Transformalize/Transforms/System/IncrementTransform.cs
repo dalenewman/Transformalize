@@ -15,17 +15,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
-    public class IncrementTransform : BaseTransform {
-        public IncrementTransform(IContext context) : base(context, "null") {
-            IsMissingContext();
-        }
+   public class IncrementTransform : BaseTransform {
+      public IncrementTransform(IContext context) : base(context, "null") {
+         IsMissingContext();
+      }
 
-        public override IRow Operate(IRow row) {
-            ++Context.Entity.RowNumber;
-            return row;
-        }
-    }
+      public override IRow Operate(IRow row) {
+         Interlocked.Increment(ref Context.Entity.RowNumber);
+         return row;
+      }
+   }
 }

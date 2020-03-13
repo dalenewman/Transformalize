@@ -56,6 +56,7 @@ namespace Transformalize.Validators {
          if (MessageField == null) {
             AppendMessage = delegate { };
          } else {
+            // preserves messages, if being used by more than one field
             AppendMessage = (row, message) => row[MessageField] = row[MessageField] + message + "|";
          }
 
@@ -63,6 +64,7 @@ namespace Transformalize.Validators {
             AppendResult = delegate { };
             IsInvalid = (row, result) => true;
          } else {
+            // preserves a failure (false), if being used by more than one field
             AppendResult = (row, result) => row[ValidField] = (bool)row[ValidField] && result;
             IsInvalid = delegate (IRow row, bool result) {
                AppendResult(row, result);
@@ -142,7 +144,7 @@ namespace Transformalize.Validators {
 
       protected bool IsNotReceivingNumbers() {
          foreach (var field in MultipleInput()) {
-            if (!field.IsNumeric()) {
+            if (!field.IsNumericType()) {
                Run = false;
                Error($"The {Context.Operation.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
                return true;

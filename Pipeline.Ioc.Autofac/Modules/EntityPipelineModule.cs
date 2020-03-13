@@ -36,12 +36,9 @@ namespace Transformalize.Ioc.Autofac.Modules {
          if (process == null)
             return;
 
-         var type = process.Pipeline == "defer" ? entity.Pipeline : process.Pipeline;
-
          builder.Register(ctx => {
             var context = ctx.ResolveNamed<IContext>(entity.Key);
             IPipeline pipeline;
-            context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
             var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
             pipeline = new DefaultPipeline(outputController, context);
 

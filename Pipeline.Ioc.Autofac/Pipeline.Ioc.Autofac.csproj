@@ -179,9 +179,9 @@
       <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
       <Name>Transformalize.452</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
+    <ProjectReference Include="..\Logging\NLog\Transformalize.Logging.NLog\Transformalize.Logging.NLog.csproj">
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
-      <Name>Pipeline.Logging.NLog</Name>
+      <Name>Transformalize.Logging.NLog</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>

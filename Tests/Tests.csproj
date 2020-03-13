@@ -99,10 +99,6 @@
       <Project>{bdd9d7e5-b417-4da7-afb6-c23de761f4d4}</Project>
       <Name>Transformalize.Container.Autofac</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Pipeline.Logging.NLog\Pipeline.Logging.NLog.csproj">
-      <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
-      <Name>Pipeline.Logging.NLog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Providers\Console\Console.csproj">
       <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
       <Name>Console</Name>

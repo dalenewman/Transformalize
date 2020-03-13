@@ -142,10 +142,7 @@ namespace Transformalize.Containers.Autofac {
          foreach (var entity in process.Entities) {
             builder.Register(ctx => {
 
-               var type = process.Pipeline == "defer" ? entity.Pipeline : process.Pipeline;
-
                var context = ctx.ResolveNamed<IContext>(entity.Key);
-               context.Debug(() => $"Registering {type} for entity {entity.Alias}.");
                var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                var pipeline = new DefaultPipeline(outputController, context);
 

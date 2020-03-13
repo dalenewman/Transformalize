@@ -193,7 +193,7 @@ namespace Transformalize.Transforms {
 
       protected bool IsNotReceivingNumbers() {
          foreach (var field in MultipleInput()) {
-            if (!field.IsNumeric()) {
+            if (!field.IsNumericType()) {
                Run = false;
                Error(
                    $"The {Context.Operation.Method} method expects a numeric input, but is receiving a {field.Type} type from {field.Alias}.");
