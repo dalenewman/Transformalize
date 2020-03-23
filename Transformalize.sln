@@ -123,7 +123,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.20"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Test.Unit.Shared", "src\Test.Unit.Shared\Test.Unit.Shared.shproj", "{CC0D9D4A-1DF1-4CBC-940E-ECFD16030932}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Container.Autofac.Standard.20", "Containers\Autofac\Transformalize.Container.Autofac.Standard.20\Transformalize.Container.Autofac.Standard.20.csproj", "{BEB86E66-7307-471F-A413-EB562EB19755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Container.Autofac.Standard.20", "Containers\Autofac\Transformalize.Container.Autofac.Standard.20\Transformalize.Container.Autofac.Standard.20.csproj", "{BEB86E66-7307-471F-A413-EB562EB19755}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{FE37F2CE-75CB-4EFE-96D4-28B60B3C525A}"
 EndProject
@@ -142,8 +142,10 @@ Global
 		Transformalize\Transformalize.projitems*{9e2c7fd8-890c-4ccf-927f-ae40ecd49013}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{ad22843c-d4f0-431d-8250-6be4db802d82}*SharedItemsImports = 4
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{bdd9d7e5-b417-4da7-afb6-c23de761f4d4}*SharedItemsImports = 4
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{beb86e66-7307-471f-a413-eb562eb19755}*SharedItemsImports = 5
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
 		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
+		Transformalize\Transformalize.projitems*{edef18f3-b55c-4de7-8f09-c07aaa2be2d1}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
