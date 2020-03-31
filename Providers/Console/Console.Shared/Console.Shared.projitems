@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8f345bfb-28e6-412f-86bb-2b3e43752138</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Console.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleCommandReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleInputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleInputReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConsoleWriter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PrintAction.cs" />
+  </ItemGroup>
+</Project>

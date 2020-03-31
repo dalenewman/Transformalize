@@ -183,6 +183,10 @@
       <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
       <Name>Transformalize.Logging.NLog</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Providers\Console\Console\Console.csproj">
+      <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
+      <Name>Console</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Providers\File\File.csproj">
       <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
       <Name>File</Name>
@@ -194,10 +198,6 @@
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Providers\Console\Console.csproj">
-      <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
-      <Name>Console</Name>
     </ProjectReference>
     <ProjectReference Include="..\Providers\Kml\Kml.csproj">
       <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
