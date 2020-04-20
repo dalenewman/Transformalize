@@ -59,6 +59,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Container.Autofac.v3.nuspec = Nuget\Transformalize.Container.Autofac.v3.nuspec
 		Nuget\Transformalize.Logging.NLog.nuspec = Nuget\Transformalize.Logging.NLog.nuspec
 		Nuget\Transformalize.nuspec = Nuget\Transformalize.nuspec
+		Nuget\Transformalize.Provider.Console.Autofac.nuspec = Nuget\Transformalize.Provider.Console.Autofac.nuspec
 		Nuget\Transformalize.Provider.Console.nuspec = Nuget\Transformalize.Provider.Console.nuspec
 		Nuget\Transformalize.Provider.File.nuspec = Nuget\Transformalize.Provider.File.nuspec
 		Nuget\Transformalize.Provider.Kml.nuspec = Nuget\Transformalize.Provider.Kml.nuspec
@@ -135,7 +136,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console", "Providers\Consol
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Console.Shared", "Providers\Console\Console.Shared\Console.Shared.shproj", "{8F345BFB-28E6-412F-86BB-2B3E43752138}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console.Standard.20", "Providers\Console\Console.Standard.20\Console.Standard.20.csproj", "{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Standard.20", "Providers\Console\Console.Standard.20\Console.Standard.20.csproj", "{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console.Autofac.Standard.20", "Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj", "{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -262,6 +265,10 @@ Global
 		{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -296,6 +303,7 @@ Global
 		{32AEE29F-519F-4A61-AF6C-BC218611B6FF} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
 		{8F345BFB-28E6-412F-86BB-2B3E43752138} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
 		{07C2284A-2D22-4165-BFE0-82F00C9FFF5A} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
+		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

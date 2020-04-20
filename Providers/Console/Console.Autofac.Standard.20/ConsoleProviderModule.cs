@@ -1,40 +1,21 @@
-#region license
-// Transformalize
-// Configurable Extract, Transform, and Load
-// Copyright 2013-2019 Dale Newman
-//  
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//   
-//       http://www.apache.org/licenses/LICENSE-2.0
-//   
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-#endregion
+﻿using Autofac;
 using System.Collections.Generic;
 using System.Linq;
-using Autofac;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Nulls;
-using Transformalize.Providers.Console;
 
-namespace Transformalize.Ioc.Autofac.Modules {
+namespace Transformalize.Providers.Console.Autofac {
 
-   public class ConsoleModule : Module {
+   public class ConsoleProviderModule : Module {
+
       private readonly Process _process;
       private readonly HashSet<string> _consoleActions = new HashSet<string> { "print" };
 
-      public ConsoleModule() { }
-
-      public ConsoleModule(Process process) {
+      public ConsoleProviderModule(Process process) {
          _process = process;
       }
 
@@ -86,8 +67,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                builder.Register<IWrite>(ctx => {
-                  var serializer = output.Format == "json" ? new JsonNetSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) : new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)) as ISerialize;
-                  return new ConsoleWriter(serializer);
+                  return new ConsoleWriter(new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)));
                }).Named<IWrite>(entity.Key);
 
                builder.Register<IOutputProvider>(ctx => {
@@ -99,7 +79,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
       }
 
-      private IAction SwitchAction(IComponentContext ctx, Action action) {
+      private IAction SwitchAction(IComponentContext ctx, Configuration.Action action) {
          var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
          switch (action.Type) {
             case "print":
@@ -109,6 +89,5 @@ namespace Transformalize.Ioc.Autofac.Modules {
                return new NullAction();
          }
       }
-
    }
 }

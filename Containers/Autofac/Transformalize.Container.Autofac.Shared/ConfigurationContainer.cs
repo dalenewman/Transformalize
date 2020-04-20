@@ -36,13 +36,14 @@ namespace Transformalize.Containers.Autofac {
    /// <summary>
    /// This container deals with the arrangement and how it becomes a process.
    /// Transforms and Validators are registered here as well because their 
-   /// short-hand is expanded in the arrangement before it becomes a process.
+   /// short-hand is expanded in the arrangement by customizers before it becomes a process.
    /// </summary>
    public class ConfigurationContainer {
 
       private readonly List<IModule> _modules = new List<IModule>();
       private readonly List<TransformHolder> _transforms = new List<TransformHolder>();
       private readonly List<ValidatorHolder> _validators = new List<ValidatorHolder>();
+      private readonly List<ICustomizer> _customizers = new List<ICustomizer>();
 
       public ConfigurationContainer() { }
 
@@ -123,14 +124,15 @@ namespace Transformalize.Containers.Autofac {
 
             var transformed = TransformParameters(ctx, cfg);
 
-            var process = new Process(transformed ?? cfg, parameters, new List<IDependency> {
-               ctx.Resolve<IReader>(),
-               new FormParameterModifier(new DateMathModifier()),
-               new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]),"parameters", "name", "value"),
-               ctx.ResolveNamed<IDependency>(TransformModule.FieldsName),
-               ctx.ResolveNamed<IDependency>(TransformModule.ParametersName),
-               ctx.ResolveNamed<IDependency>(ValidateModule.Name)
-            }.ToArray());
+            var dependancies = new List<IDependency>();
+            dependancies.Add(ctx.Resolve<IReader>());
+            dependancies.AddRange(_customizers);
+            dependancies.Add(new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"));
+            dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.FieldsName));
+            dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.ParametersName));
+            dependancies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.Name));
+
+            var process = new Process(transformed ?? cfg, parameters, dependancies.ToArray());
 
             if (process.Errors().Any()) {
                var c = new PipelineContext(logger, new Process() { Name = "Errors" });
@@ -225,6 +227,12 @@ namespace Transformalize.Containers.Autofac {
       }
       public void AddTransform(Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
          _transforms.Add(new TransformHolder(getTransform, signatures));
+      }
+      public void AddCustomizer(ICustomizer customizer) {
+         _customizers.Add(customizer);
+      }
+      public void AddModule(IModule module) {
+         _modules.Add(module);
       }
 
    }

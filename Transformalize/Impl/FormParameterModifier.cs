@@ -52,6 +52,9 @@ namespace Transformalize.Impl {
       }
    }
 
+   /// <summary>
+   /// If in form mode, this creates parameters for every input field.
+   /// </summary>
    public class FormParameterModifier : ICustomizer {
       private readonly ICustomizer _after;
 

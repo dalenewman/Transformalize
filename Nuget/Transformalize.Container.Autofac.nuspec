@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Container.Autofac</id>
-      <version>0.6.28-beta</version>
+      <version>0.6.30-beta</version>
       <title>basic autofac work for transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,7 +10,7 @@
       <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Lucene</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>basic autofac work for transformalize</description>
-      <releaseNotes>added .net standard 2.0 target</releaseNotes>
+      <releaseNotes>added methods for adding additional customizers and modules</releaseNotes>
       <copyright>Copyright 2018-2020</copyright>
       <tags>etl</tags>
       <dependencies>

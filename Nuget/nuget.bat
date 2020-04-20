@@ -7,7 +7,9 @@ REM rem PROVIDERS
 REM nuget pack Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Provider.Kml.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Provider.Console.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+
 REM nuget pack Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
 REM 
 REM REM TRANSFORMS
@@ -19,7 +21,7 @@ REM nuget pack Transformalize.Transform.Json.nuspec -OutputDirectory "c:\temp\mo
 REM nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
 
 REM CONTAINERS
-REM nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Container.Autofac.v3.nuspec -OutputDirectory "c:\temp\modules"
 
 
