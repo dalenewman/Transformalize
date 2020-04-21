@@ -578,7 +578,7 @@ namespace Transformalize.Configuration {
       }
 
       // match up a parameter by something other than this field's alias / name
-      [Cfg(unique = true)]
+      [Cfg()]
       public string Parameter { get; set; }
 
       [Cfg(value = false)]
