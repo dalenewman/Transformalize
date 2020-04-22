@@ -4,10 +4,21 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <Version>0.6.29</Version>
+    <Version>0.7.1-beta</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <NeutralLanguage>en</NeutralLanguage>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
+    <AssemblyVersion>0.7.1.0</AssemblyVersion>
+    <Authors>Dale Newman</Authors>
+    <Company>Transformalize</Company>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;ASYNC</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;ASYNC</DefineConstants>
   </PropertyGroup>
 
   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />

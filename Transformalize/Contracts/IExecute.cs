@@ -15,8 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading.Tasks;
+
 namespace Transformalize.Contracts {
-    public interface IExecute {
-        void Execute();
-    }
+   public interface IExecute {
+      void Execute();
+      Task ExecuteAsync();
+   }
 }

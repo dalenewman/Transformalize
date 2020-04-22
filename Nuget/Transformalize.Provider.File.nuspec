@@ -1,25 +1,30 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>Transformalize.Provider.File</id>
-    <version>0.6.20-beta</version>
-    <title>Transformalize Provider File Base</title>
-    <authors>Dale Newman</authors>
-    <owners>Dale Newman</owners>
-    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <!--<license type="expression">Apache-2.0</license>-->
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Base File Provider for Transformalize</description>
-    <releaseNotes>updated tfl</releaseNotes>
-    <copyright>Copyright 2013-2019</copyright>
-    <tags>etl</tags>
-    <dependencies>
-      <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.6.20-beta" />
-      </group>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="..\Providers\File\bin\Release\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
-  </files>
+   <metadata>
+      <id>Transformalize.Provider.File</id>
+      <version>0.6.30-beta</version>
+      <title>Transformalize Provider File Base</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <!--<license type="expression">Apache-2.0</license>-->
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Base File Provider for Transformalize</description>
+      <releaseNotes>added .net standard 2.0 target</releaseNotes>
+      <copyright>Copyright 2013-2020</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="net462">
+            <dependency id="Transformalize" version="0.6.29-beta" />
+         </group>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.6.29-beta" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\Providers\File\File\bin\Release\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
+      <file src="..\Providers\File\File.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.File.deps.json" target="lib\netstandard2.0\Transformalize.Provider.File.deps.json" />
+      <file src="..\Providers\File\File.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.File.dll" target="lib\netstandard2.0\Transformalize.Provider.File.dll" />
+   </files>
 </package>

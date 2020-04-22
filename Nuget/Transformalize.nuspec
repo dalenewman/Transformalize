@@ -2,15 +2,14 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.6.29-beta</version>
+      <version>0.7.1-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-      <!--<license type="expression">Apache-2.0</license>-->
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>take unique constraint off field.parameter</releaseNotes>
+      <releaseNotes>added ExecuteAsync to IExecute interface</releaseNotes>
       <copyright>Copyright © 2013-2020</copyright>
       <tags>etl</tags>
       <dependencies>

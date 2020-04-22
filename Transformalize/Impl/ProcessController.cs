@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -66,6 +67,18 @@ namespace Transformalize.Impl {
             _context.Error("Pre-Execute failed!");
          }
       }
+
+      
+#if ASYNC
+      public async Task ExecuteAsync() {
+         await Task.Run(() => Execute());
+      }
+#else
+      public Task ExecuteAsync() {
+         throw new NotImplementedException("Must be using .NET 4.6.2 or .NET Standard 2.0 library for this method to work");
+      }
+#endif
+
 
       private void PostExecute() {
          foreach (var action in PostActions) {

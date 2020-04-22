@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Scheduler.Quartz",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File", "Providers\File\File.csproj", "{93B94D0E-4287-46D3-82EF-F81C636574DD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Ioc.Autofac", "Pipeline.Ioc.Autofac\Pipeline.Ioc.Autofac.csproj", "{58FF362E-4A8D-459E-A174-5AAAE7EA8953}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Command", "Pipeline.Command\Pipeline.Command.csproj", "{C0AD9D94-4126-4452-BD01-1118FB827F39}"
@@ -138,19 +136,30 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Console.Shared", "Providers
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Standard.20", "Providers\Console\Console.Standard.20\Console.Standard.20.csproj", "{07C2284A-2D22-4165-BFE0-82F00C9FFF5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Console.Autofac.Standard.20", "Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj", "{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Console.Autofac.Standard.20", "Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj", "{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "File", "File", "{92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File", "Providers\File\File\File.csproj", "{93B94D0E-4287-46D3-82EF-F81C636574DD}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "File.Shared", "Providers\File\File.Shared\File.Shared.shproj", "{0A9E0F50-3B9D-43B0-A3B7-9184B6535D31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File.Standard.20", "Providers\File\File.Standard.20\File.Standard.20.csproj", "{4B27A101-66AC-4D87-8A23-3076067CB272}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Providers\Console\Console.Shared\Console.Shared.projitems*{07c2284a-2d22-4165-bfe0-82f00c9fff5a}*SharedItemsImports = 5
+		Providers\File\File.Shared\File.Shared.projitems*{0a9e0f50-3b9d-43b0-a3b7-9184b6535d31}*SharedItemsImports = 13
 		Transformalize\Transformalize.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
 		Providers\Console\Console.Shared\Console.Shared.projitems*{32aee29f-519f-4a61-af6c-bc218611b6ff}*SharedItemsImports = 4
+		Providers\File\File.Shared\File.Shared.projitems*{4b27a101-66ac-4d87-8a23-3076067cb272}*SharedItemsImports = 5
 		Transformalize\Transformalize.projitems*{50c78faa-713d-495f-971e-47f3aca46971}*SharedItemsImports = 4
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{54d882ec-0422-44f1-bd19-74bf346bff4f}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{5e20aa15-9ff3-4278-bb6d-dc1aced49ba4}*SharedItemsImports = 4
 		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{89d90201-5ea9-4d51-b4a7-0a977fb7504d}*SharedItemsImports = 4
 		Providers\Console\Console.Shared\Console.Shared.projitems*{8f345bfb-28e6-412f-86bb-2b3e43752138}*SharedItemsImports = 13
 		Transformalize\Transformalize.projitems*{8ffa5596-c738-479a-a0f7-1d88ba62b610}*SharedItemsImports = 4
+		Providers\File\File.Shared\File.Shared.projitems*{93b94d0e-4287-46d3-82ef-f81c636574dd}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{9e2c7fd8-890c-4ccf-927f-ae40ecd49013}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{ad22843c-d4f0-431d-8250-6be4db802d82}*SharedItemsImports = 4
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{bdd9d7e5-b417-4da7-afb6-c23de761f4d4}*SharedItemsImports = 4
@@ -169,10 +178,6 @@ Global
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}.Release|Any CPU.Build.0 = Release|Any CPU
-		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58FF362E-4A8D-459E-A174-5AAAE7EA8953}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{58FF362E-4A8D-459E-A174-5AAAE7EA8953}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{58FF362E-4A8D-459E-A174-5AAAE7EA8953}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -269,12 +274,19 @@ Global
 		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B94D0E-4287-46D3-82EF-F81C636574DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B27A101-66AC-4D87-8A23-3076067CB272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B27A101-66AC-4D87-8A23-3076067CB272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B27A101-66AC-4D87-8A23-3076067CB272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B27A101-66AC-4D87-8A23-3076067CB272}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{6ADEE326-F1A6-486F-89D1-ACA0E2A24720} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
 		{C2800256-5DE1-4BC9-9D5E-8BDE3CC8353D} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{3F8C89D9-47DE-413F-A383-39B7A23FFC22} = {9F97BFD9-DB95-483F-BF26-6ADA42D2D334}
@@ -304,6 +316,10 @@ Global
 		{8F345BFB-28E6-412F-86BB-2B3E43752138} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
 		{07C2284A-2D22-4165-BFE0-82F00C9FFF5A} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
 		{5BD91543-07EA-42AF-93E4-8FA1BAFAFF21} = {37658F8D-E462-4A64-A3DA-754D42B49BC3}
+		{92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
+		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
+		{0A9E0F50-3B9D-43B0-A3B7-9184B6535D31} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
+		{4B27A101-66AC-4D87-8A23-3076067CB272} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
