@@ -218,6 +218,12 @@ namespace Transformalize.Containers.Autofac {
          //RegisterTransform(_builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
          //RegisterTransform(_builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
          //RegisterTransform(_builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
+
+         //RegisterTransform(_builder, (ctx, c) => new HtmlDecodeTransform(c), new HtmlDecodeTransform().GetSignatures());
+         //RegisterTransform(_builder, (ctx, c) => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
+         //RegisterTransform(_builder, (ctx, c) => new UrlDecodeTransform(c), new UrlDecodeTransform().GetSignatures());
+         //RegisterTransform(_builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
+
       }
       private void RegisterTransform(ContainerBuilder builder, Func<IComponentContext, IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
 

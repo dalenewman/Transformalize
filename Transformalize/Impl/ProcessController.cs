@@ -68,10 +68,27 @@ namespace Transformalize.Impl {
          }
       }
 
-      
+
 #if ASYNC
       public async Task ExecuteAsync() {
-         await Task.Run(() => Execute());
+
+         Task task = Task.Run(() => Execute());
+         try {
+            await task;
+         } catch (Exception ex) {
+            _context.Error(ex.Message);
+            _context.Error(ex.StackTrace);
+            if (task != null && task.Exception != null) {
+               if (task.Exception.Message != ex.Message) {
+                  _context.Error(task.Exception.Message);
+                  _context.Error(task.Exception.StackTrace);
+               }
+               if (task.Exception.InnerException != null && task.Exception.InnerException.Message != task.Exception.Message && task.Exception.InnerException.Message != ex.Message) {
+                  _context.Error(task.Exception.InnerException.Message);
+                  _context.Error(task.Exception.InnerException.StackTrace);
+               }
+            }
+         }
       }
 #else
       public Task ExecuteAsync() {
@@ -92,7 +109,7 @@ namespace Transformalize.Impl {
       private bool MayContinue(ActionResponse response) {
          if (response.Code == 200) {
             if (response.Action.Type != "internal") {
-               if(response.Action.Description == string.Empty) {
+               if (response.Action.Description == string.Empty) {
                   _context.Info($"Successfully ran action {response.Action.Type}.");
                } else {
                   _context.Info($"Successfully ran action {response.Action.Type}: {response.Action.Description}.");

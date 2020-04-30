@@ -219,9 +219,9 @@
       <Project>{55c2704f-caab-4eec-af2e-9b3a775d4598}</Project>
       <Name>Globalization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Html\Html.csproj">
-      <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
-      <Name>Html</Name>
+    <ProjectReference Include="..\Transforms\Html.Standard\Html.Standard.csproj">
+      <Project>{6289500b-7c89-42a4-b0ef-06ac1da2a4d8}</Project>
+      <Name>Html.Standard</Name>
     </ProjectReference>
     <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
       <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>

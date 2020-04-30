@@ -127,10 +127,6 @@
       <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
       <Name>Geography</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Transforms\Html\Html.csproj">
-      <Project>{05087be0-7469-474b-8306-8f64f5f02d50}</Project>
-      <Name>Html</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Transforms\Xml\Xml.csproj">
       <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>
       <Name>Xml</Name>

@@ -378,8 +378,7 @@ namespace Transformalize.Transforms {
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             return new[] {
-                new OperationSignature("htmldecode"),
-                new OperationSignature("xmldecode") 
+                new OperationSignature("decode")
             };
         }
     }

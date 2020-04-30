@@ -32,8 +32,8 @@ using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.Dates;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
-using Transformalize.Transforms.Html;
 using Transformalize.Transforms.Xml;
+using Transformalize.Transforms.Html;
 using Module = Autofac.Module;
 using Parameter = Cfg.Net.Shorthand.Parameter;
 
@@ -87,7 +87,6 @@ namespace Transformalize.Ioc.Autofac.Modules {
          RegisterTransform(builder, (ctx, c) => new FormatPhoneTransform(c), new FormatPhoneTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new HashcodeTransform(c), new HashcodeTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new DecodeTransform(c), new DecodeTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new InsertTransform(c), new InsertTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new InvertTransform(c), new InvertTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new LeftTransform(c), new LeftTransform().GetSignatures());
@@ -201,6 +200,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
          // new
          RegisterTransform(builder, (ctx, c) => new CountTransform(c), new CountTransform().GetSignatures());
          RegisterTransform(builder, (ctx, c) => new SleepTransform(c), new SleepTransform().GetSignatures());
+
+         // html
+         RegisterTransform(builder, (ctx, c) => new HtmlDecodeTransform(c), new HtmlDecodeTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new UrlDecodeTransform(c), new UrlDecodeTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new UrlEncodeTransform(c), new UrlEncodeTransform().GetSignatures());
 
          var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
          if (Directory.Exists(pluginsFolder)) {

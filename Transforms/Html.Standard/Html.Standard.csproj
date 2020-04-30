@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.0</TargetFramework>
+    <AssemblyName>Transformalize.Transform.Html</AssemblyName>
+    <RootNamespace>Transformalize.Transforms.Html</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Compatibility\Transformalize\Transformalize.csproj" />
+  </ItemGroup>
+
+</Project>
