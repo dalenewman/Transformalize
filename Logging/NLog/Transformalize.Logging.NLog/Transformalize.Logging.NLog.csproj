@@ -89,4 +89,15 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
+	<ItemDefinitionGroup>
+		<!-- Default TransformOnBuild values for file types -->
+		<_NoneWithTargetPath>
+		  <TransformOnBuild>false</TransformOnBuild>
+		</_NoneWithTargetPath>
+		<ContentWithTargetPath>
+		  <TransformOnBuild>false</TransformOnBuild>
+		</ContentWithTargetPath>
+	</ItemDefinitionGroup>
+  
 </Project>
