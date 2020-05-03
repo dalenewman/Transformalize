@@ -16,16 +16,20 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+#if DNF4
+using System.Web;
+#else
 using System.Net;
+#endif
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
-namespace Transformalize.Transforms.Html {
+namespace Transformalize.Transforms {
 
-    public class UrlDecodeTransform : StringTransform {
+    public class UrlEncodeTransform : StringTransform {
         private readonly Field _input;
 
-        public UrlDecodeTransform(IContext context = null) : base(context, "string") {
+        public UrlEncodeTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {
                 return;
             }
@@ -36,14 +40,17 @@ namespace Transformalize.Transforms.Html {
         }
 
         public override IRow Operate(IRow row) {
-            row[Context.Field] = WebUtility.UrlDecode(GetString(row, _input));
-            
-            return row;
+#if DNF4
+         row[Context.Field] = HttpUtility.UrlEncode(GetString(row, _input));
+#else
+         row[Context.Field] = WebUtility.UrlEncode(GetString(row, _input));
+#endif
+         return row;
         }
 
         public override IEnumerable<OperationSignature> GetSignatures() {
             return new[] {
-                new OperationSignature("urldecode")
+                new OperationSignature("urlencode")
             };
         }
     }

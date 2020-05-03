@@ -33,7 +33,6 @@ using Transformalize.Transforms.Dates;
 using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Xml;
-using Transformalize.Transforms.Html;
 using Module = Autofac.Module;
 using Parameter = Cfg.Net.Shorthand.Parameter;
 

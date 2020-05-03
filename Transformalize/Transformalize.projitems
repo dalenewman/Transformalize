@@ -153,6 +153,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\HtmlDecodeTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\HtmlEncodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\LengthTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\DateDiffTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\Dates\DateMathModifier.cs" />
@@ -194,6 +196,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToRowTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\ToUnixTimeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Transforms\SleepTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\UrlDecodeTransform.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Transforms\UrlEncodeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AllValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\AlphanumValidator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validators\BaseValidate.cs" />
