@@ -1,7 +1,7 @@
 ﻿{
   "supports": {},
   "dependencies": {
-    "Cfg-NET": "0.11.0",
+    "Cfg-NET": "0.12.1",
     "DateMath": "1.1.0",
     "Microsoft.NETCore.Portable.Compatibility": "1.0.1",
     "NETStandard.Library": "1.6.1",

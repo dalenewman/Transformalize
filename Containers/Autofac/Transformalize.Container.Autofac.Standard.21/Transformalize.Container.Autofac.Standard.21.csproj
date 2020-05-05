@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Transformalize.Container.Autofac</RootNamespace>
-    <AssemblyName>Transformalize.Container.Autofac</AssemblyName>
-    <Version>0.7.4-beta</Version>
+    <TargetFramework>netstandard2.1</TargetFramework>
+     <RootNamespace>Transformalize.Container.Autofac</RootNamespace>
+     <AssemblyName>Transformalize.Container.Autofac</AssemblyName>
+     <Version>0.7.4-beta</Version>
   </PropertyGroup>
-
+   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE;PLUGINS</DefineConstants>
     <DebugType>full</DebugType>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compatibility\Transformalize.Standard.20\Transformalize.Standard.20.csproj" />
-  </ItemGroup>
+    <ProjectReference Include="..\..\..\Compatibility\Transformalize.Standard.21\Transformalize.Standard.21.csproj" />
+  </ItemGroup>   
 
 </Project>

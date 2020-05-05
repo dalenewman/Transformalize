@@ -144,6 +144,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "File.Shared", "Providers\Fi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File.Standard.20", "Providers\File\File.Standard.20\File.Standard.20.csproj", "{4B27A101-66AC-4D87-8A23-3076067CB272}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Standard.21", "Compatibility\Transformalize.Standard.21\Transformalize.Standard.21.csproj", "{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Container.Autofac.Standard.21", "Containers\Autofac\Transformalize.Container.Autofac.Standard.21\Transformalize.Container.Autofac.Standard.21.csproj", "{FF245354-A7A4-4447-B775-A916265DEC47}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Providers\Console\Console.Shared\Console.Shared.projitems*{07c2284a-2d22-4165-bfe0-82f00c9fff5a}*SharedItemsImports = 5
@@ -154,6 +158,7 @@ Global
 		Transformalize\Transformalize.projitems*{50c78faa-713d-495f-971e-47f3aca46971}*SharedItemsImports = 4
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{54d882ec-0422-44f1-bd19-74bf346bff4f}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{5e20aa15-9ff3-4278-bb6d-dc1aced49ba4}*SharedItemsImports = 4
+		Transformalize\Transformalize.projitems*{89b749d5-45ff-4608-bd5b-f5da0f7a0828}*SharedItemsImports = 5
 		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{89d90201-5ea9-4d51-b4a7-0a977fb7504d}*SharedItemsImports = 4
 		Providers\Console\Console.Shared\Console.Shared.projitems*{8f345bfb-28e6-412f-86bb-2b3e43752138}*SharedItemsImports = 13
 		Transformalize\Transformalize.projitems*{8ffa5596-c738-479a-a0f7-1d88ba62b610}*SharedItemsImports = 4
@@ -165,6 +170,7 @@ Global
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
 		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
 		Transformalize\Transformalize.projitems*{edef18f3-b55c-4de7-8f09-c07aaa2be2d1}*SharedItemsImports = 5
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{ff245354-a7a4-4447-b775-a916265dec47}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -276,6 +282,14 @@ Global
 		{4B27A101-66AC-4D87-8A23-3076067CB272}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B27A101-66AC-4D87-8A23-3076067CB272}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B27A101-66AC-4D87-8A23-3076067CB272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF245354-A7A4-4447-B775-A916265DEC47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF245354-A7A4-4447-B775-A916265DEC47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF245354-A7A4-4447-B775-A916265DEC47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF245354-A7A4-4447-B775-A916265DEC47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -313,6 +327,8 @@ Global
 		{93B94D0E-4287-46D3-82EF-F81C636574DD} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
 		{0A9E0F50-3B9D-43B0-A3B7-9184B6535D31} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
 		{4B27A101-66AC-4D87-8A23-3076067CB272} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
+		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
+		{FF245354-A7A4-4447-B775-A916265DEC47} = {B5882853-4EEA-4780-9AD5-8465603A710E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

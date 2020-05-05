@@ -4,11 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <Version>0.7.3-beta</Version>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Version>0.7.4-beta</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
-    <AssemblyVersion>0.7.3.0</AssemblyVersion>
+    <AssemblyVersion>0.7.4.0</AssemblyVersion>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
   </PropertyGroup>
@@ -26,15 +25,8 @@
   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="Cfg-NET" Version="0.11.0" />
+    <PackageReference Include="Cfg-NET" Version="0.12.1" />
     <PackageReference Include="DateMath" Version="1.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\..\LICENSE.md">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
 
 </Project>

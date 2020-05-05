@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>netstandard2.1</TargetFramework>
+      <RootNamespace>Transformalize</RootNamespace>
+      <AssemblyName>Transformalize</AssemblyName>
+      <Version>0.7.4-beta</Version>
+      <NeutralLanguage>en-US</NeutralLanguage>
+      <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
+      <AssemblyVersion>0.7.4.0</AssemblyVersion>
+      <Authors>Dale Newman</Authors>
+      <Company>Transformalize</Company>      
+   </PropertyGroup>
+
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DefineConstants>TRACE;ASYNC</DefineConstants>
+   </PropertyGroup>
+
+   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DefineConstants>TRACE;ASYNC</DefineConstants>
+      <DebugType>full</DebugType>
+      <DebugSymbols>true</DebugSymbols>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Cfg-NET" Version="0.12.1" />
+      <PackageReference Include="DateMath" Version="1.1.0" />
+   </ItemGroup>
+
+   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />
+
+</Project>
