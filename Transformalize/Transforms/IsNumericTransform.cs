@@ -29,7 +29,7 @@ namespace Transformalize.Transforms {
             }
 
             var input = SingleInput();
-            if (input.IsNumeric()) {
+            if (input.IsNumericType()) {
                 _transform = row => true;
             } else {
                 _transform = row => double.TryParse(row[input].ToString(), out var _);

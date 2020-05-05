@@ -43,7 +43,7 @@ namespace Transformalize.Containers.Autofac {
       private readonly List<IModule> _modules = new List<IModule>();
       private readonly List<TransformHolder> _transforms = new List<TransformHolder>();
       private readonly List<ValidatorHolder> _validators = new List<ValidatorHolder>();
-      private readonly List<ICustomizer> _customizers = new List<ICustomizer>();
+      private readonly List<IDependency> _dependencies = new List<IDependency>();
 
       public ConfigurationContainer() { }
 
@@ -126,7 +126,7 @@ namespace Transformalize.Containers.Autofac {
 
             var dependancies = new List<IDependency>();
             dependancies.Add(ctx.Resolve<IReader>());
-            dependancies.AddRange(_customizers);
+            dependancies.AddRange(_dependencies);
             dependancies.Add(new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"));
             dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.FieldsName));
             dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.ParametersName));
@@ -228,8 +228,14 @@ namespace Transformalize.Containers.Autofac {
       public void AddTransform(Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
          _transforms.Add(new TransformHolder(getTransform, signatures));
       }
+
+      [Obsolete("This method is obsolete.  Use AddDependency instead.")]
       public void AddCustomizer(ICustomizer customizer) {
-         _customizers.Add(customizer);
+         _dependencies.Add(customizer);
+      }
+
+      public void AddDependency(IDependency dependency) {
+         _dependencies.Add(dependency);
       }
       public void AddModule(IModule module) {
          _modules.Add(module);

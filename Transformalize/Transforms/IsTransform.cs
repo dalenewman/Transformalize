@@ -38,7 +38,7 @@ namespace Transformalize.Transforms {
             }
 
             _input = SingleInput();
-            _isCompatible = Received() == Context.Operation.Type || _input.IsNumeric() && Context.Operation.Type == "double";
+            _isCompatible = Received() == Context.Operation.Type || _input.IsNumericType() && Context.Operation.Type == "double";
             _canConvert = v => Constants.CanConvert()[Context.Operation.Type](v);
         }
 

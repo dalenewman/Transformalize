@@ -27,7 +27,7 @@ namespace Transformalize.Providers.OpenXml {
             if (f.Type.StartsWith("date"))
                 return CellDataType.Date;
 
-            return f.IsNumeric() ? CellDataType.Number : CellDataType.String;
+            return f.IsNumericType() ? CellDataType.Number : CellDataType.String;
         }
     }
 }

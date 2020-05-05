@@ -43,7 +43,7 @@ namespace Transformalize.Validators {
                 return;
             }
             _input = SingleInput();
-            _isCompatible = _input.Type == Context.Operation.Type || _input.IsNumeric() && Context.Operation.Type == "double";
+            _isCompatible = _input.Type == Context.Operation.Type || _input.IsNumericType() && Context.Operation.Type == "double";
             _canConvert = v => _converter[Context.Operation.Type](v);
 
             var help = Context.Field.Help;

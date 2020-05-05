@@ -34,7 +34,7 @@ namespace Transformalize.Validators {
                 return;
 
             var input = SingleInput();
-            if (input.IsNumeric()) {
+            if (input.IsNumericType()) {
                 _validator = row => true;
             } else {
                 _validator = row => double.TryParse(GetString(row, input), out _);
