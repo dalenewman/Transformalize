@@ -28,7 +28,7 @@ namespace Transformalize.Providers.Internal {
         private readonly IField[] _fields;
         public InternalWriter(OutputContext context) {
             _context = context;
-            _fields = context.Entity.GetAllOutputFields().ToArray();
+            _fields = context.Process.ReadOnly ? context.Entity.GetAllOutputFields().Where(f=>!f.System).ToArray() : context.Entity.GetAllOutputFields().ToArray();
         }
 
         public void Write(IEnumerable<IRow> rows) {

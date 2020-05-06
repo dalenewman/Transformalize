@@ -17,51 +17,64 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
 
-    public class HashcodeTransform : BaseTransform {
-        private readonly Field[] _input;
-        //private readonly StringBuilder _builder;
-        public HashcodeTransform(IContext context = null) : base(context, "int") {
-            if (IsMissingContext()) {
-                return;
+   public class HashcodeTransform : BaseTransform {
+      private readonly Field[] _input;
+      public HashcodeTransform(IContext context = null) : base(context, "int") {
+         if (IsMissingContext()) {
+            return;
+         }
+         if (Context.Field.Name == Constants.TflHashCode && Context.Process.ReadOnly) {
+            Run = false;
+            return;
+         }
+         _input = MultipleInput();
+      }
+
+      public override IRow Operate(IRow row) {
+         // row[Context.Field] = GetHashCode(_input.Select(f => row[f]));
+         row[Context.Field] = GetDeterministicHashCode(_input.Select(f => row[f]));
+         return row;
+      }
+
+      // Jon Skeet's Answer
+      // http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+      // http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
+      public static int GetHashCode(IEnumerable<object> values) {
+         unchecked {
+            var hash = (int)2166136261;
+            foreach (var value in values) {
+               hash = hash * 16777619 ^ value.GetHashCode();
             }
-            _input = MultipleInput();
-            //_builder = new StringBuilder();
-        }
+            return hash;
+         }
+      }
 
-        public override IRow Operate(IRow row) {
-            row[Context.Field] = GetHashCode(_input.Select(f => row[f]));
-            return row;
-        }
+      // They are changing get hash code to generate different hashcodes each time the program runs
+      // https://andrewlock.net/why-is-string-gethashcode-different-each-time-i-run-my-program-in-net-core/
+      static int GetDeterministicHashCode(IEnumerable<object> values) {
+         var str = string.Concat(values);
+         unchecked {
+            int hash1 = (5381 << 16) + 5381;
+            int hash2 = hash1;
 
-        // Jon Skeet's Answer
-        // http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-        // http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
-        public static int GetHashCode(IEnumerable<object> values) {
-            unchecked {
-                var hash = (int)2166136261;
-                foreach (var value in values) {
-                    hash = hash * 16777619 ^ value.GetHashCode();
-                }
-                return hash;
+            for (int i = 0; i < str.Length; i += 2) {
+               hash1 = ((hash1 << 5) + hash1) ^ str[i];
+               if (i == str.Length - 1)
+                  break;
+               hash2 = ((hash2 << 5) + hash2) ^ str[i + 1];
             }
-        }
 
-        //private int GetStringHashCode(IEnumerable<object> values) {
-        //    _builder.Clear();
-        //    foreach (var value in values) {
-        //        _builder.Append(value ?? string.Empty);
-        //    }
-        //    return _builder.ToString().GetHashCode();
-        //}
+            return hash1 + (hash2 * 1566083941);
+         }
+      }
 
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            return new[] { new OperationSignature("hashcode") };
-        }
-    }
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         return new[] { new OperationSignature("hashcode") };
+      }
+   }
 }
