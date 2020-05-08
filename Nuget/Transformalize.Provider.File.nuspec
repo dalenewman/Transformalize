@@ -2,12 +2,12 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.File</id>
-      <version>0.6.30-beta</version>
+      <version>0.7.6-beta</version>
       <title>Transformalize Provider File Base</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-      <!--<license type="expression">Apache-2.0</license>-->
+      <license type="expression">Apache-2.0</license>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Base File Provider for Transformalize</description>
       <releaseNotes>added .net standard 2.0 target</releaseNotes>
@@ -15,16 +15,18 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
-            <dependency id="Transformalize" version="0.6.29-beta" />
+            <dependency id="Transformalize" version="0.7.6-beta" />
          </group>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.6.29-beta" />
+            <dependency id="Transformalize" version="0.7.6-beta" />
          </group>
       </dependencies>
    </metadata>
    <files>
-      <file src="..\Providers\File\File\bin\Release\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
-      <file src="..\Providers\File\File.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.File.deps.json" target="lib\netstandard2.0\Transformalize.Provider.File.deps.json" />
-      <file src="..\Providers\File\File.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.File.dll" target="lib\netstandard2.0\Transformalize.Provider.File.dll" />
+      <file src="..\Providers\File\File\bin\Debug\Transformalize.Provider.File.dll" target="lib\net462\Transformalize.Provider.File.dll" />
+      <file src="..\Providers\File\File\bin\Debug\Transformalize.Provider.File.pdb" target="lib\net462\Transformalize.Provider.File.pdb" />
+      <file src="..\Providers\File\File.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.File.deps.json" target="lib\netstandard2.0\Transformalize.Provider.File.deps.json" />
+      <file src="..\Providers\File\File.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.File.dll" target="lib\netstandard2.0\Transformalize.Provider.File.dll" />
+      <file src="..\Providers\File\File.Standard.20\bin\Debug\netstandard2.0\Transformalize.Provider.File.pdb" target="lib\netstandard2.0\Transformalize.Provider.File.pdb" />
    </files>
 </package>

@@ -1,15 +1,15 @@
-nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+rem nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 REM CONTAINERS
-nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Container.Autofac.v3.nuspec -OutputDirectory "c:\temp\modules"
+rem nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+rem nuget pack Transformalize.Container.Autofac.v3.nuspec -OutputDirectory "c:\temp\modules"
 
 REM nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Scheduler.Quartz.nuspec -OutputDirectory "c:\temp\modules"
 REM 
 REM rem PROVIDERS
 REM nuget pack Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
-REM nuget pack Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.File.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Provider.Kml.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
 REM nuget pack Transformalize.Provider.Console.Autofac.nuspec -OutputDirectory "c:\temp\modules"
