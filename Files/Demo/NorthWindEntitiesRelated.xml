@@ -14,7 +14,7 @@
 				<add name="RowVersion" type="byte[]" length="8" />
 			</fields>
 			<calculated-fields>
-			  <add name="Revenue" type="decimal" t="jint(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
+				<add name="Revenue" type="decimal" t="jint(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 			</calculated-fields>
 		</add>
 		<add name="Orders" version="RowVersion">
@@ -35,6 +35,12 @@
 				<add name="ShipCountry" length="15" />
 				<add name="RowVersion" type="byte[]" alias="OrdersRowVersion" length="8" />
 			</fields>
+			<calculated-fields>
+				<add name="OrderYear" type="int" t="copy(OrderDate).datePart(year)" />
+				<add name="OrderMonthSortable" t="format({OrderDate:MM-MMM}).toUpper()" />
+				<add name="OrderDaySortable" t="format({OrderDate:yyyy-MM-dd})" />
+				<add name="OrderDayOfWeek" t="copy(OrderDate).datePart(dayOfWeek)" />
+			</calculated-fields>
 		</add>
 		<add name="Products" version="RowVersion">
 			<fields>

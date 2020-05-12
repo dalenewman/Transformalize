@@ -1004,7 +1004,7 @@ Note: The SSAS output is still under development and only tested on SQL Server 2
 > * Introducing the **Orchard CMS** module
 > * the **`parameters`** section
 > * the **`filter`** section within an `entity`
-> * the **`page`**, **`page-size`**, and **`sortable`** attributes for an `entity`
+> * the **`page`**, **`size`**, and **`sortable`** attributes for an `entity`
 > * and the label attribute for a`field`
 
 The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows you to:
@@ -1035,7 +1035,7 @@ The arrangement for this is:
     <add name="input" provider="elasticsearch" index="northwind" />
   </connections>
   <entities>
-    <add name="northwindflat" alias="NorthWind" page="1" page-size="10" sortable="true" >
+    <add name="northwindflat" alias="NorthWind" page="1" size="10" sortable="true" >
       <filter>
         <add field="orderyear" value="@[orderyear]" type="facet" min="0" />
         <add field="categoryname" value="@[categoryname]" type="facet" />
