@@ -22,46 +22,6 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
 
-   /// <summary>
-   /// An action is performed <see cref="Before"/> or <see cref="After"/> a pipeline is run.
-   /// 
-   /// Current actions are: `copy`, `web`, `tfl`, `run`, and `open`.
-   /// 
-   /// ---
-   /// 
-   /// __Copy__: Copies a file <see cref="From"/> somewhere, <see cref="To"/> somewhere.
-   /// 
-   /// [!code-html[copy](../../api/actions.xml?range=3-3 "copy")]
-   /// 
-   /// ---
-   /// 
-   /// __Web__: Executes a GET or POST (as determined by <see cref="Method"/>) to a specified <see cref="Url"/>.  
-   /// 
-   /// * If *get*, the web request result is stored in <see cref="Body"/>, and is forwarded to the next action's <see cref="Body"/>. 
-   /// * If *post*, <see cref="Body"/> is posted to the <see cref="Url"/>.
-   /// 
-   /// [!code-html[web](../../api/actions.xml?range=4-5 "web")]
-   /// 
-   /// ---
-   ///
-   /// __Tfl__: Executes another pipeline as determined by either <see cref="Url"/>, <see cref="File"/>, or <see cref="Body"/>. 
-   /// 
-   /// [!code-html[tfl](../../api/actions.xml?range=6-7 "tfl")]
-   /// 
-   /// ---
-   /// 
-   /// __Run__: Runs a <see cref="Command"/> against a <see cref="Connection"/>.
-   /// 
-   /// [!code-html[run](../../api/actions.xml?range=8-10 "run")]
-   /// 
-   /// ---
-   /// 
-   /// __Open__: Opens a <see cref="File"/>.
-   /// TODO: Add support to open Url when in web context and this will perform a redirect (after) the action completes
-   /// 
-   /// [!code-html[open](../../api/actions.xml?range=11-11 "open")]
-   /// 
-   /// </summary>
    public class Action : CfgNode {
 
       /// <summary>
@@ -69,6 +29,10 @@ namespace Transformalize.Configuration {
       /// </summary>
       [Cfg(required = true, toLower = true, domain = "copy,web,tfl,run,open,move,replace,log,print,wait,sleep,internal,exit,archive,form-commands,humanize-labels,cs-script", ignoreCase = true)]
       public string Type { get; set; }
+
+      // unique if provided, if not provided it just remains null
+      [Cfg(unique=true)]
+      public string Name { get; set; }
 
       /// <summary>
       /// Set this to `true` to run the action *after* the pipeline runs.
@@ -167,8 +131,8 @@ namespace Transformalize.Configuration {
       }
 
       protected override void Validate() {
-         if ((Type == "open" || Type == "tfl") && File == string.Empty && Url == string.Empty && Id == 0) {
-            Error($"The {Type} action requires a file, url, or id.");
+         if ((Type == "open" || Type == "tfl") && string.IsNullOrEmpty(Name) && File == string.Empty && Url == string.Empty && Id == 0) {
+            Error($"The {Type} action requires a name, file, url, or id.");
          }
          if ((Type == "run" || Type == "form-commands") && string.IsNullOrEmpty(Connection)) {
             Error($"A {Type} action requires a connection.");
