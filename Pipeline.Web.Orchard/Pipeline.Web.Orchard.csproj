@@ -221,11 +221,8 @@
     <Reference Include="Transformalize, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.0.6.28-beta\lib\net462\Transformalize.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Validate.Jint.0.6.24-beta\lib\net462\Transformalize.Jint.dll</HintPath>
-    </Reference>
-    <Reference Include="Transformalize.Provider.Ado, Version=0.6.26.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.6.26-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Provider.Ado, Version=0.6.30.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.Ado.0.6.30-beta\lib\net462\Transformalize.Provider.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Clevest, Version=0.6.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Clevest.0.6.22-beta\lib\net462\Transformalize.Provider.Clevest.dll</HintPath>
@@ -275,14 +272,14 @@
     <Reference Include="Transformalize.Provider.Solr.Autofac.v3, Version=0.6.16.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Solr.Autofac.v3.0.6.20-beta\lib\net462\Transformalize.Provider.Solr.Autofac.v3.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.24.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.24-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
+    <Reference Include="Transformalize.Provider.SqlServer, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Provider.SqlServer.0.6.28-beta\lib\net462\Transformalize.Provider.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Provider.Web, Version=0.6.27.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Provider.Web.0.6.27-beta\lib\net462\Transformalize.Provider.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Ado, Version=0.6.26.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.Ado.0.6.26-beta\lib\net462\Transformalize.Transform.Ado.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Ado, Version=0.6.29.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Ado.0.6.29-beta\lib\net462\Transformalize.Transform.Ado.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Compression, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Compression.0.6.4-beta\lib\net462\Transformalize.Transform.Compression.dll</HintPath>
@@ -293,8 +290,8 @@
     <Reference Include="Transformalize.Transform.Globalization, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Globalization.0.6.4-beta\lib\net462\Transformalize.Transform.Globalization.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.GoogleMaps, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.GoogleMaps.0.6.20-beta\lib\net462\Transformalize.Transform.GoogleMaps.dll</HintPath>
+    <Reference Include="Transformalize.Transform.GoogleMaps, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.GoogleMaps.0.6.28-beta\lib\net462\Transformalize.Transform.GoogleMaps.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Html, Version=0.6.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Html.0.6.4-beta\lib\net462\Transformalize.Transform.Html.dll</HintPath>
@@ -302,8 +299,8 @@
     <Reference Include="Transformalize.Transform.Humanizer, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Humanizer.0.6.20-beta\lib\net462\Transformalize.Transform.Humanizer.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Transform.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.6.24-beta\lib\net462\Transformalize.Transform.Jint.dll</HintPath>
+    <Reference Include="Transformalize.Transform.Jint, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Transform.Jint.0.6.28-beta\lib\net462\Transformalize.Transform.Jint.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Transform.Json, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Json.0.6.20-beta\lib\net462\Transformalize.Transform.Json.dll</HintPath>
@@ -317,8 +314,8 @@
     <Reference Include="Transformalize.Transform.Xml, Version=0.6.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Transform.Xml.0.6.5-beta\lib\net462\Transformalize.Transform.Xml.dll</HintPath>
     </Reference>
-    <Reference Include="Transformalize.Validate.Jint, Version=0.6.20.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Transformalize.Validate.Jint.0.6.24-beta\lib\net462\Transformalize.Validate.Jint.dll</HintPath>
+    <Reference Include="Transformalize.Validate.Jint, Version=0.6.28.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Transformalize.Validate.Jint.0.6.28-beta\lib\net462\Transformalize.Validate.Jint.dll</HintPath>
     </Reference>
     <Reference Include="Transformalize.Validate.Web, Version=0.6.27.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Transformalize.Validate.Web.0.6.27-beta\lib\net462\Transformalize.Validate.Web.dll</HintPath>

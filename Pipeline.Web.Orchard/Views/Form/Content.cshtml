@@ -48,7 +48,7 @@
             var map = Model.Process.Maps.FirstOrDefault(m => m.Name == field.Map);
             if (map != null) {
 
-               <div class="form-group @(Model.Status(Model.Row,field))">
+               <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
                   <label for="@field.Alias">@field.Label</label>
                   @if (field.Hint != string.Empty) {
                      <br /><span class="text-muted">@field.Hint</span>
@@ -57,7 +57,7 @@
                      value = map.Items.First().To;
                   }
                   @if (map.Items.Count > 3) {
-                     <select class="form-control @field.Class"
+                     <select class="form-control"
                              name="@field.Alias"
                              id="id_@field.Alias"
                              data-tfl-post-back="@field.PostBack">
@@ -69,13 +69,13 @@
                      if (map.Items.Count > 2) {
                         foreach (var item in map.Items) {
                            <div class="radio">
-                              <label><input class="@field.Class" type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" />@item.From</label>
+                              <label><input type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" />@item.From</label>
                            </div>
                         }
                      } else {
                         <br />
                         foreach (var item in map.Items) {
-                           <label class="radio-inline"><input class="@field.Class" type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" /> &nbsp;@item.From</label>
+                           <label class="radio-inline"><input type="radio" name="@field.Alias" value="@item.To" checked="@(value.Equals(item.To))" data-tfl-post-back="@field.PostBack" /> &nbsp;@item.From</label>
                         }
                      }
                   }
@@ -92,242 +92,241 @@
                switch (type) {
                   case "bool":
                   case "boolean":
-                     <div class="@(Model.Status(Model.Row, field))">
+                     <div class="@(Model.Status(Model.Row, field)) @field.Class">
                         <div class="checkbox">
                            <label for="@field.Alias">
                               <input name="@field.Alias"
-                                     id="id_@field.Alias"
-                                     type="checkbox"
-                                     checked="@((bool)value)"
-                                     data-tfl-post-back="@field.PostBack" /> @field.Label
-                                 </label>
-                              </div>
+                                       id="id_@field.Alias"
+                                       type="checkbox"
+                                       checked="@((bool)value)"
+                                       data-tfl-post-back="@field.PostBack" /> @field.Label
+                              </label>
+                        </div>
+                     </div>
+                     break;
+                  case "date":
+                     <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
+                        <label for="@field.Alias">@field.Label</label>
+                        @if (field.Hint != string.Empty) {
+                           <br /><span class="text-muted">@field.Hint</span>
+                        }
+                        <div class="input-group">
+                           <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
+                              <span class="glyphicon glyphicon-calendar"></span>
                            </div>
-                           break;
-                        case "date":
-                           <div class="form-group @(Model.Status(Model.Row,field))">
-                              <label for="@field.Alias">@field.Label</label>
-                              @if (field.Hint != string.Empty) {
-                                 <br /><span class="text-muted">@field.Hint</span>
-                              }
+                           <input type="text"
+                                    class="form-control"
+                                    maxlength="@field.Length"
+                                    name="@field.Alias"
+                                    id="id_@field.Alias"
+                                    placeholder="@field.Label"
+                                    value="@value"
+                                    data-tfl-post-back="@field.PostBack"
+                                    @Html.Raw(field.ToParsley()) />
+                           <script language="javascript">
+                           $(document).ready(function () {
+                              var input = $('#id_@field.Alias').pickadate({ editable: true, format: 'yyyy-mm-dd' });
+                              var picker = input.pickadate('picker');
+                              $('#id_@field.Alias').off('click');
+                              $('#id_dp_@field.Alias').click(function (e) {
+                                    // stop the click from bubbling
+                                    e.stopPropagation();
+                                    // prevent the default click action
+                                    e.preventDefault();
+                                    // open the date picker
+                                    if (picker.get('open')) {
+                                       picker.close()
+                                    } else {
+                                    picker.open()
+                                    }
+                              });
+                           });
+                           </script>
+                        </div>
+                        @* if you change location you must update parsley error container *@
+                        <span class="help-container">
+                           @if (!Model.IsValid(Model.Row, field)) {
+                              <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                           }
+                        </span>
+
+                     </div>
+                     break;
+                  case "time":
+                     <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
+                        <label for="@field.Alias">@field.Label</label>
+                        @if (field.Hint != string.Empty) {
+                           <br /><span class="text-muted">@field.Hint</span>
+                        }
+                        <div class="input-group">
+                           <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
+                              <span class="glyphicon glyphicon-time"></span>
+                           </div>
+                           <input type="time"
+                                    class="form-control"
+                                    maxlength="@field.Length"
+                                    name="@field.Alias"
+                                    id="id_@field.Alias"
+                                    placeholder="@field.Label"
+                                    value="@value"
+                                    data-tfl-post-back="@field.PostBack"
+                                    @Html.Raw(field.ToParsley()) />
+                           <script language="javascript">
+                              $(document).ready(function () {
+                                 // plugin code goes here
+                              });
+                           </script>
+                        </div>
+                        @* if you change location you must update parsley error container *@
+                        <span class="help-container">
+                           @if (!Model.IsValid(Model.Row, field)) {
+                              <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                           }
+                        </span>
+
+                     </div>
+                     break;
+                  case "file":
+
+                     var file = Model.GetFile(field, value);
+
+                     @* if change this markup you'll need to update filehandler jquery selectors *@
+                     <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
+
+                        <label for="@field.Alias">@field.Label</label>
+                        @if (field.Hint != string.Empty) {
+                           <br /><span class="text-muted">@field.Hint</span>
+                        }
+
+                        <div id="id_@(field.Alias)" class="file-options">
+                           <div class="has-file" style="@(file == null ? "display:none" : string.Empty)">
                               <div class="input-group">
-                                 <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
-                                    <span class="glyphicon glyphicon-calendar"></span>
+                                 <div class="input-group-addon removeButton" style="cursor: pointer;">
+                                    <span class="glyphicon glyphicon-remove"></span>
                                  </div>
                                  <input type="text"
-                                        class="form-control @field.Class"
-                                        maxlength="@field.Length"
-                                        name="@field.Alias"
-                                        id="id_@field.Alias"
-                                        placeholder="@field.Label"
-                                        value="@value"
-                                        data-tfl-post-back="@field.PostBack"
-                                        @Html.Raw(field.ToParsley()) />
-                                 <script language="javascript">
-                                 $(document).ready(function () {
-                                    var input = $('#id_@field.Alias').pickadate({ editable: true, format: 'yyyy-mm-dd' });
-                                    var picker = input.pickadate('picker');
-                                    $('#id_@field.Alias').off('click');
-                                    $('#id_dp_@field.Alias').click(function (e) {
-                                        // stop the click from bubbling
-                                        e.stopPropagation();
-                                        // prevent the default click action
-                                        e.preventDefault();
-                                        // open the date picker
-                                        if (picker.get('open')) {
-                                           picker.close()
-                                        } else {
-                                          picker.open()
-                                        }
-                                    });
-                                 });
-                                 </script>
+                                          class="form-control"
+                                          name="@field.Alias"
+                                          id="id_@field.Alias"
+                                          disabled="@(file == null)"
+                                          data-tfl-post-back="false"
+                                          value="@(file == null ? string.Empty : file.OriginalName)"
+                                          readonly="readonly" />
                               </div>
-                              @* if you change location you must update parsley error container *@
-                              <span class="help-container">
-                                 @if (!Model.IsValid(Model.Row, field)) {
-                                    <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
-                                 }
-                              </span>
-
                            </div>
-                           break;
-                        case "time":
-                           <div class="form-group @(Model.Status(Model.Row,field))">
-                              <label for="@field.Alias">@field.Label</label>
-                              @if (field.Hint != string.Empty) {
-                                 <br /><span class="text-muted">@field.Hint</span>
-                              }
-                              <div class="input-group">
-                                 <div class="input-group-addon" id="id_dp_@field.Alias" style="cursor: pointer;">
-                                    <span class="glyphicon glyphicon-time"></span>
-                                 </div>
-                                 <input type="time"
-                                        class="form-control @field.Class"
-                                        maxlength="@field.Length"
-                                        name="@field.Alias"
-                                        id="id_@field.Alias"
-                                        placeholder="@field.Label"
-                                        value="@value"
-                                        data-tfl-post-back="@field.PostBack"
-                                        @Html.Raw(field.ToParsley()) />
-                                 <script language="javascript">
-                                    $(document).ready(function () {
-                                       // plugin code goes here
-                                    });
-                                 </script>
-                              </div>
-                              @* if you change location you must update parsley error container *@
-                              <span class="help-container">
-                                 @if (!Model.IsValid(Model.Row, field)) {
-                                    <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
-                                 }
-                              </span>
-
-                           </div>
-
-                           break;
-                        case "file":
-
-                           var file = Model.GetFile(field, value);
-
-                           @* if change this markup you'll need to update filehandler jquery selectors *@
-                           <div class="form-group @(Model.Status(Model.Row,field))">
-
-                              <label for="@field.Alias">@field.Label</label>
-                              @if (field.Hint != string.Empty) {
-                                 <br /><span class="text-muted">@field.Hint</span>
-                              }
-
-                              <div id="id_@(field.Alias)" class="file-options">
-                                 <div class="has-file" style="@(file == null ? "display:none" : string.Empty)">
-                                    <div class="input-group">
-                                       <div class="input-group-addon removeButton" style="cursor: pointer;">
-                                          <span class="glyphicon glyphicon-remove"></span>
+                           <div class="expecting-file" style="@(file == null ? string.Empty: "display:none")">
+                              <table>
+                                 <tr>
+                                    <td style="width:auto;">
+                                       <span class="btn btn-primary btn-sm fileinput-button">
+                                          <i class="glyphicon glyphicon-plus"></i>
+                                          <span>Upload</span>
+                                          <input name="@(field.Alias)"
+                                                   type="file"
+                                                   class="form-control"
+                                                   data-tfl-post-back="false"
+                                                   disabled="@(file != null)"
+                                                   @(Html.Raw(field.InputAccept == string.Empty ? string.Empty : "accept=\"" + field.InputAccept + "\""))
+                                                   @(Html.Raw(field.InputCapture == string.Empty ? string.Empty : "capture=\"" + field.InputCapture + "\"")) />
+                                       </span>
+                                    </td>
+                                    <td style="width:100%;">
+                                       <div class="progress">
+                                          <div class="progress-bar progress-bar-striped progress-bar-success"></div>
                                        </div>
-                                       <input type="text"
-                                              class="form-control @field.Class"
-                                              name="@field.Alias"
-                                              id="id_@field.Alias"
-                                              disabled="@(file == null)"
-                                              data-tfl-post-back="false"
-                                              value="@(file == null ? string.Empty : file.OriginalName)"
-                                              readonly="readonly" />
-                                    </div>
-                                 </div>
-                                 <div class="expecting-file" style="@(file == null ? string.Empty: "display:none")">
-                                    <table>
-                                       <tr>
-                                          <td style="width:auto;">
-                                             <span class="btn btn-primary btn-sm fileinput-button">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                                <span>Upload</span>
-                                                <input name="@(field.Alias)"
-                                                       type="file"
-                                                       class="form-control @field.Class"
-                                                       data-tfl-post-back="false"
-                                                       disabled="@(file != null)"
-                                                       @(Html.Raw(field.InputAccept == string.Empty ? string.Empty : "accept=\"" + field.InputAccept + "\""))
-                                                       @(Html.Raw(field.InputCapture == string.Empty ? string.Empty : "capture=\"" + field.InputCapture + "\"")) />
-                                             </span>
-                                          </td>
-                                          <td style="width:100%;">
-                                             <div class="progress">
-                                                <div class="progress-bar progress-bar-striped progress-bar-success"></div>
-                                             </div>
-                                          </td>
-                                       </tr>
+                                    </td>
+                                 </tr>
 
-                                    </table>
+                              </table>
+                           </div>
+                        </div>
+
+                        <span class="help-container">
+                           @if (!Model.IsValid(Model.Row, field)) {
+                              <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
+                           }
+                        </span>
+                        <input type="hidden"
+                                 name="@(field.Alias)_Old"
+                                 id="id_@(field.Alias)_Old"
+                                 value="@(string.IsNullOrEmpty(Request.Form[field.Alias + "_Old"]) ? (file == null ? string.Empty : file.Id.ToString()) : Request.Form[field.Alias + "_Old"])"
+                                 @Html.Raw(field.ToParsley()) />
+                        <script language="javascript">$(document).ready(function () { fileHandler('@field.Alias',false); });</script>
+                     </div>
+
+                  break;
+                     case "scan":
+
+                        var hasScan = value != null && value.ToString() != string.Empty;
+
+                        @* if change this markup you'll need to update filehandler jquery selectors *@
+                        <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
+
+                           <label for="@field.Alias">@field.Label</label>
+                           @if (field.Hint != string.Empty) {
+                              <br /><span class="text-muted">@field.Hint</span>
+                           }
+
+                           <div id="id_@(field.Alias)" class="file-options">
+                              <div class="has-file" style="@(hasScan ? string.Empty : "display:none")">
+                                 <div class="input-group">
+                                    <div class="input-group-addon removeButton" style="cursor: pointer;">
+                                       <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                    <input type="text"
+                                             class="form-control"
+                                             name="@field.Alias"
+                                             id="id_@field.Alias"
+                                             data-tfl-post-back="false"
+                                             value="@(hasScan ? value : string.Empty)"
+                                             @Html.Raw(field.ToParsley()) />
                                  </div>
                               </div>
-
-                              <span class="help-container">
-                                 @if (!Model.IsValid(Model.Row, field)) {
-                                    <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
-                                 }
-                              </span>
-                              <input type="hidden"
-                                     name="@(field.Alias)_Old"
-                                     id="id_@(field.Alias)_Old"
-                                     value="@(string.IsNullOrEmpty(Request.Form[field.Alias + "_Old"]) ? (file == null ? string.Empty : file.Id.ToString()) : Request.Form[field.Alias + "_Old"])"
-                                     @Html.Raw(field.ToParsley()) />
-                              <script language="javascript">$(document).ready(function () { fileHandler('@field.Alias',false); });</script>
+                              <div class="expecting-file" style="@(hasScan ? "display:none" : string.Empty)">
+                                 <table>
+                                    <tr>
+                                       <td style="width:auto;">
+                                          <span class="btn btn-warning btn-sm fileinput-button">
+                                             <i class="glyphicon glyphicon glyphicon-barcode"></i>
+                                             <span> Scan </span>
+                                             <input name="@(field.Alias)"
+                                                      type="file"
+                                                      class="form-control"
+                                                      data-tfl-post-back="false"
+                                                      disabled="@(hasScan)"
+                                                      accept="image/*"
+                                                      @(Html.Raw(field.InputCapture == string.Empty ? string.Empty : "capture=\"" + field.InputCapture + "\"")) />
+                                          </span>
+                                       </td>
+                                       <td style="width:100%;">
+                                          <div class="progress">
+                                             <div class="progress-bar progress-bar-striped progress-bar-success"></div>
+                                          </div>
+                                       </td>
+                                    </tr>
+                                 </table>
+                              </div>
                            </div>
 
-                           break;
-                        case "scan":
-
-                           var hasScan = value != null && value.ToString() != string.Empty;
-
-                           @* if change this markup you'll need to update filehandler jquery selectors *@
-                           <div class="form-group @(Model.Status(Model.Row,field))">
-
-                              <label for="@field.Alias">@field.Label</label>
-                              @if (field.Hint != string.Empty) {
-                                 <br /><span class="text-muted">@field.Hint</span>
+                           <span class="help-container">
+                              @if (!Model.IsValid(Model.Row, field)) {
+                                 <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
                               }
+                           </span>
+                           <script language="javascript">$(document).ready(function () { fileHandler('@field.Alias',true); });</script>
+                        </div>
 
-                              <div id="id_@(field.Alias)" class="file-options">
-                                 <div class="has-file" style="@(hasScan ? string.Empty : "display:none")">
-                                    <div class="input-group">
-                                       <div class="input-group-addon removeButton" style="cursor: pointer;">
-                                          <span class="glyphicon glyphicon-remove"></span>
-                                       </div>
-                                       <input type="text"
-                                              class="form-control @field.Class"
-                                              name="@field.Alias"
-                                              id="id_@field.Alias"
-                                              data-tfl-post-back="false"
-                                              value="@(hasScan ? value : string.Empty)"
-                                              @Html.Raw(field.ToParsley()) />
-                                    </div>
-                                 </div>
-                                 <div class="expecting-file" style="@(hasScan ? "display:none" : string.Empty)">
-                                    <table>
-                                       <tr>
-                                          <td style="width:auto;">
-                                             <span class="btn btn-warning btn-sm fileinput-button">
-                                                <i class="glyphicon glyphicon glyphicon-barcode"></i>
-                                                <span> Scan </span>
-                                                <input name="@(field.Alias)"
-                                                       type="file"
-                                                       class="form-control @field.Class"
-                                                       data-tfl-post-back="false"
-                                                       disabled="@(hasScan)"
-                                                       accept="image/*"
-                                                       @(Html.Raw(field.InputCapture == string.Empty ? string.Empty : "capture=\"" + field.InputCapture + "\"")) />
-                                             </span>
-                                          </td>
-                                          <td style="width:100%;">
-                                             <div class="progress">
-                                                <div class="progress-bar progress-bar-striped progress-bar-success"></div>
-                                             </div>
-                                          </td>
-                                       </tr>
-                                    </table>
-                                 </div>
-                              </div>
-
-                              <span class="help-container">
-                                 @if (!Model.IsValid(Model.Row, field)) {
-                                    <span class="help-block">@(Model.Row[field.MessageField].ToString().Replace('|', ' '))</span>
-                                 }
-                              </span>
-                              <script language="javascript">$(document).ready(function () { fileHandler('@field.Alias',true); });</script>
-                           </div>
-
-                           break;
+                        break;
 
                         default:
                            int length;
-                           <div class="form-group @(Model.Status(Model.Row,field))">
+                           <div class="form-group @(Model.Status(Model.Row,field)) @field.Class">
                               <label for="@field.Alias">@field.Label</label>
                               @if (field.Hint != string.Empty) {
                                  <br /><span class="text-muted">@field.Hint</span>
                               }
                               @if (Model.UseTextArea(field, out length)) {
-                                 <textarea class="form-control @field.Class"
+                                 <textarea class="form-control"
                                            name="@field.Alias"
                                            id="id_@field.Alias"
                                            rows="3"
@@ -339,7 +338,7 @@
                                  switch (type) {
                                     case "number":
                                        <input type="number"
-                                              class="form-control @(field.Class)"
+                                              class="form-control"
                                               maxlength="@field.Length"
                                               name="@field.Alias"
                                               id="id_@field.Alias"
