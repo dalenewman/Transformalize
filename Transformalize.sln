@@ -60,6 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.nuspec = Nuget\Transformalize.nuspec
 		Nuget\Transformalize.Provider.Console.Autofac.nuspec = Nuget\Transformalize.Provider.Console.Autofac.nuspec
 		Nuget\Transformalize.Provider.Console.nuspec = Nuget\Transformalize.Provider.Console.nuspec
+		Nuget\Transformalize.Provider.File.Autofac.nuspec = Nuget\Transformalize.Provider.File.Autofac.nuspec
 		Nuget\Transformalize.Provider.File.nuspec = Nuget\Transformalize.Provider.File.nuspec
 		Nuget\Transformalize.Provider.Kml.nuspec = Nuget\Transformalize.Provider.Kml.nuspec
 		Nuget\Transformalize.Provider.OpenXml.nuspec = Nuget\Transformalize.Provider.OpenXml.nuspec
@@ -144,9 +145,11 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "File.Shared", "Providers\Fi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File.Standard.20", "Providers\File\File.Standard.20\File.Standard.20.csproj", "{4B27A101-66AC-4D87-8A23-3076067CB272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Standard.21", "Compatibility\Transformalize.Standard.21\Transformalize.Standard.21.csproj", "{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.21", "Compatibility\Transformalize.Standard.21\Transformalize.Standard.21.csproj", "{89B749D5-45FF-4608-BD5B-F5DA0F7A0828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Container.Autofac.Standard.21", "Containers\Autofac\Transformalize.Container.Autofac.Standard.21\Transformalize.Container.Autofac.Standard.21.csproj", "{FF245354-A7A4-4447-B775-A916265DEC47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Container.Autofac.Standard.21", "Containers\Autofac\Transformalize.Container.Autofac.Standard.21\Transformalize.Container.Autofac.Standard.21.csproj", "{FF245354-A7A4-4447-B775-A916265DEC47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File.Autofac.Standard.20", "Providers\File\File.Autofac.Standard.20\File.Autofac.Standard.20.csproj", "{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -290,6 +293,10 @@ Global
 		{FF245354-A7A4-4447-B775-A916265DEC47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF245354-A7A4-4447-B775-A916265DEC47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF245354-A7A4-4447-B775-A916265DEC47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -329,6 +336,7 @@ Global
 		{4B27A101-66AC-4D87-8A23-3076067CB272} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
 		{89B749D5-45FF-4608-BD5B-F5DA0F7A0828} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{FF245354-A7A4-4447-B775-A916265DEC47} = {B5882853-4EEA-4780-9AD5-8465603A710E}
+		{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF} = {92C7D0BD-AE6E-4BB0-9B69-FD99D6A3CC81}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
