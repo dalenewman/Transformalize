@@ -75,12 +75,25 @@ namespace Transformalize.Configuration {
       public string T { get; set; }
 
       /// <summary>
-      /// Long-hand transforms for parmaters
+      /// Shorthand validators for parameters
+      /// </summary>
+      [Cfg(value = "")]
+      public string V { get; set; }
+
+      /// <summary>
+      /// Long-hand transforms for parameters
       /// </summary>
       [Cfg]
       public List<Operation> Transforms { get; set; }
 
+      /// <summary>
+      /// Long-hand validators for parameters
+      /// </summary>
+      [Cfg]
+      public List<Operation> Validators { get; set; }
+
       protected override void Validate() {
+
          switch (Type) {
             case "string":
                if (InvalidCharacters != string.Empty && Value != null) {
@@ -102,6 +115,7 @@ namespace Transformalize.Configuration {
          if (string.IsNullOrEmpty(Label)) {
             Label = Name;
          }
+
       }
 
       [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]

@@ -21,100 +21,108 @@ using System.Linq;
 
 namespace Transformalize.ConfigurationFacade {
 
-    public class Parameter : CfgNode {
+   public class Parameter : CfgNode {
 
-        [Cfg]
-        public string Entity { get; set; }
+      [Cfg]
+      public string Entity { get; set; }
 
-        [Cfg]
-        public string Field { get; set; }
+      [Cfg]
+      public string Field { get; set; }
 
-        [Cfg]
-        public string Name { get; set; }
+      [Cfg]
+      public string Name { get; set; }
 
-        [Cfg]
-        public string InvalidCharacters { get; set; }
+      [Cfg]
+      public string InvalidCharacters { get; set; }
 
-        [Cfg]
-        public string Value { get; set; }
+      [Cfg]
+      public string Value { get; set; }
 
-        [Cfg]
-        public string Scope { get; set; }
+      [Cfg]
+      public string Scope { get; set; }
 
-        [Cfg]
-        public string Input { get; set; }
+      [Cfg]
+      public string Input { get; set; }
 
-        [Cfg]
-        public string Prompt { get; set; }
+      [Cfg]
+      public string Prompt { get; set; }
 
-        [Cfg]
-        public string Map { get; set; }
+      [Cfg]
+      public string Map { get; set; }
 
-        [Cfg]
-        public string T { get; set; }
+      [Cfg]
+      public string T { get; set; }
 
-        [Cfg]
-        public List<Operation> Transforms { get; set; }
+      [Cfg]
+      public List<Operation> Transforms { get; set; }
 
-        [Cfg]
-        public string Type { get; set; }
+      [Cfg]
+      public string V { get; set; }
 
-        [Cfg]
-        public string Label { get; set; }
+      [Cfg]
+      public List<Operation> Validators { get; set; }
 
-        [Cfg]
-        public string Format { get; set; }
+      [Cfg]
+      public string Type { get; set; }
 
-        [Cfg]
-        public string Width { get; set; }
+      [Cfg]
+      public string Label { get; set; }
 
-        [Cfg]
-        public string Multiple { get; set; }
+      [Cfg]
+      public string Format { get; set; }
 
-        [Cfg]
-        public string Required { get; set; }
+      [Cfg]
+      public string Width { get; set; }
 
-        [Cfg]
-        public string Sticky { get; set; }
+      [Cfg]
+      public string Multiple { get; set; }
 
-        public Configuration.Parameter ToParameter() {
-            var parameter = new Configuration.Parameter {
-                Entity = this.Entity,
-                Field = this.Field,
-                InvalidCharacters = this.InvalidCharacters,
-                Name = this.Name,
-                Value = this.Value,
-                Scope = this.Scope,
-                Map = this.Map,
-                Type = this.Type,
-                Label = this.Label,
-                Format = this.Format
-            };
+      [Cfg]
+      public string Required { get; set; }
 
-            int.TryParse(this.Width, out var width);
-            parameter.Width = width;
+      [Cfg]
+      public string Sticky { get; set; }
 
-            bool.TryParse(this.Multiple, out var multiple);
-            parameter.Multiple = multiple;
+      public Configuration.Parameter ToParameter() {
 
-            bool.TryParse(this.Required, out var required);
-            parameter.Required = required;
+         var parameter = new Configuration.Parameter {
+            Entity = this.Entity,
+            Field = this.Field,
+            InvalidCharacters = this.InvalidCharacters,
+            Name = this.Name,
+            Value = this.Value,
+            Scope = this.Scope,
+            Map = this.Map,
+            Type = this.Type,
+            Label = this.Label,
+            Format = this.Format
+         };
 
-            bool.TryParse(this.Sticky, out var sticky);
-            parameter.Sticky = sticky;
+         int.TryParse(this.Width, out var width);
+         parameter.Width = width;
 
-            bool.TryParse(this.Input, out var input);
-            parameter.Input = input;
+         bool.TryParse(this.Multiple, out var multiple);
+         parameter.Multiple = multiple;
 
-            bool.TryParse(this.Prompt, out var prompt);
-            parameter.Prompt = prompt;
+         bool.TryParse(this.Required, out var required);
+         parameter.Required = required;
 
-            parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
+         bool.TryParse(this.Sticky, out var sticky);
+         parameter.Sticky = sticky;
 
-            return parameter;
-        }
+         bool.TryParse(this.Input, out var input);
+         parameter.Input = input;
+
+         bool.TryParse(this.Prompt, out var prompt);
+         parameter.Prompt = prompt;
+
+         parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
+         parameter.Validators = this.Validators.Select(o => o.ToOperation()).ToList();
+
+         return parameter;
+      }
 
 
-    }
+   }
 
 }

@@ -97,8 +97,8 @@ namespace Transformalize.Containers.Autofac {
          builder.RegisterModule(validateModule);
 
          // register the validator short hand
-         builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ValidateModule.Name).InstancePerLifetimeScope();
-         builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ValidateModule.Name), new[] { "fields", "calculated-fields", "calculatedfields" }, "v", "validators", "method")).Named<IDependency>(ValidateModule.Name).InstancePerLifetimeScope();
+         builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ValidateModule.FieldsName).InstancePerLifetimeScope();
+         builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ValidateModule.FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "v", "validators", "method")).Named<IDependency>(ValidateModule.FieldsName).InstancePerLifetimeScope();
 
          // register the transform short hand
          builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(TransformModule.FieldsName).InstancePerLifetimeScope();
@@ -130,7 +130,7 @@ namespace Transformalize.Containers.Autofac {
             dependancies.Add(new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"));
             dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.FieldsName));
             dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.ParametersName));
-            dependancies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.Name));
+            dependancies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.FieldsName));
 
             var process = new Process(transformed ?? cfg, parameters, dependancies.ToArray());
 

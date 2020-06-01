@@ -16,10 +16,8 @@
 // limitations under the License.
 #endregion
 using Cfg.Net;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Transformalize.Contracts;
 
 namespace Transformalize.Configuration {
 

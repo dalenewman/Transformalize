@@ -38,7 +38,8 @@ namespace Transformalize.Containers.Autofac.Modules {
 
       private readonly List<ValidatorHolder> _validators = new List<ValidatorHolder>();
 
-      public const string Name = "shorthand-v";
+      public const string FieldsName = "shorthand-vf";
+      public const string ParametersName = "shorthand-vp";
       private readonly HashSet<string> _methods;
       private readonly ShorthandRoot _shortHand;
       private readonly Process _process;

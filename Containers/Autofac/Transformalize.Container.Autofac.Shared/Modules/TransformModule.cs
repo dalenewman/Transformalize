@@ -38,8 +38,8 @@ namespace Transformalize.Containers.Autofac.Modules {
 
       private readonly List<TransformHolder> _transforms = new List<TransformHolder>();
 
-      public const string FieldsName = "shorthand-t";
-      public const string ParametersName = "shorthand-p";
+      public const string FieldsName = "shorthand-tf";
+      public const string ParametersName = "shorthand-tp";
       private readonly HashSet<string> _methods;
       private readonly ShorthandRoot _shortHand;
       private readonly Process _process;

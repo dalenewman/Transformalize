@@ -27,7 +27,7 @@ namespace Transformalize.Configuration {
       /// <summary>
       /// Indicates what type of action to perform.
       /// </summary>
-      [Cfg(value="internal", required = true, toLower = true, domain = "copy,web,tfl,run,open,move,replace,log,print,wait,sleep,internal,exit,archive,form-commands,humanize-labels,cs-script", ignoreCase = true)]
+      [Cfg(value="internal", toLower = true, domain = "copy,web,tfl,run,open,move,replace,log,print,wait,sleep,internal,exit,archive,form-commands,humanize-labels,cs-script", ignoreCase = true)]
       public string Type { get; set; }
 
       // unique if provided, if not provided it just remains null
