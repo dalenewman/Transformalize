@@ -1,4 +1,4 @@
-REM nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 REM CONTAINERS
 nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
