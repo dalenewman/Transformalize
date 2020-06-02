@@ -41,7 +41,7 @@ namespace Transformalize.Validators {
         }
 
         public override IRow Operate(IRow row) {
-            if (IsInvalid(row, GetString(row, _input).Length < Context.Operation.Length)) {
+            if (IsInvalid(row, GetString(row, _input).Length >= Context.Operation.Length)) {
                 AppendMessage(row, _betterFormat.Format(row));
             }
 

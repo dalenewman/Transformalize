@@ -75,22 +75,29 @@ namespace Transformalize.Configuration {
       public string T { get; set; }
 
       /// <summary>
-      /// Shorthand validators for parameters
-      /// </summary>
-      [Cfg(value = "")]
-      public string V { get; set; }
-
-      /// <summary>
       /// Long-hand transforms for parameters
       /// </summary>
       [Cfg]
       public List<Operation> Transforms { get; set; }
 
       /// <summary>
+      /// Shorthand validators for parameters
+      /// </summary>
+      [Cfg(value = "")]
+      public string V { get; set; }
+
+      /// <summary>
       /// Long-hand validators for parameters
       /// </summary>
       [Cfg]
       public List<Operation> Validators { get; set; }
+
+      /* Default valid to true, otherwise parameters without any validation would be seen as invalid (valid = false) */
+      [Cfg(value=true)]
+      public bool Valid { get; set; }
+
+      [Cfg(value="")]
+      public string Message { get; set; }
 
       protected override void Validate() {
 

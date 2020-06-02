@@ -63,6 +63,12 @@ namespace Transformalize.ConfigurationFacade {
       public List<Operation> Validators { get; set; }
 
       [Cfg]
+      public string Valid { get; set; }
+
+      [Cfg]
+      public string Message { get; set; }
+
+      [Cfg]
       public string Type { get; set; }
 
       [Cfg]
@@ -95,7 +101,8 @@ namespace Transformalize.ConfigurationFacade {
             Map = this.Map,
             Type = this.Type,
             Label = this.Label,
-            Format = this.Format
+            Format = this.Format,
+            Message = this.Message
          };
 
          int.TryParse(this.Width, out var width);
@@ -115,6 +122,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Prompt, out var prompt);
          parameter.Prompt = prompt;
+
+         bool.TryParse(this.Valid, out var valid);
+         parameter.Valid = valid;
 
          parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
          parameter.Validators = this.Validators.Select(o => o.ToOperation()).ToList();
