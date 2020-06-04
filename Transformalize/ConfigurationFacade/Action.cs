@@ -26,6 +26,9 @@ namespace Transformalize.ConfigurationFacade {
       public string Type { get; set; }
 
       [Cfg]
+      public string Name { get; set; }
+
+      [Cfg]
       public string After { get; set; }
 
       [Cfg]
