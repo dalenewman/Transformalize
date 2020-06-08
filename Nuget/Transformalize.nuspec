@@ -2,14 +2,14 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.7.13-beta</version>
+      <version>0.7.14-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>added name attribute to fake action</releaseNotes>
+      <releaseNotes>copied form related field attributes to parameter</releaseNotes>
       <copyright>Copyright © 2013-2020</copyright>
       <tags>etl,transformalize</tags>
       <license type="expression">Apache-2.0</license>

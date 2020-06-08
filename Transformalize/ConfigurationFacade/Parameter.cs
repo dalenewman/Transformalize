@@ -89,6 +89,28 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Sticky { get; set; }
 
+      [Cfg]
+      public string Hint { get; set; }
+
+      [Cfg]
+      public string PostBack { get; set; }
+
+      [Cfg]
+      public string InputType { get; set; }
+      [Cfg]
+      public string InputAccept { get; set; }
+      [Cfg]
+      public string InputCapture { get; set; }
+
+      [Cfg]
+      public string Class { get; set; }
+      [Cfg]
+      public string Length { get; set; }
+      [Cfg]
+      public string Precision { get; set; }
+      [Cfg]
+      public string Scale { get; set; }
+
       public Configuration.Parameter ToParameter() {
 
          var parameter = new Configuration.Parameter {
@@ -102,8 +124,21 @@ namespace Transformalize.ConfigurationFacade {
             Type = this.Type,
             Label = this.Label,
             Format = this.Format,
-            Message = this.Message
+            Message = this.Message,
+            Hint = this.Hint,
+            PostBack = this.PostBack,
+            InputType = this.InputType,
+            InputAccept = this.InputAccept,
+            InputCapture = this.InputCapture,
+            Class = this.Class,
+            Length = this.Length
          };
+
+         int.TryParse(this.Precision, out var precision);
+         parameter.Precision = precision;
+
+         int.TryParse(this.Scale, out var scale);
+         parameter.Scale = scale;
 
          int.TryParse(this.Width, out var width);
          parameter.Width = width;

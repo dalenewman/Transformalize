@@ -208,6 +208,43 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Sticky { get; set; }
 
+      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
+      public string InputType { get; set; }
+
+      [Cfg(value = "", toLower = true)]
+      public string InputAccept { get; set; }
+
+      [Cfg(value = "", toLower = true)]
+      public string InputCapture { get; set; }
+
+      [Cfg(value = "")]
+      public string Hint { get; set; }
+
+      [Cfg(value = "auto", domain = "auto,true,false", ignoreCase = true, toLower = true, trim = true)]
+      public string PostBack { get; set; }
+
+      [Cfg(value="64", regex = @"^max$|^\d+$", toLower =true, trim =true)]
+      public string Length { get; set; }
+
+      /// <summary>
+      /// Optional. Default is `18`
+      /// </summary>
+      [Cfg(value = 18)]
+      public int Precision { get; set; }
+
+      /// <summary>
+      /// Optional. Default is `9`
+      /// </summary>
+      [Cfg(value = 9)]
+      public int Scale { get; set; }
+
+      [Cfg(value = "")]
+      public string Class { get; set; }
+
+      public bool IsDecimalType() {
+         return Constants.IsDecimalType(Type);
+      }
+
       public object Convert(string value) {
          return Type == "string" ? value : Constants.ConversionMap[Type](value);
       }
