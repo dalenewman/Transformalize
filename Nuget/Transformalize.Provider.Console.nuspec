@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.Console</id>
-      <version>0.6.28-beta</version>
+      <version>0.7.15-beta</version>
       <title>Transformalize Provider for Console</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,15 +10,15 @@
       <!--<license type="expression">Apache-2.0</license>-->
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize Provider for Console</description>
-      <releaseNotes>added target for .net standard 2.0</releaseNotes>
+      <releaseNotes></releaseNotes>
       <copyright>Copyright 2013-2020</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
-            <dependency id="Transformalize" version="0.6.28-beta" />
+            <dependency id="Transformalize" version="0.7.15-beta" />
          </group>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.6.28-beta" />
+            <dependency id="Transformalize" version="0.7.15-beta" />
          </group>
       </dependencies>
    </metadata>

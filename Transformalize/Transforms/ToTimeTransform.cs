@@ -19,68 +19,73 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
-    public class ToTimeTransform : BaseTransform {
-        private readonly Field _input;
-        public ToTimeTransform(IContext context = null) : base(context, "string") {
+   public class ToTimeTransform : BaseTransform {
 
-            if (IsMissingContext()) {
-                return;
+      private readonly Field _input;
+      private readonly Func<double, string> _transform;
+
+      public ToTimeTransform(IContext context = null) : base(context, "string") {
+
+         if (IsMissingContext()) {
+            return;
+         }
+
+         if (!Constants.TimeSpanComponents.Contains(Context.Operation.TimeComponent)) {
+            Error($"The {Context.Operation.Method} expects a time component of {Utility.ReadableDomain(Constants.TimeSpanComponents)}.");
+            Run = false;
+            return;
+         }
+
+         if (IsNotReceivingNumber()) {
+            return;
+         }
+
+         _input = SingleInput();
+
+         switch (Context.Operation.TimeComponent) {
+            case "minute":
+            case "minutes":
+               _transform = (value) => TimeSpan.FromMinutes(value).ToString();
+               break;
+            case "second":
+            case "seconds":
+               _transform = (value) => TimeSpan.FromSeconds(value).ToString();
+               break;
+            case "millisecond":
+            case "milliseconds":
+               _transform = (value) => TimeSpan.FromMilliseconds(value).ToString();
+               break;
+            case "tick":
+            case "ticks":
+               _transform = (value) => TimeSpan.FromTicks(Convert.ToInt64(value)).ToString();
+               break;
+            case "day":
+            case "days":
+               _transform = (value) => TimeSpan.FromDays(value).ToString();
+               break;
+            default:
+               _transform = (value) => TimeSpan.FromHours(value).ToString();
+               break;
+         }
+
+
+      }
+
+      public override IRow Operate(IRow row) {
+         var value = _input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input]);
+         row[Context.Field] = _transform(value);
+         return row;
+      }
+
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("totime") {
+            Parameters = new List<OperationParameter> {
+               new OperationParameter("time-component")
             }
-            
-            if (!Context.Operation.TimeComponent.In("hour", "minute", "second", "millisecond", "day", "tick")) {
-                Error($"The {Context.Operation.Method} expects a time component of day, hour, minute, second, millisecond, or tick.");
-                Run = false;
-                return;
-            }
+         };
+      }
 
-            if (IsNotReceivingNumber()) {
-                return;
-            }
-
-            _input = SingleInput();
-            if (Context.Operation.Format == string.Empty) {
-                Context.Operation.Format = @"d\.hh\:mm\:ss";
-            }
-
-        }
-
-        // "day,date,dayofweek,dayofyear,hour,millisecond,minute,month,second,tick,year,weekofyear", toLower = true)]
-        public override IRow Operate(IRow row) {
-            var value = _input.Type == "double" ? (double)row[_input] : Convert.ToDouble(row[_input]);
-            switch (Context.Operation.TimeComponent) {
-                case "minute":
-                    row[Context.Field] = TimeSpan.FromMinutes(value).ToString(Context.Operation.Format);
-                    break;
-                case "second":
-                    row[Context.Field] = TimeSpan.FromSeconds(value).ToString(Context.Operation.Format);
-                    break;
-                case "millisecond":
-                    row[Context.Field] = TimeSpan.FromMilliseconds(value).ToString(Context.Operation.Format);
-                    break;
-                case "tick":
-                    row[Context.Field] = TimeSpan.FromTicks(Convert.ToInt64(row[_input])).ToString(Context.Operation.Format);
-                    break;
-                case "day":
-                    row[Context.Field] = TimeSpan.FromDays(value).ToString(Context.Operation.Format);
-                    break;
-                default:
-                    row[Context.Field] = TimeSpan.FromHours(value).ToString(Context.Operation.Format);
-                    break;
-            }
-
-            return row;
-        }
-
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("totime") {
-                Parameters = new List<OperationParameter> {
-                    new OperationParameter("time-component")
-                }
-            };
-        }
-
-    }
+   }
 }

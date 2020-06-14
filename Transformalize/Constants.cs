@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;  // needed for ! NETS10
 using System.Text.RegularExpressions;
-using Transformalize.Extensions;
 
 namespace Transformalize {
    public static class Constants {
@@ -59,6 +58,8 @@ namespace Transformalize {
       public const string TflDeleted = "TflDeleted";
       public const string TflBatchId = "TflBatchId";
       public static string ApplicationFolder = "Transformalize";
+
+      public static HashSet<string> TimeSpanComponents = new HashSet<string>() { "hour", "hours", "minute", "minutes", "second", "seconds", "millisecond", "milliseconds", "day", "days", "tick", "ticks" };
 
       public static HashSet<string> TypeSet() {
          return _types ?? (_types = new HashSet<string>(TypeDomain.Split(',')));

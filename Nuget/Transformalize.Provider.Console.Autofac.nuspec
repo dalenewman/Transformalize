@@ -2,12 +2,12 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.Console.Autofac</id>
-      <version>0.6.28-beta</version>
+      <version>0.7.15-beta</version>
       <title>Transformalize Console Provider Autofac Module</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-      <!--<license type="expression">Apache-2.0</license>-->
+      <license type="expression">Apache-2.0</license>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize Console Provider Autofac Module</description>
       <releaseNotes></releaseNotes>
@@ -15,8 +15,8 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize.Provider.Console" version="0.6.28-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.6.28-beta" />
+            <dependency id="Transformalize.Provider.Console" version="0.7.15-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.7.15-beta" />
          </group>
       </dependencies>
    </metadata>

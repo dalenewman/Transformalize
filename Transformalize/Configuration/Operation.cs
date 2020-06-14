@@ -164,7 +164,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + Constants.TypeDomain)]
       public string Type { get; set; }
 
-      [Cfg(value = "meters,bits,b,bytes,kb,kilobytes,mb,megabytes,gb,gigabytes,tb,terabytes", toLower = true, ignoreCase = true)]
+      [Cfg(value= Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + "meters,bits,b,bytes,kb,kilobytes,mb,megabytes,gb,gigabytes,tb,terabytes", toLower = true, ignoreCase = true)]
       public string Units { get; set; }
 
       [Cfg(value = "")]
