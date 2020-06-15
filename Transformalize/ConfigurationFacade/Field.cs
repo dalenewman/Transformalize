@@ -227,6 +227,9 @@ namespace Transformalize.ConfigurationFacade {
       public string Connection { get; set; }
 
       [Cfg]
+      public string Parameter { get; set; }
+
+      [Cfg]
       public string Property { get; set; }
    }
 }

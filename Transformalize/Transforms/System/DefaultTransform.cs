@@ -64,9 +64,12 @@ namespace Transformalize.Transforms.System {
 
          var expanded = fields.ToArray();
          var defaults = Constants.TypeDefaults();
+         var canConvert = Constants.CanConvert();
 
          foreach (var field in expanded) {
             var hasDefault = field.Default != Constants.DefaultSetting;
+            var value = defaults[field.Type];
+
             if (hasDefault) {
                switch (field.Type) {
                   case "char" when field.Default.Length > 1:
@@ -76,9 +79,15 @@ namespace Transformalize.Transforms.System {
                      field.Default = field.Default.Substring(0, Math.Min(field.Default.Length, length));
                      break;
                }
+               if(canConvert[field.Type](field.Default)){
+                  value = field.Convert(field.Default);
+               } else {
+                  Context.Warn($"The default value {field.Default} can not be converted to {field.Type}.  Setting default value to {value} instead.");
+               }
             }
+
             var fieldDefault = new FieldDefault(field.Name, field.Alias, field.Index, field.MasterIndex, field.KeyIndex, field.Type) {
-               Value = hasDefault ? field.Convert(field.Default) : defaults[field.Type],
+               Value = value,
                StringValue = hasDefault ? field.Default : string.Empty,
                DefaultWhiteSpace = field.DefaultWhiteSpace,
                DefaultEmpty = field.DefaultEmpty,

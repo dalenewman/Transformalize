@@ -20,7 +20,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Logging {
     public class BaseLogger {
 
-        public LogLevel LogLevel { get; }
+        public LogLevel LogLevel { get; set; }
 
         public BaseLogger(LogLevel level) {
             LogLevel = level;

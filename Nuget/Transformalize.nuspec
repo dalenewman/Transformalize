@@ -2,14 +2,17 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.7.15-beta</version>
+      <version>0.7.18-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes></releaseNotes>
+      <releaseNotes>1. added missing Parameter property to configuration facade
+2. checking to see if default value can be converted to type in default transform
+3. Do not format LogEntry error messages if no params are provided and allow LogLevel to be set on BaseLogger
+      </releaseNotes>
       <copyright>Copyright © 2013-2020</copyright>
       <tags>etl,transformalize</tags>
       <license type="expression">Apache-2.0</license>

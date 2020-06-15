@@ -17,7 +17,6 @@
 #endregion
 using System;
 using Cfg.Net;
-using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Logging {
@@ -43,7 +42,7 @@ namespace Transformalize.Logging {
             Context = context;
             LogLevel = level;
             Level = level.ToString();
-            Message = string.Format(message, args);
+            Message = args == null || args.Length == 0 ? message : string.Format(message, args);
         }
 
         public LogEntry() {
