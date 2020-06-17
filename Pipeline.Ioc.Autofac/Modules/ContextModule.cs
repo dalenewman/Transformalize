@@ -51,7 +51,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
                 builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(connection.Key);
 
-                if (connection.Name != "output")
+                if (connection.Name != _process.Output)
                     continue;
 
                 // register output for connection
@@ -82,7 +82,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                     return new OutputContext(context);
                 }).Named<OutputContext>(entity.Key);
 
-                var connection = _process.Connections.First(c => c.Name == entity.Connection);
+                var connection = _process.Connections.First(c => c.Name == entity.Input);
                 builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
                
             }

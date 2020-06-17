@@ -36,8 +36,30 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Label { get; set; }
 
+      [Obsolete("Please use Input instead.")]
       [Cfg(value = Constants.DefaultSetting, toLower = true)]
-      public string Connection { get; set; }
+      public string Connection {
+         get => _connection;
+         set {
+            _connection = value;
+            if (value != null && value != Constants.DefaultSetting) {
+               Input = value;
+               Warn("The entity's connection property is obsolete.  Please use the input property instead.");
+            }
+         }
+      }
+
+      /// <summary>
+      /// References the name of the input connection for this entity.
+      /// </summary>
+      [Cfg(value = Constants.DefaultSetting, toLower = true)]
+      public string Input {
+         get => _input; 
+         set {
+            _input = value;
+            _connection = value;
+         }
+      }
 
       // insert, update, and/or delete options (default behavior is insert=true, update=true, delete=false)
       [Cfg(value = true)]
@@ -517,7 +539,7 @@ namespace Transformalize.Configuration {
       }
 
       public bool HasConnection() {
-         return Connection != Constants.DefaultSetting;
+         return Input != Constants.DefaultSetting;
       }
 
       public void AdaptFieldsCreatedFromTransforms() {
@@ -630,6 +652,8 @@ namespace Transformalize.Configuration {
       public int Identity;
 
       public int RowNumber;
+      private string _connection;
+      private string _input;
 
       [Cfg]
       public int Hits { get; set; }

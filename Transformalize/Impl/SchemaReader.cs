@@ -125,7 +125,7 @@ namespace Transformalize {
             newEntity.Fields = newFields;
 
             return new Schema {
-                Connection = _process.Connections.FirstOrDefault(c => c.Name == entity.Connection),
+                Connection = _process.Connections.FirstOrDefault(c => c.Name == entity.Input),
                 Entities = new List<Entity> { newEntity }
             };
         }

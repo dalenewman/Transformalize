@@ -4,10 +4,10 @@
       <TargetFramework>netstandard2.1</TargetFramework>
       <RootNamespace>Transformalize</RootNamespace>
       <AssemblyName>Transformalize</AssemblyName>
-      <Version>0.7.18-beta</Version>
+      <Version>0.8.0-beta</Version>
       <NeutralLanguage>en-US</NeutralLanguage>
       <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
-      <AssemblyVersion>0.7.18.0</AssemblyVersion>
+      <AssemblyVersion>0.8.0.0</AssemblyVersion>
       <Authors>Dale Newman</Authors>
       <Company>Transformalize</Company>      
    </PropertyGroup>

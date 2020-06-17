@@ -43,7 +43,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                 builder.Register<ISchemaReader>(ctx => new NullSchemaReader()).Named<ISchemaReader>(connection.Key);
             }
 
-            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == Provider)) {
+            foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Input).Provider == Provider)) {
 
                 // input version detector
                 builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
@@ -56,7 +56,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
             }
 
-            if (_process.Output().Provider == Provider) {
+            if (_process.GetOutputConnection().Provider == Provider) {
                 foreach (var entity in _process.Entities)
                 {
 

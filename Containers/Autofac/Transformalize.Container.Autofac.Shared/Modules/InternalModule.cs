@@ -72,7 +72,7 @@ namespace Transformalize.Containers.Autofac.Modules {
 
          // PROCESS AND ENTITY OUTPUT
          // if output is internal, setup internal output controllers for the process and each entity
-         if (_process.Output().Provider == "internal") {
+         if (_process.GetOutputConnection().Provider == "internal") {
 
             // PROCESS OUTPUT CONTROLLER
             builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
@@ -89,7 +89,7 @@ namespace Transformalize.Containers.Autofac.Modules {
 
          // ENTITY INPUT
          // setup internal input readers for each entity if necessary
-         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == Internal)) {
+         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Input).Provider == Internal)) {
 
             builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 

@@ -40,7 +40,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
             return;
 
          // enitity input
-         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == FileSystem)) {
+         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Input).Provider == FileSystem)) {
 
             // no input version detector for now
             builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
@@ -61,7 +61,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
 
          }
 
-         if (_process.Output().Provider == FileSystem) {
+         if (_process.GetOutputConnection().Provider == FileSystem) {
             // PROCESS OUTPUT CONTROLLER
             builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 

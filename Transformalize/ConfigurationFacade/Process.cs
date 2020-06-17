@@ -138,5 +138,8 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Id { get; set; }
 
+      [Cfg]
+      public string Output { get; set; }
+
    }
 }

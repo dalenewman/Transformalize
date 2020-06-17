@@ -49,7 +49,7 @@ namespace Transformalize.Impl {
       }
 
       public IEnumerable<ConnectionContext> GetEntityConnectionContext() {
-         return GetEntityContext().Select(c => new ConnectionContext(c, _process.Connections.First(cn => cn.Name == c.Entity.Connection)));
+         return GetEntityContext().Select(c => new ConnectionContext(c, _process.Connections.First(cn => cn.Name == c.Entity.Input)));
       }
 
    }

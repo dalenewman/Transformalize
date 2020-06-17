@@ -33,7 +33,7 @@ namespace Transformalize.Transforms.System {
          _dates = context.Entity.GetAllFields().Where(f => f.Output && f.Type.StartsWith("date", StringComparison.Ordinal)).ToArray();
 
          _minDate = minDate;
-         _toString = context.Process.Connections.First(c => c.Name == context.Entity.Connection).Provider == "mysql";
+         _toString = context.Process.Connections.First(c => c.Name == context.Entity.Input).Provider == "mysql";
       }
 
       public override IRow Operate(IRow row) {

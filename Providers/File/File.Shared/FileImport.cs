@@ -55,7 +55,7 @@ namespace Transformalize.Providers.File {
                 Entities = new List<Entity> {
                         new Entity{
                             Name = name,
-                            Connection = "input",
+                            Input = "input",
                             PrependProcessNameToOutputName = false,
                             Fields = _fields.ToList()
                         }

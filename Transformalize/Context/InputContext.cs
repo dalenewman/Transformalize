@@ -45,7 +45,7 @@ namespace Transformalize.Context {
             _context = context;
             RowCapacity = context.GetAllEntityFields().Count();
             InputFields = context.Entity.Fields.Where(f => f.Input).ToArray();
-            Connection = context.Process.Connections.First(c => c.Name == context.Entity.Connection);
+            Connection = context.Process.Connections.First(c => c.Name == context.Entity.Input);
             Key = context.Key;
         }
 

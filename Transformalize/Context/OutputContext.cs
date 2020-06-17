@@ -30,7 +30,7 @@ namespace Transformalize.Context {
 
         public OutputContext(IContext context) : base(context.Logger, context.Process, context.Entity, context.Field, context.Operation) {
             OutputFields = context.GetAllEntityOutputFields().ToArray();
-            Connection = context.Process.Output();
+            Connection = context.Process.GetOutputConnection();
         }
 
         public EntityStatus GetEntityStatus() {

@@ -42,7 +42,7 @@ namespace Transformalize.Command {
                 var process = outer.Resolve<Configuration.Process>();
                 var log = new PipelineContext(_logger, process);
 
-                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Connection).Provider != Constants.DefaultSetting && !e.Fields.Any(f => f.Input))) {
+                if (process.Entities.Any(e => process.Connections.First(c => c.Name == e.Input).Provider != Constants.DefaultSetting && !e.Fields.Any(f => f.Input))) {
                     log.Debug(() => "Detecting schema...");
                     if (_schemaHelper.Help(process)) {
                         process.Load();

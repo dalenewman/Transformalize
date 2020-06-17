@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Console.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.Console.Autofac</AssemblyName>
-    <Version>0.7.15</Version>
+    <Version>0.8.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

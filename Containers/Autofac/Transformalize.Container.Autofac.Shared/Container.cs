@@ -106,7 +106,7 @@ namespace Transformalize.Containers.Autofac {
 
             builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(connection.Key);
 
-            if (connection.Name != "output")
+            if (connection.Name != process.Output)
                continue;
 
             // register output for connection
@@ -133,7 +133,7 @@ namespace Transformalize.Containers.Autofac {
                return new OutputContext(context);
             }).Named<OutputContext>(entity.Key);
 
-            var connection = process.Connections.First(c => c.Name == entity.Connection);
+            var connection = process.Connections.First(c => c.Name == entity.Input);
             builder.Register(ctx => new ConnectionContext(ctx.Resolve<IContext>(), connection)).Named<IConnectionContext>(entity.Key);
 
          }
@@ -251,12 +251,12 @@ namespace Transformalize.Containers.Autofac {
             }
 
             // flatten(ing) is first post-action
-            var isAdo = Constants.AdoProviderSet().Contains(process.Output().Provider);
+            var isAdo = Constants.AdoProviderSet().Contains(process.GetOutputConnection().Provider);
             if (process.Flatten && isAdo) {
-               if (ctx.IsRegisteredWithName<IAction>(process.Output().Key)) {
-                  controller.PostActions.Add(ctx.ResolveNamed<IAction>(process.Output().Key));
+               if (ctx.IsRegisteredWithName<IAction>(process.GetOutputConnection().Key)) {
+                  controller.PostActions.Add(ctx.ResolveNamed<IAction>(process.GetOutputConnection().Key));
                } else {
-                  context.Error($"Could not find ADO Flatten Action for provider {process.Output().Provider}.");
+                  context.Error($"Could not find ADO Flatten Action for provider {process.GetOutputConnection().Provider}.");
                }
             }
 

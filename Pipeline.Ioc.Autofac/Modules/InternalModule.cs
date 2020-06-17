@@ -66,7 +66,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
 
          // Entity input
-         foreach (var entity in _process.Entities.Where(e => _internalProviders.Contains(_process.Connections.First(c => c.Name == e.Connection).Provider))) {
+         foreach (var entity in _process.Entities.Where(e => _internalProviders.Contains(_process.Connections.First(c => c.Name == e.Input).Provider))) {
 
             builder.RegisterType<NullInputProvider>().Named<IInputProvider>(entity.Key);
 
@@ -97,7 +97,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
 
          // Entity Output
-         if (_internalProviders.Contains(_process.Output().Provider)) {
+         if (_internalProviders.Contains(_process.GetOutputConnection().Provider)) {
 
             // PROCESS OUTPUT CONTROLLER
             builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();

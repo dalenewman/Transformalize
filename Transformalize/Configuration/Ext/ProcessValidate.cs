@@ -117,12 +117,12 @@ namespace Transformalize.Configuration.Ext {
          if (process.Connections.All(c => c.Provider != "filesystem"))
             return;
 
-         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "filesystem").Where(entity => !entity.Fields.Where(f => f.Input).Any(f => fieldNames.ContainsKey(f.Name)))) {
+         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Input).Provider == "filesystem").Where(entity => !entity.Fields.Where(f => f.Input).Any(f => fieldNames.ContainsKey(f.Name)))) {
             error($"The {entity.Alias} entity reads a directory listing. It needs at least one of these valid fields: {(string.Join(", ", fieldNames).Replace(", Name", ", or Name"))}.");
          }
 
          foreach (
-             var field in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Connection).Provider == "filesystem").SelectMany(e => e.Fields.Where(f => f.Input && fieldNames.ContainsKey(f.Name)))) {
+             var field in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Input).Provider == "filesystem").SelectMany(e => e.Fields.Where(f => f.Input && fieldNames.ContainsKey(f.Name)))) {
             var type = fieldNames[field.Name];
             if (field.Type.StartsWith(type, StringComparison.OrdinalIgnoreCase)) {
                continue;
@@ -224,14 +224,14 @@ namespace Transformalize.Configuration.Ext {
       }
 
       private static void ValidateEntityConnections(Process p, Action<string> error) {
-         foreach (var entity in p.Entities.Where(entity => p.Connections.All(c => c.Name != entity.Connection))) {
-            error($"The {entity.Name} entity references an invalid connection: {entity.Connection}.");
+         foreach (var entity in p.Entities.Where(entity => p.Connections.All(c => c.Name != entity.Input))) {
+            error($"The {entity.Name} entity references an invalid input (connection): {entity.Input}.");
          }
       }
 
       private static void ValidateEntityMeetsProviderExpectations(Process p, Action<string> error) {
          foreach (var entity in p.Entities) {
-            var connection = p.Output();
+            var connection = p.GetOutputConnection();
             if (connection != null) {
                switch (connection.Provider) {
                   case "kml":

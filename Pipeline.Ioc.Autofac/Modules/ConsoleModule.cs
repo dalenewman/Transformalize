@@ -64,7 +64,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
 
          // Entity input
-         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Connection).Provider == "console")) {
+         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Input).Provider == "console")) {
 
             builder.Register(ctx => {
                var input = ctx.ResolveNamed<InputContext>(entity.Key);
@@ -76,7 +76,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
          }
 
          // Entity Output
-         var output = _process.Output();
+         var output = _process.GetOutputConnection();
          if (output.Provider == "console") {
 
             // PROCESS OUTPUT CONTROLLER

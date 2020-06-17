@@ -78,7 +78,7 @@ namespace Transformalize.Impl {
                             entity.Fields.Add(field);
                         }
                     }
-                    process.Connections.First(c => c.Name == e.Connection).Delimiter = schema.Connection.Delimiter;
+                    process.Connections.First(c => c.Name == e.Input).Delimiter = schema.Connection.Delimiter;
                     helped = true;
                 } else {
                     _context.Warn($"Could not detect {entity.Alias} fields.");

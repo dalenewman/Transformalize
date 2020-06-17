@@ -59,7 +59,11 @@ namespace Transformalize.Validators {
          /* Over ride Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
 
          foreach (var item in CreateMap().Items) {
-            _map.Add(_input.Convert(item.From));
+            if(!item.To.Equals(Constants.DefaultSetting) && item.To != item.From) {
+               _map.Add(_input.Convert(item.To));
+            } else {
+               _map.Add(_input.Convert(item.From));
+            }
          }
 
          var help = Context.Field.Help;

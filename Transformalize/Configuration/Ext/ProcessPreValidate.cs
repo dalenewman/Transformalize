@@ -40,8 +40,8 @@ namespace Transformalize.Configuration.Ext {
          }
 
          // add an internal output
-         if (p.Connections.All(c => c.Name != "output")) {
-            p.Connections.Add(new Connection { Name = "output", Provider = "internal" });
+         if (p.Connections.All(c => c.Name != p.Output)) {
+            p.Connections.Add(new Connection { Name = p.Output, Provider = "internal" });
          }
 
          DefaultEntityConnections(p);
@@ -68,7 +68,7 @@ namespace Transformalize.Configuration.Ext {
          AutomaticMaps(p);
          SetPrimaryKeys(p);
 
-         var output = p.Output();
+         var output = p.GetOutputConnection();
 
          // force primary key to output if not internal
          if (output.Provider != "internal") {
@@ -121,7 +121,7 @@ namespace Transformalize.Configuration.Ext {
              new Entity {
                 Name = connection.Name,
                 Alias = connection.Name,
-                Connection = connection.Name,
+                Input = connection.Name,
              }
          );
       }
@@ -175,7 +175,7 @@ namespace Transformalize.Configuration.Ext {
 
          var autoMapCounter = 0;
          foreach (var entity in p.Entities.Where(e => e.Filter.Any(QualifiesForAutomaticMap()))) {
-            var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Connection));
+            var connection = p.Connections.FirstOrDefault(c => c.Name.Equals(entity.Input));
             if (connection != null) {
                foreach (var filter in entity.Filter.Where(QualifiesForAutomaticMap())) {
                   var parameter = p.Parameters.FirstOrDefault(pr => string.IsNullOrEmpty(pr.Map) && pr.Name == filter.Field && pr.Value == filter.Value);
@@ -204,14 +204,14 @@ namespace Transformalize.Configuration.Ext {
       private static void DefaultEntityConnections(Process p) {
          // take a connection named `input` if defined, otherwise take the first connection
          foreach (var entity in p.Entities.Where(entity => !entity.HasConnection())) {
-            entity.Connection = p.Connections.Any(c => c.Name == "input") ? "input" : p.Connections.First().Name;
+            entity.Input = p.Connections.Any(c => c.Name == "input") ? "input" : p.Connections.First().Name;
          }
       }
 
       private static void DefaultSearchTypes(Process p) {
 
          var searchFields = p.GetSearchFields().ToArray();
-         var output = p.Output();
+         var output = p.GetOutputConnection();
 
          if (searchFields.Any()) {
             if (p.SearchTypes.All(st => st.Name != "none")) {

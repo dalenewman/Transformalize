@@ -77,12 +77,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
                return process;
             }
 
-            if (process.Output().Provider == Constants.DefaultSetting || process.Output().Provider == "internal") {
+            if (process.GetOutputConnection().Provider == Constants.DefaultSetting || process.GetOutputConnection().Provider == "internal") {
                try {
                   Console.WindowHeight = Console.WindowHeight + 1 - 1;
                   Console.Title = process.Name;
                   if (!System.Environment.CommandLine.Contains("TESTWINDOW") && !System.Environment.CommandLine.Contains("TESTPLATFORM")) {
-                     process.Output().Provider = "console";
+                     process.GetOutputConnection().Provider = "console";
                   }
                } catch (IOException) {
 
@@ -102,7 +102,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                   }
                   process.Entities.Clear();
                   process.Entities.Add(newEntity);
-                  process.Connections.First(c => c.Name == newEntity.Connection).Delimiter = schema.Connection.Delimiter;
+                  process.Connections.First(c => c.Name == newEntity.Input).Delimiter = schema.Connection.Delimiter;
                }
             }
 

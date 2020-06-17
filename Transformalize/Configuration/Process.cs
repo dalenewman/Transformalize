@@ -496,9 +496,15 @@ namespace Transformalize.Configuration {
          return starFields;
       }
 
-      public Connection Output() {
-         return Connections.FirstOrDefault(c => c.Name == "output");
+      public Connection GetOutputConnection() {
+         return Connections.FirstOrDefault(c => c.Name == Output);
       }
+
+      /// <summary>
+      /// References the name of the output connection for this process.  All entities are output to this connection.
+      /// </summary>
+      [Cfg(value ="output", toLower = true)]
+      public string Output { get; set; }
 
       /// <summary>
       /// clone process, remove entities, and create entity needed for calculated fields
@@ -519,7 +525,7 @@ namespace Transformalize.Configuration {
          var entity = new Entity { Name = "Calculated" };
          entity.Alias = entity.Name;
          entity.Key = calc.Name + entity.Alias;
-         entity.Connection = "output";
+         entity.Input = calc.Output;
          entity.Fields.Add(new Field {
             Name = Constants.TflKey,
             Alias = Constants.TflKey,
@@ -696,7 +702,7 @@ namespace Transformalize.Configuration {
       }
 
       public bool OutputIsRelational() {
-         return Output() != null && Constants.AdoProviderSet().Contains(Output().Provider);
+         return GetOutputConnection() != null && Constants.AdoProviderSet().Contains(GetOutputConnection().Provider);
       }
 
       public bool OutputIsConsole() {
@@ -704,7 +710,7 @@ namespace Transformalize.Configuration {
          if (Actions.Count > 0 && Entities.Count == 0) {
             return false;
          }
-         return Connections.Any(c => c.Name == Constants.OriginalOutput && c.Provider == "console" || c.Name == "output" && c.Provider == "console");
+         return Connections.Any(c => c.Name == Constants.OriginalOutput && c.Provider == "console" || c.Name == Output && c.Provider == "console");
       }
 
 

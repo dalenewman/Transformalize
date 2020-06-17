@@ -40,7 +40,7 @@ namespace Transformalize.Providers.File.Transforms {
                 return;
             }
 
-            _connection = Context.Process.Connections.FirstOrDefault(c => c.Name == Context.Entity.Connection);
+            _connection = Context.Process.Connections.FirstOrDefault(c => c.Name == Context.Entity.Input);
             if (_connection == null) {
                 Run = false;
             }

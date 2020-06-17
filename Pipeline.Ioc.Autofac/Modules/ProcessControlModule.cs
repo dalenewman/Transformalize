@@ -62,7 +62,7 @@ namespace Transformalize.Ioc.Autofac.Modules {
                pipelines.Add(ctx.Resolve<IPipeline>());
             }
 
-            var outputConnection = _process.Output();
+            var outputConnection = _process.GetOutputConnection();
             var context = ctx.Resolve<IContext>();
 
             var controller = new ProcessController(pipelines, context);
