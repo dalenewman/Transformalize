@@ -59,18 +59,53 @@ namespace Transformalize.Configuration {
       [Cfg]
       public List<LogEntry> Log { get; set; }
 
+      /// <summary>
+      /// Constucts and Loads a Process with external parameters and dependendencies
+      /// </summary>
+      /// <param name="cfg">xml, json, file name, or web address of an arrangement</param>
+      /// <param name="parameters">parameters may be used in place-holders throughout the process</param>
+      /// <param name="dependencies">Cfg-Net dependencies</param>
       public Process(
           string cfg,
           IDictionary<string, string> parameters,
-          params IDependency[] dependencies)
+          params IDependency[] dependencies
+          )
       : base(dependencies) {
          Load(cfg, parameters);
       }
 
+      /// <summary>
+      /// Constucts and Loads a Process with external parameters and dependendencies.  Enabled parameter allows you to enable or disable Cfg-Net based validation and transformation
+      /// </summary>
+      /// <param name="cfg">xml, json, file name, or web address of an arrangement</param>
+      /// <param name="parameters">parameters may be used in place-holders throughout the process</param>
+      /// <param name="enabled">enable or disable Cfg-Net based validation and transformation</param>
+      /// <param name="dependencies">Cfg-Net dependencies</param>
+      public Process(
+         string cfg,
+         IDictionary<string, string> parameters,
+         bool enabled,
+         params IDependency[] dependencies
+      ) : base(dependencies) {
+         Load(cfg, parameters, enabled);
+      }
+
+      /// <summary>
+      /// Constucts and Loads a Process with dependendencies
+      /// </summary>
+      /// <param name="cfg">xml, json, file name, or web address of an arrangement</param>
+      /// <param name="dependencies">Cfg-Net dependencies</param>
       public Process(string cfg, params IDependency[] dependencies) : this(cfg, null, dependencies) { }
 
+      /// <summary>
+      /// Constucts and Process with dependendencies
+      /// </summary>
+      /// <param name="dependencies">Cfg-Net dependencies</param>
       public Process(params IDependency[] dependencies) : base(dependencies) { }
 
+      /// <summary>
+      /// Constucts and Process without external dependencies
+      /// </summary>
       public Process() : base(new XmlSerializer()) { }
 
       /// <summary>
@@ -503,7 +538,7 @@ namespace Transformalize.Configuration {
       /// <summary>
       /// References the name of the output connection for this process.  All entities are output to this connection.
       /// </summary>
-      [Cfg(value ="output", toLower = true)]
+      [Cfg(value = "output", toLower = true)]
       public string Output { get; set; }
 
       /// <summary>

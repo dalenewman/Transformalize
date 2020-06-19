@@ -150,6 +150,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Batch.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalKeysReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalParameterReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Providers\Internal\InternalReader.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullInputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Nulls\NullOutputProvider.cs" />

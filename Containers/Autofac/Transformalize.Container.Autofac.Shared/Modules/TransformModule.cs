@@ -45,6 +45,11 @@ namespace Transformalize.Containers.Autofac.Modules {
       private readonly Process _process;
       private readonly IPipelineLogger _logger;
 
+      /// <summary>
+      /// Search for and load plugins from plugins folder
+      /// </summary>
+      public bool Plugins { get; set; } = true;
+
       public TransformModule(Process process, HashSet<string> methods, ShorthandRoot shortHand, IPipelineLogger logger) {
          _process = process;
          _logger = logger;
@@ -65,25 +70,27 @@ namespace Transformalize.Containers.Autofac.Modules {
 
 #if PLUGINS
 
-         var context = new PipelineContext(_logger, _process);
+         if(Plugins){
+            var context = new PipelineContext(_logger, _process);
 
-         builder.Properties["ShortHand"] = _shortHand;
-         builder.Properties["Methods"] = _methods;
-         builder.Properties["Process"] = _process;
+            builder.Properties["ShortHand"] = _shortHand;
+            builder.Properties["Methods"] = _methods;
+            builder.Properties["Process"] = _process;
 
-         var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
-         if (Directory.Exists(pluginsFolder)) {
+            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
+            if (Directory.Exists(pluginsFolder)) {
 
-            var assemblies = new List<Assembly>();
-            foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
-               var info = new FileInfo(file);
-               var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
-               context.Debug(() => $"Loading {name} transform(s)");
-               var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-               assemblies.Add(assembly);
-            }
-            if (assemblies.Any()) {
-               builder.RegisterAssemblyModules(assemblies.ToArray());
+               var assemblies = new List<Assembly>();
+               foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Transform.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+                  var info = new FileInfo(file);
+                  var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "transform" && f != "autofac");
+                  context.Debug(() => $"Loading {name} transform(s)");
+                  var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
+                  assemblies.Add(assembly);
+               }
+               if (assemblies.Any()) {
+                  builder.RegisterAssemblyModules(assemblies.ToArray());
+               }
             }
          }
 #endif
@@ -94,6 +101,7 @@ namespace Transformalize.Containers.Autofac.Modules {
          _transforms.Add(t);
       }
 
+#if PLUGINS
       public static string AssemblyDirectory {
          get {
             var codeBase = typeof(Process).Assembly.CodeBase;
@@ -102,5 +110,7 @@ namespace Transformalize.Containers.Autofac.Modules {
             return Path.GetDirectoryName(path);
          }
       }
+#endif
+
    }
 }
