@@ -15,8 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
@@ -25,6 +25,9 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string Name { get; set; }
+
+      [Cfg]
+      public string Buffer { get; set; }
 
       [Cfg]
       public string ConnectionString { get; set; }
@@ -123,13 +126,13 @@ namespace Transformalize.ConfigurationFacade {
       public string Table { get; set; }
 
       [Cfg]
-      public short MaxLength { get; set; }
+      public string MaxLength { get; set; }
 
       [Cfg]
-      public short MinLength { get; set; }
+      public string MinLength { get; set; }
 
       [Cfg]
-      public short Sample { get; set; }
+      public string Sample { get; set; }
 
       [Cfg]
       public List<TflType> Types { get; set; }
@@ -192,10 +195,103 @@ namespace Transformalize.ConfigurationFacade {
       public string MaxDegreeOfParallism { get; set; }
 
       public Configuration.Connection ToConnection() {
-         var map = new Configuration.Connection {
-            Name = this.Name
+         var c = new Configuration.Connection {
+            Arguments = this.Arguments,
+            Command = this.Command,
+            ConnectionString = this.ConnectionString,
+            ContentType = this.ContentType,
+            Core = this.Core,
+            Cube = this.Cube,
+            Database = this.Database,
+            DateFormat = this.DateFormat,
+            Delimiter = this.Delimiter,
+            Delimiters = this.Delimiters.Select(d=>d.ToDelimiter()).ToList(),
+            Encoding = this.Encoding,
+            ErrorMode = this.ErrorMode,
+            File = this.File,
+            Folder = this.Folder,
+            Footer = this.Footer,
+            Format = this.Format,
+            Header = this.Header,
+            Index = this.Index,
+            LinePattern = this.LinePattern,
+            ModelType = this.ModelType,
+            Name = this.Name,
+            OpenWith = this.OpenWith,
+            Password = this.Password,
+            Path = this.Path,
+            Provider = this.Provider,
+            Schema = this.Schema,
+            SchemaFileName = this.SchemaFileName,
+            SearchOption = this.SearchOption,
+            SearchPattern = this.SearchPattern,
+            Server = this.Server,
+            Servers = this.Servers.Select(s=> s.ToServer()).ToList(),
+            Table = this.Table,
+            Template = this.Template,
+            TextQualifier = this.TextQualifier,
+            Types = this.Types.Select(t=>t.ToType()).ToList(),
+            Url = this.Url,
+            User = this.User,
+            Version = this.Version,
+            WebMethod = this.WebMethod
          };
-         return map;
+
+         bool.TryParse(this.Buffer, out bool buffer);
+         c.Buffer = buffer;
+
+         bool.TryParse(this.DropControl, out var dropControl);
+         c.DropControl = dropControl;
+
+         int.TryParse(this.End, out var end);
+         c.End = end;
+
+         int.TryParse(this.ErrorLimit, out var errorLimit);
+         c.ErrorLimit = errorLimit;
+
+         int.TryParse(this.MaxDegreeOfParallism, out int mdop);
+         c.MaxDegreeOfParallelism = mdop;
+
+         short.TryParse(this.MaxLength, out short maxLength);
+         c.MaxLength = maxLength;
+
+         short.TryParse(this.MinLength, out short minLength);
+         c.MinLength = minLength;
+
+         int.TryParse(this.Port, out int port);
+         c.Port = port;
+
+         short.TryParse(this.Replicas, out short replicas);
+         c.Replicas = replicas;
+
+         int.TryParse(this.RequestTimeout, out int requestTimeout);
+         c.RequestTimeout = requestTimeout;
+
+         short.TryParse(this.Sample, out short sample);
+         c.Sample = sample;
+
+         double.TryParse(this.ScrollWindow, out double scrollWindow);
+         c.ScrollWindow = scrollWindow;
+
+         int.TryParse(this.Seed, out int seed);
+         c.Seed = seed;
+
+         short.TryParse(this.Shards, out short shards);
+         c.Shards = shards;
+
+         int.TryParse(this.Start, out int start);
+         c.Start = start;
+
+         bool.TryParse(this.Stream, out bool stream);
+         c.Stream = stream;
+
+         int.TryParse(this.Timeout, out int timeOut);
+         c.Timeout = timeOut;
+
+         bool.TryParse(this.UseSsl, out bool useSsl);
+         c.UseSsl = useSsl;
+
+         return c;
       }
 
    }

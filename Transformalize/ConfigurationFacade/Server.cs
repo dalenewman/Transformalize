@@ -18,18 +18,31 @@
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
-    public class Server : CfgNode {
-        [Cfg]
-        public string Url { get; set; }
+   public class Server : CfgNode {
+      [Cfg]
+      public string Url { get; set; }
 
-        [Cfg]
-        public string Name { get; set; }
+      [Cfg]
+      public string Name { get; set; }
 
-        [Cfg]
-        public string Port { get; set; }
+      [Cfg]
+      public string Port { get; set; }
 
-        [Cfg]
-        public string Path { get; set; }
+      [Cfg]
+      public string Path { get; set; }
 
-    }
+      public Configuration.Server ToServer() {
+         var server = new Configuration.Server() {
+            Url = this.Url,
+            Name = this.Name,
+            Path = this.Path
+         };
+
+         int.TryParse(this.Port, out int port);
+         server.Port = port;
+
+         return server;
+      }
+
+   }
 }

@@ -18,9 +18,13 @@
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
-    public class TflType : CfgNode {
+   public class TflType : CfgNode {
 
-        [Cfg]
-        public string Type { get; set; }
-    }
+      [Cfg]
+      public string Type { get; set; }
+
+      public Configuration.TflType ToType() {
+         return new Configuration.TflType() { Type = this.Type };
+      }
+   }
 }

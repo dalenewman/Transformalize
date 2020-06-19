@@ -19,13 +19,20 @@ using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
 
-    public class Delimiter : CfgNode {
+   public class Delimiter : CfgNode {
 
-        [Cfg]
-        public string Character { get; set; }
+      [Cfg]
+      public string Character { get; set; }
 
-        [Cfg]
-        public string Name { get; set; }
+      [Cfg]
+      public string Name { get; set; }
 
-    }
+      public Configuration.Delimiter ToDelimiter() {
+         return new Configuration.Delimiter() {
+            Character = string.IsNullOrEmpty(Character) ? default : Character[0],
+            Name = Name
+         };
+      }
+
+   }
 }
