@@ -2,20 +2,14 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.8.1-beta</version>
+      <version>0.8.2-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>Input Output Connection Attribute Update
-      
-         - ! Breaking Change: Renamed Process.Output() to Process.GetOutputConnection()
-         - Added Output property to Process in order to make output connection name configurable
-         - Marked entity Connection property as obsolete, preferring the name Input instead
-         - Use To property in map validator if available
-      </releaseNotes>
+      <releaseNotes>Update to Cfg-Net 0.13.0</releaseNotes>
       <copyright>Copyright © 2013-2020</copyright>
       <tags>etl,transformalize</tags>
       <license type="expression">Apache-2.0</license>
@@ -25,31 +19,31 @@
             <dependency id="Microsoft.NETCore.Portable.Compatibility" version="1.0.1" />
             <dependency id="NETStandard.Library" version="1.6.0" />
             <dependency id="System.Dynamic.Runtime" version="4.0.11" />
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="net40">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="net45">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="net452">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="net462">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="netstandard2.0">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
          <group targetFramework="netstandard2.1">
-            <dependency id="Cfg-NET" version="0.12.1" />
+            <dependency id="Cfg-NET" version="0.13.0" />
             <dependency id="DateMath" version="1.1.0" />
          </group>
       </dependencies>

@@ -25,7 +25,7 @@
   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="Cfg-NET" Version="0.12.1" />
+    <PackageReference Include="Cfg-NET" Version="0.13.0" />
     <PackageReference Include="DateMath" Version="1.1.0" />
   </ItemGroup>
 
