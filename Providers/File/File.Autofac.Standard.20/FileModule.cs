@@ -45,6 +45,15 @@ namespace Transformalize.Providers.File.Autofac {
 
       protected override void Load(ContainerBuilder builder) {
 
+         // get methods and shorthand from builder
+         _methods = builder.Properties.ContainsKey("Methods") ? (HashSet<string>)builder.Properties["Methods"] : new HashSet<string>();
+         _shortHand = builder.Properties.ContainsKey("ShortHand") ? (ShorthandRoot)builder.Properties["ShortHand"] : new ShorthandRoot();
+
+         RegisterTransform(builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
+         RegisterTransform(builder, (ctx, c) => new FileReadAllBytesTransform(c), new FileReadAllBytesTransform().GetSignatures());
+
          if (builder.Properties.ContainsKey("Process")) {
             _process = (Process)builder.Properties["Process"];
          }
@@ -68,16 +77,6 @@ namespace Transformalize.Providers.File.Autofac {
                }).Named<IAction>(action.Key);
             }
          }
-
-         // get methods and shorthand from builder
-         _methods = builder.Properties.ContainsKey("Methods") ? (HashSet<string>)builder.Properties["Methods"] : new HashSet<string>();
-         _shortHand = builder.Properties.ContainsKey("ShortHand") ? (ShorthandRoot)builder.Properties["ShortHand"] : new ShorthandRoot();
-
-         RegisterTransform(builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
-         RegisterTransform(builder, (ctx, c) => new FileReadAllBytesTransform(c), new FileReadAllBytesTransform().GetSignatures());
-
       }
 
       private IAction SwitchAction(IComponentContext ctx, Configuration.Action action) {
