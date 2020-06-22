@@ -34,17 +34,17 @@
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Environment, Version=0.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.13.0\lib\netstandard2.0\Cfg.Net.Environment.dll</HintPath>
+    <Reference Include="Cfg.Net.Environment, Version=0.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Environment.0.13.2-beta\lib\netstandard2.0\Cfg.Net.Environment.dll</HintPath>
     </Reference>
     <Reference Include="Cfg.Net.Reader, Version=0.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.13.0\lib\net45\Cfg.Net.Reader.dll</HintPath>
+      <HintPath>..\..\..\packages\Cfg-NET.Reader.0.13.2-beta\lib\net45\Cfg.Net.Reader.dll</HintPath>
     </Reference>
-    <Reference Include="Cfg.Net.Shorthand, Version=0.12.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.13.0\lib\netstandard2.0\Cfg.Net.Shorthand.dll</HintPath>
+    <Reference Include="Cfg.Net.Shorthand, Version=0.13.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.Shorthand.0.13.2-beta\lib\netstandard2.0\Cfg.Net.Shorthand.dll</HintPath>
     </Reference>
-    <Reference Include="CfgNet, Version=0.13.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.13.0\lib\net462\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.13.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.13.2-beta\lib\net462\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="DateMath, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\DateMath.1.1.0\lib\net462\DateMath.dll</HintPath>

@@ -4,10 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <Version>0.8.9-beta</Version>
+    <Version>0.8.11-beta</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
-    <AssemblyVersion>0.8.9.0</AssemblyVersion>
+    <AssemblyVersion>0.8.11.0</AssemblyVersion>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
   </PropertyGroup>
@@ -25,7 +25,7 @@
   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="Cfg-NET" Version="0.13.0" />
+    <PackageReference Include="Cfg-NET" Version="0.13.2-beta" />
     <PackageReference Include="DateMath" Version="1.1.0" />
   </ItemGroup>
 

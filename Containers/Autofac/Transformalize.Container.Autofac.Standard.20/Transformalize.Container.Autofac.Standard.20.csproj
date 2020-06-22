@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Container.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Container.Autofac</AssemblyName>
-    <Version>0.8.8-beta</Version>
+    <Version>0.8.11-beta</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -21,9 +21,9 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="Cfg-NET.Environment" Version="0.13.0" />
-    <PackageReference Include="Cfg-NET.Reader" Version="0.13.0" />
-    <PackageReference Include="Cfg-NET.Shorthand" Version="0.13.0" />
+    <PackageReference Include="Cfg-NET.Environment" Version="0.13.2-beta" />
+    <PackageReference Include="Cfg-NET.Reader" Version="0.13.2-beta" />
+    <PackageReference Include="Cfg-NET.Shorthand" Version="0.13.2-beta" />
     <PackageReference Include="DateMath" Version="1.1.0" />
   </ItemGroup>
 

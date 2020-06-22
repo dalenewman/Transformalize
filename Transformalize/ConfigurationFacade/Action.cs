@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Linq;
 using Cfg.Net;
 
 namespace Transformalize.ConfigurationFacade {
@@ -111,5 +112,49 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public List<Parameter> Parameters { get; set; }
+
+      public Configuration.Action ToAction() {
+         var a = new Configuration.Action();
+         if(bool.TryParse(this.After, out bool after)) {
+            a.After = after;
+         }
+         a.Arguments = this.Arguments;
+         a.Bcc = this.Bcc;
+         if(bool.TryParse(this.Before, out bool before)) {
+            a.Before = before;
+         }
+         a.Body = this.Body;
+         a.Cc = this.Cc;
+         a.Command = this.Command;
+         a.Connection = this.Connection;
+         a.Description = this.Description;
+         a.ErrorMode = this.ErrorMode;
+         a.File = this.File;
+         a.From = this.From;
+         if(bool.TryParse(this.Html, out bool html)) {
+            a.Html = html;
+         }
+         if(int.TryParse(this.Id, out int id)) {
+            a.Id = id;
+         }
+         a.Level = this.Level;
+         a.Message = this.Message;
+         a.Method = this.Method;
+         a.Mode = this.Mode;
+         a.Modes = this.Modes.Select(nr => nr.ToNameReference()).ToList();
+         a.Name = this.Name;
+         a.NewValue = this.NewValue;
+         a.OldValue = this.OldValue;
+         a.Parameters = this.Parameters.Select(p => p.ToParameter()).ToList();
+         a.PlaceHolderStyle = this.PlaceHolderStyle;
+         a.Subject = this.Subject;
+         if(int.TryParse(this.TimeOut, out int timeOut)) {
+            a.TimeOut = timeOut;
+         }
+         a.To = this.To;
+         a.Type = this.Type;
+         a.Url = this.Url;
+         return a;
+      }
    }
 }

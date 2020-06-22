@@ -75,22 +75,6 @@ namespace Transformalize.Configuration {
       }
 
       /// <summary>
-      /// Constucts and Loads a Process with external parameters and dependendencies.  Enabled parameter allows you to enable or disable Cfg-Net based validation and transformation
-      /// </summary>
-      /// <param name="cfg">xml, json, file name, or web address of an arrangement</param>
-      /// <param name="parameters">parameters may be used in place-holders throughout the process</param>
-      /// <param name="enabled">enable or disable Cfg-Net based validation and transformation</param>
-      /// <param name="dependencies">Cfg-Net dependencies</param>
-      public Process(
-         string cfg,
-         IDictionary<string, string> parameters,
-         bool enabled,
-         params IDependency[] dependencies
-      ) : base(dependencies) {
-         Load(cfg, parameters, enabled);
-      }
-
-      /// <summary>
       /// Constucts and Loads a Process with dependendencies
       /// </summary>
       /// <param name="cfg">xml, json, file name, or web address of an arrangement</param>
