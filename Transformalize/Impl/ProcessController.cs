@@ -76,16 +76,13 @@ namespace Transformalize.Impl {
          try {
             await task;
          } catch (Exception ex) {
-            _context.Error(ex.Message);
-            _context.Error(ex.StackTrace);
+            _context.Error(ex, ex.Message);
             if (task != null && task.Exception != null) {
                if (task.Exception.Message != ex.Message) {
-                  _context.Error(task.Exception.Message);
-                  _context.Error(task.Exception.StackTrace);
+                  _context.Error(task.Exception, task.Exception.Message);
                }
                if (task.Exception.InnerException != null && task.Exception.InnerException.Message != task.Exception.Message && task.Exception.InnerException.Message != ex.Message) {
-                  _context.Error(task.Exception.InnerException.Message);
-                  _context.Error(task.Exception.InnerException.StackTrace);
+                  _context.Error(task.Exception, task.Exception.InnerException.Message);
                }
             }
          }
@@ -95,7 +92,6 @@ namespace Transformalize.Impl {
          throw new NotImplementedException("Must be using .NET 4.6.2 or .NET Standard 2.0 library for this method to work");
       }
 #endif
-
 
       private void PostExecute() {
          foreach (var action in PostActions) {
