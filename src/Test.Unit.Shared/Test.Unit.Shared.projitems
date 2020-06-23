@@ -55,6 +55,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMaxLength.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMinLength.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\TestContains.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestRequired.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestAll.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestXmlDecode.cs" />

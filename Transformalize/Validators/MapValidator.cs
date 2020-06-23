@@ -28,7 +28,8 @@ namespace Transformalize.Validators {
 
       private readonly bool _inMap;
       private readonly Field _input;
-      private readonly HashSet<object> _map = new HashSet<object>();
+      // private readonly HashSet<object> _map = new HashSet<object>();
+      private readonly Dictionary<object, object> _map = new Dictionary<object, object>();
       private BetterFormat _betterFormat;
       private Action<IRow> _validate;
       private bool _autoMap;
@@ -58,26 +59,38 @@ namespace Transformalize.Validators {
 
          /* Over ride Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
 
+         var mapItems = CreateMap().Items;
+         var usingTo = mapItems.Any(mi => !mi.To.Equals(Constants.DefaultSetting));
+
          foreach (var item in CreateMap().Items) {
-            if(!item.To.Equals(Constants.DefaultSetting) && item.To != item.From) {
-               _map.Add(_input.Convert(item.To));
+            var from = _input.Convert(item.From);
+            if (usingTo) {
+               var to = _input.Convert(item.To);
+               _map[to.Equals(Constants.DefaultSetting) ? from : to] = from;
             } else {
-               _map.Add(_input.Convert(item.From));
+               _map[from] = from;
             }
          }
 
          var help = Context.Field.Help;
          if (help == string.Empty) {
             if (_autoMap || _map.Count > 5) {
-               help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} is {(_inMap ? "not one of" : "one of")} {_map.Count} {(_inMap ? "valid" : "invalid")} items.";
+               if (usingTo) {
+                  help = $"{Context.Field.Label} is {(_inMap ? "not one of" : "one of")} {_map.Count} {(_inMap ? "valid" : "invalid")} items.";
+               } else {
+                  help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} is {(_inMap ? "not one of" : "one of")} {_map.Count} {(_inMap ? "valid" : "invalid")} items.";
+               }
             } else {
-               var domain = Utility.ReadableDomain(_map);
+               var domain = Utility.ReadableDomain(_map.Values);
                if (domain == string.Empty) {
                   help = $"{Context.Field.Label} has an empty {Context.Operation.Method} validator.";
                } else {
-                  help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} must {(_inMap ? "be" : "not be")} one of these {_map.Count} items: " + domain + ".";
+                  if (usingTo) {
+                     help = $"{Context.Field.Label} must {(_inMap ? "be" : "not be")} one of these {_map.Count} items: " + domain + ".";
+                  } else {
+                     help = $"{Context.Field.Label}'s value {{{Context.Field.Alias}}} must {(_inMap ? "be" : "not be")} one of these {_map.Count} items: " + domain + ".";
+                  }
                }
-
             }
          }
 
@@ -85,9 +98,11 @@ namespace Transformalize.Validators {
 
          Func<object, bool> isValid;
          if (_inMap) {
-            isValid = o => _map.Contains(o);
+            // isValid = o => _map.Contains(o);
+            isValid = o => _map.ContainsKey(o);
          } else {
-            isValid = o => !_map.Contains(o);
+            // isValid = o => !_map.Contains(o);
+            isValid = o => !_map.ContainsKey(o);
          }
 
          _validate = row => {
