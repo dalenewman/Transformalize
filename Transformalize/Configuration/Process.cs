@@ -365,33 +365,35 @@ namespace Transformalize.Configuration {
             if (Mode == "form") {
 
                var fields = entity.Fields.Where(f => f.Input).ToArray();
-               var lastField = fields.Last(f => f.InputType != "file");
 
-               foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
+               if (fields.Any()) {
 
-                  field.PostBack = field.Validators.Any() ? "true" : "false";
+                  foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
 
-                  if (field.Map == string.Empty)
-                     continue;
+                     field.PostBack = field.Validators.Any() ? "true" : "false";
 
-                  var map = Maps.FirstOrDefault(m => m.Name == field.Map);
-                  if (map == null)
-                     continue;
+                     if (field.Map == string.Empty)
+                        continue;
 
-                  if (!map.Query.Contains("@"))
-                     continue;
+                     var map = Maps.FirstOrDefault(m => m.Name == field.Map);
+                     if (map == null)
+                        continue;
 
-                  // it is possible for this map to affect other field's post-back setting
-                  foreach (var p in new ParameterFinder().Find(map.Query).Distinct()) {
-                     var parameterField = fields.FirstOrDefault(f => f.Name == p || f.Alias == p);
-                     if (parameterField != null) {
-                        parameterField.PostBack = "true";
+                     if (!map.Query.Contains("@"))
+                        continue;
+
+                     // it is possible for this map to affect other field's post-back setting
+                     foreach (var p in new ParameterFinder().Find(map.Query).Distinct()) {
+                        var parameterField = fields.FirstOrDefault(f => f.Name == p || f.Alias == p);
+                        if (parameterField != null) {
+                           parameterField.PostBack = "true";
+                        }
                      }
                   }
-               }
 
-               foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
-                  field.PostBack = "false";
+                  foreach (var field in fields.Where(f => f.PostBack == "auto").ToArray()) {
+                     field.PostBack = "false";
+                  }
                }
 
             }

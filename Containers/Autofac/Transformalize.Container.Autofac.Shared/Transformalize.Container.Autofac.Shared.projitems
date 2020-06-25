@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Container.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DateMathModifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)FormParameterModifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IGetProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\ProviderPlugInModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Modules\InternalModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NullPlaceHolderReplacer.cs" />
