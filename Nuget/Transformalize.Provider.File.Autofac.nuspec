@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.File.Autofac</id>
-      <version>0.8.8-beta</version>
+      <version>0.8.14-beta</version>
       <title>Transformalize File Autofac Module</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -15,8 +15,8 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize.Provider.File" version="0.8.8-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.8.8-beta" />
+            <dependency id="Transformalize.Provider.File" version="0.8.14-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.8.15-beta" />
          </group>
       </dependencies>
    </metadata>

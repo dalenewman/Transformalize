@@ -84,13 +84,13 @@ namespace Transformalize.Providers.File {
 
             var process = new Process {
                 Name = "FileInspector",
-                Pipeline = "parallel.linq",
                 ReadOnly = true,
                 Connections = new List<Connection> { connection }
             };
 
             process.Entities.Add(new Entity {
                 Name = identifier,
+                Input = "input",
                 PrependProcessNameToOutputName = false,
                 Sample = Convert.ToInt32(_context.Connection.Sample)
             });
