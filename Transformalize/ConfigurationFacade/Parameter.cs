@@ -110,6 +110,8 @@ namespace Transformalize.ConfigurationFacade {
       public string Precision { get; set; }
       [Cfg]
       public string Scale { get; set; }
+      [Cfg]
+      public string Raw { get; set; }
 
       public Configuration.Parameter ToParameter() {
 
@@ -160,6 +162,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Valid, out var valid);
          parameter.Valid = valid;
+
+         bool.TryParse(this.Raw, out var raw);
+         parameter.Raw = raw;
 
          parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
          parameter.Validators = this.Validators.Select(o => o.ToOperation()).ToList();

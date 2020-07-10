@@ -205,6 +205,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Required { get; set; }
 
+      [Cfg(value=false)]
+      public bool Raw { get; set; }
+
       [Cfg(value = false)]
       public bool Sticky { get; set; }
 
