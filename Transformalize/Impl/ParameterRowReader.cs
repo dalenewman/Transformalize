@@ -118,7 +118,7 @@ namespace Transformalize.Impl {
                            break;
                         case "int":
                         case "int32":
-                           row[messageField] = "Must a whole number (not a fraction) between −2,147,483,648 and 2,147,483,647.|";
+                           row[messageField] = "Must be a whole number (not a fraction) between −2,147,483,648 and 2,147,483,647.|";
                            break;
                         case "short":
                         case "int16":
