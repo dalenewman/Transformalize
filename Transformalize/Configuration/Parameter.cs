@@ -103,7 +103,7 @@ namespace Transformalize.Configuration {
 
          switch (Type) {
             case "string":
-               if (InvalidCharacters != string.Empty && Value != null) {
+               if (Input && InvalidCharacters != string.Empty && Value != null) {
                   foreach (var c in InvalidCharacters.ToCharArray()) {
                      if (c == ',' && Multiple)
                         continue;
@@ -114,11 +114,22 @@ namespace Transformalize.Configuration {
                }
                break;
             default:
-               if (T == string.Empty && !string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
-                  Error($"The parameter {Name} is supposed to be a {Type}, but {Value} can not be parsed as such.");
+               
+               if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
+
+                  var article = Type.StartsWith("i", StringComparison.OrdinalIgnoreCase) ? "an" : "a";
+
+                  if (T != string.Empty || V != string.Empty || Transforms.Any() || Validators.Any()) {
+                     // if transforms or validators are present on parameters, type checking will be performed elsewhere (e.g. ParameterRowReader)
+                     Warn($"The parameter {Name} is supposed to be {article} {Type}, but {Value} can not be parsed as such.");
+                  } else {
+                     Error($"The parameter {Name} is supposed to be {article} {Type}, but {Value} can not be parsed as such.");
+                  }
+
                }
                break;
          }
+
          if (string.IsNullOrEmpty(Label)) {
             Label = Name;
          }

@@ -133,7 +133,9 @@ namespace Transformalize.ConfigurationFacade {
             InputAccept = this.InputAccept,
             InputCapture = this.InputCapture,
             Class = this.Class,
-            Length = this.Length
+            Length = this.Length,
+            T = this.T,
+            V = this.V
          };
 
          int.TryParse(this.Precision, out var precision);
