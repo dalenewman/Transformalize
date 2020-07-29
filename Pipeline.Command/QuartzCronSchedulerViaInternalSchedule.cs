@@ -17,7 +17,6 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using System.Xml;
 using Common.Logging;
 using Quartz;
 using Quartz.Impl;
@@ -36,7 +35,7 @@ namespace Transformalize.Command {
         public QuartzCronSchedulerViaInternalSchedule(Options options, List<Schedule> schedule, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
             _options = options;
             _schedule = schedule;
-            _scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             _scheduler.JobFactory = jobFactory;
 
             LogManager.Adapter = loggerFactory;

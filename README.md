@@ -999,7 +999,7 @@ is needed to accurately describe the cube.  Here is a short video showing Excel 
 
 Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
-### Leveraging the Orchard CMS Module
+### Leveraging the Orchard Core CMS Module
 
 > * Introducing the **Orchard CMS** module
 > * the **`parameters`** section
@@ -1007,16 +1007,13 @@ Note: The SSAS output is still under development and only tested on SQL Server 2
 > * the **`page`**, **`size`**, and **`sortable`** attributes for an `entity`
 > * and the label attribute for a`field`
 
-The [Orchard CMS](http://www.orchardproject.net) Transformalize module allows you to:
+The [OrchardCore.Transformalize](https://github.com/dalenewman/OrchardCore.Transformalize) module allows you to:
 
 * edit, store, and secure your arrangements
-* run your arrangements (like the CLI does)
-* view and page through your output in *report mode*
-* export search results (to csv, and xlsx) in *report mode*
-
-Although arranging a report in Transformalize can add some 
-complexity, it still makes sense since reporting is just a 
-form of ETL.
+* run your arrangements as tasks (like the CLI does)
+* view and page through your arrangements as reports
+* export search results
+* compose bulk actions; select records from your report and run tasks on them.
 
 Here's a quick video of a Northwind report using the Elasticsearch 
 provider we loaded earlier:
@@ -1064,8 +1061,7 @@ They may be used to manipulate attribute values in the arrangement.
 The parameter place-holders (e.g. `@[orderyear]`) are replaced with 
 a provided or default value before validation.
 
-Parameters are visible in report mode 
-when `prompt` is set to `true`.
+Parameters are visible in report mode when `prompt` is set to `true`.
 
 #### Filter
 
@@ -1076,12 +1072,13 @@ Filters allow you to limit your output. A filter is set in two ways:
 1. by setting `field`, `operator`, and `value` 
 2. by setting a provider-specific `expression`
 
-Either way, you may use parameters to manipulate 
-your filters at run-time.
+Either way, you may use parameters to manipulate your filters at run-time.
 
-SOLR and Elasticsearch support faceted navigation.  When you set 
-the filter's type to *facet*, Transformalize takes 
-care of mapping the facet values to a parameter's choices.
+A filter's type to may be *facet*, *search*, or *filter*.  Facet and search 
+types affect the way your parameters are presented. 
+
+*Update*: In the Orchard Core module, there is a short-cut for defining parameterized filters.  Add a `parameter` 
+attribute to your field with the value *facet*, *facets*, or *search*. 
 
 #### Paging
 

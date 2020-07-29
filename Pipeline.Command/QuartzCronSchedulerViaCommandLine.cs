@@ -28,7 +28,7 @@ namespace Transformalize.Command {
 
         public QuartzCronSchedulerViaCommandLine(Options options, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
             _options = options;
-            _scheduler = StdSchedulerFactory.GetDefaultScheduler();
+            _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             _scheduler.JobFactory = jobFactory;
 
             LogManager.Adapter = loggerFactory;
