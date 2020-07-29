@@ -49,7 +49,7 @@ namespace Transformalize.Impl {
                p = _parameters[field.Name];
             }
 
-            if (p != null) {
+            if (p != null && p.Value != null) {
                if (!Constants.CanConvert()[field.Type](p.Value)) {
                   field.Validators.Clear();
                }
@@ -82,7 +82,7 @@ namespace Transformalize.Impl {
                p = _parameters[field.Name];
             }
 
-            if (p != null) {
+            if (p != null && p.Value != null) {
 
                if (Constants.CanConvert()[field.Type](p.Value)) {
 
