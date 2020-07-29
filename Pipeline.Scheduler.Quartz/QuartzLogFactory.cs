@@ -15,22 +15,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Common.Logging;
-using Common.Logging.Simple;
+
+using Microsoft.Extensions.Logging;
 
 namespace Transformalize.Scheduler.Quartz {
 
-    public class QuartzLogAdaptor : AbstractSimpleLoggerFactoryAdapter {
+   public class QuartzLogFactory : ILoggerFactory {
 
-        readonly Contracts.IContext _context;
+      readonly Contracts.IContext _context;
+      readonly Contracts.LogLevel _level;
 
-        public QuartzLogAdaptor(Contracts.IContext context, LogLevel level, bool showLevel, bool showDateTime, bool showLogName, string dateTimeFormat) :base(level, showDateTime, showLogName, showLevel, dateTimeFormat) {
-            _context = context;
-        }
+      public QuartzLogFactory(Contracts.IContext context, Contracts.LogLevel level) {
+         _context = context;
+         _level = level;
+      }
 
-        protected override ILog CreateLogger(string name, LogLevel level, bool showLevel, bool showDateTime, bool showLogName, string dateTimeFormat) {
-            return new QuartzLogger(_context, level, showLevel, showDateTime, showLogName, dateTimeFormat);
-        }
-        
-    }
+      public void AddProvider(ILoggerProvider provider) {
+      }
+
+      public ILogger CreateLogger(string categoryName) {
+         return new QuartzLogger(_context, _level);
+      }
+
+      public void Dispose() {
+         
+      }
+   }
 }

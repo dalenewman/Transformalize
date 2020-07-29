@@ -16,51 +16,81 @@
 // limitations under the License.
 #endregion
 using System;
-using Common.Logging;
-using Common.Logging.Simple;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Transformalize.Logging;
 
 namespace Transformalize.Scheduler.Quartz {
-    public class QuartzLogger : AbstractSimpleLogger {
-        private readonly Contracts.IContext _context;
+   public class QuartzLogger : ILogger {
 
-        public QuartzLogger(Contracts.IContext context, LogLevel level, bool showLevel, bool showDateTime, bool showLogName, string dateTimeFormat) : base("Transformalize", level, showLevel, showDateTime, showLogName, "o") {
-            _context = context;
-        }
-        protected override void WriteInternal(LogLevel level, object message, Exception exception) {
-            switch (level) {
-                case LogLevel.All:
-                    _context.Debug(message.ToString);
-                    break;
-                case LogLevel.Debug:
-                    _context.Debug(message.ToString);
-                    break;
-                case LogLevel.Error:
-                    if (exception == null) {
-                        _context.Error(message.ToString());
-                    } else {
-                        _context.Error(exception, message.ToString());
-                    }
-                    break;
-                case LogLevel.Fatal:
-                    if (exception == null) {
-                        _context.Error(message.ToString());
-                    } else {
-                        _context.Error(exception, message.ToString());
-                    }
-                    break;
-                case LogLevel.Info:
-                    _context.Info(message.ToString());
-                    break;
-                case LogLevel.Off:
-                    break;
-                case LogLevel.Trace:
-                    _context.Debug(message.ToString);
-                    break;
-                case LogLevel.Warn:
-                    _context.Warn(message.ToString());
-                    break;
-            }
-        }
-    }
+      private readonly Contracts.IContext _context;
+      private readonly BaseLogger _base;
+
+      public QuartzLogger(Contracts.IContext context, Contracts.LogLevel level)  {
+         _context = context;
+         _base = new BaseLogger(level);
+      }
+
+      public IDisposable BeginScope<TState>(TState state) {
+         return NullLoggerProvider.Instance;
+      }
+
+      public bool IsEnabled(LogLevel logLevel) {
+         switch (logLevel) {
+            case LogLevel.Trace:
+               return false;
+            case LogLevel.Debug:
+               return _base.DebugEnabled;
+            case LogLevel.Information:
+               return _base.InfoEnabled;
+            case LogLevel.Warning:
+               return _base.WarnEnabled;
+            case LogLevel.Error:
+               return _base.ErrorEnabled;
+            case LogLevel.Critical:
+               return _base.ErrorEnabled;
+            case LogLevel.None:
+               return false;
+            default:
+               return true;
+         }
+      }
+
+      public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter) {
+         switch (logLevel) {
+            case LogLevel.Debug:
+               _context.Debug(()=>formatter(state,exception));
+               break;
+            case LogLevel.Error:
+               if (exception == null) {
+                  _context.Error(formatter(state,exception));
+               } else {
+                  _context.Error(exception, formatter(state, exception));
+               }
+               break;
+            case LogLevel.Critical:
+               if (exception == null) {
+                  _context.Error(formatter(state, exception));
+               } else {
+                  _context.Error(exception, formatter(state, exception));
+               }
+               break;
+            case LogLevel.Information:
+               _context.Info(formatter(state, exception));
+               break;
+            case LogLevel.None:
+               break;
+            case LogLevel.Trace:
+               _context.Debug(()=>formatter(state, exception));
+               break;
+            case LogLevel.Warning:
+               _context.Warn(formatter(state, exception));
+               break;
+         }
+
+      }
+
+
+   }
 
 }

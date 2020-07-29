@@ -15,7 +15,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Common.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Transformalize.Scheduler.Quartz {
     public static class Utility {
@@ -24,15 +24,15 @@ namespace Transformalize.Scheduler.Quartz {
                 case Contracts.LogLevel.Debug:
                     return LogLevel.Debug;
                 case Contracts.LogLevel.Info:
-                    return LogLevel.Info;
+                    return LogLevel.Information;
                 case Contracts.LogLevel.Warn:
-                    return LogLevel.Warn;
+                    return LogLevel.Warning;
                 case Contracts.LogLevel.Error:
                     return LogLevel.Error;
                 case Contracts.LogLevel.None:
-                    return LogLevel.Off;
+                    return LogLevel.None;
                 default:
-                    return LogLevel.Info;
+                    return LogLevel.Information;
             }
         }
     }

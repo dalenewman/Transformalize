@@ -15,57 +15,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Common.Logging;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 
 namespace Transformalize.Command {
-    public class QuartzCronSchedulerViaCommandLine : Contracts.IScheduler {
-        readonly Quartz.IScheduler _scheduler;
-        private readonly Options _options;
-        private readonly ILog _logger;
+   public class QuartzCronSchedulerViaCommandLine : Contracts.IScheduler {
+      readonly Quartz.IScheduler _scheduler;
+      private readonly Options _options;
+      private readonly ILogger _logger;
 
-        public QuartzCronSchedulerViaCommandLine(Options options, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
-            _options = options;
-            _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
-            _scheduler.JobFactory = jobFactory;
+      public QuartzCronSchedulerViaCommandLine(Options options, IJobFactory jobFactory, ILoggerFactory loggerFactory) {
+         _options = options;
+         _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
+         _scheduler.JobFactory = jobFactory;
 
-            LogManager.Adapter = loggerFactory;
-            _logger = LogManager.GetLogger("Quartz.Net");
-        }
+         Quartz.LogContext.SetCurrentLogProvider(loggerFactory);
 
-        public void Start() {
+         _logger = loggerFactory.CreateLogger("Quartz.Net");
+      }
 
-            _logger.Info($"Starting Scheduler: {_options.Schedule}");
-            _scheduler.Start();
+      public void Start() {
 
-            var job = JobBuilder.Create<ScheduleExecutor>()
-                .WithIdentity("Job", "TFL")
-                .WithDescription("Scheduled TFL Job")
-                .StoreDurably(false)
-                .RequestRecovery(false)
-                .UsingJobData("Cfg", _options.Arrangement)
-                .UsingJobData("Mode", _options.Mode)
-                .UsingJobData("Schedule", string.Empty)
-                .Build();
+         _logger.LogInformation($"Starting Scheduler: {_options.Schedule}");
+         _scheduler.Start();
 
-            var trigger = TriggerBuilder.Create()
-                .WithIdentity("Trigger", "TFL")
-                .StartNow()
-                .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionDoNothing())
-                .Build();
+         var job = JobBuilder.Create<ScheduleExecutor>()
+             .WithIdentity("Job", "TFL")
+             .WithDescription("Scheduled TFL Job")
+             .StoreDurably(false)
+             .RequestRecovery(false)
+             .UsingJobData("Cfg", _options.Arrangement)
+             .UsingJobData("Mode", _options.Mode)
+             .UsingJobData("Schedule", string.Empty)
+             .Build();
 
-            _scheduler.ScheduleJob(job, trigger);
-        }
+         var trigger = TriggerBuilder.Create()
+             .WithIdentity("Trigger", "TFL")
+             .StartNow()
+             .WithCronSchedule(_options.Schedule, x => x.WithMisfireHandlingInstructionDoNothing())
+             .Build();
 
-        public void Stop() {
-            if (!_scheduler.IsStarted)
-                return;
+         _scheduler.ScheduleJob(job, trigger);
+      }
 
-            _logger.Info("Stopping Scheduler...");
-            _scheduler.Shutdown(true);
-        }
+      public void Stop() {
+         if (!_scheduler.IsStarted)
+            return;
 
-    }
+         _logger.LogInformation("Stopping Scheduler...");
+         _scheduler.Shutdown(true);
+      }
+
+   }
 }

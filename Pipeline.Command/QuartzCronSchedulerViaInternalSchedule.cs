@@ -17,29 +17,29 @@
 #endregion
 using System;
 using System.Collections.Generic;
-using Common.Logging;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 using Transformalize.Configuration;
 using Humanizer;
+using Microsoft.Extensions.Logging;
 
 namespace Transformalize.Command {
 
     public class QuartzCronSchedulerViaInternalSchedule : Contracts.IScheduler {
         readonly Quartz.IScheduler _scheduler;
         private readonly Options _options;
-        private readonly ILog _logger;
+        private readonly ILogger _logger;
         private readonly List<Schedule> _schedule;
 
-        public QuartzCronSchedulerViaInternalSchedule(Options options, List<Schedule> schedule, IJobFactory jobFactory, ILoggerFactoryAdapter loggerFactory) {
+        public QuartzCronSchedulerViaInternalSchedule(Options options, List<Schedule> schedule, IJobFactory jobFactory, ILoggerFactory loggerFactory) {
             _options = options;
             _schedule = schedule;
             _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             _scheduler.JobFactory = jobFactory;
 
-            LogManager.Adapter = loggerFactory;
-            _logger = LogManager.GetLogger("Quartz.Net");
+         Quartz.LogContext.SetCurrentLogProvider(loggerFactory);
+         _logger = loggerFactory.CreateLogger("Quartz.Net");
         }
 
         public void Start() {
@@ -50,7 +50,7 @@ namespace Transformalize.Command {
                     Console.Error.WriteLine($"Note: The internal schedule's mode of {schedule.Mode} trumps your command line mode of {_options.Mode}.");
                 }
 
-                _logger.Info($"Schedule {schedule.Name} set for {schedule.Cron} in {schedule.Mode} mode.");
+                _logger.LogInformation($"Schedule {schedule.Name} set for {schedule.Cron} in {schedule.Mode} mode.");
 
                 var job = JobBuilder.Create<ScheduleExecutor>()
                     .WithIdentity(schedule.Name, "TFL")
@@ -107,7 +107,7 @@ namespace Transformalize.Command {
             if (!_scheduler.IsStarted)
                 return;
 
-            _logger.Info("Stopping Scheduler...");
+            _logger.LogInformation("Stopping Scheduler...");
             _scheduler.Shutdown(true);
         }
     }

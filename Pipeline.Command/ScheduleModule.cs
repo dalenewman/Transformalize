@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
-using Common.Logging;
+using Microsoft.Extensions.Logging;
 using Quartz.Spi;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -51,7 +51,7 @@ namespace Transformalize.Command {
             builder.Register<ISchemaHelper>(ctx => new SchemaHelper(ctx.Resolve<IContext>(), ctx.Resolve<IRunTimeSchemaReader>())).As<ISchemaHelper>();
 
             // for quartz scheduler
-            builder.Register<ILoggerFactoryAdapter>(ctx => new QuartzLogAdaptor(ctx.Resolve<IContext>(), Scheduler.Quartz.Utility.ConvertLevel(ctx.Resolve<IContext>().LogLevel), true, true, false, "o")).As<ILoggerFactoryAdapter>();
+            builder.Register<ILoggerFactory>(ctx => new QuartzLogFactory(ctx.Resolve<IContext>(), ctx.Resolve<IContext>().LogLevel)).As<ILoggerFactory>();
             builder.Register(ctx => new QuartzJobFactory(_options, ctx.Resolve<IPipelineLogger>())).As<IJobFactory>().SingleInstance();
 
             builder.Register<IScheduler>((ctx, p) => {
@@ -68,10 +68,10 @@ namespace Transformalize.Command {
                         }
                         Environment.Exit(1);
                     }
-                    return new QuartzCronSchedulerViaInternalSchedule(_options, process.Schedule, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+                    return new QuartzCronSchedulerViaInternalSchedule(_options, process.Schedule, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactory>());
                 }
 
-                return new QuartzCronSchedulerViaCommandLine(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactoryAdapter>());
+                return new QuartzCronSchedulerViaCommandLine(_options, ctx.Resolve<IJobFactory>(), ctx.Resolve<ILoggerFactory>());
             }).As<IScheduler>();
 
         }
