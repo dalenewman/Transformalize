@@ -766,7 +766,7 @@ Start a new arrangement with this in your XML editor:
          server="localhost" 
          port="9200" 
          index="NorthWind" 
-         version="5" />
+         version="7.8.0" />
   </connections>
   <entities>
     <add name="NorthWindFlat" version="TflBatchId" >
