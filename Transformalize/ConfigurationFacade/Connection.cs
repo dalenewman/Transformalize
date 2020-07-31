@@ -180,7 +180,7 @@ namespace Transformalize.ConfigurationFacade {
       public string UseSsl { get; set; }
 
       [Cfg]
-      public string ScrollWindow { get; set; }
+      public string Scroll { get; set; }
 
       [Cfg]
       public string LinePattern { get; set; }
@@ -234,7 +234,8 @@ namespace Transformalize.ConfigurationFacade {
             Url = this.Url,
             User = this.User,
             Version = this.Version,
-            WebMethod = this.WebMethod
+            WebMethod = this.WebMethod,
+            Scroll = this.Scroll
          };
 
          bool.TryParse(this.Buffer, out bool buffer);
@@ -269,9 +270,6 @@ namespace Transformalize.ConfigurationFacade {
 
          short.TryParse(this.Sample, out short sample);
          c.Sample = sample;
-
-         double.TryParse(this.ScrollWindow, out double scrollWindow);
-         c.ScrollWindow = scrollWindow;
 
          int.TryParse(this.Seed, out int seed);
          c.Seed = seed;

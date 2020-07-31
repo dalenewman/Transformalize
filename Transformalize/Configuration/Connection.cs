@@ -329,9 +329,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool UseSsl { get; set; }
 
-      // how long to maintain a consistent view of data for scrolling
-      [Cfg(value = 60)]
-      public double ScrollWindow { get; set; }
+      // for elasticsearch, a time unit of long to maintain a consistent view of the data for scrolling (exporting large result sets)
+      [Cfg(value = "1m")]
+      public string Scroll { get; set; }
 
       [Cfg(value = "")]
       public string LinePattern { get; set; }
