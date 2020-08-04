@@ -69,7 +69,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Transform.Compression.nuspec = Nuget\Transformalize.Transform.Compression.nuspec
 		Nuget\Transformalize.Transform.Geography.nuspec = Nuget\Transformalize.Transform.Geography.nuspec
 		Nuget\Transformalize.Transform.Globalization.nuspec = Nuget\Transformalize.Transform.Globalization.nuspec
-		Nuget\Transformalize.Transform.Json.nuspec = Nuget\Transformalize.Transform.Json.nuspec
 		Nuget\Transformalize.Transform.Xml.nuspec = Nuget\Transformalize.Transform.Xml.nuspec
 	EndProjectSection
 EndProject
@@ -149,7 +148,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.21"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Container.Autofac.Standard.21", "Containers\Autofac\Transformalize.Container.Autofac.Standard.21\Transformalize.Container.Autofac.Standard.21.csproj", "{FF245354-A7A4-4447-B775-A916265DEC47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "File.Autofac.Standard.20", "Providers\File\File.Autofac.Standard.20\File.Autofac.Standard.20.csproj", "{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File.Autofac.Standard.20", "Providers\File\File.Autofac.Standard.20\File.Autofac.Standard.20.csproj", "{8FE49D55-62DA-48B7-8C0D-FFCC92D406DF}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

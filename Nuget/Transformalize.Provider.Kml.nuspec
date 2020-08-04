@@ -2,20 +2,20 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Kml</id>
-    <version>0.6.20-beta</version>
+    <version>0.8.22-beta</version>
     <title>Transformalize Provider KML</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <!--<license type="expression">Apache-2.0</license>-->
+    <license type="expression">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>KML Provider for Transformalize</description>
-    <releaseNotes>updated to latest tfl</releaseNotes>
-    <copyright>Copyright 2013-2019</copyright>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2013-2020</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.6.20-beta" />
+        <dependency id="Transformalize" version="0.8.22-beta" />
       </group>
     </dependencies>
   </metadata>

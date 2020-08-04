@@ -2,20 +2,20 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.6.21-beta</version>
+    <version>0.8.22-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <!--<license type="expression">Apache-2.0</license>-->
+    <license type="expression">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>used to write excel</description>
     <releaseNotes>updated dependencies</releaseNotes>
-    <copyright>Copyright 2013-2019</copyright>
+    <copyright>Copyright 2013-2020</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.6.20-beta" />
+        <dependency id="Transformalize" version="0.8.22-beta" />
         <dependency id="OpenXmlPowerTools" version="4.5.3.2" />
         <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
       </group>
