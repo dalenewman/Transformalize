@@ -114,7 +114,7 @@ namespace Transformalize.Impl {
 
       public virtual IEnumerable<IRow> Read() {
          Context.Debug(() => $"Running {Transforms.Count} transforms.");
-         if (Context.Entity.NeedsUpdate()) {
+         if (Context.Entity.NeedsUpdate(Context)) {
             if (Context.Process.Mode != "init") {
                if (Context.Entity.Version != string.Empty) {
                   var version = Context.Entity.GetVersionField();

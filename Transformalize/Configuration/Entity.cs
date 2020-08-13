@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Transformalize.Contracts;
 using Transformalize.Impl;
 
 namespace Transformalize.Configuration {
@@ -194,7 +195,7 @@ namespace Transformalize.Configuration {
       /// </summary>
       public object MaxVersion { get; set; }
 
-      public bool NeedsUpdate() {
+      public bool NeedsUpdate(IContext context) {
          if (MinVersion == null)
             return true;
          if (MaxVersion == null)
@@ -211,8 +212,18 @@ namespace Transformalize.Configuration {
          }
 
          if (minVersionType != maxVersionType) {
-            MinVersion = field.Convert(MinVersion.ToString());
-            MaxVersion = field.Convert(MaxVersion.ToString());
+            if (Constants.CanConvert()[field.Type](MinVersion.ToString())) {
+               MinVersion = field.Convert(MinVersion.ToString());
+            } else {
+               context.Warn($"the minimum version value '{MinVersion}' to query from the input could not be converted to the expected {field.Type} type.");
+               return true; // the safer choice is to say yes, perform updates
+            }
+            if (Constants.CanConvert()[field.Type](MaxVersion.ToString())) {
+               MaxVersion = field.Convert(MaxVersion.ToString());
+            } else {
+               context.Warn($"the maximum version value '{MaxVersion}' to query from the input could not be converted to the expected {field.Type} type.");
+               return true; // the safer choice is to say yes, perform updates
+            }
          }
 
          return !MinVersion.Equals(MaxVersion);
