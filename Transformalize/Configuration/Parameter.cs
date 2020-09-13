@@ -255,6 +255,15 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Class { get; set; }
 
+      [Cfg(value = false)]
+      public bool PrimaryKey { get; set; }
+
+      [Cfg(value = true)]
+      public bool Unicode { get; set; }
+
+      [Cfg(value = true)]
+      public bool VariableLength { get; set; }
+
       public bool IsDecimalType() {
          return Constants.IsDecimalType(Type);
       }

@@ -113,6 +113,15 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Raw { get; set; }
 
+      [Cfg]
+      public string PrimaryKey { get; set; }
+
+      [Cfg]
+      public string Unicode { get; set; }
+
+      [Cfg]
+      public string VariableLength { get; set; }
+
       public Configuration.Parameter ToParameter() {
 
          var parameter = new Configuration.Parameter {
@@ -167,6 +176,15 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Raw, out var raw);
          parameter.Raw = raw;
+
+         bool.TryParse(this.PrimaryKey, out var primaryKey);
+         parameter.PrimaryKey = primaryKey;
+
+         bool.TryParse(this.Unicode, out var unicode);
+         parameter.Unicode = unicode;
+
+         bool.TryParse(this.VariableLength, out var variableLength);
+         parameter.VariableLength = variableLength;
 
          parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
          parameter.Validators = this.Validators.Select(o => o.ToOperation()).ToList();
