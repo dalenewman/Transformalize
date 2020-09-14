@@ -122,6 +122,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string VariableLength { get; set; }
 
+      [Cfg]
+      public string Output { get; set; }
+
       public Configuration.Parameter ToParameter() {
 
          var parameter = new Configuration.Parameter {
@@ -185,6 +188,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.VariableLength, out var variableLength);
          parameter.VariableLength = variableLength;
+
+         bool.TryParse(this.Output, out var output);
+         parameter.Output = output;
 
          parameter.Transforms = this.Transforms.Select(o => o.ToOperation()).ToList();
          parameter.Validators = this.Validators.Select(o => o.ToOperation()).ToList();

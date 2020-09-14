@@ -93,10 +93,10 @@ namespace Transformalize.Configuration {
       public List<Operation> Validators { get; set; }
 
       /* Default valid to true, otherwise parameters without any validation would be seen as invalid (valid = false) */
-      [Cfg(value=true)]
+      [Cfg(value = true)]
       public bool Valid { get; set; }
 
-      [Cfg(value="")]
+      [Cfg(value = "")]
       public string Message { get; set; }
 
       protected override void Validate() {
@@ -114,7 +114,7 @@ namespace Transformalize.Configuration {
                }
                break;
             default:
-               
+
                if (!string.IsNullOrEmpty(Value) && !Constants.CanConvert()[Type](Value)) {
 
                   var article = Type.StartsWith("i", StringComparison.OrdinalIgnoreCase) ? "an" : "a";
@@ -216,7 +216,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Required { get; set; }
 
-      [Cfg(value=false)]
+      [Cfg(value = false)]
       public bool Raw { get; set; }
 
       [Cfg(value = false)]
@@ -237,7 +237,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = "auto", domain = "auto,true,false", ignoreCase = true, toLower = true, trim = true)]
       public string PostBack { get; set; }
 
-      [Cfg(value="64", regex = @"^max$|^\d+$", toLower =true, trim =true)]
+      [Cfg(value = "64", regex = @"^max$|^\d+$", toLower = true, trim = true)]
       public string Length { get; set; }
 
       /// <summary>
@@ -263,6 +263,9 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = true)]
       public bool VariableLength { get; set; }
+
+      [Cfg(value = true)]
+      public bool Output { get; set; }
 
       public bool IsDecimalType() {
          return Constants.IsDecimalType(Type);
