@@ -113,6 +113,11 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public List<Parameter> Parameters { get; set; }
 
+      [Cfg]
+      public string Class { get; set; }
+      [Cfg]
+      public string Icon { get; set; }
+
       public Configuration.Action ToAction() {
          var a = new Configuration.Action();
          if(bool.TryParse(this.After, out bool after)) {
@@ -128,6 +133,8 @@ namespace Transformalize.ConfigurationFacade {
          a.Command = this.Command;
          a.Connection = this.Connection;
          a.Description = this.Description;
+         a.Class = this.Class;
+         a.Icon = this.Icon;
          a.ErrorMode = this.ErrorMode;
          a.File = this.File;
          a.From = this.From;

@@ -166,5 +166,11 @@ namespace Transformalize.Configuration {
 
       [Cfg]
       public List<Parameter> Parameters { get; set; }
+
+      [Cfg(value="")]
+      public string Class { get; set; }
+
+      [Cfg(value="")]
+      public string Icon { get; set; }
    }
 }
