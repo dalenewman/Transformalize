@@ -63,9 +63,15 @@ namespace Transformalize.Ioc.Autofac {
          if (Directory.Exists(pluginsFolder)) {
 
             var assemblies = new List<Assembly>();
-            foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
+            var files = Directory.GetFiles(pluginsFolder, "Transformalize.Provider.*.Autofac.dll", SearchOption.TopDirectoryOnly);
+            foreach (var file in files) {
                var info = new FileInfo(file);
                var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "provider" && f != "autofac");
+
+                // temporary hack
+                if (name.StartsWith("amazonkinesis")) {
+                    name = name.Replace("amazonkinesis", string.Empty);
+                }
 
                switch (name) {
                   case "filehelpers" when (providers.Contains("file") || providers.Contains("folder")):

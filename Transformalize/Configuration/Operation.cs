@@ -56,7 +56,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = Constants.DefaultSetting)]
       public string FromLon { get; set; }
 
-      [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + TimeZoneIdDomain)]
+      [Cfg(value = Constants.DefaultSetting)]
       public string FromTimeZone { get; set; }
 
       [Cfg(value = Constants.DefaultSetting, toLower = true, domain = Constants.DefaultSetting + ",unspecified,utc,local")]
@@ -155,7 +155,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = 0)]
       public int TotalWidth { get; set; }
 
-      [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + "," + TimeZoneIdDomain)]
+      [Cfg(value = Constants.DefaultSetting)]
       public string ToTimeZone { get; set; }
 
       [Cfg(value = " ")]

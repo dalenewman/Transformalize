@@ -52,6 +52,22 @@ namespace Transformalize.Transforms.Dates {
          _transform = null;
 #else
 
+         var timeZones = new HashSet<string>(Operation.TimeZoneIdDomain.Split(','));
+
+        if (!timeZones.Contains(Context.Operation.FromTimeZone))
+        {
+            Run = false;
+            Error($"The from time zone {Context.Operation.FromTimeZone} id invalid.  It must be a windows time zone id");
+            return;
+        }
+
+        if (!timeZones.Contains(Context.Operation.ToTimeZone))
+        {
+            Run = false;
+            Error($"The to time zone {Context.Operation.ToTimeZone} id invalid.  It must be a windows time zone id");
+            return;
+        }
+         
          var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
          var toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
 
