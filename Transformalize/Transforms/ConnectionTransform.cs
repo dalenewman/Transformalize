@@ -24,62 +24,66 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms {
-    public class ConnectionTransform : BaseTransform {
 
-        private readonly string[] _props;
-        private readonly Connection _connection;
+   /// <summary>
+   /// Gets properties from the connections in the arrangement
+   /// </summary>
+   public class ConnectionTransform : BaseTransform {
 
-        public ConnectionTransform(IContext context = null) : base(context, "string") {
-            if (IsMissingContext()) {
-                return;
-            }
+      private readonly string[] _props;
+      private readonly Connection _connection;
 
-            if (IsMissing(Context.Operation.Name)) {
-                return;
-            }
+      public ConnectionTransform(IContext context = null) : base(context, "string") {
+         if (IsMissingContext()) {
+            return;
+         }
 
-            if (IsMissing(Context.Operation.Property)) {
-                return;
-            }
+         if (IsMissing(Context.Operation.Name)) {
+            return;
+         }
+
+         if (IsMissing(Context.Operation.Property)) {
+            return;
+         }
 
 #if NETS10
-            _props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
+         _props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
 #else
             _props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
 #endif
 
-            var set = new HashSet<string>(_props, StringComparer.OrdinalIgnoreCase);
+         var set = new HashSet<string>(_props, StringComparer.OrdinalIgnoreCase);
 
-            if (!set.Contains(Context.Operation.Property)) {
-                Error($"The connection property {Context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", _props))}.");
-                Run = false;
-                return;
-            }
+         if (!set.Contains(Context.Operation.Property)) {
+            Error($"The connection property {Context.Operation.Property} is not allowed.  The allowed properties are {(string.Join(", ", _props))}.");
+            Run = false;
+            return;
+         }
 
-            Context.Operation.Property = set.First(s => s.Equals(Context.Operation.Property, StringComparison.OrdinalIgnoreCase));
+         Context.Operation.Property = set.First(s => s.Equals(Context.Operation.Property, StringComparison.OrdinalIgnoreCase));
 
-            _connection = Context.Process.Connections.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
-        }
+         _connection = Context.Process.Connections.First(c => c.Name.Equals(Context.Operation.Name, StringComparison.OrdinalIgnoreCase));
+      }
 
-        public override IRow Operate(IRow row) {
+      public override IRow Operate(IRow row) {
+         row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
+         return row;
+      }
+
+      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+         foreach (var row in rows) {
             row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
-            return row;
-        }
+            yield return row;
+         }
+      }
 
-        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-            foreach (var row in rows) {
-                row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
-                yield return row;
-            }
-        }
-
-        public override IEnumerable<OperationSignature> GetSignatures() {
-            yield return new OperationSignature("connection") {
-                Parameters = new List<OperationParameter>(2){
+      public override IEnumerable<OperationSignature> GetSignatures() {
+         yield return new OperationSignature("connection") {
+            Parameters = new List<OperationParameter>(2){
                     new OperationParameter("name"),
                     new OperationParameter("property")
                 }
-            };
-        }
-    }
+         };
+      }
+   }
 }

@@ -228,7 +228,7 @@ namespace Transformalize.Transforms {
       }
 
       protected bool IsMissing(string value) {
-         if (value == Constants.DefaultSetting || value == string.Empty) {
+         if (value == Constants.DefaultSetting || string.IsNullOrEmpty(value)) {
             Error($"The {Context.Operation.Method} is missing a required ({nameof(value)}) parameter.");
             Run = false;
             return true;

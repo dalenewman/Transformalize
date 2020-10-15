@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <Version>0.8.27-beta</Version>
+    <Version>0.8.29-beta</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
     <Authors>Dale Newman</Authors>
@@ -19,7 +19,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Cfg-NET" Version="0.13.2-beta" />
-    <PackageReference Include="DateMath" Version="1.1.0" />
+    <PackageReference Include="DateMath" Version="1.2.0" />
   </ItemGroup>
   <Import Project="..\..\Transformalize\Transformalize.projitems" Label="Shared" />
 </Project>
