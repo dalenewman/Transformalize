@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CLI": {
+      "commandName": "Project",
+      "commandLineArgs": "-a test.xml"
+    }
+  }
+}

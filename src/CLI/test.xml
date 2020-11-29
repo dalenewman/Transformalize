@@ -1,0 +1,19 @@
+﻿<cfg name="Test" read-only="true">
+   <connections>
+      <add name="input" provider="internal" />
+      <add name="output" provider="console" />
+   </connections>
+   <entities>
+      <add name="Test">
+         <rows>
+            <add FirstName="Daryl" LastName="Noonan" BirthDate="2020-12-01" />
+            <add FirstName="Gavin" LastName="Noonan" BirthDate="2020-12-01" />
+         </rows>
+         <fields>
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="BirthDate" type="datetime" />
+         </fields>
+      </add>
+   </entities>
+</cfg>
