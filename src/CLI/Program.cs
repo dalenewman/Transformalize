@@ -1,11 +1,13 @@
 ﻿using Autofac;
 using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Containers.Autofac.Modules;
 using Transformalize.Contracts;
+using Transformalize.Providers.Bogus.Autofac;
 using Transformalize.Providers.Console;
 using Transformalize.Providers.Console.Autofac;
 using Transformalize.Providers.CsvHelper.Autofac;
@@ -17,27 +19,27 @@ namespace Transformalize.Cli {
    class Program {
       static void Main(string[] args) {
 
-         Parser.Default.ParseArguments<Options>(args)
+         Parser.Default.ParseArguments<RunOptions>(args)
           .WithParsed(Run)
           .WithNotParsed(CommandLineError);
 
       }
 
-      static void Run(Options options) {
+      static void Run(RunOptions options) {
 
 
          var logger = new ConsoleLogger(options.LogLevel);
-         using (var outer = new ConfigurationContainer().CreateScope(options.ArrangementWithMode(), logger)) {
+
+         using (var outer = new ConfigurationContainer().CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
 
             var process = outer.Resolve<Process>();
 
             if (process.Errors().Any()) {
-               System.Environment.Exit(1);
+               Environment.Exit(1);
             }
 
             var modules = new List<Autofac.Core.IModule> {
-               new InternalModule(process),
-               new ConsoleProviderModule(process)
+               new ConsoleProviderModule()
             };
 
             var output = process.GetOutputConnection();
@@ -58,14 +60,15 @@ namespace Transformalize.Cli {
                   modules.Add(new JsonProviderModule(System.Console.OpenStandardOutput()));
                }
             } else {
-               modules.Add(new CsvHelperProviderModule(process));
+               modules.Add(new CsvHelperProviderModule());
                modules.Add(new JsonProviderModule());
             }
 
             var providers = new HashSet<string>(process.Connections.Select(c => c.Provider));
 
-            if (providers.Contains("sqlserver")) { modules.Add(new SqlServerModule(process)); }
-            if (providers.Contains("postgresql")) { modules.Add(new PostgreSqlModule(process)); }
+            if (providers.Contains("sqlserver")) { modules.Add(new SqlServerModule()); }
+            if (providers.Contains("postgresql")) { modules.Add(new PostgreSqlModule()); }
+            if (providers.Contains("bogus")) { modules.Add(new BogusModule()); }
 
             using (var inner = new Container(modules.ToArray()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();

@@ -19,33 +19,38 @@ namespace Transformalize.Providers.Console.Autofac {
          _process = process;
       }
 
+      public ConsoleProviderModule() { }
+
       protected override void Load(ContainerBuilder builder) {
 
-         if (_process == null)
+         if (_process == null && !builder.Properties.ContainsKey("Process")) {
             return;
+         }
 
-         foreach (var action in _process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+         var process = _process ?? (Process)builder.Properties["Process"];
+
+         foreach (var action in process.Templates.Where(t => t.Enabled).SelectMany(t => t.Actions).Where(a => a.GetModes().Any(m => m == process.Mode || m == "*"))) {
             if (_consoleActions.Contains(action.Type)) {
                builder.Register(ctx => {
-                  return SwitchAction(ctx, action);
+                  return SwitchAction(ctx, process, action);
                }).Named<IAction>(action.Key);
             }
          }
-         foreach (var action in _process.Actions.Where(a => a.GetModes().Any(m => m == _process.Mode || m == "*"))) {
+         foreach (var action in process.Actions.Where(a => a.GetModes().Any(m => m == process.Mode || m == "*"))) {
             if (_consoleActions.Contains(action.Type)) {
                builder.Register(ctx => {
-                  return SwitchAction(ctx, action);
+                  return SwitchAction(ctx, process, action);
                }).Named<IAction>(action.Key);
             }
          }
 
          // Connections
-         foreach (var connection in _process.Connections.Where(c => c.Provider == "console")) {
+         foreach (var connection in process.Connections.Where(c => c.Provider == "console")) {
             builder.RegisterType<NullSchemaReader>().Named<ISchemaReader>(connection.Key);
          }
 
          // Entity input
-         foreach (var entity in _process.Entities.Where(e => _process.Connections.First(c => c.Name == e.Input).Provider == "console")) {
+         foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Input).Provider == "console")) {
 
             builder.Register(ctx => {
                var input = ctx.ResolveNamed<InputContext>(entity.Key);
@@ -57,13 +62,13 @@ namespace Transformalize.Providers.Console.Autofac {
          }
 
          // Entity Output
-         var output = _process.GetOutputConnection();
+         var output = process.GetOutputConnection();
          if (output.Provider == "console") {
 
             // PROCESS OUTPUT CONTROLLER
             builder.Register<IOutputController>(ctx => new NullOutputController()).As<IOutputController>();
 
-            foreach (var entity in _process.Entities) {
+            foreach (var entity in process.Entities) {
                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                builder.Register<IWrite>(ctx => {
@@ -79,8 +84,8 @@ namespace Transformalize.Providers.Console.Autofac {
          }
       }
 
-      private IAction SwitchAction(IComponentContext ctx, Configuration.Action action) {
-         var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), _process);
+      private IAction SwitchAction(IComponentContext ctx, Process process, Action action) {
+         var context = new PipelineContext(ctx.Resolve<IPipelineLogger>(), process);
          switch (action.Type) {
             case "print":
                return new PrintAction(action);

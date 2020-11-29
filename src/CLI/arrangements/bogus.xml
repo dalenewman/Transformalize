@@ -1,0 +1,26 @@
+﻿<cfg name="Bogus" read-only="true">
+
+   <parameters>
+      <add name="Seed" value="1" />
+      <add name="Size" value="5" />
+   </parameters>
+
+   <connections>
+      <add name="input" provider="bogus" seed="@[Seed]" />
+   </connections>
+
+   <entities>
+      <add name="Contact" size="@[Size]">
+         <fields>
+            <add name="Identity" type="int" />
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="Email" />
+            <add name="Phone" format="(###)###-####" />
+            <add name="Stars" type="byte" min="1" max="5" />
+            <add name="Recent" alias="LastSeen" type="datetime" />
+         </fields>
+      </add>
+   </entities>
+
+</cfg>
