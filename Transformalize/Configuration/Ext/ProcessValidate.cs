@@ -28,6 +28,9 @@ namespace Transformalize.Configuration.Ext {
             if (p.CalculatedFields.Any()) {
                error("A process can not be read-only and have process-level calculated fields at the same time.");
             }
+            if (p.Mode == "init") {
+               error("A process can not be read-only in init mode.");
+            }
          }
 
          ValidateDuplicateEntities(p, error);
@@ -49,7 +52,6 @@ namespace Transformalize.Configuration.Ext {
          ValidateDirectoryReaderHasAtLeastOneValidField(p, error);
          ValidateFlatten(p, error, warn);
          ValidateTransformParameters(p, error, warn);
-
 
       }
 

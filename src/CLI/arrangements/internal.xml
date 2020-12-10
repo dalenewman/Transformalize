@@ -6,14 +6,19 @@
    <entities>
       <add name="Test">
          <rows>
-            <add FirstName="Daryl" LastName="Noonan" BirthDate="2020-12-01" />
-            <add FirstName="Gavin" LastName="Noonan" BirthDate="2020-12-01" />
+            <add FirstName="John" LastName="Smith" BirthDate="2020-12-01" />
+            <add FirstName="Jane" LastName="Doe" BirthDate="2020-12-01" />
          </rows>
          <fields>
             <add name="FirstName" />
             <add name="LastName" />
             <add name="BirthDate" type="datetime" />
          </fields>
+         <calculated-fields>
+            <add name="FullNameByJoin" t="copy(FirstName,LastName).join( )" />
+            <add name="FullNameByFormat" t="format({FirstName} {LastName})" />
+            <add name="FullNameByJs" t="js(FirstName + ' ' + LastName)" />
+         </calculated-fields>
       </add>
    </entities>
 </cfg>

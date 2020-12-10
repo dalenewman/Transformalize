@@ -16,10 +16,13 @@
             <add name="FirstName" />
             <add name="LastName" />
             <add name="Email" />
-            <add name="Phone" format="(###)###-####" />
+            <add name="Phone" format="(###) ###-####" />
             <add name="Stars" type="byte" min="1" max="5" />
             <add name="Recent" alias="LastSeen" type="datetime" />
          </fields>
+         <calculated-fields>
+            <add name="TimeAgo" t="copy(LastSeen).timeAgo()" />
+         </calculated-fields>
       </add>
    </entities>
 
