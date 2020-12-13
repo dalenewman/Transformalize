@@ -16,6 +16,7 @@ using Transformalize.Providers.Json.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
+using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Transforms.Jint.Autofac;
 
 namespace Transformalize.Cli {
@@ -78,7 +79,7 @@ namespace Transformalize.Cli {
             providers.Add(new SqliteModule());
             providers.Add(new SqlServerModule());
             providers.Add(new PostgreSqlModule());
-            // mysql
+            providers.Add(new MySqlModule());
             providers.Add(new ElasticsearchModule());
             // solr
             // razor (templates)
