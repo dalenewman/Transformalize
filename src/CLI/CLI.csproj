@@ -106,7 +106,7 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.31-beta" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.8.29-beta" />
-    <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.31-beta" />
+    <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />
     <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.8.29-beta" />

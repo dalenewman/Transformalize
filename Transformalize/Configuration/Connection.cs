@@ -349,6 +349,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Buffer { get; set; }
 
+      [Cfg(value = false)]
+      public bool Synchronous { get; set; }
+
       public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 
       protected override void PostValidate() {

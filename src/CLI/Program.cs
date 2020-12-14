@@ -59,6 +59,7 @@ namespace Transformalize.Cli {
                   output.Provider = "file";  // delimited file
                   output.Delimiter = ",";
                   output.Stream = true;
+                  output.Synchronous = true; // got odd results when using Async methods
                   output.File = "dummy.csv";
                   providers.Add(new CsvHelperProviderModule(Console.OpenStandardOutput()));
                } else {

@@ -194,6 +194,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string MaxDegreeOfParallism { get; set; }
 
+      [Cfg]
+      public string Synchronous { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -288,6 +291,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.UseSsl, out bool useSsl);
          c.UseSsl = useSsl;
+
+         bool.TryParse(this.Synchronous, out bool synchronous);
+         c.Synchronous = synchronous;
 
          return c;
       }
