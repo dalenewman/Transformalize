@@ -1,0 +1,28 @@
+﻿<cfg name="Bogus" mode="init">
+
+   <parameters>
+      <add name="User" value="*" />
+      <add name="Password" value="*" />
+      <add name="File" value="*.*" />
+   </parameters>
+
+   <connections>
+      <add name="input" provider="bogus" seed="1" />
+      <add name="output" provider="sqlite" file="@[File]" />
+   </connections>
+
+   <entities>
+      <add name="Contact" size="1000">
+         <fields>
+            <add name="Identity" type="int" />
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="Email" />
+            <add name="Phone" format="(###) ###-####" />
+            <add name="Stars" type="byte" min="1" max="5" />
+            <add name="Recent" alias="LastSeen" type="datetime" />
+         </fields>
+      </add>
+   </entities>
+
+</cfg>

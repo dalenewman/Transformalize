@@ -122,10 +122,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="arrangements\bogus-too-flexible.xml">
+    <None Update="arrangements\bogus-to-sqlite.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="arrangements\bogus-to-rdbms.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="arrangements\bogus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="arrangements\denormalize-northwind.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="arrangements\internal.xml">
