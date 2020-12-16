@@ -18,6 +18,8 @@ using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
 using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Transforms.Jint.Autofac;
+using Transformalize.Transforms.Razor.Autofac;
+using Transformalize.Providers.Razor.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -35,7 +37,8 @@ namespace Transformalize.Cli {
          var logger = new ConsoleLogger(options.LogLevel);
 
          var operations = new List<Autofac.Core.IModule> {
-            new JintTransformModule()
+            new JintTransformModule(),
+            new RazorTransformModule()
          };
          // razor, lambda parser, fluid, humanizer, etc
 
@@ -82,8 +85,8 @@ namespace Transformalize.Cli {
             providers.Add(new PostgreSqlModule());
             providers.Add(new MySqlModule());
             providers.Add(new ElasticsearchModule());
+            providers.Add(new RazorProviderModule());
             // solr
-            // razor (templates)
 
             var modules = providers.Union(operations).ToArray();
 

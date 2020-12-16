@@ -1,0 +1,29 @@
+﻿@model Transformalize.Providers.Razor.RazorModel
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Razor Output</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                @foreach (var field in Model.Entity.Fields.Where(f => !f.System)) {
+                    <th>@field.Label</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Model.Rows) {
+                <tr>
+                    @foreach (var field in Model.Entity.Fields.Where(f => !f.System)) {
+                        <td>@(row[field])</td>
+                    }
+                </tr>
+                ++Model.Entity.Inserts;
+            }
+        </tbody>
+    </table>
+</body>
+</html>

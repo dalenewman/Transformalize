@@ -111,9 +111,11 @@
     <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.8.30-beta" />
+    <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.8.30-beta" />
     <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.8.29-beta" />
+    <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.8.30-beta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -122,6 +124,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="arrangements\bogus-to-razor.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="arrangements\bogus-to-sqlite.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -138,6 +143,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="arrangements\readme.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="arrangements\template.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

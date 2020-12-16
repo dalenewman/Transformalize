@@ -2,7 +2,7 @@
   "profiles": {
     "CLI": {
       "commandName": "Project",
-      "commandLineArgs": "-a arrangements\\bogus.xml -p seed=2 size=10"
+      "commandLineArgs": "-a arrangements\\bogus-to-razor.xml -p File=bogus.html"
     }
   }
 }

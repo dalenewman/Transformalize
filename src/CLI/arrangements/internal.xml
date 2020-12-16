@@ -18,6 +18,8 @@
             <add name="FullNameByJoin" t="copy(FirstName,LastName).join( )" />
             <add name="FullNameByFormat" t="format({FirstName} {LastName})" />
             <add name="FullNameByJs" t="js(FirstName + ' ' + LastName)" />
+            <!-- razor has to compile before it runs to it slows things down, only use if you really need it -->
+            <!--<add name="FullNameByRazor" t="razor(@Model.FirstName @Model.LastName)" />-->
          </calculated-fields>
       </add>
    </entities>
