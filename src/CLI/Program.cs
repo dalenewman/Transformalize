@@ -17,9 +17,10 @@ using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
 using Transformalize.Providers.MySql.Autofac;
+using Transformalize.Providers.Razor.Autofac;
 using Transformalize.Transforms.Jint.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
-using Transformalize.Providers.Razor.Autofac;
+using Transformalize.Transforms.Fluid.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -38,9 +39,10 @@ namespace Transformalize.Cli {
 
          var operations = new List<Autofac.Core.IModule> {
             new JintTransformModule(),
-            new RazorTransformModule()
+            new RazorTransformModule(),
+            new FluidTransformModule()
          };
-         // razor, lambda parser, fluid, humanizer, etc
+         // todo: add lambda parser, humanizer, etc
 
          using (var outer = new ConfigurationContainer(operations.ToArray()).CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
 
