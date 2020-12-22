@@ -21,6 +21,7 @@ using Transformalize.Providers.Razor.Autofac;
 using Transformalize.Transforms.Jint.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Fluid.Autofac;
+using Transformalize.Transforms.Humanizer.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -40,9 +41,10 @@ namespace Transformalize.Cli {
          var operations = new List<Autofac.Core.IModule> {
             new JintTransformModule(),
             new RazorTransformModule(),
-            new FluidTransformModule()
+            new FluidTransformModule(),
+            new HumanizeModule()
          };
-         // todo: add lambda parser, humanizer, etc
+         // todo: add lambda parser, etc
 
          using (var outer = new ConfigurationContainer(operations.ToArray()).CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
 
