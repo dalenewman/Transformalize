@@ -117,6 +117,7 @@
     <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.8.31-beta" />
     <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.8.30-beta" />
     <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.8.29-beta" />
+    <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.8.30-beta" />
     <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.8.30-beta" />
   </ItemGroup>
 

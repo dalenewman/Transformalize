@@ -21,6 +21,7 @@
             <add name="FullNameByFluid" t="fluid({{ FirstName}} {{ LastName}})" />
             <add name="FullNameLower" t="copy(FullNameByJoin).lower()" />
             <add name="FullNameHumanized" t="copy(FullNameLower).titleize()" />
+            <add name="FullNameLambdaParsed" t='eval(FirstName + " " + LastName)' />
             <!-- razor has to compile before it runs to it slows things down, only use if you really need it -->
             <!--<add name="FullNameByRazor" t="razor(@Model.FirstName @Model.LastName)" />-->
          </calculated-fields>

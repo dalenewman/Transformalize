@@ -22,6 +22,7 @@ using Transformalize.Transforms.Jint.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Fluid.Autofac;
 using Transformalize.Transforms.Humanizer.Autofac;
+using Transformalize.Transforms.LambdaParser.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -42,9 +43,10 @@ namespace Transformalize.Cli {
             new JintTransformModule(),
             new RazorTransformModule(),
             new FluidTransformModule(),
-            new HumanizeModule()
+            new HumanizeModule(),
+            new LambdaParserModule()
          };
-         // todo: add lambda parser, etc
+         // todo: geoCode, etc
 
          using (var outer = new ConfigurationContainer(operations.ToArray()).CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
 
