@@ -77,8 +77,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geography", "Transforms\Geo
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize", "Transformalize\Transformalize.shproj", "{13144F6B-B1FE-4029-9D2C-3C06E662D627}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize", "Compatibility\Transformalize\Transformalize.csproj", "{50C78FAA-713D-495F-971E-47F3ACA46971}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.40", "Compatibility\Transformalize.40\Transformalize.40.csproj", "{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.45", "Compatibility\Transformalize.45\Transformalize.45.csproj", "{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}"
@@ -155,14 +153,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Ioc.Autofac", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Command", "src\Legacy\Pipeline.Command\Pipeline.Command.csproj", "{C0AD9D94-4126-4452-BD01-1118FB827F39}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Standard.10", "Compatibility\Transformalize.Standard.10\Transformalize.Standard.10.csproj", "{0D720AEF-0326-471C-88CE-A873AE728BB0}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Providers\Console\Console.Shared\Console.Shared.projitems*{07c2284a-2d22-4165-bfe0-82f00c9fff5a}*SharedItemsImports = 5
 		Providers\File\File.Shared\File.Shared.projitems*{0a9e0f50-3b9d-43b0-a3b7-9184b6535d31}*SharedItemsImports = 13
+		Transformalize\Transformalize.projitems*{0d720aef-0326-471c-88ce-a873ae728bb0}*SharedItemsImports = 5
 		Transformalize\Transformalize.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
 		Providers\Console\Console.Shared\Console.Shared.projitems*{32aee29f-519f-4a61-af6c-bc218611b6ff}*SharedItemsImports = 4
 		Providers\File\File.Shared\File.Shared.projitems*{4b27a101-66ac-4d87-8a23-3076067cb272}*SharedItemsImports = 5
-		Transformalize\Transformalize.projitems*{50c78faa-713d-495f-971e-47f3aca46971}*SharedItemsImports = 4
 		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{54d882ec-0422-44f1-bd19-74bf346bff4f}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{5e20aa15-9ff3-4278-bb6d-dc1aced49ba4}*SharedItemsImports = 4
 		Transformalize\Transformalize.projitems*{89b749d5-45ff-4608-bd5b-f5da0f7a0828}*SharedItemsImports = 5
@@ -249,18 +249,6 @@ Global
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x64.Build.0 = Release|Any CPU
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x86.ActiveCfg = Release|Any CPU
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x86.Build.0 = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|x64.Build.0 = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Debug|x86.Build.0 = Debug|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|x64.ActiveCfg = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|x64.Build.0 = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|x86.ActiveCfg = Release|Any CPU
-		{50C78FAA-713D-495F-971E-47F3ACA46971}.Release|x86.Build.0 = Release|Any CPU
 		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -549,6 +537,18 @@ Global
 		{C0AD9D94-4126-4452-BD01-1118FB827F39}.Release|x64.Build.0 = Release|x64
 		{C0AD9D94-4126-4452-BD01-1118FB827F39}.Release|x86.ActiveCfg = Release|x86
 		{C0AD9D94-4126-4452-BD01-1118FB827F39}.Release|x86.Build.0 = Release|x86
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|x64.Build.0 = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Debug|x86.Build.0 = Debug|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|x64.ActiveCfg = Release|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|x64.Build.0 = Release|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|x86.ActiveCfg = Release|Any CPU
+		{0D720AEF-0326-471C-88CE-A873AE728BB0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -560,7 +560,6 @@ Global
 		{64D47F26-3787-42CE-AD4C-3AEA348AA567} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
-		{50C78FAA-713D-495F-971E-47F3ACA46971} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
@@ -592,6 +591,7 @@ Global
 		{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77} = {3BC4FECC-271B-442D-87CD-DF9088CB2282}
 		{58FF362E-4A8D-459E-A174-5AAAE7EA8953} = {3BC4FECC-271B-442D-87CD-DF9088CB2282}
 		{C0AD9D94-4126-4452-BD01-1118FB827F39} = {3BC4FECC-271B-442D-87CD-DF9088CB2282}
+		{0D720AEF-0326-471C-88CE-A873AE728BB0} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
