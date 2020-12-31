@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.md = LICENSE.md
 		nuget.config = nuget.config
 		README.md = README.md
+		README_WIP.md = README_WIP.md
 		WE-Markdown.css = WE-Markdown.css
 	EndProjectSection
 EndProject
@@ -153,7 +154,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Ioc.Autofac", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pipeline.Command", "src\Legacy\Pipeline.Command\Pipeline.Command.csproj", "{C0AD9D94-4126-4452-BD01-1118FB827F39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Standard.10", "Compatibility\Transformalize.Standard.10\Transformalize.Standard.10.csproj", "{0D720AEF-0326-471C-88CE-A873AE728BB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.10", "Compatibility\Transformalize.Standard.10\Transformalize.Standard.10.csproj", "{0D720AEF-0326-471C-88CE-A873AE728BB0}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

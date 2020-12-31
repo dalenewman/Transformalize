@@ -1,19 +1,17 @@
 # Transformalize
 
-Transformalize automates moving data into data warehouses, 
-search engines, and other *value-add* systems.
+Transformalize automates denormalizing relational data into data warehouses, 
+search engines, etc. The supported inputs and outputs are below. 
 
-The supported data sources are below. 
-<span style="color:green">Green</span> are cross-platform. 
-<span style="color:darkorange">Orange</span> only run on Windows.
-
-<div class="table-responsive">
+<div class="table-responsive" style="font-size:smaller;">
 <table class="table table-condensed">
     <thead>
+      <tr>
+         <th colspan="3">Cross Platform</th>
+      </tr>
         <tr>
             <th>Relational</th>
-            <th>Non-Relational</th>
-            <th>Other</th>
+            <th colspan="2">Non-Relational</th>
         </tr>
     </thead>
     <tbody>
@@ -29,27 +27,19 @@ The supported data sources are below.
                     <tbody>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlServer">SQL Server</a></td>
-                            <td style="color:green">In/Out</td>
+                            <td >In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.MySql">MySql</a></td>
-                            <td style="color:green">In/Out</td>
+                            <td >In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.PostgreSql">PostgreSql</a></td>
-                            <td style="color:green">In/Out</td>
+                            <td >In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Sqlite">SQLite</a></td>
-                            <td style="color:green">In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlCe">SqlCe</a></td>
-                            <td style="color:darkorange">Legacy In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
-                            <td style="color:darkorange">Legacy In/Out</td>
+                            <td >In/Out</td>
                         </tr>
                     </tbody>
                 </table>
@@ -65,23 +55,15 @@ The supported data sources are below.
                     <tbody>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Elasticsearch">Elasticsearch</a></td>
-                            <td style="color:green">In/Out</td>
+                            <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Lucene">Lucene</a></td>
-                            <td style="color:darkorange">Legacy In/Out</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
+                            <td>In</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Solr">SOLR</a></td>
-                            <td style="color:darkorange">Legacy In/Out</td>
-                        </tr>
-                        <tr>
-                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
-                            <td style="color:darkorange">Legacy Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
-                            <td style="color:darkorange">Legacy Out</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.CsvHelper">Files</a></td>
+                            <td>In/Out</td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,34 +78,110 @@ The supported data sources are below.
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
-                            <td>
-                              <span style="color:green">In</span>/<span style="color:darkorange">Out</span> 
-                            </td>
+                            <td>Console</td>
+                            <td>In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Razor">Razor</a></td>
-                            <td style="color:green">Out</td>
-                        </tr>
-                        <tr>
-                            <td>Files</td>
-                            <td style="color:green">In/Out</td>
-                        </tr>
-                        <tr>
-                            <td>Console</td>
-                            <td style="color:green">In/Out</td>
+                            <td>Out</td>
                         </tr>
                         <tr>
                             <td title="Forms in Orchard CMS Module"><a href="https://github.com/dalenewman/OrchardCore.Transformalize">Forms</a></td>
-                            <td style="color:green">In</td>
+                            <td>In</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
-                            <td style="color:green">In</td>
+                            <td>In</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</div>
+
+<div class="table-responsive" style="font-size:smaller;">
+<table class="table table-condensed">
+    <thead>
+      <tr>
+         <th colspan="3">Windows Only<span style="font-size:smaller"></span></th>
+      </tr>
+      <tr>
+         <th>Relational</th>
+         <th colspan="2">Non-Relational</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="vertical-align:top">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlCe">SqlCe</a></td>
+                            <td>In/Out</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
+                            <td>In/Out</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="vertical-align:top">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Lucene">Lucene</a></td>
+                            <td>In/Out</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Solr">SOLR</a></td>
+                            <td>In/Out</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
+                            <td>Out</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.FileHelpers">Files</a></td>
+                            <td>In/Out</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td style="vertical-align:top">
+                <table class="table table-condensed">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Support</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
+                            <td>Out</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
+                            <td>Out</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.ActiveDirectory">Active Directory</a></td>
-                            <td style="color:darkorange">Legacy</td>
+                            <td>In</td>
                         </tr>
                     </tbody>
                 </table>
@@ -142,8 +200,8 @@ This *readme* demonstrates how to denormalize a relational database and load it 
 To follow along, you need:
 
 * The [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
-* Docker
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
+* Satisfy the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites)
 
 For your convenience, here is part of NorthWind's database schema:
 
@@ -156,6 +214,7 @@ tables that all relate to *Order Details*.
 
 Transformalize arrangements are stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
 or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code. 
+
 Open VS Code and paste this in:
 
 ```xml
