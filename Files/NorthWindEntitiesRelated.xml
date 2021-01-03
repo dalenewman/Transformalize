@@ -1,4 +1,4 @@
-﻿<cfg name="NorthWind" flat="true">
+﻿<cfg name="NorthWind" flatten="true">
 	<connections>
 		<add name="input" provider="sqlce" file="northwind-ts.sdf"/>
 		<add name="output" provider="sqlite" file="northwind.sqlite3" />

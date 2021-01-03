@@ -1,7 +1,6 @@
 # Transformalize
 
-Transformalize automates denormalizing relational data into data warehouses, 
-search engines, etc. The supported inputs and outputs are below. 
+Transformalize is a configuration based ETL tool that automates denormalizing relational data into data warehouses, search engines, etc.  The supported inputs and outputs are below. 
 
 <div class="table-responsive" style="font-size:smaller;">
 <table class="table table-condensed">
@@ -66,8 +65,8 @@ search engines, etc. The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td> </td>
-                            <td> </td>
+                            <td> &nbsp;</td>
+                            <td> &nbsp;</td>
                         </tr>                        
                     </tbody>
                 </table>
@@ -196,8 +195,8 @@ search engines, etc. The supported inputs and outputs are below.
                             <td>In</td>
                         </tr>
                         <tr>
-                            <td> </td>
-                            <td> </td>
+                            <td> &nbsp;</td>
+                            <td> &nbsp;</td>
                         </tr>                        
                     </tbody>
                 </table>
@@ -229,7 +228,8 @@ tables that all relate to *Order Details*.
 
 > This section introduces `<connections/>`, and `<entities/>`.
 
-Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).  I use XML because it's pointy.
+Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).  They are validated before execution 
+and provide errors and warnings if necessary.
 
 To get started, open VS Code and paste this in:
 
@@ -296,7 +296,7 @@ your arrangement like this:
 
 > Introducing **`<calculated-fields/>`**, the **`t`** attribute, and the **`js`** and **`round`** transformations
 
-Now we may add **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
+Add **`<calculated-fields/>`** right after **`<fields/>`** like this:
 
 ```xml
 <calculated-fields>
@@ -401,8 +401,8 @@ ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIME
 /* PostgreSql, use the system field xmin */
 ```
 
-Note: I have prepared a *northwind-ts.sdf* database that has row version fields. 
-Add "-ts" to the your input's file name.
+To demonstrate incrementals, add a row version to each of the eight tables on the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for 
+convenience.
 
 Once added, we have to let `tfl` know about `RowVersion` like this:
 
@@ -433,15 +433,14 @@ info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind |               | Time elapsed: 00:00:03.09
 
-<strong>>tfl -a NorthWind.xml</strong>
+<strong>tfl -a NorthWind.xml</strong>
 <strong>info  | NorthWind | Order Details | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.71
 </pre>
 
-With a `version` in place, the second run doesn't read and compare 
-un-changed data.
+With a `version` in place, the second run doesn't read and compare un-changed data.
 
-![Step04](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step04.gif "Step 4")
+![Step04](./Files/Demo/step04-cp.gif "Step 4")
 
 ### Denormalization
 
@@ -464,12 +463,10 @@ to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
 
-If you add another entity to your arrangement in the same way we 
-added `Order Details`, you must relate it to the first entity. 
-Here is what the `Orders` entity should look like:
+It's time to add another entity to our arrangement.  Here is what the `Orders` entity should look like:
 
 ```xml
-<add name="Orders">
+<add name="Orders" version="RowVersion">
   <fields>
     <add name="OrderID" type="int" primary-key="true" />
     <add name="CustomerID" length="5" />
@@ -485,10 +482,14 @@ Here is what the `Orders` entity should look like:
     <add name="ShipRegion" length="15" />
     <add name="ShipPostalCode" length="10" />
     <add name="ShipCountry" length="15" />
+    <!-- note: RowVersion must be aliased to co-exist with Order Details RowVersion -->
+    <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" length="8" />
   </fields>
 </add>
 ```
-Next, tell Transformalize how to relate *Order Details* to *Orders*.
+Because we're denormalizing entities, the field names in the output must ultimately be unique.  Since *RowVersion* is already used in *Order Details*, I need to `alias` it in *Orders*.
+
+Moreover, if I add another entity to my arrangement, I must relate it to the first entity.
 
 #### Relationships
 
@@ -499,7 +500,7 @@ follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your 
 
 ```xml
 <relationships>
-    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
 </relationships>
 ```
 
@@ -522,14 +523,14 @@ info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.25
 </pre>
 
-![Step05](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step05.gif "Step 5")
+![Step05](./Files/Demo/step05-cp.gif "Step 5")
 
 Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
-a view called `NorthWindStar` is created.  *NorthWindStar* joins Transformalize's 
+a view called `NorthWindStar` is created in the output.  *NorthWindStar* joins Transformalize's 
 [star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a 
 single entity.
 
-Using a SQLite program, query *NorthWindStar* to make sure Transformalize is working:
+Query *NorthWindStar* to make sure Transformalize is working:
 
 ```sql
 SELECT
@@ -617,12 +618,12 @@ In the end, the relationships should look like this:
 </relationships>
 ```
 
-If you'd rather not do all that work, you can use this pre-created [arrangement](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/NorthWindEntitiesRelated.xml).
+If you'd rather not do all that work, you can use this pre-created [arrangement](./Files/NorthWindEntitiesRelated-cp.xml).
 
 Now when you initialize and run Transformalize, there's a lot going on:
 
 <pre style="font-size:smaller;">
-<strong>>tfl -a "c:\Temp\NorthWind.xml" -m init</strong>
+<strong>>tfl -a "NorthWind.xml" -m init</strong>
 <span style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing
 warn  | NorthWind | Orders        | Initializing
 warn  | NorthWind | Products      | Initializing
@@ -648,9 +649,9 @@ info  | NorthWind | Suppliers     | 29 inserts into output
 info  | NorthWind | Categories    | 8 from input
 info  | NorthWind | Categories    | 8 inserts into output
 info  | NorthWind |               | 2155 records inserted into flat
-info  | NorthWind |               | Time elapsed: 00:00:02.66
+info  | NorthWind |               | Time elapsed: 00:00:06.58
 
-<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
+<strong>>tfl -a "NorthWind.xml"</strong>
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -659,14 +660,14 @@ info  | NorthWind | Employees     | Change Detected: No.
 info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
-info  | NorthWind |               | Time elapsed: 00:00:00.59
+info  | NorthWind |               | Time elapsed: 00:00:01.40
 </pre>
 
-![AllEntities](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/AllEntities.gif "All Entities")
+![AllEntities](./Files/Demo/all-entities-cp.gif "All Entities")
 
 ### Incrementals (Part 2)
 
-Let's simulate a data change.  Use *CompactView* or some other tool to edit *northwind-ts.sdf*.
+Let's simulate a data change.
 
 ```sql
 UPDATE Customers
@@ -676,7 +677,7 @@ WHERE CustomerID = 'BOTTM';
 Now run Transformalize again:
 
 <pre style="font-size:smaller;">
-<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
+<strong>>tfl -a "NorthWind.xml"</strong>
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -689,28 +690,13 @@ info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
 <strong>info  | NorthWind |               | 35 records updated in flat</strong>
-info  | NorthWind |               | Time elapsed: 00:00:00.74
+info  | NorthWind |               | Time elapsed: 00:00:01.79
 </pre>
 
 Using the version, Transformalize picked up the one change in *Customers*.  Since this 
 customer has purchased 35 items (in *Order Details*), the flat table is updated as well.
 
-#### Scheduling Incrementals
-
-Most likely, you'll want to schedule incremantals so that the de-normalized data is current. 
-Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Add this next 
-bit to your arrangement: 
-
-```xml
-<schedule>
-   <add name="every 3 seconds" cron="0/3 * * * * ?" mode="default" />
-</schedule>
-```
-
-This runs an incremental every five seconds until you press **`CTRL-C`**.  If you 
-want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
-
-![Scheduler](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/scheduler.gif "Scheduler")
+![Incrementals](./Files/Demo/incrementals-cp.gif "Incrementals")
 
 ### Transformations to Make Life Easier
 
@@ -743,7 +729,7 @@ After re-initializing, *NorthWindFlat* has some helpful time related fields that
 to run queries like:
 
 ```sql
-SELECT OrderDayOfWeek AS [Day], SUM(Revenue) AS [Sales]
+SELECT OrderDayOfWeek AS "Day", SUM(Revenue) AS "Sales"
 FROM NorthWindFlat
 GROUP BY OrderDayOfWeek
 ```
@@ -759,13 +745,14 @@ Wednesday   266546.72
 Note that the query isn't dealing with joins or parsing dates. This is 
 because we de-normalized it and pre-calculated useful fields.
 
+![Time Dimension](./Files/Demo/time-dimension-cp.gif "Time Dimension")
+
 ## Post De-Normalization
 
 > * Introducing system fields in output
 > * the **`read-only`** attribute
 
-Transformalize must use a relation output to de-normalize (i.e. SQLite).  However, now that it's flat, 
-we can leverage the non-relational providers as well.
+Transformalize must use a relational output to de-normalize (i.e. PostgreSQL).  However, now that it's flat, we can leverage the non-relational providers as well.
 
 Transformalize records four *system* fields that may 
 be used by additional `tfl` arrangements and/or other systems:
@@ -793,23 +780,23 @@ Start a new arrangement with this in your XML editor:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+    <add name="input" provider="postgresql" user="postgres" password="Secret1!" database="TflNorthwind" />
     <add name="output" 
          provider="elasticsearch" 
          server="localhost" 
          port="9200" 
-         index="NorthWind" 
-         version="7.8.0" />
+         index="northwind" 
+         version="7.9.3" />
   </connections>
   <entities>
     <add name="NorthWindFlat" version="TflBatchId" >
       <fields>
-        <add name="TflKey" alias="Key" type="long" primary-key="true" />
-        <add name="TflBatchId" alias="Version" type="long" />
+        <add name="TflKey" alias="Key" type="int" primary-key="true" />
+        <add name="TflBatchId" alias="Version" type="int" />
         <add name="Revenue" type="decimal" precision="19" scale="2" />
         <add name="Freight" type="decimal" precision="19" scale="4" />
         <add name="OrderDate" type="datetime" />
-        <add name="OrderYear" type="long" />
+        <add name="OrderYear" type="int" />
         <add name="OrderMonthSortable" />
         <add name="Country" length="15" />
         <add name="CategoryName" length="15" />
@@ -855,182 +842,7 @@ A quick query in your browser can confirm records loaded:
 }
 ```
 
-#### Kibana
-
-Kibana offers interactive dashboards based on Elasticsearch 
-indexes. Here's a quick 30 second video:
-
-[![NorthWind in Kibana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
-
-### Leveraging SOLR & Banana
-
-> Introducing the **solr** provider
-
-This section demonstrates how to load the flattened Northwind 
-data into [SOLR](http://lucene.apache.org/solr) 
-and view it with [Banana](https://github.com/lucidworks/banana).
-
-#### SOLR
-
-Start a new arrangement with this in your XML editor:
-
-```xml
-<cfg name="NorthWind">
-    <connections>
-        <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
-        <add name="output" 
-             provider="solr" 
-             server="localhost" 
-             port="8983" 
-             path="solr" 
-             core="northwind" 
-             folder="C:\java\solr-6.6.0\server\solr" />
-    </connections>
-    <entities>
-        <add name="NorthWindFlat" version="TflBatchId">
-            <fields>
-                <add name="TflKey" alias="Key" type="long" primary-key="true" />
-                <add name="TflBatchId" alias="Version" type="long" />
-                <add name="Revenue" type="decimal" precision="19" scale="2" />
-                <add name="Freight" type="decimal" precision="19" scale="4" />
-                <add name="OrderDate" type="datetime" />
-                <add name="OrderYear" type="long" />
-                <add name="OrderMonthSortable" />
-                <add name="Country" length="15" />
-                <add name="CategoryName" length="15" />
-            </fields>
-        </add>
-    </entities>
-</cfg>
-```
-
-Save as *NorthWindToSOLR.xml* and run:
-
-<pre style="font-size:smaller;">
-<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml -m init</strong>
-info  | NorthWind | NorthWindFlat | Starting
-info  | NorthWind | NorthWindFlat | 2155 from input
-info  | NorthWind | NorthWindFlat | 2155 to output
-info  | NorthWind | NorthWindFlat | Ending
-info  | NorthWind |               | Time elapsed: 00:00:06
-
-<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml</strong>
-info  | NorthWind | NorthWindFlat | Starting
-info  | NorthWind | NorthWindFlat | Change Detected: No.
-info  | NorthWind |               | Time elapsed: 00:00:00.285
-</pre>
-
-A quick query in your browser can confirm the records loaded:
-
-[http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json](http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json)
-
-```json
-{
-    "responseHeader": {
-        "status": 0,
-        "QTime": 0,
-        "params": {
-            "q": "*:*",
-            "indent": "on",
-            "rows": "0",
-            "wt": "json"
-        }
-    },
-    "response": {
-        "numFound": 2155,
-        "start": 0,
-        "docs": []
-    }
-}
-```
-
-#### Banana
-
-Similar to Kibana, Banana offers interactive dashboards.  However, it's 
-works against SOLR indexes instead of Elasticsearch. Here's a quick 20 second video:
-
-[![NorthWind in Banana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
-
-### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel
-
-> * Introducing the **sqlserver** provider
-> * the **ssas** provider
-> * the `measure` and `dimension` attributes on `fields`
-
-This section demonstrates loading the data into a *SSAS* 
-cube and browsing it with Excel.  To follow along, 
-you'll need a local instance of Analysis Services, and Excel.
-
-The SSAS provider only works with a SQL Server input, so first 
-make a database called `TflNorthWind`, and then modify 
-the *NorthWind.xml* arrangement to output to SQL Server 
-instead of SQLite:
-
-```xml
-<cfg name="NorthWind" flatten="true">
-  <connections>
-    <add name="input" provider="sqlserver" server="localhost" database="NorthWind"/>
-    <!-- change output to ... -->
-    <add name="output" 
-         provider="sqlserver" 
-         server="localhost"
-         database="TflNorthWind" />
-  </connections>
-  <!-- clipped for brevity -->
-</cfg>
-```
-
-Run this in `init` mode to load `NorthWindFlat` into 
-SQL Server. Then, create a new arrangement:
-
-```xml
-<cfg name="NorthWind">
-    <connections>
-        <add name="input" provider="sqlserver" server="localhost" database="TflNorthWind" />
-        <add name="output" provider="ssas" server="localhost" database="NorthWind" />
-    </connections>
-    <entities>
-        <add name="NorthWindFlat" version="TflBatchId" alias="Properties" >
-            <fields>
-                <add name="TflKey" type="int" primarykey="true" alias="Key" />
-                <add name="TflBatchId" type="int" alias="Version" />
-                <add name="Revenue" type="decimal" scale="2" measure="true" format="$###,###,###.00" />
-                <add name="Freight" type="decimal" precision="19" scale="4" measure="true" format="$###,###,###.00" />
-                <add name="OrderYear" type="int" dimension="true" />
-                <add name="OrderMonthSortable" />
-                <add name="Country" length="15" />
-                <add name="EmployeeID" type="int" measure="true" aggregate-function="distinctcount" label="Employees" />
-                <add name="CategoryName" length="15" />
-            </fields>
-        </add>
-    </entities>
-</cfg>
-```
-
-Save this as *NorthWindToSSAS.xml* and run it:
-
-<pre style="font-size:smaller;">
-<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml -m init</strong>
-info  | NorthWind | Properties | Creating new OLAP database: NorthWind
-info  | NorthWind | Properties | Creating new data source: TflNorthWind
-info  | NorthWind | Properties | Creating new data source view: NorthWind
-info  | NorthWind | Properties | Creating new dimension: Properties
-info  | NorthWind | Properties | Creating new cube: NorthWind
-info  | NorthWind | Properties | Processing OLAP database NorthWind
-info  | NorthWind |            | Time elapsed: 00:00:03.52
-
-<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml</strong>
-info  | NorthWind | Properties | Change Detected: No.
-info  | NorthWind |            | Time elapsed: 00:00:00.58
-</pre>
-
-This example marks some fields as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
-and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.  This 
-is needed to accurately describe the cube.  Here is a short video showing Excel browse the resulting cube.
-
-[![NorthWind in Excel](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
-
-Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
+![NorthWind in Kibana](./Files/Demo/elasticserach-kibana-cp.gif "Northwind in Kibana")
 
 ### Leveraging the Orchard Core CMS Module
 
@@ -1048,35 +860,29 @@ The [OrchardCore.Transformalize](https://github.com/dalenewman/OrchardCore.Trans
 * export search results
 * compose bulk actions; select records from your report and run tasks on them.
 
-Here's a quick video of a Northwind report using the Elasticsearch 
-provider we loaded earlier:
+Here's a quick video of a Northwind report using the Elasticsearch provider we loaded earlier:
 
-[![NorthWind in Orchard CMS](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-orchard-cms-youtube.png)](https://youtu.be/CCTvjsrUtHk "Northwind in Orchard CMS")
-
+![NorthWind in Orchard Core CMS](./Files/Demo/orchardcore-transformalize-cp.gif "Northwind in Orchard Core")
 The arrangement for this is:
 
 ```xml
 <cfg name="NorthWind">
-  <parameters>
-    <add name="orderyear" label="Year" value="*" prompt="true" multiple="true" />
-    <add name="categoryname" label="Category" value="*" prompt="true" />
-  </parameters>
   <connections>
-    <add name="input" provider="elasticsearch" index="northwind" />
+    <add name="input" 
+         provider="elasticsearch" 
+         server="host.docker.internal" 
+         index="northwind" 
+         version="7.9.3" />
   </connections>
   <entities>
     <add name="northwindflat" alias="NorthWind" page="1" size="10" sortable="true" >
-      <filter>
-        <add field="orderyear" value="@[orderyear]" type="facet" min="0" />
-        <add field="categoryname" value="@[categoryname]" type="facet" />
-      </filter>
       <fields>
-        <add name="orderyear" type="long" label="Year" />
-        <add name="ordermonthsortable" label="Month" />
-        <add name="orderdate" type="datetime" label="Date" format="yyyy-MM-dd" />
         <add name="tflkey" alias="Key" type="long" primary-key="true" output="false" />
+        <add name="orderyear" type="long" label="Year" parameter="facet" />
+        <add name="ordermonthsortable" label="Month" parameter="facet" />
+        <add name="orderdate" type="datetime" label="Date" format="yyyy-MM-dd" />
         <add name="country" label="Country" length="15" />
-        <add name="categoryname" length="15" label="Category" />
+        <add name="categoryname" length="15" label="Category" parameter="facet" />
         <add name="freight" label="Freight" type="decimal" precision="19" scale="4" format="$#,###,###.00" />
         <add name="revenue" label="Revenue" type="decimal" precision="19" scale="2" format="$#,###,###.00" />
       </fields>
@@ -1084,40 +890,3 @@ The arrangement for this is:
   </entities>
 </cfg>
 ```
-
-#### Parameters
-
-> Introducing the **`name`**, **`label`**, **`value`**, **`prompt`**, and **`multiple`** attributes for **`parameters`**
-
-Parameters allow you to pass in data from outside your arrangement. 
-They may be used to manipulate attribute values in the arrangement. 
-The parameter place-holders (e.g. `@[orderyear]`) are replaced with 
-a provided or default value before validation.
-
-Parameters are visible in report mode when `prompt` is set to `true`.
-
-#### Filter
-
-> Introducing the **`field`**, **`operator`**, **`value`**, **`expression`**, and **`type`** attributes for each **`filter`**
-
-Filters allow you to limit your output. A filter is set in two ways:
-
-1. by setting `field`, `operator`, and `value` 
-2. by setting a provider-specific `expression`
-
-Either way, you may use parameters to manipulate your filters at run-time.
-
-A filter's type to may be *facet*, *search*, or *filter*.  Facet and search 
-types affect the way your parameters are presented. 
-
-*Update*: In the Orchard Core module, there is a short-cut for defining parameterized filters.  Add a `parameter` 
-attribute to your field with the value *facet*, *facets*, or *search*. 
-
-#### Paging
-
-Without paging, web-based reporting gets too big for 
-the browser.  All providers are capable of paging, 
-but SOLR and Elasticsearch do it the best.
-
-### Build Notes
-Clone.  Build with Visual Studio 2019.  You'll need the SlowCheetah extension.

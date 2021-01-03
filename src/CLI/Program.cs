@@ -53,12 +53,18 @@ namespace Transformalize.Cli {
 
             var process = outer.Resolve<Process>();
 
-            if (process.Errors().Any()) {
-               Environment.Exit(1);
+            if (options.Mode != "default" && options.Mode != process.Mode) {
+               process.Mode = options.Mode;
+               process.Load();
             }
 
-            if (options.Mode != "default") {
-               process.Mode = options.Mode;
+            if (process.Errors().Any()) {
+               var context = new PipelineContext(logger, process);
+               context.Error("The configuration has errors.");
+               foreach (var error in process.Errors()) {
+                  context.Error(error);
+               }
+               Environment.Exit(1);
             }
 
             var providers = new List<Autofac.Core.IModule> {
@@ -101,7 +107,7 @@ namespace Transformalize.Cli {
 
             var modules = providers.Union(operations).ToArray();
 
-            if (options.Mode.ToLower()  == "schema") {
+            if (options.Mode.ToLower() == "schema") {
                using (var inner = new Container(modules).CreateScope(process, logger)) {
                   process = new SchemaService(inner).GetProcess(process);
                   process.Connections.Clear();

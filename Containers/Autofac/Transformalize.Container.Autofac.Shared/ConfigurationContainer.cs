@@ -132,17 +132,8 @@ namespace Transformalize.Containers.Autofac {
             dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.ParametersName));
             dependancies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.FieldsName));
 
-            var process = new Process(transformed ?? cfg, parameters, dependancies.ToArray());
+            return new Process(transformed ?? cfg, parameters, dependancies.ToArray());
 
-            if (process.Errors().Any()) {
-               var c = new PipelineContext(logger, new Process() { Name = "Errors" });
-               c.Error("The configuration has errors.");
-               foreach (var error in process.Errors()) {
-                  c.Error(error);
-               }
-            }
-
-            return process;
          }).As<Process>().InstancePerDependency();
          return builder.Build().BeginLifetimeScope();
       }

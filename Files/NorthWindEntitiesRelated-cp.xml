@@ -1,0 +1,140 @@
+﻿<cfg name="NorthWind" flatten="true">
+  <connections>
+    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
+    <add name="output" provider="postgresql" user="postgres" password="Secret1!" database="TflNorthwind" />
+  </connections>
+	<entities>
+		<add name="Order Details" version="RowVersion">
+			<fields>
+				<add name="OrderID" type="int" primary-key="true" />
+				<add name="ProductID" type="int" primary-key="true" />
+				<add name="UnitPrice" type="decimal" precision="19" scale="4" />
+				<add name="Quantity" type="short" />
+				<add name="Discount" type="single" />
+				<add name="RowVersion" type="byte[]" length="8" />
+			</fields>
+			<calculated-fields>
+			  <add name="Revenue" type="decimal" t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
+			</calculated-fields>
+		</add>
+		<add name="Orders" version="RowVersion">
+			<fields>
+				<add name="OrderID" type="int" primarykey="true" />
+				<add name="CustomerID" length="5" />
+				<add name="EmployeeID" type="int" />
+				<add name="OrderDate" type="datetime" />
+				<add name="RequiredDate" type="datetime" />
+				<add name="ShippedDate" type="datetime" />
+				<add name="ShipVia" type="int" />
+				<add name="Freight" type="decimal" precision="19" scale="4" />
+				<add name="ShipName" length="40" />
+				<add name="ShipAddress" length="60" />
+				<add name="ShipCity" length="15" />
+				<add name="ShipRegion" length="15" />
+				<add name="ShipPostalCode" length="10" />
+				<add name="ShipCountry" length="15" />
+				<add name="RowVersion" type="byte[]" alias="OrdersRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Products" version="RowVersion">
+			<fields>
+				<add name="ProductID" type="int" primarykey="true" />
+				<add name="ProductName" length="40" />
+				<add name="SupplierID" type="int" />
+				<add name="CategoryID" type="int" />
+				<add name="QuantityPerUnit" length="20" />
+				<add name="UnitPrice" type="decimal" precision="19" scale="4" alias="ProductsUnitPrice" />
+				<add name="UnitsInStock" type="short" />
+				<add name="UnitsOnOrder" type="short" />
+				<add name="ReorderLevel" type="short" />
+				<add name="Discontinued" type="bool" />
+				<add name="RowVersion" type="byte[]" alias="ProductsRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Customers" version="RowVersion">
+			<fields>
+				<add name="CustomerID" primarykey="true" length="5" />
+				<add name="CompanyName" length="40" />
+				<add name="ContactName" length="30" />
+				<add name="ContactTitle" length="30" />
+				<add name="Address" length="60" />
+				<add name="City" length="15" />
+				<add name="Region" length="15" />
+				<add name="PostalCode" length="10" />
+				<add name="Country" length="15" />
+				<add name="Phone" length="24" />
+				<add name="Fax" length="24" />
+				<add name="RowVersion" type="byte[]" alias="CustomersRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Employees" version="RowVersion">
+			<fields>
+				<add name="EmployeeID" type="int" primarykey="true" />
+				<add name="LastName" length="20" />
+				<add name="FirstName" length="10" />
+				<add name="Title" length="30" />
+				<add name="TitleOfCourtesy" length="25" />
+				<add name="BirthDate" type="datetime" />
+				<add name="HireDate" type="datetime" />
+				<add name="Address" alias="EmployeesAddress" length="60" />
+				<add name="City" alias="EmployeesCity" length="15" />
+				<add name="Region" alias="EmployeesRegion" length="15" />
+				<add name="PostalCode" alias="EmployeesPostalCode" length="10" />
+				<add name="Country" alias="EmployeesCountry" length="15" />
+				<add name="HomePhone" length="24" />
+				<add name="Extension" length="4" />
+				<add name="Photo" type="byte[]" length="max" />
+				<add name="Notes" length="max" />
+				<add name="ReportsTo" type="int" />
+				<add name="PhotoPath" length="255" />
+				<add name="RowVersion" type="byte[]" alias="EmployeesRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Shippers" version="RowVersion">
+			<fields>
+				<add name="ShipperID" type="int" primarykey="true" />
+				<add name="CompanyName" alias="ShippersCompanyName" length="40" />
+				<add name="Phone" alias="ShippersPhone" length="24" />
+				<add name="RowVersion" type="byte[]" alias="ShippersRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Suppliers" version="RowVersion">
+			<fields>
+				<add name="SupplierID" type="int" primarykey="true" />
+				<add name="CompanyName" alias="SuppliersCompanyName" length="40" />
+				<add name="ContactName" alias="SuppliersContactName" length="30" />
+				<add name="ContactTitle" alias="SuppliersContactTitle" length="30" />
+				<add name="Address" alias="SuppliersAddress" length="60" />
+				<add name="City" alias="SuppliersCity" length="15" />
+				<add name="Region" alias="SuppliersRegion" length="15" />
+				<add name="PostalCode" alias="SuppliersPostalCode" length="10" />
+				<add name="Country" alias="SuppliersCountry" length="15" />
+				<add name="Phone" alias="SuppliersPhone" length="24" />
+				<add name="Fax" alias="SuppliersFax" length="24" />
+				<add name="HomePage" length="max" />
+				<add name="RowVersion" type="byte[]" alias="SuppliersRowVersion" length="8" />
+			</fields>
+		</add>
+		<add name="Categories" version="RowVersion">
+			<fields>
+				<add name="CategoryID" type="int" primarykey="true" />
+				<add name="CategoryName" length="15" />
+				<add name="Description" length="max" />
+				<add name="Picture" type="byte[]" length="max" />
+				<add name="RowVersion" type="byte[]" alias="CategoriesRowVersion" length="8" />
+			</fields>
+		</add>
+	</entities>
+	<relationships>
+		<!-- following Orders to Customers, Employees, and Shippers -->
+		<add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+		<add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+		<add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+		<add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
+
+		<!-- following Products to Suppliers and Categories -->
+		<add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+		<add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+		<add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+	</relationships>
+</cfg>
