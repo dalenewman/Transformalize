@@ -1,16 +1,17 @@
 # Transformalize
 
-Transformalize is a configuration based ETL tool that automates denormalizing relational data into data warehouses, search engines, etc.  The supported inputs and outputs are below. 
+Transformalize automates moving data into data warehouses, 
+search engines, and other *value-adding* systems.
 
-<div class="table-responsive" style="font-size:smaller;">
+It works with many data sources:
+
+<div class="table-responsive">
 <table class="table table-condensed">
     <thead>
-      <tr>
-         <th colspan="3" style="text-align:center">Cross Platform</th>
-      </tr>
         <tr>
             <th>Relational</th>
-            <th colspan="2" style="text-align:center">Non-Relational</th>
+            <th>Non-Relational</th>
+            <th>Other</th>
         </tr>
     </thead>
     <tbody>
@@ -20,25 +21,40 @@ Transformalize is a configuration based ETL tool that automates denormalizing re
                     <thead>
                         <tr>
                             <th>Provider</th>
-                            <th>Support</th>
+                            <th>Input</th>
+                            <th>Output</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlServer">SQL Server</a></td>
-                            <td >In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.MySql">MySql</a></td>
-                            <td >In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.PostgreSql">PostgreSql</a></td>
-                            <td >In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Sqlite">SQLite</a></td>
-                            <td >In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlCe">SqlCe</a></td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green">BETA</td>
                         </tr>
                     </tbody>
                 </table>
@@ -48,127 +64,35 @@ Transformalize is a configuration based ETL tool that automates denormalizing re
                     <thead>
                         <tr>
                             <th>Provider</th>
-                            <th>Support</th>
+                            <th>Input</th>
+                            <th>Output</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Elasticsearch">Elasticsearch</a></td>
-                            <td>In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.CsvHelper">Files</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>                        
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Console</td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Razor">Razor</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td title="Forms in Orchard CMS Module"><a href="https://github.com/dalenewman/OrchardCore.Transformalize">Forms</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
-                            <td>In</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
-
-<div class="table-responsive" style="font-size:smaller;">
-<table class="table table-condensed">
-    <thead>
-      <tr>
-         <th colspan="3" style="text-align:center">Windows Only<span style="font-size:smaller"></span></th>
-      </tr>
-      <tr>
-         <th>Relational</th>
-         <th colspan="2" style="text-align:center">Non-Relational</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlCe">SqlCe</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Lucene">Lucene</a></td>
-                            <td>In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Solr">SOLR</a></td>
-                            <td>In/Out</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
-                            <td>Out</td>
+                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.FileHelpers">Files</a></td>
-                            <td>In/Out</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
                         </tr>
                     </tbody>
                 </table>
@@ -178,26 +102,51 @@ Transformalize is a configuration based ETL tool that automates denormalizing re
                     <thead>
                         <tr>
                             <th>Provider</th>
-                            <th>Support</th>
+                            <th>Input</th>
+                            <th>Output</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
-                            <td>Out</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
-                            <td>Out</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Razor">Razor</a></td>
+                            <td style="color:green"></td>
+                            <td style="color:green">BETA</td>
+                        </tr>
+                        <tr>
+                            <td>Files</td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td>Web</td>
+                            <td style="color:green">&#10003;</td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Console</td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green">&#10003;</td>
+                        </tr>
+                        <tr>
+                            <td title="Forms in Orchard CMS Module">Humans</td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green"></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
+                            <td style="color:green">&#10003;</td>
+                            <td style="color:green"></td>
                         </tr>
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.ActiveDirectory">Active Directory</a></td>
-                            <td>In</td>
+                            <td style="color:green">BETA</td>
+                            <td style="color:green"></td>
                         </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>                        
                     </tbody>
                 </table>
             </td>
@@ -210,33 +159,37 @@ Transformalize is a configuration based ETL tool that automates denormalizing re
 
 ### Getting Started
 
-This *readme* demonstrates how to denormalize a relational database and load it into Elasticsearch.
+This *readme* demonstrates how to:
+
+* denormalize a relational database
+* load data into Elasticsearch and SOLR
+* keep Elasticsearch and SOLR updated
  
-To follow along:
+To follow along, you need:
 
-* Grab the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
-* Install [VS Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize) and update the Transformalize path in VS Code settings.
-* Setup SQL Server and PostgreSQL per thes [wiki](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites) instructions.
+* the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize.
+* [DB Browser for SQLite](http://sqlitebrowser.org)
+* SQL CE databases: [northwind.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/Demo/northwind.sdf) and [northwind-ts.sdf](https://github.com/dalenewman/Transformalize/blob/master/Files/Demo/northwind-ts.sdf) (+[drivers](https://www.microsoft.com/en-us/download/details.aspx?id=17876)).
+* [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
+* optionally: running instances of [Elasticsearch](https://www.elastic.co/products/elasticsearch) and/or [SOLR](http://lucene.apache.org/solr).
 
-When you start denormalizing a database, it's good to have a diagram handy. 
-Here is part of NorthWind's schema:
+For your convenience, here is part of NorthWind's database schema:
 
-<img src="./Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
+<img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-It shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+The above shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
 tables that all relate to *Order Details*. 
 
 > This section introduces `<connections/>`, and `<entities/>`.
 
-Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).  They are validated before execution 
-and provide errors and warnings if necessary.
-
-To get started, open VS Code and paste this in:
+Transformalize arrangements are stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
+or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code. 
+Open VS Code and paste this in:
 
 ```xml
-<cfg name="NorthWind" read-only="true">
+<cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5" />
@@ -244,10 +197,23 @@ To get started, open VS Code and paste this in:
 </cfg>
 ```
 
-It defines an *input* as the Northwind database's `Order Details` table. 
-Save it as *NorthWind.xml* and then press CTRL-P to find and execute the `tfl:run` command. 
+The arrangment above defines the *input* as the *northwind.sdf* database's `Order Details` table. 
 
-![Step01](./Files/Demo/step01-cp.gif "Step 1")
+Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This 
+runs *NorthWind.xml* with the CLI (`tfl.exe`) and may be done without VS Code.  The output 
+should look like this:
+
+<pre style="font-size:smaller;">
+<strong>> tfl -a NorthWind.xml</strong>
+OrderID,ProductID,UnitPrice,Quantity,Discount
+10248,11,14.0000,12,0
+10248,42,9.8000,10,0
+10248,72,34.8000,5,0
+10249,14,18.6000,9,0
+10249,51,42.4000,40,0
+</pre>
+
+![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step01.gif "Step 1")
 
 Transformalize detected field names and read 5 rows. 
 This is nice, but in order to modify or create new fields, 
@@ -255,10 +221,10 @@ we have to define input fields.
 
 > Introducing `<fields/>`.
 
-If we knew the field names and types, we could write them in.  But, that is painful and error prone.  Instead, press CTRL-P to find and execute the `tfl:schema` command:
+We could hand-write fields, or press CTRL-P and run the the `tfl:schema` command:
 
 <pre style="font-size:smaller;">
-> tfl -a NorthWind.xml <strong>-m schema</strong>
+> tfl -a NorthWind.xml <strong>-m check</strong>
 ...
 &lt;fields&gt;
   &lt;add name="OrderID" type="int" primary-key="true" /&gt;
@@ -270,14 +236,14 @@ If we knew the field names and types, we could write them in.  But, that is pain
 ...
 </pre>
 
-Rather than reading the records, `tfl:schema` reads and returns 
-the schema of the arrangement. Copy the `<fields/>` from the output into 
-your arrangement like this:
+Instead of reading the records, `tfl:schema` mode 
+reads the schema and returns the arrangement. Copy the `<fields/>` from the 
+output into your arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5">
@@ -296,7 +262,7 @@ your arrangement like this:
 
 > Introducing **`<calculated-fields/>`**, the **`t`** attribute, and the **`js`** and **`round`** transformations
 
-Add **`<calculated-fields/>`** right after **`<fields/>`** like this:
+Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
 
 ```xml
 <calculated-fields>
@@ -305,8 +271,7 @@ Add **`<calculated-fields/>`** right after **`<fields/>`** like this:
        t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```
-Execute `tfl:run` and it should produce this output:
-
+Now run `tfl`:
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
 OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
@@ -318,41 +283,32 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 ...
 </pre>
 
-*Revenue* is created by the **js** (JavaScript) and **round** [transformations](./Containers/Autofac/Transformalize.Container.Autofac.Shared/TransformBuilder.cs).  You may chain transformations as long as the output of one is compatible with the input of another.
+*Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
+may chain transformations as long as the output of one is compatible with the input of another.
 
-![Step02](./Files/Demo/step02-cp.gif "Step 2")
+![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
 
 ### Output
 
 > Introducing **`init`** mode
 
-Let's save *all* the `Order Details` into an output. To do this:
-
-1. Remove the `read-only` attribute.
-1. Remove the `page` and `size` attributes.
-1. Define the output as a PostgreSql database named TflNorthwind in `<connections/>`.
+Define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) 
+database.  Add an output in `<connections/>` (see below).  Also, 
+remove the `page` and `size` attributes in the `Order Details` entity 
+so we get all the records.
 
 ```xml
 <connections>
-    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
-    <!-- define output here -->
-    <add name="output" provider="postgres" user="postgres" password="Secret1!" database="TflNorthwind" />
+    <add name="input" provider="sqlce" file="northwind.sdf" />
+    <!-- add the output here -->
+    <add name="output" provider="sqlite" file="northwind.sqlite3" />
 </connections>
 ```
 
-Press CTRL-P to find and run the `tfl:init` command.
-
-<pre style="font-size:smaller;">
-> tfl -a NorthWind.xml <strong>-m init</strong>
-<strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
-info  | NorthWind | Order Details | 2155 from input
-info  | NorthWind | Order Details | 2155 inserts into output
-info  | NorthWind | Order Details | Ending 00:00:03.89
-</pre>
-
 ### Initialization
 
-Initializing is required anytime you create or change an arrangement's output structure.
+Initializing is required anytime you're creating or changing an 
+arrangement's output structure.
 
 It does three things:
 
@@ -360,9 +316,20 @@ It does three things:
 2. creates output structures
 3. bulk inserts data.
 
-![Step03](./Files/Demo/step03-cp.gif "Step 3")
+Go ahead and press CTRL-P and run the `tfl:init` command.
 
-Note that writing *Order Details* into PostgreSQL frees up the console for logging.
+<pre style="font-size:smaller;">
+> tfl -a NorthWind.xml <strong>-m init</strong>
+<strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
+info  | NorthWind | Order Details | 2155 from input
+info  | NorthWind | Order Details | 2155 inserts into output Order Details
+info  | NorthWind | Order Details | Ending 00:00:00.67
+</pre>
+
+![Step03](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step03.gif "Step 3")
+
+Note that writing *Order Details* into SQLite frees up 
+the console for logging.
 
 #### Mapping
 
@@ -401,8 +368,8 @@ ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIME
 /* PostgreSql, use the system field xmin */
 ```
 
-To demonstrate incrementals, add a row version to each of the eight tables on the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for 
-convenience.
+Note: I have prepared a *northwind-ts.sdf* database that has row version fields. 
+Add "-ts" to the your input's file name.
 
 Once added, we have to let `tfl` know about `RowVersion` like this:
 
@@ -433,14 +400,15 @@ info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind |               | Time elapsed: 00:00:03.09
 
-<strong>tfl -a NorthWind.xml</strong>
+<strong>>tfl -a NorthWind.xml</strong>
 <strong>info  | NorthWind | Order Details | Change Detected: No.</strong>
 info  | NorthWind |               | Time elapsed: 00:00:00.71
 </pre>
 
-With a `version` in place, the second run doesn't read and compare un-changed data.
+With a `version` in place, the second run doesn't read and compare 
+un-changed data.
 
-![Step04](./Files/Demo/step04-cp.gif "Step 4")
+![Step04](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step04.gif "Step 4")
 
 ### Denormalization
 
@@ -463,10 +431,12 @@ to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
 
-It's time to add another entity to our arrangement.  Here is what the `Orders` entity should look like:
+If you add another entity to your arrangement in the same way we 
+added `Order Details`, you must relate it to the first entity. 
+Here is what the `Orders` entity should look like:
 
 ```xml
-<add name="Orders" version="RowVersion">
+<add name="Orders">
   <fields>
     <add name="OrderID" type="int" primary-key="true" />
     <add name="CustomerID" length="5" />
@@ -482,14 +452,10 @@ It's time to add another entity to our arrangement.  Here is what the `Orders` e
     <add name="ShipRegion" length="15" />
     <add name="ShipPostalCode" length="10" />
     <add name="ShipCountry" length="15" />
-    <!-- note: RowVersion must be aliased to co-exist with Order Details RowVersion -->
-    <add name="RowVersion" alias="OrdersRowVersion" type="byte[]" length="8" />
   </fields>
 </add>
 ```
-Because we're denormalizing entities, the field names in the output must ultimately be unique.  Since *RowVersion* is already used in *Order Details*, I need to `alias` it in *Orders*.
-
-Moreover, if I add another entity to my arrangement, I must relate it to the first entity.
+Next, tell Transformalize how to relate *Order Details* to *Orders*.
 
 #### Relationships
 
@@ -500,7 +466,7 @@ follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your 
 
 ```xml
 <relationships>
-    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+    <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID"/>
 </relationships>
 ```
 
@@ -523,14 +489,14 @@ info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:00.25
 </pre>
 
-![Step05](./Files/Demo/step05-cp.gif "Step 5")
+![Step05](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step05.gif "Step 5")
 
 Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
-a view called `NorthWindStar` is created in the output.  *NorthWindStar* joins Transformalize's 
+a view called `NorthWindStar` is created.  *NorthWindStar* joins Transformalize's 
 [star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a 
 single entity.
 
-Query *NorthWindStar* to make sure Transformalize is working:
+Using a SQLite program, query *NorthWindStar* to make sure Transformalize is working:
 
 ```sql
 SELECT
@@ -618,12 +584,12 @@ In the end, the relationships should look like this:
 </relationships>
 ```
 
-If you'd rather not do all that work, you can use this pre-created [arrangement](./Files/NorthWindEntitiesRelated-cp.xml).
+If you'd rather not do all that work, you can use this pre-created [arrangement](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/NorthWindEntitiesRelated.xml).
 
 Now when you initialize and run Transformalize, there's a lot going on:
 
 <pre style="font-size:smaller;">
-<strong>>tfl -a "NorthWind.xml" -m init</strong>
+<strong>>tfl -a "c:\Temp\NorthWind.xml" -m init</strong>
 <span style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing
 warn  | NorthWind | Orders        | Initializing
 warn  | NorthWind | Products      | Initializing
@@ -649,9 +615,9 @@ info  | NorthWind | Suppliers     | 29 inserts into output
 info  | NorthWind | Categories    | 8 from input
 info  | NorthWind | Categories    | 8 inserts into output
 info  | NorthWind |               | 2155 records inserted into flat
-info  | NorthWind |               | Time elapsed: 00:00:06.58
+info  | NorthWind |               | Time elapsed: 00:00:02.66
 
-<strong>>tfl -a "NorthWind.xml"</strong>
+<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -660,14 +626,14 @@ info  | NorthWind | Employees     | Change Detected: No.
 info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
-info  | NorthWind |               | Time elapsed: 00:00:01.40
+info  | NorthWind |               | Time elapsed: 00:00:00.59
 </pre>
 
-![AllEntities](./Files/Demo/all-entities-cp.gif "All Entities")
+![AllEntities](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/AllEntities.gif "All Entities")
 
 ### Incrementals (Part 2)
 
-Let's simulate a data change.
+Let's simulate a data change.  Use *CompactView* or some other tool to edit *northwind-ts.sdf*.
 
 ```sql
 UPDATE Customers
@@ -677,7 +643,7 @@ WHERE CustomerID = 'BOTTM';
 Now run Transformalize again:
 
 <pre style="font-size:smaller;">
-<strong>>tfl -a "NorthWind.xml"</strong>
+<strong>>tfl -a "c:\Temp\NorthWind.xml"</strong>
 info  | NorthWind | Order Details | Change Detected: No.
 info  | NorthWind | Orders        | Change Detected: No.
 info  | NorthWind | Products      | Change Detected: No.
@@ -690,13 +656,28 @@ info  | NorthWind | Shippers      | Change Detected: No.
 info  | NorthWind | Suppliers     | Change Detected: No.
 info  | NorthWind | Categories    | Change Detected: No.
 <strong>info  | NorthWind |               | 35 records updated in flat</strong>
-info  | NorthWind |               | Time elapsed: 00:00:01.79
+info  | NorthWind |               | Time elapsed: 00:00:00.74
 </pre>
 
 Using the version, Transformalize picked up the one change in *Customers*.  Since this 
 customer has purchased 35 items (in *Order Details*), the flat table is updated as well.
 
-![Incrementals](./Files/Demo/incrementals-cp.gif "Incrementals")
+#### Scheduling Incrementals
+
+Most likely, you'll want to schedule incremantals so that the de-normalized data is current. 
+Transformalize uses [Quartz.NET](https://www.quartz-scheduler.net) for this. Add this next 
+bit to your arrangement: 
+
+```xml
+<schedule>
+   <add name="every 3 seconds" cron="0/3 * * * * ?" mode="default" />
+</schedule>
+```
+
+This runs an incremental every five seconds until you press **`CTRL-C`**.  If you 
+want to run Transformalize as a service, I recommend using [NSSM](https://nssm.cc).
+
+![Scheduler](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/scheduler.gif "Scheduler")
 
 ### Transformations to Make Life Easier
 
@@ -729,7 +710,7 @@ After re-initializing, *NorthWindFlat* has some helpful time related fields that
 to run queries like:
 
 ```sql
-SELECT OrderDayOfWeek AS "Day", SUM(Revenue) AS "Sales"
+SELECT OrderDayOfWeek AS [Day], SUM(Revenue) AS [Sales]
 FROM NorthWindFlat
 GROUP BY OrderDayOfWeek
 ```
@@ -745,14 +726,13 @@ Wednesday   266546.72
 Note that the query isn't dealing with joins or parsing dates. This is 
 because we de-normalized it and pre-calculated useful fields.
 
-![Time Dimension](./Files/Demo/time-dimension-cp.gif "Time Dimension")
-
 ## Post De-Normalization
 
 > * Introducing system fields in output
 > * the **`read-only`** attribute
 
-Transformalize must use a relational output to de-normalize (i.e. PostgreSQL).  However, now that it's flat, we can leverage the non-relational providers as well.
+Transformalize must use a relation output to de-normalize (i.e. SQLite).  However, now that it's flat, 
+we can leverage the non-relational providers as well.
 
 Transformalize records four *system* fields that may 
 be used by additional `tfl` arrangements and/or other systems:
@@ -780,23 +760,23 @@ Start a new arrangement with this in your XML editor:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="postgresql" user="postgres" password="Secret1!" database="TflNorthwind" />
+    <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
     <add name="output" 
          provider="elasticsearch" 
          server="localhost" 
          port="9200" 
-         index="northwind" 
-         version="7.9.3" />
+         index="NorthWind" 
+         version="7.8.0" />
   </connections>
   <entities>
     <add name="NorthWindFlat" version="TflBatchId" >
       <fields>
-        <add name="TflKey" alias="Key" type="int" primary-key="true" />
-        <add name="TflBatchId" alias="Version" type="int" />
+        <add name="TflKey" alias="Key" type="long" primary-key="true" />
+        <add name="TflBatchId" alias="Version" type="long" />
         <add name="Revenue" type="decimal" precision="19" scale="2" />
         <add name="Freight" type="decimal" precision="19" scale="4" />
         <add name="OrderDate" type="datetime" />
-        <add name="OrderYear" type="int" />
+        <add name="OrderYear" type="long" />
         <add name="OrderMonthSortable" />
         <add name="Country" length="15" />
         <add name="CategoryName" length="15" />
@@ -842,7 +822,182 @@ A quick query in your browser can confirm records loaded:
 }
 ```
 
-![NorthWind in Kibana](./Files/Demo/elasticserach-kibana-cp.gif "Northwind in Kibana")
+#### Kibana
+
+Kibana offers interactive dashboards based on Elasticsearch 
+indexes. Here's a quick 30 second video:
+
+[![NorthWind in Kibana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-kibana-youtube.png)](https://youtu.be/NzrFiG54foc "Northwind in Kibana")
+
+### Leveraging SOLR & Banana
+
+> Introducing the **solr** provider
+
+This section demonstrates how to load the flattened Northwind 
+data into [SOLR](http://lucene.apache.org/solr) 
+and view it with [Banana](https://github.com/lucidworks/banana).
+
+#### SOLR
+
+Start a new arrangement with this in your XML editor:
+
+```xml
+<cfg name="NorthWind">
+    <connections>
+        <add name="input" provider="sqlite" file="c:\temp\NorthWind.sqlite3" />
+        <add name="output" 
+             provider="solr" 
+             server="localhost" 
+             port="8983" 
+             path="solr" 
+             core="northwind" 
+             folder="C:\java\solr-6.6.0\server\solr" />
+    </connections>
+    <entities>
+        <add name="NorthWindFlat" version="TflBatchId">
+            <fields>
+                <add name="TflKey" alias="Key" type="long" primary-key="true" />
+                <add name="TflBatchId" alias="Version" type="long" />
+                <add name="Revenue" type="decimal" precision="19" scale="2" />
+                <add name="Freight" type="decimal" precision="19" scale="4" />
+                <add name="OrderDate" type="datetime" />
+                <add name="OrderYear" type="long" />
+                <add name="OrderMonthSortable" />
+                <add name="Country" length="15" />
+                <add name="CategoryName" length="15" />
+            </fields>
+        </add>
+    </entities>
+</cfg>
+```
+
+Save as *NorthWindToSOLR.xml* and run:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml -m init</strong>
+info  | NorthWind | NorthWindFlat | Starting
+info  | NorthWind | NorthWindFlat | 2155 from input
+info  | NorthWind | NorthWindFlat | 2155 to output
+info  | NorthWind | NorthWindFlat | Ending
+info  | NorthWind |               | Time elapsed: 00:00:06
+
+<strong>>tfl -ac:\Temp\NorthWindToSOLR.xml</strong>
+info  | NorthWind | NorthWindFlat | Starting
+info  | NorthWind | NorthWindFlat | Change Detected: No.
+info  | NorthWind |               | Time elapsed: 00:00:00.285
+</pre>
+
+A quick query in your browser can confirm the records loaded:
+
+[http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json](http://localhost:8983/solr/northwind/select?indent=on&q=*:*&rows=0&wt=json)
+
+```json
+{
+    "responseHeader": {
+        "status": 0,
+        "QTime": 0,
+        "params": {
+            "q": "*:*",
+            "indent": "on",
+            "rows": "0",
+            "wt": "json"
+        }
+    },
+    "response": {
+        "numFound": 2155,
+        "start": 0,
+        "docs": []
+    }
+}
+```
+
+#### Banana
+
+Similar to Kibana, Banana offers interactive dashboards.  However, it's 
+works against SOLR indexes instead of Elasticsearch. Here's a quick 20 second video:
+
+[![NorthWind in Banana](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-banana-youtube.png)](https://youtu.be/59t5HJRsv_4 "Northwind in Banana")
+
+### Leveraging SQL Server [Analysis Services](https://en.wikipedia.org/wiki/Microsoft_Analysis_Services) (SSAS) & Excel
+
+> * Introducing the **sqlserver** provider
+> * the **ssas** provider
+> * the `measure` and `dimension` attributes on `fields`
+
+This section demonstrates loading the data into a *SSAS* 
+cube and browsing it with Excel.  To follow along, 
+you'll need a local instance of Analysis Services, and Excel.
+
+The SSAS provider only works with a SQL Server input, so first 
+make a database called `TflNorthWind`, and then modify 
+the *NorthWind.xml* arrangement to output to SQL Server 
+instead of SQLite:
+
+```xml
+<cfg name="NorthWind" flatten="true">
+  <connections>
+    <add name="input" provider="sqlserver" server="localhost" database="NorthWind"/>
+    <!-- change output to ... -->
+    <add name="output" 
+         provider="sqlserver" 
+         server="localhost"
+         database="TflNorthWind" />
+  </connections>
+  <!-- clipped for brevity -->
+</cfg>
+```
+
+Run this in `init` mode to load `NorthWindFlat` into 
+SQL Server. Then, create a new arrangement:
+
+```xml
+<cfg name="NorthWind">
+    <connections>
+        <add name="input" provider="sqlserver" server="localhost" database="TflNorthWind" />
+        <add name="output" provider="ssas" server="localhost" database="NorthWind" />
+    </connections>
+    <entities>
+        <add name="NorthWindFlat" version="TflBatchId" alias="Properties" >
+            <fields>
+                <add name="TflKey" type="int" primarykey="true" alias="Key" />
+                <add name="TflBatchId" type="int" alias="Version" />
+                <add name="Revenue" type="decimal" scale="2" measure="true" format="$###,###,###.00" />
+                <add name="Freight" type="decimal" precision="19" scale="4" measure="true" format="$###,###,###.00" />
+                <add name="OrderYear" type="int" dimension="true" />
+                <add name="OrderMonthSortable" />
+                <add name="Country" length="15" />
+                <add name="EmployeeID" type="int" measure="true" aggregate-function="distinctcount" label="Employees" />
+                <add name="CategoryName" length="15" />
+            </fields>
+        </add>
+    </entities>
+</cfg>
+```
+
+Save this as *NorthWindToSSAS.xml* and run it:
+
+<pre style="font-size:smaller;">
+<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml -m init</strong>
+info  | NorthWind | Properties | Creating new OLAP database: NorthWind
+info  | NorthWind | Properties | Creating new data source: TflNorthWind
+info  | NorthWind | Properties | Creating new data source view: NorthWind
+info  | NorthWind | Properties | Creating new dimension: Properties
+info  | NorthWind | Properties | Creating new cube: NorthWind
+info  | NorthWind | Properties | Processing OLAP database NorthWind
+info  | NorthWind |            | Time elapsed: 00:00:03.52
+
+<strong>>tfl -a c:\Temp\NorthWindToSSAS.xml</strong>
+info  | NorthWind | Properties | Change Detected: No.
+info  | NorthWind |            | Time elapsed: 00:00:00.58
+</pre>
+
+This example marks some fields as [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) 
+and others as [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) attributes.  This 
+is needed to accurately describe the cube.  Here is a short video showing Excel browse the resulting cube.
+
+[![NorthWind in Excel](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-excel-youtube.png)](https://youtu.be/X23pVSuxN64 "Northwind in Excel")
+
+Note: The SSAS output is still under development and only tested on SQL Server 2008 R2.
 
 ### Leveraging the Orchard Core CMS Module
 
@@ -860,29 +1015,35 @@ The [OrchardCore.Transformalize](https://github.com/dalenewman/OrchardCore.Trans
 * export search results
 * compose bulk actions; select records from your report and run tasks on them.
 
-Here's a quick video of a Northwind report using the Elasticsearch provider we loaded earlier:
+Here's a quick video of a Northwind report using the Elasticsearch 
+provider we loaded earlier:
 
-![NorthWind in Orchard Core CMS](./Files/Demo/orchardcore-transformalize-cp.gif "Northwind in Orchard Core")
+[![NorthWind in Orchard CMS](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-in-orchard-cms-youtube.png)](https://youtu.be/CCTvjsrUtHk "Northwind in Orchard CMS")
+
 The arrangement for this is:
 
 ```xml
 <cfg name="NorthWind">
+  <parameters>
+    <add name="orderyear" label="Year" value="*" prompt="true" multiple="true" />
+    <add name="categoryname" label="Category" value="*" prompt="true" />
+  </parameters>
   <connections>
-    <add name="input" 
-         provider="elasticsearch" 
-         server="host.docker.internal" 
-         index="northwind" 
-         version="7.9.3" />
+    <add name="input" provider="elasticsearch" index="northwind" />
   </connections>
   <entities>
     <add name="northwindflat" alias="NorthWind" page="1" size="10" sortable="true" >
+      <filter>
+        <add field="orderyear" value="@[orderyear]" type="facet" min="0" />
+        <add field="categoryname" value="@[categoryname]" type="facet" />
+      </filter>
       <fields>
-        <add name="tflkey" alias="Key" type="long" primary-key="true" output="false" />
-        <add name="orderyear" type="long" label="Year" parameter="facet" />
-        <add name="ordermonthsortable" label="Month" parameter="facet" />
+        <add name="orderyear" type="long" label="Year" />
+        <add name="ordermonthsortable" label="Month" />
         <add name="orderdate" type="datetime" label="Date" format="yyyy-MM-dd" />
+        <add name="tflkey" alias="Key" type="long" primary-key="true" output="false" />
         <add name="country" label="Country" length="15" />
-        <add name="categoryname" length="15" label="Category" parameter="facet" />
+        <add name="categoryname" length="15" label="Category" />
         <add name="freight" label="Freight" type="decimal" precision="19" scale="4" format="$#,###,###.00" />
         <add name="revenue" label="Revenue" type="decimal" precision="19" scale="2" format="$#,###,###.00" />
       </fields>
@@ -890,3 +1051,40 @@ The arrangement for this is:
   </entities>
 </cfg>
 ```
+
+#### Parameters
+
+> Introducing the **`name`**, **`label`**, **`value`**, **`prompt`**, and **`multiple`** attributes for **`parameters`**
+
+Parameters allow you to pass in data from outside your arrangement. 
+They may be used to manipulate attribute values in the arrangement. 
+The parameter place-holders (e.g. `@[orderyear]`) are replaced with 
+a provided or default value before validation.
+
+Parameters are visible in report mode when `prompt` is set to `true`.
+
+#### Filter
+
+> Introducing the **`field`**, **`operator`**, **`value`**, **`expression`**, and **`type`** attributes for each **`filter`**
+
+Filters allow you to limit your output. A filter is set in two ways:
+
+1. by setting `field`, `operator`, and `value` 
+2. by setting a provider-specific `expression`
+
+Either way, you may use parameters to manipulate your filters at run-time.
+
+A filter's type to may be *facet*, *search*, or *filter*.  Facet and search 
+types affect the way your parameters are presented. 
+
+*Update*: In the Orchard Core module, there is a short-cut for defining parameterized filters.  Add a `parameter` 
+attribute to your field with the value *facet*, *facets*, or *search*. 
+
+#### Paging
+
+Without paging, web-based reporting gets too big for 
+the browser.  All providers are capable of paging, 
+but SOLR and Elasticsearch do it the best.
+
+### Build Notes
+Clone.  Build with Visual Studio 2019.  You'll need the SlowCheetah extension.
