@@ -7,11 +7,11 @@ search engines, etc. The supported inputs and outputs are below.
 <table class="table table-condensed">
     <thead>
       <tr>
-         <th colspan="3">Cross Platform</th>
+         <th colspan="3" style="text-align:center">Cross Platform</th>
       </tr>
         <tr>
             <th>Relational</th>
-            <th colspan="2">Non-Relational</th>
+            <th colspan="2" style="text-align:center">Non-Relational</th>
         </tr>
     </thead>
     <tbody>
@@ -65,6 +65,10 @@ search engines, etc. The supported inputs and outputs are below.
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.CsvHelper">Files</a></td>
                             <td>In/Out</td>
                         </tr>
+                        <tr>
+                            <td> </td>
+                            <td> </td>
+                        </tr>                        
                     </tbody>
                 </table>
             </td>
@@ -105,11 +109,11 @@ search engines, etc. The supported inputs and outputs are below.
 <table class="table table-condensed">
     <thead>
       <tr>
-         <th colspan="3">Windows Only<span style="font-size:smaller"></span></th>
+         <th colspan="3" style="text-align:center">Windows Only<span style="font-size:smaller"></span></th>
       </tr>
       <tr>
          <th>Relational</th>
-         <th colspan="2">Non-Relational</th>
+         <th colspan="2" style="text-align:center">Non-Relational</th>
       </tr>
     </thead>
     <tbody>
@@ -130,6 +134,14 @@ search engines, etc. The supported inputs and outputs are below.
                         <tr>
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
                             <td>In/Out</td>
+                        </tr>
+                        <tr>
+                            <td> &nbsp;</td>
+                            <td> &nbsp;</td>
+                        </tr>
+                        <tr>
+                            <td> &nbsp;</td>
+                            <td> &nbsp;</td>
                         </tr>
                     </tbody>
                 </table>
@@ -183,6 +195,10 @@ search engines, etc. The supported inputs and outputs are below.
                             <td><a href="https://github.com/dalenewman/Transformalize.Provider.ActiveDirectory">Active Directory</a></td>
                             <td>In</td>
                         </tr>
+                        <tr>
+                            <td> </td>
+                            <td> </td>
+                        </tr>                        
                     </tbody>
                 </table>
             </td>
@@ -197,26 +213,25 @@ search engines, etc. The supported inputs and outputs are below.
 
 This *readme* demonstrates how to denormalize a relational database and load it into Elasticsearch.
  
-To follow along, you need:
+To follow along:
 
-* The [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
-* [Visual Studio Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
-  * Update Transformalize path in VS Code settings.
-* Setup [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
+* Grab the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
+* Install [VS Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize) and update the Transformalize path in VS Code settings.
+* Setup SQL Server and PostgreSQL per thes [wiki](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites) instructions.
 
-For your convenience, here is part of NorthWind's database schema:
+When you start denormalizing a database, it's good to have a diagram handy. 
+Here is part of NorthWind's schema:
 
-<img src="https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
+<img src="./Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-The above shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+It shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
 tables that all relate to *Order Details*. 
 
 > This section introduces `<connections/>`, and `<entities/>`.
 
-Transformalize arrangements are stored in [XML](https://en.wikipedia.org/wiki/XML), [JSON](https://en.wikipedia.org/wiki/JSON), 
-or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code. 
+Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).  I use XML because it's pointy.
 
-Open VS Code and paste this in:
+To get started, open VS Code and paste this in:
 
 ```xml
 <cfg name="NorthWind" read-only="true">
@@ -229,19 +244,8 @@ Open VS Code and paste this in:
 </cfg>
 ```
 
-The arrangment above defines an *input* as the Northwind database's `Order Details` table.
-
-Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This runs *NorthWind.xml* with the command line interface and may be done without VS Code.  The output should look like this:
-
-<pre style="font-size:smaller;">
-<strong>> tfl -a NorthWind.xml</strong>
-OrderID,ProductID,UnitPrice,Quantity,Discount
-10248,11,14.0000,12,0
-10248,42,9.8000,10,0
-10248,72,34.8000,5,0
-10249,14,18.6000,9,0
-10249,51,42.4000,40,0
-</pre>
+It defines an *input* as the Northwind database's `Order Details` table. 
+Save it as *NorthWind.xml* and then press CTRL-P to find and execute the `tfl:run` command. 
 
 ![Step01](./Files/Demo/step01-cp.gif "Step 1")
 
@@ -251,7 +255,7 @@ we have to define input fields.
 
 > Introducing `<fields/>`.
 
-We could hand-write fields, or press CTRL-P and run the the `tfl:schema` command:
+If we knew the field names and types, we could write them in.  But, that is painful and error prone.  Instead, press CTRL-P to find and execute the `tfl:schema` command:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m schema</strong>
@@ -266,9 +270,9 @@ We could hand-write fields, or press CTRL-P and run the the `tfl:schema` command
 ...
 </pre>
 
-Instead of reading the records, `tfl:schema` mode 
-reads the schema and returns the arrangement. Copy the `<fields/>` from the 
-output into your arrangement like this:
+Rather than reading the records, `tfl:schema` reads and returns 
+the schema of the arrangement. Copy the `<fields/>` from the output into 
+your arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -292,7 +296,7 @@ output into your arrangement like this:
 
 > Introducing **`<calculated-fields/>`**, the **`t`** attribute, and the **`js`** and **`round`** transformations
 
-Now you may calculate a new field. Place **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
+Now we may add **`<calculated-fields/>`** right after **`<fields/>`** and add *Revenue* like this:
 
 ```xml
 <calculated-fields>
@@ -301,7 +305,8 @@ Now you may calculate a new field. Place **`<calculated-fields/>`** right after 
        t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```
-Now run `tfl`:
+Execute `tfl:run` and it should produce this output:
+
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
 OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
@@ -313,7 +318,7 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 ...
 </pre>
 
-*Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You may chain transformations as long as the output of one is compatible with the input of another.
+*Revenue* is created by the **js** (JavaScript) and **round** [transformations](./Containers/Autofac/Transformalize.Container.Autofac.Shared/TransformBuilder.cs).  You may chain transformations as long as the output of one is compatible with the input of another.
 
 ![Step02](./Files/Demo/step02-cp.gif "Step 2")
 
@@ -321,32 +326,21 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 
 > Introducing **`init`** mode
 
-Now let's save the output.  To do this, we have to:
+Let's save *all* the `Order Details` into an output. To do this:
 
-1. Add a `mode` attribute and set it to *init*.
-2. Remove the `read-only` attribute.
-3. Define the output as a PostgreSql database named TflNorthwind in `<connections/>`.
+1. Remove the `read-only` attribute.
+1. Remove the `page` and `size` attributes.
+1. Define the output as a PostgreSql database named TflNorthwind in `<connections/>`.
 
 ```xml
 <connections>
     <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
-    <!-- add the output here -->
+    <!-- define output here -->
     <add name="output" provider="postgres" user="postgres" password="Secret1!" database="TflNorthwind" />
 </connections>
 ```
-In addition, remove the `page` and `size` attributes in the `Order Details` entity so we save all 2155 records.
 
-### Initialization
-
-Initializing is required anytime you're creating or changing an arrangement's output structure.
-
-It does three things:
-
-1. destroys pre-existing output structures
-2. creates output structures
-3. bulk inserts data.
-
-Go ahead and press CTRL-P and run the `tfl:init` command.
+Press CTRL-P to find and run the `tfl:init` command.
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m init</strong>
@@ -355,6 +349,16 @@ info  | NorthWind | Order Details | 2155 from input
 info  | NorthWind | Order Details | 2155 inserts into output
 info  | NorthWind | Order Details | Ending 00:00:03.89
 </pre>
+
+### Initialization
+
+Initializing is required anytime you create or change an arrangement's output structure.
+
+It does three things:
+
+1. destroys pre-existing output structures
+2. creates output structures
+3. bulk inserts data.
 
 ![Step03](./Files/Demo/step03-cp.gif "Step 3")
 
