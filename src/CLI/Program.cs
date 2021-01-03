@@ -57,6 +57,10 @@ namespace Transformalize.Cli {
                Environment.Exit(1);
             }
 
+            if (options.Mode != "default") {
+               process.Mode = options.Mode;
+            }
+
             var providers = new List<Autofac.Core.IModule> {
                new ConsoleProviderModule()
             };

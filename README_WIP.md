@@ -200,8 +200,9 @@ This *readme* demonstrates how to denormalize a relational database and load it 
 To follow along, you need:
 
 * The [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
-* [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
-* To satisfy the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites)
+* [Visual Studio Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
+  * Update Transformalize path in VS Code settings.
+* Setup [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
 
 For your convenience, here is part of NorthWind's database schema:
 
@@ -230,9 +231,7 @@ Open VS Code and paste this in:
 
 The arrangment above defines an *input* as the Northwind database's `Order Details` table.
 
-Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This 
-runs *NorthWind.xml* with the CLI (`tfl.exe`) and may be done without VS Code.  The output 
-should look like this:
+Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This runs *NorthWind.xml* with the command line interface and may be done without VS Code.  The output should look like this:
 
 <pre style="font-size:smaller;">
 <strong>> tfl -a NorthWind.xml</strong>
@@ -244,7 +243,7 @@ OrderID,ProductID,UnitPrice,Quantity,Discount
 10249,51,42.4000,40,0
 </pre>
 
-![Step01](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step01.gif "Step 1")
+![Step01](./Files/Demo/step01-cp.gif "Step 1")
 
 Transformalize detected field names and read 5 rows. 
 This is nice, but in order to modify or create new fields, 
@@ -255,7 +254,7 @@ we have to define input fields.
 We could hand-write fields, or press CTRL-P and run the the `tfl:schema` command:
 
 <pre style="font-size:smaller;">
-> tfl -a NorthWind.xml <strong>-m check</strong>
+> tfl -a NorthWind.xml <strong>-m schema</strong>
 ...
 &lt;fields&gt;
   &lt;add name="OrderID" type="int" primary-key="true" /&gt;
@@ -274,7 +273,7 @@ output into your arrangement like this:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" provider="sqlce" file="northwind.sdf" />
+    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5">
@@ -314,32 +313,32 @@ OrderID,ProductID,UnitPrice,Quantity,Discount,<strong>Revenue</strong>
 ...
 </pre>
 
-*Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You 
-may chain transformations as long as the output of one is compatible with the input of another.
+*Revenue* is created by the **js** (JavaScript) and **round** [transformations](https://github.com/dalenewman/Transformalize/blob/master/Pipeline.Ioc.Autofac/Modules/TransformModule.cs).  You may chain transformations as long as the output of one is compatible with the input of another.
 
-![Step02](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step02.gif "Step 2")
+![Step02](./Files/Demo/step02-cp.gif "Step 2")
 
 ### Output
 
 > Introducing **`init`** mode
 
-Define the output as a [SQLite](https://en.wikipedia.org/wiki/SQLite) 
-database.  Add an output in `<connections/>` (see below).  Also, 
-remove the `page` and `size` attributes in the `Order Details` entity 
-so we get all the records.
+Now let's save the output.  To do this, we have to:
+
+1. Add a `mode` attribute and set it to *init*.
+2. Remove the `read-only` attribute.
+3. Define the output as a PostgreSql database named TflNorthwind in `<connections/>`.
 
 ```xml
 <connections>
-    <add name="input" provider="sqlce" file="northwind.sdf" />
+    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
     <!-- add the output here -->
-    <add name="output" provider="sqlite" file="northwind.sqlite3" />
+    <add name="output" provider="postgres" user="postgres" password="Secret1!" database="TflNorthwind" />
 </connections>
 ```
+In addition, remove the `page` and `size` attributes in the `Order Details` entity so we save all 2155 records.
 
 ### Initialization
 
-Initializing is required anytime you're creating or changing an 
-arrangement's output structure.
+Initializing is required anytime you're creating or changing an arrangement's output structure.
 
 It does three things:
 
@@ -353,14 +352,13 @@ Go ahead and press CTRL-P and run the `tfl:init` command.
 > tfl -a NorthWind.xml <strong>-m init</strong>
 <strong style="color:#FF7F50;">warn  | NorthWind | Order Details | Initializing</strong>
 info  | NorthWind | Order Details | 2155 from input
-info  | NorthWind | Order Details | 2155 inserts into output Order Details
-info  | NorthWind | Order Details | Ending 00:00:00.67
+info  | NorthWind | Order Details | 2155 inserts into output
+info  | NorthWind | Order Details | Ending 00:00:03.89
 </pre>
 
-![Step03](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/Demo/Step03.gif "Step 3")
+![Step03](./Files/Demo/step03-cp.gif "Step 3")
 
-Note that writing *Order Details* into SQLite frees up 
-the console for logging.
+Note that writing *Order Details* into PostgreSQL frees up the console for logging.
 
 #### Mapping
 
