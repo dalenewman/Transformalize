@@ -55,7 +55,7 @@ namespace Transformalize.Command {
             builder.Register(ctx => new QuartzJobFactory(_options, ctx.Resolve<IPipelineLogger>())).As<IJobFactory>().SingleInstance();
 
             builder.Register<IScheduler>((ctx, p) => {
-                if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "check")) {
+                if (string.IsNullOrEmpty(_options.Schedule) || _options.Mode != null && _options.Mode.In("init", "schema")) {
                     return new NowScheduler(_options, ctx.Resolve<ISchemaHelper>(), ctx.Resolve<IPipelineLogger>());
                 }
 

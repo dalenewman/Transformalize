@@ -49,7 +49,7 @@ namespace Transformalize.Command {
                     }
                 }
 
-                if (_options.Mode != null && _options.Mode.ToLower() == "check") {
+                if (_options.Mode != null && _options.Mode.ToLower() == "schema") {
                     SimplifyForOutput(process);
                     Console.WriteLine(process.Serialize());
                     return;

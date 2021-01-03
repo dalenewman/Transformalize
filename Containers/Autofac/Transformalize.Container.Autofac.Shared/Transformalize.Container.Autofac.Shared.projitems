@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Modules\InternalModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NullPlaceHolderReplacer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PipelineAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SchemaService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformHolder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TransformBuilder.cs" />

@@ -23,6 +23,7 @@ using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Fluid.Autofac;
 using Transformalize.Transforms.Humanizer.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
+using Transformalize.Context;
 
 namespace Transformalize.Cli {
    class Program {
@@ -95,6 +96,24 @@ namespace Transformalize.Cli {
             // solr
 
             var modules = providers.Union(operations).ToArray();
+
+            if (options.Mode.ToLower()  == "schema") {
+               using (var inner = new Container(modules).CreateScope(process, logger)) {
+                  process = new SchemaService(inner).GetProcess(process);
+                  process.Connections.Clear();
+                  Console.WriteLine(process.Serialize());
+                  Environment.Exit(0);
+               }
+            } else if (process.Entities.Count == 1 && !process.Entities[0].Fields.Any(f => f.Input)) {
+               using (var inner = new Container(modules).CreateScope(process, logger)) {
+                  if (new SchemaService(inner).Help(process)) {
+                     process.Load();
+                  } else {
+                     Console.Error.WriteLine($"Unable to detect fields in {process.Entities[0].Name}.");
+                     Environment.Exit(1);
+                  }
+               }
+            }
 
             using (var inner = new Container(modules).CreateScope(process, logger)) {
                inner.Resolve<IProcessController>().Execute();

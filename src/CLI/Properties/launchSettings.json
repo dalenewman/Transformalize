@@ -2,7 +2,7 @@
   "profiles": {
     "CLI": {
       "commandName": "Project",
-      "commandLineArgs": "-a arrangements\\bogus-to-razor.xml -p File=bogus.html"
+      "commandLineArgs": "-a \"\\\\wsl$\\Ubuntu\\home\\dalenewman\\code\\readme\\readme.xml\""
     }
   }
 }

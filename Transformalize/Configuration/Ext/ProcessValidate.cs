@@ -288,7 +288,7 @@ namespace Transformalize.Configuration.Ext {
             // count check
             if (p.Entities.Count > 1 && p.Relationships.Count + 1 < p.Entities.Count) {
                var message = $"You have {p.Entities.Count} entities so you need {p.Entities.Count - 1} relationships. You have {p.Relationships.Count} relationships.";
-               if (p.Mode == "check") {
+               if (p.Mode == "schema") {
                   warn(message);
                } else {
                   error(message);
@@ -314,7 +314,7 @@ namespace Transformalize.Configuration.Ext {
                      relationship.Summary.LeftFields.Add(field);
                   } else {
                      var message = $"A relationship references a left-field that doesn't exist: {leftField}";
-                     if (p.Mode == "check") {
+                     if (p.Mode == "schema") {
                         warn(message);
                      } else {
                         error(message);
@@ -324,7 +324,7 @@ namespace Transformalize.Configuration.Ext {
                }
             } else {
                var message = $"A relationship references a left-entity that doesn't exist: {relationship.LeftEntity}";
-               if (p.Mode == "check") {
+               if (p.Mode == "schema") {
                   error(message);
                } else {
                   warn(message);
@@ -340,7 +340,7 @@ namespace Transformalize.Configuration.Ext {
                      relationship.Summary.RightFields.Add(field);
                   } else {
                      var message = $"A relationship references a right-field that doesn't exist: {rightField}";
-                     if (p.Mode == "check") {
+                     if (p.Mode == "schema") {
                         warn(message);
                      } else {
                         error(message);
@@ -350,7 +350,7 @@ namespace Transformalize.Configuration.Ext {
                   }
                }
             } else {
-               if (p.Mode == "check") {
+               if (p.Mode == "schema") {
                   warn($"A relationship references a right-entity that doesn't exist: {relationship.RightEntity}");
                } else {
                   error($"A relationship references a right-entity that doesn't exist: {relationship.RightEntity}");

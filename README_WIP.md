@@ -201,7 +201,7 @@ To follow along, you need:
 
 * The [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
 * [Visual Studio Code](https://code.visualstudio.com/) with the [Transformalize extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize).
-* Satisfy the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites)
+* To satisfy the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites)
 
 For your convenience, here is part of NorthWind's database schema:
 
@@ -218,9 +218,9 @@ or [C#](https://en.wikipedia.org/wiki/C_Sharp_(programming_language)) code.
 Open VS Code and paste this in:
 
 ```xml
-<cfg name="NorthWind">
+<cfg name="NorthWind" read-only="true">
   <connections>
-    <add name="input" provider="sqlce" file="northwind.sdf" />
+    <add name="input" provider="sqlserver" user="sa" password="Secret1!" database="Northwind" />
   </connections>
   <entities>
     <add name="Order Details" page="1" size="5" />
@@ -228,7 +228,7 @@ Open VS Code and paste this in:
 </cfg>
 ```
 
-The arrangment above defines the *input* as the *northwind.sdf* database's `Order Details` table. 
+The arrangment above defines an *input* as the Northwind database's `Order Details` table.
 
 Save it as *NorthWind.xml*, then press CTRL-P and execute the `tfl:run` command.  This 
 runs *NorthWind.xml* with the CLI (`tfl.exe`) and may be done without VS Code.  The output 

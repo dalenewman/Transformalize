@@ -11,7 +11,7 @@ namespace Transformalize.Cli {
       [Option('a', "arrangement", Required = true, HelpText = "An arrangement (aka configuration) file, or url. Note: you may add an optional query string.")]
       public string Arrangement { get; set; }
 
-      [Option('m', "mode", Default = "default", Required = false, HelpText = "A system or user-defined mode (init, check, default, etc).")]
+      [Option('m', "mode", Default = "default", Required = false, HelpText = "A system or user-defined mode (init, schema, default, etc).")]
       public string Mode { get; set; }
 
       [Option('f', "format", Default = "csv", Required = false, HelpText = "Output format for console provider (csv, json).")]

@@ -37,19 +37,6 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Label { get; set; }
 
-      [Obsolete("Please use Input instead.")]
-      [Cfg(value = Constants.DefaultSetting, toLower = true)]
-      public string Connection {
-         get => _connection;
-         set {
-            _connection = value;
-            if (value != null && value != Constants.DefaultSetting) {
-               Input = value;
-               Warn("The entity's connection property is obsolete.  Please use the input property instead.");
-            }
-         }
-      }
-
       /// <summary>
       /// References the name of the input connection for this entity.
       /// </summary>
