@@ -1,6 +1,11 @@
 # Transformalize
 
-Transformalize is a configuration based ETL tool that automates denormalizing relational data into data warehouses, search engines, etc.  The supported inputs and outputs are below. 
+Transformalize is a configuration based ETL tool that automates 
+incremental denormalization of relational data.  It may be 
+used for other types of [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
+as well.  
+
+The supported inputs and outputs are below. 
 
 <div class="table-responsive" style="font-size:smaller;">
 <table class="table table-condensed">
@@ -216,20 +221,19 @@ To follow along:
 
 * Grab the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
 * Install [VS Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize) and update the Transformalize path in VS Code settings.
-* Setup SQL Server and PostgreSQL per thes [wiki](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites) instructions.
+* Setup these [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
 
-When you start denormalizing a database, it's good to have a diagram handy. 
-Here is part of NorthWind's schema:
+When you start denormalizing a database, it's good to have a diagram. 
 
 <img src="./Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-It shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables that all relate to *Order Details*. 
+This shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
+tables related to *Order Details*. 
 
-> This section introduces `<connections/>`, and `<entities/>`.
+> This section introduces `<connections/>`, `<entities/>`, and the `page` and `size` attributes.
 
-Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).  They are validated before execution 
-and provide errors and warnings if necessary.
+Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON). 
+They are validated before execution.
 
 To get started, open VS Code and paste this in:
 
@@ -244,18 +248,17 @@ To get started, open VS Code and paste this in:
 </cfg>
 ```
 
-It defines an *input* as the Northwind database's `Order Details` table. 
-Save it as *NorthWind.xml* and then press CTRL-P to find and execute the `tfl:run` command. 
+This defines an *input* as the `Order Details` table inside the Northwind database. 
+Save it as *NorthWind.xml* and press CTRL-P to find and execute the `tfl:run` command. 
 
 ![Step01](./Files/Demo/step01-cp.gif "Step 1")
 
-Transformalize detected field names and read 5 rows. 
-This is nice, but in order to modify or create new fields, 
-we have to define input fields.
+Transformalize returned the first page of rows from the `Order Details` table. 
+To transform and save this data, the `<fields/>` must be defined.
 
 > Introducing `<fields/>`.
 
-If we knew the field names and types, we could write them in.  But, that is painful and error prone.  Instead, press CTRL-P to find and execute the `tfl:schema` command:
+To see the schema, press CTRL-P to find and execute the `tfl:schema` command:
 
 <pre style="font-size:smaller;">
 > tfl -a NorthWind.xml <strong>-m schema</strong>
@@ -270,9 +273,7 @@ If we knew the field names and types, we could write them in.  But, that is pain
 ...
 </pre>
 
-Rather than reading the records, `tfl:schema` reads and returns 
-the schema of the arrangement. Copy the `<fields/>` from the output into 
-your arrangement like this:
+Copy the `<fields/>` from the output into your arrangement like this:
 
 ```xml
 <cfg name="NorthWind">
@@ -352,7 +353,7 @@ info  | NorthWind | Order Details | Ending 00:00:03.89
 
 ### Initialization
 
-Initializing is required anytime you create or change an arrangement's output structure.
+Initialization is required initially and any time the structure of the output is changed.
 
 It does three things:
 
@@ -362,12 +363,13 @@ It does three things:
 
 ![Step03](./Files/Demo/step03-cp.gif "Step 3")
 
-Note that writing *Order Details* into PostgreSQL frees up the console for logging.
+Note that writing *Order Details* into PostgreSQL frees up the standard output for logging.
 
 #### Mapping
 
 Transformalize doesn't *map* input to pre-existing output. Instead, it 
-creates a consistent output structure that is optimized for incremental updates.
+creates a control table and a consistent output structure 
+for handling incremental updates.  
 
 You decide:
 
@@ -383,13 +385,12 @@ You decide:
 
 An *initialization* is a full rebuild and may be time-consuming. So, by default, 
 Transformalize performs incrementals. To determine if an update or insert 
-is necessary, `tfl` compares input with output.
+is necessary, it compares input with output.
 
-While keys and hashes are used to compare, comparison is unnecessary 
+While keys and hashes are used, comparison is unnecessary 
 when an input's provider is queryable and has a row version. 
-A row version increments anytime the row is inserted or updated. 
-Many tables have these by design, but if not, you can add them to a 
-table like this:
+A row version increments when the row changes.  Many tables 
+have these by design, but if not, you can add them like this:
 
 ```sql
 /* SQL Server and SQL CE */
@@ -401,14 +402,15 @@ ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIME
 /* PostgreSql, use the system field xmin */
 ```
 
-To demonstrate incrementals, add a row version to each of the eight tables on the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for 
+To demonstrate incrementals, add a row version to each of the eight tables 
+in the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for 
 convenience.
 
-Once added, we have to let `tfl` know about `RowVersion` like this:
+Once added, we have add the `RowVersion` to our arrangement like this:
 
 ```xml
 <entities>
-                            <!-- mark it here -->
+                            <!-- Mark it here -->
   <add name="Order Details" version="RowVersion" >
     <fields>
       <add name="OrderID" type="int" primary-key="true" />
@@ -417,7 +419,7 @@ Once added, we have to let `tfl` know about `RowVersion` like this:
       <add name="Quantity" type="short" />
       <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
 
-      <!-- add (define) it here -->
+      <!-- It's a field, so define it here -->
       <add name="RowVersion" type="byte[]" length="8" />
     </fields>
   </add>
