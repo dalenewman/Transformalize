@@ -87,6 +87,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = Constants.DefaultSetting, domain = Constants.ProviderDomain, toLower = true)]
       public string Provider { get; set; }
 
+      [Cfg(value ="", toLower = true)]
+      public string Service { get; set; }
+
       [Cfg(value = "TopDirectoryOnly", domain = "AllDirectories,TopDirectoryOnly", ignoreCase = true)]
       public string SearchOption { get; set; }
 
@@ -245,6 +248,10 @@ namespace Transformalize.Configuration {
 
          if (Provider == "sqlce" && RequestTimeout != 0) {
             RequestTimeout = 0;
+         }
+
+         if (Provider == "aws" && Service == string.Empty) {
+            Error("The aws provider requires a service setting (e.g. provider='aws' service='logs').");
          }
       }
 

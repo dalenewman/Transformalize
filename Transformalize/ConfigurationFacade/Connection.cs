@@ -197,6 +197,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Synchronous { get; set; }
 
+      [Cfg]
+      public string Service { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -238,7 +241,8 @@ namespace Transformalize.ConfigurationFacade {
             User = this.User,
             Version = this.Version,
             WebMethod = this.WebMethod,
-            Scroll = this.Scroll
+            Scroll = this.Scroll,
+            Service = this.Service
          };
 
          bool.TryParse(this.Buffer, out bool buffer);
