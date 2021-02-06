@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.8.32-beta</Version>
+    <Version>0.8.33-beta</Version>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="bin\Debug\netcoreapp3.1\arrangements\bogus-too-flexible.xml" />

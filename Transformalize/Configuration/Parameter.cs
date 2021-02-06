@@ -134,6 +134,31 @@ namespace Transformalize.Configuration {
             Label = Name;
          }
 
+         if (InputType == "location") {
+            switch (InputType) {
+               case "latitude":
+                  break;
+               case "longitude":
+                  break;
+               case "altitude":
+                  break;
+               case "accuracy":
+                  break;
+               case "altitudeaccuracy":
+                  break;
+               case "heading":
+                  break;
+               case "speed":
+                  break;
+               default:
+                  Error("If input-type is location, input-capture must be latitude, longitude, altitude, accuracy, altitudeaccuracy, heading, or speed.");
+                  break;
+            }
+            if (Type != "double") {
+               Error("If input-type is location, type must be double.");
+            }
+         }
+
       }
 
       [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
