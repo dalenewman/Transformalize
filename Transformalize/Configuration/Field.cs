@@ -114,15 +114,14 @@ namespace Transformalize.Configuration {
          }
       }
 
-      [Obsolete("InputType is being moved to Parameter.")]
       [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,location,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
       public string InputType { get; set; }
 
-      [Obsolete("InputAccept is being moved to Parameter.")]
+      [Obsolete("InputAccept is only needed in Parameter.")]
       [Cfg(value = "", toLower = true)]
       public string InputAccept { get; set; }
 
-      [Obsolete("InputCapture is being moved to Parameter.")]
+      [Obsolete("InputCapture is only needed in Parameter.")]
       [Cfg(value = "", toLower = true)]
       public string InputCapture { get; set; }
 
