@@ -197,6 +197,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Synchronous { get; set; }
 
+      [Cfg]
+      public string Mars { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -294,6 +297,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Synchronous, out bool synchronous);
          c.Synchronous = synchronous;
+
+         bool.TryParse(this.Mars, out bool mars);
+         c.Mars = mars;
 
          return c;
       }

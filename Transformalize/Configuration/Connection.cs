@@ -352,6 +352,12 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Synchronous { get; set; }
 
+      /// <summary>
+      /// Mars = Multiple Active Result Sets.  This is a SQL Server specific connection string option.
+      /// </summary>
+      [Cfg(value = false)]
+      public bool Mars { get; set; }
+
       public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 
       protected override void PostValidate() {
