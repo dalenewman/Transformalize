@@ -51,8 +51,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Ext\ProcessPreValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Ext\ProcessValidate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Field.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\FieldSearchType.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\FieldSearchTypes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Filter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Join.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Map.cs" />
@@ -63,7 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Parameter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Process.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Relationship.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ResponseLog.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Schedule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Schema.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Configuration\Script.cs" />

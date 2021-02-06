@@ -222,7 +222,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Sticky { get; set; }
 
-      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
+      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,hidden,image,location,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
       public string InputType { get; set; }
 
       [Cfg(value = "", toLower = true)]
