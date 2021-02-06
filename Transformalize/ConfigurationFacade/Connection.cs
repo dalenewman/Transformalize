@@ -199,7 +199,9 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string Service { get; set; }
-      [Cfg]      public string Mars { get; set; }      
+      
+      [Cfg]
+      public string Mars { get; set; }      
       
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
