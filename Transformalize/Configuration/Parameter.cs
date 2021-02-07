@@ -135,7 +135,7 @@ namespace Transformalize.Configuration {
          }
 
          if (InputType == "location") {
-            switch (InputType) {
+            switch (InputCapture) {
                case "latitude":
                   break;
                case "longitude":
