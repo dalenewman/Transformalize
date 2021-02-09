@@ -44,11 +44,11 @@ namespace Transformalize.Providers.Console {
          // Start the child process.
          using (var p = new Process {
             StartInfo = {
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    FileName = _input.Connection.Command,
-                    Arguments = _input.Connection.Arguments
-                }
+               UseShellExecute = false,
+               RedirectStandardOutput = true,
+               FileName = _input.Connection.Command,
+               Arguments = _input.Connection.Arguments
+            }
          }) {
             if(_input.Connection.Folder != string.Empty) {
                p.StartInfo.WorkingDirectory = _input.Connection.Folder;

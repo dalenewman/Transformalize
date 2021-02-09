@@ -1,0 +1,21 @@
+﻿<cfg name="Test" read-only="true">
+   <connections>
+      <add name="input" provider="console" command="aws" 
+           arguments='iam list-users --output text --query "Users[*].[UserName,Arn,CreateDate,PasswordLastUsed,UserId]"' />
+      <add name="output" provider="console" />
+   </connections>
+   <entities>
+      <add name="Test">
+         <fields>
+            <add name="Line" length="4000" output="false" />
+         </fields>
+         <calculated-fields>
+            <add name="Username" t="copy(Line).split(&#09;).get(0)" />
+            <add name="Arn" t="copy(Line).split(&#09;).get(1)" />
+            <add name="CreateDate" t="copy(Line).split(&#09;).get(2)" />
+            <add name="PasswordLastUsed" t="copy(Line).split(&#09;).get(3)" />
+            <add name="UserId" t="copy(Line).split(&#09;).get(4)" />
+         </calculated-fields>
+      </add>
+   </entities>
+</cfg>
