@@ -365,6 +365,12 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Mars { get; set; }
 
+      /// <summary>
+      /// Used to optionally tell postgresql to enclose all identifiers (instead of just keywords).  Sometimes needed when table has been created with double quoted identifiers.
+      /// </summary>
+      [Cfg(value =false)]
+      public bool Enclose { get; set; }
+
       public Dictionary<int, string> Lines { get; set; } = new Dictionary<int, string>();
 
       protected override void PostValidate() {

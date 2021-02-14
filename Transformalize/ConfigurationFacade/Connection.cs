@@ -201,7 +201,10 @@ namespace Transformalize.ConfigurationFacade {
       public string Service { get; set; }
       
       [Cfg]
-      public string Mars { get; set; }      
+      public string Mars { get; set; }
+
+      [Cfg]
+      public string Enclose { get; set; }
       
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
@@ -304,6 +307,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Mars, out bool mars);
          c.Mars = mars;
+
+         bool.TryParse(this.Enclose, out bool enclose);
+         c.Enclose = enclose;
 
          return c;
       }
