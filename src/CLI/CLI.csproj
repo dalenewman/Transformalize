@@ -100,16 +100,17 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.31-beta" />
+    <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.35-beta" />
+    <PackageReference Include="Transformalize.Provider.Aws.CloudWatch.Autofac" Version="0.8.35-beta" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />
     <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.8.29-beta" />
-    <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.8.30-beta" />
+    <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.8.35-beta" />
     <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.8.30-beta" />
     <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.8.29-beta" />
-    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.8.29-beta" />
+    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.8.33-beta" />
     <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.8.31-beta" />
     <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.8.30-beta" />
     <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.8.29-beta" />
@@ -121,6 +122,9 @@
     <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="arrangements\loggroups.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="arrangements\bogus-to-razor.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

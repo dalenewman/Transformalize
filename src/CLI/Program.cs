@@ -24,6 +24,7 @@ using Transformalize.Transforms.Fluid.Autofac;
 using Transformalize.Transforms.Humanizer.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
 using Transformalize.Context;
+using Transformalize.Providers.Aws.CloudWatch.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -103,6 +104,7 @@ namespace Transformalize.Cli {
             providers.Add(new MySqlModule());
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
+            providers.Add(new AwsCloudWatchProviderModule());
             // solr
 
             var modules = providers.Union(operations).ToArray();
