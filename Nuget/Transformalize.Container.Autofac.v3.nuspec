@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Container.Autofac.v3</id>
-      <version>0.8.31-beta</version>
+      <version>0.8.35-beta</version>
       <title>basic autofac work for transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,13 +10,13 @@
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>basic autofac work for transformalize</description>
-      <releaseNotes>Updated Cfg-Net.Reader Dependency</releaseNotes>
-      <copyright>Copyright 2018-2020</copyright>
+      <releaseNotes>Updated Transformalize Dependency</releaseNotes>
+      <copyright>Copyright 2018-2021</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
             <dependency id="Autofac" version="3.5.2" />
-            <dependency id="Transformalize" version="0.8.31-beta" />
+            <dependency id="Transformalize" version="0.8.35-beta" />
             <dependency id="Cfg-NET.Environment" version="0.13.2-beta" />
             <dependency id="Cfg-NET.Reader" version="0.13.3-beta" />
             <dependency id="Cfg-NET.Shorthand" version="0.13.2-beta" />
