@@ -336,6 +336,12 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool UseSsl { get; set; }
 
+      /// <summary>
+      /// Added for mail provider
+      /// </summary>
+      [Cfg(value = false)]
+      public bool StartTls { get; set; }
+
       // for elasticsearch, a time unit of long to maintain a consistent view of the data for scrolling (exporting large result sets)
       [Cfg(value = "1m")]
       public string Scroll { get; set; }

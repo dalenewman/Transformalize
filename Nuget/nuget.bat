@@ -1,8 +1,8 @@
-REM nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 REM CONTAINERS
-nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
-nuget pack Transformalize.Container.Autofac.v3.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+REM nuget pack Transformalize.Container.Autofac.v3.nuspec -OutputDirectory "c:\temp\modules"
 
 REM MISC
 REM nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"

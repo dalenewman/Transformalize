@@ -180,6 +180,9 @@ namespace Transformalize.ConfigurationFacade {
       public string UseSsl { get; set; }
 
       [Cfg]
+      public string StartTls { get; set; }
+
+      [Cfg]
       public string Scroll { get; set; }
 
       [Cfg]
@@ -301,6 +304,9 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.UseSsl, out bool useSsl);
          c.UseSsl = useSsl;
+
+         bool.TryParse(this.StartTls, out bool startTls);
+         c.StartTls = startTls;
 
          bool.TryParse(this.Synchronous, out bool synchronous);
          c.Synchronous = synchronous;
