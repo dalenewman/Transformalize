@@ -70,8 +70,8 @@ The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
+                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Mail">Mail</a></td>
+                            <td>Out</td>
                         </tr>                        
                     </tbody>
                 </table>

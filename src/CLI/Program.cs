@@ -25,6 +25,7 @@ using Transformalize.Transforms.Humanizer.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
 using Transformalize.Context;
 using Transformalize.Providers.Aws.CloudWatch.Autofac;
+using Transformalize.Providers.Mail.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -105,6 +106,7 @@ namespace Transformalize.Cli {
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
             providers.Add(new AwsCloudWatchProviderModule());
+            providers.Add(new MailModule());
             // solr
 
             var modules = providers.Union(operations).ToArray();

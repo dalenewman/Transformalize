@@ -106,6 +106,7 @@
     <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />
     <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.8.29-beta" />
+    <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.8.38-beta" />
     <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.8.35-beta" />
     <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.8.30-beta" />
@@ -122,6 +123,9 @@
     <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="arrangements\mail.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="arrangements\loggroups.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

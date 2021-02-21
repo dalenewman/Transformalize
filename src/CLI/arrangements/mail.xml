@@ -1,0 +1,35 @@
+﻿<cfg name="Mail">
+
+   <connections>
+      <add name="input" provider="internal" />
+      <add name="output"
+           provider="mail"
+           server="smtp.sendgrid.net"
+           port="587"
+           startTls="true"
+           user="apikey"
+           password="*" />
+   </connections>
+
+   <entities>
+      <add name="Messages" >
+         <rows>
+            <add From="*"
+             To="dalenewman@gmail.com"
+             Cc=""
+             Bcc=""
+             Subject="Test Subject"
+             Body="Test Body" />
+         </rows>
+         <fields>
+            <add name="From" />
+            <add name="To" />
+            <add name="Cc" />
+            <add name="Bcc" />
+            <add name="Subject" />
+            <add name="Body" />
+         </fields>
+      </add>
+   </entities>
+
+</cfg>
