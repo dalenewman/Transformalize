@@ -3,6 +3,10 @@
     "CLI": {
       "commandName": "Project",
       "commandLineArgs": "-a \"arrangements/internal.xml\""
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "commandLineArgs": "-a https://gist.githubusercontent.com/dalenewman/d010b411ad79fbf634e7836a31eea232/raw"
     }
   }
 }
