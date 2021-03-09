@@ -4,7 +4,7 @@
       <TargetFramework>net5.0</TargetFramework>
       <AssemblyName>tfl</AssemblyName>
       <RootNamespace>Transformalize.Cli</RootNamespace>
-      <Version>0.8.33-beta</Version>
+      <Version>0.8.37-beta</Version>
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
       <DockerfileTag>transformalize.cli</DockerfileTag>
