@@ -292,6 +292,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = true)]
       public bool Output { get; set; }
 
+      [Cfg(value = "")]
+      public string Help { get; set; }
+
       public bool IsDecimalType() {
          return Constants.IsDecimalType(Type);
       }

@@ -125,6 +125,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Output { get; set; }
 
+      [Cfg]
+      public string Help { get; set; }
+
       public Configuration.Parameter ToParameter() {
 
          var parameter = new Configuration.Parameter {
@@ -147,7 +150,8 @@ namespace Transformalize.ConfigurationFacade {
             Class = this.Class,
             Length = this.Length,
             T = this.T,
-            V = this.V
+            V = this.V,
+            Help = this.Help
          };
 
          int.TryParse(this.Precision, out var precision);

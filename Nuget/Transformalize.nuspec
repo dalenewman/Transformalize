@@ -2,14 +2,14 @@
 <package>
    <metadata>
       <id>Transformalize</id>
-      <version>0.8.36-beta</version>
+      <version>0.8.37-beta</version>
       <title>Transformalize</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
       <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>The main Transformalize library</description>
-      <releaseNotes>added StartTls property for mail provider</releaseNotes>
+      <releaseNotes>fixed bug with regular expressions and string format help messages</releaseNotes>
       <copyright>Copyright © 2013-2021</copyright>
       <tags>etl,transformalize</tags>
       <license type="expression">Apache-2.0</license>
