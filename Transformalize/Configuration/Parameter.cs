@@ -295,6 +295,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Help { get; set; }
 
+      [Cfg(value = false)]
+      public bool AutoComplete { get; set; }
+
       public bool IsDecimalType() {
          return Constants.IsDecimalType(Type);
       }
