@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.8.38-beta</Version>
+    <Version>0.8.39-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
@@ -105,7 +105,8 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.35-beta" />
-    <PackageReference Include="Transformalize.Provider.Aws.CloudWatch.Autofac" Version="0.8.35-beta" />
+    <PackageReference Include="Transformalize.Provider.Amazon.Connect.Autofac" Version="0.8.38-beta" />
+    <PackageReference Include="Transformalize.Provider.Aws.CloudWatch.Autofac" Version="0.8.38-beta" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />
     <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.8.29-beta" />

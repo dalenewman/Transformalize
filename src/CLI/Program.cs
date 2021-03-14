@@ -6,6 +6,7 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
+using Transformalize.Context;
 using Transformalize.Providers.Ado.Autofac;
 using Transformalize.Providers.Bogus.Autofac;
 using Transformalize.Providers.Console;
@@ -23,9 +24,9 @@ using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Fluid.Autofac;
 using Transformalize.Transforms.Humanizer.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
-using Transformalize.Context;
 using Transformalize.Providers.Aws.CloudWatch.Autofac;
 using Transformalize.Providers.Mail.Autofac;
+using Transformalize.Providers.Amazon.Connect.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -106,6 +107,7 @@ namespace Transformalize.Cli {
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
             providers.Add(new AwsCloudWatchProviderModule());
+            providers.Add(new AmazonConnectProviderModule());
             providers.Add(new MailModule());
             // solr
 
