@@ -3,7 +3,7 @@
     <TargetFramework>netstandard1.0</TargetFramework>
     <RootNamespace>Transformalize</RootNamespace>
     <AssemblyName>Transformalize</AssemblyName>
-    <Version>0.8.38-beta</Version>
+    <Version>0.8.39-beta</Version>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Copyright>Copyright © 2013-2020 Dale Newman</Copyright>
     <Authors>Dale Newman</Authors>

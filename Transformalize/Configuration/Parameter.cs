@@ -298,6 +298,13 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool AutoComplete { get; set; }
 
+      /// <summary>
+      /// For web forms and tasks where a parameters may or may not need to be visible.
+      /// Most likely implemented by a JavaScript script that returns a true or false.
+      /// </summary>
+      [Cfg(value = "")]
+      public string Visible { get; set; }
+
       public bool IsDecimalType() {
          return Constants.IsDecimalType(Type);
       }

@@ -131,6 +131,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string AutoComplete { get; set; }
 
+      [Cfg]
+      public string Visible { get; set; }
+
       public Configuration.Parameter ToParameter() {
 
          var parameter = new Configuration.Parameter {
