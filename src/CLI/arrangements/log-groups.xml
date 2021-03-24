@@ -1,0 +1,21 @@
+﻿<cfg name="AwsCloudWatch" read-only="true">
+
+   <connections>
+      <add name="input" provider="aws" service="logs" command="describe-log-groups" />
+   </connections>
+
+   <entities>
+      <add name='LogGroups'>
+         <fields>
+            <add name='arn' primary-key='true' />
+            <add name='CreationTime' type='datetime' />
+            <add name='KmsKeyId' length='256' />
+            <add name='LogGroupName' length='512' />
+            <add name='MetricFilterCount' type='int' />
+            <add name='RetentionInDays' type='int' />
+            <add name='StoredBytes' type='long' />
+         </fields>
+      </add>
+   </entities>
+
+</cfg>

@@ -2,7 +2,7 @@
   "profiles": {
     "CLI": {
       "commandName": "Project",
-      "commandLineArgs": "-a \"arrangements/internal.xml\""
+      "commandLineArgs": "-a \"arrangements/instances-schema.xml\" -m schema"
     },
     "Docker": {
       "commandName": "Docker",

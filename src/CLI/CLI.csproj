@@ -105,8 +105,8 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
     <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.35-beta" />
-    <PackageReference Include="Transformalize.Provider.Amazon.Connect.Autofac" Version="0.8.38-beta" />
-    <PackageReference Include="Transformalize.Provider.Aws.CloudWatch.Autofac" Version="0.8.38-beta" />
+    <PackageReference Include="Transformalize.Provider.Amazon.Connect.Autofac" Version="0.8.39-beta" />
+    <PackageReference Include="Transformalize.Provider.Aws.CloudWatch.Autofac" Version="0.8.39-beta" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />
     <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.8.29-beta" />
@@ -128,10 +128,19 @@
     <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="arrangements\instances-schema.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="arrangements\instances.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="arrangements\log-groups-schema.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="arrangements\mail.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="arrangements\loggroups.xml">
+    <None Update="arrangements\log-groups.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="arrangements\bogus-to-razor.xml">

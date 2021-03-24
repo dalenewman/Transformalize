@@ -1,0 +1,23 @@
+﻿<cfg name="AmazonConnect" read-only="true">
+
+   <connections>
+      <add name="input" provider="aws" service="connect" command="list-instances" />
+   </connections>
+
+   <entities>
+      <add name='Instances'>
+         <fields>
+            <add name='arn' primary-key='true' />
+            <add name='CreatedTime' type='datetime' />
+            <add name='Id' length='100' />
+            <add name='IdentityManagementType' />
+            <add name='InboundCallsEnabled' type='bool' />
+            <add name='InstanceAlias' length='62' />
+            <add name='InstanceStatus' />
+            <add name='OutboundCallsEnabled' type='bool' />
+            <add name='ServiceRole' length='512' />
+         </fields>
+      </add>
+   </entities>
+
+</cfg>

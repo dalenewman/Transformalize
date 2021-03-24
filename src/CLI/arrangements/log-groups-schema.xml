@@ -1,0 +1,15 @@
+﻿<cfg name="AwsCloudWatch" read-only="true">
+
+   <connections>
+      <add name="input" provider="aws" service="logs" command="describe-log-groups" />
+   </connections>
+
+   <entities>
+      <add name='LogGroups'>
+         <fields>
+
+         </fields>
+      </add>
+   </entities>
+
+</cfg>

@@ -1,0 +1,14 @@
+﻿<cfg name="AmazonConnect" read-only="true">
+
+   <connections>
+      <add name="input" provider="aws" service="connect" command="list-instances" />
+   </connections>
+
+   <entities>
+      <add name='Instances'>
+         <fields>
+         </fields>
+      </add>
+   </entities>
+
+</cfg>
