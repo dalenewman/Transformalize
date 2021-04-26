@@ -33,9 +33,11 @@ namespace Transformalize.Transforms {
          if (IsMissingContext()) {
             return;
          }
-         if (IsMissing(Context.Operation.Separator)) {
-            return;
+
+         if (Context.Operation.Separator == Constants.DefaultSetting) {
+            Context.Operation.Separator = string.Empty;
          }
+
          _input = MultipleInput();
 
          var lastOperation = LastOperation();
@@ -77,7 +79,7 @@ namespace Transformalize.Transforms {
       public override IEnumerable<OperationSignature> GetSignatures() {
          return new[] {
                 new OperationSignature("join") {
-                    Parameters = new List<OperationParameter> {new OperationParameter("separator", ",")}
+                    Parameters = new List<OperationParameter> {new OperationParameter("separator")}
                 }
             };
       }

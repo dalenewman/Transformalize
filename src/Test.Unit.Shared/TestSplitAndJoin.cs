@@ -31,7 +31,7 @@ namespace Tests {
    public class TestSplitAndJoin {
 
       [TestMethod]
-      public void Join() {
+      public void SplitBySpace() {
 
          const string xml = @"
     <add name='TestProcess'>
@@ -64,6 +64,120 @@ namespace Tests {
                scope.Resolve<IProcessController>().Execute();
                var output = process.Entities.First().Rows;
                Assert.AreEqual("1-2-3-4", output[0]["Joined"]);
+            }
+         }
+      }
+
+      [TestMethod]
+      public void SplitByComma() {
+
+         const string xml = @"
+    <add name='TestProcess'>
+      <entities>
+        <add name='TestData'>
+          <rows>
+            <add Input='1,2,3' />
+          </rows>
+          <fields>
+            <add name='Input' />
+          </fields>
+          <calculated-fields>
+            <add name='Joined' t='copy(Input).split(,).reverse().join(-)' />
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>";
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         var transforms = new List<TransformHolder>() {
+            new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
+            new TransformHolder((c) => new SplitTransform(c), new SplitTransform().GetSignatures())
+         }.ToArray();
+
+         using (var cfgScope = new ConfigurationContainer(transforms).CreateScope(xml, logger)) {
+
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container(transforms).CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
+               var output = process.Entities.First().Rows;
+               Assert.AreEqual("3-2-1", output[0]["Joined"]);
+            }
+         }
+      }
+
+      [TestMethod]
+      public void SplitByCommas() {
+
+         const string xml = @"
+    <add name='TestProcess'>
+      <entities>
+        <add name='TestData'>
+          <rows>
+            <add Input='3,,2,,1' />
+          </rows>
+          <fields>
+            <add name='Input' />
+          </fields>
+          <calculated-fields>
+            <add name='Joined' t='copy(Input).split(,,).sort().join(-)' />
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>";
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         var transforms = new List<TransformHolder>() {
+            new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
+            new TransformHolder((c) => new SplitTransform(c), new SplitTransform().GetSignatures())
+         }.ToArray();
+
+         using (var cfgScope = new ConfigurationContainer(transforms).CreateScope(xml, logger)) {
+
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container(transforms).CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
+               var output = process.Entities.First().Rows;
+               Assert.AreEqual("--1-2-3", output[0]["Joined"]);
+            }
+         }
+      }
+
+      [TestMethod]
+      public void SplitByEmpty() {
+
+         const string xml = @"
+    <add name='TestProcess'>
+      <entities>
+        <add name='TestData'>
+          <rows>
+            <add Input='123' />
+          </rows>
+          <fields>
+            <add name='Input' />
+          </fields>
+          <calculated-fields>
+            <add name='Joined' t='copy(Input).split().reverse().join()' />
+          </calculated-fields>
+        </add>
+      </entities>
+    </add>";
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         var transforms = new List<TransformHolder>() {
+            new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
+            new TransformHolder((c) => new SplitTransform(c), new SplitTransform().GetSignatures())
+         }.ToArray();
+
+         using (var cfgScope = new ConfigurationContainer(transforms).CreateScope(xml, logger)) {
+
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container(transforms).CreateScope(process, logger)) {
+               scope.Resolve<IProcessController>().Execute();
+               var output = process.Entities.First().Rows;
+               Assert.AreEqual("321", output[0]["Joined"]);
             }
          }
       }

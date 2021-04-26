@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -26,6 +27,7 @@ namespace Transformalize.Transforms {
 
       private readonly Field _input;
       private readonly char[] _separator;
+      private readonly Func<string, string[]> _splitter;
 
       public SplitTransform(IContext context = null) : base(context, "object") {
 
@@ -35,24 +37,32 @@ namespace Transformalize.Transforms {
 
          Context.Operation.ProducesArray = true;
 
-         if (IsMissing(Context.Operation.Separator)) {
-            return;
+         _input = SingleInput();
+
+         if(Context.Operation.Separator == Constants.DefaultSetting) {
+            Context.Operation.Separator = string.Empty;
          }
 
-         _input = SingleInput();
          _separator = Context.Operation.Separator.ToCharArray();
+
+         // the things that follow the split() transform all expect a string[]
+         // a future optimization could handle char[]
+         if(Context.Operation.Separator == string.Empty) {
+            _splitter = (value) => value.ToCharArray().Select(c=>c.ToString()).ToArray();
+         } else {
+            _splitter = (value) => value.Split(_separator, StringSplitOptions.None);
+         }
 
       }
 
       public override IRow Operate(IRow row) {
-         row[Context.Field] = GetString(row, _input).Split(_separator, StringSplitOptions.None);
-
+         row[Context.Field] = _splitter(GetString(row, _input));
          return row;
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("split") {
-            Parameters = new List<OperationParameter>(1) { new OperationParameter("separator", ",") }
+            Parameters = new List<OperationParameter>(1) { new OperationParameter("separator") }
          };
       }
    }

@@ -1,4 +1,4 @@
-nuget push "c:\temp\modules\Transformalize.0.8.39-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.8.40-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 REM 
 REM nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.8.35-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Container.Autofac.v3.0.8.35-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
