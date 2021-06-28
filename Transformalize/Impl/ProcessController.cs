@@ -74,7 +74,7 @@ namespace Transformalize.Impl {
 
          Task task = Task.Run(() => Execute());
          try {
-            await task;
+            await task.ConfigureAwait(false);
          } catch (Exception ex) {
             _context.Error(ex, ex.Message);
             if (task != null && task.Exception != null) {
