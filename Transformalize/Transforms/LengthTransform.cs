@@ -55,8 +55,9 @@ namespace Transformalize.Transforms {
          return row;
       }
 
+      // this is a workaround: the length parameter is must have the same signature as the length validator
       public override IEnumerable<OperationSignature> GetSignatures() {
-         yield return new OperationSignature("length");
+         yield return new OperationSignature("length") { Parameters = new List<OperationParameter>(1) { new OperationParameter("length", "0") } };
          yield return new OperationSignature("len");
       }
    }

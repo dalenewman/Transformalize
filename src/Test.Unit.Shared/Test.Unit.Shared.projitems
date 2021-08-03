@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestToUnixTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMatches.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMaxLength.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Validation\TestLength.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMinLength.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Validation\TestContains.cs" />
