@@ -79,5 +79,57 @@ namespace Tests {
             }
          }
       }
+
+      [TestMethod]
+      public void MapTransformPassThrough() {
+
+         const string xml = @"
+<add name='TestProcess'>
+
+    <maps>
+        <add name='Map' pass-through='true'>
+            <items>
+                <add from='A' to='Letter A' />
+                <add from='B' to='Letter B' />
+                <add from='C' to='Letter C' />
+            </items>
+        </add>
+    </maps>
+
+    <entities>
+        <add name='TestData'>
+            <rows>
+                <add Field1='A' />
+                <add Field1='D' />
+                <add Field1='B' />
+                <add Field1='C' />
+            </rows>
+            <fields>
+                <add name='Field1' />
+            </fields>
+            <calculated-fields>
+                <add name='Map' t='copy(Field1).map(map)' default='None' />
+            </calculated-fields>
+        </add>
+    </entities>
+
+</add>";
+
+         var logger = new ConsoleLogger(LogLevel.Debug);
+         using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
+
+            var process = cfgScope.Resolve<Process>();
+
+            using (var scope = new Container().CreateScope(process, logger)) {
+               var output = scope.Resolve<IProcessController>().Read().ToArray();
+               var field = process.Entities.First().CalculatedFields.First();
+               Assert.AreEqual("Letter A", output[0][field], "'A' got mapped to 'Letter A'.");
+               Assert.AreEqual("D", output[1][field], "'D' didn't get mapped and passed through.");
+               Assert.AreEqual("Letter B", output[2][field], "'B' got mapped to 'Letter B'.");
+               Assert.AreEqual("Letter C", output[3][field], "'C' got mapped to 'Letter C'.");
+            }
+         }
+      }
+
    }
 }

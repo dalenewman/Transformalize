@@ -25,6 +25,7 @@ namespace Transformalize.Transforms {
    public class MapTransform : BaseTransform {
 
       private readonly IField _input;
+      private readonly Configuration.Map _operationMap;
       private readonly Dictionary<object, Func<IRow, object>> _map = new Dictionary<object, Func<IRow, object>>();
       private object _catchAll;
       private const string CatchAll = "*";
@@ -40,15 +41,15 @@ namespace Transformalize.Transforms {
             return;
          }
 
+         _operationMap = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
+
          _input = SingleInput();
       }
 
       public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
 
-         var map = Context.Process.Maps.First(m => m.Name == Context.Operation.Map);
-
          // seems like i have over-complicated this...
-         foreach (var item in map.Items) {
+         foreach (var item in _operationMap.Items) {
             if (item.From.Equals(CatchAll)) {
                _catchAll = Context.Field.Convert(item.To);
                continue;
@@ -76,10 +77,11 @@ namespace Transformalize.Transforms {
       }
 
       public override IRow Operate(IRow row) {
+
          if (_map.TryGetValue(row[_input], out var objects)) {
             row[Context.Field] = objects(row);
          } else {
-            row[Context.Field] = _catchAll;
+            row[Context.Field] = _operationMap.PassThrough ? row[_input] : _catchAll;
          }
 
          return row;
@@ -87,10 +89,10 @@ namespace Transformalize.Transforms {
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          return new[]{
-                new OperationSignature("map"){
-                    Parameters = new List<OperationParameter> {new OperationParameter("map")}
-                }
-            };
+            new OperationSignature("map"){
+               Parameters = new List<OperationParameter> {new OperationParameter("map")}
+            }
+         };
       }
    }
 

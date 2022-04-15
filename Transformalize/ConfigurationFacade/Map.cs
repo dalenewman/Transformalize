@@ -27,6 +27,9 @@ namespace Transformalize.ConfigurationFacade {
         public string Name { get; set; }
 
         [Cfg]
+        public string PassThrough { get; set; }
+
+        [Cfg]
         public string Connection { get; set; }
 
         [Cfg]
@@ -42,6 +45,10 @@ namespace Transformalize.ConfigurationFacade {
                 Query = this.Query,
                 Items = this.Items.Select(mi => mi.ToMapItem()).ToList()
             };
+
+            bool.TryParse(this.PassThrough, out bool passThrough);
+            map.PassThrough = passThrough;
+
             return map;
         }
 
