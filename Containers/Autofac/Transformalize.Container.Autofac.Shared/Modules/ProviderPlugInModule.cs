@@ -79,10 +79,14 @@ namespace Transformalize.Containers.Autofac.Modules {
 
       public static string AssemblyDirectory {
          get {
-            var codeBase = typeof(Process).Assembly.CodeBase;
-            var uri = new UriBuilder(codeBase);
-            var path = Uri.UnescapeDataString(uri.Path);
-            return Path.GetDirectoryName(path);
+            try {
+               var codeBase = typeof(Process).Assembly.CodeBase;
+               var uri = new UriBuilder(codeBase);
+               var path = Uri.UnescapeDataString(uri.Path);
+               return Path.GetDirectoryName(path);
+            } catch (Exception) {
+               return ".";
+            }
          }
       }
    }
