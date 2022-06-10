@@ -1,13 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
+﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.8.42-beta</Version>
+    <Version>0.9.0-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
+    <StartupObject>Transformalize.Cli.Program</StartupObject>
+    <ApplicationIcon>tfl.ico</ApplicationIcon>
+    <Copyright>© 2022 - Dale Newman</Copyright>
+    <PackageIcon>tfl.png</PackageIcon>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="bin\Debug\net5.0\arrangements\bogus-too-flexible.xml" />
@@ -16,8 +20,13 @@
     <Content Include="bin\Debug\net5.0\tfl.deps.json" />
     <Content Include="bin\Debug\net5.0\tfl.runtimeconfig.dev.json" />
     <Content Include="bin\Debug\net5.0\tfl.runtimeconfig.json" />
+    <Content Include="tfl.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Files\tfl.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Include="bin\Debug\net5.0\Autofac.dll" />
     <None Include="bin\Debug\net5.0\Bogus.dll" />
     <None Include="bin\Debug\net5.0\Cfg.Net.Environment.dll" />
