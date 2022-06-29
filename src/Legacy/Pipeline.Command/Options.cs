@@ -29,19 +29,14 @@ namespace Transformalize.Command {
         [Option('s', "schedule", Required = false, HelpText = "To use an arrangement schedule, set to 'internal', otherwise provide a cron expression in double-quotes.")]
         public string Schedule { get; set; }
 
-        [Option('m', "mode", DefaultValue = "default", Required = false, HelpText = "A system or user-defined mode (init, check, default, etc).")]
+        [Option('m', "mode", Default = "default", Required = false, HelpText = "A system or user-defined mode (init, check, default, etc).")]
         public string Mode { get; set; }
 
-        [Option('f', "format", DefaultValue = "csv", Required = false, HelpText = "Output format for console provider (csv, json).")]
+        [Option('f', "format", Default = "csv", Required = false, HelpText = "Output format for console provider (csv, json).")]
         public string Format { get; set; }
 
-        [Option("phs", DefaultValue = "@()", Required = false, HelpText = "Placeholder Style: the marker, prefix, and suffix for place holders in the arrangement. Note: you can set parameters with default values in your arrangement, and also pass them in using a query string on your -a arrangement (e.g. =a \"c:\\cfg.xml?x=1&y=2\").")]
+        [Option("phs", Default = "@()", Required = false, HelpText = "Placeholder Style: the marker, prefix, and suffix for place holders in the arrangement. Note: you can set parameters with default values in your arrangement, and also pass them in using a query string on your -a arrangement (e.g. =a \"c:\\cfg.xml?x=1&y=2\").")]
         public string PlaceHolderStyle { get; set; }
-
-        [HelpOption]
-        public string GetUsage() {
-            return HelpText.AutoBuild(this, current => HelpText.DefaultParsingErrorsHandler(this, current));
-        }
 
         public string ArrangementWithMode() {
             if (Mode == "default")

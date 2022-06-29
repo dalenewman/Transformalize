@@ -4,7 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Console</RootNamespace>
     <AssemblyName>Transformalize.Provider.Console</AssemblyName>
-    <Version>0.8.29</Version>
+    <Version>0.10.0-beta</Version>
+    <FileVersion>0.10.0</FileVersion>
+    <AssemblyVersion>0.10.0</AssemblyVersion>
   </PropertyGroup>
 
   <Import Project="..\Console.Shared\Console.Shared.projitems" Label="Shared" />

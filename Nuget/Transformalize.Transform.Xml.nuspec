@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Transform.Xml</id>
-    <version>0.8.22-beta</version>
+    <version>0.10.0-beta</version>
     <title>Transformalize Xml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,12 +10,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">Apache-2.0</license>
     <description>Xml related transforms for Transformalize</description>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright 2013-2020</copyright>
+    <releaseNotes>maint</releaseNotes>
+    <copyright>Copyright 2013-2022</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.8.22-beta" />
+        <dependency id="Transformalize" version="0.10.0-beta" />
       </group>
     </dependencies>
   </metadata>

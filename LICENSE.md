@@ -1,19 +1,16 @@
 ## Projects Licensed under Apache 2
 
-1. Transformalize (this project) - Copyright (c) 2013-2016 Dale Newman
-1. Cfg-NET - Copyright (c) 2015-2016 Dale Newman
-1. Cfg-Net.Environment - Copyright (c) 2015 Dale Newman
-1. Cfg-Net.Reader - Copyright (c) 2015 Dale Newman
-1. Cfg-Net.Shorthand - Copyright (c) 2015 Dale Newman
+1. Transformalize (this project) - Copyright (c) 2013-2022 Dale Newman
+1. Cfg-NET - Copyright (c) 2015-2022 Dale Newman
+1. Cfg-Net.Environment - Copyright (c) 2015-2022 Dale Newman
+1. Cfg-Net.Reader - Copyright (c) 2015-2022 Dale Newman
+1. Cfg-Net.Shorthand - Copyright (c) 2015-2022 Dale Newman
 1. Dapper - Copyright (c) Sam Saffron, Marc Gravell, Nick Craver
-1. Common.Logging.Core - Copyright (c) Aleksandar Seovic, Mark Pollack, Erich Eichinger, Stephen Bohlen
-1. Common.Logging - Copyright (c) Aleksandar Seovic, Mark Pollack, Erich Eichinger, Stephen Bohlen
-1. DateMath - Copyright (c) 2016 Dale Newman
-1. VIN - Copyright (c) 2016 Dale Newman
+1. DateMath - Copyright (c) 2016-2022 Dale Newman
+1. VIN - Copyright (c) 2016-2022 Dale Newman
 1. Castle.NVelocity
 1. Elasticsearch.Net - Copyright (c) Elastic and contributors
 13. gmaps-api-net - Copyright (c) Eric Newton
-14. JavaScriptEngineSwitcher - Copyright (c) 2013-2016 Andrey Taritsyn
 
 ### The Apache 2 License
 

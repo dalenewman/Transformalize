@@ -3,7 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Container.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Container.Autofac</AssemblyName>
-    <Version>0.8.41-beta</Version>
+    <Version>0.10.0-beta</Version>
+    <FileVersion>0.10.0</FileVersion>
+    <AssemblyVersion>0.10.0</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE;PLUGINS</DefineConstants>
@@ -16,9 +18,9 @@
   <Import Project="..\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems" Label="Shared" />
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
-    <PackageReference Include="Cfg-NET.Environment" Version="0.13.2-beta" />
-    <PackageReference Include="Cfg-NET.Reader" Version="0.13.3-beta" />
-    <PackageReference Include="Cfg-NET.Shorthand" Version="0.13.2-beta" />
+    <PackageReference Include="Cfg-NET.Environment" Version="0.14.0-beta" />
+    <PackageReference Include="Cfg-NET.Reader" Version="0.14.0-beta" />
+    <PackageReference Include="Cfg-NET.Shorthand" Version="0.14.0-beta" />
     <PackageReference Include="DateMath" Version="1.2.0" />
   </ItemGroup>
   <ItemGroup>

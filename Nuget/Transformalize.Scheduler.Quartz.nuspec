@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Scheduler.Quartz</id>
-    <version>0.5.0-beta</version>
+    <version>0.10.0-beta</version>
     <title>Transformalize Scheduler Quartz.NET</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,17 +10,17 @@
     <!--<license type="expression">Apache-2.0</license>-->
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Quartz.NET Scheduler for Transformalize</description>
-    <releaseNotes>update dependencies</releaseNotes>
-    <copyright>Copyright 2013-2019</copyright>
+    <releaseNotes>general maintenance</releaseNotes>
+    <copyright>Copyright 2013-2022</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.5.0-beta" />
-        <dependency id="Quartz" version="2.6.2" />
+        <dependency id="Transformalize" version="0.10.0-beta" />
+        <dependency id="Quartz" version="3.4.0" />
       </group>
     </dependencies>
   </metadata>
   <files>
-    <file src="..\Pipeline.Scheduler.Quartz\bin\Release\Transformalize.Scheduler.Quartz.dll" target="lib\net462\Transformalize.Scheduler.Quartz.dll" />
+     <file src="..\src\Legacy\Pipeline.Scheduler.Quartz\bin\Release\Transformalize.Scheduler.Quartz.dll" target="lib\net462\Transformalize.Scheduler.Quartz.dll" />
   </files>
 </package>

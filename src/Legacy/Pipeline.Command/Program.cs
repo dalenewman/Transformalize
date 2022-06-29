@@ -16,8 +16,10 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using Autofac;
+using CommandLine;
 using Transformalize.Contracts;
 
 namespace Transformalize.Command {
@@ -32,30 +34,34 @@ namespace Transformalize.Command {
             eArgs.Cancel = true;
          };
 
-         var options = new Options();
+         Parser.Default.ParseArguments<Options>(args)
+            .WithParsed(Run)
+            .WithNotParsed(CommandLineError);
+         NLog.LogManager.Flush();
+      }
 
-         if (CommandLine.Parser.Default.ParseArguments(args, options)) {
-            Environment.ExitCode = 0;
-            var builder = new ContainerBuilder();
-            builder.RegisterModule(new ScheduleModule(options));
+      static void Run(Options options) {
 
-            using (var scope = builder.Build().BeginLifetimeScope()) {
-               var scheduler = scope.Resolve<IScheduler>();
-               scheduler.Start();
+         Environment.ExitCode = 0;
+         var builder = new ContainerBuilder();
+         builder.RegisterModule(new ScheduleModule(options));
 
-               if (scheduler is NowScheduler)
-                  return;
+         using (var scope = builder.Build().BeginLifetimeScope()) {
+            var scheduler = scope.Resolve<IScheduler>();
+            scheduler.Start();
 
-               QuitEvent.WaitOne();
-               Console.WriteLine("Stopping...");
-               scheduler.Stop();
-            }
-         } else {
-            Environment.ExitCode = 1;
+            if (scheduler is NowScheduler)
+               return;
+
+            QuitEvent.WaitOne();
+            Console.WriteLine("Stopping...");
+            scheduler.Stop();
          }
 
-         NLog.LogManager.Flush();
+      }
 
+      static void CommandLineError(IEnumerable<Error> errors) {
+         Environment.Exit(1);
       }
    }
 }

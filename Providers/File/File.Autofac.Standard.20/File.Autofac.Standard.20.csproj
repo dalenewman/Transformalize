@@ -3,7 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Provider.Files.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.File.Autofac</AssemblyName>
-    <Version>0.8.30-beta</Version>
+    <Version>0.10.0-beta</Version>
+    <FileVersion>0.10.0</FileVersion>
+    <AssemblyVersion>0.10.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Containers\Autofac\Transformalize.Container.Autofac.Standard.20\Transformalize.Container.Autofac.Standard.20.csproj" />

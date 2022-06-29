@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.Trace</id>
-      <version>0.8.22-beta</version>
+      <version>0.10.0-beta</version>
       <title>Transformalize Provider for Trace</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -10,17 +10,17 @@
       <license type="expression">Apache-2.0</license>
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize Provider for Trace</description>
-      <releaseNotes>beta</releaseNotes>
-      <copyright>Copyright 2013-2020</copyright>
+      <releaseNotes>maint</releaseNotes>
+      <copyright>Copyright 2013-2022</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="net462">
-            <dependency id="Transformalize" version="0.8.22-beta" />
+            <dependency id="Transformalize" version="0.10.0-beta" />
          </group>
       </dependencies>
    </metadata>
    <files>
-      <file src="..\Providers\Trace\bin\Debug\Transformalize.Provider.Trace.dll" target="lib\net462\Transformalize.Provider.Trace.dll" />
-      <file src="..\Providers\Trace\bin\Debug\Transformalize.Provider.Trace.pdb" target="lib\net462\Transformalize.Provider.Trace.pdb" />
+      <file src="..\Providers\Trace\bin\Release\Transformalize.Provider.Trace.dll" target="lib\net462\Transformalize.Provider.Trace.dll" />
+      <!--<file src="..\Providers\Trace\bin\Release\Transformalize.Provider.Trace.pdb" target="lib\net462\Transformalize.Provider.Trace.pdb" />-->
    </files>
 </package>

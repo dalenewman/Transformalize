@@ -38,7 +38,7 @@ namespace Transformalize.Command {
             _scheduler = StdSchedulerFactory.GetDefaultScheduler().Result;
             _scheduler.JobFactory = jobFactory;
 
-         Quartz.LogContext.SetCurrentLogProvider(loggerFactory);
+         Quartz.Logging.LogContext.SetCurrentLogProvider(loggerFactory);
          _logger = loggerFactory.CreateLogger("Quartz.Net");
         }
 

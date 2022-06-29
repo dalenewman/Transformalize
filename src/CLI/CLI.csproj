@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.9.0-beta</Version>
+    <Version>0.10.0-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
@@ -12,6 +12,8 @@
     <ApplicationIcon>tfl.ico</ApplicationIcon>
     <Copyright>© 2022 - Dale Newman</Copyright>
     <PackageIcon>tfl.png</PackageIcon>
+    <FileVersion>0.10.0</FileVersion>
+    <AssemblyVersion>0.10.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="bin\Debug\net5.0\arrangements\bogus-too-flexible.xml" />
@@ -111,8 +113,8 @@
     <None Include="bin\Debug\net5.0\Transformalize.Transform.Jint.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.8.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
     <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.8.35-beta" />
     <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.8.29-beta" />
     <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.8.32-beta" />

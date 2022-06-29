@@ -3,7 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.File</RootNamespace>
     <AssemblyName>Transformalize.Provider.File</AssemblyName>
-    <Version>0.8.30-beta</Version>
+    <Version>0.10.0-beta</Version>
+    <FileVersion>0.10.0</FileVersion>
+    <AssemblyVersion>0.10.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Compatibility\Transformalize.Standard.20\Transformalize.Standard.20.csproj" />

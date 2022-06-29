@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28729.10
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9F97BFD9-DB95-483F-BF26-6ADA42D2D334}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,8 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Files", "Files", "{6ADEE326
 		Files\northwind-in-banana-youtube.png = Files\northwind-in-banana-youtube.png
 		Files\northwind-in-excel-youtube.png = Files\northwind-in-excel-youtube.png
 		Files\northwind-in-kibana-youtube.png = Files\northwind-in-kibana-youtube.png
-		Files\Northwind_in_Kibana5_4YouTube.png = Files\Northwind_in_Kibana5_4YouTube.png
 		Files\NorthWindEntitiesRelated.xml = Files\NorthWindEntitiesRelated.xml
+		Files\Northwind_in_Kibana5_4YouTube.png = Files\Northwind_in_Kibana5_4YouTube.png
 		Files\notepadpp.png = Files\notepadpp.png
 		Files\npp-orderline-csv.jpg = Files\npp-orderline-csv.jpg
 		Files\old-testament.txt = Files\old-testament.txt
@@ -77,10 +77,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geography", "Transforms\Geography\Geography.csproj", "{F49EEF2B-5CF8-4643-8131-921D5A41C884}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize", "Transformalize\Transformalize.shproj", "{13144F6B-B1FE-4029-9D2C-3C06E662D627}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.40", "Compatibility\Transformalize.40\Transformalize.40.csproj", "{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.45", "Compatibility\Transformalize.45\Transformalize.45.csproj", "{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.452", "Compatibility\Transformalize.452\Transformalize.452.csproj", "{AD22843C-D4F0-431D-8250-6BE4DB802D82}"
 EndProject
@@ -157,29 +153,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Standard.10", "Compatibility\Transformalize.Standard.10\Transformalize.Standard.10.csproj", "{0D720AEF-0326-471C-88CE-A873AE728BB0}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Providers\Console\Console.Shared\Console.Shared.projitems*{07c2284a-2d22-4165-bfe0-82f00c9fff5a}*SharedItemsImports = 5
-		Providers\File\File.Shared\File.Shared.projitems*{0a9e0f50-3b9d-43b0-a3b7-9184b6535d31}*SharedItemsImports = 13
-		Transformalize\Transformalize.projitems*{0d720aef-0326-471c-88ce-a873ae728bb0}*SharedItemsImports = 5
-		Transformalize\Transformalize.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
-		Providers\Console\Console.Shared\Console.Shared.projitems*{32aee29f-519f-4a61-af6c-bc218611b6ff}*SharedItemsImports = 4
-		Providers\File\File.Shared\File.Shared.projitems*{4b27a101-66ac-4d87-8a23-3076067cb272}*SharedItemsImports = 5
-		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{54d882ec-0422-44f1-bd19-74bf346bff4f}*SharedItemsImports = 4
-		Transformalize\Transformalize.projitems*{5e20aa15-9ff3-4278-bb6d-dc1aced49ba4}*SharedItemsImports = 4
-		Transformalize\Transformalize.projitems*{89b749d5-45ff-4608-bd5b-f5da0f7a0828}*SharedItemsImports = 5
-		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{89d90201-5ea9-4d51-b4a7-0a977fb7504d}*SharedItemsImports = 4
-		Providers\Console\Console.Shared\Console.Shared.projitems*{8f345bfb-28e6-412f-86bb-2b3e43752138}*SharedItemsImports = 13
-		Transformalize\Transformalize.projitems*{8ffa5596-c738-479a-a0f7-1d88ba62b610}*SharedItemsImports = 4
-		Providers\File\File.Shared\File.Shared.projitems*{93b94d0e-4287-46d3-82ef-f81c636574dd}*SharedItemsImports = 4
-		Transformalize\Transformalize.projitems*{9e2c7fd8-890c-4ccf-927f-ae40ecd49013}*SharedItemsImports = 4
-		Transformalize\Transformalize.projitems*{ad22843c-d4f0-431d-8250-6be4db802d82}*SharedItemsImports = 4
-		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{bdd9d7e5-b417-4da7-afb6-c23de761f4d4}*SharedItemsImports = 4
-		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{beb86e66-7307-471f-a413-eb562eb19755}*SharedItemsImports = 5
-		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
-		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
-		Transformalize\Transformalize.projitems*{edef18f3-b55c-4de7-8f09-c07aaa2be2d1}*SharedItemsImports = 5
-		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{ff245354-a7a4-4447-b775-a916265dec47}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -250,30 +223,6 @@ Global
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x64.Build.0 = Release|Any CPU
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x86.ActiveCfg = Release|Any CPU
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884}.Release|x86.Build.0 = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x64.Build.0 = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Debug|x86.Build.0 = Debug|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x64.ActiveCfg = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x64.Build.0 = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x86.ActiveCfg = Release|Any CPU
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4}.Release|x86.Build.0 = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x64.Build.0 = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Debug|x86.Build.0 = Debug|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x64.ActiveCfg = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x64.Build.0 = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x86.ActiveCfg = Release|Any CPU
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013}.Release|x86.Build.0 = Release|Any CPU
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -561,8 +510,6 @@ Global
 		{64D47F26-3787-42CE-AD4C-3AEA348AA567} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{77811C79-9CC7-40A8-BA7C-148A02AB6AC2} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
 		{F49EEF2B-5CF8-4643-8131-921D5A41C884} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
-		{5E20AA15-9FF3-4278-BB6D-DC1ACED49BA4} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
-		{9E2C7FD8-890C-4CCF-927F-AE40ECD49013} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{AD22843C-D4F0-431D-8250-6BE4DB802D82} = {0A44435F-A0BC-418F-BA9C-B5FFC27D5589}
 		{3407ED24-C039-44ED-AEAC-F29C945DFFDE} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
 		{36724DD4-0A61-494B-ABCB-4FE845306EB8} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
@@ -596,6 +543,27 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Providers\Console\Console.Shared\Console.Shared.projitems*{07c2284a-2d22-4165-bfe0-82f00c9fff5a}*SharedItemsImports = 5
+		Providers\File\File.Shared\File.Shared.projitems*{0a9e0f50-3b9d-43b0-a3b7-9184b6535d31}*SharedItemsImports = 13
+		Transformalize\Transformalize.projitems*{0d720aef-0326-471c-88ce-a873ae728bb0}*SharedItemsImports = 5
+		Transformalize\Transformalize.projitems*{13144f6b-b1fe-4029-9d2c-3c06e662d627}*SharedItemsImports = 13
+		Providers\Console\Console.Shared\Console.Shared.projitems*{32aee29f-519f-4a61-af6c-bc218611b6ff}*SharedItemsImports = 4
+		Providers\File\File.Shared\File.Shared.projitems*{4b27a101-66ac-4d87-8a23-3076067cb272}*SharedItemsImports = 5
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{54d882ec-0422-44f1-bd19-74bf346bff4f}*SharedItemsImports = 4
+		Transformalize\Transformalize.projitems*{89b749d5-45ff-4608-bd5b-f5da0f7a0828}*SharedItemsImports = 5
+		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{89d90201-5ea9-4d51-b4a7-0a977fb7504d}*SharedItemsImports = 4
+		Providers\Console\Console.Shared\Console.Shared.projitems*{8f345bfb-28e6-412f-86bb-2b3e43752138}*SharedItemsImports = 13
+		Transformalize\Transformalize.projitems*{8ffa5596-c738-479a-a0f7-1d88ba62b610}*SharedItemsImports = 4
+		Providers\File\File.Shared\File.Shared.projitems*{93b94d0e-4287-46d3-82ef-f81c636574dd}*SharedItemsImports = 4
+		Transformalize\Transformalize.projitems*{ad22843c-d4f0-431d-8250-6be4db802d82}*SharedItemsImports = 4
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{bdd9d7e5-b417-4da7-afb6-c23de761f4d4}*SharedItemsImports = 4
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{beb86e66-7307-471f-a413-eb562eb19755}*SharedItemsImports = 5
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
+		src\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
+		Transformalize\Transformalize.projitems*{edef18f3-b55c-4de7-8f09-c07aaa2be2d1}*SharedItemsImports = 5
+		Containers\Autofac\Transformalize.Container.Autofac.Shared\Transformalize.Container.Autofac.Shared.projitems*{ff245354-a7a4-4447-b775-a916265dec47}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

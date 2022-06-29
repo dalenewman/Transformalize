@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Transformalize.Provider.OpenXml</id>
-    <version>0.8.22-beta</version>
+    <version>0.10.0-beta</version>
     <title>Transformalize Provider OpenXml</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -10,14 +10,14 @@
     <license type="expression">Apache-2.0</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>used to write excel</description>
-    <releaseNotes>updated dependencies</releaseNotes>
-    <copyright>Copyright 2013-2020</copyright>
+    <releaseNotes>maint</releaseNotes>
+    <copyright>Copyright 2013-2022</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.8.22-beta" />
+        <dependency id="Transformalize" version="0.10.0-beta" />
         <dependency id="OpenXmlPowerTools" version="4.5.3.2" />
-        <dependency id="DocumentFormat.OpenXml" version="2.9.1" />
+        <dependency id="DocumentFormat.OpenXml" version="2.16.0" />
       </group>
     </dependencies>
   </metadata>
