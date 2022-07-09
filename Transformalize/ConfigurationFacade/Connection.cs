@@ -208,7 +208,13 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string Enclose { get; set; }
-      
+
+      [Cfg]
+      public string Encrypt { get; set; }
+
+      [Cfg]
+      public string TrustServerCertificate { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -316,6 +322,12 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.Enclose, out bool enclose);
          c.Enclose = enclose;
+
+         bool.TryParse(this.Encrypt, out bool encrypt);
+         c.Encrypt = encrypt;
+
+         bool.TryParse(this.TrustServerCertificate, out bool trustServerCertificate);
+         c.TrustServerCertificate = trustServerCertificate;
 
          return c;
       }

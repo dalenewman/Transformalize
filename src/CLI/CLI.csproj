@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.10.0-beta</Version>
+    <Version>0.10.1-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
@@ -12,8 +12,8 @@
     <ApplicationIcon>tfl.ico</ApplicationIcon>
     <Copyright>© 2022 - Dale Newman</Copyright>
     <PackageIcon>tfl.png</PackageIcon>
-    <FileVersion>0.10.0</FileVersion>
-    <AssemblyVersion>0.10.0</AssemblyVersion>
+    <FileVersion>0.10.1</FileVersion>
+    <AssemblyVersion>0.10.1</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="bin\Debug\net5.0\arrangements\bogus-too-flexible.xml" />

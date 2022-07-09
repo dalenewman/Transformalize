@@ -387,5 +387,16 @@ namespace Transformalize.Configuration {
          }
       }
 
+      /// <summary>
+      /// matches sql server connection string property with same name
+      /// </summary>
+      [Cfg(value = false)]
+      public bool Encrypt { get; set; }
+
+      /// <summary>
+      /// matches sql server connection string property with same name
+      /// </summary>
+      [Cfg(value = false)]
+      public bool TrustServerCertificate { get; set; }
    }
 }
