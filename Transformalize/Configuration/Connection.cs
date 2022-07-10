@@ -398,5 +398,11 @@ namespace Transformalize.Configuration {
       /// </summary>
       [Cfg(value = false)]
       public bool TrustServerCertificate { get; set; }
+
+      /// <summary>
+      /// matches elasticsearch client property with same name
+      /// </summary>
+      [Cfg(value = "")]
+      public string CertificateFingerprint { get; set; }
    }
 }

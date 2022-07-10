@@ -2,14 +2,14 @@
 <package>
   <metadata>
     <id>Transformalize</id>
-    <version>0.10.1-beta</version>
+    <version>0.10.2-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The main Transformalize library</description>
-    <releaseNotes>general maintenance</releaseNotes>
+    <releaseNotes>added property for elasticsearch</releaseNotes>
     <copyright>Copyright © 2013-2022</copyright>
     <tags>etl,transformalize</tags>
     <license type="expression">Apache-2.0</license>

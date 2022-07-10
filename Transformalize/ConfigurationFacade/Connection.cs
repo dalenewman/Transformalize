@@ -215,6 +215,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string TrustServerCertificate { get; set; }
 
+      [Cfg]
+      public string CertificateFingerprint { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -257,7 +260,8 @@ namespace Transformalize.ConfigurationFacade {
             Version = this.Version,
             WebMethod = this.WebMethod,
             Scroll = this.Scroll,
-            Service = this.Service
+            Service = this.Service,
+            CertificateFingerprint = this.CertificateFingerprint
          };
 
          bool.TryParse(this.Buffer, out bool buffer);
