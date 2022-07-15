@@ -82,13 +82,13 @@ namespace Transformalize.Cli {
                   output.Stream = true;
                   output.Synchronous = true; // got odd results when using Async methods
                   output.File = "dummy.csv";
-                  providers.Add(new CsvHelperProviderModule(Console.OpenStandardOutput()));
+                  providers.Add(new CsvHelperProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
                } else {
                   output.Provider = "json";
                   output.Stream = true;
                   output.Format = "json";
                   output.File = "dummy.json";
-                  providers.Add(new JsonProviderModule(Console.OpenStandardOutput()));
+                  providers.Add(new JsonProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
                }
             } else {
                providers.Add(new CsvHelperProviderModule());
