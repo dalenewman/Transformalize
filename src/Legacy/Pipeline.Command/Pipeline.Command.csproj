@@ -111,8 +111,8 @@
     <Reference Include="Azure.Identity, Version=1.6.0.0, Culture=neutral, PublicKeyToken=92742159e12e44c8, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Azure.Identity.1.6.0\lib\netstandard2.0\Azure.Identity.dll</HintPath>
     </Reference>
-    <Reference Include="CfgNet, Version=0.13.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Cfg-NET.0.13.3-beta\lib\net462\CfgNet.dll</HintPath>
+    <Reference Include="CfgNet, Version=0.14.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Cfg-NET.0.14.0-beta\lib\net462\CfgNet.dll</HintPath>
     </Reference>
     <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\CommandLineParser.2.9.1\lib\net461\CommandLine.dll</HintPath>
