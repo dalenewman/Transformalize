@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize.Ioc.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Ioc.Autofac</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -278,53 +278,49 @@
     <Compile Include="ValidateFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compatibility\Transformalize.452\Transformalize.452.csproj">
-      <Project>{ad22843c-d4f0-431d-8250-6be4db802d82}</Project>
-      <Name>Transformalize.452</Name>
+    <ProjectReference Include="..\..\Logging\NLog\NLog.Standard.20\NLog.Standard.20.csproj">
+      <Project>{38fc156b-edf5-4d94-8a50-fb67f5c008e7}</Project>
+      <Name>NLog.Standard.20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Logging\NLog\Transformalize.Logging.NLog\Transformalize.Logging.NLog.csproj">
-      <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
-      <Name>Transformalize.Logging.NLog</Name>
+    <ProjectReference Include="..\..\Providers\Console\Console.Standard.20\Console.Standard.20.csproj">
+      <Project>{79951f95-4891-4e3d-ba9f-53e9ebc3615c}</Project>
+      <Name>Console.Standard.20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\Console\Console\Console.csproj">
-      <Project>{32aee29f-519f-4a61-af6c-bc218611b6ff}</Project>
-      <Name>Console</Name>
+    <ProjectReference Include="..\..\Providers\File\File.Standard.20\File.Standard.20.csproj">
+      <Project>{d03656ea-f8ff-4efa-ae5e-027773c357a4}</Project>
+      <Name>File.Standard.20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\File\File\File.csproj">
-      <Project>{93b94d0e-4287-46d3-82ef-f81c636574dd}</Project>
-      <Name>File</Name>
+    <ProjectReference Include="..\..\Providers\Kml.Standard.20\Kml.Standard.20.csproj">
+      <Project>{40396080-83f3-46ae-a19b-aa6ea0fb9cf6}</Project>
+      <Name>Kml.Standard.20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\OpenXml\OpenXml.csproj">
-      <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
-      <Name>OpenXml</Name>
+    <ProjectReference Include="..\..\Providers\Trace.Standard.20\Trace.Standard.20.csproj">
+      <Project>{76bfd182-39a3-458f-9ea5-50724446032e}</Project>
+      <Name>Trace.Standard.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj">
+      <Project>{3dfd527b-3b9d-4b38-af6d-d324754841f4}</Project>
+      <Name>Transformalize</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transforms\Compression.Standard.20\Compression.Standard.20.csproj">
+      <Project>{7feb3ea6-dbe5-4785-a234-c11558e95742}</Project>
+      <Name>Compression.Standard.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transforms\Geography.Standard.20\Geography.Standard.20.csproj">
+      <Project>{5647977a-41ec-44b7-b2f0-9eac3dd61b97}</Project>
+      <Name>Geography.Standard.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transforms\Globalization.Standard.20\Globalization.Standard.20.csproj">
+      <Project>{5fc982d6-54c3-49f5-bdb8-b04ababa26ba}</Project>
+      <Name>Globalization.Standard.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transforms\Xml.Standard.20\Xml.Standard.20.csproj">
+      <Project>{826e681c-b1b6-43f6-bb66-b618877c8175}</Project>
+      <Name>Xml.Standard.20</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24F88AAF-2DC3-4AA1-B385-C6C7748CBE77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\Kml\Kml.csproj">
-      <Project>{64d47f26-3787-42ce-ad4c-3aea348aa567}</Project>
-      <Name>Kml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\Trace\Trace.csproj">
-      <Project>{77811c79-9cc7-40a8-ba7c-148a02ab6ac2}</Project>
-      <Name>Trace</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Transforms\Compression\Compression.csproj">
-      <Project>{36724dd4-0a61-494b-abcb-4fe845306eb8}</Project>
-      <Name>Compression</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Transforms\Geography\Geography.csproj">
-      <Project>{f49eef2b-5cf8-4643-8131-921d5a41c884}</Project>
-      <Name>Geography</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Transforms\Globalization\Globalization.csproj">
-      <Project>{55c2704f-caab-4eec-af2e-9b3a775d4598}</Project>
-      <Name>Globalization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Transforms\Xml\Xml.csproj">
-      <Project>{3407ed24-c039-44ed-aeac-f29c945dffde}</Project>
-      <Name>Xml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

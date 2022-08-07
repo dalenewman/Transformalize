@@ -1,26 +1,28 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>Transformalize.Transform.Geography</id>
-    <version>0.10.0-beta</version>
-    <title>Transformalize Geography</title>
-    <authors>Dale Newman</authors>
-    <owners>Dale Newman</owners>
-    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">Apache-2.0</license>
-    <description>Geography related transforms for Transformalize</description>
-    <releaseNotes>maint</releaseNotes>
-    <copyright>Copyright 2013-2022</copyright>
-    <tags>etl</tags>
-    <dependencies>
-      <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.10.0-beta" />
-        <dependency id="NGeoHash.Portable" version="1.0.0" />
-      </group>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="..\Transforms\Geography\bin\Release\Transformalize.Transform.Geography.dll" target="lib\net462\Transformalize.Transform.Geography.dll" />
-  </files>
+   <metadata>
+      <id>Transformalize.Transform.Geography</id>
+      <version>0.10.5-beta</version>
+      <title>Transformalize Geography</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <license type="expression">Apache-2.0</license>
+      <description>Geography related transforms for Transformalize</description>
+      <releaseNotes>maint</releaseNotes>
+      <copyright>Copyright 2013-2022</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.10.5-beta" />
+            <dependency id="Geolocation" version="1.2.1" />
+            <dependency id="NGeoHash" version="1.2.0" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Transforms\Geography.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Geography.dll" target="lib\netstandard2.0\Transformalize.Transform.Geography.dll" />
+      <file src="..\src\Transforms\Geography.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Geography.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Geography.deps.json" />
+   </files>
 </package>

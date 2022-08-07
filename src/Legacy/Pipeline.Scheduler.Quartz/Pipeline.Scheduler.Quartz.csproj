@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize.Scheduler.Quartz</RootNamespace>
     <AssemblyName>Transformalize.Scheduler.Quartz</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -190,9 +190,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compatibility\Transformalize.462\Transformalize.462.csproj">
-      <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
-      <Name>Transformalize.462</Name>
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj">
+      <Project>{3dfd527b-3b9d-4b38-af6d-d324754841f4}</Project>
+      <Name>Transformalize</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

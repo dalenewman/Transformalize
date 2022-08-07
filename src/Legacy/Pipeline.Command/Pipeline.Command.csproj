@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Transformalize.Command</RootNamespace>
     <AssemblyName>tfl</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
@@ -340,13 +340,21 @@
     <Compile Include="ScheduleModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Compatibility\Transformalize.462\Transformalize.462.csproj">
-      <Project>{8ffa5596-c738-479a-a0f7-1d88ba62b610}</Project>
-      <Name>Transformalize.462</Name>
+    <ProjectReference Include="..\..\Logging\NLog\NLog.Standard.20\NLog.Standard.20.csproj">
+      <Project>{38fc156b-edf5-4d94-8a50-fb67f5c008e7}</Project>
+      <Name>NLog.Standard.20</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Logging\NLog\Transformalize.Logging.NLog\Transformalize.Logging.NLog.csproj">
-      <Project>{5f5dc0b4-2ab2-4933-a2c6-d0eb89fdff53}</Project>
-      <Name>Transformalize.Logging.NLog</Name>
+    <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj">
+      <Project>{87084ddc-e9f4-429a-8ff3-c28d6ff23134}</Project>
+      <Name>Console.Autofac.Standard.20</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj">
+      <Project>{3dfd527b-3b9d-4b38-af6d-d324754841f4}</Project>
+      <Name>Transformalize</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Transforms\Globalization.Standard.20\Globalization.Standard.20.csproj">
+      <Project>{5fc982d6-54c3-49f5-bdb8-b04ababa26ba}</Project>
+      <Name>Globalization.Standard.20</Name>
     </ProjectReference>
     <ProjectReference Include="..\Pipeline.Ioc.Autofac\Pipeline.Ioc.Autofac.csproj">
       <Project>{58FF362E-4A8D-459E-A174-5AAAE7EA8953}</Project>
@@ -355,14 +363,6 @@
     <ProjectReference Include="..\Pipeline.Scheduler.Quartz\Pipeline.Scheduler.Quartz.csproj">
       <Project>{24f88aaf-2dc3-4aa1-b385-c6c7748cbe77}</Project>
       <Name>Pipeline.Scheduler.Quartz</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Providers\OpenXml\OpenXml.csproj">
-      <Project>{c2800256-5de1-4bc9-9d5e-8bde3cc8353d}</Project>
-      <Name>OpenXml</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Transforms\Globalization\Globalization.csproj">
-      <Project>{55c2704f-caab-4eec-af2e-9b3a775d4598}</Project>
-      <Name>Globalization</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

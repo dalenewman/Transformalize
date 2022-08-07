@@ -1,27 +1,28 @@
 <?xml version="1.0"?>
 <package >
-  <metadata>
-    <id>Transformalize.Provider.OpenXml</id>
-    <version>0.10.0-beta</version>
-    <title>Transformalize Provider OpenXml</title>
-    <authors>Dale Newman</authors>
-    <owners>Dale Newman</owners>
-    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <license type="expression">Apache-2.0</license>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>used to write excel</description>
-    <releaseNotes>maint</releaseNotes>
-    <copyright>Copyright 2013-2022</copyright>
-    <tags>etl</tags>
-    <dependencies>
-      <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.10.0-beta" />
-        <dependency id="OpenXmlPowerTools" version="4.5.3.2" />
-        <dependency id="DocumentFormat.OpenXml" version="2.16.0" />
-      </group>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="..\Providers\OpenXml\bin\Release\Transformalize.Provider.OpenXml.dll" target="lib\net462\Transformalize.Provider.OpenXml.dll" />
-  </files>
+   <metadata>
+      <id>Transformalize.Provider.OpenXml</id>
+      <version>0.10.5-beta</version>
+      <title>Transformalize Provider OpenXml</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <license type="expression">Apache-2.0</license>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>used to write excel</description>
+      <releaseNotes>maint</releaseNotes>
+      <copyright>Copyright 2013-2022</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.10.5-beta" />
+            <dependency id="Open-Xml-PowerTools" version="4.4.0" />
+            <dependency id="DocumentFormat.OpenXml" version="2.17.1" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Providers\OpenXml.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.OpenXml.dll" target="lib\netstandard2.0\Transformalize.Provider.OpenXml.dll" />
+      <file src="..\src\Providers\OpenXml.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.OpenXml.deps.json" target="lib\netstandard2.0\Transformalize.Provider.OpenXml.deps.json" />
+   </files>
 </package>

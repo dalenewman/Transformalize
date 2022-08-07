@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <RootNamespace>Transformalize.Providers.Trace</RootNamespace>
+      <AssemblyName>Transformalize.Provider.Trace</AssemblyName>
+      <Version>0.10.5-beta</Version>
+      <FileVersion>0.10.5</FileVersion>
+      <AssemblyVersion>0.10.5</AssemblyVersion>
+   </PropertyGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
+   </ItemGroup>
+
+</Project>

@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Provider.Files.Autofac</RootNamespace>
+    <AssemblyName>Transformalize.Provider.File.Autofac</AssemblyName>
+    <Version>0.10.5-beta</Version>
+    <FileVersion>0.10.5</FileVersion>
+    <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\File.Standard.20\File.Standard.20.csproj" />
+  </ItemGroup>
+</Project>

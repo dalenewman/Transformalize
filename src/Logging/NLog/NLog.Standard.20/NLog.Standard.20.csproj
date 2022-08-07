@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Logging.NLog</RootNamespace>
+     <AssemblyName>Transformalize.Logging.NLog</AssemblyName>
+     <Version>0.10.5-beta</Version>
+     <FileVersion>0.10.5</FileVersion>
+     <AssemblyVersion>0.10.5</AssemblyVersion> 
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="NLog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+  </ItemGroup>
+
+</Project>

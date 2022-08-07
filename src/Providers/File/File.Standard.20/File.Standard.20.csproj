@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Providers.File</RootNamespace>
+    <AssemblyName>Transformalize.Provider.File</AssemblyName>
+    <Version>0.10.5-beta</Version>
+    <FileVersion>0.10.5</FileVersion>
+    <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+  <Import Project="..\File.Shared\File.Shared.projitems" Label="Shared" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+  </ItemGroup>
+</Project>

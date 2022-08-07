@@ -1,25 +1,26 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>Transformalize.Provider.Kml</id>
-    <version>0.10.0-beta</version>
-    <title>Transformalize Provider KML</title>
-    <authors>Dale Newman</authors>
-    <owners>Dale Newman</owners>
-    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <license type="expression">Apache-2.0</license>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>KML Provider for Transformalize</description>
-    <releaseNotes>maint</releaseNotes>
-    <copyright>Copyright 2013-2022</copyright>
-    <tags>etl</tags>
-    <dependencies>
-      <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.10.0-beta" />
-      </group>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="..\Providers\Kml\bin\Release\Transformalize.Provider.Kml.dll" target="lib\net462\Transformalize.Provider.Kml.dll" />
-  </files>
+   <metadata>
+      <id>Transformalize.Provider.Kml</id>
+      <version>0.10.5-beta</version>
+      <title>Transformalize Provider KML</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <license type="expression">Apache-2.0</license>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>KML Provider for Transformalize</description>
+      <releaseNotes>maint</releaseNotes>
+      <copyright>Copyright 2013-2022</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.10.5-beta" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Providers\Kml.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Kml.dll" target="lib\netstandard2.0\Transformalize.Provider.Kml.dll" />
+      <file src="..\src\Providers\Kml.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Kml.deps.json" target="lib\netstandard2.0\Transformalize.Provider.Kml.deps.json" />
+   </files>
 </package>

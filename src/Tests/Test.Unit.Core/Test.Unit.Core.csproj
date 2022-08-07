@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+
+    <Version>0.10.5-beta</Version>
+
+    <FileVersion>0.10.5</FileVersion>
+
+    <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Providers\File\File.Standard.20\File.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Providers\Trace.Standard.20\Trace.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
+    <ProjectReference Include="..\..\Transforms\Compression.Standard.20\Compression.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Transforms\Xml.Standard.20\Xml.Standard.20.csproj" />
+  </ItemGroup>
+
+  <Import Project="..\Test.Unit.Shared\Test.Unit.Shared.projitems" Label="Shared" />
+
+</Project>

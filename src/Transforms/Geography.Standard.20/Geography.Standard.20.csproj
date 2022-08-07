@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <RootNamespace>Transformalize.Transforms.Geography</RootNamespace>
+      <AssemblyName>Transformalize.Transform.Geography</AssemblyName>
+      <Version>0.10.5-beta</Version>
+      <FileVersion>0.10.5</FileVersion>
+      <AssemblyVersion>0.10.5</AssemblyVersion>
+   </PropertyGroup>
+
+   <ItemGroup>
+     <PackageReference Include="Geolocation" Version="1.2.1" />
+     <PackageReference Include="NGeoHash" Version="1.2.0" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
+   </ItemGroup>
+
+</Project>

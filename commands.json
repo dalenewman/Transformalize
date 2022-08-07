@@ -1,9 +1,0 @@
-{
-  "commands": {
-    "nuget": {
-      "fileName": "nuget.bat",
-      "workingDirectory": "Nuget",
-      "arguments": ""
-    }
-  }
-}

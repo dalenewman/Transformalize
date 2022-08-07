@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.10.3-beta</Version>
+    <Version>0.10.5-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
@@ -12,8 +12,8 @@
     <ApplicationIcon>tfl.ico</ApplicationIcon>
     <Copyright>© 2022 - Dale Newman</Copyright>
     <PackageIcon>tfl.png</PackageIcon>
-    <FileVersion>0.10.3</FileVersion>
-    <AssemblyVersion>0.10.3</AssemblyVersion>
+    <FileVersion>0.10.5</FileVersion>
+    <AssemblyVersion>0.10.5</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="bin\Debug\net5.0\arrangements\bogus-too-flexible.xml" />
@@ -133,8 +133,7 @@
     <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Containers\Autofac\Transformalize.Container.Autofac.Standard.20\Transformalize.Container.Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="arrangements\instances-schema.xml">
