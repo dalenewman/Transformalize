@@ -16,12 +16,11 @@
     <AssemblyVersion>0.10.5</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\net5.0\arrangements\bogus-too-flexible.xml" />
-    <Content Include="bin\Debug\net5.0\arrangements\bogus.xml" />
-    <Content Include="bin\Debug\net5.0\arrangements\internal.xml" />
-    <Content Include="bin\Debug\net5.0\tfl.deps.json" />
-    <Content Include="bin\Debug\net5.0\tfl.runtimeconfig.dev.json" />
-    <Content Include="bin\Debug\net5.0\tfl.runtimeconfig.json" />
+    <Compile Remove="bin\**" />
+    <EmbeddedResource Remove="bin\**" />
+    <None Remove="bin\**" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="tfl.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -29,88 +28,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="bin\Debug\net5.0\Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Bogus.dll" />
-    <None Include="bin\Debug\net5.0\Cfg.Net.Environment.dll" />
-    <None Include="bin\Debug\net5.0\Cfg.Net.Reader.dll" />
-    <None Include="bin\Debug\net5.0\Cfg.Net.Shorthand.dll" />
-    <None Include="bin\Debug\net5.0\CfgNet.dll" />
-    <None Include="bin\Debug\net5.0\CommandLine.dll" />
-    <None Include="bin\Debug\net5.0\CsvHelper.dll" />
-    <None Include="bin\Debug\net5.0\Dapper.dll" />
-    <None Include="bin\Debug\net5.0\DateMath.dll" />
-    <None Include="bin\Debug\net5.0\Elasticsearch.Net.dll" />
-    <None Include="bin\Debug\net5.0\Jint.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.Identity.Client.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.IdentityModel.JsonWebTokens.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.IdentityModel.Logging.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll" />
-    <None Include="bin\Debug\net5.0\Microsoft.Win32.SystemEvents.dll" />
-    <None Include="bin\Debug\net5.0\Newtonsoft.Json.dll" />
-    <None Include="bin\Debug\net5.0\Npgsql.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\linux-x64\native\SQLite.Interop.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\osx-x64\native\SQLite.Interop.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\unix\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\unix\lib\netstandard2.0\System.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-arm64\native\sni.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x64\native\sni.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x64\native\SQLite.Interop.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x86\native\sni.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win-x86\native\SQLite.Interop.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netcoreapp3.1\Microsoft.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll" />
-    <None Include="bin\Debug\net5.0\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll" />
-    <None Include="bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll" />
-    <None Include="bin\Debug\net5.0\System.Data.SqlClient.dll" />
-    <None Include="bin\Debug\net5.0\System.Data.SQLite.dll" />
-    <None Include="bin\Debug\net5.0\System.Drawing.Common.dll" />
-    <None Include="bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll" />
-    <None Include="bin\Debug\net5.0\System.Runtime.Caching.dll" />
-    <None Include="bin\Debug\net5.0\System.Security.Cryptography.ProtectedData.dll" />
-    <None Include="bin\Debug\net5.0\System.Security.Permissions.dll" />
-    <None Include="bin\Debug\net5.0\System.Windows.Extensions.dll" />
-    <None Include="bin\Debug\net5.0\tfl.dll" />
-    <None Include="bin\Debug\net5.0\tfl.exe" />
-    <None Include="bin\Debug\net5.0\tfl.pdb" />
-    <None Include="bin\Debug\net5.0\Transformalize.Container.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Container.Autofac.pdb" />
-    <None Include="bin\Debug\net5.0\Transformalize.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.pdb" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Ado.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Ado.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Bogus.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Bogus.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Console.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Console.Autofac.pdb" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Console.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Console.pdb" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.CsvHelper.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.CsvHelper.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Elasticsearch.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Elasticsearch.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.File.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Json.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Json.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.PostgreSql.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.PostgreSql.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Sqlite.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.Sqlite.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.SqlServer.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Provider.SqlServer.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Transform.Jint.Autofac.dll" />
-    <None Include="bin\Debug\net5.0\Transformalize.Transform.Jint.dll" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
@@ -126,11 +43,15 @@
     <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.10.1-beta" />
+    <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
     <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.1-beta" />
+    <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
+    <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
     <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.0-beta" />
     <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
+    <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.5-beta" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />

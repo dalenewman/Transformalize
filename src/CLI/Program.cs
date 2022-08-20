@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
-using Transformalize.Contracts;
+using Transformalize.Containers.Autofac.Modules;
 using Transformalize.Context;
+using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Autofac;
 using Transformalize.Providers.Bogus.Autofac;
 using Transformalize.Providers.Console;
@@ -14,17 +15,21 @@ using Transformalize.Providers.Console.Autofac;
 using Transformalize.Providers.CsvHelper.Autofac;
 using Transformalize.Providers.Elasticsearch.Autofac;
 using Transformalize.Providers.Json.Autofac;
+using Transformalize.Providers.Mail.Autofac;
+using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
+using Transformalize.Providers.Razor.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
-using Transformalize.Providers.MySql.Autofac;
-using Transformalize.Providers.Razor.Autofac;
-using Transformalize.Transforms.Jint.Autofac;
-using Transformalize.Transforms.Razor.Autofac;
+using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.Fluid.Autofac;
+using Transformalize.Transforms.Geography;
+using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Humanizer.Autofac;
+using Transformalize.Transforms.Jint.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
-using Transformalize.Providers.Mail.Autofac;
+using Transformalize.Transforms.Razor.Autofac;
+using Transformalize.Transforms.Xml;
 
 namespace Transformalize.Cli {
    class Program {
@@ -38,7 +43,6 @@ namespace Transformalize.Cli {
 
       static void Run(RunOptions options) {
 
-
          var logger = new ConsoleLogger(options.LogLevel);
 
          var operations = new List<Autofac.Core.IModule> {
@@ -50,7 +54,18 @@ namespace Transformalize.Cli {
          };
          // todo: geoCode, etc
 
-         using (var outer = new ConfigurationContainer(operations.ToArray()).CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
+         // adding transforms that aren't in modules
+         var container = new ConfigurationContainer(operations.ToArray());
+         container.AddTransform((c) => new SlugifyTransform(c), new SlugifyTransform().GetSignatures());
+         container.AddTransform((c) => new DistanceTransform(c), new DistanceTransform().GetSignatures());
+         container.AddTransform((c) => new GeohashEncodeTransform(c), new GeohashEncodeTransform().GetSignatures());
+         container.AddTransform((c) => new GeohashNeighborTransform(c), new GeohashNeighborTransform().GetSignatures());
+         container.AddTransform((c) => new CompressTransform(c), new CompressTransform().GetSignatures());
+         container.AddTransform((c) => new DecompressTransform(c), new DecompressTransform().GetSignatures());
+         container.AddTransform((c) => new FromXmlTransform(c), new FromXmlTransform().GetSignatures());
+         container.AddTransform((c) => new XPathTransform(c), new XPathTransform().GetSignatures());
+
+         using (var outer = container.CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
 
             var process = outer.Resolve<Process>();
 

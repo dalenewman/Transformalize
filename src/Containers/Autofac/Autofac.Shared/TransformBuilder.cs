@@ -214,12 +214,6 @@ namespace Transformalize.Containers.Autofac {
          //RegisterTransform(_builder, (ctx, c) => new WebTransform(c), new WebTransform().GetSignatures());
          //RegisterTransform(_builder, (ctx, c) => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
          
-         // Moved to FileModule
-         //RegisterTransform(_builder, (ctx, c) => new FileExtTransform(c), new FileExtTransform().GetSignatures());
-         //RegisterTransform(_builder, (ctx, c) => new FileNameTransform(c), new FileNameTransform().GetSignatures());
-         //RegisterTransform(_builder, (ctx, c) => new FilePathTransform(c), new FilePathTransform().GetSignatures());
-         //RegisterTransform(_builder, (ctx, c) => new LineTransform(c), new LineTransform().GetSignatures());
-
          RegisterTransform(_builder, (ctx, c) => new HtmlDecodeTransform(c), new HtmlDecodeTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new HtmlEncodeTransform(c), new HtmlEncodeTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new UrlDecodeTransform(c), new UrlDecodeTransform().GetSignatures());

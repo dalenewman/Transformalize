@@ -45,10 +45,10 @@ namespace Tests {
 </items>");
 
          Assert.AreEqual(2, doc.Descendants("item").Count());
-         var items = string.Join(", ", doc.Descendants("item").Select(item => item.Element("Quantity").Value + " " + item.Element("Item").Value));
-         var price = doc.Descendants("item").Where(item => !string.IsNullOrEmpty(item.Element("Price").Value)).Sum(item => System.Convert.ToInt32(item.Element("Price").Value) * System.Convert.ToInt32(item.Element("Quantity").Value));
+         var items = string.Join(", ", doc.Descendants("item").Select(item => item.Element("Quantity")?.Value ?? string.Empty + " " + item.Element("Item")?.Value ?? string.Empty));
+         var price = doc.Descendants("item").Where(item => !string.IsNullOrEmpty(item.Element("Price")?.Value ?? string.Empty)).Sum(item => Convert.ToInt32(item.Element("Price")?.Value ?? "0") * Convert.ToInt32(item.Element("Quantity")?.Value ?? "0"));
 
-         System.Console.WriteLine(price);
+         Console.WriteLine(price);
       }
 
       [TestMethod]
