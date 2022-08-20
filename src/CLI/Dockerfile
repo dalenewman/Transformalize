@@ -7,10 +7,10 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["src/CLI/CLI.csproj", "src/CLI/"]
-COPY ["Containers/Autofac/Transformalize.Container.Autofac.Standard.20/Transformalize.Container.Autofac.Standard.20.csproj", "Containers/Autofac/Transformalize.Container.Autofac.Standard.20/"]
-COPY ["Compatibility/Transformalize.Standard.20/Transformalize.Standard.20.csproj", "Compatibility/Transformalize.Standard.20/"]
-COPY ["Providers/Console/Console.Autofac.Standard.20/Console.Autofac.Standard.20.csproj", "Providers/Console/Console.Autofac.Standard.20/"]
-COPY ["Providers/Console/Console.Standard.20/Console.Standard.20.csproj", "Providers/Console/Console.Standard.20/"]
+COPY ["src/Providers/Console/Console.Autofac.Standard.20/Console.Autofac.Standard.20.csproj", "src/Providers/Console/Console.Autofac.Standard.20/"]
+COPY ["src/Providers/Console/Console.Standard.20/Console.Standard.20.csproj", "src/Providers/Console/Console.Standard.20/"]
+COPY ["src/Transformalize/Transformalize.csproj", "src/Transformalize/"]
+COPY ["src/Containers/Autofac/Autofac.Standard.20/Autofac.Standard.20.csproj", "src/Containers/Autofac/Autofac.Standard.20/"]
 RUN dotnet restore "src/CLI/CLI.csproj"
 COPY . .
 WORKDIR "/src/src/CLI"
