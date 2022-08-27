@@ -15,18 +15,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Linq;
 using System.Threading;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.System {
-   public class SetSystemFields : BaseTransform {
+   public class SystemFieldsTransform : BaseTransform {
       private readonly Field _tflKey;
       private readonly Field _tflDeleted;
       private readonly Field _tflBatchId;
       private readonly Field _tflHashCode;
+      private readonly Field[] _hashFields;
 
-      public SetSystemFields(IContext context) : base(context, null) {
+      public SystemFieldsTransform(IContext context) : base(context, null) {
 
          if (Context.Process.ReadOnly) {
             Run = false;
@@ -37,13 +39,15 @@ namespace Transformalize.Transforms.System {
          _tflDeleted = context.Entity.TflDeleted();
          _tflBatchId = context.Entity.TflBatchId();
          _tflHashCode = context.Entity.TflHashCode();
+         _hashFields = context.Entity.Fields.Where(f => f.Input && !f.PrimaryKey).OrderBy(f => f.Input).ToArray();
+
       }
 
       public override IRow Operate(IRow row) {
          row[_tflKey] = Interlocked.Increment(ref Context.Entity.Identity);
          row[_tflDeleted] = false;
          row[_tflBatchId] = Context.Entity.BatchId;
-         row[_tflHashCode] = 0;
+         row[_tflHashCode] = HashcodeTransform.GetDeterministicHashCode(_hashFields.Select(f => row[f]));
          return row;
       }
 

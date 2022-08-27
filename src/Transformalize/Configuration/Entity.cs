@@ -42,7 +42,7 @@ namespace Transformalize.Configuration {
       /// </summary>
       [Cfg(value = Constants.DefaultSetting, toLower = true)]
       public string Input {
-         get => _input; 
+         get => _input;
          set {
             _input = value;
             _connection = value;
@@ -329,24 +329,11 @@ namespace Transformalize.Configuration {
             return;
 
          var fields = new List<Field> {
-                new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" },
-                new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" },
-                new Field {
-                    Name = Constants.TflHashCode,
-                    Alias = Constants.TflHashCode,
-                    System = true,
-                    Type = "int",
-                    Input = false,
-                    Default = "0",
-                    Transforms = new List<Operation> {
-                        new Operation {
-                            Method = "hashcode",
-                            Parameters = Fields.Where(f=>f.Input && !f.PrimaryKey).OrderBy(f=>f.Input).Select(f=>new Parameter { Entity = Alias, Field = f.Alias}).ToList()
-                        }
-                    }
-                },
-                new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }
-            };
+            new Field { Name = Constants.TflKey, Alias = Constants.TflKey, System = true, Type = "int", Input = false, Default = "0" },
+            new Field { Name = Constants.TflBatchId, Alias = Constants.TflBatchId, System = true, Type = "int", Input = false, Default = "0" },
+            new Field { Name = Constants.TflHashCode, Alias = Constants.TflHashCode, System = true, Type = "int", Input = false, Default = "0" },
+            new Field { Name = Constants.TflDeleted, Alias = Constants.TflDeleted, System = true, Type = "boolean", Input = false, Default = "false" }
+         };
 
          foreach (var field in fields) {
             field.System = true;

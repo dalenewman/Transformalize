@@ -36,27 +36,13 @@ namespace Transformalize.Transforms {
       }
 
       public override IRow Operate(IRow row) {
-         // row[Context.Field] = GetHashCode(_input.Select(f => row[f]));
          row[Context.Field] = GetDeterministicHashCode(_input.Select(f => row[f]));
          return row;
       }
 
-      // Jon Skeet's Answer
-      // http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-      // http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx
-      public static int GetHashCode(IEnumerable<object> values) {
-         unchecked {
-            var hash = (int)2166136261;
-            foreach (var value in values) {
-               hash = hash * 16777619 ^ value.GetHashCode();
-            }
-            return hash;
-         }
-      }
-
-      // They are changing get hash code to generate different hashcodes each time the program runs
+      // get same hash code for string input across separate program execution
       // https://andrewlock.net/why-is-string-gethashcode-different-each-time-i-run-my-program-in-net-core/
-      static int GetDeterministicHashCode(IEnumerable<object> values) {
+      public static int GetDeterministicHashCode(IEnumerable<object> values) {
          var str = string.Concat(values);
          unchecked {
             int hash1 = (5381 << 16) + 5381;

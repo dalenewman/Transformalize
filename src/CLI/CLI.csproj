@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AssemblyName>tfl</AssemblyName>
     <RootNamespace>Transformalize.Cli</RootNamespace>
-    <Version>0.10.5-beta</Version>
+    <Version>0.10.7-beta</Version>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
     <DockerfileTag>transformalize.cli</DockerfileTag>
@@ -12,8 +12,8 @@
     <ApplicationIcon>tfl.ico</ApplicationIcon>
     <Copyright>© 2022 - Dale Newman</Copyright>
     <PackageIcon>tfl.png</PackageIcon>
-    <FileVersion>0.10.5</FileVersion>
-    <AssemblyVersion>0.10.5</AssemblyVersion>
+    <FileVersion>0.10.7</FileVersion>
+    <AssemblyVersion>0.10.7</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="bin\**" />
@@ -42,7 +42,7 @@
     <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.10.2-beta" />
     <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.1-beta" />
-    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.10.1-beta" />
+    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.10.7-beta" />
     <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
     <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.1-beta" />
     <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />

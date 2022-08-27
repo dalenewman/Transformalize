@@ -35,8 +35,8 @@ namespace Transformalize.Transforms.Xml {
 
       private readonly string _root;
       private readonly bool _findRoot;
-      private readonly IOperation _setSystemFields;
-      private readonly Field _hashCode;
+      //private readonly IOperation _setSystemFields;
+      //private readonly Field _hashCode;
 
       private const StringComparison Ic = StringComparison.OrdinalIgnoreCase;
       private readonly bool _searchAttributes;
@@ -48,7 +48,7 @@ namespace Transformalize.Transforms.Xml {
 
       private readonly Field _input;
       private readonly Field[] _fields;
-      private readonly Field[] _fieldsToHash;
+      //private readonly Field[] _fieldsToHash;
       private readonly List<Field> _outerFields;
       private readonly Dictionary<string, object> _typeDefaults;
 
@@ -82,11 +82,11 @@ namespace Transformalize.Transforms.Xml {
             _nameMap[field.Name] = field;
          }
 
-         if (!Context.Process.ReadOnly) {
-            _fieldsToHash = _fields.Where(f => !f.System).ToArray();
-            _setSystemFields = new SetSystemFields(Context);
-            _hashCode = Context.Entity.TflHashCode();
-         } 
+         //if (!Context.Process.ReadOnly) {
+         //   _fieldsToHash = _fields.Where(f => !f.System).ToArray();
+         //   _setSystemFields = new SetSystemFields(Context);
+         //   _hashCode = Context.Entity.TflHashCode();
+         //} 
       }
 
       public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
@@ -177,10 +177,11 @@ namespace Transformalize.Transforms.Xml {
             r[field] = outerRow[field];
          }
 
-         if (!Context.Process.ReadOnly) {
-            r = _setSystemFields.Operate(r);
-            r[_hashCode] = HashcodeTransform.GetHashCode(_fieldsToHash.Select(f => r[f]));
-         }
+         // try 
+         //if (!Context.Process.ReadOnly) {
+         //   r = _setSystemFields.Operate(r);
+         //   r[_hashCode] = HashcodeTransform.GetDeterministicHashCode(_fieldsToHash.Select(f => r[f]));
+         //}
 
          innerRows.Add(r);
          innerRow = _rowFactory.Create();

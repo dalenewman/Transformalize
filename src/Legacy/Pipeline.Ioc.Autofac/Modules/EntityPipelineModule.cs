@@ -47,15 +47,12 @@ namespace Transformalize.Ioc.Autofac.Modules {
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
             // transforms
-            if (!process.ReadOnly) {
-               pipeline.Register(new SetSystemFields(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-            }
-
-            // pipeline.Register(new CancelTransform(context));  may create a problem when canceling without the intention to run full init afterwards
             pipeline.Register(new IncrementTransform(context));
             pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
-
             pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
+            if (!process.ReadOnly) {
+               pipeline.Register(new SystemFieldsTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+            }
             pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
 
             if (!process.ReadOnly) {

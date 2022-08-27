@@ -71,7 +71,7 @@ namespace Transformalize.Transforms {
          } else {
 
             if (Context.Operation.Value == "*" && nextOperation != null) {
-               foreach (var field in Context.Entity.GetAllFields()) {
+               foreach (var field in Context.Entity.GetAllFields().Where(f=>!f.System)) {
                   nextOperation.Parameters.Add(new Parameter() { Field = field.Alias, Entity = Context.Entity.Alias });
                }
             } else {
