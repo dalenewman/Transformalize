@@ -1,8 +1,8 @@
 REM Main
-nuget push "c:\temp\modules\Transformalize.0.10.7-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.10.9-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 
 REM Containers 
-nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.7-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.9-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 
 REM Providers
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json

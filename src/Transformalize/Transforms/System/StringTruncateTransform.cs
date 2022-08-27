@@ -26,6 +26,15 @@ namespace Transformalize.Transforms.System {
    public class StringTruncateTransfom : BaseTransform {
       private readonly StringLength[] _strings;
 
+      public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
+         if (Context.Process.ReadOnly) {
+            Run = false;
+            return;
+         }
+         fields = fields ?? context.Entity.GetAllFields();
+         _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output && (f.Transforms.Count == 0 || !f.Transforms.Last().ProducesArray)).Select(f => new StringLength(f.Name, f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length), f.Transforms.Any())).ToArray();
+      }
+
       internal class StringLength : IField {
          public string Name { get; }
          public string Alias { get; }
@@ -42,11 +51,6 @@ namespace Transformalize.Transforms.System {
             MasterIndex = masterIndex;
             Length = length;
          }
-      }
-
-      public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
-         fields = fields ?? context.Entity.GetAllFields();
-         _strings = fields.Where(f => f.Type == "string" && f.Length != "max" && f.Output && (f.Transforms.Count == 0 || !f.Transforms.Last().ProducesArray)).Select(f => new StringLength(f.Name, f.Alias, f.Index, f.MasterIndex, Convert.ToInt32(f.Length), f.Transforms.Any())).ToArray();
       }
 
       public override IRow Operate(IRow row) {

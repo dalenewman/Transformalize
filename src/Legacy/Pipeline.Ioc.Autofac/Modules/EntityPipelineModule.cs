@@ -46,19 +46,14 @@ namespace Transformalize.Ioc.Autofac.Modules {
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
             pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
-            // transforms
+            // register transform and validator operations
             pipeline.Register(new IncrementTransform(context));
             pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
+            pipeline.Register(new SystemHashcodeTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
-            if (!process.ReadOnly) {
-               pipeline.Register(new SystemFieldsTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-            }
+            pipeline.Register(new SystemFieldsTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
-
-            if (!process.ReadOnly) {
-               pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
-            }
-
+            pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
             pipeline.Register(new LogTransform(context));
 
             // writer, TODO: rely on IOutputProvider instead
