@@ -1,12 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize.Transforms.Xml</RootNamespace>
       <AssemblyName>Transformalize.Transform.Xml</AssemblyName>
-      <Version>0.10.5-beta</Version>
-      <FileVersion>0.10.5</FileVersion>
-      <AssemblyVersion>0.10.5</AssemblyVersion>
+      <Version>0.10.10-beta</Version>
+      <FileVersion>0.10.10</FileVersion>
+      <AssemblyVersion>0.10.10</AssemblyVersion>
    </PropertyGroup>
 
    <ItemGroup>

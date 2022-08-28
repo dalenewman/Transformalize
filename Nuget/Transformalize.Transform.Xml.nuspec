@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Transform.Xml</id>
-      <version>0.10.5-beta</version>
+      <version>0.10.10-beta</version>
       <title>Transformalize Xml</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.10.5-beta" />
+            <dependency id="Transformalize" version="0.10.10-beta" />
          </group>
       </dependencies>
    </metadata>

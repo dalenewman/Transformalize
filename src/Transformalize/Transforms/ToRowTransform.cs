@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
-using Transformalize.Transforms.System;
 
 namespace Transformalize.Transforms {
    public class ToRowTransform : BaseTransform {
@@ -11,9 +10,8 @@ namespace Transformalize.Transforms {
       private readonly IRowFactory _rowFactory;
       private readonly Field _input;
       private readonly Field[] _fields;
-      //private SetSystemFields _setSystemFields;
-      //private readonly Field _hashCode;
-      //private Field[] _fieldsToHash;
+      private readonly Field _hashCode;
+      private Field[] _fieldsToHash;
 
       public ToRowTransform(IContext context = null, IRowFactory rowFactory = null) : base(context, null) {
 
@@ -46,10 +44,8 @@ namespace Transformalize.Transforms {
          _fields = Context.Entity.GetAllFields().ToArray();
          _input = SingleInput();
 
-         // this bit can be encapsulated ,it is always needed for producing rows (it's in FromXml too)
-         //_setSystemFields = new SetSystemFields(context);
-         //_hashCode = Context.Entity.TflHashCode();
-         //_fieldsToHash = _fields.Where(f => !f.System).ToArray();
+         _hashCode = Context.Entity.TflHashCode();
+         _fieldsToHash = _fields.Where(f => !f.System).ToArray();
       }
 
       public override IRow Operate(IRow row) {
@@ -66,11 +62,9 @@ namespace Transformalize.Transforms {
                   var inner = _rowFactory.Clone(outer, _fields);
                   inner[Context.Field] = value;
 
-                  // this has to be done whenever adding rows
-                  //if (!Context.Process.ReadOnly) {
-                  //   inner = _setSystemFields.Operate(inner);
-                  //   inner[_hashCode] = HashcodeTransform.GetDeterministicHashCode(_fieldsToHash.Select(f => inner[f]));
-                  //}
+                  if (!Context.Process.ReadOnly) {
+                     inner[_hashCode] = HashcodeTransform.GetDeterministicHashCode(_fieldsToHash.Select(f => inner[f]));
+                  }
 
                   yield return inner;
                }
