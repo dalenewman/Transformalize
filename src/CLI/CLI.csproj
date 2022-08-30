@@ -4,16 +4,19 @@
       <TargetFramework>net6.0</TargetFramework>
       <AssemblyName>tfl</AssemblyName>
       <RootNamespace>Transformalize.Cli</RootNamespace>
-      <Version>0.10.10-beta</Version>
-      <FileVersion>0.10.10</FileVersion>
-      <AssemblyVersion>0.10.10</AssemblyVersion>
-      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-      <DockerfileContext>..\..</DockerfileContext>
-      <DockerfileTag>transformalize.cli</DockerfileTag>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
       <Copyright>© 2022 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
+
+      <Version>0.10.10-beta</Version>
+      <FileVersion>0.10.10</FileVersion>
+      <AssemblyVersion>0.10.10</AssemblyVersion>
+
+      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+      <DockerfileContext>..\..</DockerfileContext>
+      <DockerfileTag>transformalize.cli</DockerfileTag>
+      <DockerfileFile>Dockerfile</DockerfileFile>
    </PropertyGroup>
    <ItemGroup>
       <Compile Remove="bin\**" />
