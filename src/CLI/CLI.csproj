@@ -9,9 +9,9 @@
       <Copyright>© 2022 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.10-beta</Version>
-      <FileVersion>0.10.10</FileVersion>
-      <AssemblyVersion>0.10.10</AssemblyVersion>
+      <Version>0.10.11-beta</Version>
+      <FileVersion>0.10.11</FileVersion>
+      <AssemblyVersion>0.10.11</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -34,7 +34,8 @@
    </ItemGroup>
    <ItemGroup>
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
-      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
+      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
+      <PackageReference Include="NETStandard.Library" Version="2.0.3" />
       <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.0-beta" />

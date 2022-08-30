@@ -1,8 +1,8 @@
 REM Main
-nuget push "c:\temp\modules\Transformalize.0.10.10-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.0.10.11-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 
 REM Containers 
-REM nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.9-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.11-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 
 REM Providers
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
@@ -17,7 +17,7 @@ REM Transforms
 REM nuget push "c:\temp\modules\Transformalize.Transform.Compression.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Transform.Globalization.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Transform.Geography.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
-nuget push "c:\temp\modules\Transformalize.Transform.Xml.0.10.10-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+REM nuget push "c:\temp\modules\Transformalize.Transform.Xml.0.10.10-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
 
 REM Legacy
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.10.5-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
