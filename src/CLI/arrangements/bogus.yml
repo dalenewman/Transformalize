@@ -1,0 +1,36 @@
+﻿name: Bogus
+read-only: true
+
+parameters:
+  - name: Seed
+    value: 1
+  - name: Size
+    value: 5
+
+connections:
+  - name: input
+    provider: bogus
+    seed: ${Seed}
+
+entities:
+  - name: Contact
+    size: ${Size}
+    fields:
+      - name: Identity
+        type: int
+      - name: FirstName
+      - name: LastName
+      - name: Email
+      - name: Phone
+        format: "(###) ###-####"
+      - name: Stars
+        type: byte
+        min: 1
+        max: 5
+      - name: Recent
+        alias: LastSeen
+        type: datetime
+    calculated-fields:
+      - name: TimeAgo
+        t: copy(LastSeen).timeAgo()
+

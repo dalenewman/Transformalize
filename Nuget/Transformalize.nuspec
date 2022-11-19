@@ -2,20 +2,20 @@
 <package>
   <metadata>
     <id>Transformalize</id>
-    <version>0.10.10-beta</version>
+    <version>0.10.11-beta</version>
     <title>Transformalize</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
     <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>The main Transformalize library</description>
-    <releaseNotes>added property for elasticsearch</releaseNotes>
+    <releaseNotes>dependencies</releaseNotes>
     <copyright>Copyright © 2013-2022</copyright>
     <tags>etl,transformalize</tags>
     <license type="expression">Apache-2.0</license>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="Cfg-NET" version="0.14.0-beta" />
+        <dependency id="Cfg-NET" version="0.15.0-beta" />
         <dependency id="DateMath" version="1.2.0" />
       </group>
     </dependencies>

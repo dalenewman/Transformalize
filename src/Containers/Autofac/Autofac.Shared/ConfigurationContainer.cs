@@ -79,7 +79,6 @@ namespace Transformalize.Containers.Autofac {
          var builder = new ContainerBuilder();
 
          builder.Register((ctx) => logger).As<IPipelineLogger>();
-
          builder.Register<IReader>(c => new DefaultReader(new FileReader(), new WebReader())).As<IReader>();
 
          // register short-hand for t attribute
@@ -106,7 +105,6 @@ namespace Transformalize.Containers.Autofac {
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(TransformModule.FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "t", "transforms", "method")).Named<IDependency>(TransformModule.FieldsName).InstancePerLifetimeScope();
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(TransformModule.ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(TransformModule.ParametersName).InstancePerLifetimeScope();
 
-
 #if PLUGINS
          // the shorthand registrations are stored in the builder's properties for plugins to add to
          builder.Properties["ShortHand"] = _shortHand;
@@ -124,13 +122,14 @@ namespace Transformalize.Containers.Autofac {
 
             var transformed = TransformParameters(ctx, cfg);
 
-            var dependancies = new List<IDependency>();
-            dependancies.Add(ctx.Resolve<IReader>());
+            var dependancies = new List<IDependency> {
+                 ctx.Resolve<IReader>(),
+                 new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"),
+                 ctx.ResolveNamed<IDependency>(TransformModule.FieldsName),
+                 ctx.ResolveNamed<IDependency>(TransformModule.ParametersName),
+                 ctx.ResolveNamed<IDependency>(ValidateModule.FieldsName)
+             };
             dependancies.AddRange(_dependencies);
-            dependancies.Add(new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"));
-            dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.FieldsName));
-            dependancies.Add(ctx.ResolveNamed<IDependency>(TransformModule.ParametersName));
-            dependancies.Add(ctx.ResolveNamed<IDependency>(ValidateModule.FieldsName));
 
             return new Process(transformed ?? cfg, parameters, dependancies.ToArray());
 
@@ -138,17 +137,18 @@ namespace Transformalize.Containers.Autofac {
          return builder.Build().BeginLifetimeScope();
       }
 
-      private static string TransformParameters(IComponentContext ctx, string cfg) {
+      private string TransformParameters(IComponentContext ctx, string cfg) {
 
-         var preProcess = new ConfigurationFacade.Process(
-            cfg,
-            new Dictionary<string, string>(),
-            new List<IDependency> {
-               ctx.Resolve<IReader>(),
-               new DateMathModifier(),
-               new ParameterModifier(new NullPlaceHolderReplacer()),
-               ctx.ResolveNamed<IDependency>(TransformModule.ParametersName)
-         }.ToArray());
+         var parameters = new Dictionary<string, string>();
+         var dependencies = new List<IDependency>() {
+            ctx.Resolve<IReader>(),
+            new DateMathModifier(),
+            new ParameterModifier(new NullPlaceHolderReplacer()),
+            ctx.ResolveNamed<IDependency>(TransformModule.ParametersName)
+         };
+         dependencies.AddRange(_dependencies);
+
+         var preProcess = new ConfigurationFacade.Process(cfg, parameters, dependencies.ToArray());
 
          if (!preProcess.Parameters.Any(pr => pr.Transforms.Any()))
             return null;

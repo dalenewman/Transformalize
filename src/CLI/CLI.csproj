@@ -6,12 +6,12 @@
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
-      <Copyright>© 2022 - Dale Newman</Copyright>
+      <Copyright>© 2013-2022 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.10-beta</Version>
-      <FileVersion>0.10.10</FileVersion>
-      <AssemblyVersion>0.10.10</AssemblyVersion>
+      <Version>0.10.11-beta</Version>
+      <FileVersion>0.10.11</FileVersion>
+      <AssemblyVersion>0.10.11</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -33,6 +33,7 @@
       </None>
    </ItemGroup>
    <ItemGroup>
+      <PackageReference Include="Cfg-NET.Parser.YamlDotNet" Version="0.15.0-beta" />
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.16.1" />
       <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.10.2-beta" />
@@ -44,12 +45,14 @@
       <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.10.1-beta" />
+      <PackageReference Include="Transformalize.Provider.Solr.Autofac" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.10.9-beta" />
       <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
+      <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
@@ -60,6 +63,9 @@
       <ProjectReference Include="..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
    </ItemGroup>
    <ItemGroup>
+      <None Update="arrangements\bogus.yml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="arrangements\instances-schema.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

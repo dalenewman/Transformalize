@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Cfg.Net.Parsers.YamlDotNet;
 using CommandLine;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,10 @@ using Transformalize.Providers.Mail.Autofac;
 using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.Razor.Autofac;
+using Transformalize.Providers.Solr.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
+using Transformalize.Transform.GoogleMaps;
 using Transformalize.Transforms.Compression;
 using Transformalize.Transforms.Fluid.Autofac;
 using Transformalize.Transforms.Geography;
@@ -33,11 +36,12 @@ using Transformalize.Transforms.Xml;
 
 namespace Transformalize.Cli {
    class Program {
+
       static void Main(string[] args) {
 
          Parser.Default.ParseArguments<RunOptions>(args)
-          .WithParsed(Run)
-          .WithNotParsed(CommandLineError);
+            .WithParsed(Run)
+            .WithNotParsed(CommandLineError); 
 
       }
 
@@ -52,7 +56,6 @@ namespace Transformalize.Cli {
             new HumanizeModule(),
             new LambdaParserModule()
          };
-         // todo: geoCode, etc
 
          // adding transforms that aren't in modules
          var container = new ConfigurationContainer(operations.ToArray());
@@ -64,8 +67,16 @@ namespace Transformalize.Cli {
          container.AddTransform((c) => new DecompressTransform(c), new DecompressTransform().GetSignatures());
          container.AddTransform((c) => new FromXmlTransform(c), new FromXmlTransform().GetSignatures());
          container.AddTransform((c) => new XPathTransform(c), new XPathTransform().GetSignatures());
+         container.AddTransform((c) => new GeocodeTransform(c), new GeocodeTransform().GetSignatures());
+         container.AddTransform((c) => new PlaceTransform(c), new PlaceTransform().GetSignatures());
 
-         using (var outer = container.CreateScope(options.ArrangementWithMode(), logger, options.GetParameters())) {
+         var placeHolderStyle = "@[]"; // the legacy style
+         if (options.Arrangement.EndsWith("yaml", StringComparison.OrdinalIgnoreCase) || options.Arrangement.EndsWith("yml", StringComparison.OrdinalIgnoreCase)) {
+            container.AddDependency(new YamlDotNetParser());
+            placeHolderStyle = "${}";
+         }
+
+         using (var outer = container.CreateScope(options.ArrangementWithMode(), logger, options.GetParameters(), placeHolderStyle)) {
 
             var process = outer.Resolve<Process>();
 
@@ -120,7 +131,7 @@ namespace Transformalize.Cli {
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
             providers.Add(new MailModule());
-            // solr
+            providers.Add(new SolrModule());
 
             var modules = providers.Union(operations).ToArray();
 
