@@ -1,4 +1,3 @@
-REM note I have not pushed 0.10.11 yet
 nuget pack Transformalize.nuspec -OutputDirectory "c:\temp\modules"
 
 REM CONTAINERS
