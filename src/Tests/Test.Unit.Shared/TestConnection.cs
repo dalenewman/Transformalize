@@ -36,12 +36,11 @@ namespace Tests {
       public void FileStuff() {
 
       var sep = Path.DirectorySeparatorChar.ToString();
-		var filePath = string.Join(sep, new string[] { "/", "server", "projects", "ETL", "2016-04-24.txt" });
-
+      var testPath = string.Join(sep, new string[] { "/", "server", "projects", "ETL", "2016-04-24.txt" });
       var xml = $@"<add name='TestProcess'>
    <connections>
      <add name='input' provider='internal' file='c:\temp.txt' port='6' />
-     <add name='other' provider='internal' file='{filePath}' />
+     <add name='other' provider='internal' file='{testPath}' />
    </connections>
    <entities>
      <add name='TestData'>
@@ -90,7 +89,7 @@ namespace Tests {
                Assert.AreEqual(@"2016-04-24.txt", output[0][fileName]);
                Assert.AreEqual(@"2016-04-24", output[0][fileNameNoExt]);
                Assert.AreEqual(@".txt", output[0][fileExt]);
-               Assert.AreEqual(filePath, output[0][filePath]);
+               Assert.AreEqual(testPath, output[0][filePath]);
             }
          }
       }
