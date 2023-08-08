@@ -24,6 +24,6 @@ jobs:
       run: dotnet restore
     - name: Build
     # run: dotnet build --no-restore
-      run: dotnet msbuild --no-restore /p:ExcludeFoldersFromDeployment=legacy
+      run: dotnet msbuild /p:ExcludeFoldersFromDeployment=legacy
     - name: Test
       run: dotnet test --no-build --verbosity normal
