@@ -36,7 +36,11 @@ namespace Tests {
             var process = c.Resolve<Process>();
             Assert.AreEqual(0, process.Errors().Length);
             Assert.AreEqual(0, process.Warnings().Length);
-            Assert.AreEqual("egAAAB+LCAAAAAAAAApLzi/NSVEozs9Nzc9LVSjISU0sTlVIzs8tKEotLlbITbUHcgipUMhUyEtNTVEoyVdIQkilpugpwLUVZ4BNQdKmBwCqA+CnegAAAA==", process.Parameters.First().Value);
+            /* 19th character is different */
+            var expectedLin = "egAAAB+LCAAAAAAAAANLzi/NSVEozs9Nzc9LVSjISU0sTlVIzs8tKEotLlbITbUHcgipUMhUyEtNTVEoyVdIQkilpugpwLUVZ4BNQdKmBwCqA+CnegAAAA==";
+            var expectedWin = "egAAAB+LCAAAAAAAAApLzi/NSVEozs9Nzc9LVSjISU0sTlVIzs8tKEotLlbITbUHcgipUMhUyEtNTVEoyVdIQkilpugpwLUVZ4BNQdKmBwCqA+CnegAAAA==";
+            var actual = process.Parameters.First().Value;
+            Assert.IsTrue(actual == expectedLin || actual == expectedWin);
          }
       }
 
