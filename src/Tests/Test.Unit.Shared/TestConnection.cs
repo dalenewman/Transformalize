@@ -36,7 +36,7 @@ namespace Tests {
       public void FileStuff() {
 
       var sep = Path.DirectorySeparatorChar.ToString();
-      var testPath = string.Join(sep, new string[] { "/", "server", "projects", "ETL", "2016-04-24.txt" });
+      var testPath = string.Join(sep, new string[] { "server", "projects", "ETL", "2016-04-24.txt" });
       var xml = $@"<add name='TestProcess'>
    <connections>
      <add name='input' provider='internal' file='c:\temp.txt' port='6' />
