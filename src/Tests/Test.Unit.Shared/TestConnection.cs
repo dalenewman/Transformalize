@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2019 Dale Newman
+// Copyright 2013-2023 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ using Transformalize.Contracts;
 using Transformalize.Logging;
 using Transformalize.Providers.File.Transforms;
 using Transformalize.Transforms;
+using System.IO;
 
 namespace Tests {
 
@@ -34,34 +35,35 @@ namespace Tests {
       [TestMethod]
       public void FileStuff() {
 
-         const string xml = @"
-    <add name='TestProcess'>
-      <connections>
-        <add name='input' provider='internal' file='c:\temp.txt' port='6' />
-        <add name='other' provider='internal' file='\\server\projects\ETL\2016-04-24.txt' />
-      </connections>
-      <entities>
-        <add name='TestData'>
-          <rows>
-            <add Field1='1' Field2='2' Field3='3' />
-          </rows>
-          <fields>
-            <add name='Field1' />
-            <add name='Field2' />
-            <add name='Field3' />
-          </fields>
-          <calculated-fields>
-            <add name='File' type='string' t='connection(input,File)' />
-            <add name='Port' type='int' t='connection(input,Port).convert()' />            
-            <add name='FileName' length='128' t='connection(other,File).filename()' />
-            <add name='FileNameNoExt' length='128' t='connection(other,File).filename(false)' />
-            <add name='FileExt' length='128' t='connection(other,File).fileext()' />
-            <add name='FilePath' length='128' t='connection(other,File).filepath()' />
-          </calculated-fields>
-        </add>
-      </entities>
-    </add>
-            ";
+      var sep = Path.DirectorySeparatorChar.ToString();
+		var filePath = string.Join(sep, new string[] { "/", "server", "projects", "ETL", "2016-04-24.txt" });
+
+      var xml = $@"<add name='TestProcess'>
+   <connections>
+     <add name='input' provider='internal' file='c:\temp.txt' port='6' />
+     <add name='other' provider='internal' file='{filePath}' />
+   </connections>
+   <entities>
+     <add name='TestData'>
+       <rows>
+         <add Field1='1' Field2='2' Field3='3' />
+       </rows>
+       <fields>
+         <add name='Field1' />
+         <add name='Field2' />
+         <add name='Field3' />
+       </fields>
+       <calculated-fields>
+         <add name='File' type='string' t='connection(input,File)' />
+         <add name='Port' type='int' t='connection(input,Port).convert()' />            
+         <add name='FileName' length='128' t='connection(other,File).filename()' />
+         <add name='FileNameNoExt' length='128' t='connection(other,File).filename(false)' />
+         <add name='FileExt' length='128' t='connection(other,File).fileext()' />
+         <add name='FilePath' length='128' t='connection(other,File).filepath()' />
+       </calculated-fields>
+     </add>
+   </entities>
+</add>";
 
          var transforms = new List<TransformHolder> {
             new TransformHolder((c) => new FileNameTransform(c), new FileNameTransform().GetSignatures()),
@@ -88,7 +90,7 @@ namespace Tests {
                Assert.AreEqual(@"2016-04-24.txt", output[0][fileName]);
                Assert.AreEqual(@"2016-04-24", output[0][fileNameNoExt]);
                Assert.AreEqual(@".txt", output[0][fileExt]);
-               Assert.AreEqual(@"\\server\projects\ETL\2016-04-24.txt", output[0][filePath]);
+               Assert.AreEqual(filePath, output[0][filePath]);
             }
          }
       }
