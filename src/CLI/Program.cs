@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
-using Transformalize.Containers.Autofac.Modules;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Autofac;
@@ -30,6 +29,7 @@ using Transformalize.Transforms.Geography;
 using Transformalize.Transforms.Globalization;
 using Transformalize.Transforms.Humanizer.Autofac;
 using Transformalize.Transforms.Jint.Autofac;
+using Transformalize.Transforms.Json.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Xml;
@@ -54,7 +54,8 @@ namespace Transformalize.Cli {
             new RazorTransformModule(),
             new FluidTransformModule(),
             new HumanizeModule(),
-            new LambdaParserModule()
+            new LambdaParserModule(),
+            new JsonTransformModule()
          };
 
          // adding transforms that aren't in modules

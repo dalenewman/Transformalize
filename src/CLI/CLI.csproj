@@ -6,12 +6,12 @@
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
-      <Copyright>© 2013-2022 - Dale Newman</Copyright>
+      <Copyright>© 2013-2023 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.12-beta</Version>
-      <FileVersion>0.10.12</FileVersion>
-      <AssemblyVersion>0.10.12</AssemblyVersion>
+      <Version>0.10.13-beta</Version>
+      <FileVersion>0.10.13</FileVersion>
+      <AssemblyVersion>0.10.13</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -56,6 +56,7 @@
       <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.0-beta" />
+      <PackageReference Include="Transformalize.Transform.Json.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.10-beta" />
