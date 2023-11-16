@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
+		docker.sh = docker.sh
 		LICENSE.md = LICENSE.md
 		nuget.config = nuget.config
 		README.md = README.md
@@ -109,7 +110,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac.Standard.20", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog.Standard.20", "src\Logging\NLog\NLog.Standard.20\NLog.Standard.20.csproj", "{38FC156B-EDF5-4D94-8A50-FB67F5C008E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Trace.Standard.20", "src\Providers\Trace.Standard.20\Trace.Standard.20.csproj", "{76BFD182-39A3-458F-9EA5-50724446032E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trace.Standard.20", "src\Providers\Trace.Standard.20\Trace.Standard.20.csproj", "{76BFD182-39A3-458F-9EA5-50724446032E}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Console.Shared", "src\Providers\Console\Console.Shared\Console.Shared.shproj", "{8F345BFB-28E6-412F-86BB-2B3E43752138}"
 EndProject
@@ -123,13 +124,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File.Standard.20", "src\Pro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "File.Autofac.Standard.20", "src\Providers\File\File.Autofac.Standard.20\File.Autofac.Standard.20.csproj", "{6FD8B578-EB14-4938-8B85-417B4B9856AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression.Standard.20", "src\Transforms\Compression.Standard.20\Compression.Standard.20.csproj", "{7FEB3EA6-DBE5-4785-A234-C11558E95742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compression.Standard.20", "src\Transforms\Compression.Standard.20\Compression.Standard.20.csproj", "{7FEB3EA6-DBE5-4785-A234-C11558E95742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geography.Standard.20", "src\Transforms\Geography.Standard.20\Geography.Standard.20.csproj", "{5647977A-41EC-44B7-B2F0-9EAC3DD61B97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geography.Standard.20", "src\Transforms\Geography.Standard.20\Geography.Standard.20.csproj", "{5647977A-41EC-44B7-B2F0-9EAC3DD61B97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Globalization.Standard.20", "src\Transforms\Globalization.Standard.20\Globalization.Standard.20.csproj", "{5FC982D6-54C3-49F5-BDB8-B04ABABA26BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Globalization.Standard.20", "src\Transforms\Globalization.Standard.20\Globalization.Standard.20.csproj", "{5FC982D6-54C3-49F5-BDB8-B04ABABA26BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xml.Standard.20", "src\Transforms\Xml.Standard.20\Xml.Standard.20.csproj", "{826E681C-B1B6-43F6-BB66-B618877C8175}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xml.Standard.20", "src\Transforms\Xml.Standard.20\Xml.Standard.20.csproj", "{826E681C-B1B6-43F6-BB66-B618877C8175}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

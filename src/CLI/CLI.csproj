@@ -9,9 +9,9 @@
       <Copyright>© 2013-2023 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.13-beta</Version>
-      <FileVersion>0.10.13</FileVersion>
-      <AssemblyVersion>0.10.13</AssemblyVersion>
+      <Version>0.10.14-beta</Version>
+      <FileVersion>0.10.14</FileVersion>
+      <AssemblyVersion>0.10.14</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -39,7 +39,7 @@
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
       <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.10.0-beta" />
-      <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.0-beta" />
+      <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
@@ -55,7 +55,7 @@
       <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.0-beta" />
+      <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Transform.Json.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
