@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
    <PropertyGroup>
       <OutputType>Exe</OutputType>
-      <TargetFramework>net6.0</TargetFramework>
+      <TargetFramework>net8.0</TargetFramework>
       <AssemblyName>tfl</AssemblyName>
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
@@ -9,9 +9,9 @@
       <Copyright>© 2013-2023 - Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.14-beta</Version>
-      <FileVersion>0.10.14</FileVersion>
-      <AssemblyVersion>0.10.14</AssemblyVersion>
+      <Version>0.10.15-beta</Version>
+      <FileVersion>0.10.15</FileVersion>
+      <AssemblyVersion>0.10.15</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
