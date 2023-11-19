@@ -6,7 +6,7 @@ ARG BUILD_IMAGE=mcr.microsoft.com/dotnet/sdk:8.0
 FROM ${BASE_IMAGE} AS base
 WORKDIR /app
 
-FROM ${BUILD_IMAGE} AS build
+FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["src/CLI/CLI.csproj", "src/CLI/"]
