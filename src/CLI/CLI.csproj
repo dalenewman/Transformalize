@@ -6,12 +6,12 @@
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
-      <Copyright>© 2013-2023 - Dale Newman</Copyright>
+      <Copyright>Copyright © 2013-2024 Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.10.16-beta</Version>
-      <FileVersion>0.10.16</FileVersion>
-      <AssemblyVersion>0.10.16</AssemblyVersion>
+      <Version>0.10.17-beta</Version>
+      <FileVersion>0.10.17</FileVersion>
+      <AssemblyVersion>0.10.17</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -41,7 +41,7 @@
       <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.10.2-beta" />
-      <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.10.0-beta" />
+      <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.10.2-beta" />
@@ -56,7 +56,7 @@
       <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.2-beta" />
-      <PackageReference Include="Transformalize.Transform.Json.Autofac" Version="0.10.0-beta" />
+      <PackageReference Include="Transformalize.Transform.Json.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.10-beta" />

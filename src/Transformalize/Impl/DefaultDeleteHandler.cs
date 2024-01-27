@@ -43,25 +43,17 @@ namespace Transformalize.Impl {
 
       public IEnumerable<IRow> DetermineDeletes() {
          var input = _inputReader.Read();
-#if NETS10
-            // no PLINQ
-#else
          if (_context.Entity.Pipeline == "parallel.linq") {
             input = input.AsParallel();
          }
-#endif
 
          // I believe this is here in case the primary key depends on transformations
          var transformed = _transforms.Aggregate(input, (current, transform) => current.Select(transform.Operate));
 
          var output = _outputReader.Read();
-#if NETS10
-            // no PLINQ
-#else
          if (_context.Entity.Pipeline == "parallel.linq") {
             output = output.AsParallel();
          }
-#endif
 
          return output.Except(transformed, new KeyComparer(_context.Entity.GetPrimaryKey()));
       }
