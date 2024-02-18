@@ -10,9 +10,9 @@ The supported inputs and outputs are below.
 <div class="table-responsive" style="font-size:smaller;">
 <table class="table table-condensed">
     <thead>
-      <tr>
+      <!--<tr>
          <th colspan="3" style="text-align:center">Cross Platform</th>
-      </tr>
+      </tr>-->
         <tr>
             <th>Relational</th>
             <th colspan="2" style="text-align:center">Non-Relational</th>
@@ -109,7 +109,7 @@ The supported inputs and outputs are below.
 </table>
 </div>
 
-<div class="table-responsive" style="font-size:smaller;">
+<!--<div class="table-responsive" style="font-size:smaller;">
 <table class="table table-condensed">
     <thead>
       <tr>
@@ -209,7 +209,7 @@ The supported inputs and outputs are below.
         </tr>
     </tbody>
 </table>
-</div>
+</div>-->
 
 ---
 
@@ -217,11 +217,7 @@ The supported inputs and outputs are below.
 
 This *readme* demonstrates how to denormalize a relational database and load it into Elasticsearch.
  
-To follow along:
-
-* Grab the [latest release](https://github.com/dalenewman/Transformalize/releases) of Transformalize for your platform.
-* Install [VS Code](https://code.visualstudio.com/) with the Transformalize [extension](https://marketplace.visualstudio.com/items?itemName=DaleNewman.transformalize) and update the Transformalize path in VS Code settings.
-* Setup these [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
+To follow along, see the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
 
 When you start denormalizing a database, it's good to have a diagram. 
 
