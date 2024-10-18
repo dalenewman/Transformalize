@@ -703,8 +703,8 @@ namespace Transformalize.Configuration {
       /// <summary>
       /// An optional Id (used in Orchard CMS module)
       /// </summary>
-      [Cfg(value = 0)]
-      public int Id { get; set; }
+      [Cfg(value = (long)0)]
+      public long Id { get; set; }
 
       public void Dispose() {
          if (Preserve)
