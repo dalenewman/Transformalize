@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.Trace</id>
-      <version>0.10.5-beta</version>
+      <version>0.11.1-beta</version>
       <title>Transformalize Provider for Trace</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -11,11 +11,11 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize Provider for Trace</description>
       <releaseNotes>maint</releaseNotes>
-      <copyright>Copyright 2013-2022</copyright>
+      <copyright>Copyright 2013-2024</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.10.5-beta" />
+            <dependency id="Transformalize" version="0.11.1-beta" />
          </group>
       </dependencies>
    </metadata>

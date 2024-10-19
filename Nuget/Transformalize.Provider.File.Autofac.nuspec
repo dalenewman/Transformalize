@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.File.Autofac</id>
-      <version>0.10.5-beta</version>
+      <version>0.11.1-beta</version>
       <title>Transformalize File Autofac Module</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -11,12 +11,12 @@
       <requireLicenseAcceptance>false</requireLicenseAcceptance>
       <description>Transformalize File Autofac Module</description>
       <releaseNotes>maint</releaseNotes>
-      <copyright>Copyright 2013-2022</copyright>
+      <copyright>Copyright 2013-2024</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize.Provider.File" version="0.10.5-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.10.5-beta" />
+            <dependency id="Transformalize.Provider.File" version="0.11.1-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.11.1-beta" />
          </group>
       </dependencies>
    </metadata>

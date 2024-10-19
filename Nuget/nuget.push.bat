@@ -1,7 +1,6 @@
 REM nuget push "c:\temp\modules\Transformalize.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM 
-REM nuget push "c:\temp\modules\Transformalize.Scheduler.Quartz.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM 
 REM REM PROVIDERS

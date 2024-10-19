@@ -2,7 +2,7 @@
 <package >
    <metadata>
       <id>Transformalize.Logging.NLog</id>
-      <version>0.10.6-beta</version>
+      <version>0.11.1-beta</version>
       <title>Transformalize Logging NLog</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -11,12 +11,12 @@
       <description>NLog Logging implementation</description>
       <!--<license type="expression">Apache-2.0</license>-->
       <releaseNotes>maint</releaseNotes>
-      <copyright>Copyright 2013-2023</copyright>
+      <copyright>Copyright 2013-2024</copyright>
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.10.5-beta" />
-            <dependency id="NLog" version="5.2.2" />
+            <dependency id="Transformalize" version="0.11.1-beta" />
+            <dependency id="NLog" version="5.3.4" />
          </group>
       </dependencies>
    </metadata>

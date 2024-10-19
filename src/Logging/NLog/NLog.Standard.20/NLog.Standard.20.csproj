@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Logging.NLog</RootNamespace>
      <AssemblyName>Transformalize.Logging.NLog</AssemblyName>
-     <Version>0.10.6-beta</Version>
-     <FileVersion>0.10.6</FileVersion>
-     <AssemblyVersion>0.10.6</AssemblyVersion> 
+     <Version>0.11.1</Version>
+     <FileVersion>0.11.1</FileVersion>
+     <AssemblyVersion>0.11.1</AssemblyVersion> 
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="5.2.2" />
+    <PackageReference Include="NLog" Version="5.3.4" />
   </ItemGroup>
 
   <ItemGroup>
