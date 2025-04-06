@@ -404,5 +404,11 @@ namespace Transformalize.Configuration {
       /// </summary>
       [Cfg(value = "")]
       public string CertificateFingerprint { get; set; }
+
+      /// <summary>
+      /// browse the connection (intended for orchardcore transformalize module feature)
+      /// </summary>
+      [Cfg(value = false)]
+      public bool Browse { get; set; }
    }
 }

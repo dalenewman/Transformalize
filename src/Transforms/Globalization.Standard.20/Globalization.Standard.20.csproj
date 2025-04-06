@@ -4,9 +4,9 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize.Transforms.Globalization</RootNamespace>
       <AssemblyName>Transformalize.Transform.Globalization</AssemblyName>
-      <Version>0.11.1</Version>
-      <FileVersion>0.11.1</FileVersion>
-      <AssemblyVersion>0.11.1</AssemblyVersion>
+      <Version>0.11.2-beta</Version>
+      <FileVersion>0.11.2</FileVersion>
+      <AssemblyVersion>0.11.2</AssemblyVersion>
    </PropertyGroup>
 
    <ItemGroup>
