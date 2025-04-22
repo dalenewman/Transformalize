@@ -88,17 +88,21 @@ namespace Transformalize {
       public static string ToPreferredTypeName(string t) {
          var l = t.ToLower();
          switch (l) {
+            case "boolean":
+               return "bool";
+            case "float":
+               return "single";
             case "int16":
                return "short";
             case "int32":
                return "int";
             case "int64":
                return "long";
+            case "ipaddress":
+               return "string";
+            case "npgsqlcidr":
+               return "string";
             case "real":
-            case "float":
-               return "single";
-            case "boolean":
-               return "bool";
             default:
                return l;
          }

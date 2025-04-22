@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Logging.NLog</RootNamespace>
      <AssemblyName>Transformalize.Logging.NLog</AssemblyName>
-     <Version>0.11.2-beta</Version>
-     <FileVersion>0.11.2</FileVersion>
-     <AssemblyVersion>0.11.2</AssemblyVersion> 
+     <Version>0.11.3-beta</Version>
+     <FileVersion>0.11.3</FileVersion>
+     <AssemblyVersion>0.11.3</AssemblyVersion> 
   </PropertyGroup>
 
   <ItemGroup>

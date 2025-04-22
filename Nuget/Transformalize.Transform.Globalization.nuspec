@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Transform.Globalization</id>
-      <version>0.11.1-beta</version>
+      <version>0.11.3-beta</version>
       <title>Transformalize Globalization</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.11.1-beta" />
+            <dependency id="Transformalize" version="0.11.3-beta" />
          </group>
       </dependencies>
    </metadata>
