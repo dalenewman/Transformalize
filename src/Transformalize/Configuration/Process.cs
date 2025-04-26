@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2019 Dale Newman
+// Copyright 2013-2025 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -312,7 +312,19 @@ namespace Transformalize.Configuration {
       public int FieldLogLimit { get; set; }
 
       protected override void Validate() {
+         ValidateRelationshipEntities();
          this.Validate(e => Error(e), w => Warn(w));
+      }
+
+      private void ValidateRelationshipEntities() {
+         foreach (var relationship in Relationships) {
+            if (!Entities.Exists(e => e.Name == relationship.LeftEntity || e.Alias == relationship.LeftEntity)) {
+               Error("The left entity {0} does not exist in entities.", relationship.LeftEntity);
+            }
+            if (!Entities.Exists(e => e.Name == relationship.RightEntity || e.Alias == relationship.RightEntity)) {
+               Error("The right entity {0} does not exist in entities.", relationship.RightEntity);
+            }
+         }
       }
 
       public List<Field> ParametersToFields(IEnumerable<Parameter> parameters, Field defaultField) {

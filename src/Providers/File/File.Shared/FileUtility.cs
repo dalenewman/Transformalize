@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2019 Dale Newman
+// Copyright 2013-2025 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.

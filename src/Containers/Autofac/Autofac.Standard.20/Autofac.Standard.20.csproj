@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Container.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Container.Autofac</AssemblyName>
-    <Version>0.11.3-beta</Version>
-    <FileVersion>0.11.3</FileVersion>
-    <AssemblyVersion>0.11.3</AssemblyVersion>
+    <Version>0.11.4</Version>
+    <FileVersion>0.11.4</FileVersion>
+    <AssemblyVersion>0.11.4</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>TRACE;PLUGINS</DefineConstants>

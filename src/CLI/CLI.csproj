@@ -9,9 +9,9 @@
       <Copyright>Copyright © 2013-2024 Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.11.3-beta</Version>
-      <FileVersion>0.11.3</FileVersion>
-      <AssemblyVersion>0.11.3</AssemblyVersion>
+      <Version>0.11.4</Version>
+      <FileVersion>0.11.4</FileVersion>
+      <AssemblyVersion>0.11.4</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>

@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Transform.Compression</id>
-      <version>0.11.3-beta</version>
+      <version>0.11.4-beta</version>
       <title>Transformalize Transform Compression</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize" version="0.11.3-beta" />
+            <dependency id="Transformalize" version="0.11.4-beta" />
          </group>
       </dependencies>
    </metadata>
