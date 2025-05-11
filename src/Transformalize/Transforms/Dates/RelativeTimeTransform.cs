@@ -23,7 +23,7 @@ using Transformalize.Contracts;
 namespace Transformalize.Transforms.Dates {
 
    public class TimeAgoTransform : RelativeTimeTransform {
-      public TimeAgoTransform(IContext context = null) : base(context, true) { }
+      public TimeAgoTransform(IContext context = null) : base(context) { }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("timeago") {
@@ -35,7 +35,7 @@ namespace Transformalize.Transforms.Dates {
    }
 
    public class TimeAheadTransform : RelativeTimeTransform {
-      public TimeAheadTransform(IContext context = null) : base(context, false) {
+      public TimeAheadTransform(IContext context = null) : base(context) {
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
@@ -49,16 +49,15 @@ namespace Transformalize.Transforms.Dates {
 
    public class RelativeTimeTransform : BaseTransform {
 
-      private readonly bool _past;
       private readonly long _nowTicks;
       private readonly Field _input;
-      private const int Second = 1;
-      private const int Minute = 60 * Second;
-      private const int Hour = 60 * Minute;
-      private const int Day = 24 * Hour;
-      private const int Month = 30 * Day;
+      private const double Second = 1.0;
+      private const double Minute = 60.0 * Second;
+      private const double Hour = 60.0 * Minute;
+      private const double Day = 24.0 * Hour;
+      private const double Month = (365.0 / 12.0) * Day;
 
-      public RelativeTimeTransform(IContext context, bool past) : base(context, "string") {
+      public RelativeTimeTransform(IContext context) : base(context, "string") {
          if (IsMissingContext()) {
             return;
          }
@@ -68,59 +67,50 @@ namespace Transformalize.Transforms.Dates {
          }
 
          _input = SingleInput();
-         _past = past;
          var fromTimeZone = context.Operation.FromTimeZone == Constants.DefaultSetting ? "UTC" : context.Operation.FromTimeZone;
 
-#if NETS10
-         _nowTicks = DateTime.UtcNow.Ticks;
-         if (fromTimeZone != "UTC") {
-            Context.Error($"The relative time transform (timeago, timeahead) in {Context.Field.Alias} can only work on UTC dates on the .net standard 1.0 platform.");
-            Run = false;
-         }
-#else
          _nowTicks = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, fromTimeZone).Ticks;
-#endif
       }
 
       public override IRow Operate(IRow row) {
-         row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks, _past);
+         row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks);
 
          return row;
       }
 
-      public static string GetRelativeTime(long nowTicks, long thenTicks, bool past = true) {
+      public static string GetRelativeTime(long nowTicks, long thenTicks) {
 
-         var suffix = past ? " ago" : string.Empty;
-         var ts = past ? new TimeSpan(nowTicks - thenTicks) : new TimeSpan(thenTicks - nowTicks);
+         var suffix = nowTicks > thenTicks ? " ago" : string.Empty;
+         var ts = nowTicks > thenTicks ? new TimeSpan(nowTicks - thenTicks) : new TimeSpan(thenTicks - nowTicks);
          var delta = Math.Abs(ts.TotalSeconds);
 
-         if (delta < 1 * Minute) {
+         if (delta < 1.0 * Minute) {
             return ts.Seconds == 1 ? "one second" + suffix : ts.Seconds + " seconds" + suffix;
          }
-         if (delta < 2 * Minute) {
+         if (delta < 2.0 * Minute) {
             return "a minute" + suffix;
          }
-         if (delta < 45 * Minute) {
+         if (delta < 45.0 * Minute) {
             return ts.Minutes + " minutes" + suffix;
          }
-         if (delta < 90 * Minute) {
+         if (delta < 90.0 * Minute) {
             return "an hour" + suffix;
          }
-         if (delta < 24 * Hour) {
-            return ts.Hours + " hours" + suffix;
+         if (delta < 24.0 * Hour) {
+            return Math.Max(ts.Hours, 2) + " hours" + suffix;
          }
-         if (delta < 48 * Hour) {
-            return past ? "yesterday" : "tomorrow";
+         if (delta < 2.0 * Day) {
+            return nowTicks > thenTicks ? "yesterday" : "tomorrow";
          }
-         if (delta < 30 * Day) {
+         if (delta < 30.0 * Day) {
             return ts.Days + " days" + suffix;
          }
-         if (delta < 12 * Month) {
-            var months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));
+         if (delta < 12.0 * Month) {
+            var months = Math.Max(Convert.ToInt32(Math.Floor(ts.TotalDays / 30.0)), 1);
             return months <= 1 ? "one month" + suffix : months + " months" + suffix;
          }
 
-         var years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
+         var years = Math.Max(Convert.ToInt32(Math.Floor(ts.TotalDays / 365.0)), 1);
          return years <= 1 ? "one year" + suffix : years + " years" + suffix;
       }
 

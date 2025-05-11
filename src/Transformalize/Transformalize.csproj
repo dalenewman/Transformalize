@@ -3,11 +3,11 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize</RootNamespace>
       <AssemblyName>Transformalize</AssemblyName>
-      <Version>0.11.4</Version>
-      <FileVersion>0.11.4</FileVersion>
-      <AssemblyVersion>0.11.4</AssemblyVersion>
+      <Version>0.11.5</Version>
+      <FileVersion>0.11.5</FileVersion>
+      <AssemblyVersion>0.11.5</AssemblyVersion>
       <NeutralLanguage>en-US</NeutralLanguage>
-      <Copyright>Copyright © 2013-2024 Dale Newman</Copyright>
+      <Copyright>Copyright © 2013-2025 Dale Newman</Copyright>
       <Authors>Dale Newman</Authors>
       <Company>Transformalize</Company>
    </PropertyGroup>
