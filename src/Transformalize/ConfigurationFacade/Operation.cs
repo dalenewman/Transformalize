@@ -257,6 +257,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Command { get; set; }
 
+      [Cfg]
+      public string Ellipsis { get; set; }
+
       public Configuration.Operation ToOperation() {
          var operation = new Configuration.Operation {
             AdministrativeArea = this.AdministrativeArea,
@@ -315,7 +318,8 @@ namespace Transformalize.ConfigurationFacade {
             Units = this.Units,
             Url = this.Url,
             Value = this.Value,
-            WebMethod = this.WebMethod
+            WebMethod = this.WebMethod,
+            Ellipsis = this.Ellipsis
          };
 
          int.TryParse(this.Count, out var count);

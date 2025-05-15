@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TestAppend.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCalculatedFieldProcess.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCompression.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestEllipsis.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestTimeAgoTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestToTimeTransform.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TestCondense.cs" />

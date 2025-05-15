@@ -111,6 +111,7 @@ namespace Transformalize.Containers.Autofac {
          RegisterTransform(_builder, (ctx, c) => new TrimStartTransform(c), new TrimStartTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new TrimEndTransform(c), new TrimEndTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new ToUpperTransform(c), new ToUpperTransform().GetSignatures());
+         RegisterTransform(_builder, (ctx, c) => new EllipsisTransform(c), new EllipsisTransform().GetSignatures());
 
          RegisterTransform(_builder, (ctx, c) => new IIfTransform(c), new IIfTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new AppendTransform(c), new AppendTransform().GetSignatures());
