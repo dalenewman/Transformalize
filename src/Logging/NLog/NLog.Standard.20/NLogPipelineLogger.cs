@@ -71,22 +71,6 @@ namespace Transformalize.Logging.NLog {
                 }
             }
 
-            target = LogManager.Configuration.FindTargetByName("mail");
-            if (target != null) {
-                MailTarget mail;
-                var wrapper = target as AsyncTargetWrapper;
-                if (wrapper == null) {
-                    mail = (MailTarget)target;
-                } else {
-                    mail = (MailTarget)wrapper.WrappedTarget;
-                }
-                var subject = mail.Subject.Render(new LogEventInfo { TimeStamp = DateTime.Now });
-                if (!subject.Contains(name)) {
-                    mail.Subject = subject + ": " + name;
-                    reconfigured = true;
-                }
-            }
-
             if (reconfigured) {
                 LogManager.ReconfigExistingLoggers();
             }

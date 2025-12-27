@@ -6,12 +6,12 @@
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
-      <Copyright>Copyright © 2013-2024 Dale Newman</Copyright>
+      <Copyright>Copyright © 2013-2025 Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.11.6</Version>
-      <FileVersion>0.11.6</FileVersion>
-      <AssemblyVersion>0.11.6</AssemblyVersion>
+      <Version>0.11.7</Version>
+      <FileVersion>0.11.7</FileVersion>
+      <AssemblyVersion>0.11.7</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>

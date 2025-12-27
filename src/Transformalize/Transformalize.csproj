@@ -3,9 +3,9 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize</RootNamespace>
       <AssemblyName>Transformalize</AssemblyName>
-      <Version>0.11.6</Version>
-      <FileVersion>0.11.6</FileVersion>
-      <AssemblyVersion>0.11.6</AssemblyVersion>
+      <Version>0.11.7</Version>
+      <FileVersion>0.11.7</FileVersion>
+      <AssemblyVersion>0.11.7</AssemblyVersion>
       <NeutralLanguage>en-US</NeutralLanguage>
       <Copyright>Copyright © 2013-2025 Dale Newman</Copyright>
       <Authors>Dale Newman</Authors>

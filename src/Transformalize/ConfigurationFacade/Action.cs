@@ -115,8 +115,12 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string Class { get; set; }
+
       [Cfg]
       public string Icon { get; set; }
+
+      [Cfg]
+      public string Modal { get; set; }
 
       public Configuration.Action ToAction() {
          var a = new Configuration.Action();
@@ -161,6 +165,9 @@ namespace Transformalize.ConfigurationFacade {
          a.To = this.To;
          a.Type = this.Type;
          a.Url = this.Url;
+         if (bool.TryParse(this.Modal, out bool modal)) {
+            a.Modal = modal;
+         }
          return a;
       }
    }

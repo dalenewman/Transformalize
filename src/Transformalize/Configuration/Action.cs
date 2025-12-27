@@ -172,5 +172,8 @@ namespace Transformalize.Configuration {
 
       [Cfg(value="")]
       public string Icon { get; set; }
+
+      [Cfg(value=false)]
+      public bool Modal { get; set; }
    }
 }
