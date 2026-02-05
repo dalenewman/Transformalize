@@ -16,15 +16,18 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
 
    public class ConsoleWriter : IWrite {
       private readonly ISerialize _serializer;
+      private readonly OutputContext _context;
 
-      public ConsoleWriter(ISerialize serializer) {
+      public ConsoleWriter(OutputContext context, ISerialize serializer) {
          _serializer = serializer;
+         _context = context;
       }
 
       public void Write(IEnumerable<IRow> rows) {
@@ -41,6 +44,7 @@ namespace Transformalize.Providers.Console {
                System.Console.Out.Write(_serializer.RowPrefix);
                System.Console.Out.Write(_serializer.Serialize(current));
                System.Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
+               ++_context.Entity.Inserts;
             }
          }
 

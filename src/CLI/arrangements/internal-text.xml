@@ -1,0 +1,30 @@
+﻿<cfg name="Test" read-only="true">
+   <connections>
+      <add name="input" provider="internal" />
+      <add name="output" provider="console" format="text" />
+   </connections>
+   <entities>
+      <add name="Test">
+         <rows>
+            <add FirstName="John" LastName="Smith" BirthDate="2020-12-01" />
+            <add FirstName="Jane" LastName="Doe" BirthDate="2020-12-01" />
+         </rows>
+         <fields>
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="BirthDate" type="datetime" />
+         </fields>
+         <calculated-fields>
+            <add name="FullNameByJoin" t="copy(FirstName,LastName).join( )" />
+            <add name="FullNameByFormat" t="format({FirstName} {LastName})" />
+            <add name="FullNameByJs" t="js(FirstName + ' ' + LastName)" />
+            <add name="FullNameByFluid" t="fluid({{ FirstName}} {{ LastName}})" />
+            <add name="FullNameLower" t="copy(FullNameByJoin).lower()" />
+            <add name="FullNameHumanized" t="copy(FullNameLower).titleize()" />
+            <add name="FullNameLambdaParsed" t='eval(FirstName + " " + LastName)' />
+            <!-- razor has to compile before it runs to it slows things down, only use if you really need it -->
+            <!--<add name="FullNameByRazor" t="razor(@Model.FirstName @Model.LastName)" />-->
+         </calculated-fields>
+      </add>
+   </entities>
+</cfg>

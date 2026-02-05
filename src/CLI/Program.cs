@@ -101,21 +101,27 @@ namespace Transformalize.Cli {
 
             var output = process.GetOutputConnection();
 
+            // if you are missing an output, or it's internal, or your output is console with csv or json format
+            // wire up a csv or json provider that writes to the standard output
             if (output == null || output.Provider == "internal" || output.Provider == "console") {
                logger.SuppressConsole();
-               if (options.Format == "csv") {
-                  output.Provider = "file";  // delimited file
-                  output.Delimiter = ",";
-                  output.Stream = true;
-                  output.Synchronous = true; // got odd results when using Async methods
-                  output.File = "dummy.csv";
-                  providers.Add(new CsvHelperProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
+               if (output != null && output.Provider == "console" && output.Format == "text") {
+                  // let the console writer handle it
                } else {
-                  output.Provider = "json";
-                  output.Stream = true;
-                  output.Format = "json";
-                  output.File = "dummy.json";
-                  providers.Add(new JsonProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
+                  if (options.Format == "csv") {
+                     output.Provider = "file";  // delimited file
+                     output.Delimiter = ",";
+                     output.Stream = true;
+                     output.Synchronous = true; // got odd results when using Async methods
+                     output.File = "dummy.csv";
+                     providers.Add(new CsvHelperProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
+                  } else {
+                     output.Provider = "json";
+                     output.Stream = true;
+                     output.Format = "json";
+                     output.File = "dummy.json";
+                     providers.Add(new JsonProviderModule(new System.IO.StreamWriter(Console.OpenStandardOutput())));
+                  }
                }
             } else {
                providers.Add(new CsvHelperProviderModule());

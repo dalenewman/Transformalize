@@ -16,5 +16,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleOutputProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ConsoleWriter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PrintAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextSerializer.cs" />
   </ItemGroup>
 </Project>

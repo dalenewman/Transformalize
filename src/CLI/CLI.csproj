@@ -6,12 +6,12 @@
       <RootNamespace>Transformalize.Cli</RootNamespace>
       <StartupObject>Transformalize.Cli.Program</StartupObject>
       <ApplicationIcon>tfl.ico</ApplicationIcon>
-      <Copyright>Copyright © 2013-2025 Dale Newman</Copyright>
+      <Copyright>Copyright © 2013-2026 Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.11.7</Version>
-      <FileVersion>0.11.7</FileVersion>
-      <AssemblyVersion>0.11.7</AssemblyVersion>
+      <Version>0.11.8</Version>
+      <FileVersion>0.11.8</FileVersion>
+      <AssemblyVersion>0.11.8</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -73,6 +73,9 @@
       </None>
       <None Update="arrangements\instances.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="arrangements\internal-text.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="arrangements\log-groups-schema.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>

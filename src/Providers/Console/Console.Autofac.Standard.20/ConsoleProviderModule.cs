@@ -72,7 +72,12 @@ namespace Transformalize.Providers.Console.Autofac {
                builder.Register<IOutputController>(ctx => new NullOutputController()).Named<IOutputController>(entity.Key);
 
                builder.Register<IWrite>(ctx => {
-                  return new ConsoleWriter(new CsvSerializer(ctx.ResolveNamed<OutputContext>(entity.Key)));
+                  var context = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  if (output.Format == "text") {
+                     return new ConsoleWriter(context, new TextSerializer(context));
+                  } else {
+                     return new ConsoleWriter(context, new CsvSerializer(context));
+                  }
                }).Named<IWrite>(entity.Key);
 
                builder.Register<IOutputProvider>(ctx => {

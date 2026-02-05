@@ -303,7 +303,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string OpenWith { get; set; }
 
-      [Cfg(value = "csv", domain = "csv,json")]
+      [Cfg(value = "csv", domain = "csv,json,text")]
       public string Format { get; set; }
 
       [Cfg(value = 5)]

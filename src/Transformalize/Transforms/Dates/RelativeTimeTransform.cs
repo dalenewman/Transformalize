@@ -73,8 +73,8 @@ namespace Transformalize.Transforms.Dates {
       }
 
       public override IRow Operate(IRow row) {
-         row[Context.Field] = GetRelativeTime(_nowTicks, ((DateTime)row[_input]).Ticks);
-
+         var then = (DateTime)row[_input];
+         row[Context.Field] = then.Year > 9998 ? "never" : GetRelativeTime(_nowTicks, (then).Ticks);
          return row;
       }
 

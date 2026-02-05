@@ -53,7 +53,8 @@ namespace Tests {
             <add utcdate='{utc.AddDays(62).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(62).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
             <add utcdate='{utc.AddDays(366).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(366).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
             <add utcdate='{utc.AddDays(731).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(731).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-          </rows>
+            <add utcdate='{new DateTime(9999,12,31,23,59,59, DateTimeKind.Utc)}' estdate='{new DateTime(9999,12,31,23,59,59, DateTimeKind.Local)}' /> 
+         </rows>
           <fields>
             <add name='utcdate' type='datetime' />
             <add name='estdate' type='datetime' />
@@ -97,6 +98,9 @@ namespace Tests {
                Assert.AreEqual("2 months", results[7][utc1], "A marked UTC date plus 2+ months");
                Assert.AreEqual("one year", results[8][utc1], "A marked UTC date plus 1+ year");
                Assert.AreEqual("2 years", results[9][utc1], "A marked UTC date plus 2+ years");
+
+               Assert.AreEqual("never", results[10][utc1], "A UTC date in the year 9999");
+               Assert.AreEqual("never", results[10][est1], "A EST date in the year 9999");
 
             }
          }
