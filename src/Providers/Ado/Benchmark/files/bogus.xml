@@ -1,0 +1,24 @@
+﻿<add name='bogus' mode='init'>
+   <parameters>
+      <add name='Size' type='int' value='10' />
+      <add name='Provider' value='internal' />
+      <add name='User' value='' />
+      <add name='Password' value='' />
+      <add name='File' value='' />
+   </parameters>
+   <connections>
+      <add name='input' provider='bogus' seed='1' />
+      <add name='output' provider='@[Provider]' database='junk' user='@[User]' password='@[Password]' file='@[File]' />
+   </connections>
+   <entities>
+      <add name='Contact' size='@[Size]'>
+         <fields>
+            <add name='FirstName' />
+            <add name='LastName' />
+            <add name='Stars' type='byte' min='1' max='5' />
+            <add name='Reviewers' type='int' min='0' max='500' />
+         </fields>
+      </add>
+   </entities>
+</add>
+
