@@ -37,31 +37,34 @@ namespace Tests {
          // Use cross-platform timezone ID: Windows uses "Eastern Standard Time", Linux/macOS uses "America/New_York"
          TimeZoneInfo estZone;
          try {
-            estZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
             timeZone = "Eastern Standard Time";
+            estZone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
          } catch (TimeZoneNotFoundException) {
-            estZone = TimeZoneInfo.FindSystemTimeZoneById("America/Detroit");
             timeZone = "America/Detroit";
+            estZone = TimeZoneInfo.FindSystemTimeZoneById(timeZone);
          }
-         DateTime est = TimeZoneInfo.ConvertTimeFromUtc(utc, estZone);
-         Console.WriteLine(est.ToString("yyyy-MM-dd HH:mm:ss zzz"));
-         Console.WriteLine(est.ToString("yyyy-MM-dd HH:mm:ss"));
+
+         // Use DateTimeOffset to properly preserve timezone information
+         DateTimeOffset estOffset = TimeZoneInfo.ConvertTime(new DateTimeOffset(utc, TimeSpan.Zero), estZone);
+         Console.WriteLine(estOffset.ToString("yyyy-MM-dd HH:mm:ss zzz"));
+         Console.WriteLine(estOffset.DateTime.ToString("yyyy-MM-dd HH:mm:ss"));
+         Console.WriteLine("timeZone: " + timeZone);
 
          string xml = $@"
     <add name='TestProcess'>
       <entities>
         <add name='TestData'>
           <rows>
-            <add utcdate='{utc.AddMinutes(-30.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddMinutes(-30.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddMinutes(-30.1).ToString("yyyy-MM-ddTHH:mm:ss")}' estdate='{est.AddMinutes(-30.1).ToString("yyyy-MM-dd HH:mm:ss")}' />
-            <add utcdate='{utc.AddHours(2.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddHours(2.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddSeconds(-29.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddSeconds(-29.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddSeconds(-75.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddSeconds(-75.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddMinutes(-65.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddMinutes(-65.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddHours(36.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddHours(36.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddDays(62).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(62).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddDays(366).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(366).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
-            <add utcdate='{utc.AddDays(731).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{est.AddDays(731).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddMinutes(-30.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddMinutes(-30.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddMinutes(-30.1).ToString("yyyy-MM-ddTHH:mm:ss")}' estdate='{estOffset.DateTime.AddMinutes(-30.1).ToString("yyyy-MM-dd HH:mm:ss")}' />
+            <add utcdate='{utc.AddHours(2.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddHours(2.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddSeconds(-29.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddSeconds(-29.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddSeconds(-75.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddSeconds(-75.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddMinutes(-65.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddMinutes(-65.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddHours(36.1).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddHours(36.1).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddDays(62).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddDays(62).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddDays(366).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddDays(366).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
+            <add utcdate='{utc.AddDays(731).ToString("yyyy-MM-ddTHH:mm:ssZ")}' estdate='{estOffset.AddDays(731).ToString("yyyy-MM-dd HH:mm:ss zzz")}' />
             <add utcdate='{new DateTime(9999,12,31,23,59,59, DateTimeKind.Utc)}' estdate='{new DateTime(9999,12,31,23,59,59, DateTimeKind.Local)}' /> 
          </rows>
           <fields>
@@ -90,7 +93,7 @@ namespace Tests {
 
                Assert.AreEqual("30 minutes ago", results[0][utc1], "A marked UTC date minus 30+ minutes");
                Assert.AreEqual("30 minutes ago", results[0][est1], "A marked EST date minus 30+ minutes");
-               Assert.AreEqual(est.IsDaylightSavingTime() ? "3 hours" : "4 hours", results[0][est2], "A marked EST date with fromTimeZone also EST sees a difference of 4 or 5 hours minus 30+ minutes, and results in 3:30 and 4:30 rounded down to 3 and 4 hours.");
+               Assert.AreEqual(estZone.IsDaylightSavingTime(estOffset.DateTime) ? "3 hours" : "4 hours", results[0][est2], "A marked EST date with fromTimeZone also EST sees a difference of 4 or 5 hours minus 30+ minutes, and results in 3:30 and 4:30 rounded down to 3 and 4 hours.");
 
                Assert.AreEqual("30 minutes ago", results[1][utc1], "An unmarked UTC date (no Z or offset) minus 30+ minutes");
                Assert.AreNotEqual("30 minutes ago", results[1][est1], "An unmarked EST date (no offset) without from time zone set minus 30+ minutes");
@@ -98,7 +101,7 @@ namespace Tests {
 
                Assert.AreEqual("2 hours", results[2][utc1], "A marked UTC date plus 2+ hours");
                Assert.AreEqual("2 hours", results[2][est1], "A marked EST date plus 2+ hours");
-               Assert.AreEqual(est.IsDaylightSavingTime() ? "6 hours" : "7 hours", results[2][est2], "A marked EST date with fromTimeZone also EST sees a difference of 4 or 5 hours plus 2+ hours, and results in 6 or 7 hours");
+               Assert.AreEqual(estZone.IsDaylightSavingTime(estOffset.DateTime) ? "6 hours" : "7 hours", results[2][est2], "A marked EST date with fromTimeZone also EST sees a difference of 4 or 5 hours plus 2+ hours, and results in 6 or 7 hours");
 
                Assert.IsTrue("29 seconds ago" == (string)results[3][utc1] || "30 seconds ago" == (string)results[3][utc1], "A marked UTC date minus 29+ seconds");  
                Assert.AreEqual("a minute ago", results[4][utc1], "A marked UTC date minus 75+ seconds");
