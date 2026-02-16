@@ -32,8 +32,17 @@ namespace Tests {
          DateTime utc = DateTime.UtcNow;
          Console.WriteLine(utc.ToString("yyyy-MM-ddTHH:mm:ssZ"));
          Console.WriteLine(utc.ToString("yyyy-MM-ddTHH:mm:ss"));
+         string timeZone = string.Empty;
 
-         TimeZoneInfo estZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+         // Use cross-platform timezone ID: Windows uses "Eastern Standard Time", Linux/macOS uses "America/New_York"
+         TimeZoneInfo estZone;
+         try {
+            estZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            timeZone = "Eastern Standard Time";
+         } catch (TimeZoneNotFoundException) {
+            estZone = TimeZoneInfo.FindSystemTimeZoneById("America/Detroit");
+            timeZone = "America/Detroit";
+         }
          DateTime est = TimeZoneInfo.ConvertTimeFromUtc(utc, estZone);
          Console.WriteLine(est.ToString("yyyy-MM-dd HH:mm:ss zzz"));
          Console.WriteLine(est.ToString("yyyy-MM-dd HH:mm:ss"));
@@ -62,7 +71,7 @@ namespace Tests {
           <calculated-fields>
             <add name='utc1' t='copy(utcdate).timeAgo()' />
             <add name='est1' t='copy(estdate).timeAgo()' />
-            <add name='est2' t='copy(estdate).timeAgo(Eastern Standard Time)' />
+            <add name='est2' t='copy(estdate).timeAgo({timeZone})' />
           </calculated-fields>
         </add>
       </entities>
