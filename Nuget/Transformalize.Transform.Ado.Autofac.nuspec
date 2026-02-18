@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Transform.Ado.Autofac</id>
+    <version>0.11.3-beta</version>
+    <title>Transformalize ADO based transforms</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Ado</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Transform using ADO</description>
+    <releaseNotes>general maintenance</releaseNotes>
+    <copyright>Copyright 2013-2025</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Transformalize.Container.Autofac" version="0.11.3-beta" />
+        <dependency id="Transformalize.Transform.Ado" version="0.11.3-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Providers\Ado\Transformalize.Transform.Ado.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Ado.Autofac.dll" target="lib\netstandard2.0\Transformalize.Transform.Ado.Autofac.dll" />
+    <!--<file src="..\src\Providers\Ado\Transformalize.Transform.Ado.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Ado.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Transform.Ado.Autofac.pdb" />-->
+    <file src="..\src\Providers\Ado\Transformalize.Transform.Ado.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Ado.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Ado.Autofac.deps.json" />
+  </files>
+</package>
