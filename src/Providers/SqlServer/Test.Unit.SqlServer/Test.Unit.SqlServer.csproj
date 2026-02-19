@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <IsPackable>false</IsPackable>
+      <Version>0.11.2-beta</Version>
+      <FileVersion>0.11.2</FileVersion>
+      <AssemblyVersion>0.11.2</AssemblyVersion>
+   </PropertyGroup>
+
+   <ItemGroup>
+      <None Remove="files\DeleteIntegration.xml" />
+      <None Remove="files\instnwnd.sql" />
+      <None Remove="files\northwind-rowversion.sql" />
+      <None Remove="files\NorthWind.xml" />
+      <None Remove="files\SlaveGetsInsert.xml" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <Content Include="files\DeleteIntegration.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="files\instnwnd.sql">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="files\northwind-rowversion.sql">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="files\NorthWind.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+         <SubType>Designer</SubType>
+      </Content>
+      <Content Include="files\SlaveGetsInsert.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+   </ItemGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+      <PackageReference Include="MSTest.TestAdapter" Version="3.7.1" />
+      <PackageReference Include="MSTest.TestFramework" Version="3.7.1" />
+      <PackageReference Include="Testcontainers.MsSql" Version="4.6.0" />
+      <PackageReference Include="coverlet.collector" Version="6.0.3">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.11.1-beta" />
+      <PackageReference Include="Transformalize.Transform.CSharp.Autofac" Version="0.11.1-beta" />
+   </ItemGroup>
+
+   <ItemGroup>
+      <ProjectReference Include="..\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
+      <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
+      <ProjectReference Include="..\..\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\..\Ado\Transformalize.Transform.Ado.Autofac\Transformalize.Transform.Ado.Autofac.csproj" />
+   </ItemGroup>
+
+</Project>
