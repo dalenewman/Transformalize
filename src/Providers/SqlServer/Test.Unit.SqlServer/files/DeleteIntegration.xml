@@ -1,0 +1,22 @@
+﻿<cfg name='TestDeletes' mode='@[Mode]'>
+   <parameters>
+      <add name='Mode' value='default' />
+      <add name='Server' value='localhost' />
+      <add name='User' value='*' />
+      <add name='Pw' value='*' />
+   </parameters>
+   <connections>
+      <add name='input' provider='sqlserver' server='@[Server]' database='NorthWind' user='@[User]' password='@[Pw]' />
+      <add name='output' provider='sqlserver' server='@[Server]' database='TflNorthWind' user='@[User]' password='@[Pw]' />
+   </connections>
+   <entities>
+      <add name='TestDeletes' alias='Data' delete='true' version='RowVersion'>
+         <fields>
+            <add name='TextValue' />
+            <add name='Id' primary-key='true' type='int' />
+            <add name='NumericValue' primary-key='true' type='int' />
+            <add name='RowVersion' type='byte[]' length='8' />
+         </fields>
+      </add>
+   </entities>
+</cfg>
