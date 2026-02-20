@@ -1,0 +1,229 @@
+<add name="NorthWind" mode="@[Mode]" >
+
+  <parameters>
+    <add name="Mode" value="default" />
+    <add name="PgServer" value="localhost" />
+    <add name="PgPort" value="5432" />
+    <add name="PgUser" value="postgres" />
+    <add name="PgPw" value="*" />
+  </parameters>
+
+  <connections>
+    <add name="input" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind_source" user="@[PgUser]" password="@[PgPw]" />
+    <add name="output" provider="postgresql" server="@[PgServer]" port="@[PgPort]" database="northwind_destination" user="@[PgUser]" password="@[PgPw]" />
+  </connections>
+
+  <maps>
+    <add name="Managers" connection="input" query="SELECT employee_id, first_name || ' ' || last_name FROM employees;" />
+  </maps>
+
+  <entities>
+
+    <add name="order_details" alias="OrderDetails" version="modified_at" prefix="OrderDetails">
+      <fields>
+        <add name="discount" alias="OrderDetailsDiscount" type="single" ></add>
+        <add name="order_id" alias="OrderDetailsOrderID" type="int" primary-key="true"></add>
+        <add name="product_id" alias="OrderDetailsProductID" type="int" primary-key="true"></add>
+        <add name="quantity" alias="OrderDetailsQuantity" type="int16" ></add>
+        <add name="unit_price" alias="OrderDetailsUnitPrice" type="decimal" precision="19" scale="4"/>
+        <add name="modified_at" type="datetime" alias="OrderDetailsVersion" />
+        <!-- <add name="xmin" type="long" alias="OrderDetailsVersion" /> -->
+      </fields>
+      <calculated-fields>
+        <add name="OrderDetailsExtendedPrice" type="decimal" precision="19" scale="4">
+           <transforms>
+              <add method="jint" script="OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-OrderDetailsDiscount))" />
+           </transforms>
+        </add>
+      </calculated-fields>
+    </add>
+
+    <add name="orders"
+         alias="Orders"
+         version="xmin"
+         prefix="Orders">
+      <fields>
+        <add name="customer_id" alias="OrdersCustomerID" type="string" length="5"/>
+        <add name="employee_id" alias="OrdersEmployeeID" type="int"/>
+        <add name="freight" alias="OrdersFreight" type="decimal" precision="19" scale="4"/>
+        <add name="order_date" alias="OrdersOrderDate" type="datetime"/>
+        <add name="order_id" alias="OrdersOrderID" type="int" primary-key="true"></add>
+        <add name="required_date" alias="OrdersRequiredDate" type="datetime" ></add>
+        <add name="ship_address" alias="OrdersShipAddress" length="60" ></add>
+        <add name="ship_city" alias="OrdersShipCity" length="15" ></add>
+        <add name="ship_country" alias="OrdersShipCountry" length="15" ></add>
+        <add name="ship_name" alias="OrdersShipName" length="40" ></add>
+        <add name="shipped_date" alias="OrdersShippedDate" type="datetime" ></add>
+        <add name="ship_postal_code" alias="OrdersShipPostalCode" length="10" ></add>
+        <add name="ship_region" alias="OrdersShipRegion" length="15" ></add>
+        <add name="ship_via" alias="OrdersShipVia" type="int" ></add>
+        <add name="xmin" type="long" alias="OrdersVersion" />
+      </fields>
+
+      <calculated-fields>
+        <add name="TimeOrderMonth" length="6" default="12-DEC">
+          <transforms>
+             <add method="tostring" format="MM-MMM">
+                <parameters>
+                   <add field="OrdersOrderDate" />
+                </parameters>
+             </add>
+            <add method="toUpper" />
+          </transforms>
+        </add>
+        <add name="TimeOrderDate" length="10" default="9999-12-31">
+          <transforms>
+             <add method="tostring" format="yyyy-MM-dd">
+                <parameters>
+                   <add field="OrdersOrderDate" />
+                </parameters>
+             </add>
+          </transforms>
+        </add>
+        <add name="TimeOrderYear" length="4" default="9999">
+          <transforms>
+             <add method="tostring" format="yyyy">
+                <parameters>
+                   <add field="OrdersOrderDate" />
+                </parameters>
+             </add>
+          </transforms>
+        </add>
+      </calculated-fields>
+    </add>
+
+    <add name="customers"
+         alias="Customers"
+         version="xmin"
+         prefix="Customers">
+      <fields>
+        <add name="address" alias="CustomersAddress" length="60" ></add>
+        <add name="city" alias="CustomersCity" length="15" ></add>
+        <add name="company_name" alias="CustomersCompanyName" length="40" />
+        <add name="contact_name" alias="CustomersContactName" length="30" ></add>
+        <add name="contact_title" alias="CustomersContactTitle" length="30" ></add>
+        <add name="country" alias="CustomersCountry" length="15" ></add>
+        <add name="customer_id" alias="CustomersCustomerID" length="5" primary-key="true"></add>
+        <add name="fax" alias="CustomersFax" length="24" ></add>
+        <add name="phone" alias="CustomersPhone" length="24" ></add>
+        <add name="postal_code" alias="CustomersPostalCode" length="10" ></add>
+        <add name="region" alias="CustomersRegion" length="15" ></add>
+        <add name="xmin" type="long" alias="CustomersVersion" />
+      </fields>
+    </add>
+
+    <add name="employees"
+         alias="Employees"
+         version="xmin"
+         prefix="Employees">
+      <fields>
+        <add name="address" alias="EmployeesAddress" length="60" ></add>
+        <add name="birth_date" alias="EmployeesBirthDate" type="datetime" ></add>
+        <add name="city" alias="EmployeesCity" length="15" ></add>
+        <add name="country" alias="EmployeesCountry" length="15" ></add>
+        <add name="employee_id" alias="EmployeesEmployeeID" type="int" primary-key="true"></add>
+        <add name="extension" alias="EmployeesExtension" length="4" ></add>
+        <add name="first_name" alias="EmployeesFirstName" length="10" ></add>
+        <add name="hire_date" alias="EmployeesHireDate" type="datetime" ></add>
+        <add name="home_phone" alias="EmployeesHomePhone" length="24" ></add>
+        <add name="last_name" alias="EmployeesLastName" length="20" ></add>
+        <add name="notes" alias="EmployeesNotes" length="MAX" ></add>
+        <add name="photo" alias="EmployeesPhoto" input="false" output="false"></add>
+        <add name="photo_path" alias="EmployeesPhotoPath" input="false" output="false"></add>
+        <add name="postal_code" alias="EmployeesPostalCode" length="10" ></add>
+        <add name="region" alias="EmployeesRegion" length="15" ></add>
+        <add name="title" alias="EmployeesTitle" length="30" ></add>
+        <add name="title_of_courtesy" alias="EmployeesTitleOfCourtesy" length="25" ></add>
+        <add name="reports_to" alias="EmployeesReportsTo" type="int" />
+        <add name="xmin" type="long" alias="EmployeesVersion" />
+      </fields>
+      <calculated-fields>
+        <add name="EmployeesManager" t="copy(EmployeesReportsTo).map(Managers)" default="" />
+        <add name="Employee" t="copy(EmployeesFirstName,EmployeesLastName).join( )" default="" />
+      </calculated-fields>
+    </add>
+
+    <add name="products"
+         alias="Products"
+         version="xmin"
+         prefix="Products">
+      <fields>
+        <add name="category_id" alias="ProductsCategoryID" type="int32"/>
+        <add name="discontinued" alias="ProductsDiscontinued" type="int16"/>
+        <add name="product_id" alias="ProductsProductID" type="int" primary-key="true"/>
+        <add name="product_name" alias="ProductsProductName" length="40"/>
+        <add name="quantity_per_unit" alias="ProductsQuantityPerUnit" length="20"/>
+        <add name="reorder_level" alias="ProductsReorderLevel" type="int16"/>
+        <add name="supplier_id" alias="ProductsSupplierID" type="int"/>
+        <add name="unit_price" alias="ProductsUnitPrice" type="decimal" precision="19" scale="4"/>
+        <add name="units_in_stock" alias="ProductsUnitsInStock" type="int16"/>
+        <add name="units_on_order" alias="ProductsUnitsOnOrder" type="int16"/>
+        <add name="xmin" type="long" alias="ProductsVersion" />
+      </fields>
+    </add>
+
+    <add name="suppliers"
+         alias="Suppliers"
+         version="xmin"
+         prefix="Suppliers">
+      <fields>
+        <add name="address" alias="SuppliersAddress" length="60" ></add>
+        <add name="city" alias="SuppliersCity" length="15" ></add>
+        <add name="company_name" alias="SuppliersCompanyName" length="40" ></add>
+        <add name="contact_name" alias="SuppliersContactName" length="30" ></add>
+        <add name="contact_title" alias="SuppliersContactTitle" length="30" ></add>
+        <add name="country" alias="SuppliersCountry" length="15" ></add>
+        <add name="fax" alias="SuppliersFax" length="24" ></add>
+        <add name="homepage" alias="SuppliersHomePage" length="MAX" ></add>
+        <add name="phone" alias="SuppliersPhone" length="24" ></add>
+        <add name="postal_code" alias="SuppliersPostalCode" length="10" ></add>
+        <add name="region" alias="SuppliersRegion" length="15" ></add>
+        <add name="supplier_id" alias="SuppliersSupplierID" type="int" primary-key="true"/>
+        <add name="xmin" type="long" alias="SuppliersVersion" />
+      </fields>
+    </add>
+
+    <add name="categories"
+         alias="Categories"
+         version="xmin"
+         prefix="Categories">
+      <fields>
+        <add name="category_id" alias="CategoriesCategoryID" type="int" primary-key="true"/>
+        <add name="category_name" alias="CategoriesCategoryName" length="15"/>
+        <add name="description" alias="CategoriesDescription" length="MAX"/>
+        <add name="picture" alias="CategoriesPicture" type="byte[]" length="MAX" search-type="none" input="false" output="false"/>
+        <add name="xmin" type="long" alias="CategoriesVersion" />
+      </fields>
+    </add>
+
+    <add name="shippers"
+         alias="Shippers"
+         version="xmin"
+         prefix="Shippers">
+      <fields>
+        <add name="company_name" alias="ShippersCompanyName" length="40"/>
+        <add name="phone" alias="ShippersPhone" length="24"/>
+        <add name="shipper_id" alias="ShippersShipperID" type="int" primary-key="true"/>
+        <add name="xmin" type="long" alias="ShippersVersion" />
+      </fields>
+    </add>
+
+  </entities>
+
+  <relationships>
+    <add left-entity="order_details" left-field="order_id" right-entity="orders" right-field="order_id" />
+    <add left-entity="orders" left-field="customer_id" right-entity="customers" right-field="customer_id" />
+    <add left-entity="orders" left-field="employee_id" right-entity="employees" right-field="employee_id" />
+    <add left-entity="order_details" left-field="product_id" right-entity="products" right-field="product_id" />
+    <add left-entity="products" left-field="supplier_id" right-entity="suppliers" right-field="supplier_id" />
+    <add left-entity="products" left-field="category_id" right-entity="categories" right-field="category_id" />
+    <add left-entity="orders" left-field="ship_via" right-entity="shippers" right-field="shipper_id" />
+  </relationships>
+
+  <calculated-fields>
+    <add name="CountryExchange"
+         length="128"
+         t="copy(SuppliersCountry,OrdersShipCountry).format(Shipping from {0} to {1})"/>
+  </calculated-fields>
+
+</add>

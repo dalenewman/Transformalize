@@ -56,6 +56,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Provider.File.nuspec = Nuget\Transformalize.Provider.File.nuspec
 		Nuget\Transformalize.Provider.Kml.nuspec = Nuget\Transformalize.Provider.Kml.nuspec
 		Nuget\Transformalize.Provider.OpenXml.nuspec = Nuget\Transformalize.Provider.OpenXml.nuspec
+		Nuget\Transformalize.Provider.PostgreSql.nuspec = Nuget\Transformalize.Provider.PostgreSql.nuspec
+		Nuget\Transformalize.Provider.PostgreSql.Autofac.nuspec = Nuget\Transformalize.Provider.PostgreSql.Autofac.nuspec
 		Nuget\Transformalize.Provider.Trace.nuspec = Nuget\Transformalize.Provider.Trace.nuspec
 		Nuget\Transformalize.Transform.Compression.nuspec = Nuget\Transformalize.Transform.Compression.nuspec
 		Nuget\Transformalize.Transform.Geography.nuspec = Nuget\Transformalize.Transform.Geography.nuspec
@@ -149,6 +151,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.SqlServer.Autofac", "src\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj", "{B7FDC46F-B7DE-4F0B-99F1-5BD5A2D1E620}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.SqlServer", "src\Providers\SqlServer\Test.Unit.SqlServer\Test.Unit.SqlServer.csproj", "{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostgreSql", "PostgreSql", "{96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql", "src\Providers\PostgreSql\Transformalize.Provider.PostgreSql\Transformalize.Provider.PostgreSql.csproj", "{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql.Autofac", "src\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj", "{3E38280B-8FB1-42B8-AB74-0848BE286927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.PostgreSql", "src\Providers\PostgreSql\Test.Unit.PostgreSql\Test.Unit.PostgreSql.csproj", "{92038F0E-FA70-475F-B489-AE424A17636D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -461,6 +471,42 @@ Global
 		{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}.Release|x64.Build.0 = Release|Any CPU
 		{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}.Release|x86.ActiveCfg = Release|Any CPU
 		{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}.Release|x86.Build.0 = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|x64.Build.0 = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Debug|x86.Build.0 = Debug|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|x64.ActiveCfg = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|x64.Build.0 = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|x86.ActiveCfg = Release|Any CPU
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A}.Release|x86.Build.0 = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|x64.Build.0 = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Debug|x86.Build.0 = Debug|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|x64.ActiveCfg = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|x64.Build.0 = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|x86.ActiveCfg = Release|Any CPU
+		{3E38280B-8FB1-42B8-AB74-0848BE286927}.Release|x86.Build.0 = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|x64.Build.0 = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Debug|x86.Build.0 = Debug|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|x64.ActiveCfg = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|x64.Build.0 = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|x86.ActiveCfg = Release|Any CPU
+		{92038F0E-FA70-475F-B489-AE424A17636D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -503,6 +549,10 @@ Global
 		{6F65B71E-DE52-48EF-B23A-1479984BB843} = {D7E3FD3E-5A87-41B3-9D87-9EB72509462D}
 		{B7FDC46F-B7DE-4F0B-99F1-5BD5A2D1E620} = {D7E3FD3E-5A87-41B3-9D87-9EB72509462D}
 		{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A} = {D7E3FD3E-5A87-41B3-9D87-9EB72509462D}
+		{96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
+		{0BDD7607-CDE7-4A28-8703-F0B42AA4DD3A} = {96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E}
+		{3E38280B-8FB1-42B8-AB74-0848BE286927} = {96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E}
+		{92038F0E-FA70-475F-B489-AE424A17636D} = {96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

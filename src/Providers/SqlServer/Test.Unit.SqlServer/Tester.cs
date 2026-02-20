@@ -29,11 +29,17 @@ namespace Test.Unit.SqlServer {
 
          // Build and start the container
          // Using 2019-latest as it's more compatible with ARM64 (Apple Silicon) via emulation
-         _container = new MsSqlBuilder()
+         var builder = new MsSqlBuilder()
             .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
             .WithPassword(Pw)
-            .WithCleanUp(true)
-            .Build();
+            .WithCleanUp(true);
+
+         var fixedPort = Environment.GetEnvironmentVariable("MSSQL_TEST_PORT");
+         if (!string.IsNullOrEmpty(fixedPort) && int.TryParse(fixedPort, out var p)) {
+             builder = builder. WithPortBinding(p, MsSqlBuilder.MsSqlPort);
+         }
+
+         _container = builder.Build();
 
          await _container.StartAsync();
 
