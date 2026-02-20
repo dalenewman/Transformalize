@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Provider.PostgreSql</id>
+      <version>0.11.4-beta</version>
+      <title>Transformalize Transform using PostgreSql</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <license type="expression">Apache-2.0</license>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Transformalize Transform using PostgreSql</description>
+      <releaseNotes>maintenance</releaseNotes>
+      <copyright>Copyright © 2018-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize.Provider.Ado" version="0.11.4-beta" />
+            <dependency id="Npgsql" version="8.0.3" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Providers\PostgreSql\Transformalize.Provider.PostgreSql\bin\Release\netstandard2.0\Transformalize.Provider.PostgreSql.deps.json" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.deps.json" />
+      <file src="..\src\Providers\PostgreSql\Transformalize.Provider.PostgreSql\bin\Release\netstandard2.0\Transformalize.Provider.PostgreSql.dll" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.dll" />
+      <!--<file src="..\src\Providers\PostgreSql\Transformalize.Provider.PostgreSql\bin\Release\netstandard2.0\Transformalize.Provider.PostgreSql.pdb" target="lib\netstandard2.0\Transformalize.Provider.PostgreSql.pdb" />-->
+   </files>
+</package>

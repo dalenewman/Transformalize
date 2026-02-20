@@ -185,7 +185,13 @@ FROM (
       }
 
       public static string SqlSelectInputWithMinVersion(this InputContext c, Field[] fields, IConnectionFactory cf) {
-         var versionFilter = $"{cf.Enclose(c.Entity.GetVersionField().Name)} {(c.Entity.Overlap ? ">=" : ">")} @MinVersion";
+         var versionField = c.Entity.GetVersionField();
+         string versionFilter = null;
+         if(cf.AdoProvider == AdoProvider.PostgreSql && versionField.Name == "xmin") {
+            versionFilter = $"xmin::text::bigint {(c.Entity.Overlap ? ">=" : ">")} @MinVersion::bigint";
+         } else {
+            versionFilter = $"{cf.Enclose(versionField.Name)} {(c.Entity.Overlap ? ">=" : ">")} @MinVersion";
+         }
          var fieldList = string.Join(",", fields.Select(f => cf.Enclose(f.Name)));
          var table = SqlInputName(c, cf);
          var resolved = c.ResolveFilter(cf);
