@@ -36,8 +36,6 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.6.0" />
-    <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.11.1-beta" />
-    <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.11.2-beta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +43,8 @@
     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
     <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
     <ProjectReference Include="..\..\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
   </ItemGroup>
 
 </Project>

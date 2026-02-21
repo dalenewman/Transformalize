@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Transform.Jint.Autofac</id>
+    <version>0.11.2-beta</version>
+    <title>Transformalize Transform using Jint Autofac Module</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/dalenewman/Transformalize.Transform.Jint</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Transform using Jint Autofac Module</description>
+    <releaseNotes>remove esprima</releaseNotes>
+    <copyright>Copyright © 2018-2025</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Transformalize.Transform.Jint" version="0.11.2-beta" />
+        <dependency id="Transformalize.Container.Autofac" version="0.11.1-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Transforms\Jint\Transformalize.Transform.Jint.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Jint.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Jint.Autofac.deps.json" />
+    <file src="..\src\Transforms\Jint\Transformalize.Transform.Jint.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Jint.Autofac.dll" target="lib\netstandard2.0\Transformalize.Transform.Jint.Autofac.dll" />
+    <!--<file src="..\src\Transforms\Jint\Transformalize.Transform.Jint.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.Jint.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Transform.Jint.Autofac.pdb" />-->
+  </files>
+</package>

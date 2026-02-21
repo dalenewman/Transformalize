@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Benchmarks-report.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Benchmarks-report-github.md" />
+    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Benchmarks-report.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
+    <ProjectReference Include="..\Transformalize.Validate.Jint.Autofac\Transformalize.Validate.Jint.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files\bogus-with-transform-dates.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="files\bogus-with-transform.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="files\bogus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

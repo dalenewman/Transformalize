@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+   <PropertyGroup>
+      <TargetFramework>net8.0</TargetFramework>
+
+      <IsPackable>false</IsPackable>
+
+      <Version>0.11.2-beta</Version>
+
+      <FileVersion>0.11.2</FileVersion>
+
+      <AssemblyVersion>0.11.2</AssemblyVersion>
+   </PropertyGroup>
+
+   <ItemGroup>
+     <None Remove="scripts\function.js" />
+     <None Remove="scripts\script.js" />
+   </ItemGroup>
+
+   <ItemGroup>
+     <Content Include="scripts\function.js">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </Content>
+     <Content Include="scripts\script.js">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+     </Content>
+   </ItemGroup>
+
+   <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+      <PackageReference Include="MSTest.TestAdapter" Version="3.7.0" />
+      <PackageReference Include="MSTest.TestFramework" Version="3.7.0" />
+      <PackageReference Include="coverlet.collector" Version="6.0.3">
+         <PrivateAssets>all</PrivateAssets>
+         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+   </ItemGroup>
+
+   <ItemGroup>
+     <ProjectReference Include="..\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
+     <ProjectReference Include="..\Transformalize.Validate.Jint.Autofac\Transformalize.Validate.Jint.Autofac.csproj" />
+     <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+     <ProjectReference Include="..\..\..\Providers\Console\Console.Standard.20\Console.Standard.20.csproj" />
+   </ItemGroup>
+
+</Project>

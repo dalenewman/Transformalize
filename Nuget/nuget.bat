@@ -7,6 +7,8 @@ REM REM MISC
 nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
 
 REM PROVIDERS
+nuget pack Transformalize.Provider.Bogus.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.Bogus.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Ado.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Ado.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.OpenXml.nuspec -OutputDirectory "c:\temp\modules"
@@ -24,6 +26,10 @@ nuget pack Transformalize.Provider.MySql.nuspec -OutputDirectory "c:\temp\module
 nuget pack Transformalize.Provider.MySql.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 
 REM TRANSFORMS
+nuget pack Transformalize.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Jint.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Validate.Jint.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Validate.Jint.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Ado.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Ado.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\temp\modules"

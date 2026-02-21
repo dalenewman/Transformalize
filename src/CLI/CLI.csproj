@@ -37,25 +37,19 @@
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-      <PackageReference Include="Transformalize.Provider.Ado.Autofac" Version="0.10.2-beta" />
-      <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.10.0-beta" />
       <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Solr.Autofac" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.3-beta" />
-      <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.10.9-beta" />
       <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Humanizer.Autofac" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Transform.Jint.Autofac" Version="0.10.3-beta" />
       <PackageReference Include="Transformalize.Transform.Json.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Razor.Autofac" Version="0.10.1-beta" />
@@ -63,6 +57,13 @@
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Providers\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Providers\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
+      
    </ItemGroup>
    <ItemGroup>
       <None Update="arrangements\bogus.yml">
