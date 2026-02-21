@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Providers.MySql.Autofac</RootNamespace>
+    <AssemblyName>Transformalize.Provider.MySql.Autofac</AssemblyName>
+    <Version>0.10.2-beta</Version>
+    <FileVersion>0.10.2</FileVersion>
+    <AssemblyVersion>0.10.2</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado\Transformalize.Provider.Ado.csproj" />
+    <ProjectReference Include="..\Transformalize.Provider.MySql\Transformalize.Provider.MySql.csproj" />
+  </ItemGroup>
+</Project>

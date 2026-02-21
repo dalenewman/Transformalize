@@ -20,6 +20,8 @@ nuget pack Transformalize.Provider.SqlServer.nuspec -OutputDirectory "c:\temp\mo
 nuget pack Transformalize.Provider.SqlServer.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.PostgreSql.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.PostgreSql.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.MySql.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.MySql.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 
 REM TRANSFORMS
 nuget pack Transformalize.Transform.Ado.nuspec -OutputDirectory "c:\temp\modules"
