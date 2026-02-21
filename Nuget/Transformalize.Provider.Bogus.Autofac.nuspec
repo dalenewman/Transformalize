@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Provider.Bogus.Autofac</id>
+    <version>0.11.1-beta</version>
+    <title>Transformalize Provider for Bogus Autofac Module</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Bogus</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Provider for Bogus Autofac Module</description>
+    <releaseNotes>general maint</releaseNotes>
+    <copyright>Copyright 2018-2025</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Transformalize.Container.Autofac" version="0.11.1-beta" />
+        <dependency id="Transformalize.Provider.Bogus" version="0.11.1-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Provider.Bogus.Autofac.deps.json" />
+    <file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.Autofac.dll" target="lib\netstandard2.0\Transformalize.Provider.Bogus.Autofac.dll" />
+    <!--<file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Provider.Bogus.Autofac.pdb" />-->
+  </files>
+</package>

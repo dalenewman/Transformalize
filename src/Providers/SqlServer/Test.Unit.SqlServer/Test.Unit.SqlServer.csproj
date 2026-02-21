@@ -47,7 +47,6 @@
          <PrivateAssets>all</PrivateAssets>
          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.11.1-beta" />
       <PackageReference Include="Transformalize.Transform.CSharp.Autofac" Version="0.11.1-beta" />
    </ItemGroup>
 
@@ -57,6 +56,7 @@
       <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
       <ProjectReference Include="..\..\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
       <ProjectReference Include="..\..\Ado\Transformalize.Transform.Ado.Autofac\Transformalize.Transform.Ado.Autofac.csproj" />
+      <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
    </ItemGroup>
 
 </Project>

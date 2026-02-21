@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Provider.Bogus</id>
+    <version>0.11.1-beta</version>
+    <title>Transformalize Provider for Bogus</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <license type="expression">Apache-2.0</license>
+    <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Bogus</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Provider for Bogus</description>
+    <releaseNotes>general maint</releaseNotes>
+    <copyright>Copyright 2018-2025</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Transformalize" version="0.11.1-beta" />
+        <dependency id="Bogus" version="35.6.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.deps.json" target="lib\netstandard2.0\Transformalize.Provider.Bogus.deps.json" />
+    <file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.dll" target="lib\netstandard2.0\Transformalize.Provider.Bogus.dll" />
+    <!--<file src="..\src\Providers\Bogus\Transformalize.Provider.Bogus.Standard.20\bin\Release\netstandard2.0\Transformalize.Provider.Bogus.pdb" target="lib\netstandard2.0\Transformalize.Provider.Bogus.pdb" />-->
+  </files>
+</package>

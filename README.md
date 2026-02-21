@@ -30,15 +30,15 @@ The supported inputs and outputs are below.
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlServer">SQL Server</a></td>
+                            <td><a href="./src/Providers/SqlServer/README.md">SQL Server</a></td>
                             <td >In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.MySql">MySql</a></td>
+                            <td><a href="./src/Providers/MySql/README.md">MySql</a></td>
                             <td >In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.PostgreSql">PostgreSql</a></td>
+                            <td><a href="./src/Providers/PostgreSql/README.md">PostgreSql</a></td>
                             <td >In/Out</td>
                         </tr>
                         <tr>
@@ -98,7 +98,7 @@ The supported inputs and outputs are below.
                             <td>In</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Bogus">Bogus</a></td>
+                            <td><a href="./src/Providers/Bogus/README.md">Bogus</a></td>
                             <td>In</td>
                         </tr>
                     </tbody>

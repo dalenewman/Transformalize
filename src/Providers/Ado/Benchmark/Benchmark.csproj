@@ -21,15 +21,15 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="Transformalize.Provider.Bogus.Autofac" Version="0.11.1-beta" />
-    <PackageReference Include="Transformalize.Provider.MySql.Autofac" Version="0.11.1-beta" />
-    <PackageReference Include="Transformalize.Provider.PostgreSql.Autofac" Version="0.11.2-beta" />
     <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.11.1-beta" />
-    <PackageReference Include="Transformalize.Provider.SqlServer.Autofac" Version="0.11.2-beta" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Logging\NLog\NLog.Standard.20\NLog.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
+    <ProjectReference Include="..\..\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
+    <ProjectReference Include="..\..\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
   </ItemGroup>
 
   <ItemGroup>
