@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+   <PropertyGroup>
+      <TargetFramework>netstandard2.0</TargetFramework>
+      <AssemblyName>Transformalize.Transform.GoogleMaps</AssemblyName>
+      <RootNamespace>Transformalize.Transforms.GoogleMaps</RootNamespace>
+      <Version>0.11.1-beta</Version>
+      <FileVersion>0.11.1</FileVersion>
+      <AssemblyVersion>0.11.1</AssemblyVersion>
+   </PropertyGroup>
+   <ItemGroup>
+      <PackageReference Include="gmaps-api-net" Version="0.33.0" />
+   </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+   </ItemGroup>
+</Project>
