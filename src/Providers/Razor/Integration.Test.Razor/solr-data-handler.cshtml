@@ -1,0 +1,77 @@
+﻿@model Transformalize.Providers.Razor.RazorModel
+@using System.Linq
+@using System.Text
+@using Transformalize.Extensions
+@using Transformalize.Configuration
+@{
+    var process = (Process)Model.Process;
+    var connection = process.Connections.First(c => c.Name == "output");
+    var l = "[";
+    var r = "]";
+    var fields = process.GetSearchFields();
+    var hasMultiValued = process.SearchTypes.Any(st => st.MultiValued);
+
+    // build query (all fields)
+    var builder = new StringBuilder();
+    builder.AppendLine("\r\nSELECT");
+    foreach (var field in fields) {
+        builder.AppendLine("    " + l + field.Alias.ToLower() + r + ",");
+    }
+    builder.TrimEnd(",\r\n");
+    if (process.Flatten) {
+        builder.AppendFormat("\r\nFROM {0}{1} WITH (NOLOCK);", process.Name, process.FlatSuffix);
+    } else {
+        builder.AppendFormat("\r\nFROM {0}{1} WITH (NOLOCK);", process.Name, process.StarSuffix);
+    }
+    var query = builder + System.Environment.NewLine;
+
+    // build delta import query (all fields filtered by the changed keys)
+    builder.TrimEnd(";");
+    builder.AppendLine("\r\nWHERE tflkey = ${dataimporter.delta.tflkey};");
+    var deltaImportQuery = builder.ToString();
+
+    // build delta query (just the changed keys)
+    builder.Clear();
+    builder.AppendLine("DECLARE @OffSet AS INT = DATEDIFF(HOUR,GETDATE(),GETUTCDATE()) * -1;");
+    builder.AppendLine("DECLARE @Last AS DATETIME = '${dataimporter.last_index_time}'");
+    builder.AppendLine("SET @Last = DATEADD(HOUR,@OffSet,@Last);");
+    builder.AppendLine("\r\nSELECT tflkey");
+    if (process.Flatten) {
+        builder.AppendFormat("FROM {0}{1} s WITH (NOLOCK)\r\n", process.Name, process.FlatSuffix);
+    } else {
+        builder.AppendFormat("FROM {0}{1} s WITH (NOLOCK)\r\n", process.Name, process.StarSuffix);
+    }
+    builder.AppendFormat("INNER JOIN {0}Control c WITH (NOLOCK) ON (s.TflBatchId = c.BatchId)\r\n", process.Name);
+    builder.AppendLine("WHERE c.[End] &gt; @Last");
+    var deltaQuery = builder.ToString();
+    builder.Clear();
+}
+<dataConfig>
+
+    <dataSource type="JdbcDataSource"
+                driver="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                url="jdbc:sqlserver://@connection.Server;databaseName=@connection.Database;responseBuffering=adaptive;"
+                readOnly="true"
+                applicationName="Tfl Solr"
+                user="Solr"
+                password="*****"
+                integratedSecurity="false">
+    </dataSource>
+
+    <document>
+        <entity name="@process.Name"
+                query="@query"
+                deltaQuery="@deltaQuery"
+                deltaImportQuery="@deltaImportQuery"
+                @(hasMultiValued ? "transformer=\"RegexTransformer\"" : string.Empty)>
+
+            <field column="tflkey" name="tflkey" />
+            @foreach (Field field in fields.Where(f => f.SearchType != "none")) {
+                var searchType = process.SearchTypes.FirstOrDefault(st => st.Name == field.SearchType);
+                if (searchType != null && searchType.MultiValued) {
+                    <field column="@field.Alias.ToLower()" splitBy="@field.Delimiter" />
+                }
+            }
+        </entity>
+    </document>
+</dataConfig>
