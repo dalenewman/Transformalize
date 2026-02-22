@@ -85,6 +85,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Transform.Json.Autofac.nuspec = Nuget\Transformalize.Transform.Json.Autofac.nuspec
 		Nuget\Transformalize.Transform.GoogleMaps.nuspec = Nuget\Transformalize.Transform.GoogleMaps.nuspec
 		Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec = Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec
+		Nuget\Transformalize.Provider.Razor.nuspec = Nuget\Transformalize.Provider.Razor.nuspec
+		Nuget\Transformalize.Provider.Razor.Autofac.nuspec = Nuget\Transformalize.Provider.Razor.Autofac.nuspec
+		Nuget\Transformalize.Transform.Razor.nuspec = Nuget\Transformalize.Transform.Razor.nuspec
+		Nuget\Transformalize.Transform.Razor.Autofac.nuspec = Nuget\Transformalize.Transform.Razor.Autofac.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{00A6A3EF-B483-4A04-83B3-4208E28EAAED}"
@@ -267,6 +271,30 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.GoogleMaps.Autofac", "src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\Transformalize.Transform.GoogleMaps.Autofac.csproj", "{E40A5B4C-C086-440D-96F2-3AFC9C42D019}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.GoogleMaps", "src\Transforms\GoogleMaps\Integration.Test.GoogleMaps\Test.Int.GoogleMaps.csproj", "{83240A82-692A-4841-9E60-578B94B1831A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Razor", "Razor", "{4D738474-7B8C-4404-86A7-8E8CFFF315F0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Razor.Standard.20", "src\Providers\Razor\Transformalize.Provider.Razor.Standard.20\Transformalize.Provider.Razor.Standard.20.csproj", "{F008FB7B-685B-473A-A930-AAB838B6F591}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Razor.Autofac.Standard.20", "src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Standard.20\Transformalize.Provider.Razor.Autofac.Standard.20.csproj", "{45B7DCA6-EF12-475E-8965-C4E88AEA54FE}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.Razor.Autofac.Shared", "src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.shproj", "{A5ACD2AB-9AE9-45E6-A73D-2C981A83D993}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Razor", "src\Providers\Razor\Integration.Test.Razor\Test.Int.Razor.csproj", "{3D14CE36-6AD2-4D81-A3BE-5440B00176C1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark.Razor", "src\Providers\Razor\Benchmark.Razor\Benchmark.csproj", "{8548CE5C-1BAE-4C1C-AF94-459FE48C8F31}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Benchmark.Shared", "src\Providers\Razor\Benchmark.Shared\Benchmark.Shared.shproj", "{1266B3AE-A50E-4BEC-BF47-2753FB95C9C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Razor", "Razor", "{DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Razor.Standard.20", "src\Transforms\Razor\Transformalize.Transform.Razor.Standard.20\Transformalize.Transform.Razor.Standard.20.csproj", "{0ED30B47-BA4A-41E0-A20F-C5B6E1F3729F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Razor.Autofac.Standard.20", "src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Standard.20\Transformalize.Transform.Razor.Autofac.Standard.20.csproj", "{16CA3DBE-809C-4B79-B9EC-D92EE52E69E7}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Transform.Razor.Autofac.Shared", "src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.shproj", "{322A5978-874D-4F23-88AC-1FB9C3F45B4E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Razor", "src\Transforms\Razor\Test.Unit.Razor\Test.Unit.Razor.csproj", "{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1100,6 +1128,18 @@ Global
 		{E3C71D6C-EA00-4875-BA9A-BB06F014735E} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
 		{E40A5B4C-C086-440D-96F2-3AFC9C42D019} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
 		{83240A82-692A-4841-9E60-578B94B1831A} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
+		{4D738474-7B8C-4404-86A7-8E8CFFF315F0} = {FB1833DA-C3E8-46E8-8866-3AD0CF8EF3F9}
+		{F008FB7B-685B-473A-A930-AAB838B6F591} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{45B7DCA6-EF12-475E-8965-C4E88AEA54FE} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{A5ACD2AB-9AE9-45E6-A73D-2C981A83D993} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{3D14CE36-6AD2-4D81-A3BE-5440B00176C1} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{8548CE5C-1BAE-4C1C-AF94-459FE48C8F31} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{1266B3AE-A50E-4BEC-BF47-2753FB95C9C0} = {4D738474-7B8C-4404-86A7-8E8CFFF315F0}
+		{DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{0ED30B47-BA4A-41E0-A20F-C5B6E1F3729F} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
+		{16CA3DBE-809C-4B79-B9EC-D92EE52E69E7} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
+		{322A5978-874D-4F23-88AC-1FB9C3F45B4E} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
+		{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
@@ -1113,6 +1153,12 @@ Global
 		src\Containers\Autofac\Autofac.Shared\Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
 		src\Tests\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
 		src\Providers\File\File.Shared\File.Shared.projitems*{d03656ea-f8ff-4efa-ae5e-027773c357a4}*SharedItemsImports = 5
+		src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.projitems*{a5acd2ab-9ae9-45e6-a73d-2c981a83d993}*SharedItemsImports = 13
+		src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.projitems*{45b7dca6-ef12-475e-8965-c4e88aea54fe}*SharedItemsImports = 5
+		src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.projitems*{322a5978-874d-4f23-88ac-1fb9c3f45b4e}*SharedItemsImports = 13
+		src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.projitems*{16ca3dbe-809c-4b79-b9ec-d92ee52e69e7}*SharedItemsImports = 5
+		src\Providers\Razor\Benchmark.Shared\Benchmark.Shared.projitems*{1266b3ae-a50e-4bec-bf47-2753fb95c9c0}*SharedItemsImports = 13
+		src\Providers\Razor\Benchmark.Shared\Benchmark.Shared.projitems*{8548ce5c-1bae-4c1c-af94-459fe48c8f31}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

@@ -1,0 +1,23 @@
+﻿<add name='TestProcess' read-only='false'>
+  <parameters>
+    <add name='Size' type='int' value='1' />
+  </parameters>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+  </connections>
+  <entities>
+    <add name='Contact' size='@[Size]'>
+      <fields>
+        <add name='FirstName' />
+        <add name='LastName' />
+        <add name='Stars' type='byte' min='1' max='5' />
+        <add name='Reviewers' type='int' min='0' max='500' />
+      </fields>
+
+      <calculated-fields>
+        <add name='Score' raw='true' t='razor(@{var x = Model.Stars * Model.Reviewers;}&lt;span>@x&lt;/span>)' />
+      </calculated-fields>
+    </add>
+  </entities>
+
+</add>
