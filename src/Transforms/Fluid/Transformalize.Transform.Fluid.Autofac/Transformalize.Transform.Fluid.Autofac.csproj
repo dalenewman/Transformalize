@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Transforms.Fluid.Autofac</RootNamespace>
+    <Version>0.11.1-beta</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/dalenewman/Transformalize.Transform.Fluid</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dalenewman/Transformalize.Transform.Fluid.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Copyright>Copyright (c) 2020-2025 Dale Newman</Copyright>
+    <PackageTags>transformalize,etl,liquid,fluid,autofac</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <FileVersion>0.11.1</FileVersion>
+    <AssemblyVersion>0.11.1</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Transformalize.Transform.Fluid\Transformalize.Transform.Fluid.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+  </ItemGroup>
+</Project>

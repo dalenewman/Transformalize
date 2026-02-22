@@ -40,3 +40,5 @@ nuget pack Transformalize.Transform.Globalization.nuspec -OutputDirectory "c:\te
 nuget pack Transformalize.Transform.Compression.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Geography.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Xml.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Fluid.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Fluid.Autofac.nuspec -OutputDirectory "c:\temp\modules"
