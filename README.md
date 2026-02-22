@@ -42,7 +42,7 @@ The supported inputs and outputs are below.
                             <td >In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Sqlite">SQLite</a></td>
+                            <td><a href="./src/Providers/Sqlite/README.md">SQLite</a></td>
                             <td >In/Out</td>
                         </tr>
                     </tbody>

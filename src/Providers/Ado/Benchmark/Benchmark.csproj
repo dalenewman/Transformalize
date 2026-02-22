@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-    <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.11.1-beta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +29,7 @@
     <ProjectReference Include="..\..\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
     <ProjectReference Include="..\..\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
     <ProjectReference Include="..\..\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
+    <ProjectReference Include="..\..\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
   </ItemGroup>
 
   <ItemGroup>
