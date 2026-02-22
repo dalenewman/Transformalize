@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Providers.CsvHelper</RootNamespace>
+    <PackageOutputPath>c:\temp\modules</PackageOutputPath>
+    <IncludeSymbols>true</IncludeSymbols>
+    <Title>Transformalize File Provider using CsvHelper Autofac Module</Title>
+    <Version>0.11.1-beta</Version>
+    <Authors>Dale Newman</Authors>
+    <Company>Transformalize</Company>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <Description>A Transformalize provider using CsvHelper for reading and writing files.</Description>
+    <Copyright>Copyright © 2020-2025 Dale Newman</Copyright>
+    <PackageProjectUrl>https://github.com/dalenewman/Transformalize.Provider.CsvHelper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dalenewman/Transformalize.Provider.CsvHelper.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>etl,csvhelper,transformalize,csv</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <FileVersion>0.11.1</FileVersion>
+    <AssemblyVersion>0.11.1</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\File\File.Standard.20\File.Standard.20.csproj" />
+  </ItemGroup>
+</Project>

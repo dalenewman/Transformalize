@@ -37,7 +37,7 @@
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-      <PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.2-beta" />
+      <!--<PackageReference Include="Transformalize.Provider.CsvHelper.Autofac" Version="0.10.2-beta" />-->
       <PackageReference Include="Transformalize.Provider.Elasticsearch.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Provider.Json.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
@@ -64,6 +64,7 @@
       <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\CsvHelper\Transformalize.Provider.CsvHelper.Autofac\Transformalize.Provider.CsvHelper.Autofac.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="arrangements\bogus.yml">

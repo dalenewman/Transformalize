@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Transformalize.Provider.CsvHelper</id>
+    <version>0.11.1-beta</version>
+    <title>Transformalize Provider using CsvHelper</title>
+    <authors>Dale Newman</authors>
+    <owners>Dale Newman</owners>
+    <projectUrl>https://github.com/dalenewman/Transformalize.Provider.CsvHelper</projectUrl>
+    <license type="expression">Apache-2.0</license>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformalize Provider using CsvHelper</description>
+    <releaseNotes>maintenance</releaseNotes>
+    <copyright>Copyright © 2018-2025</copyright>
+    <tags>etl</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="CsvHelper" version="33.0.1" />
+        <dependency id="Transformalize.Provider.File" version="0.11.1-beta" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\src\Providers\CsvHelper\Transformalize.Provider.CsvHelper\bin\Release\netstandard2.0\Transformalize.Provider.CsvHelper.deps.json" target="lib\netstandard2.0\Transformalize.Provider.CsvHelper.deps.json" />
+    <file src="..\src\Providers\CsvHelper\Transformalize.Provider.CsvHelper\bin\Release\netstandard2.0\Transformalize.Provider.CsvHelper.dll" target="lib\netstandard2.0\Transformalize.Provider.CsvHelper.dll" />
+    <!--<file src="..\src\Providers\CsvHelper\Transformalize.Provider.CsvHelper\bin\Release\netstandard2.0\Transformalize.Provider.CsvHelper.pdb" target="lib\netstandard2.0\Transformalize.Provider.CsvHelper.pdb" />-->
+  </files>
+</package>

@@ -66,7 +66,7 @@ The supported inputs and outputs are below.
                             <td>In</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.CsvHelper">Files</a></td>
+                            <td><a href="./src/Providers/CsvHelper/README.md">Files</a></td>
                             <td>In/Out</td>
                         </tr>
                         <tr>
