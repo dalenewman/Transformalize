@@ -1,0 +1,18 @@
+﻿<add name="TestProcess" read-only="true">
+   <connections>
+      <add name="input" provider="bogus" seed="1" />
+   </connections>
+   <entities>
+      <add name="Contact" size="5">
+         <fields>
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="Stars" type="byte" min="1" max="5" />
+            <add name="Reviewers" type="int" min="0" max="500" />
+         </fields>
+         <calculated-fields>
+            <add name="ScoreTag" raw="true" t="fluid({% assign x = Stars | times: Reviewers %}&lt;span>{{ x }}&lt;/span>)" />
+         </calculated-fields>
+      </add>
+   </entities>
+</add>

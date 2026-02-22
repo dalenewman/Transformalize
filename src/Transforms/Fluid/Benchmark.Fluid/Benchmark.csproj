@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Version>0.11.1-beta</Version>
+    <FileVersion>0.11.1</FileVersion>
+    <AssemblyVersion>0.11.1</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="bin\Release\netcoreapp3.1\**" />
+    <EmbeddedResource Remove="bin\Release\netcoreapp3.1\**" />
+    <None Remove="bin\Release\netcoreapp3.1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report-github.md" />
+    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformalize.Transform.Fluid.Autofac\Transformalize.Transform.Fluid.Autofac.csproj" />
+    <ProjectReference Include="..\Transformalize.Transform.Fluid\Transformalize.Transform.Fluid.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files\bogus-with-transform.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="files\bogus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
