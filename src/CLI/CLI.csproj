@@ -43,7 +43,7 @@
       <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Razor.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Solr.Autofac" Version="0.10.5-beta" />
-      <PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.3-beta" />
+      <!--<PackageReference Include="Transformalize.Provider.Sqlite.Autofac" Version="0.10.3-beta" />-->
       <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.2-beta" />
       <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
@@ -63,7 +63,7 @@
       <ProjectReference Include="..\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
       <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
-      
+      <ProjectReference Include="..\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="arrangements\bogus.yml">
