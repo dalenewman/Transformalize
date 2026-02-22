@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Transformalize.Provider.Mail</AssemblyName>
+    <RootNamespace>Transformalize.Providers.Mail</RootNamespace>
+    <Version>0.11.1-beta</Version>
+    <FileVersion>0.11.1</FileVersion>
+    <AssemblyVersion>0.11.1</AssemblyVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.8.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../Transformalize/Transformalize.csproj" />
+  </ItemGroup>
+</Project>
