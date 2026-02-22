@@ -86,7 +86,7 @@ namespace Test.Integration.Core {
          const string xml = @"<add name='file' mode='init' read-only='true'>
   <connections>
     <add name='input' provider='internal' />
-    <add name='output' provider='file' delimiter=',' file='files/data-with-line-breaks-and-commas-test.csv' text-qualifier='""' />
+    <add name='output' provider='file' delimiter=',' file='files/data-with-line-breaks-and-commas-test.csv' text-qualifier='""' synchronous='true' />
   </connections>
   <entities>
     <add name='Contact'>
