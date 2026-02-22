@@ -1,25 +1,28 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>Transformalize.Transform.Json</id>
-    <version>0.8.22-beta</version>
-    <title>Transformalize Json</title>
-    <authors>Dale Newman</authors>
-    <owners>Dale Newman</owners>
-    <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <license type="expression">Apache-2.0</license>
-    <description>Json related transforms for Transformalize</description>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright 2013-2020</copyright>
-    <tags>etl</tags>
-    <dependencies>
-      <group targetFramework="net462">
-        <dependency id="Transformalize" version="0.8.22-beta" />
-      </group>
-    </dependencies>
-  </metadata>
-  <files>
-    <file src="..\Transforms\Json\bin\Release\Transformalize.Transform.Json.dll" target="lib\net462\Transformalize.Transform.Json.dll" />
-  </files>
+   <metadata>
+      <id>Transformalize.Transform.Json</id>
+      <version>0.11.2-beta</version>
+      <title>JSON transforms for Transformalize</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize.Provider.Json</projectUrl>
+      <license type="expression">Apache-2.0</license>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>JSON transforms for Transformalize</description>
+      <releaseNotes>dependencies</releaseNotes>
+      <copyright>Copyright © 2013-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.11.1-beta" />
+            <dependency id="Newtonsoft.Json" version="13.0.3" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Transforms\Json\Transformalize.Transform.Json\bin\Release\netstandard2.0\Transformalize.Transform.Json.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Json.deps.json" />
+      <file src="..\src\Transforms\Json\Transformalize.Transform.Json\bin\Release\netstandard2.0\Transformalize.Transform.Json.dll" target="lib\netstandard2.0\Transformalize.Transform.Json.dll" />
+      <!--<file src="..\src\Transforms\Json\Transformalize.Transform.Json\bin\Release\netstandard2.0\Transformalize.Transform.Json.pdb" target="lib\netstandard2.0\Transformalize.Transform.Json.pdb" />-->
+   </files>
 </package>

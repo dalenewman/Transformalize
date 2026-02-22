@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.10.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.10.2" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Containers/Autofac/Autofac.Standard.20/Autofac.Standard.20.csproj" />
+    <ProjectReference Include="../../Bogus/Transformalize.Provider.Bogus.Autofac.Standard.20/Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="../../Console/Console.Autofac.Standard.20/Console.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="../Transformalize.Provider.Json.Autofac/Transformalize.Provider.Json.Autofac.csproj" />
+    <ProjectReference Include="../../../Transforms/Json/Transformalize.Transform.Json.Autofac/Transformalize.Transform.Json.Autofac.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files\nfl-team-colors.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
