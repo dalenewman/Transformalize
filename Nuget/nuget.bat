@@ -19,6 +19,8 @@ nuget pack Transformalize.Provider.CsvHelper.nuspec -OutputDirectory "c:\temp\mo
 nuget pack Transformalize.Provider.CsvHelper.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Console.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.Mail.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.Mail.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.SqlServer.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.SqlServer.Autofac.nuspec -OutputDirectory "c:\temp\modules"
