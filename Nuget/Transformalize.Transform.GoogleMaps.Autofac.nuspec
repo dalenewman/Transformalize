@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Transform.GoogleMaps.Autofac</id>
+      <version>0.11.1-beta</version>
+      <title>Transformalize Transform using Google Maps API Autofac Module</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <license type="expression">Apache-2.0</license>
+      <projectUrl>https://github.com/dalenewman/Transformalize.Transform.GoogleMaps</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Transformalize Transform using Google Maps API Autofac Module</description>
+      <releaseNotes>maintenance</releaseNotes>
+      <copyright>Copyright © 2018-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize.Container.Autofac" version="0.11.1-beta" />
+            <dependency id="Transformalize.Transform.GoogleMaps" version="0.11.1-beta" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.deps.json" />
+      <file src="..\src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.dll" target="lib\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.dll" />
+      <!--<file src="..\src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\bin\Release\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Transform.GoogleMaps.Autofac.pdb" />-->
+   </files>
+</package>

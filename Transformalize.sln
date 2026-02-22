@@ -83,6 +83,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Provider.Json.Autofac.nuspec = Nuget\Transformalize.Provider.Json.Autofac.nuspec
 		Nuget\Transformalize.Transform.Json.nuspec = Nuget\Transformalize.Transform.Json.nuspec
 		Nuget\Transformalize.Transform.Json.Autofac.nuspec = Nuget\Transformalize.Transform.Json.Autofac.nuspec
+		Nuget\Transformalize.Transform.GoogleMaps.nuspec = Nuget\Transformalize.Transform.GoogleMaps.nuspec
+		Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec = Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{00A6A3EF-B483-4A04-83B3-4208E28EAAED}"
@@ -257,6 +259,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Mail.Autofac", "src\Providers\Mail\Transformalize.Provider.Mail.Autofac\Transformalize.Provider.Mail.Autofac.csproj", "{FAE5BBEF-3735-44E9-AAEF-5CCD3BE805AF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Test.Mail", "src\Providers\Mail\Integration.Test.Mail\Integration.Test.Mail.csproj", "{18C69FF4-E467-4275-AADF-CC1FEC698CEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoogleMaps", "GoogleMaps", "{12434ACE-414A-4782-BD4E-BD4E1B5D8916}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.GoogleMaps", "src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps\Transformalize.Transform.GoogleMaps.csproj", "{E3C71D6C-EA00-4875-BA9A-BB06F014735E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.GoogleMaps.Autofac", "src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\Transformalize.Transform.GoogleMaps.Autofac.csproj", "{E40A5B4C-C086-440D-96F2-3AFC9C42D019}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Integration.Test.GoogleMaps", "src\Transforms\GoogleMaps\Integration.Test.GoogleMaps\Integration.Test.GoogleMaps.csproj", "{83240A82-692A-4841-9E60-578B94B1831A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -965,6 +975,42 @@ Global
 		{18C69FF4-E467-4275-AADF-CC1FEC698CEF}.Release|x64.Build.0 = Release|Any CPU
 		{18C69FF4-E467-4275-AADF-CC1FEC698CEF}.Release|x86.ActiveCfg = Release|Any CPU
 		{18C69FF4-E467-4275-AADF-CC1FEC698CEF}.Release|x86.Build.0 = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|x64.Build.0 = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Debug|x86.Build.0 = Debug|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|x64.ActiveCfg = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|x64.Build.0 = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|x86.ActiveCfg = Release|Any CPU
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E}.Release|x86.Build.0 = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|x64.Build.0 = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Debug|x86.Build.0 = Debug|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|x64.ActiveCfg = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|x64.Build.0 = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|x86.ActiveCfg = Release|Any CPU
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019}.Release|x86.Build.0 = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|x64.Build.0 = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Debug|x86.Build.0 = Debug|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x64.ActiveCfg = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x64.Build.0 = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x86.ActiveCfg = Release|Any CPU
+		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1050,6 +1096,10 @@ Global
 		{35C36967-F7BC-41ED-AF32-8CBEE47426DD} = {A06669D5-F3E3-4B72-9327-3640D30FFCEF}
 		{FAE5BBEF-3735-44E9-AAEF-5CCD3BE805AF} = {A06669D5-F3E3-4B72-9327-3640D30FFCEF}
 		{18C69FF4-E467-4275-AADF-CC1FEC698CEF} = {A06669D5-F3E3-4B72-9327-3640D30FFCEF}
+		{12434ACE-414A-4782-BD4E-BD4E1B5D8916} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{E3C71D6C-EA00-4875-BA9A-BB06F014735E} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
+		{E40A5B4C-C086-440D-96F2-3AFC9C42D019} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
+		{83240A82-692A-4841-9E60-578B94B1831A} = {12434ACE-414A-4782-BD4E-BD4E1B5D8916}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}
