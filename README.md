@@ -70,7 +70,7 @@ The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Mail">Mail</a></td>
+                            <td><a href="./src/Providers/Mail/README.md">Mail</a></td>
                             <td>Out</td>
                         </tr>                        
                     </tbody>
@@ -90,7 +90,7 @@ The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Razor">Razor</a></td>
+                            <td><a href="./src/Providers/Razor/README.md">Razor</a></td>
                             <td>Out</td>
                         </tr>
                         <tr>

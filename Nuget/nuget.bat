@@ -34,6 +34,8 @@ nuget pack Transformalize.Provider.Sqlite.Autofac.nuspec -OutputDirectory "c:\te
 REM TRANSFORMS
 nuget pack Transformalize.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Jint.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Humanizer.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.Humanizer.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Validate.Jint.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Validate.Jint.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Ado.nuspec -OutputDirectory "c:\temp\modules"
