@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Transform.Humanizer</id>
+      <version>0.11.1-beta</version>
+      <title>Transformalize Transform using Humanizer</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <license type="expression">MIT</license>
+      <projectUrl>https://github.com/dalenewman/Transformalize.Transform.Humanizer</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Transformalize Transform using Humanizer</description>
+      <releaseNotes>gen maint</releaseNotes>
+      <copyright>Copyright © 2018-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.11.1-beta" />
+            <dependency id="Humanizer.Core" version="2.14.1" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Transforms\Humanizer\Transformalize.Transform.Humanizer.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Humanizer.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Humanizer.deps.json" />
+      <file src="..\src\Transforms\Humanizer\Transformalize.Transform.Humanizer.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Humanizer.dll" target="lib\netstandard2.0\Transformalize.Transform.Humanizer.dll" />
+      <!--<file src="..\src\Transforms\Humanizer\Transformalize.Transform.Humanizer.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Humanizer.pdb" target="lib\netstandard2.0\Transformalize.Transform.Humanizer.pdb" />-->
+   </files>
+</package>
