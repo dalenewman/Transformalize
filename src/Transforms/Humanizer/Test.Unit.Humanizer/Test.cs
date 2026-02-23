@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +15,9 @@ namespace UnitTests {
 
       [TestMethod]
       public void BasicTests() {
+
+         CultureInfo.CurrentCulture = new CultureInfo("en-US");
+         CultureInfo.CurrentUICulture = new CultureInfo("en-US");
 
          var logger = new ConsoleLogger(LogLevel.Debug);
          var date = DateTime.UtcNow.AddMonths(2).AddDays(1).ToString("O");
