@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Provider.GeoJson.Autofac</id>
+      <version>0.11.1-beta</version>
+      <title>GeoJson for Transformalize Autofac Module</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <license type="expression">Apache-2.0</license>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>GeoJson for Transformalize Autofac Module</description>
+      <releaseNotes>gen maint</releaseNotes>
+      <copyright>Copyright © 2013-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize.Container.Autofac" version="0.11.1-beta" />
+            <dependency id="Transformalize.Provider.GeoJson" version="0.11.1-beta" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Providers\GeoJson\Transformalize.Provider.GeoJson.Autofac\bin\Release\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.deps.json" target="lib\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.deps.json" />
+      <file src="..\src\Providers\GeoJson\Transformalize.Provider.GeoJson.Autofac\bin\Release\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.dll" target="lib\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.dll" />
+      <!--<file src="..\src\Providers\GeoJson\Transformalize.Provider.GeoJson.Autofac\bin\Release\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.pdb" target="lib\netstandard2.0\Transformalize.Provider.GeoJson.Autofac.pdb" />-->
+   </files>
+</package>
