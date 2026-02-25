@@ -6,7 +6,6 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using System.IO;
 
 namespace Transformalize.Providers.Json.Autofac {
    public class JsonProviderBuilder {

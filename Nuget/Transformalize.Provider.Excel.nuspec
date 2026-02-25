@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+   <metadata>
+      <id>Transformalize.Provider.Excel</id>
+      <version>0.11.1-beta</version>
+      <title>Excel Provider for Transformalize</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <license type="expression">Apache-2.0</license>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Excel Provider for Transformalize</description>
+      <releaseNotes>gen maint</releaseNotes>
+      <copyright>Copyright © 2013-2025</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="netstandard2.0">
+            <dependency id="Transformalize" version="0.11.1-beta" />
+            <dependency id="ExcelDataReader" version="3.7.0" />
+            <dependency id="System.Text.Encoding.CodePages" version="9.0.2" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Providers\Excel\Transformalize.Provider.Excel\bin\Release\net8.0\Transformalize.Provider.Excel.deps.json" target="lib\net8.0\Transformalize.Provider.Excel.deps.json" />
+      <file src="..\src\Providers\Excel\Transformalize.Provider.Excel\bin\Release\net8.0\Transformalize.Provider.Excel.dll" target="lib\net8.0\Transformalize.Provider.Excel.dll" />
+      <!--<file src="..\src\Providers\Excel\Transformalize.Provider.Excel\bin\Release\net8.0\Transformalize.Provider.Excel.pdb" target="lib\net8.0\Transformalize.Provider.Excel.pdb" />-->
+   </files>
+</package>

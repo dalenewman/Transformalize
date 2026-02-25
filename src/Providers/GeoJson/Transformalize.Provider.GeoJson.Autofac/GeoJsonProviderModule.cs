@@ -25,7 +25,6 @@ using Transformalize.Containers.Autofac;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
-using System.IO;
 
 namespace Transformalize.Providers.GeoJson.Autofac {
 
