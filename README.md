@@ -72,7 +72,11 @@ The supported inputs and outputs are below.
                         <tr>
                             <td><a href="./src/Providers/Mail/README.md">Mail</a></td>
                             <td>Out</td>
-                        </tr>                        
+                        </tr>
+                        <tr>
+                            <td><a href="./src/Providers/GeoJson/README.md">GeoJson</td>
+                            <td>Out</td>
+                        </tr>           
                     </tbody>
                 </table>
             </td>
@@ -101,6 +105,10 @@ The supported inputs and outputs are below.
                             <td><a href="./src/Providers/Bogus/README.md">Bogus</a></td>
                             <td>In</td>
                         </tr>
+                        <tr>
+                            <td><a href="./src/Providers/Json/README.md">JSON</td>
+                            <td>Out</td>
+                        </tr>    
                     </tbody>
                 </table>
             </td>

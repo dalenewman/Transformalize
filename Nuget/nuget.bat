@@ -30,6 +30,8 @@ nuget pack Transformalize.Provider.MySql.nuspec -OutputDirectory "c:\temp\module
 nuget pack Transformalize.Provider.MySql.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Sqlite.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Sqlite.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.GeoJson.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.GeoJson.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 
 REM TRANSFORMS
 nuget pack Transformalize.Transform.Jint.nuspec -OutputDirectory "c:\temp\modules"
