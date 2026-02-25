@@ -45,7 +45,6 @@
       <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
       <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Transform.LambdaParser.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.10-beta" />
    </ItemGroup>
    <ItemGroup>
@@ -61,6 +60,7 @@
       <ProjectReference Include="..\Providers\CsvHelper\Transformalize.Provider.CsvHelper.Autofac\Transformalize.Provider.CsvHelper.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Json\Transformalize.Provider.Json.Autofac\Transformalize.Provider.Json.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Json\Transformalize.Transform.Json.Autofac\Transformalize.Transform.Json.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Razor\Transformalize.Provider.Razor.Autofac.Standard.20\Transformalize.Provider.Razor.Autofac.Standard.20.csproj" />
       <ProjectReference Include="..\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Standard.20\Transformalize.Transform.Razor.Autofac.Standard.20.csproj" />
    </ItemGroup>
