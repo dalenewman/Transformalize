@@ -21,6 +21,8 @@ nuget pack Transformalize.Provider.Excel.nuspec -OutputDirectory "c:\temp\module
 nuget pack Transformalize.Provider.Excel.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Console.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Console.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.Elasticsearch.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Provider.Elasticsearch.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Mail.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Mail.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Trace.nuspec -OutputDirectory "c:\temp\modules"

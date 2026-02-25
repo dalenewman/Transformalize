@@ -1,0 +1,19 @@
+<add name='TestProcess' >
+  <connections>
+    <add name='input' provider='elasticsearch' index='bogus' port='9200' version='6' />
+  </connections>
+  <entities>
+    <add name='contact' page='1' size='10'>
+      <order>
+        <add field='identity' />
+      </order>
+      <fields>
+        <add name='identity' type='int' />
+        <add name='firstname' />
+        <add name='lastname' />
+        <add name='stars' type='byte' />
+        <add name='reviewers' type='int' />
+      </fields>
+    </add>
+  </entities>
+</add>

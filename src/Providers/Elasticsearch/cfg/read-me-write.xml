@@ -1,0 +1,17 @@
+<add name='TestProcess' mode='init'>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+    <add name='output' provider='elasticsearch' index='bogus' port='9200' version='6' />
+  </connections>
+  <entities>
+    <add name='Contact' size='1000'>
+      <fields>
+        <add name='Identity' type='int' primary-key='true' />
+        <add name='FirstName' />
+        <add name='LastName' />
+        <add name='Stars' type='byte' min='1' max='5' />
+        <add name='Reviewers' type='int' min='0' max='500' />
+      </fields>
+    </add>
+  </entities>
+</add>

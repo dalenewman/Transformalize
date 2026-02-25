@@ -9,6 +9,8 @@ REM nuget push "c:\temp\modules\Transformalize.Provider.Ado.Autofac.0.11.3-beta.
 REM nuget push "c:\temp\modules\Transformalize.Provider.Trace.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Console.Autofac.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
+REM nuget push "c:\temp\modules\Transformalize.Provider.Elasticsearch.0.11.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
+REM nuget push "c:\temp\modules\Transformalize.Provider.Elasticsearch.Autofac.0.11.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Excel.0.11.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.Excel.Autofac.0.11.1-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM nuget push "c:\temp\modules\Transformalize.Provider.File.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
