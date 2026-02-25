@@ -87,6 +87,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{3F8C89D9
 		Nuget\Transformalize.Transform.Json.Autofac.nuspec = Nuget\Transformalize.Transform.Json.Autofac.nuspec
 		Nuget\Transformalize.Transform.GoogleMaps.nuspec = Nuget\Transformalize.Transform.GoogleMaps.nuspec
 		Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec = Nuget\Transformalize.Transform.GoogleMaps.Autofac.nuspec
+		Nuget\Transformalize.Transform.LambdaParser.nuspec = Nuget\Transformalize.Transform.LambdaParser.nuspec
+		Nuget\Transformalize.Transform.LambdaParser.Autofac.nuspec = Nuget\Transformalize.Transform.LambdaParser.Autofac.nuspec
 		Nuget\Transformalize.Provider.Razor.nuspec = Nuget\Transformalize.Provider.Razor.nuspec
 		Nuget\Transformalize.Provider.Razor.Autofac.nuspec = Nuget\Transformalize.Provider.Razor.Autofac.nuspec
 		Nuget\Transformalize.Transform.Razor.nuspec = Nuget\Transformalize.Transform.Razor.nuspec
@@ -315,6 +317,16 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Transform.Razor.Autofac.Shared", "src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.shproj", "{322A5978-874D-4F23-88AC-1FB9C3F45B4E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Razor", "src\Transforms\Razor\Test.Unit.Razor\Test.Unit.Razor.csproj", "{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LambdaParser", "LambdaParser", "{6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.LambdaParser", "src\Transforms\LambdaParser\Transformalize.Transform.LambdaParser\Transformalize.Transform.LambdaParser.csproj", "{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.LambdaParser.Autofac", "src\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj", "{9A033EB5-6666-4106-B16F-1E0DD849B63F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.LambdaParser", "src\Transforms\LambdaParser\Test.Unit.LambdaParser\Test.Unit.LambdaParser.csproj", "{6C44F6C3-B0BA-4525-8636-222B79B23787}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "src\Transforms\LambdaParser\Benchmark.LambdaParser\Benchmark.csproj", "{C99680F4-893F-4964-AFDE-43F70E742BD0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1131,6 +1143,54 @@ Global
 		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x64.Build.0 = Release|Any CPU
 		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x86.ActiveCfg = Release|Any CPU
 		{83240A82-692A-4841-9E60-578B94B1831A}.Release|x86.Build.0 = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|x64.Build.0 = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Debug|x86.Build.0 = Debug|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|x64.ActiveCfg = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|x64.Build.0 = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|x86.ActiveCfg = Release|Any CPU
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79}.Release|x86.Build.0 = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Debug|x86.Build.0 = Debug|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|x64.Build.0 = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|x86.ActiveCfg = Release|Any CPU
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F}.Release|x86.Build.0 = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|x64.Build.0 = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Debug|x86.Build.0 = Debug|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|x64.ActiveCfg = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|x64.Build.0 = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|x86.ActiveCfg = Release|Any CPU
+		{6C44F6C3-B0BA-4525-8636-222B79B23787}.Release|x86.Build.0 = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|x64.Build.0 = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Debug|x86.Build.0 = Debug|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|x64.ActiveCfg = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|x64.Build.0 = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|x86.ActiveCfg = Release|Any CPU
+		{C99680F4-893F-4964-AFDE-43F70E742BD0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -1240,6 +1300,11 @@ Global
 		{16CA3DBE-809C-4B79-B9EC-D92EE52E69E7} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
 		{322A5978-874D-4F23-88AC-1FB9C3F45B4E} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
 		{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5} = {DFD65AD6-66E0-45CB-BB9F-D9A2EE8FE93A}
+		{6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5} = {6D8CE7D5-73C6-4DE8-B9AF-539007080B74}
+		{D819C18E-9B74-4B9B-98DD-1091BE5C2E79} = {6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}
+		{9A033EB5-6666-4106-B16F-1E0DD849B63F} = {6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}
+		{6C44F6C3-B0BA-4525-8636-222B79B23787} = {6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}
+		{C99680F4-893F-4964-AFDE-43F70E742BD0} = {6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {485BFA9F-A9CF-4371-93AA-13184522861A}

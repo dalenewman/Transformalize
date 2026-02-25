@@ -50,6 +50,8 @@ nuget pack Transformalize.Transform.Fluid.nuspec -OutputDirectory "c:\temp\modul
 nuget pack Transformalize.Transform.Fluid.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.GoogleMaps.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.GoogleMaps.Autofac.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.LambdaParser.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Transform.LambdaParser.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Razor.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Provider.Razor.Autofac.nuspec -OutputDirectory "c:\temp\modules"
 nuget pack Transformalize.Transform.Razor.nuspec -OutputDirectory "c:\temp\modules"
