@@ -23,6 +23,6 @@
     <PackageReference Include="CsvHelper" Version="33.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\File\File.Standard.20\File.Standard.20.csproj" />
+    <ProjectReference Include="..\..\File\File\File.csproj" />
   </ItemGroup>
 </Project>

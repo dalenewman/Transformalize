@@ -25,12 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Providers\File\File.Standard.20\File.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Providers\Trace.Standard.20\Trace.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
+    <ProjectReference Include="..\..\Providers\File\File\File.csproj" />
+    <ProjectReference Include="..\..\Providers\Trace\Trace.csproj" />
     <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
-    <ProjectReference Include="..\..\Transforms\Compression.Standard.20\Compression.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Transforms\Xml.Standard.20\Xml.Standard.20.csproj" />
+    <ProjectReference Include="..\..\Transforms\Compression\Compression.csproj" />
+    <ProjectReference Include="..\..\Transforms\Xml\Xml.csproj" />
   </ItemGroup>
 
   <Import Project="..\Test.Unit.Shared\Test.Unit.Shared.projitems" Label="Shared" />

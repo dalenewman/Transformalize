@@ -26,7 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
     <ProjectReference Include="..\Transformalize.Validate.Jint.Autofac\Transformalize.Validate.Jint.Autofac.csproj" />
-    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
   </ItemGroup>
 
   <ItemGroup>

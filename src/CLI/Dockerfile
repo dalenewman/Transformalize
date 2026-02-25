@@ -10,10 +10,10 @@ FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
 COPY ["src/CLI/CLI.csproj", "src/CLI/"]
-COPY ["src/Providers/Console/Console.Autofac.Standard.20/Console.Autofac.Standard.20.csproj", "src/Providers/Console/Console.Autofac.Standard.20/"]
-COPY ["src/Providers/Console/Console.Standard.20/Console.Standard.20.csproj", "src/Providers/Console/Console.Standard.20/"]
+COPY ["src/Providers/Console/Console.Autofac/Console.Autofac.csproj", "src/Providers/Console/Console.Autofac/"]
+COPY ["src/Providers/Console/Console/Console.csproj", "src/Providers/Console/Console/"]
 COPY ["src/Transformalize/Transformalize.csproj", "src/Transformalize/"]
-COPY ["src/Containers/Autofac/Autofac.Standard.20/Autofac.Standard.20.csproj", "src/Containers/Autofac/Autofac.Standard.20/"]
+COPY ["src/Containers/Autofac/Autofac/Autofac.csproj", "src/Containers/Autofac/Autofac/"]
 RUN dotnet restore "src/CLI/CLI.csproj"
 COPY . .
 WORKDIR "/src/src/CLI"

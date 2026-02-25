@@ -9,9 +9,9 @@
   </PropertyGroup>
   <Import Project="..\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.projitems" Label="Shared" />
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Transformalize.Transform.Razor.Standard.20\Transformalize.Transform.Razor.Standard.20.csproj" />
+    <ProjectReference Include="..\Transformalize.Transform.Razor\Transformalize.Transform.Razor.csproj" />
   </ItemGroup>
 </Project>

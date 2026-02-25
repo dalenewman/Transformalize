@@ -47,22 +47,22 @@
       <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.10-beta" />
    </ItemGroup>
    <ItemGroup>
-      <ProjectReference Include="..\Providers\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
       <ProjectReference Include="..\Providers\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Elasticsearch\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
       <ProjectReference Include="..\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
       <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
-      <ProjectReference Include="..\Transforms\Humanizer\Transformalize.Transform.Humanizer.Autofac.Standard.20\Transformalize.Transform.Humanizer.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Transforms\Humanizer\Transformalize.Transform.Humanizer.Autofac\Transformalize.Transform.Humanizer.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
       <ProjectReference Include="..\Providers\CsvHelper\Transformalize.Provider.CsvHelper.Autofac\Transformalize.Provider.CsvHelper.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Json\Transformalize.Provider.Json.Autofac\Transformalize.Provider.Json.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Json\Transformalize.Transform.Json.Autofac\Transformalize.Transform.Json.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\Razor\Transformalize.Provider.Razor.Autofac.Standard.20\Transformalize.Provider.Razor.Autofac.Standard.20.csproj" />
-      <ProjectReference Include="..\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Standard.20\Transformalize.Transform.Razor.Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\Providers\Razor\Transformalize.Provider.Razor.Autofac\Transformalize.Provider.Razor.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Razor\Transformalize.Transform.Razor.Autofac\Transformalize.Transform.Razor.Autofac.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="arrangements\bogus.yml">

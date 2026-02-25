@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
     <ProjectReference Include="..\..\..\Providers\Ado\Transformalize.Provider.Ado\Transformalize.Provider.Ado.csproj" />
     <ProjectReference Include="..\..\..\Providers\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
-    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\..\..\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Standard.20\Transformalize.Transform.Razor.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Transforms\Razor\Transformalize.Transform.Razor.Autofac\Transformalize.Transform.Razor.Autofac.csproj" />
   </ItemGroup>
 
 </Project>

@@ -40,7 +40,7 @@
      <ProjectReference Include="..\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
      <ProjectReference Include="..\Transformalize.Validate.Jint.Autofac\Transformalize.Validate.Jint.Autofac.csproj" />
      <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
-     <ProjectReference Include="..\..\..\Providers\Console\Console.Standard.20\Console.Standard.20.csproj" />
+     <ProjectReference Include="..\..\..\Providers\Console\Console\Console.csproj" />
    </ItemGroup>
 
 </Project>

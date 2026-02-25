@@ -9,7 +9,7 @@
       <AssemblyVersion>0.11.3</AssemblyVersion>
    </PropertyGroup>
    <ItemGroup>
-      <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+      <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
    </ItemGroup>
    <ItemGroup>
      <ProjectReference Include="..\Transformalize.Transform.Ado\Transformalize.Transform.Ado.csproj" />
