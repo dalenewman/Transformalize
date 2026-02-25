@@ -8,7 +8,7 @@
     <AssemblyVersion>0.11.1</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Transformalize.Provider.Bogus.Standard.20\Transformalize.Provider.Bogus.Standard.20.csproj" />
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\Transformalize.Provider.Bogus\Transformalize.Provider.Bogus.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
   </ItemGroup>
 </Project>

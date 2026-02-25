@@ -8,7 +8,7 @@
     <AssemblyVersion>0.11.4</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\File.Standard.20\File.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\File\File.csproj" />
   </ItemGroup>
 </Project>

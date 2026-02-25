@@ -35,9 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.Standard.20\Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac.Standard.20\Transformalize.Provider.Bogus.Autofac.Standard.20.csproj" />
-    <ProjectReference Include="..\..\Console\Console.Autofac.Standard.20\Console.Autofac.Standard.20.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="..\..\Console\Console.Autofac\Console.Autofac.csproj" />
     <ProjectReference Include="..\..\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
     <ProjectReference Include="..\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
   </ItemGroup>

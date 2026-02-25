@@ -20,7 +20,7 @@
 
    <ItemGroup>
       <ProjectReference Include="..\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
-      <ProjectReference Include="..\..\..\Providers\Console\Console.Standard.20\Console.Standard.20.csproj" />
+      <ProjectReference Include="..\..\..\Providers\Console\Console\Console.csproj" />
    </ItemGroup>
 
 </Project>

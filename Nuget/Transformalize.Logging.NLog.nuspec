@@ -21,7 +21,7 @@
       </dependencies>
    </metadata>
    <files>
-      <file src="..\src\Logging\NLog\NLog.Standard.20\bin\Release\netstandard2.0\Transformalize.Logging.NLog.dll" target="lib\netstandard2.0\Transformalize.Logging.NLog.dll" />
-      <file src="..\src\Logging\NLog\NLog.Standard.20\bin\Release\netstandard2.0\Transformalize.Logging.NLog.deps.json" target="lib\netstandard2.0\Transformalize.Logging.NLog.deps.json" />
+      <file src="..\src\Logging\NLog\NLog\bin\Release\netstandard2.0\Transformalize.Logging.NLog.dll" target="lib\netstandard2.0\Transformalize.Logging.NLog.dll" />
+      <file src="..\src\Logging\NLog\NLog\bin\Release\netstandard2.0\Transformalize.Logging.NLog.deps.json" target="lib\netstandard2.0\Transformalize.Logging.NLog.deps.json" />
    </files>
 </package>

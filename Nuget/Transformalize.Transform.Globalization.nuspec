@@ -20,7 +20,7 @@
       </dependencies>
    </metadata>
    <files>
-      <file src="..\src\Transforms\Globalization.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Globalization.dll" target="lib\netstandard2.0\Transformalize.Transform.Globalization.dll" />
-      <file src="..\src\Transforms\Globalization.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Globalization.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Globalization.deps.json" />
+      <file src="..\src\Transforms\Globalization\bin\Release\netstandard2.0\Transformalize.Transform.Globalization.dll" target="lib\netstandard2.0\Transformalize.Transform.Globalization.dll" />
+      <file src="..\src\Transforms\Globalization\bin\Release\netstandard2.0\Transformalize.Transform.Globalization.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Globalization.deps.json" />
    </files>
 </package>

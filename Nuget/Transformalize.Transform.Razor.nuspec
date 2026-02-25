@@ -21,8 +21,8 @@
       </dependencies>
    </metadata>
    <files>
-      <file src="..\src\Transforms\Razor\Transformalize.Transform.Razor.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Razor.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Razor.deps.json" />
-      <file src="..\src\Transforms\Razor\Transformalize.Transform.Razor.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Razor.dll" target="lib\netstandard2.0\Transformalize.Transform.Razor.dll" />
-      <!--<file src="..\src\Transforms\Razor\Transformalize.Transform.Razor.Standard.20\bin\Release\netstandard2.0\Transformalize.Transform.Razor.pdb" target="lib\netstandard2.0\Transformalize.Transform.Razor.pdb" />-->
+      <file src="..\src\Transforms\Razor\Transformalize.Transform.Razor\bin\Release\netstandard2.0\Transformalize.Transform.Razor.deps.json" target="lib\netstandard2.0\Transformalize.Transform.Razor.deps.json" />
+      <file src="..\src\Transforms\Razor\Transformalize.Transform.Razor\bin\Release\netstandard2.0\Transformalize.Transform.Razor.dll" target="lib\netstandard2.0\Transformalize.Transform.Razor.dll" />
+      <!--<file src="..\src\Transforms\Razor\Transformalize.Transform.Razor\bin\Release\netstandard2.0\Transformalize.Transform.Razor.pdb" target="lib\netstandard2.0\Transformalize.Transform.Razor.pdb" />-->
    </files>
 </package>
