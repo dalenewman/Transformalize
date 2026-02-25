@@ -31,19 +31,23 @@ The supported inputs and outputs are below.
                     <tbody>
                         <tr>
                             <td><a href="./src/Providers/SqlServer/README.md">SQL Server</a></td>
-                            <td >In/Out</td>
+                            <td>In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="./src/Providers/MySql/README.md">MySql</a></td>
-                            <td >In/Out</td>
+                            <td>In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="./src/Providers/PostgreSql/README.md">PostgreSql</a></td>
-                            <td >In/Out</td>
+                            <td>In/Out</td>
                         </tr>
                         <tr>
                             <td><a href="./src/Providers/Sqlite/README.md">SQLite</a></td>
-                            <td >In/Out</td>
+                            <td>In/Out</td>
+                        </tr>
+                        <tr>
+                            <td> </td>
+                            <td> </td>
                         </tr>
                     </tbody>
                 </table>
@@ -62,7 +66,7 @@ The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
+                            <td><a href="./src/Providers/Excel/README.md">Excel</a></td>
                             <td>In</td>
                         </tr>
                         <tr>
