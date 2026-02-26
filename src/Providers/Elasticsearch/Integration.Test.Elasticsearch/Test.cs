@@ -1,14 +1,14 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,58 @@ using Transformalize.Providers.Elasticsearch.Autofac;
 namespace Test.Integration.Core {
 
    [TestClass]
-   [Ignore]
+   [DoNotParallelize]
    public class Test {
 
-      // note: these credentials are specific to the container running on dale's computer
-      private static string Version = "8.3.2";
-      private static string User = "elastic";
-      private static string Password = "1JN_8oISzY1d-T=P9iHF";  
-      private static string Fingerprint = "DA:35:81:AA:E4:02:75:31:CE:22:A3:25:E7:54:26:49:20:B2:8C:73:1C:AD:14:B0:58:9B:F8:3E:3F:1B:B9:31";
+      private static string Version => Tester.ElasticVersion;
+      private static string User => Tester.ElasticUser;
+      private static string Password => Tester.ElasticPassword;
+      private static string Server => Tester.ElasticServer;
+      private static int Port => Tester.ElasticPort;
+
+      [ClassInitialize]
+      public static void ClassInit(TestContext context) {
+         string xml = $@"<add name='TestProcess' mode='init'>
+  <parameters>
+    <add name='Size' type='int' value='1000' />
+  </parameters>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+    <add name='output'
+         provider='elasticsearch'
+         server='{Tester.ElasticServer}'
+         index='bogus'
+         shards='3'
+         replicas='0'
+         port='{Tester.ElasticPort}'
+         useSsl='true'
+         user='{Tester.ElasticUser}'
+         password='{Tester.ElasticPassword}'
+         version='{Tester.ElasticVersion}' />
+  </connections>
+  <entities>
+    <add name='Contact' size='@[Size]'>
+      <fields>
+        <add name='Identity' type='int' />
+        <add name='FirstName' />
+        <add name='LastName' />
+        <add name='Stars' type='byte' min='1' max='5' />
+        <add name='Reviewers' type='int' min='0' max='500' />
+      </fields>
+      <calculated-fields>
+         <add name='Names' t='copy(FirstName,LastName).toArray()' />
+      </calculated-fields>
+    </add>
+  </entities>
+</add>";
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using (var x = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = x.Resolve<Process>();
+            using (var y = new Container(new BogusModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+               y.Resolve<IProcessController>().Execute();
+            }
+         }
+      }
 
       [TestMethod]
       public void Write() {
@@ -46,17 +90,16 @@ namespace Test.Integration.Core {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' 
-         provider='elasticsearch' 
-         server='localhost' 
-         index='bogus' 
-         shards='3' 
-         replicas='0' 
-         port='9200'
+    <add name='output'
+         provider='elasticsearch'
+         server='{Server}'
+         index='bogus'
+         shards='3'
+         replicas='0'
+         port='{Port}'
          useSsl='true'
          user='{User}'
          password='{Password}'
-         certificate-fingerprint='{Fingerprint}'
          version='{Version}' />
   </connections>
   <entities>
@@ -74,7 +117,7 @@ namespace Test.Integration.Core {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var x = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = x.Resolve<Process>();
@@ -89,7 +132,7 @@ namespace Test.Integration.Core {
       public void Read() {
          string xml = $@"<add name='TestProcess'>
   <connections>
-    <add name='input' provider='elasticsearch' server='localhost' index='bogus' port='9200' useSsl='true' version='{Version}' user='{User}' password='{Password}' certificate-fingerprint='{Fingerprint}' />
+    <add name='input' provider='elasticsearch' server='{Server}' index='bogus' port='{Port}' useSsl='true' version='{Version}' user='{User}' password='{Password}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -104,7 +147,7 @@ namespace Test.Integration.Core {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new ElasticsearchModule()).CreateScope(process, logger)) {
@@ -122,7 +165,7 @@ namespace Test.Integration.Core {
       public void ReadPage1() {
          string xml = $@"<add name='TestProcess'>
   <connections>
-    <add name='input' provider='elasticsearch' server='localhost' index='bogus' port='9200' version='{Version}' useSsl='true' user='{User}' password='{Password}' certificate-fingerprint='{Fingerprint}' scroll='30s' />
+    <add name='input' provider='elasticsearch' server='{Server}' index='bogus' port='{Port}' version='{Version}' useSsl='true' user='{User}' password='{Password}' scroll='30s' />
   </connections>
   <entities>
     <add name='contact' page='1' size='10'>
@@ -140,7 +183,7 @@ namespace Test.Integration.Core {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new ElasticsearchModule()).CreateScope(process, logger)) {
@@ -159,7 +202,7 @@ namespace Test.Integration.Core {
       public void ReadPage2() {
          string xml = $@"<add name='TestProcess'>
   <connections>
-    <add name='input' provider='elasticsearch' server='localhost' index='bogus' port='9200' version='{Version}' useSsl='true' user='{User}' password='{Password}' certificate-fingerprint='{Fingerprint}' scroll='30s' />
+    <add name='input' provider='elasticsearch' server='{Server}' index='bogus' port='{Port}' version='{Version}' useSsl='true' user='{User}' password='{Password}' scroll='30s' />
   </connections>
   <entities>
     <add name='contact' page='2' size='5'>
@@ -177,7 +220,7 @@ namespace Test.Integration.Core {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new ElasticsearchModule()).CreateScope(process, logger)) {

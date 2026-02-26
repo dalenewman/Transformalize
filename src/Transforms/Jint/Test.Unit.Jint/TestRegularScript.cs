@@ -33,7 +33,7 @@ namespace Tests {
       [TestMethod]
       public void Run() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          var xml = @"
 <add name='Test' read-only='true'>
@@ -68,7 +68,7 @@ namespace Tests {
 </add>";
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new JintTransformModule()).CreateScope(process, new ConsoleLogger(LogLevel.Debug))) {
+            using (var inner = new Container(new JintTransformModule()).CreateScope(process, new ConsoleLogger(LogLevel.Info))) {
 
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();

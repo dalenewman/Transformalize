@@ -51,7 +51,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var lengthTransform = new TransformHolder((c) => new LengthTransform(c), new LengthTransform().GetSignatures());
 
          using (var cfgScope = new ConfigurationContainer(lengthTransform).CreateScope(xml, logger)) {
@@ -92,7 +92,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var transforms = new List<TransformHolder>() {
             new TransformHolder((c) => new LengthTransform(c), new LengthTransform().GetSignatures()),
             new TransformHolder((c) => new SplitTransform(c), new SplitTransform().GetSignatures())

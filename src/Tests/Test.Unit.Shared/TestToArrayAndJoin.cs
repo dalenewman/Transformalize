@@ -52,7 +52,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var transforms = new List<TransformHolder>() {
             new TransformHolder((c) => new JoinTransform(c), new JoinTransform().GetSignatures()),
             new TransformHolder((c) => new ToArrayTransform(c), new ToArrayTransform().GetSignatures())

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <RunConfiguration>
+    <!-- Limit parallel test assembly execution to avoid overwhelming Docker
+         when multiple projects spin up containers simultaneously.
+         Set to 1 for fully sequential, or 2 to allow some parallelism. -->
+    <!--<MaxCpuCount>2</MaxCpuCount>-->
+  </RunConfiguration>
+</RunSettings>

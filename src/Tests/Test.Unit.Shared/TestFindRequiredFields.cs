@@ -51,7 +51,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var scope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
@@ -100,7 +100,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var scope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
@@ -148,7 +148,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var scope = new ConfigurationContainer().CreateScope(xml, logger)) {
 

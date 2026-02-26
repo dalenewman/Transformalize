@@ -51,7 +51,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var dateMath = new TransformHolder((c)=>new DateMathTransform(c), new DateMathTransform().GetSignatures());
 
          using (var cfgScope = new ConfigurationContainer(dateMath).CreateScope(xml, logger)) {

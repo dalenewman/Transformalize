@@ -33,7 +33,7 @@ namespace Test {
       [TestMethod]
       public void WriteThenRead() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var writeXml = $@"<add name='Bogus' mode='init'>
   <parameters>
     <add name='Size' type='int' value='1000' />

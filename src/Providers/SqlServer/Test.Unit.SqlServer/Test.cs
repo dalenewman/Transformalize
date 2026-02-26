@@ -56,7 +56,7 @@ namespace Test.Unit.SqlServer {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(writeXml, logger)) {
 
             var process = outer.Resolve<Process>();
@@ -179,7 +179,7 @@ namespace Test.Unit.SqlServer {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
 
@@ -222,7 +222,7 @@ namespace Test.Unit.SqlServer {
     </add>
   </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new AdoTransformModule()).CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoTransformModule(), new SqlServerModule()).CreateScope(process, logger)) {

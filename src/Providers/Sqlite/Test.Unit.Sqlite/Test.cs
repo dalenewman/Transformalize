@@ -34,7 +34,7 @@ namespace IntegrationTests {
       [TestMethod]
       public void WriteThenRead() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          const string writeXml = @"<add name='Bogus' mode='init'>
   <parameters>

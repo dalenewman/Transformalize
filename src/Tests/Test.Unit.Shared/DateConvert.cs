@@ -48,7 +48,7 @@ namespace Tests {
             ".Replace('\'', '"');
 
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using(var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using(var inner = new Container().CreateScope(process, logger)) {
@@ -84,7 +84,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container().CreateScope(process, logger)) {

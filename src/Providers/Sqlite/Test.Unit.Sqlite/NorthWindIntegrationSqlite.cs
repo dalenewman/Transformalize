@@ -58,7 +58,7 @@ namespace IntegrationTests {
       [TestMethod]
       public void SqlLite_Integration() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          // INITIAL LOAD
          using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile + "?Mode=init", logger)) {

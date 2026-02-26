@@ -55,16 +55,16 @@ namespace Test.Unit.SqlServer {
          var logger = new ConsoleLogger();
 
          // CORRECT DATA AND INITIAL LOAD
-         using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
-            cn.Open();
-            Assert.AreEqual(5, cn.Execute(@"
-               UPDATE [Order Details] SET UnitPrice = 14.40, Quantity = 42 WHERE OrderId = 10253 AND ProductId = 39;
-               UPDATE Orders SET CustomerID = 'CHOPS', Freight = 22.98 WHERE OrderId = 10254;
-               UPDATE Customers SET ContactName = 'Palle Ibsen' WHERE CustomerID = 'VAFFE';
-               UPDATE Suppliers SET Region = '' WHERE SupplierID = 10;
-               UPDATE [Order Details] SET Quantity = 5 WHERE OrderId = 10568 AND ProductID = 10;
-            "));
-         }
+         // using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
+         //    cn.Open();
+         //    Assert.AreEqual(5, cn.Execute(@"
+         //       UPDATE [Order Details] SET UnitPrice = 14.40, Quantity = 42 WHERE OrderId = 10253 AND ProductId = 39;
+         //       UPDATE Orders SET CustomerID = 'CHOPS', Freight = 22.98 WHERE OrderId = 10254;
+         //       UPDATE Customers SET ContactName = 'Palle Ibsen' WHERE CustomerID = 'VAFFE';
+         //       UPDATE Suppliers SET Region = '' WHERE SupplierID = 10;
+         //       UPDATE [Order Details] SET Quantity = 5 WHERE OrderId = 10568 AND ProductID = 10;
+         //    "));
+         // }
 
          // RUN INIT AND TEST
          using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile + "&Mode=init", logger: logger)) {

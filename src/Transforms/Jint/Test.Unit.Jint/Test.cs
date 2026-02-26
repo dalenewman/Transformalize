@@ -33,7 +33,7 @@ namespace Tests {
       [TestMethod]
       public void BasicTests() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          var xml = $@"
 <add name='TestProcess' read-only='false'>

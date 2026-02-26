@@ -51,7 +51,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var transform = new TransformHolder((c) => new SpecifyKindTransform(c), new SpecifyKindTransform().GetSignatures());
 
          using (var outer = new ConfigurationContainer(transform).CreateScope(xml, logger)) {

@@ -111,7 +111,7 @@ INSERT INTO SlaveTable(Id,d3,d4)VALUES(1,'d5','d6');
                 "));
          }
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          // RUN INIT AND TEST
          using (var outer = new ConfigurationContainer().CreateScope($@"files/SlaveGetsInsert.xml?Mode=init&Server={Tester.Server},{Tester.Port}&User={Tester.User}&Pw={Tester.Pw}", logger)) {

@@ -47,7 +47,7 @@ namespace Test.Unit.SqlServer {
       [TestMethod]
       public void Delete_Integration() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          var cfg = $@"files/DeleteIntegration.xml?Server={Tester.Server},{Tester.Port}&User={Tester.User}&Pw={Tester.Pw}";
 

@@ -119,7 +119,7 @@ namespace Test.Unit.SqlServer {
 
       [TestMethod]
       public void FlatSql() {
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope($@"files/NorthWind.xml?Server={Tester.Server},{Tester.Port}&User={Tester.User}&Pw={Tester.Pw}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqlServerModule()).CreateScope(process, logger)) {

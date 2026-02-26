@@ -51,7 +51,7 @@ namespace Test {
       [TestMethod]
       public void Integration() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var outer = new ConfigurationContainer().CreateScope(Cfg + $"?Mode=init&{CfgParams}", logger)) {
             var process = outer.Resolve<Process>();
