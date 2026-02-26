@@ -58,7 +58,7 @@ namespace Test {
     </entities>
 
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          using (var outer = new ConfigurationContainer(new LambdaParserModule()).CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();

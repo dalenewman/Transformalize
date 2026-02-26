@@ -1,19 +1,23 @@
-﻿<add name="NorthWind" 
-     enabled="true" 
-     mode="@(Mode)" 
+<add name="NorthWind"
+     enabled="true"
+     mode="@[Mode]"
      environment="prod">
 
-  <environments>
-    <add name="prod">
-      <parameters>
-        <add name="Mode" value="default" />
-      </parameters>
-    </add>
-  </environments>
+  <parameters>
+    <add name="Mode" value="default" />
+    <add name="SqlServer" value="localhost" />
+    <add name="SqlUser" value="sa" />
+    <add name="SqlPw" value="*" />
+    <add name="ElasticServer" value="localhost" />
+    <add name="ElasticPort" value="9200" />
+    <add name="ElasticUser" value="elastic" />
+    <add name="ElasticPassword" value="*" />
+    <add name="ElasticVersion" value="8.12.0" />
+  </parameters>
 
   <connections>
-    <add name="input" provider="sqlserver" server="localhost" database="TflNorthwind" user="sa" password="*" />
-    <add name="output" provider="elasticsearch" server="localhost" port="9200" index="northwind" />
+    <add name="input" provider="sqlserver" server="@[SqlServer]" database="TflNorthWind" user="@[SqlUser]" password="@[SqlPw]" />
+    <add name="output" provider="elasticsearch" server="@[ElasticServer]" port="@[ElasticPort]" index="northwind" user="@[ElasticUser]" password="@[ElasticPassword]" version="@[ElasticVersion]" useSsl="true" />
   </connections>
 
   <entities>

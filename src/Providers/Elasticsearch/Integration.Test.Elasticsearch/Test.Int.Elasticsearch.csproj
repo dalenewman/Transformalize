@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <Version>0.11.1-beta</Version>
@@ -10,11 +12,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="files\instnwnd.sql" />
+    <None Remove="files\northwind-rowversion.sql" />
+    <None Remove="files\NorthWind.xml" />
     <None Remove="files\NorthWindSqlServerToElasticsearch.xml" />
     <None Remove="files\read-me-read-usage.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="files\instnwnd.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\northwind-rowversion.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\NorthWind.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="files\NorthWindSqlServerToElasticsearch.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -25,13 +39,17 @@
 
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.8.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.8.2" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.6.0" />
+    <PackageReference Include="Testcontainers.MsSql" Version="4.6.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Transformalize.Transform.CSharp.Autofac" Version="0.11.1-beta" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +58,7 @@
     <ProjectReference Include="..\..\Console\Console.Autofac\Console.Autofac.csproj" />
     <ProjectReference Include="..\..\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
     <ProjectReference Include="..\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
+    <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
   </ItemGroup>
 
 </Project>

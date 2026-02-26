@@ -14,7 +14,7 @@ namespace Test.Integration.Core {
       [TestMethod]
       public void TestMethod1() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new FluidTransformModule()).CreateScope(@"files/bogus-with-transform.xml", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new FluidTransformModule(), new BogusModule()).CreateScope(process, logger)) {

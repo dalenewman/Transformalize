@@ -32,7 +32,7 @@ namespace Test.Unit {
       </add>
    </entities>
 </cfg>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new JsonTransformModule()).CreateScope(cfg, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JsonTransformModule()).CreateScope(process, logger)) {
@@ -77,7 +77,7 @@ namespace Test.Unit {
       </add>
    </entities>
 </cfg>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new JsonTransformModule()).CreateScope(cfg, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JsonTransformModule()).CreateScope(process, logger)) {
@@ -120,7 +120,7 @@ namespace Test.Unit {
       </add>
    </entities>
 </cfg>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new JsonTransformModule()).CreateScope(cfg, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JsonTransformModule()).CreateScope(process, logger)) {
@@ -158,7 +158,7 @@ namespace Test.Unit {
       </add>
    </entities>
 </cfg>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new JsonTransformModule()).CreateScope(cfg, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JsonTransformModule()).CreateScope(process, logger)) {

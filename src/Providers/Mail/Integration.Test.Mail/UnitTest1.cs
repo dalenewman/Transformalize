@@ -45,7 +45,7 @@ namespace Integration.Test.Mail {
 
 </cfg>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new MailModule()).CreateScope(process, logger)) {

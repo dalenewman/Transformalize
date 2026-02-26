@@ -60,7 +60,7 @@ namespace Test.Integration.Core {
         </add>
     </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer(new RazorTransformModule()).CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new RazorTransformModule()).CreateScope(process, logger)) {

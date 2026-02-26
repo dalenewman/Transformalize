@@ -57,7 +57,7 @@ namespace Tests.Validation {
     </add>";
 
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
             var process = cfgScope.Resolve<Process>();
@@ -109,7 +109,7 @@ namespace Tests.Validation {
     </add>";
 
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          using (var cfgScope = new ConfigurationContainer().CreateScope(xml, logger)) {
 
             var process = cfgScope.Resolve<Process>();

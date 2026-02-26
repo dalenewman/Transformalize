@@ -16,7 +16,7 @@ namespace Test.Integration {
       [TestMethod]
       public void WriteThenReadJsonArray() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          const string writeXml = @"<add name='file' mode='init'>
   <parameters>
     <add name='Size' type='int' value='1000' />
@@ -80,7 +80,7 @@ namespace Test.Integration {
       [TestMethod]
       public void WriteThenReadJsonLines() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          const string writeXml = @"<add name='file' mode='init'>
   <parameters>

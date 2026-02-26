@@ -55,7 +55,7 @@ namespace Tests {
       </entities>
     </add>";
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var fromXml = new TransformHolder((c) => new Transformalize.Transforms.Xml.FromXmlTransform(c), new Transformalize.Transforms.Xml.FromXmlTransform().GetSignatures());
 
          using (var cfgScope = new ConfigurationContainer(fromXml).CreateScope(xml, logger)) {

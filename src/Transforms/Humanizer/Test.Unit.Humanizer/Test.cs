@@ -19,7 +19,7 @@ namespace UnitTests {
          CultureInfo.CurrentCulture = new CultureInfo("en-US");
          CultureInfo.CurrentUICulture = new CultureInfo("en-US");
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var date = DateTime.UtcNow.AddMonths(2).AddDays(1).ToString("O");
          var now = DateTime.Now.ToString("O");
          var now30 = DateTime.Now.AddMinutes(30.1);

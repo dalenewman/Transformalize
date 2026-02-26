@@ -14,7 +14,7 @@ namespace UnitTests {
       [TestMethod]
       public void ByteSize() {
 
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
 
          var xml = $@"
 <add name='TestProcess' read-only='false'>

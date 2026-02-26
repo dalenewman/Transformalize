@@ -50,7 +50,7 @@ namespace Tests {
         </add>
     </entities>
 </add>";
-         var logger = new ConsoleLogger(LogLevel.Debug);
+         var logger = new ConsoleLogger(LogLevel.Info);
          var specifyKind = new TransformHolder((c) => new TimeZoneTransform(c), new TimeZoneTransform().GetSignatures());
          var toUnixTime = new TransformHolder((c)=>new ToUnixTimeTransform(c), new ToUnixTimeTransform().GetSignatures());
 
