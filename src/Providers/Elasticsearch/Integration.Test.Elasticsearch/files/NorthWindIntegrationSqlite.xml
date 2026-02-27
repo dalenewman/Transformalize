@@ -1,0 +1,195 @@
+<add name="NorthWind" mode="@[Mode]">
+
+  <parameters>
+     <add name="Mode" value="default" />
+  </parameters>
+
+  <connections>
+     <add name="input" provider="sqlite" file="files/northwind-input.sqlite3" />
+     <add name="output" provider="sqlite" file="files/northwind-output.sqlite3" />
+  </connections>
+
+  <maps>
+     <add name="Managers" connection="input" query="select EmployeeID, FirstName || ' ' || LastName FROM Employees;" />
+  </maps>
+
+  <entities>
+
+     <add name="Order Details"
+          version="RowVersion"
+          prefix="OrderDetails">
+        <fields>
+           <add name="Discount" type="single" ></add>
+           <add name="OrderID" type="int" primary-key="true"></add>
+           <add name="ProductID" type="int" primary-key="true"></add>
+           <add name="Quantity" type="int16" ></add>
+           <add name="RowVersion" type="int64" />
+           <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
+        </fields>
+        <calculated-fields>
+           <add name="OrderDetailsExtendedPrice"
+                type="decimal"
+                precision="19"
+                scale="4"
+                t="cs(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-Convert.ToDecimal(OrderDetailsDiscount))))">
+           </add>
+        </calculated-fields>
+     </add>
+
+     <add name="Orders"
+          version="RowVersion"
+          prefix="Orders">
+        <fields>
+           <add name="CustomerID" type="string" length="5"/>
+           <add name="EmployeeID" type="int"/>
+           <add name="Freight" type="decimal" precision="19" scale="4"/>
+           <add name="OrderDate" type="datetime"/>
+           <add name="OrderID" type="int" primary-key="true"></add>
+           <add name="RequiredDate" type="datetime" ></add>
+           <add name="RowVersion" type="int64" />
+           <add name="ShipAddress" length="60" ></add>
+           <add name="ShipCity" length="15" ></add>
+           <add name="ShipCountry" length="15" ></add>
+           <add name="ShipName" length="40" ></add>
+           <add name="ShippedDate" type="datetime" ></add>
+           <add name="ShipPostalCode" length="10" ></add>
+           <add name="ShipRegion" length="15" ></add>
+           <add name="ShipVia" type="int" ></add>
+        </fields>
+
+        <calculated-fields>
+           <add name="TimeOrderMonth" length="6" default="12-DEC" t="toString(MM-MMM).toUpper()" />
+           <add name="TimeOrderDate" length="10" default="9999-12-31" t="toString(yyyy-MM-dd)" />
+           <add name="TimeOrderYear" length="4" default="9999" t="toString(yyyy)" />
+        </calculated-fields>
+     </add>
+
+     <add name="Customers"
+          version="RowVersion"
+          prefix="Customers">
+        <fields>
+           <add name="Address" length="60" ></add>
+           <add name="City" length="15" ></add>
+           <add name="CompanyName" length="40" />
+           <add name="ContactName" length="30" ></add>
+           <add name="ContactTitle" length="30" ></add>
+           <add name="Country" length="15" ></add>
+           <add name="CustomerID" type="string" length="5" primary-key="true"></add>
+           <add name="Fax" length="24" ></add>
+           <add name="Phone" length="24" ></add>
+           <add name="PostalCode" length="10" ></add>
+           <add name="Region" length="15" ></add>
+           <add name="RowVersion" type="int64" />
+        </fields>
+     </add>
+
+     <add name="Employees"
+          version="RowVersion"
+          prefix="Employees">
+        <fields>
+           <add name="Address" length="60" ></add>
+           <add name="BirthDate" type="datetime" ></add>
+           <add name="City" length="15" ></add>
+           <add name="Country" length="15" ></add>
+           <add name="EmployeeID" type="int" primary-key="true"></add>
+           <add name="Extension" length="4" ></add>
+           <add name="FirstName" length="10" ></add>
+           <add name="HireDate" type="datetime" ></add>
+           <add name="HomePhone" length="24" ></add>
+           <add name="LastName" length="20" ></add>
+           <add name="Notes" length="MAX" ></add>
+           <add name="Photo" alias="EmployeesPhoto" input="false" output="false"></add>
+           <add name="PhotoPath" alias="EmployeesPhotoPath" input="false" output="false"></add>
+           <add name="PostalCode" length="10" ></add>
+           <add name="Region" length="15" ></add>
+           <add name="RowVersion" type="int64" />
+           <add name="Title" length="30" ></add>
+           <add name="TitleOfCourtesy" length="25" ></add>
+           <add name="ReportsTo" type="int" />
+        </fields>
+        <calculated-fields>
+           <add name="EmployeesManager" t="copy(ReportsTo).map(Managers)" default="" />
+           <add name="Employee" t="copy(FirstName,LastName).join( )" default="" />
+        </calculated-fields>
+     </add>
+
+     <add name="Products"
+          version="RowVersion"
+          prefix="Products">
+        <fields>
+           <add name="CategoryID" type="int32"/>
+           <add name="Discontinued" type="string" length="1"/>
+           <add name="ProductID" type="int" primary-key="true"/>
+           <add name="ProductName" length="40"/>
+           <add name="QuantityPerUnit" length="20"/>
+           <add name="ReorderLevel" type="int16"/>
+           <add name="RowVersion" type="int64" />
+           <add name="SupplierID" type="int"/>
+           <add name="UnitPrice" type="decimal" precision="19" scale="4"/>
+           <add name="UnitsInStock" type="int16"/>
+           <add name="UnitsOnOrder" type="int16"/>
+        </fields>
+     </add>
+
+     <add name="Suppliers"
+          version="RowVersion"
+          prefix="Suppliers">
+        <fields>
+           <add name="Address" length="60" ></add>
+           <add name="City" length="15" ></add>
+           <add name="CompanyName" length="40" ></add>
+           <add name="ContactName" length="30" ></add>
+           <add name="ContactTitle" length="30" ></add>
+           <add name="Country" length="15" ></add>
+           <add name="Fax" length="24" ></add>
+           <add name="HomePage" length="MAX" ></add>
+           <add name="Phone" length="24" ></add>
+           <add name="PostalCode" length="10" ></add>
+           <add name="Region" length="15" ></add>
+           <add name="RowVersion" type="int64" />
+           <add name="SupplierID" type="int" primary-key="true"/>
+        </fields>
+     </add>
+
+     <add name="Categories"
+          version="RowVersion"
+          prefix="Categories">
+        <fields>
+           <add name="CategoryID" type="int" primary-key="true"/>
+           <add name="CategoryName" length="15"/>
+           <add name="Description" length="MAX"/>
+           <add name="Picture" type="byte[]" length="MAX" />
+           <add name="RowVersion" type="int64" />
+        </fields>
+     </add>
+
+     <add name="Shippers"
+          version="RowVersion"
+          prefix="Shippers">
+        <fields>
+           <add name="CompanyName" length="40"/>
+           <add name="Phone" length="24"/>
+           <add name="RowVersion" type="int64" />
+           <add name="ShipperID" type="int" primary-key="true"/>
+        </fields>
+     </add>
+
+  </entities>
+
+  <relationships>
+     <add left-entity="Order Details" left-field="OrderID" right-entity="Orders" right-field="OrderID" />
+     <add left-entity="Orders" left-field="CustomerID" right-entity="Customers" right-field="CustomerID" />
+     <add left-entity="Orders" left-field="EmployeeID" right-entity="Employees" right-field="EmployeeID" />
+     <add left-entity="Order Details" left-field="ProductID" right-entity="Products" right-field="ProductID" />
+     <add left-entity="Products" left-field="SupplierID" right-entity="Suppliers" right-field="SupplierID" />
+     <add left-entity="Products" left-field="CategoryID" right-entity="Categories" right-field="CategoryID" />
+     <add left-entity="Orders" left-field="ShipVia" right-entity="Shippers" right-field="ShipperID" />
+  </relationships>
+
+  <calculated-fields>
+     <add name="CountryExchange"
+          length="128"
+          t="copy(SuppliersCountry,OrdersShipCountry).format(Shipping from {0} to {1})"/>
+  </calculated-fields>
+
+</add>

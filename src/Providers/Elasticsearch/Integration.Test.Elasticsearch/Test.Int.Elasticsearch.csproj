@@ -12,43 +12,34 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="files\instnwnd.sql" />
-    <None Remove="files\northwind-rowversion.sql" />
-    <None Remove="files\NorthWind.xml" />
-    <None Remove="files\NorthWindSqlServerToElasticsearch.xml" />
-    <None Remove="files\read-me-read-usage.xml" />
+    <None Remove="files\NorthWindIntegrationSqlite.xml" />
+    <None Remove="files\NorthWindSqliteToElasticsearch.xml" />
+    <None Remove="files\northwind-sqlite.db" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="files\instnwnd.sql">
+    <Content Include="files\NorthWindIntegrationSqlite.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="files\northwind-rowversion.sql">
+    <Content Include="files\NorthWindSqliteToElasticsearch.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="files\NorthWind.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="files\NorthWindSqlServerToElasticsearch.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="files\read-me-read-usage.xml">
+    <Content Include="files\northwind-sqlite.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.8.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.8.2" />
     <PackageReference Include="Testcontainers.Elasticsearch" Version="4.6.0" />
-    <PackageReference Include="Testcontainers.MsSql" Version="4.6.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
     <PackageReference Include="Transformalize.Transform.CSharp.Autofac" Version="0.11.1-beta" />
   </ItemGroup>
 
@@ -56,9 +47,8 @@
     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
     <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="..\..\Console\Console.Autofac\Console.Autofac.csproj" />
-    <ProjectReference Include="..\..\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
+    <ProjectReference Include="..\..\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
     <ProjectReference Include="..\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
-    <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
   </ItemGroup>
 
 </Project>

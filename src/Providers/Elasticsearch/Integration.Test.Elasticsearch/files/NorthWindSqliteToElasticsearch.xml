@@ -5,9 +5,7 @@
 
   <parameters>
     <add name="Mode" value="default" />
-    <add name="SqlServer" value="localhost" />
-    <add name="SqlUser" value="sa" />
-    <add name="SqlPw" value="*" />
+    <add name="SqliteFile" value="files/northwind-output.sqlite3" />
     <add name="ElasticServer" value="localhost" />
     <add name="ElasticPort" value="9200" />
     <add name="ElasticUser" value="elastic" />
@@ -16,7 +14,7 @@
   </parameters>
 
   <connections>
-    <add name="input" provider="sqlserver" server="@[SqlServer]" database="TflNorthWind" user="@[SqlUser]" password="@[SqlPw]" />
+    <add name="input" provider="sqlite" file="@[SqliteFile]" />
     <add name="output" provider="elasticsearch" server="@[ElasticServer]" port="@[ElasticPort]" index="northwind" user="@[ElasticUser]" password="@[ElasticPassword]" version="@[ElasticVersion]" useSsl="true" />
   </connections>
 
@@ -32,7 +30,7 @@
         <add name="OrderDetailsOrderID" type="int" />
         <add name="OrderDetailsProductID" type="int" />
         <add name="OrderDetailsQuantity" type="int16" />
-        <add name="OrderDetailsRowVersion" type="byte[]" length="8" />
+        <add name="OrderDetailsRowVersion" type="int64" />
         <add name="OrderDetailsUnitPrice" type="decimal" precision="19" scale="4" />
         <add name="OrderDetailsExtendedPrice" type="decimal" precision="19" scale="4" />
         <add name="CountryExchange" length="128" />
@@ -85,7 +83,7 @@
         <add name="EmployeesManager" />
         <add name="Employee" />
 
-        <add name="ProductsDiscontinued" type="int" />
+        <add name="ProductsDiscontinued" type="string" length="1" />
         <add name="ProductsProductName" length="40" />
         <add name="ProductsQuantityPerUnit" length="20" />
         <add name="ProductsReorderLevel" type="int" />
