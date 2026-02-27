@@ -34,43 +34,47 @@ using Transformalize.Providers.Console;
 using Transformalize.Providers.Elasticsearch;
 using Transformalize.Providers.Elasticsearch.Autofac;
 using Transformalize.Providers.Elasticsearch.Ext;
-using Transformalize.Providers.SqlServer;
-using Transformalize.Providers.SqlServer.Autofac;
-using Transformalize.Providers.Ado.Autofac;
+using System.IO;
+using Transformalize.Providers.Sqlite.Autofac;
+using Transformalize.Providers.SQLite;
 using Transformalize.Transforms.CSharp.Autofac;
 
 namespace Test.Integration.Core {
 
    [TestClass]
    [DoNotParallelize]
-   public class NorthWindIntegrationSqlServerThenElastic {
+   public class Integration {
 
-      public string SqlTestFile { get; set; } = @"files/NorthWind.xml";
-      public string ElasticTestFile { get; set; } = @"files/NorthWindSqlServerToElasticsearch.xml";
+      public string SqliteTestFile { get; set; } = @"files/NorthWindIntegrationSqlite.xml";
+      public string ElasticTestFile { get; set; } = @"files/NorthWindSqliteToElasticsearch.xml";
 
       public Connection InputConnection => new Connection {
          Name = "input",
-         Provider = "sqlserver",
-         ConnectionString = Tester.GetSqlConnectionString("NorthWind")
+         Provider = "sqlite",
+         File = "files/northwind-input.sqlite3"
       };
 
       public Connection OutputConnection => new Connection {
          Name = "output",
-         Provider = "sqlserver",
-         ConnectionString = Tester.GetSqlConnectionString("TflNorthWind")
+         Provider = "sqlite",
+         File = "files/northwind-output.sqlite3"
       };
 
-      private string SqlFileParams =>
-         $"Server={Tester.SqlServer}&User={Tester.SqlUser}&Pw={Tester.SqlPw}";
+      [ClassInitialize]
+      public static void ClassInit(TestContext context) {
+         File.Copy("files/northwind-sqlite.db", "files/northwind-input.sqlite3", overwrite: true);
+         if (File.Exists("files/northwind-output.sqlite3")) {
+            File.Delete("files/northwind-output.sqlite3");
+         }
+      }
 
       private string ElasticFileParams =>
-         $"SqlServer={Tester.SqlServer}&SqlUser={Tester.SqlUser}&SqlPw={Tester.SqlPw}" +
-         $"&ElasticServer={Tester.ElasticServer}&ElasticPort={Tester.ElasticPort}" +
+         $"ElasticServer={Tester.ElasticServer}&ElasticPort={Tester.ElasticPort}" +
          $"&ElasticUser={Tester.ElasticUser}&ElasticPassword={Tester.ElasticPassword}" +
          $"&ElasticVersion={Tester.ElasticVersion}";
 
       [TestMethod]
-      public void SqlServer_Elasticsearch_Integration() {
+      public void SqliteToElastic() {
 
          var logger = new ConsoleLogger(LogLevel.Info);
 
@@ -80,9 +84,9 @@ namespace Test.Integration.Core {
             .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
 
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqlTestFile}?Mode=init&{SqlFileParams}", logger)) {
+         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}?Mode=init", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -90,7 +94,7 @@ namespace Test.Integration.Core {
 
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?Mode=init&{ElasticFileParams}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqlServerModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -102,7 +106,7 @@ namespace Test.Integration.Core {
          // FIRST DELTA, NO CHANGES
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?{ElasticFileParams}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqlServerModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -112,24 +116,24 @@ namespace Test.Integration.Core {
          Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"].Value);
 
          // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO
-         using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
+         using (var cn = new SqliteConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
             const string sql = @"UPDATE [Order Details] SET UnitPrice = 15, Quantity = 40 WHERE OrderId = 10253 AND ProductId = 39;";
             Assert.AreEqual(1, cn.Execute(sql));
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqlTestFile}?{SqlFileParams}", logger)) {
+         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
          }
 
-         using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+         using (var cn = new SqliteConnectionFactory(OutputConnection).GetConnection()) {
             cn.Open();
-            Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT TOP 1 Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9;"));
+            Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Order Details' AND BatchId = 9 LIMIT 1;"));
             Assert.AreEqual(15.0M, cn.ExecuteScalar<decimal>("SELECT OrderDetailsUnitPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
             Assert.AreEqual(40, cn.ExecuteScalar<int>("SELECT OrderDetailsQuantity FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
             Assert.AreEqual(15.0 * 40, cn.ExecuteScalar<int>("SELECT OrderDetailsExtendedPrice FROM NorthWindStar WHERE OrderDetailsOrderId= 10253 AND OrderDetailsProductId = 39;"));
@@ -138,7 +142,7 @@ namespace Test.Integration.Core {
          // RUN AND CHECK ELASTIC
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?{ElasticFileParams}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqlServerModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -170,21 +174,21 @@ namespace Test.Integration.Core {
          Assert.AreEqual(source["orderdetailsextendedprice"], 40 * 15.0);
 
          // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
-         using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
+         using (var cn = new SqliteConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
             Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqlTestFile}?{SqlFileParams}", logger)) {
+         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
          }
 
-         using (var cn = new SqlServerConnectionFactory(OutputConnection).GetConnection()) {
+         using (var cn = new SqliteConnectionFactory(OutputConnection).GetConnection()) {
             cn.Open();
             Assert.AreEqual(1, cn.ExecuteScalar<int>("SELECT Updates FROM NorthWindControl WHERE Entity = 'Orders' AND BatchId = 18;"));
             Assert.AreEqual("VICTE", cn.ExecuteScalar<string>("SELECT OrdersCustomerId FROM NorthWindStar WHERE OrderDetailsOrderId= 10254;"));
@@ -194,7 +198,7 @@ namespace Test.Integration.Core {
          // RUN AND CHECK ELASTIC
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?{ElasticFileParams}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqlServerModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -227,21 +231,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestSingleIndexMapping() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
@@ -251,21 +260,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestAllIndexMapping() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
@@ -275,21 +289,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestReadAll() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity { Name = "rows", Alias = "rows" }), connection);
          var code = new Field { Name = "code", Index = 0 };
@@ -303,21 +322,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestReadPage() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity {
             Name = "rows",

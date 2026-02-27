@@ -1,18 +1,12 @@
-using Dapper;
-using Microsoft.Data.SqlClient;
+using Elasticsearch.Net;
+using System.IO;
+using System.Text;
 using Testcontainers.Elasticsearch;
-using Testcontainers.MsSql;
 
 namespace Test.Integration.Core {
    public static class Tester {
 
-      private static MsSqlContainer? _sqlContainer;
       private static ElasticsearchContainer? _elasticContainer;
-
-      // SQL Server connection properties
-      public static string SqlServer { get; private set; } = "localhost";
-      public static string SqlUser { get; private set; } = "sa";
-      public static string SqlPw { get; private set; } = "DevDev1!";
 
       // Elasticsearch connection properties
       public static string ElasticServer { get; private set; } = "localhost";
@@ -22,42 +16,15 @@ namespace Test.Integration.Core {
       public static string ElasticVersion { get; private set; } = "8.12.0";
       public static string ElasticUrl { get; private set; } = "https://localhost:9200";
 
-      public static string GetSqlConnectionString(string database) {
-         return $"server={SqlServer};database={database};User Id={SqlUser};Password={SqlPw};Trust Server Certificate=True;Encrypt=true";
-      }
-
       public static async Task InitializeContainers() {
-         // Start both containers in parallel
-         await Task.WhenAll(StartSqlContainer(), StartElasticContainer());
-
-         // Initialize SQL Server databases after container is ready
-         await CreateDatabases();
-         await InitializeNorthwindDatabase();
-
-         Console.WriteLine("Container initialization complete");
+         await StartElasticContainer();
+         await EnsureColorsIndexAsync();
       }
 
       public static async Task DisposeContainers() {
-         var tasks = new List<Task>();
-         if (_sqlContainer != null) tasks.Add(_sqlContainer.DisposeAsync().AsTask());
-         if (_elasticContainer != null) tasks.Add(_elasticContainer.DisposeAsync().AsTask());
-         await Task.WhenAll(tasks);
-      }
-
-      private static async Task StartSqlContainer() {
-         Console.WriteLine("Starting SQL Server container...");
-
-         _sqlContainer = new MsSqlBuilder()
-             .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
-             .WithPassword(SqlPw)
-             .WithCleanUp(true)
-             .Build();
-
-         await _sqlContainer.StartAsync();
-
-         // Use "host,port" format understood by SQL Server connection strings
-         SqlServer = $"{_sqlContainer.Hostname},{_sqlContainer.GetMappedPublicPort(MsSqlBuilder.MsSqlPort)}";
-         Console.WriteLine($"SQL Server container started: {SqlServer}");
+         if (_elasticContainer != null) {
+            await _elasticContainer.DisposeAsync().AsTask();
+         }
       }
 
       private static async Task StartElasticContainer() {
@@ -77,82 +44,123 @@ namespace Test.Integration.Core {
          Console.WriteLine($"Elasticsearch container started: {ElasticUrl}");
       }
 
-      private static async Task CreateDatabases() {
-         using var connection = new SqlConnection(GetSqlConnectionString("master"));
-         await connection.OpenAsync();
-         Console.WriteLine("Creating TflNorthWind database...");
-         await connection.ExecuteAsync("IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'TflNorthWind') CREATE DATABASE TflNorthWind");
+      private static ElasticLowLevelClient CreateClient() {
+         var pool = new SingleNodeConnectionPool(new Uri(ElasticUrl));
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(ElasticUser, ElasticPassword);
+         return new ElasticLowLevelClient(settings);
       }
 
-      private static async Task InitializeNorthwindDatabase() {
-         Console.WriteLine("Initializing Northwind database...");
+      private static async Task EnsureColorsIndexAsync() {
+         const string indexName = "colors";
+         var client = CreateClient();
 
-         var instnwndPath = Path.Combine(AppContext.BaseDirectory, "files", "instnwnd.sql");
-         if (!File.Exists(instnwndPath)) {
-            throw new FileNotFoundException($"Northwind installation script not found at {instnwndPath}");
+         var exists = await client.Indices.ExistsAsync<DynamicResponse>(indexName);
+         if (exists.Success && exists.HttpStatusCode == 200) {
+            await client.Indices.DeleteAsync<DynamicResponse>(indexName);
          }
 
-         var instnwndSql = await File.ReadAllTextAsync(instnwndPath);
+         const string mapping = @"{
+  ""mappings"": {
+    ""properties"": {
+      ""code"": { ""type"": ""keyword"" },
+      ""name"": { ""type"": ""text"" },
+      ""hex"": { ""type"": ""keyword"" },
+      ""rgb"": { ""type"": ""keyword"" },
+      ""r"": { ""type"": ""integer"" },
+      ""g"": { ""type"": ""integer"" },
+      ""b"": { ""type"": ""integer"" },
+      ""h"": { ""type"": ""float"" },
+      ""s"": { ""type"": ""float"" },
+      ""l"": { ""type"": ""float"" },
+      ""total"": { ""type"": ""integer"" }
+    }
+  }
+}";
 
-         using (var connection = new SqlConnection(GetSqlConnectionString("master"))) {
-            await connection.OpenAsync();
-            foreach (var batch in SplitSqlBatches(instnwndSql)) {
-               if (!string.IsNullOrWhiteSpace(batch)) {
-                  try {
-                     await connection.ExecuteAsync(batch, commandTimeout: 120);
-                  } catch (Exception ex) {
-                     Console.WriteLine($"Warning executing Northwind setup batch: {ex.Message}");
-                  }
+         var create = await client.Indices.CreateAsync<DynamicResponse>(indexName, PostData.String(mapping));
+         if (!create.Success) {
+            throw new InvalidOperationException($"Failed to create index '{indexName}': {create}");
+         }
+
+         var colorsPath = Path.Combine(AppContext.BaseDirectory, "files", "colors.csv");
+         if (!File.Exists(colorsPath)) {
+            throw new FileNotFoundException($"colors.csv not found at {colorsPath}");
+         }
+
+         var lines = await File.ReadAllLinesAsync(colorsPath);
+         const int batchSize = 200;
+         var totalDocs = lines.Length;
+
+         for (var batchStart = 0; batchStart < totalDocs; batchStart += batchSize) {
+            var batchEnd = Math.Min(totalDocs, batchStart + batchSize);
+            var sb = new StringBuilder();
+
+            for (var i = batchStart; i < batchEnd; i++) {
+               var parts = lines[i].Split(',');
+               if (parts.Length < 6) {
+                  continue;
                }
+
+               var code = EscapeJson(parts[0].Trim());
+               var name = EscapeJson(parts[1].Trim());
+               var hex = EscapeJson(parts[2].Trim());
+               var r = int.Parse(parts[3]);
+               var g = int.Parse(parts[4]);
+               var b = int.Parse(parts[5]);
+               var (h, s, l) = RgbToHsl(r, g, b);
+               var rgb = $"{r},{g},{b}";
+               var total = i + 1;
+
+               sb.AppendLine($@"{{""index"":{{""_index"":""{indexName}"",""_id"":""{total}""}}}}");
+               sb.AppendLine(FormattableString.Invariant(
+                  $@"{{""code"":""{code}"",""name"":""{name}"",""hex"":""{hex}"",""rgb"":""{rgb}"",""r"":{r},""g"":{g},""b"":{b},""h"":{h:F2},""s"":{s:F2},""l"":{l:F2},""total"":{total}}}"));
+            }
+
+            var bulk = await client.BulkAsync<DynamicResponse>(PostData.String(sb.ToString()));
+            if (!bulk.Success) {
+               throw new InvalidOperationException($"Failed to seed '{indexName}' batch {batchStart + 1}-{batchEnd}: {bulk}");
             }
          }
 
-         Console.WriteLine("Adding RowVersion columns to Northwind tables...");
-
-         var rowversionPath = Path.Combine(AppContext.BaseDirectory, "files", "northwind-rowversion.sql");
-         if (!File.Exists(rowversionPath)) {
-            throw new FileNotFoundException($"Northwind RowVersion script not found at {rowversionPath}");
-         }
-
-         var rowversionSql = await File.ReadAllTextAsync(rowversionPath);
-
-         using (var connection = new SqlConnection(GetSqlConnectionString("NorthWind"))) {
-            await connection.OpenAsync();
-            foreach (var batch in SplitSqlBatches(rowversionSql)) {
-               if (!string.IsNullOrWhiteSpace(batch)) {
-                  try {
-                     await connection.ExecuteAsync(batch, commandTimeout: 30);
-                  } catch (Exception ex) {
-                     Console.WriteLine($"Warning adding RowVersion: {ex.Message}");
-                  }
-               }
-            }
-         }
-
-         Console.WriteLine("Northwind database initialization complete");
+         await client.Indices.RefreshAsync<DynamicResponse>(indexName);
       }
 
-      private static IEnumerable<string> SplitSqlBatches(string sql) {
-         var batches = new List<string>();
-         var lines = sql.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-         var currentBatch = new List<string>();
+      private static string EscapeJson(string value) {
+         return value
+            .Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("\"", "\\\"", StringComparison.Ordinal);
+      }
 
-         foreach (var line in lines) {
-            if (string.Equals(line.Trim(), "GO", StringComparison.OrdinalIgnoreCase)) {
-               if (currentBatch.Count > 0) {
-                  batches.Add(string.Join(Environment.NewLine, currentBatch));
-                  currentBatch.Clear();
-               }
+      private static (double h, double s, double l) RgbToHsl(int r, int g, int b) {
+         var rf = r / 255.0;
+         var gf = g / 255.0;
+         var bf = b / 255.0;
+
+         var max = Math.Max(rf, Math.Max(gf, bf));
+         var min = Math.Min(rf, Math.Min(gf, bf));
+         var delta = max - min;
+
+         double h = 0.0;
+         if (delta > 0) {
+            if (max == rf) {
+               h = ((gf - bf) / delta) % 6.0;
+            } else if (max == gf) {
+               h = ((bf - rf) / delta) + 2.0;
             } else {
-               currentBatch.Add(line);
+               h = ((rf - gf) / delta) + 4.0;
+            }
+            h *= 60.0;
+            if (h < 0) {
+               h += 360.0;
             }
          }
 
-         if (currentBatch.Count > 0) {
-            batches.Add(string.Join(Environment.NewLine, currentBatch));
-         }
+         var l = (max + min) / 2.0;
+         var s = delta == 0 ? 0.0 : delta / (1.0 - Math.Abs(2.0 * l - 1.0));
 
-         return batches;
+         return (h, s, l);
       }
    }
 }

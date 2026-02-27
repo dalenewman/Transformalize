@@ -42,10 +42,25 @@ namespace Transformalize.Providers.Elasticsearch {
          response = _client.Indices.GetMapping<DynamicResponse>(_index);
 
          if (response.Success) {
-            var properties = response.Body[_index]["mappings"][name]["properties"];
-            if (properties != null && properties.HasValue) {
-               return PropertiesToFields(name, properties.Value as IDictionary<string, object>);
+            var mappings = response.Body[_index]["mappings"];
+            if (mappings != null && mappings.HasValue) {
+               var mappingsDict = mappings.Value as IDictionary<string, object>;
+               if (mappingsDict != null) {
+                  // Typed mappings (ES 6 and earlier, or include_type_name)
+                  if (mappingsDict.ContainsKey(name)) {
+                     var typed = mappingsDict[name] as IDictionary<string, object>;
+                     if (typed != null && typed.ContainsKey("properties")) {
+                        return PropertiesToFields(name, typed["properties"] as IDictionary<string, object>);
+                     }
+                  }
+
+                  // Typeless mappings (ES 7+)
+                  if (mappingsDict.ContainsKey("properties")) {
+                     return PropertiesToFields(name, mappingsDict["properties"] as IDictionary<string, object>);
+                  }
+               }
             }
+
             _input.Error("Could not find properties for index {0} type {1}.", _index, name);
          } else {
             _input.Error(response.ToString());
@@ -87,6 +102,15 @@ namespace Transformalize.Providers.Elasticsearch {
             if (mappings != null && mappings.HasValue) {
                var types = mappings.Value as IDictionary<string, object>;
                if (types != null) {
+                  // Typeless mappings (ES 7+)
+                  if (types.ContainsKey("properties")) {
+                     var e = new Entity { Name = "rows" };
+                     e.Fields = PropertiesToFields(e.Name, types["properties"] as IDictionary<string, object>).ToList();
+                     yield return e;
+                     yield break;
+                  }
+
+                  // Typed mappings
                   foreach (var pair in types) {
                      var e = new Entity { Name = pair.Key };
                      var attributes = pair.Value as IDictionary<string, object>;
