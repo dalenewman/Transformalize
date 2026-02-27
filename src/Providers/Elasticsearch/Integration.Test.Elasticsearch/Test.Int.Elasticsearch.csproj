@@ -14,6 +14,7 @@
   <ItemGroup>
     <None Remove="files\NorthWindIntegrationSqlite.xml" />
     <None Remove="files\NorthWindSqliteToElasticsearch.xml" />
+    <None Remove="files\colors.csv" />
     <None Remove="files\northwind-sqlite.db" />
   </ItemGroup>
 
@@ -22,6 +23,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="files\NorthWindSqliteToElasticsearch.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\colors.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="files\northwind-sqlite.db">

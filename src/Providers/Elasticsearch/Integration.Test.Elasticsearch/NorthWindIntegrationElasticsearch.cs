@@ -43,7 +43,7 @@ namespace Test.Integration.Core {
 
    [TestClass]
    [DoNotParallelize]
-   public class NorthWindIntegrationSqliteThenElastic {
+   public class Integration {
 
       public string SqliteTestFile { get; set; } = @"files/NorthWindIntegrationSqlite.xml";
       public string ElasticTestFile { get; set; } = @"files/NorthWindSqliteToElasticsearch.xml";
@@ -74,7 +74,7 @@ namespace Test.Integration.Core {
          $"&ElasticVersion={Tester.ElasticVersion}";
 
       [TestMethod]
-      public void Sqlite_Elasticsearch_Integration() {
+      public void SqliteToElastic() {
 
          var logger = new ConsoleLogger(LogLevel.Info);
 
@@ -231,21 +231,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestSingleIndexMapping() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
@@ -255,21 +260,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestAllIndexMapping() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
@@ -279,21 +289,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestReadAll() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity { Name = "rows", Alias = "rows" }), connection);
          var code = new Field { Name = "code", Index = 0 };
@@ -307,21 +322,26 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      [Ignore]
       public void TestReadPage() {
 
          var connection = new Connection {
             Name = "input",
             Provider = "elasticsearch",
             Index = "colors",
-            Server = "localhost",
-            Port = 9200
+            Server = Tester.ElasticServer,
+            Port = Tester.ElasticPort,
+            User = Tester.ElasticUser,
+            Password = Tester.ElasticPassword,
+            UseSsl = true,
+            Version = Tester.ElasticVersion
          };
 
          connection.Url = connection.GetElasticUrl();
 
          var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool);
+         var settings = new ConnectionConfiguration(pool)
+            .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
+            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity {
             Name = "rows",
