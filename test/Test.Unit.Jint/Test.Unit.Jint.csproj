@@ -1,0 +1,34 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="scripts\function.js" />
+    <None Remove="scripts\script.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="scripts\function.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="scripts\script.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Validate.Jint.Autofac/Transformalize.Validate.Jint.Autofac.csproj" />
+    <ProjectReference Include="../../src/Transformalize/Transformalize.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console/Console.csproj" />
+  </ItemGroup>
+
+</Project>

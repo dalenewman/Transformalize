@@ -1,0 +1,20 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.3-beta</Version>
+    <FileVersion>0.11.3</FileVersion>
+    <AssemblyVersion>0.11.3</AssemblyVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Ado/Transformalize.Provider.Ado.Autofac/Transformalize.Provider.Ado.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>

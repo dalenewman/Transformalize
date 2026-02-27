@@ -1,0 +1,26 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.4</Version>
+    <FileVersion>0.11.4</FileVersion>
+    <AssemblyVersion>0.11.4</AssemblyVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/File/File/File.csproj" />
+    <ProjectReference Include="../../src/Providers/Trace/Trace.csproj" />
+    <ProjectReference Include="../../src/Transformalize/Transformalize.csproj" />
+    <ProjectReference Include="../../src/Transforms/Compression/Compression.csproj" />
+    <ProjectReference Include="../../src/Transforms/Xml/Xml.csproj" />
+  </ItemGroup>
+
+  <Import Project="../Test.Unit.Shared/Test.Unit.Shared.projitems" Label="Shared" />
+
+</Project>
