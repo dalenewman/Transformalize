@@ -1,6 +1,6 @@
 ## Projects Licensed under Apache 2
 
-1. Transformalize (this project) - Copyright (c) 2013-2022 Dale Newman
+1. Transformalize (this project) - Copyright (c) 2013-2026 Dale Newman
 1. Cfg-NET - Copyright (c) 2015-2022 Dale Newman
 1. Cfg-Net.Environment - Copyright (c) 2015-2022 Dale Newman
 1. Cfg-Net.Reader - Copyright (c) 2015-2022 Dale Newman

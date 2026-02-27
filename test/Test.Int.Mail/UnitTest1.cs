@@ -12,6 +12,11 @@ namespace Integration.Test.Mail {
    public class UnitTest1 {
 
       [TestMethod]
+      public void UsefulTest(){
+         Assert.AreEqual(1,1, "Try this for Github Actions");
+      }
+
+      [TestMethod]
       [Ignore]
       public void TestWrite() {
 
