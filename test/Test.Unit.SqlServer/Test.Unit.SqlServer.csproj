@@ -1,0 +1,56 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="files\DeleteIntegration.xml" />
+    <None Remove="files\instnwnd.sql" />
+    <None Remove="files\northwind-rowversion.sql" />
+    <None Remove="files\NorthWind.xml" />
+    <None Remove="files\SlaveGetsInsert.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="files\DeleteIntegration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\instnwnd.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\northwind-rowversion.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\NorthWind.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="files\SlaveGetsInsert.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Transformalize.Transform.CSharp.Autofac" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/SqlServer/Transformalize.Provider.SqlServer.Autofac/Transformalize.Provider.SqlServer.Autofac.csproj" />
+    <ProjectReference Include="../../src/Containers/Autofac/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Ado/Transformalize.Provider.Ado.Autofac/Transformalize.Provider.Ado.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Ado/Transformalize.Transform.Ado.Autofac/Transformalize.Transform.Ado.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>

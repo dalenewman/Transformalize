@@ -123,9 +123,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize", "src\Trans
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2D77AE46-3D56-4F3A-A787-E740767B0714}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Core", "src\Tests\Test.Unit.Core\Test.Unit.Core.csproj", "{B655822B-EC85-45C4-81AE-54A3759B98DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Core", "test\Test.Unit.Core\Test.Unit.Core.csproj", "{B655822B-EC85-45C4-81AE-54A3759B98DC}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Test.Unit.Shared", "src\Tests\Test.Unit.Shared\Test.Unit.Shared.shproj", "{CC0D9D4A-1DF1-4CBC-940E-ECFD16030932}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Test.Unit.Shared", "test\Test.Unit.Shared\Test.Unit.Shared.shproj", "{CC0D9D4A-1DF1-4CBC-940E-ECFD16030932}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kml", "src\Providers\Kml\Kml.csproj", "{40396080-83F3-46AE-A19B-AA6EA0FB9CF6}"
 EndProject
@@ -174,7 +174,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Transform.Ad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Transform.Ado.Autofac", "src\Providers\Ado\Transformalize.Transform.Ado.Autofac\Transformalize.Transform.Ado.Autofac.csproj", "{78028A44-AED7-4741-BC89-E3F62D405B99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Ado", "src\Providers\Ado\Test.Unit.Ado\Test.Unit.Ado.csproj", "{D91EB9DE-9996-40D6-B69D-4FAF1924143A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Ado", "test\Test.Unit.Ado\Test.Unit.Ado.csproj", "{D91EB9DE-9996-40D6-B69D-4FAF1924143A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "src\Providers\Ado\Benchmark\Benchmark.csproj", "{90EE638B-73F1-4717-9139-EFF8B263B093}"
 EndProject
@@ -184,7 +184,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Sql
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.SqlServer.Autofac", "src\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj", "{B7FDC46F-B7DE-4F0B-99F1-5BD5A2D1E620}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.SqlServer", "src\Providers\SqlServer\Test.Unit.SqlServer\Test.Unit.SqlServer.csproj", "{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.SqlServer", "test\Test.Unit.SqlServer\Test.Unit.SqlServer.csproj", "{CDFD5D2A-4847-4BDE-97DF-CAF0F292F44A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PostgreSql", "PostgreSql", "{96B78696-5E04-4CD0-AE96-7BDBAB1C5B5E}"
 EndProject
@@ -192,7 +192,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Pos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.PostgreSql.Autofac", "src\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj", "{3E38280B-8FB1-42B8-AB74-0848BE286927}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.PostgreSql", "src\Providers\PostgreSql\Test.Unit.PostgreSql\Test.Unit.PostgreSql.csproj", "{92038F0E-FA70-475F-B489-AE424A17636D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.PostgreSql", "test\Test.Unit.PostgreSql\Test.Unit.PostgreSql.csproj", "{92038F0E-FA70-475F-B489-AE424A17636D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MySql", "MySql", "{3D35752E-3C21-4511-BC8E-1C93FE7D351A}"
 EndProject
@@ -200,7 +200,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.MyS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.MySql.Autofac", "src\Providers\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj", "{FE48D73B-30BB-444A-9D95-86DD523FFA2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.MySql", "src\Providers\MySql\Test.Unit.MySql\Test.Unit.MySql.csproj", "{C84F4688-5A57-4567-97FF-A079BDB4FD55}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.MySql", "test\Test.Unit.MySql\Test.Unit.MySql.csproj", "{C84F4688-5A57-4567-97FF-A079BDB4FD55}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bogus", "Bogus", "{39642FCA-F964-4866-8D39-796644C47D85}"
 EndProject
@@ -208,7 +208,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Bog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Bogus.Autofac", "src\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj", "{BB3F5F90-FAE9-41C7-8E42-A120E2176B10}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Bogus", "src\Providers\Bogus\Test.Unit.Bogus\Test.Unit.Bogus.csproj", "{FCFD74A6-7563-40AF-8528-BFEF1B538CEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Bogus", "test\Test.Unit.Bogus\Test.Unit.Bogus.csproj", "{FCFD74A6-7563-40AF-8528-BFEF1B538CEF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CsvHelper", "CsvHelper", "{F73E0CCD-6128-4F58-B894-B664D207C819}"
 EndProject
@@ -216,7 +216,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Csv
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.CsvHelper.Autofac", "src\Providers\CsvHelper\Transformalize.Provider.CsvHelper.Autofac\Transformalize.Provider.CsvHelper.Autofac.csproj", "{518CBF66-3EC4-49C0-9043-363F61B703DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.CsvHelper", "src\Providers\CsvHelper\Test.Unit.CsvHelper\Test.Unit.CsvHelper.csproj", "{6DD2E5F7-0555-43FC-961D-46D74CE2BCF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.CsvHelper", "test\Test.Unit.CsvHelper\Test.Unit.CsvHelper.csproj", "{6DD2E5F7-0555-43FC-961D-46D74CE2BCF4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jint", "Jint", "{626B20EB-78FA-421C-A5B4-FC0B7DE5C09A}"
 EndProject
@@ -228,7 +228,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Validate.Jin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Validate.Jint.Autofac", "src\Transforms\Jint\Transformalize.Validate.Jint.Autofac\Transformalize.Validate.Jint.Autofac.csproj", "{F60BFF74-7FA8-4984-9B69-858D3D8C71A7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Jint", "src\Transforms\Jint\Test.Unit.Jint\Test.Unit.Jint.csproj", "{05F64F8A-8A8C-4333-BC7C-0295D74EBC9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Jint", "test\Test.Unit.Jint\Test.Unit.Jint.csproj", "{05F64F8A-8A8C-4333-BC7C-0295D74EBC9F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "src\Transforms\Jint\Benchmark.Jint\Benchmark.csproj", "{F6691CFC-FCA9-4199-A070-E6F4301E4E75}"
 EndProject
@@ -238,7 +238,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Fl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Fluid.Autofac", "src\Transforms\Fluid\Transformalize.Transform.Fluid.Autofac\Transformalize.Transform.Fluid.Autofac.csproj", "{2F76A0F4-37C0-4188-8CE8-7CE9B68A410F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Fluid", "src\Transforms\Fluid\Test.Unit.Fluid\Test.Unit.Fluid.csproj", "{659EF531-4FF6-4EBB-8581-80567AD70FA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Fluid", "test\Test.Unit.Fluid\Test.Unit.Fluid.csproj", "{659EF531-4FF6-4EBB-8581-80567AD70FA2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "src\Transforms\Fluid\Benchmark.Fluid\Benchmark.csproj", "{1BE0D545-946F-41AF-8BAA-1BC22D09F57A}"
 EndProject
@@ -248,7 +248,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Hu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Humanizer.Autofac", "src\Transforms\Humanizer\Transformalize.Transform.Humanizer.Autofac\Transformalize.Transform.Humanizer.Autofac.csproj", "{BD91C052-CDBA-43FB-A23A-75B7592D7AD0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Humanizer", "src\Transforms\Humanizer\Test.Unit.Humanizer\Test.Unit.Humanizer.csproj", "{8C527329-43ED-4D0F-A0E7-FC639274BFA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Humanizer", "test\Test.Unit.Humanizer\Test.Unit.Humanizer.csproj", "{8C527329-43ED-4D0F-A0E7-FC639274BFA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sqlite", "Sqlite", "{821C466E-7FFD-44E3-B7FD-F7FA586BF604}"
 EndProject
@@ -256,7 +256,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Sql
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Sqlite.Autofac", "src\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj", "{E01693CA-04B7-4980-81DF-E5FB632321D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Sqlite", "src\Providers\Sqlite\Test.Unit.Sqlite\Test.Unit.Sqlite.csproj", "{7D80FF60-A211-4732-864B-4EB3D9720796}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Sqlite", "test\Test.Unit.Sqlite\Test.Unit.Sqlite.csproj", "{7D80FF60-A211-4732-864B-4EB3D9720796}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Json", "Json", "{C5EFF78D-7EB4-4D7D-8996-B0CFAB432ACE}"
 EndProject
@@ -264,7 +264,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Jso
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Json.Autofac", "src\Providers\Json\Transformalize.Provider.Json.Autofac\Transformalize.Provider.Json.Autofac.csproj", "{BB8BAAF0-A3CA-408E-8CEB-D48B6B4E8945}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Json", "src\Providers\Json\Test.Unit.Json\Test.Unit.Json.csproj", "{C1F99151-9F1D-4CB3-A963-63C014D8568D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Json", "test\Test.Unit.Json\Test.Unit.Json.csproj", "{C1F99151-9F1D-4CB3-A963-63C014D8568D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GeoJson", "GeoJson", "{1783D45F-5A03-408A-894F-CA25472140FD}"
 EndProject
@@ -272,7 +272,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Geo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.GeoJson.Autofac", "src\Providers\GeoJson\Transformalize.Provider.GeoJson.Autofac\Transformalize.Provider.GeoJson.Autofac.csproj", "{7D8A1306-2699-493D-8ECA-8CB6EF920091}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.GeoJson", "src\Providers\GeoJson\Test.Unit.GeoJson\Test.Unit.GeoJson.csproj", "{84C88A96-047F-4EFD-9E53-222529424DB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.GeoJson", "test\Test.Unit.GeoJson\Test.Unit.GeoJson.csproj", "{84C88A96-047F-4EFD-9E53-222529424DB8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Json", "Json", "{7CFEC323-C66B-4EA5-A9FA-DB6FDDB2AFEF}"
 EndProject
@@ -286,7 +286,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Mai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Mail.Autofac", "src\Providers\Mail\Transformalize.Provider.Mail.Autofac\Transformalize.Provider.Mail.Autofac.csproj", "{FAE5BBEF-3735-44E9-AAEF-5CCD3BE805AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Mail", "src\Providers\Mail\Integration.Test.Mail\Test.Int.Mail.csproj", "{18C69FF4-E467-4275-AADF-CC1FEC698CEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Mail", "test\Test.Int.Mail\Test.Int.Mail.csproj", "{18C69FF4-E467-4275-AADF-CC1FEC698CEF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GoogleMaps", "GoogleMaps", "{12434ACE-414A-4782-BD4E-BD4E1B5D8916}"
 EndProject
@@ -294,7 +294,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Go
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.GoogleMaps.Autofac", "src\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps.Autofac\Transformalize.Transform.GoogleMaps.Autofac.csproj", "{E40A5B4C-C086-440D-96F2-3AFC9C42D019}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.GoogleMaps", "src\Transforms\GoogleMaps\Integration.Test.GoogleMaps\Test.Int.GoogleMaps.csproj", "{83240A82-692A-4841-9E60-578B94B1831A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.GoogleMaps", "test\Test.Int.GoogleMaps\Test.Int.GoogleMaps.csproj", "{83240A82-692A-4841-9E60-578B94B1831A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Razor", "Razor", "{4D738474-7B8C-4404-86A7-8E8CFFF315F0}"
 EndProject
@@ -304,7 +304,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Raz
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Provider.Razor.Autofac.Shared", "src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.shproj", "{A5ACD2AB-9AE9-45E6-A73D-2C981A83D993}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Razor", "src\Providers\Razor\Integration.Test.Razor\Test.Int.Razor.csproj", "{3D14CE36-6AD2-4D81-A3BE-5440B00176C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Razor", "test\Test.Int.Razor\Test.Int.Razor.csproj", "{3D14CE36-6AD2-4D81-A3BE-5440B00176C1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "src\Providers\Razor\Benchmark.Razor\Benchmark.csproj", "{8548CE5C-1BAE-4C1C-AF94-459FE48C8F31}"
 EndProject
@@ -318,7 +318,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.Ra
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Transformalize.Transform.Razor.Autofac.Shared", "src\Transforms\Razor\Transformalize.Transform.Razor.Autofac.Shared\Transformalize.Transform.Razor.Autofac.Shared.shproj", "{322A5978-874D-4F23-88AC-1FB9C3F45B4E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Razor", "src\Transforms\Razor\Test.Unit.Razor\Test.Unit.Razor.csproj", "{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.Razor", "test\Test.Unit.Razor\Test.Unit.Razor.csproj", "{DB4AC8B0-763C-4EA4-9FC7-41DFC9310CB5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LambdaParser", "LambdaParser", "{6641FC1B-DBF1-4F99-AE1E-45C9AD7AF2C5}"
 EndProject
@@ -326,7 +326,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.La
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Transform.LambdaParser.Autofac", "src\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj", "{9A033EB5-6666-4106-B16F-1E0DD849B63F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.LambdaParser", "src\Transforms\LambdaParser\Test.Unit.LambdaParser\Test.Unit.LambdaParser.csproj", "{6C44F6C3-B0BA-4525-8636-222B79B23787}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Unit.LambdaParser", "test\Test.Unit.LambdaParser\Test.Unit.LambdaParser.csproj", "{6C44F6C3-B0BA-4525-8636-222B79B23787}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "src\Transforms\LambdaParser\Benchmark.LambdaParser\Benchmark.csproj", "{C99680F4-893F-4964-AFDE-43F70E742BD0}"
 EndProject
@@ -336,7 +336,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Ela
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformalize.Provider.Elasticsearch.Autofac", "src\Providers\Elasticsearch\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj", "{A65768AE-F95F-4792-8337-FF8E8F372B2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Elasticsearch", "src\Providers\Elasticsearch\Integration.Test.Elasticsearch\Test.Int.Elasticsearch.csproj", "{CC1F1E32-1E7A-4C82-A50D-38E0FEC6DCA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test.Int.Elasticsearch", "test\Test.Int.Elasticsearch\Test.Int.Elasticsearch.csproj", "{CC1F1E32-1E7A-4C82-A50D-38E0FEC6DCA8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Excel", "Excel", "{73B2E5C8-E437-4634-A881-FE952D87E352}"
 EndProject
@@ -344,7 +344,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Exc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformalize.Provider.Excel.Autofac", "src\Providers\Excel\Transformalize.Provider.Excel.Autofac\Transformalize.Provider.Excel.Autofac.csproj", "{AA296CFB-9DB1-4D6C-958A-77D2ABD88494}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Excel", "src\Providers\Excel\Test.Unit.Excel\Test.Unit.Excel.csproj", "{F52E722E-2829-4A98-8CC4-9269B55F564F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Excel", "test\Test.Unit.Excel\Test.Unit.Excel.csproj", "{F52E722E-2829-4A98-8CC4-9269B55F564F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1412,9 +1412,9 @@ Global
 		src\Containers\Autofac\Autofac.Shared\Autofac.Shared.projitems*{6e826c36-c487-4c4f-8000-530f7193a027}*SharedItemsImports = 5
 		src\Providers\Console\Console.Shared\Console.Shared.projitems*{79951f95-4891-4e3d-ba9f-53e9ebc3615c}*SharedItemsImports = 5
 		src\Providers\Console\Console.Shared\Console.Shared.projitems*{8f345bfb-28e6-412f-86bb-2b3e43752138}*SharedItemsImports = 13
-		src\Tests\Test.Unit.Shared\Test.Unit.Shared.projitems*{b655822b-ec85-45c4-81ae-54a3759b98dc}*SharedItemsImports = 5
+		test\Test.Unit.Shared\Test.Unit.Shared.projitems*{b655822b-ec85-45c4-81ae-54a3759b98dc}*SharedItemsImports = 5
 		src\Containers\Autofac\Autofac.Shared\Autofac.Shared.projitems*{c41efbe7-25d0-4608-a37a-456e705a97e3}*SharedItemsImports = 13
-		src\Tests\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
+		test\Test.Unit.Shared\Test.Unit.Shared.projitems*{cc0d9d4a-1df1-4cbc-940e-ecfd16030932}*SharedItemsImports = 13
 		src\Providers\File\File.Shared\File.Shared.projitems*{d03656ea-f8ff-4efa-ae5e-027773c357a4}*SharedItemsImports = 5
 		src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.projitems*{a5acd2ab-9ae9-45e6-a73d-2c981a83d993}*SharedItemsImports = 13
 		src\Providers\Razor\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.projitems*{45b7dca6-ef12-475e-8965-c4e88aea54fe}*SharedItemsImports = 5

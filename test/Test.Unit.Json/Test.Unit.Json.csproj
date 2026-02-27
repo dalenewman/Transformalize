@@ -1,0 +1,29 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.2-beta</Version>
+    <FileVersion>0.11.2</FileVersion>
+    <AssemblyVersion>0.11.2</AssemblyVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Containers/Autofac/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Json/Transformalize.Provider.Json.Autofac/Transformalize.Provider.Json.Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Json/Transformalize.Transform.Json.Autofac/Transformalize.Transform.Json.Autofac.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files\nfl-team-colors.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>0.11.1-beta</Version>
+    <FileVersion>0.11.1</FileVersion>
+    <AssemblyVersion>0.11.1</AssemblyVersion>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Mail/Transformalize.Provider.Mail.Autofac/Transformalize.Provider.Mail.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>
