@@ -31,6 +31,7 @@ using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Logging;
 using Transformalize.Providers.Console;
+using Transformalize.Providers.CsvHelper.Autofac;
 using Transformalize.Providers.Elasticsearch;
 using Transformalize.Providers.Elasticsearch.Autofac;
 using Transformalize.Providers.Elasticsearch.Ext;
@@ -72,6 +73,42 @@ namespace Test.Integration.Core {
          $"ElasticServer={Tester.ElasticServer}&ElasticPort={Tester.ElasticPort}" +
          $"&ElasticUser={Tester.ElasticUser}&ElasticPassword={Tester.ElasticPassword}" +
          $"&ElasticVersion={Tester.ElasticVersion}";
+
+      private static string ColorsCsvToElasticXml => $@"<add name='ColorsCsvToElastic' mode='init' read-only='true'>
+  <connections>
+    <add name='input' provider='file' delimiter=',' file='files/colors.csv' synchronous='true' start='0' />
+    <add name='output' provider='elasticsearch' server='{Tester.ElasticServer}' port='{Tester.ElasticPort}' index='colors' user='{Tester.ElasticUser}' password='{Tester.ElasticPassword}' useSsl='true' version='{Tester.ElasticVersion}' />
+  </connections>
+  <entities>
+    <add name='rows'>
+      <fields>
+        <add name='code' primary-key='true' />
+        <add name='name' />
+        <add name='hex' />
+        <add name='r' type='int' />
+        <add name='g' type='int' />
+        <add name='b' type='int' />
+      </fields>
+      <calculated-fields>
+        <add name='rgb' t='copy(r,g,b).join(,)' />
+        <add name='total' type='int' t='rownumber()' />
+      </calculated-fields>
+    </add>
+  </entities>
+</add>";
+
+      private static void BuildColorsIndex(uint? expectedInserts = null) {
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using (var outer = new ConfigurationContainer().CreateScope(ColorsCsvToElasticXml, logger)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = new Container(new CsvHelperProviderModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
+               inner.Resolve<IProcessController>().Execute();
+               if (expectedInserts.HasValue) {
+                  Assert.AreEqual(expectedInserts.Value, process.Entities.First().Inserts);
+               }
+            }
+         }
+      }
 
       [TestMethod]
       public void SqliteToElastic() {
@@ -231,7 +268,13 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
+      public void Colors00BuildIndexFromCsv() {
+         BuildColorsIndex(865);
+      }
+
+      [TestMethod]
       public void TestSingleIndexMapping() {
+         BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -255,12 +298,13 @@ namespace Test.Integration.Core {
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
 
-         Assert.AreEqual(11, schemaReader.GetFields("rows").Count());
+         Assert.AreEqual(9, schemaReader.GetFields("rows").Count());
 
       }
 
       [TestMethod]
       public void TestAllIndexMapping() {
+         BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -290,6 +334,7 @@ namespace Test.Integration.Core {
 
       [TestMethod]
       public void TestReadAll() {
+         BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -323,6 +368,7 @@ namespace Test.Integration.Core {
 
       [TestMethod]
       public void TestReadPage() {
+         BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
