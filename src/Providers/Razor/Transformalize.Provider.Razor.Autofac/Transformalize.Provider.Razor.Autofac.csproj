@@ -13,5 +13,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Provider.Razor\Transformalize.Provider.Razor.csproj" />
   </ItemGroup>
-  <Import Project="..\Transformalize.Provider.Razor.Autofac.Shared\Transformalize.Provider.Razor.Autofac.Shared.projitems" Label="Shared" />
 </Project>

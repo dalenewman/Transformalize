@@ -7,7 +7,6 @@
     <FileVersion>0.11.4</FileVersion>
     <AssemblyVersion>0.11.4</AssemblyVersion>
   </PropertyGroup>
-  <Import Project="..\File.Shared\File.Shared.projitems" Label="Shared" />
   <ItemGroup>
     <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
   </ItemGroup>
