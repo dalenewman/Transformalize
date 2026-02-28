@@ -250,11 +250,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# DocFx
-log.txt
-_site/
-/Pipeline.Command/plugins/Clevest.Framework.Encryption2.dll
-/Pipeline.Command/plugins/Scope.Common.ClevestWebServiceProxy.dll
-/Pipeline.Command/plugins/Scope.Common.dll
-/Pipeline.Command/plugins/Transformalize.Provider.Clevest.Autofac.dll
-/Pipeline.Command/plugins/Transformalize.Provider.Clevest.dll
+# Jetbrains
+.idea/

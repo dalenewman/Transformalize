@@ -129,9 +129,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kml", "src\Providers\Kml\Km
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXml", "src\Providers\OpenXml\OpenXml.csproj", "{C5983323-589D-4FE0-AA7F-CABD997ED21C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac", "src\Containers\Autofac\Autofac\Autofac.csproj", "{6E826C36-C487-4C4F-8000-530F7193A027}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Autofac", "src\Containers\Autofac\Autofac.csproj", "{6E826C36-C487-4C4F-8000-530F7193A027}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog", "src\Logging\NLog\NLog\NLog.csproj", "{38FC156B-EDF5-4D94-8A50-FB67F5C008E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog", "src\Logging\NLog\NLog.csproj", "{38FC156B-EDF5-4D94-8A50-FB67F5C008E7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Trace", "src\Providers\Trace\Trace.csproj", "{76BFD182-39A3-458F-9EA5-50724446032E}"
 EndProject

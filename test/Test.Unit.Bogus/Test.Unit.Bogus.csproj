@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
-    <ProjectReference Include="../../src/Containers/Autofac/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console/Console.csproj" />
   </ItemGroup>
 

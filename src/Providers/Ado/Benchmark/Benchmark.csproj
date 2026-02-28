@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Logging\NLog\NLog\NLog.csproj" />
+    <ProjectReference Include="..\..\..\Logging\NLog\NLog.csproj" />
     <ProjectReference Include="..\..\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="..\..\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
     <ProjectReference Include="..\..\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />

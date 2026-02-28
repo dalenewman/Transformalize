@@ -10,7 +10,7 @@
    </PropertyGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
      <ProjectReference Include="..\..\OpenXml\OpenXml.csproj" />
      <ProjectReference Include="..\Transformalize.Provider.Excel\Transformalize.Provider.Excel.csproj" />
    </ItemGroup>
