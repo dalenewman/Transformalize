@@ -14,7 +14,7 @@
    </ItemGroup>
 
    <ItemGroup>
-     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
    </ItemGroup>
 
    <ItemGroup>

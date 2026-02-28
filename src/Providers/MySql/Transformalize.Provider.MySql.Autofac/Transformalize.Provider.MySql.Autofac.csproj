@@ -11,7 +11,7 @@
     <PackageReference Include="MySqlConnector" Version="2.3.7" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
     <ProjectReference Include="..\..\Ado\Transformalize.Provider.Ado\Transformalize.Provider.Ado.csproj" />
     <ProjectReference Include="..\Transformalize.Provider.MySql\Transformalize.Provider.MySql.csproj" />
   </ItemGroup>

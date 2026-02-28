@@ -23,6 +23,6 @@
     <PackageReference Include="DateMath" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
   </ItemGroup>
 </Project>

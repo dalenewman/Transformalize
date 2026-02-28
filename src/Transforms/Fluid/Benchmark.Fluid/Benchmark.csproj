@@ -30,7 +30,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Transform.Fluid.Autofac\Transformalize.Transform.Fluid.Autofac.csproj" />
     <ProjectReference Include="..\Transformalize.Transform.Fluid\Transformalize.Transform.Fluid.csproj" />
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
     <ProjectReference Include="..\..\..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
   </ItemGroup>
 

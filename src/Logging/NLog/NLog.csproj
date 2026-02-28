@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+    <ProjectReference Include="..\..\Transformalize\Transformalize.csproj" />
   </ItemGroup>
 
 </Project>

@@ -22,6 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Transform.Fluid\Transformalize.Transform.Fluid.csproj" />
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
   </ItemGroup>
 </Project>

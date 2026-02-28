@@ -26,6 +26,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Transform.Jint\Transformalize.Transform.Jint.csproj" />
-    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac\Autofac.csproj" />
+    <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
   </ItemGroup>
 </Project>

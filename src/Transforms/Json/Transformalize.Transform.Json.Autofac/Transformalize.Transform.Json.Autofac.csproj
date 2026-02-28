@@ -8,7 +8,7 @@
     <AssemblyVersion>0.11.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Containers/Autofac/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../../Containers/Autofac/Autofac.csproj" />
     <ProjectReference Include="../Transformalize.Transform.Json/Transformalize.Transform.Json.csproj" />
   </ItemGroup>
 </Project>
