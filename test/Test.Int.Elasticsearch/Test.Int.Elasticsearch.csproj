@@ -34,9 +34,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" />
-    <PackageReference Include="Microsoft.Data.Sqlite" />
-    <PackageReference Include="Testcontainers.Elasticsearch" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
