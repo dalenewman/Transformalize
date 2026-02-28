@@ -15,7 +15,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>TRACE;PLUGINS</DefineConstants>
   </PropertyGroup>
-  <Import Project="..\Autofac.Shared\Autofac.Shared.projitems" Label="Shared" />
   <ItemGroup>
     <PackageReference Include="Autofac" Version="4.9.4" />
     <PackageReference Include="Cfg-NET.Environment" Version="0.15.0-beta" />

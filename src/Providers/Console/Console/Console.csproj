@@ -13,6 +13,4 @@
     <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
   </ItemGroup>
 
-  <Import Project="..\Console.Shared\Console.Shared.projitems" Label="Shared" />
-
 </Project>

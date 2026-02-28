@@ -12,10 +12,17 @@
     <DefineConstants>TRACE;CORE</DefineConstants>
   </PropertyGroup>
 
-  <Import Project="..\Benchmark.Shared\Benchmark.Shared.projitems" Label="Shared" />
-
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="files\bogus-with-transform.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\bogus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
