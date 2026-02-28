@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <AssemblyName>Transformalize.Provider.Mail</AssemblyName>
     <RootNamespace>Transformalize.Providers.Mail</RootNamespace>
     <Version>0.11.1-beta</Version>

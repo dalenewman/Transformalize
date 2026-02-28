@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Providers.Sqlite</RootNamespace>
     <AssemblyName>Transformalize.Provider.Sqlite</AssemblyName>
     <Version>0.11.1-beta</Version>

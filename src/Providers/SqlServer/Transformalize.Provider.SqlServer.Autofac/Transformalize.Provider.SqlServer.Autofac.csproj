@@ -2,6 +2,7 @@
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <RootNamespace>Transformalize.Providers.SqlServer.Autofac</RootNamespace>
       <AssemblyName>Transformalize.Provider.SqlServer.Autofac</AssemblyName>
       <Version>0.11.2-beta</Version>

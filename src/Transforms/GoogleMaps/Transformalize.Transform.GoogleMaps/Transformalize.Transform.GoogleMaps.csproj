@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <AssemblyName>Transformalize.Transform.GoogleMaps</AssemblyName>
       <RootNamespace>Transformalize.Transforms.GoogleMaps</RootNamespace>
       <Version>0.11.1-beta</Version>

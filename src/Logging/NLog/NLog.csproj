@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Logging.NLog</RootNamespace>
      <AssemblyName>Transformalize.Logging.NLog</AssemblyName>
      <Version>0.11.7</Version>

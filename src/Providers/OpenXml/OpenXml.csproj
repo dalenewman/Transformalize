@@ -2,6 +2,7 @@
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <RootNamespace>Transformalize.Providers.OpenXml</RootNamespace>
       <AssemblyName>Transformalize.Provider.OpenXml</AssemblyName>
       <Version>0.11.4</Version>

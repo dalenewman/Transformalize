@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Transforms.Humanizer.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Transform.Humanizer.Autofac</AssemblyName>
     <Version>0.11.1-beta</Version>

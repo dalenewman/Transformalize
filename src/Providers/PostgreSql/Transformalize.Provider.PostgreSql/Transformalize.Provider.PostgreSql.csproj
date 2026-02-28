@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Providers.PostgreSql</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql</AssemblyName>
     <Version>0.11.4-beta</Version>

@@ -2,6 +2,7 @@
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <AssemblyName>Transformalize.Provider.Excel.Autofac</AssemblyName>
       <RootNamespace>Transformalize.Providers.Excel.Autofac</RootNamespace>
       <Version>0.11.1-beta</Version>

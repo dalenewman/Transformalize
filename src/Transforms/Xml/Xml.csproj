@@ -2,6 +2,7 @@
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <RootNamespace>Transformalize.Transforms.Xml</RootNamespace>
       <AssemblyName>Transformalize.Transform.Xml</AssemblyName>
       <Version>0.11.4</Version>

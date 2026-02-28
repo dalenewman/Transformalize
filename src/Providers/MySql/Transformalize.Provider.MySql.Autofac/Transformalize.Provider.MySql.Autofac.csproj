@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Providers.MySql.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.MySql.Autofac</AssemblyName>
     <Version>0.10.2-beta</Version>

@@ -2,6 +2,7 @@
 
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
       <RootNamespace>Transformalize.Providers.SqlServer</RootNamespace>
       <AssemblyName>Transformalize.Provider.SqlServer</AssemblyName>
       <Version>0.11.2-beta</Version>

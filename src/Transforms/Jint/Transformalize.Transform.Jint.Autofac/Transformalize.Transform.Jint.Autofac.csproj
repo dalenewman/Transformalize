@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
     <RootNamespace>Transformalize.Transforms.Jint.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Transform.Jint.Autofac</AssemblyName>
     <IncludeSymbols>true</IncludeSymbols>
