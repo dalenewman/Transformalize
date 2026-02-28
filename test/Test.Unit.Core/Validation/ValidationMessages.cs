@@ -63,8 +63,8 @@ namespace Tests.Validation {
                var message = process.Entities.First().CalculatedFields.First(cf => cf.Name == "Message");
                var valid = process.Entities.First().CalculatedFields.First(cf => cf.Name == "TestDataValid");
                Assert.IsFalse((bool)output[0][valid]);
-               Assert.AreEqual("Field3 must be a 5 digit number (including decimal pt.)", output[0][message].ToString().Replace("|", " ").TrimEnd());
-               Assert.AreEqual("Field1 must contain 1. Field2 is required. Field2's value is incompatable with the int data type.", output[1][message].ToString().Replace("|", " ").TrimEnd());
+               Assert.AreEqual("Field3 must be a 5 digit number (including decimal pt.)", output[0][message]!.ToString()!.Replace("|", " ").TrimEnd());
+               Assert.AreEqual("Field1 must contain 1. Field2 is required. Field2's value is incompatable with the int data type.", output[1][message]!.ToString()!.Replace("|", " ").TrimEnd());
 
             }
          }

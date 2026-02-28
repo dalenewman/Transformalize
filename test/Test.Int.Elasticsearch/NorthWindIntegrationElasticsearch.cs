@@ -202,9 +202,7 @@ namespace Test.Integration.Core {
    }
 }"));
 
-         var hits = response.Body["hits"]["hits"].Value as IList<object>;
-         var hit = hits[0] as IDictionary<string, object>;
-         var source = hit["_source"] as IDictionary<string, object>;
+         var source = GetFirstSource(response);
 
          Assert.AreEqual(source["orderdetailsunitprice"], 15.0);
          Assert.AreEqual(source["orderdetailsquantity"], (long)40);
@@ -258,9 +256,7 @@ namespace Test.Integration.Core {
    }
 }"));
 
-         hits = response.Body["hits"]["hits"].Value as IList<object>;
-         hit = hits[0] as IDictionary<string, object>;
-         source = hit["_source"] as IDictionary<string, object>;
+         source = GetFirstSource(response);
 
          Assert.AreEqual(source["orderscustomerid"], "VICTE");
          Assert.AreEqual(source["ordersfreight"], 20.11);
@@ -403,6 +399,12 @@ namespace Test.Integration.Core {
          var rows = reader.Read().ToArray();
          Assert.AreEqual(20, rows.Length);
 
+      }
+
+      private static IDictionary<string, object> GetFirstSource(DynamicResponse response) {
+         var hits = (IList<object>)response.Body["hits"]["hits"].Value!;
+         var hit = (IDictionary<string, object>)hits[0]!;
+         return (IDictionary<string, object>)hit["_source"]!;
       }
 
    }

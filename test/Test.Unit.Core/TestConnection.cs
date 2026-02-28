@@ -89,7 +89,7 @@ namespace Tests {
                     Assert.AreEqual(@"2016-04-24.txt", output[0][fileName]);
                     Assert.AreEqual(@"2016-04-24", output[0][fileNameNoExt]);
                     Assert.AreEqual(@".txt", output[0][fileExt]);
-                    Assert.IsTrue(output[0][filePath].ToString().EndsWith(testPath));
+                    Assert.IsTrue(output[0][filePath]!.ToString()!.EndsWith(testPath));
                 }
             }
         }
