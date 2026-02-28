@@ -25,11 +25,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" />
-    <PackageReference Include="Transformalize.Transform.CSharp.Autofac" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Sqlite/Transformalize.Provider.Sqlite.Autofac/Transformalize.Provider.Sqlite.Autofac.csproj" />

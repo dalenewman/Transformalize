@@ -16,8 +16,7 @@
     <PackageVersion Include="Microsoft.Data.Sqlite" Version="8.0.7" />
     <PackageVersion Include="MySqlConnector" Version="2.3.7" />
     <PackageVersion Include="Npgsql" Version="8.0.3" />
-    <!-- External Transformalize Packages -->
-    <PackageVersion Include="Transformalize.Transform.CSharp.Autofac" Version="0.11.1-beta" />
+
   </ItemGroup>
 
 </Project>

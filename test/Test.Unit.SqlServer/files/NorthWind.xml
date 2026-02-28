@@ -32,7 +32,7 @@
                  type="decimal"
                  precision="19"
                  scale="4"
-                 t="cs(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-Convert.ToDecimal(OrderDetailsDiscount))))">
+                 t="js(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1 - OrderDetailsDiscount)))">
             </add>
          </calculated-fields>
       </add>
@@ -200,7 +200,7 @@
       <add name="CountryExchange"
            length="128"
            t="format(Shipping from {SuppliersCountry} to {OrdersShipCountry})"/>
-      <add name='Test' t='copy(SuppliersCountry,OrdersShipCountry).cs(string.Format("{0} to {1}",SuppliersCountry,OrdersShipCountry))' />
+      <add name='Test' t='copy(SuppliersCountry,OrdersShipCountry).js(SuppliersCountry + " to " + OrdersShipCountry)' />
    </calculated-fields>
 
 </add>
