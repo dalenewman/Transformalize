@@ -1,7 +1,7 @@
 <Project Sdk="MSTest.Sdk/3.8.2">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
     <Version>0.11.1-beta</Version>

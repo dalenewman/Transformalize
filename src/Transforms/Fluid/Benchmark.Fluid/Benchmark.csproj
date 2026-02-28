@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Version>0.11.1-beta</Version>
     <FileVersion>0.11.1</FileVersion>
     <AssemblyVersion>0.11.1</AssemblyVersion>
@@ -15,12 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.html" />
+    <Content Include="bin\Release\net10.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report-github.md" />
-    <None Include="bin\Release\net8.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.csv" />
+    <None Include="bin\Release\net10.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report-github.md" />
+    <None Include="bin\Release\net10.0\BenchmarkDotNet.Artifacts\results\Benchmark.Core.Benchmarks-report.csv" />
   </ItemGroup>
 
   <ItemGroup>
