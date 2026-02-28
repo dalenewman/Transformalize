@@ -38,7 +38,7 @@ using Transformalize.Providers.Elasticsearch.Ext;
 using System.IO;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SQLite;
-using Transformalize.Transforms.CSharp.Autofac;
+using Transformalize.Transforms.Jint.Autofac;
 
 namespace Test.Integration.Core {
 
@@ -121,9 +121,9 @@ namespace Test.Integration.Core {
             .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
 
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}?Mode=init", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?Mode=init", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -160,9 +160,9 @@ namespace Test.Integration.Core {
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -217,9 +217,9 @@ namespace Test.Integration.Core {
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope($"{SqliteTestFile}", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new SqliteModule(), new CSharpModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
