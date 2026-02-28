@@ -105,11 +105,9 @@ namespace Transformalize.Containers.Autofac {
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(TransformModule.FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "t", "transforms", "method")).Named<IDependency>(TransformModule.FieldsName).InstancePerLifetimeScope();
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(TransformModule.ParametersName), new[] { "parameters" }, "t", "transforms", "method")).Named<IDependency>(TransformModule.ParametersName).InstancePerLifetimeScope();
 
-#if PLUGINS
-         // the shorthand registrations are stored in the builder's properties for plugins to add to
+         // store shorthand objects so additional registered modules can add their signatures to them
          builder.Properties["ShortHand"] = _shortHand;
          builder.Properties["Methods"] = _methods;
-#endif
 
          foreach (var module in _modules) {
             builder.RegisterModule(module);

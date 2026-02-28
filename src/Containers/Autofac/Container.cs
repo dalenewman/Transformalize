@@ -57,9 +57,7 @@ namespace Transformalize.Containers.Autofac {
       public ILifetimeScope CreateScope(Process process, IPipelineLogger logger) {
 
          var builder = new ContainerBuilder();
-#if PLUGINS
          builder.Properties["Process"] = process;
-#endif
          builder.Register(ctx => process).As<Process>();
          builder.RegisterInstance(logger).As<IPipelineLogger>().SingleInstance();
 
@@ -79,13 +77,9 @@ namespace Transformalize.Containers.Autofac {
 
          builder.RegisterModule(new InternalModule(process));
 
-#if PLUGINS
-         builder.RegisterModule(new ProviderPlugInModule(process));
-
-         // just in case other modules need to see these
+         // allowing transform modules added via AddModule() to access the shared shorthand objects
          builder.Properties["ShortHand"] = _shortHand;
          builder.Properties["Methods"] = _methods;
-#endif
 
          // allowing for additional modules
          foreach (var module in _modules) {
