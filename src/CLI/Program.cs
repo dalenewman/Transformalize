@@ -19,7 +19,7 @@ using Transformalize.Providers.Mail.Autofac;
 using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.Razor.Autofac;
-using Transformalize.Providers.Solr.Autofac;
+// using Transformalize.Providers.Solr.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
 using Transformalize.Transform.GoogleMaps;
@@ -138,7 +138,7 @@ namespace Transformalize.Cli {
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
             providers.Add(new MailModule());
-            providers.Add(new SolrModule());
+            // providers.Add(new SolrModule());
 
             var modules = providers.Union(operations).ToArray();
 

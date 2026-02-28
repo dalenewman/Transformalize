@@ -18,13 +18,8 @@
 
 using Autofac;
 using Cfg.Net.Shorthand;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Transformalize.Configuration;
-using Transformalize.Context;
 using Transformalize.Contracts;
 using Module = Autofac.Module;
 
@@ -45,11 +40,6 @@ namespace Transformalize.Containers.Autofac.Modules {
       private readonly Process _process;
       private readonly IPipelineLogger _logger;
 
-      /// <summary>
-      /// Search for and load plugins from plugins folder
-      /// </summary>
-      public bool Plugins { get; set; } = true;
-
       public ValidateModule(Process process, IPipelineLogger logger) {
          _process = process;
          _logger = logger;
@@ -65,56 +55,12 @@ namespace Transformalize.Containers.Autofac.Modules {
       }
 
       protected override void Load(ContainerBuilder builder) {
-
          new ValidateBuilder(_process, builder, _methods, _shortHand, _validators, _logger).Build();
-
-#if PLUGINS
-         if (Plugins) {
-            var loadContext = new PipelineContext(_logger, _process);
-
-            builder.Properties["ShortHand"] = _shortHand;
-            builder.Properties["Methods"] = _methods;
-            builder.Properties["Process"] = _process;
-
-            var pluginsFolder = Path.Combine(AssemblyDirectory, "plugins");
-            if (Directory.Exists(pluginsFolder)) {
-
-               var assemblies = new List<Assembly>();
-
-               foreach (var file in Directory.GetFiles(pluginsFolder, "Transformalize.Validate.*.Autofac.dll", SearchOption.TopDirectoryOnly)) {
-                  var info = new FileInfo(file);
-                  var name = info.Name.ToLower().Split('.').FirstOrDefault(f => f != "dll" && f != "transformalize" && f != "validate" && f != "autofac");
-                  loadContext.Debug(() => $"Loading {name} validator(s)");
-                  var assembly = Assembly.LoadFile(new FileInfo(file).FullName);
-                  assemblies.Add(assembly);
-               }
-
-               if (assemblies.Any()) {
-                  builder.RegisterAssemblyModules(assemblies.ToArray());
-               }
-            }
-         }
-#endif
       }
 
       public void AddValidator(ValidatorHolder v) {
          _validators.Add(v);
       }
-
-#if PLUGINS
-      public static string AssemblyDirectory {
-         get {
-            try {
-               var codeBase = typeof(Process).Assembly.CodeBase;
-               var uri = new UriBuilder(codeBase);
-               var path = Uri.UnescapeDataString(uri.Path);
-               return Path.GetDirectoryName(path);
-            } catch (Exception) {
-               return ".";
-            }
-         }
-      }
-#endif
 
    }
 }

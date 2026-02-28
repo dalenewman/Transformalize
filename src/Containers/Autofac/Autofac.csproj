@@ -8,15 +8,15 @@
     <AssemblyVersion>0.11.8</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;PLUGINS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;PLUGINS</DefineConstants>
+    <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac" Version="4.9.4" />
+    <PackageReference Include="Autofac" Version="9.0.0" />
     <PackageReference Include="Cfg-NET.Environment" Version="0.15.0-beta" />
     <PackageReference Include="Cfg-NET.Reader" Version="0.15.0-beta" />
     <PackageReference Include="Cfg-NET.Shorthand" Version="0.15.0-beta" />

@@ -21,7 +21,6 @@ using System.Linq;
 using Autofac;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
-using Transformalize.Containers.Autofac;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
@@ -38,8 +37,6 @@ namespace Transformalize.Providers.GeoJson.Autofac {
       private const string GeoJson = "geojson";
 
       public bool UseAsyncMethods { get; set; }
-
-      public IPropertyRepository PropertyRepository { get; set; } = new PropertyRepository();
 
       /// <summary>
       /// Create a GeoJson module with an optional stream to write to
@@ -65,8 +62,8 @@ namespace Transformalize.Providers.GeoJson.Autofac {
       /// <param name="builder"></param>
       protected override void Load(ContainerBuilder builder) {
 
-         if(_process == null && PropertyRepository != null) {
-            _process = (Process) PropertyRepository.GetProperty(builder, "Process");
+         if (_process == null && builder.Properties.ContainsKey("Process")) {
+            _process = (Process)builder.Properties["Process"];
          }
 
          if (_process == null)
