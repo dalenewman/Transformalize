@@ -3,8 +3,8 @@
 # docker buildx create --driver=docker-container --name=container
 
 version="0.11.8"
-build="mcr.microsoft.com/dotnet/sdk:8.0"
-base="mcr.microsoft.com/dotnet/runtime:8.0"
+build="mcr.microsoft.com/dotnet/sdk:10.0"
+base="mcr.microsoft.com/dotnet/runtime:10.0"
 name="transformalize.cli"
 
 # docker build -f "./src/CLI/Dockerfile" \
@@ -28,8 +28,8 @@ docker buildx build --builder=container \
   --build-arg BUILD_IMAGE=$build \
   --push .
 
-build="mcr.microsoft.com/dotnet/sdk:8.0-alpine"
-base="mcr.microsoft.com/dotnet/runtime:8.0-alpine"
+build="mcr.microsoft.com/dotnet/sdk:10.0-alpine"
+base="mcr.microsoft.com/dotnet/runtime:10.0-alpine"
 
 # docker build -f "./src/CLI/Dockerfile" \
 #   --force-rm \
