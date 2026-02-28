@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySqlConnector" />
-    <PackageReference Include="Testcontainers.MySql" />
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    <PackageReference Include="Testcontainers.MySql" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,14 +39,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" />
-    <PackageReference Include="Testcontainers.MsSql" />
-    <PackageReference Include="Transformalize.Transform.CSharp.Autofac" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Testcontainers.MsSql" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../src/Providers/SqlServer/Transformalize.Provider.SqlServer.Autofac/Transformalize.Provider.SqlServer.Autofac.csproj" />
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Ado/Transformalize.Provider.Ado.Autofac/Transformalize.Provider.Ado.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Ado/Transformalize.Transform.Ado.Autofac/Transformalize.Transform.Ado.Autofac.csproj" />

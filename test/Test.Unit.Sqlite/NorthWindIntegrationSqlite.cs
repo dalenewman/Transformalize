@@ -26,7 +26,7 @@ using Transformalize.Contracts;
 using Transformalize.Providers.Console;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SQLite;
-using Transformalize.Transforms.CSharp.Autofac;
+using Transformalize.Transforms.Jint.Autofac;
 
 namespace IntegrationTests {
 
@@ -61,9 +61,9 @@ namespace IntegrationTests {
          var logger = new ConsoleLogger(LogLevel.Info);
 
          // INITIAL LOAD
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile + "?Mode=init", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile + "?Mode=init", logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new CSharpModule(), new SqliteModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -76,9 +76,9 @@ namespace IntegrationTests {
          }
 
          // FIRST DELTA, NO CHANGES
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile, logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new CSharpModule(), new SqliteModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -96,9 +96,9 @@ namespace IntegrationTests {
             Assert.AreEqual(1, cn.Execute("UPDATE [Order Details] SET UnitPrice = 15, Quantity = 40 WHERE OrderId = 10253 AND ProductId = 39;"));
          }
 
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile, logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new CSharpModule(), new SqliteModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }
@@ -118,9 +118,9 @@ namespace IntegrationTests {
             Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
          }
 
-         using (var outer = new ConfigurationContainer(new CSharpModule()).CreateScope(TestFile, logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
-            using (var inner = new Container(new CSharpModule(), new SqliteModule()).CreateScope(process, logger)) {
+            using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
             }

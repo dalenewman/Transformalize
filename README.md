@@ -62,7 +62,7 @@ The supported inputs and outputs are below.
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Elasticsearch">Elasticsearch</a></td>
+                            <td><a href="./src/Providers/Elasticsearch/README.md">Elasticsearch</a></td>
                             <td>In/Out</td>
                         </tr>
                         <tr>
@@ -910,4 +910,4 @@ The OrchardCore module has many specific "web" features.  More information can b
 
 This is the end for now.  This article provides a brief overview of how you'd denormalize a relational database and make use of the flattened output in various ways. I will try to get more documentation created as time permits.
 
-**Note**: This readme is for the updated cross-platform version of Transformalize, the old version is [here](README_LEGACY.md).
+**Note**: This readme is for the updated cross-platform version of Transformalize, the old version is [here](./Files/README_LEGACY.md).

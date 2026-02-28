@@ -37,14 +37,7 @@
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-      <PackageReference Include="Transformalize.Provider.Mail.Autofac" Version="0.10.1-beta" />
       <PackageReference Include="Transformalize.Provider.Solr.Autofac" Version="0.10.5-beta" />
-      <PackageReference Include="Transformalize.Transform.Compression" Version="0.10.5-beta" />
-      <PackageReference Include="Transformalize.Transform.Fluid.Autofac" Version="0.10.2-beta" />
-      <PackageReference Include="Transformalize.Transform.Geography" Version="0.10.5-beta" />
-      <PackageReference Include="Transformalize.Transform.Globalization" Version="0.10.5-beta" />
-      <PackageReference Include="Transformalize.Transform.GoogleMaps" Version="0.10.1-beta" />
-      <PackageReference Include="Transformalize.Transform.Xml" Version="0.10.10-beta" />
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
@@ -61,8 +54,15 @@
       <ProjectReference Include="..\Providers\Json\Transformalize.Provider.Json.Autofac\Transformalize.Provider.Json.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Json\Transformalize.Transform.Json.Autofac\Transformalize.Transform.Json.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\Mail\Transformalize.Provider.Mail.Autofac\Transformalize.Provider.Mail.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Razor\Transformalize.Provider.Razor.Autofac\Transformalize.Provider.Razor.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Compression\Compression.csproj" />
+      <ProjectReference Include="..\Transforms\Fluid\Transformalize.Transform.Fluid.Autofac\Transformalize.Transform.Fluid.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Geography\Geography.csproj" />
+      <ProjectReference Include="..\Transforms\Globalization\Globalization.csproj" />
+      <ProjectReference Include="..\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps\Transformalize.Transform.GoogleMaps.csproj" />
       <ProjectReference Include="..\Transforms\Razor\Transformalize.Transform.Razor.Autofac\Transformalize.Transform.Razor.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Xml\Xml.csproj" />
    </ItemGroup>
    <ItemGroup>
       <None Update="arrangements\bogus.yml">

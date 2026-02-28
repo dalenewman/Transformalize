@@ -31,7 +31,7 @@
                 type="decimal"
                 precision="19"
                 scale="4"
-                t="cs(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1-Convert.ToDecimal(OrderDetailsDiscount))))">
+                t="js(OrderDetailsQuantity * (OrderDetailsUnitPrice * (1 - OrderDetailsDiscount)))">
            </add>
         </calculated-fields>
      </add>

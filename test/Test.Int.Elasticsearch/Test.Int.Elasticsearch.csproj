@@ -34,14 +34,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Elasticsearch.Net" />
-    <PackageReference Include="Microsoft.Data.Sqlite" />
-    <PackageReference Include="Testcontainers.Elasticsearch" />
-    <PackageReference Include="Transformalize.Transform.CSharp.Autofac" />
+    <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/CsvHelper/Transformalize.Provider.CsvHelper.Autofac/Transformalize.Provider.CsvHelper.Autofac.csproj" />

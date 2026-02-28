@@ -10,6 +10,10 @@
 
 
   <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
