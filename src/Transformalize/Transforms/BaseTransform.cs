@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -49,6 +51,16 @@ namespace Transformalize.Transforms {
       // this *may* be implemented
       public virtual IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
          return Run && Context != null ? rows.Select(Operate) : rows;
+      }
+
+      // this *may* be implemented; default wraps the sync per-row Operate
+      public virtual async IAsyncEnumerable<IRow> OperateAsync(
+            IAsyncEnumerable<IRow> rows,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+         await foreach (var row in rows) {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return Operate(row);
+         }
       }
 
       public string Returns {

@@ -15,10 +15,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 
 namespace Transformalize.Contracts {
     public interface IAction {
         ActionResponse Execute();
+        Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default);
     }
 }

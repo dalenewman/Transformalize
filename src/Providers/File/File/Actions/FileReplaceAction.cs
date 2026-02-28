@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -44,5 +46,7 @@ namespace Transformalize.Providers.File.Actions {
             }
             return response;
         }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 }

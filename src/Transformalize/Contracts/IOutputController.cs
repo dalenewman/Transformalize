@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 
 namespace Transformalize.Contracts {
@@ -22,5 +24,8 @@ namespace Transformalize.Contracts {
         ActionResponse Initialize();
         void Start();
         void End();
+        Task<ActionResponse> InitializeAsync(CancellationToken cancellationToken = default);
+        Task StartAsync(CancellationToken cancellationToken = default);
+        Task EndAsync(CancellationToken cancellationToken = default);
     }
 }

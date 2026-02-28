@@ -18,6 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Transformalize.Actions;
@@ -219,5 +221,6 @@ namespace Transformalize.Providers.Elasticsearch {
          return fields;
       }
 
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }

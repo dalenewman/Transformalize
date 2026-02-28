@@ -15,8 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
+
 namespace Transformalize.Contracts {
     public interface IUpdate {
         void Update();
+        Task UpdateAsync(CancellationToken cancellationToken = default);
     }
 }

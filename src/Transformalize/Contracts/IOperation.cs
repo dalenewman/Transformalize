@@ -17,6 +17,7 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Transformalize.Contracts {
 
@@ -59,6 +60,11 @@ namespace Transformalize.Contracts {
         /// <param name="rows"></param>
         /// <returns></returns>
         IEnumerable<IRow> Operate(IEnumerable<IRow> rows);
+
+        /// <summary>
+        /// Async version of Operate for streaming pipelines. Default implementation wraps the sync per-row Operate.
+        /// </summary>
+        IAsyncEnumerable<IRow> OperateAsync(IAsyncEnumerable<IRow> rows, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// registers short-hand signature

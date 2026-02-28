@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
    <PropertyGroup>
       <TargetFramework>netstandard2.0</TargetFramework>
+      <LangVersion>latest</LangVersion>
       <RootNamespace>Transformalize</RootNamespace>
       <AssemblyName>Transformalize</AssemblyName>
       <Version>0.11.8</Version>
@@ -22,5 +23,6 @@
    <ItemGroup>
       <PackageReference Include="Cfg-NET" Version="0.15.0-beta" />
       <PackageReference Include="DateMath" Version="1.3.0" />
+      <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
    </ItemGroup>
 </Project>

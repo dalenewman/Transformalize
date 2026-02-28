@@ -17,6 +17,9 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -62,6 +65,18 @@ namespace Transformalize.Impl {
          if (_context.Process.Mode != "init") {
             _outputDeleter.Delete(DetermineDeletes());
          }
+      }
+
+      public async IAsyncEnumerable<IRow> DetermineDeletesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default) {
+         foreach (var row in DetermineDeletes()) {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return row;
+         }
+      }
+
+      public Task DeleteAsync(CancellationToken cancellationToken = default) {
+         Delete();
+         return Task.CompletedTask;
       }
 
       public void Register(ITransform transform) {

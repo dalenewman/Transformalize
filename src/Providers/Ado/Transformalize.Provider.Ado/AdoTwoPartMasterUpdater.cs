@@ -22,6 +22,8 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -146,6 +148,8 @@ namespace Transformalize.Providers.Ado {
             return sql;
 
         }
+
+        public Task UpdateAsync(CancellationToken cancellationToken = default) { Update(); return Task.CompletedTask; }
 
         private IEnumerable<ExpandoObject> Read(IDbConnection cn, string select) {
             using (var reader = cn.ExecuteReader(select, new { TflBatchId = _c.Entity.BatchId, MasterTflBatchId = _master.BatchId }, null, 0, CommandType.Text)) {

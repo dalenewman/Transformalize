@@ -18,6 +18,8 @@
 
 using System.Data;
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Actions;
 using Transformalize.Context;
@@ -69,5 +71,7 @@ AND m.{_model.Batch} > @Threshold;";
 
          return new ActionResponse(200, "Ok");
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }

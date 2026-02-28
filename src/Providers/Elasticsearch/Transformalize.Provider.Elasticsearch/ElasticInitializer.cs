@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 
+using System.Threading;
+using System.Threading.Tasks;
 using Elasticsearch.Net;
 using Newtonsoft.Json.Linq;
 using Transformalize.Actions;
@@ -55,5 +57,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          return response;
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }

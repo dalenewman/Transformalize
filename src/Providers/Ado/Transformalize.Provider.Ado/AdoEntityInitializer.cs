@@ -19,6 +19,8 @@
 using Dapper;
 using System.Data;
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -118,5 +120,7 @@ namespace Transformalize.Providers.Ado {
          }
          return new ActionResponse();
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }

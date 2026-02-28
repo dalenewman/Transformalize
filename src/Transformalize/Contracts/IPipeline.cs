@@ -17,6 +17,9 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Contracts {
     public interface IPipeline : IRead, IDisposable {
@@ -32,7 +35,12 @@ namespace Transformalize.Contracts {
         void Register(IEntityDeleteHandler deleteHandler);
         void Register(IOutputProvider output);
         void Register(IInputProvider input);
+        void Register(IOutputProviderAsync output);
+        void Register(IInputProviderAsync input);
         void Execute();
+        Task<ActionResponse> InitializeAsync(CancellationToken cancellationToken = default);
+        Task ExecuteAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<IRow> ReadAsync(CancellationToken cancellationToken = default);
 
         IContext Context { get; }
     }

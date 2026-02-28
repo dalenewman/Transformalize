@@ -19,6 +19,8 @@
 using System;
 using System.Data.Common;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -66,5 +68,7 @@ namespace Transformalize.Providers.Ado {
             }
          }
       }
+
+      public Task UpdateAsync(CancellationToken cancellationToken = default) { Update(); return Task.CompletedTask; }
    }
 }

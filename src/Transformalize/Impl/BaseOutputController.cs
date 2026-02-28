@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -68,6 +70,16 @@ namespace Transformalize.Impl {
       /// </summary>
       public virtual void End() {
          Context.Debug(() => "Ending");
+      }
+
+      public virtual Task<ActionResponse> InitializeAsync(CancellationToken cancellationToken = default) => Task.FromResult(Initialize());
+      public virtual Task StartAsync(CancellationToken cancellationToken = default) {
+         Start();
+         return Task.CompletedTask;
+      }
+      public virtual Task EndAsync(CancellationToken cancellationToken = default) {
+         End();
+         return Task.CompletedTask;
       }
    }
 }

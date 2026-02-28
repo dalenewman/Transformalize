@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -34,6 +36,11 @@ namespace Transformalize.Nulls {
         public void Update() {
             if (_log)
                 _context.Info("Null Updating...");
+        }
+
+        public Task UpdateAsync(CancellationToken cancellationToken = default) {
+            Update();
+            return Task.CompletedTask;
         }
     }
 }

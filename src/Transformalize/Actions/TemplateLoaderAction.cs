@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Cfg.Net.Contracts;
 using Cfg.Net.Loggers;
 using Transformalize.Contracts;
@@ -58,5 +60,7 @@ namespace Transformalize.Actions {
                 }
             };
         }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 }

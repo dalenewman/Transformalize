@@ -17,6 +17,9 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -26,8 +29,12 @@ namespace Transformalize.Nulls {
             return Enumerable.Empty<IRow>();
         }
 
-        public void Delete() {
+        public void Delete() { }
 
+        public async IAsyncEnumerable<IRow> DetermineDeletesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default) {
+            yield break;
         }
+
+        public Task DeleteAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
     }
 }

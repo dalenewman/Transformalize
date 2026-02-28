@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -35,6 +37,8 @@ namespace Transformalize.Impl {
       protected List<IMapReader> MapReaders { get; }
       protected IOutputProvider OutputProvider { get; private set; }
       protected IInputProvider InputProvider { get; private set; }
+      protected IOutputProviderAsync AsyncOutputProvider { get; private set; }
+      protected IInputProviderAsync AsyncInputProvider { get; private set; }
 
       public IContext Context { get; }
 
@@ -77,6 +81,20 @@ namespace Transformalize.Impl {
             Context.Debug(() => $"Registering {input.GetType().Name}.");
          }
          InputProvider = input;
+      }
+
+      public void Register(IOutputProviderAsync output) {
+         if (output != null) {
+            Context.Debug(() => $"Registering {output.GetType().Name}.");
+         }
+         AsyncOutputProvider = output;
+      }
+
+      public void Register(IInputProviderAsync input) {
+         if (input != null) {
+            Context.Debug(() => $"Registering {input.GetType().Name}.");
+         }
+         AsyncInputProvider = input;
       }
 
       public void Register(ITransform transform) {
@@ -154,6 +172,76 @@ namespace Transformalize.Impl {
          }
          Updater.Update();
          _controller.End();
+      }
+
+      public Task<ActionResponse> InitializeAsync(CancellationToken cancellationToken = default) {
+         return _controller.InitializeAsync(cancellationToken);
+      }
+
+      public virtual async IAsyncEnumerable<IRow> ReadAsync(
+            [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+         Context.Debug(() => $"Running {Transforms.Count} transforms.");
+         if (Context.Entity.NeedsUpdate(Context)) {
+            if (Context.Process.Mode != "init") {
+               if (Context.Entity.Version != string.Empty) {
+                  var version = Context.Entity.GetVersionField();
+                  if (version.Type == "byte[]") {
+                     var min = Context.Entity.MinVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' });
+                     var max = Context.Entity.MaxVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' });
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", max, min);
+                  } else {
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", Context.Entity.MaxVersion ?? "null", Context.Entity.MinVersion ?? "null");
+                  }
+               }
+            }
+
+            var data = GetInitialAsyncStream(cancellationToken);
+
+            if (Transforms.Any()) {
+               data = Transforms.Aggregate(data, (rows, t) => t.OperateAsync(rows, cancellationToken));
+            }
+
+            if (Validators.Any()) {
+               data = Validators.Aggregate(data, (rows, v) => v.OperateAsync(rows, cancellationToken));
+            }
+
+            await foreach (var row in data) {
+               cancellationToken.ThrowIfCancellationRequested();
+               yield return row;
+            }
+         } else {
+            Context.Info("Change Detected: No.");
+         }
+      }
+
+      public async Task ExecuteAsync(CancellationToken cancellationToken = default) {
+         if (AsyncOutputProvider != null) {
+            await _controller.StartAsync(cancellationToken).ConfigureAwait(false);
+            if (DeleteHandler != null) {
+               await DeleteHandler.DeleteAsync(cancellationToken).ConfigureAwait(false);
+            }
+            await AsyncOutputProvider.WriteAsync(ReadAsync(cancellationToken), cancellationToken).ConfigureAwait(false);
+            await Updater.UpdateAsync(cancellationToken).ConfigureAwait(false);
+            await _controller.EndAsync(cancellationToken).ConfigureAwait(false);
+         } else {
+            // No async provider registered; run the sync pipeline
+            await Task.Run(() => Execute(), cancellationToken).ConfigureAwait(false);
+         }
+      }
+
+      private IAsyncEnumerable<IRow> GetInitialAsyncStream(CancellationToken cancellationToken) {
+         if (AsyncInputProvider != null) return AsyncInputProvider.ReadAsync(cancellationToken);
+         if (Reader != null) return SyncToAsyncEnumerable(Reader.Read(), cancellationToken);
+         return SyncToAsyncEnumerable(InputProvider.Read(), cancellationToken);
+      }
+
+      private static async IAsyncEnumerable<IRow> SyncToAsyncEnumerable(
+            IEnumerable<IRow> rows,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+         foreach (var row in rows) {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return row;
+         }
       }
 
       /// <inheritdoc />

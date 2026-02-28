@@ -15,9 +15,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using System.Collections.Generic;
-using Transformalize.Contracts;
 using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
@@ -93,6 +96,24 @@ namespace Transformalize.Impl {
 
         public void Register(IValidate validator) {
             _pipeline.Register(validator);
+        }
+
+        public void Register(IOutputProviderAsync output) {
+            _pipeline.Register(output);
+        }
+
+        public void Register(IInputProviderAsync input) {
+            _pipeline.Register(input);
+        }
+
+        public Task<ActionResponse> InitializeAsync(CancellationToken cancellationToken = default) => _pipeline.InitializeAsync(cancellationToken);
+
+        public Task ExecuteAsync(CancellationToken cancellationToken = default) => _pipeline.ExecuteAsync(cancellationToken);
+
+        public async IAsyncEnumerable<IRow> ReadAsync([EnumeratorCancellation] CancellationToken cancellationToken = default) {
+            await foreach (var row in _pipeline.ReadAsync(cancellationToken)) {
+                yield return row;
+            }
         }
     }
 }

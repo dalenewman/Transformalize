@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -116,6 +118,7 @@ namespace Transformalize.Providers.Ado {
             return $"DELETE FROM {cf.Enclose(c.Entity.Name)} WHERE {criteria}{cf.Terminator}";
         }
 
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 
 }

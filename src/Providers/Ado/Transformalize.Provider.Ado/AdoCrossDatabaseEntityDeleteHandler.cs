@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -53,6 +56,9 @@ namespace Transformalize.Providers.Ado {
       /// </summary>
       /// <param name="context"></param>
       /// <returns></returns>
+      public async IAsyncEnumerable<IRow> DetermineDeletesAsync([EnumeratorCancellation] CancellationToken cancellationToken = default) { foreach (var row in DetermineDeletes()) { cancellationToken.ThrowIfCancellationRequested(); yield return row; } }
+      public Task DeleteAsync(CancellationToken cancellationToken = default) { Delete(); return Task.CompletedTask; }
+
       public static bool IsApplicable(Process process, Entity entity) {
 
          var input = process.Connections.FirstOrDefault(c => c.Name == entity.Input);
@@ -61,8 +67,8 @@ namespace Transformalize.Providers.Ado {
             return false;
          }
 
-         return input.Provider == output.Provider 
-                && input.Server == output.Server 
+         return input.Provider == output.Provider
+                && input.Server == output.Server
                 && entity.GetPrimaryKey().All(k=>k.Transforms.Count == 0)
                 && input.Provider == "sqlserver";  // only implemented for SQL Server to start
       }

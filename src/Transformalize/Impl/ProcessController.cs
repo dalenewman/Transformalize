@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Contracts;
 
@@ -50,6 +52,16 @@ namespace Transformalize.Impl {
          return true;
       }
 
+      private async Task<bool> PreExecuteAsync(CancellationToken cancellationToken) {
+         foreach (var action in PreActions) {
+            _context.Debug(() => $"Pre-Executing {action.GetType().Name}");
+            if (!MayContinue(await action.ExecuteAsync(cancellationToken).ConfigureAwait(false))) {
+               return false;
+            }
+         }
+         return true;
+      }
+
       public void Execute() {
          if (PreExecute()) {
             foreach (var entity in _pipelines) {
@@ -69,34 +81,37 @@ namespace Transformalize.Impl {
       }
 
 
-#if ASYNC
-      public async Task ExecuteAsync() {
-
-         Task task = Task.Run(() => Execute());
-         try {
-            await task.ConfigureAwait(false);
-         } catch (Exception ex) {
-            _context.Error(ex, ex.Message);
-            if (task != null && task.Exception != null) {
-               if (task.Exception.Message != ex.Message) {
-                  _context.Error(task.Exception, task.Exception.Message);
-               }
-               if (task.Exception.InnerException != null && task.Exception.InnerException.Message != task.Exception.Message && task.Exception.InnerException.Message != ex.Message) {
-                  _context.Error(task.Exception, task.Exception.InnerException.Message);
+      public async Task ExecuteAsync(CancellationToken cancellationToken = default) {
+         if (await PreExecuteAsync(cancellationToken).ConfigureAwait(false)) {
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Initializing {entity.GetType().Name}");
+               if (!MayContinue(await entity.InitializeAsync(cancellationToken).ConfigureAwait(false))) {
+                  return;
                }
             }
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Executing {entity.GetType().Name}");
+               await entity.ExecuteAsync(cancellationToken).ConfigureAwait(false);
+            }
+            await PostExecuteAsync(cancellationToken).ConfigureAwait(false);
+         } else {
+            _context.Error("Pre-Execute failed!");
          }
       }
-#else
-      public Task ExecuteAsync() {
-         throw new NotImplementedException("Must be using .NET 4.6.2 or .NET Standard 2.0 library for this method to work");
-      }
-#endif
 
       private void PostExecute() {
          foreach (var action in PostActions) {
             _context.Debug(() => $"Post-Executing {action.GetType().Name}");
             if (!MayContinue(action.Execute())) {
+               return;
+            }
+         }
+      }
+
+      private async Task PostExecuteAsync(CancellationToken cancellationToken) {
+         foreach (var action in PostActions) {
+            _context.Debug(() => $"Post-Executing {action.GetType().Name}");
+            if (!MayContinue(await action.ExecuteAsync(cancellationToken).ConfigureAwait(false))) {
                return;
             }
          }
@@ -147,6 +162,15 @@ namespace Transformalize.Impl {
                yield return row;
             }
          };
+      }
+
+      public async IAsyncEnumerable<IRow> ReadAsync(
+            [EnumeratorCancellation] CancellationToken cancellationToken = default) {
+         foreach (var pl in _pipelines) {
+            await foreach (var row in pl.ReadAsync(cancellationToken)) {
+               yield return row;
+            }
+         }
       }
 
       public void Dispose() {

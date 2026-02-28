@@ -17,6 +17,8 @@
 #endregion
 
 using System.Data.Common;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Actions;
 using Transformalize.Context;
@@ -53,5 +55,7 @@ namespace Transformalize.Providers.Ado {
             }
             return new ActionResponse();
         }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 }

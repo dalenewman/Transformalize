@@ -22,6 +22,8 @@ using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -89,6 +91,8 @@ namespace Transformalize.Providers.Ado {
 
          return new ActionResponse(200, "Ok");
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
 
       private static IEnumerable<ExpandoObject> Read(IDbConnection cn, string sql, AdoSqlModel model) {
 

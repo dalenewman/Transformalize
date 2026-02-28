@@ -15,6 +15,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -39,5 +41,7 @@ namespace Transformalize.Providers.Console {
             }
             return new ActionResponse(200, _action.Message) { Action = _action };
         }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 }

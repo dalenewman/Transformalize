@@ -1,4 +1,6 @@
 ﻿using Humanizer;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
 
@@ -31,5 +33,7 @@ namespace Transformalize.Transforms.Humanizer.Actions {
 
          return new ActionResponse(200) { Action = _action };
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }

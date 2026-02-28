@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
@@ -94,5 +96,7 @@ namespace Transformalize.Providers.Ado.Actions {
             }
             return response;
         }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
     }
 }

@@ -18,6 +18,8 @@
 
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -140,5 +142,7 @@ namespace Transformalize.Providers.Ado {
             }
          }
       }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken cancellationToken = default) => Task.FromResult(Execute());
    }
 }
