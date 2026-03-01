@@ -158,6 +158,10 @@ namespace Transformalize.Containers.Autofac {
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
 
+               // async providers (Phase 2)
+               pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProviderAsync)) ? ctx.ResolveNamed<IInputProviderAsync>(entity.Key) : null);
+               pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProviderAsync)) ? ctx.ResolveNamed<IOutputProviderAsync>(entity.Key) : null);
+
                // updater
                pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));
 

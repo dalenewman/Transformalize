@@ -31,7 +31,7 @@ using Transformalize.Transforms.Jint.Autofac;
 namespace Test.Unit.SqlServer {
 
    [TestClass]
-   public class NorthWindIntegrationSqlServer {
+   public class NorthWindAsync {
 
       public string TestFile { get; set; } = $@"files/NorthWind.xml?Server={Tester.Server},{Tester.Port}&User={Tester.User}&Pw={Tester.Pw}";
 
@@ -48,30 +48,17 @@ namespace Test.Unit.SqlServer {
       };
 
       [TestMethod]
-      //[Ignore]
-      public void SqlServer_Integration() {
+      public async Task SqlServer_Integration() {
 
          // Northwind database is automatically initialized by TestContainers
-         var logger = new ConsoleLogger();
-
-         // CORRECT DATA AND INITIAL LOAD
-         // using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
-         //    cn.Open();
-         //    Assert.AreEqual(5, cn.Execute(@"
-         //       UPDATE [Order Details] SET UnitPrice = 14.40, Quantity = 42 WHERE OrderId = 10253 AND ProductId = 39;
-         //       UPDATE Orders SET CustomerID = 'CHOPS', Freight = 22.98 WHERE OrderId = 10254;
-         //       UPDATE Customers SET ContactName = 'Palle Ibsen' WHERE CustomerID = 'VAFFE';
-         //       UPDATE Suppliers SET Region = '' WHERE SupplierID = 10;
-         //       UPDATE [Order Details] SET Quantity = 5 WHERE OrderId = 10568 AND ProductID = 10;
-         //    "));
-         // }
+         var logger = new ConsoleLogger(LogLevel.Debug);
 
          // RUN INIT AND TEST
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile + "&Mode=init", logger: logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -88,7 +75,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -103,7 +90,7 @@ namespace Test.Unit.SqlServer {
          using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
             const string sql = @"UPDATE [Order Details] SET UnitPrice = 15, Quantity = 40 WHERE OrderId = 10253 AND ProductId = 39;";
-            Assert.AreEqual(1, cn.Execute(sql));
+            Assert.AreEqual(1, await cn.ExecuteAsync(sql));
          }
 
          // RUN AND CHECK
@@ -111,7 +98,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -130,14 +117,14 @@ namespace Test.Unit.SqlServer {
          // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
          using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
-            Assert.AreEqual(1, cn.Execute("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
+            Assert.AreEqual(1, await cn.ExecuteAsync("UPDATE Orders SET CustomerID = 'VICTE', Freight = 20.11 WHERE OrderId = 10254;"));
          }
 
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -157,14 +144,14 @@ namespace Test.Unit.SqlServer {
          // CHANGE A CUSTOMER'S CONTACT NAME FROM Palle Ibsen TO Paul Ibsen
          using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
-            Assert.AreEqual(1, cn.Execute("UPDATE Customers SET ContactName = 'Paul Ibsen' WHERE CustomerID = 'VAFFE';"));
+            Assert.AreEqual(1, await cn.ExecuteAsync("UPDATE Customers SET ContactName = 'Paul Ibsen' WHERE CustomerID = 'VAFFE';"));
          }
 
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -183,15 +170,15 @@ namespace Test.Unit.SqlServer {
          // CHANGE A SUPPLIER REGION WHICH SHOULD AFFECT 51 RECORDS AND ALSO 1 ORDER DETAIL RECORD
          using (var cn = new SqlServerConnectionFactory(InputConnection).GetConnection()) {
             cn.Open();
-            Assert.AreEqual(1, cn.Execute("UPDATE Suppliers SET Region = 'BSH' WHERE SupplierID = 10;"));
-            Assert.AreEqual(1, cn.Execute("UPDATE [Order Details] SET Quantity = 6 WHERE OrderId = 10568 AND ProductID = 10;"));
+            Assert.AreEqual(1, await cn.ExecuteAsync("UPDATE Suppliers SET Region = 'BSH' WHERE SupplierID = 10;"));
+            Assert.AreEqual(1, await cn.ExecuteAsync("UPDATE [Order Details] SET Quantity = 6 WHERE OrderId = 10568 AND ProductID = 10;"));
          }
 
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope(TestFile, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -209,5 +196,6 @@ namespace Test.Unit.SqlServer {
          }
 
       }
+      
    }
 }

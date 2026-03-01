@@ -87,6 +87,13 @@ namespace Transformalize.Providers.MySql.Autofac {
                return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
             }).Named<IInputProvider>(entity.Key);
 
+            // ASYNC INPUT PROVIDER
+            builder.Register<IInputProviderAsync>(ctx => {
+               var input = ctx.ResolveNamed<InputContext>(entity.Key);
+               var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
+               return new AdoAsyncInputProvider(input, input.InputFields, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key), rowFactory);
+            }).Named<IInputProviderAsync>(entity.Key);
+
          }
 
          // entity output
@@ -151,6 +158,15 @@ namespace Transformalize.Providers.MySql.Autofac {
 
                   return new AdoOutputProvider(output, cf, writer);
                }).Named<IOutputProvider>(entity.Key);
+
+               // ASYNC OUTPUT PROVIDER
+               builder.Register<IOutputProviderAsync>(ctx => {
+                  var output = ctx.ResolveNamed<OutputContext>(entity.Key);
+                  var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
+                  var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
+                  var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
+                  return new AdoAsyncOutputProvider(output, cf, matcher);
+               }).Named<IOutputProviderAsync>(entity.Key);
 
                // ENTITY OUTPUT CONTROLLER
                builder.Register<IOutputController>(ctx => {
