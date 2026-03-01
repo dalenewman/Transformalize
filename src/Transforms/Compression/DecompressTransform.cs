@@ -55,7 +55,12 @@ namespace Transformalize.Transforms.Compression {
 
                 memoryStream.Position = 0;
                 using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Decompress)) {
-                    gZipStream.Read(buffer, 0, buffer.Length);
+                    var totalRead = 0;
+                    while (totalRead < buffer.Length) {
+                        var bytesRead = gZipStream.Read(buffer, totalRead, buffer.Length - totalRead);
+                        if (bytesRead == 0) break;
+                        totalRead += bytesRead;
+                    }
                 }
 
                 return Encoding.UTF8.GetString(buffer);
