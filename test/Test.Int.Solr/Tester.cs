@@ -64,9 +64,9 @@ namespace IntegrationTests {
 
          _solrContainer = new ContainerBuilder()
              .WithImage($"solr:{SolrVersion}")
-             .WithPortBinding(0, 8983) // Random host port to container 8983
-             .WithBindMount(_hostDataDir!, "/var/solr/data") // Standard Solr data location
-             .WithEnvironment("SOLR_HOME", "/var/solr/data")
+             .WithPortBinding(8983, true)
+             .WithBindMount(_hostDataDir!, _hostDataDir!) // Same path on host and container
+             .WithEnvironment("SOLR_HOME", _hostDataDir!)
              .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8983))
              .WithCleanUp(true)
              .Build();
