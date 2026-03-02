@@ -35,14 +35,28 @@ namespace Transformalize.Providers.SqlServer.Autofac {
 
       private const string SqlServer = "sqlserver";
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SqlServerModule"/> class.
+      /// </summary>
       public SqlServerModule() { }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="SqlServerModule"/> class with a specific process.
+      /// </summary>
+      /// <param name="process">The process being executed.</param>
       public SqlServerModule(Process process) {
          _process = process;
       }
 
+      /// <summary>
+      /// Gets or sets an optional factory function for creating connection factories.
+      /// </summary>
       public Func<Connection,IConnectionFactory> ConnectionFactory { get; set; }
 
+      /// <summary>
+      /// Configures the Autofac container with SQL Server-specific components (readers, writers, controllers).
+      /// </summary>
+      /// <param name="builder">The container builder.</param>
       protected override void Load(ContainerBuilder builder) {
 
          if (_process == null && !builder.Properties.ContainsKey("Process")) {
@@ -54,14 +68,14 @@ namespace Transformalize.Providers.SqlServer.Autofac {
          // connections
          foreach (var connection in process.Connections.Where(c => c.Provider == SqlServer)) {
 
-            // Connection Factory
+            // Connection Factory: Manages creating and opening SQL connections.
             if(ConnectionFactory == null) {
                builder.Register<IConnectionFactory>(ctx => new SqlServerConnectionFactory(connection)).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
             } else {
                builder.Register(ctx => ConnectionFactory(connection)).Named<IConnectionFactory>(connection.Key).InstancePerLifetimeScope();
             }            
 
-            // Schema Reader
+            // Schema Reader: Inspects SQL Server schema to discover table structures.
             builder.Register<ISchemaReader>(ctx => {
                var factory = ctx.ResolveNamed<IConnectionFactory>(connection.Key);
                return new AdoSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), factory);
@@ -72,7 +86,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
          // entitiy input
          foreach (var entity in process.Entities.Where(e => process.Connections.First(c => c.Name == e.Input).Provider == SqlServer)) {
 
-            // INPUT READER
+            // INPUT READER: Reads raw data from SQL Server using ADO.NET.
             builder.Register<IRead>(ctx => {
                var input = ctx.ResolveNamed<InputContext>(entity.Key);
                var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
@@ -84,7 +98,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                );
             }).Named<IRead>(entity.Key);
 
-            // INPUT VERSION DETECTOR
+            // INPUT VERSION DETECTOR: Detects the max version of data in the input to support incremental loads.
             builder.Register<IInputProvider>(ctx => {
                var input = ctx.ResolveNamed<InputContext>(entity.Key);
                return new AdoInputProvider(input, ctx.ResolveNamed<IConnectionFactory>(input.Connection.Key));
@@ -97,7 +111,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
 
             var calc = process.ToCalculatedFieldsProcess();
 
-            // PROCESS OUTPUT CONTROLLER
+            // PROCESS OUTPUT CONTROLLER: Manages high-level output actions like creating star schema views or flattened tables.
             builder.Register<IOutputController>(ctx => {
                var output = ctx.Resolve<OutputContext>();
                if (process.Mode != "init")
@@ -110,7 +124,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                return new AdoStarController(output, actions);
             }).As<IOutputController>();
 
-            // PROCESS CALCULATED READER
+            // PROCESS CALCULATED READER: Reads data from the output table specifically for resolving process-level calculated fields.
             builder.Register<IRead>(ctx => {
                var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
                var outputContext = new OutputContext(calcContext);
@@ -120,7 +134,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                return new AdoStarParametersReader(outputContext, process, cf, rowFactory);
             }).As<IRead>();
 
-            // PROCESS CALCULATED FIELD WRITER
+            // PROCESS CALCULATED FIELD WRITER: Updates the output table with values for process-level calculated fields.
             builder.Register<IWrite>(ctx => {
                var calcContext = new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, calc.Entities.First());
                var outputContext = new OutputContext(calcContext);
@@ -128,7 +142,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                return new AdoCalculatedFieldUpdater(outputContext, process, cf);
             }).As<IWrite>();
 
-            // PROCESS INITIALIZER
+            // PROCESS INITIALIZER: Handles initialization of the output database/schema (e.g., creating the output tables).
             builder.Register<IInitializer>(ctx => {
                var output = ctx.Resolve<OutputContext>();
                return new AdoInitializer(output, ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key));
@@ -137,12 +151,13 @@ namespace Transformalize.Providers.SqlServer.Autofac {
             // ENTITIES
             foreach (var entity in process.Entities) {
 
+               // OUTPUT PROVIDER: Orchestrates writing data to the output, including change detection (matching keys).
                builder.Register<IOutputProvider>(ctx => {
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   var cf = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
                   var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", output.GetAllEntityFields().Count()));
 
-                  // matcher determines what's an update vs. and insert
+                  // matcher determines what's an update vs. and insert by reading existing keys/hashes from the output.
                   var matcher = entity.Update ? (IBatchReader)new AdoEntityMatchingKeysReader(output, cf, rowFactory) : new NullBatchReader();
 
                   var writer = new SqlServerWriter(
@@ -155,7 +170,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                   return new AdoOutputProvider(output, cf, writer);
                }).Named<IOutputProvider>(entity.Key);
 
-               // ENTITY OUTPUT CONTROLLER
+               // ENTITY OUTPUT CONTROLLER: Handles per-entity output initialization and management.
                builder.Register<IOutputController>(ctx => {
 
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
@@ -171,14 +186,14 @@ namespace Transformalize.Providers.SqlServer.Autofac {
 
                }).Named<IOutputController>(entity.Key);
 
-               // MASTER UPDATE QUERY
+               // MASTER UPDATE QUERY: Generates the SQL for updating the master output table when an entity changes.
                builder.Register<IWriteMasterUpdateQuery>(ctx => {
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   var factory = ctx.ResolveNamed<IConnectionFactory>(output.Connection.Key);
                   return new AdoUpdateMasterKeysQueryWriter(output, factory);
                }).Named<IWriteMasterUpdateQuery>(entity.Key + "MasterKeys");
 
-               // MASTER UPDATER
+               // MASTER UPDATER: Performs the update of the master output table.
                builder.Register<IUpdate>(ctx => {
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   return new AdoMasterUpdater(
@@ -188,8 +203,9 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                   );
                }).Named<IUpdate>(entity.Key);
 
-               // DELETE HANDLER
+               // DELETE HANDLER: Identifies and removes records from the output that are no longer present in the source.
                if (entity.Delete) {
+                  // ... rest of delete handling logic ...
 
                   if (AdoCrossDatabaseEntityDeleteHandler.IsApplicable(process, entity)){
 
@@ -253,7 +269,7 @@ namespace Transformalize.Providers.SqlServer.Autofac {
                         // feels a lot like entity pipeline on just the primary keys... may look at consolidating
                         handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
                         handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
-                        handler.Register(new StringTruncateTransfom(context, primaryKey));
+                        handler.Register(new StringTruncateTransform(context, primaryKey));
 
                         return handler;
                      }).Named<IEntityDeleteHandler>(entity.Key);

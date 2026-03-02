@@ -40,20 +40,42 @@ namespace Transformalize.Containers.Autofac {
       private readonly List<TransformHolder> _transforms = new List<TransformHolder>();
       private readonly List<ValidatorHolder> _validators = new List<ValidatorHolder>();
 
+      /// <summary>
+      /// Initializes a new instance of the execution <see cref="Container"/> class with modules.
+      /// </summary>
+      /// <param name="modules">Autofac modules providing provider-specific implementations.</param>
       public Container(params IModule[] modules) {
          _modules.AddRange(modules);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the execution <see cref="Container"/> class with custom transforms.
+      /// </summary>
+      /// <param name="transforms">Custom transforms to register.</param>
       public Container(params TransformHolder[] transforms) {
          _transforms.AddRange(transforms);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the execution <see cref="Container"/> class with custom validators.
+      /// </summary>
+      /// <param name="validators">Custom validators to register.</param>
       public Container(params ValidatorHolder[] validators) {
          _validators.AddRange(validators);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the execution <see cref="Container"/> class.
+      /// </summary>
       public Container() { }
 
+      /// <summary>
+      /// Creates an Autofac lifetime scope configured for execution of the specified process.
+      /// This includes registering contexts, entity pipelines, and the process controller.
+      /// </summary>
+      /// <param name="process">The hydrated and validated process to execute.</param>
+      /// <param name="logger">The pipeline logger.</param>
+      /// <returns>An Autofac <see cref="ILifetimeScope"/> containing the executable components.</returns>
       public ILifetimeScope CreateScope(Process process, IPipelineLogger logger) {
 
          var builder = new ContainerBuilder();
@@ -132,7 +154,7 @@ namespace Transformalize.Containers.Autofac {
 
          }
 
-         // entity pipelines
+         // entity pipelines are where the data transformation logic resides
          foreach (var entity in process.Entities) {
             builder.Register(ctx => {
 
@@ -140,25 +162,35 @@ namespace Transformalize.Containers.Autofac {
                var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                var pipeline = new DefaultPipeline(outputController, context);
 
+               // Inputs: Providers like SqlServer register their readers with the entity key.
                // TODO: rely on IInputProvider's Read method instead (after every provider has one)
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
-               // operations (transforms and validators)
+               // System Transforms:
+               // Increment: Tracks row number.
                pipeline.Register(new IncrementTransform(context));
+               // Default: Applies default field values if they are missing.
                pipeline.Register(new DefaultTransform(context, context.GetAllEntityFields().Where(f => !f.System)));
+               // Hashcode: Calculates a deterministic hash of fields to detect changes.
                pipeline.Register(new SystemHashcodeTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+               // User-defined Transforms: Resolved from the shorthand expansion.
                pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.GetAllFields().Where(f => f.Transforms.Any())));
+               // System Fields: Adds tfl-prefixed management fields like TflKey, TflDeleted, and TflBatchId.
                pipeline.Register(new SystemFieldsTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+               // Validators: Resolved from shorthand expansion.
                pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
-               pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+               // Truncate: Ensures string fields don't exceed their defined length.
+               pipeline.Register(new StringTruncateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), process, entity)));
+               // Log: Allows logging specific row data if configured.
                pipeline.Register(new LogTransform(context));
 
-               // writer, TODO: rely on IOutputProvider instead
+               // Output: Providers like SqlServer register their writers with the entity key.
+               // writer, TODO: rely on IOutputProvider instead (after every provider has one)
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
 
-               // updater
+               // Updater: Handles updating records in the output based on change detection.
                pipeline.Register(process.ReadOnly || !ctx.IsRegisteredWithName(entity.Key, typeof(IUpdate)) ? new NullUpdater() : ctx.ResolveNamed<IUpdate>(entity.Key));
 
                return pipeline;
@@ -194,7 +226,7 @@ namespace Transformalize.Containers.Autofac {
             pipeline.Register(new DefaultTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity), entity.CalculatedFields));
             pipeline.Register(TransformFactory.GetTransforms(ctx, context, entity.CalculatedFields));
             pipeline.Register(ValidateFactory.GetValidators(ctx, context, entity.GetAllFields().Where(f => f.Validators.Any())));
-            pipeline.Register(new StringTruncateTransfom(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
+            pipeline.Register(new StringTruncateTransform(new PipelineContext(ctx.Resolve<IPipelineLogger>(), calc, entity)));
 
             // register input and output
             pipeline.Register(ctx.IsRegistered<IRead>() ? ctx.Resolve<IRead>() : new NullReader(context));
@@ -264,12 +296,28 @@ namespace Transformalize.Containers.Autofac {
 
       }
 
+      /// <summary>
+      /// Manually adds a validator and its shorthand signatures to the execution container.
+      /// </summary>
+      /// <param name="getValidator">A factory function to create the validator.</param>
+      /// <param name="signatures">The shorthand signatures for the validator.</param>
       public void AddValidator(Func<IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
          _validators.Add(new ValidatorHolder(getValidator, signatures));
       }
+
+      /// <summary>
+      /// Manually adds a transform and its shorthand signatures to the execution container.
+      /// </summary>
+      /// <param name="getTransform">A factory function to create the transform.</param>
+      /// <param name="signatures">The shorthand signatures for the transform.</param>
       public void AddTransform(Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
          _transforms.Add(new TransformHolder(getTransform, signatures));
       }
+
+      /// <summary>
+      /// Registers an Autofac module that will be included in the execution scope.
+      /// </summary>
+      /// <param name="module">The module to add.</param>
       public void AddModule(IModule module) {
          _modules.Add(module);
       }

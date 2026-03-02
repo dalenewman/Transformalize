@@ -1,0 +1,204 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+     <RootNamespace>Transformalize.Providers.Solr</RootNamespace>
+     <AssemblyName>Transformalize.Provider.Solr</AssemblyName>
+     <Version>0.10.5-beta</Version>
+     <FileVersion>0.10.5</FileVersion>
+     <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+
+   <ItemGroup>
+      <PackageReference Include="SolrNet.Core" Version="1.1.1" />
+      <ProjectReference Include="../../../Transformalize/Transformalize.csproj" />
+   </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="files\solr\conf\currency.xml" />
+    <None Remove="files\solr\conf\lang\contractions_ca.txt" />
+    <None Remove="files\solr\conf\lang\contractions_fr.txt" />
+    <None Remove="files\solr\conf\lang\contractions_ga.txt" />
+    <None Remove="files\solr\conf\lang\contractions_it.txt" />
+    <None Remove="files\solr\conf\lang\hyphenations_ga.txt" />
+    <None Remove="files\solr\conf\lang\stemdict_nl.txt" />
+    <None Remove="files\solr\conf\lang\stoptags_ja.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ar.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_bg.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ca.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_cz.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_da.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_de.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_el.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_en.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_es.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_eu.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_fa.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_fi.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_fr.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ga.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_gl.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_hi.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_hu.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_hy.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_id.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_it.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ja.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_lv.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_nl.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_no.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_pt.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ro.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_ru.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_sv.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_th.txt" />
+    <None Remove="files\solr\conf\lang\stopwords_tr.txt" />
+    <None Remove="files\solr\conf\lang\userdict_ja.txt" />
+    <None Remove="files\solr\conf\protwords.txt" />
+    <None Remove="files\solr\conf\stopwords.txt" />
+    <None Remove="files\solr\conf\synonyms.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="files\solr\conf\currency.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\contractions_ca.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\contractions_fr.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\contractions_ga.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\contractions_it.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\hyphenations_ga.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stemdict_nl.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stoptags_ja.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ar.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_bg.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ca.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_cz.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_da.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_de.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_el.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_es.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_eu.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_fa.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_fi.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_fr.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ga.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_gl.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_hi.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_hu.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_hy.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_id.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_it.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ja.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_lv.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_nl.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_no.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_pt.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ro.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_ru.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_sv.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_th.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\stopwords_tr.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\lang\userdict_ja.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\protwords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\stopwords.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\solr\conf\synonyms.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="files\solr\data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files\solr\schema.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="files\solr\solrconfig.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

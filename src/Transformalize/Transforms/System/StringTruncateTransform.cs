@@ -23,10 +23,10 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Transforms.System {
-   public class StringTruncateTransfom : BaseTransform {
+   public class StringTruncateTransform : BaseTransform {
       private readonly StringLength[] _strings;
 
-      public StringTruncateTransfom(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
+      public StringTruncateTransform(IContext context, IEnumerable<Field> fields = null) : base(context, "string") {
          if (Context.Process.ReadOnly) {
             Run = false;
             return;

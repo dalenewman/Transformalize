@@ -234,7 +234,7 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                      // feels a lot like entity pipeline on just the primary keys... may look at consolidating
                      handler.Register(new DefaultTransform(context, entity.GetPrimaryKey().ToArray()));
                      handler.Register(TransformFactory.GetTransforms(ctx, context, primaryKey));
-                     handler.Register(new StringTruncateTransfom(context, primaryKey));
+                     handler.Register(new StringTruncateTransform(context, primaryKey));
 
                      return handler;
                   }).Named<IEntityDeleteHandler>(entity.Key);

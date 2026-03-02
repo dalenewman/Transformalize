@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+     <RootNamespace>Transformalize.Providers.Solr.Autofac</RootNamespace>
+     <AssemblyName>Transformalize.Provider.Solr.Autofac</AssemblyName>
+     <Version>0.10.5-beta</Version>
+     <FileVersion>0.10.5</FileVersion>
+     <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RazorEngineCore" Version="2022.1.2" />
+    <ProjectReference Include="../../../Containers/Autofac/Autofac.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformalize.Provider.Solr\Transformalize.Provider.Solr.csproj" />
+  </ItemGroup>
+
+</Project>
