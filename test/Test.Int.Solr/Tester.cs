@@ -20,7 +20,7 @@ namespace IntegrationTests {
          // Using the system temp path for cross-platform compatibility
          _hostDataDir = Path.Combine(Path.GetTempPath(), "tfl-solr-" + Guid.NewGuid().ToString("N"));
          Directory.CreateDirectory(_hostDataDir);
-         
+
          // Write a basic solr.xml
          File.WriteAllText(Path.Combine(_hostDataDir, "solr.xml"), @"<solr>
   <int name='coreLoadThreads'>${solr.coreLoadThreads:3}</int>
@@ -31,7 +31,14 @@ namespace IntegrationTests {
   </shardHandlerFactory>
 </solr>");
 
-         // On Linux/CI, we must ensure the container's solr user (UID 8983) can read/write the mounted directory.
+         // Pre-create core directories so SolrInitializer skips creating them.
+         // On Linux, the Solr container user (UID 8983) must be able to write core.properties
+         // into these directories. We set them to 777 so the container user can write there
+         // even though the directories are owned by the host runner user.
+         foreach (var core in new[] { "bogus", "dates" }) {
+            Directory.CreateDirectory(Path.Combine(_hostDataDir, core));
+         }
+
          if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             try {
                var process = Process.Start("chmod", $"-R 777 {_hostDataDir}");
@@ -42,7 +49,7 @@ namespace IntegrationTests {
                Console.WriteLine($"Warning: Failed to set permissions on {_hostDataDir}: {ex.Message}");
             }
          }
-         
+
          await StartSolrContainer();
       }
 
@@ -67,7 +74,8 @@ namespace IntegrationTests {
              .WithPortBinding(8983, true)
              .WithBindMount(_hostDataDir!, _hostDataDir!) // Same path on host and container
              .WithEnvironment("SOLR_HOME", _hostDataDir!)
-             .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8983))
+             .WithWaitStrategy(Wait.ForUnixContainer()
+                 .UntilHttpRequestIsSucceeded(r => r.ForPath("/solr/admin/cores").ForPort(8983)))
              .WithCleanUp(true)
              .Build();
 
