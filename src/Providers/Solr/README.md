@@ -11,7 +11,7 @@ This adds a `Solr` provider to Transformalize using [SolrNet](https://github.com
     <add name='output' 
          provider='solr' 
          core='bogus' 
-         folder='c:\temp\mysolrhome' 
+         folder='solr-home-path' 
          path='solr' 
          port='8983' 
          version='7.7.3' 
@@ -38,7 +38,7 @@ This writes 1000 rows of bogus data to Solr.
 ```xml
 <add name='TestProcess' >
   <connections>
-    <add name='input' provider='solr' core='bogus' folder='c:\temp\mysolrhome' path='solr' port='8983' />
+    <add name='input' provider='solr' core='bogus' folder='solr-home-path' path='solr' port='8983' />
   </connections>
   <entities>
     <add name='Contact' page='1' size='10'>
@@ -76,14 +76,3 @@ Or you could just look at it in SOLR admin:
 
 - Only tested with Solr 7.7.3 (using Docker) so far.
 - Field names go into Solr as lower case.
-
-### ☀️ SOLR Docker Commands
-
-```
-# windows
-docker run -p 8983:8983 -v %cd%/mysolrhome:/mysolrhome -e SOLR_HOME=/mysolrhome -e INIT_SOLR_HOME=yes -t solr:7.7.3
-# linux
-docker run -p 8983:8983 -v $PWD/mysolrhome:/mysolrhome -e SOLR_HOME=/mysolrhome -e INIT_SOLR_HOME=yes -t solr:7.7.3
-```
-
-**Note**: I ran ☝️ from _c:\temp_ on Windows which is why `folder` is set to _c:\temp\mysolrhome_ above.

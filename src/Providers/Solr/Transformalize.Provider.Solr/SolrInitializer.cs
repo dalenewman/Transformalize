@@ -73,7 +73,7 @@ namespace Transformalize.Providers.Solr {
          }
 
          // https://stackoverflow.com/questions/58744/copy-the-entire-contents-of-a-directory-in-c-sharp
-         var sourceFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files\\solr"));
+         var sourceFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files", "solr"));
 
          try {
             foreach (var d in Directory.GetDirectories(sourceFolder.FullName, "*", SearchOption.AllDirectories)) {

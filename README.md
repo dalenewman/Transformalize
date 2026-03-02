@@ -46,8 +46,8 @@ The supported inputs and outputs are below.
                             <td>In/Out</td>
                         </tr>
                         <tr>
-                            <td> </td>
-                            <td> </td>
+                            <td> &nbsp;</td>
+                            <td> &nbsp;</td>
                         </tr>
                     </tbody>
                 </table>
