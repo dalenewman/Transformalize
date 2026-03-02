@@ -1,0 +1,24 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <IsPackable>false</IsPackable>
+    <Version>0.10.5-beta</Version>
+    <FileVersion>0.10.5</FileVersion>
+    <AssemblyVersion>0.10.5</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console/Console.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Solr/Transformalize.Provider.Solr.Autofac/Transformalize.Provider.Solr.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>

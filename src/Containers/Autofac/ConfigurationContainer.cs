@@ -45,27 +45,47 @@ namespace Transformalize.Containers.Autofac {
       private readonly List<ValidatorHolder> _validators = new List<ValidatorHolder>();
       private readonly List<IDependency> _dependencies = new List<IDependency>();
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class.
+      /// </summary>
       public ConfigurationContainer() { }
 
       /// <summary>
-      /// for registering modules that require short-hand (i.e. transforms and validators)
-      /// that are not in the plugins folder.
+      /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class with modules.
+      /// These modules are used to register shorthand (e.g., transforms and validators) that are not in the plugins folder.
       /// </summary>
-      /// <param name="args"></param>
+      /// <param name="args">The modules to register.</param>
       public ConfigurationContainer(params IModule[] args) {
          _modules.AddRange(args);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class with custom transforms.
+      /// </summary>
+      /// <param name="transforms">The transforms to register.</param>
       public ConfigurationContainer(params TransformHolder[] transforms) {
          _transforms.AddRange(transforms);
       }
 
+      /// <summary>
+      /// Initializes a new instance of the <see cref="ConfigurationContainer"/> class with custom validators.
+      /// </summary>
+      /// <param name="validators">The validators to register.</param>
       public ConfigurationContainer(params ValidatorHolder[] validators) {
          _validators.AddRange(validators);
       }
 
       private readonly HashSet<string> _methods = new HashSet<string>();
       private readonly ShorthandRoot _shortHand = new ShorthandRoot();
+
+      /// <summary>
+      /// Creates an Autofac lifetime scope for a configuration string, resolving shorthand and parameters.
+      /// </summary>
+      /// <param name="cfg">The raw configuration string (XML, JSON, etc.).</param>
+      /// <param name="logger">The pipeline logger.</param>
+      /// <param name="parameters">Optional parameters for environment/placeholder replacement.</param>
+      /// <param name="placeHolderStyle">The style of placeholders, default is @[]. Must be three characters.</param>
+      /// <returns>An Autofac <see cref="ILifetimeScope"/> containing the processed <see cref="Process"/>.</returns>
       public ILifetimeScope CreateScope(string cfg, IPipelineLogger logger, IDictionary<string, string> parameters = null, string placeHolderStyle = "@[]") {
 
          if (placeHolderStyle == null || placeHolderStyle.Length != 3) {
@@ -81,25 +101,30 @@ namespace Transformalize.Containers.Autofac {
          builder.Register((ctx) => logger).As<IPipelineLogger>();
          builder.Register<IReader>(c => new DefaultReader(new FileReader(), new WebReader())).As<IReader>();
 
-         // register short-hand for t attribute
+         // register shorthand for the "t" (transform) attribute. 
+         // This expands shorthand like t="copy" into the full Transform object.
          var transformModule = new TransformModule(new Process { Name = "TransformShorthand" }, _methods, _shortHand, logger);
          foreach (var t in _transforms) {
             transformModule.AddTransform(t);
          }
          builder.RegisterModule(transformModule);
 
-         // register short-hand for v attribute
+         // register shorthand for the "v" (validate) attribute.
+         // This expands shorthand like v="required" into the full Validate object.
          var validateModule = new ValidateModule(new Process { Name = "ValidateShorthand" }, _methods, _shortHand, logger);
          foreach (var v in _validators) {
             validateModule.AddValidator(v);
          }
          builder.RegisterModule(validateModule);
 
-         // register the validator short hand
+         // Shorthand customizers are responsible for scanning the configuration and 
+         // expanding shorthand attributes before the configuration is fully loaded by Cfg-Net.
+         
+         // register the validator shorthand
          builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(ValidateModule.FieldsName).InstancePerLifetimeScope();
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(ValidateModule.FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "v", "validators", "method")).Named<IDependency>(ValidateModule.FieldsName).InstancePerLifetimeScope();
 
-         // register the transform short hand
+         // register the transform shorthand for both fields and parameters
          builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(TransformModule.FieldsName).InstancePerLifetimeScope();
          builder.Register((c, p) => _shortHand).Named<ShorthandRoot>(TransformModule.ParametersName).InstancePerLifetimeScope();
          builder.Register((c, p) => new ShorthandCustomizer(c.ResolveNamed<ShorthandRoot>(TransformModule.FieldsName), new[] { "fields", "calculated-fields", "calculatedfields" }, "t", "transforms", "method")).Named<IDependency>(TransformModule.FieldsName).InstancePerLifetimeScope();
@@ -118,8 +143,11 @@ namespace Transformalize.Containers.Autofac {
 
          builder.Register(ctx => {
 
+            // If any parameters have transforms, they must be resolved before the main process is built.
             var transformed = TransformParameters(ctx, cfg);
 
+            // Dependencies passed to the Cfg-Net loader. 
+            // These include the expanded shorthand and parameter modifiers.
             var dependancies = new List<IDependency> {
                  ctx.Resolve<IReader>(),
                  new ParameterModifier(new PlaceHolderReplacer(placeHolderStyle[0], placeHolderStyle[1], placeHolderStyle[2]), "parameters", "name", "value"),
@@ -135,6 +163,13 @@ namespace Transformalize.Containers.Autofac {
          return builder.Build().BeginLifetimeScope();
       }
 
+      /// <summary>
+      /// Resolves transforms applied directly to parameters by running a "mini-pipeline".
+      /// This is necessary before the main process is instantiated because parameters may affect global settings.
+      /// </summary>
+      /// <param name="ctx">The Autofac component context.</param>
+      /// <param name="cfg">The raw configuration string.</param>
+      /// <returns>A serialized configuration string with resolved parameter values, or null if no parameter transforms were found.</returns>
       private string TransformParameters(IComponentContext ctx, string cfg) {
 
          var parameters = new Dictionary<string, string>();
@@ -211,21 +246,45 @@ namespace Transformalize.Containers.Autofac {
          return null;
       }
 
+      /// <summary>
+      /// Manually adds a validator and its shorthand signatures to the container.
+      /// </summary>
+      /// <param name="getValidator">A factory function to create the validator.</param>
+      /// <param name="signatures">The shorthand signatures for the validator.</param>
       public void AddValidator(Func<IContext, IValidate> getValidator, IEnumerable<OperationSignature> signatures) {
          _validators.Add(new ValidatorHolder(getValidator, signatures));
       }
+
+      /// <summary>
+      /// Manually adds a transform and its shorthand signatures to the container.
+      /// </summary>
+      /// <param name="getTransform">A factory function to create the transform.</param>
+      /// <param name="signatures">The shorthand signatures for the transform.</param>
       public void AddTransform(Func<IContext, ITransform> getTransform, IEnumerable<OperationSignature> signatures) {
          _transforms.Add(new TransformHolder(getTransform, signatures));
       }
 
+      /// <summary>
+      /// Adds a custom dependency that can modify the configuration before it becomes a process.
+      /// </summary>
+      /// <param name="customizer">The customizer to add.</param>
       [Obsolete("This method is obsolete.  Use AddDependency instead.")]
       public void AddCustomizer(ICustomizer customizer) {
          _dependencies.Add(customizer);
       }
 
+      /// <summary>
+      /// Adds a dependency used during the configuration parsing and expansion phase.
+      /// </summary>
+      /// <param name="dependency">The dependency to add.</param>
       public void AddDependency(IDependency dependency) {
          _dependencies.Add(dependency);
       }
+
+      /// <summary>
+      /// Registers an Autofac module that will be included in the configuration scope.
+      /// </summary>
+      /// <param name="module">The module to add.</param>
       public void AddModule(IModule module) {
          _modules.Add(module);
       }
