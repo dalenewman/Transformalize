@@ -1,5 +1,7 @@
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace IntegrationTests {
    public static class Tester {
@@ -15,8 +17,8 @@ namespace IntegrationTests {
       public static string SolrDataDir => _hostDataDir ?? throw new InvalidOperationException("Container not initialized");
 
       public static async Task InitializeContainers() {
-         // Using a directory within the current base directory for reliable bind mounts in CI
-         _hostDataDir = Path.Combine(AppContext.BaseDirectory, "solr-data-" + Guid.NewGuid().ToString("N"));
+         // Using the system temp path for cross-platform compatibility
+         _hostDataDir = Path.Combine(Path.GetTempPath(), "tfl-solr-" + Guid.NewGuid().ToString("N"));
          Directory.CreateDirectory(_hostDataDir);
          
          // Write a basic solr.xml
@@ -28,6 +30,18 @@ namespace IntegrationTests {
     <int name='connTimeout'>${connTimeout:600000}</int>
   </shardHandlerFactory>
 </solr>");
+
+         // On Linux/CI, we must ensure the container's solr user (UID 8983) can read/write the mounted directory.
+         if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+            try {
+               var process = Process.Start("chmod", $"-R 777 {_hostDataDir}");
+               if (process != null) {
+                  await process.WaitForExitAsync();
+               }
+            } catch (Exception ex) {
+               Console.WriteLine($"Warning: Failed to set permissions on {_hostDataDir}: {ex.Message}");
+            }
+         }
          
          await StartSolrContainer();
       }
@@ -50,9 +64,9 @@ namespace IntegrationTests {
 
          _solrContainer = new ContainerBuilder()
              .WithImage($"solr:{SolrVersion}")
-             .WithPortBinding(8983, true)
-             .WithBindMount(_hostDataDir!, _hostDataDir!) // Same path on host and container
-             .WithEnvironment("SOLR_HOME", _hostDataDir!)
+             .WithPortBinding(0, 8983) // Random host port to container 8983
+             .WithBindMount(_hostDataDir!, "/var/solr/data") // Standard Solr data location
+             .WithEnvironment("SOLR_HOME", "/var/solr/data")
              .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(8983))
              .WithCleanUp(true)
              .Build();
