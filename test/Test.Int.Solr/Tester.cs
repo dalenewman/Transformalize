@@ -15,8 +15,8 @@ namespace IntegrationTests {
       public static string SolrDataDir => _hostDataDir ?? throw new InvalidOperationException("Container not initialized");
 
       public static async Task InitializeContainers() {
-         // Using the system temp path for cross-platform compatibility
-         _hostDataDir = Path.Combine(Path.GetTempPath(), "tfl-solr-" + Guid.NewGuid().ToString("N"));
+         // Using a directory within the current base directory for reliable bind mounts in CI
+         _hostDataDir = Path.Combine(AppContext.BaseDirectory, "solr-data-" + Guid.NewGuid().ToString("N"));
          Directory.CreateDirectory(_hostDataDir);
          
          // Write a basic solr.xml

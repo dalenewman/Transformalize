@@ -27,6 +27,7 @@ using Transformalize.Providers.Solr.Autofac;
 namespace IntegrationTests {
 
    [TestClass]
+   [DoNotParallelize]
    public class Test {
 
       [TestMethod]
