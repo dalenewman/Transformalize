@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -179,8 +180,8 @@ namespace Transformalize.Providers.Solr.Autofac {
                                 output,
                                 ctx.ResolveNamed<ISolrCoreAdmin>(output.Connection.Key),
                                 ctx.ResolveNamed<ISolrOperations<Dictionary<string, object>>>(output.Connection.Key),
-                                new RazorTemplateEngine(ctx.ResolveNamed<OutputContext>(entity.Key), new Template { Name = output.Connection.Key, File = "files\\solr\\schema.cshtml" }, new FileReader()),
-                                new RazorTemplateEngine(ctx.ResolveNamed<OutputContext>(entity.Key), new Template { Name = output.Connection.Key, File = "files\\solr\\solrconfig.cshtml" }, new FileReader())
+                                new RazorTemplateEngine(ctx.ResolveNamed<OutputContext>(entity.Key), new Template { Name = output.Connection.Key, File = Path.Combine("files", "solr", "schema.cshtml") }, new FileReader()),
+                                new RazorTemplateEngine(ctx.ResolveNamed<OutputContext>(entity.Key), new Template { Name = output.Connection.Key, File = Path.Combine("files", "solr", "solrconfig.cshtml") }, new FileReader())
                             ) : new NullInitializer();
 
                         return new SolrOutputController(

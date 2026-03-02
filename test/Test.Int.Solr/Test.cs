@@ -30,21 +30,15 @@ namespace IntegrationTests {
    public class Test {
 
       [TestMethod]
-      public void UsefulTest(){
-         Assert.AreEqual(1,1, "Try this for Github Actions");
-      }
-
-      [TestMethod]
-      [Ignore]
       public void Write773() {
-         const string xml = @"<add name='TestProcess' mode='init'>
+         string xml = $@"<add name='TestProcess' mode='init'>
   <parameters>
     <add name='Size' type='int' value='1000' />
     <add name='MDOP' type='int' value='2' />
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='solr' core='bogus' server='localhost' folder='c:\temp\mysolrhome' version='7.7.3' path='solr' port='8983' max-degree-of-parallelism='@[MDOP]' request-timeout='100' />
+    <add name='output' provider='solr' core='bogus' server='{Tester.SolrServer}' folder='{Tester.SolrDataDir}' version='{Tester.SolrVersion}' path='{Tester.SolrPath}' port='{Tester.SolrPort}' max-degree-of-parallelism='@[MDOP]' request-timeout='100' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]' insert-size='255'>
@@ -71,11 +65,10 @@ namespace IntegrationTests {
       }
 
       [TestMethod]
-      [Ignore]
       public void Read773() {
-         const string xml = @"<add name='TestProcess'>
+         string xml = $@"<add name='TestProcess'>
   <connections>
-    <add name='input' provider='solr' core='bogus' server='localhost' folder='c:\temp\mysolrhome' path='solr' port='8983' />
+    <add name='input' provider='solr' core='bogus' server='{Tester.SolrServer}' folder='{Tester.SolrDataDir}' path='{Tester.SolrPath}' port='{Tester.SolrPort}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -105,15 +98,14 @@ namespace IntegrationTests {
       }
 
       [TestMethod]
-      [Ignore]
-      public void Write621() {
-         const string xml = @"<add name='TestProcess' mode='init'>
+      public void Write773PrimaryKey() {
+         string xml = $@"<add name='TestProcess' mode='init'>
   <parameters>
-    <add name='Size' type='int' value='100000' />
+    <add name='Size' type='int' value='1000' />
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='solr' core='bogus' folder='d:\java\solr-6.2.1\cores' path='solr' port='8983' version='6.2.1' />
+    <add name='output' provider='solr' core='bogus' folder='{Tester.SolrDataDir}' server='{Tester.SolrServer}' port='{Tester.SolrPort}' path='{Tester.SolrPath}' version='{Tester.SolrVersion}' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]' insert-size='1000'>
@@ -135,18 +127,17 @@ namespace IntegrationTests {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
 
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)100000);
+               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
             }
          }
       }
 
       [TestMethod]
-      [Ignore]
-      public void WriteDates621() {
-         const string xml = @"<add name='TestProcess' mode='init'>
+      public void WriteDates773() {
+         string xml = $@"<add name='TestProcess' mode='init'>
   <connections>
     <add name='input' provider='internal' seed='1' />
-    <add name='output' provider='solr' core='dates' folder='d:\java\solr-6.2.1\cores' path='solr' port='8983' />
+    <add name='output' provider='solr' core='dates' folder='{Tester.SolrDataDir}' server='{Tester.SolrServer}' port='{Tester.SolrPort}' path='{Tester.SolrPath}' version='{Tester.SolrVersion}' />
   </connections>
   <entities>
     <add name='dates'>
@@ -178,11 +169,10 @@ namespace IntegrationTests {
 
 
       [TestMethod]
-      [Ignore]
-      public void Read621FastPaging() {
-         const string xml = @"<add name='TestProcess' read-only='true'>
+      public void Read773FastPaging() {
+         string xml = $@"<add name='TestProcess' read-only='true'>
   <connections>
-    <add name='input' provider='solr' core='bogus' folder='d:\java\solr-6.2.1\cores' path='solr' port='8983' />
+    <add name='input' provider='solr' core='bogus' folder='{Tester.SolrDataDir}' server='{Tester.SolrServer}' port='{Tester.SolrPort}' path='{Tester.SolrPath}' version='{Tester.SolrVersion}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -206,7 +196,7 @@ namespace IntegrationTests {
                controller.Execute();
                var rows = process.Entities.First().Rows;
 
-               Assert.AreEqual(100000, rows.Count);
+               Assert.AreEqual(1000, rows.Count);
 
 
             }
@@ -214,11 +204,10 @@ namespace IntegrationTests {
       }
 
       [TestMethod]
-      [Ignore]
-      public void Read621SlowPaging() {
-         const string xml = @"<add name='TestProcess' read-only='true'>
+      public void Read773SlowPaging() {
+         string xml = $@"<add name='TestProcess' read-only='true'>
   <connections>
-    <add name='input' provider='solr' core='bogus' folder='d:\java\solr-6.2.1\cores' path='solr' port='8983' version='4.6' />
+    <add name='input' provider='solr' core='bogus' folder='{Tester.SolrDataDir}' server='{Tester.SolrServer}' port='{Tester.SolrPort}' path='{Tester.SolrPath}' version='4.6' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -241,17 +230,16 @@ namespace IntegrationTests {
                controller.Execute();
                var rows = process.Entities.First().Rows;
 
-               Assert.AreEqual(100000, rows.Count);
+               Assert.AreEqual(1000, rows.Count);
             }
          }
       }
 
       [TestMethod]
-      [Ignore]
-      public void ReadWithExpression621() {
-         const string xml = @"<add name='TestProcess'>
+      public void ReadWithExpression773() {
+         string xml = $@"<add name='TestProcess'>
   <connections>
-    <add name='input' provider='solr' core='bogus' server='localhost' path='solr' port='8983' version='6.2.1' />
+    <add name='input' provider='solr' core='bogus' server='{Tester.SolrServer}' folder='{Tester.SolrDataDir}' path='{Tester.SolrPath}' port='{Tester.SolrPort}' version='{Tester.SolrVersion}' />
     <add name='output' provider='internal' />
   </connections>
   <entities>
@@ -277,7 +265,7 @@ namespace IntegrationTests {
                controller.Execute();
                var rows = process.Entities.First().Rows;
 
-               Assert.AreEqual(8, rows.Count);
+               Assert.AreEqual(1, rows.Count);
 
             }
          }
