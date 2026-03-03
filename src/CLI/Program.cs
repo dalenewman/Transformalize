@@ -19,7 +19,7 @@ using Transformalize.Providers.Mail.Autofac;
 using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
 using Transformalize.Providers.Razor.Autofac;
-// using Transformalize.Providers.Solr.Autofac;
+using Transformalize.Providers.Solr.Autofac;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SqlServer.Autofac;
 using Transformalize.Transform.GoogleMaps;
@@ -39,27 +39,25 @@ namespace Transformalize.Cli {
 
       static int Main(string[] args) {
 
+         // Shared options — Recursive = true so subcommands inherit them without re-declaration
          var arrangementOption = new Option<string>("--arrangement") {
             Description = "An arrangement (aka configuration) file, or url. Note: you may add an optional query string.",
-            Required = true
+            Required = true,
+            Recursive = true
          };
          arrangementOption.Aliases.Add("-a");
 
-         var modeOption = new Option<string>("--mode") {
-            Description = "A system or user-defined mode (init, schema, default, etc).",
-            DefaultValueFactory = _ => "default"
-         };
-         modeOption.Aliases.Add("-m");
-
          var formatOption = new Option<string>("--format") {
             Description = "Output format for console provider (csv, json).",
-            DefaultValueFactory = _ => "csv"
+            DefaultValueFactory = _ => "csv",
+            Recursive = true
          };
          formatOption.Aliases.Add("-f");
 
          var logLevelOption = new Option<LogLevel>("--log-level") {
             Description = "Sets the log level (Info, Debug, Warn, Error, None).",
-            DefaultValueFactory = _ => LogLevel.Info
+            DefaultValueFactory = _ => LogLevel.Info,
+            Recursive = true
          };
          logLevelOption.Aliases.Add("-l");
 
@@ -68,9 +66,26 @@ namespace Transformalize.Cli {
          //   -p key1=val1 key2=val2     (space-separated sequence)
          var parameterOption = new Option<string[]>("--parameter") {
             Description = "Add parameters that correspond to the arrangement's parameters and/or place holders.",
-            AllowMultipleArgumentsPerToken = true
+            AllowMultipleArgumentsPerToken = true,
+            Recursive = true
          };
          parameterOption.Aliases.Add("-p");
+
+         // Mode option is NOT recursive — init/schema verbs imply their mode, run gets its own instance
+         var modeOption = new Option<string>("--mode") {
+            Description = "A system or user-defined mode (init, schema, default, etc).",
+            DefaultValueFactory = _ => "default"
+         };
+         modeOption.Aliases.Add("-m");
+
+         // Helper to reduce duplication across actions
+         RunOptions BuildOptions(ParseResult r, string mode) => new RunOptions {
+            Arrangement = r.GetValue(arrangementOption),
+            Mode = mode,
+            Format = r.GetValue(formatOption),
+            LogLevel = r.GetValue(logLevelOption),
+            Parameters = r.GetValue(parameterOption) ?? Array.Empty<string>()
+         };
 
          var rootCommand = new RootCommand("Run a Transformalize arrangement.");
          rootCommand.Options.Add(arrangementOption);
@@ -79,16 +94,42 @@ namespace Transformalize.Cli {
          rootCommand.Options.Add(logLevelOption);
          rootCommand.Options.Add(parameterOption);
 
+         // Root action — unchanged for backwards compatibility; -m init / -m schema still work here
          rootCommand.SetAction(parseResult => {
-            Run(new RunOptions {
-               Arrangement = parseResult.GetValue(arrangementOption),
-               Mode = parseResult.GetValue(modeOption),
-               Format = parseResult.GetValue(formatOption),
-               LogLevel = parseResult.GetValue(logLevelOption),
-               Parameters = parseResult.GetValue(parameterOption) ?? Array.Empty<string>()
-            });
+            Run(BuildOptions(parseResult, parseResult.GetValue(modeOption)));
             return 0;
          });
+
+         // run verb — like root but -m is for custom user-defined modes only
+         var runModeOption = new Option<string>("--mode") {
+            Description = "A custom user-defined mode.",
+            DefaultValueFactory = _ => "default"
+         };
+         runModeOption.Aliases.Add("-m");
+         var runCommand = new Command("run", "Run your arrangement (same as the default).");
+         runCommand.Options.Add(runModeOption);
+         runCommand.SetAction(parseResult => {
+            Run(BuildOptions(parseResult, parseResult.GetValue(runModeOption)));
+            return 0;
+         });
+
+         // init verb — mode is implied, no -m needed or shown
+         var initCommand = new Command("init", "Initialize your arrangement.");
+         initCommand.SetAction(parseResult => {
+            Run(BuildOptions(parseResult, "init"));
+            return 0;
+         });
+
+         // schema verb — mode is implied, no -m needed or shown
+         var schemaCommand = new Command("schema", "Detect and print the schema for your arrangement.");
+         schemaCommand.SetAction(parseResult => {
+            Run(BuildOptions(parseResult, "schema"));
+            return 0;
+         });
+
+         rootCommand.Subcommands.Add(runCommand);
+         rootCommand.Subcommands.Add(initCommand);
+         rootCommand.Subcommands.Add(schemaCommand);
 
          return rootCommand.Parse(args).Invoke();
       }
@@ -186,7 +227,7 @@ namespace Transformalize.Cli {
             providers.Add(new ElasticsearchModule());
             providers.Add(new RazorProviderModule());
             providers.Add(new MailModule());
-            // providers.Add(new SolrModule());
+            providers.Add(new SolrModule());
 
             var modules = providers.Union(operations).ToArray();
 
