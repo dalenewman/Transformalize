@@ -1,8 +1,8 @@
-﻿using Autofac;
+using Autofac;
 using Cfg.Net.Parsers.YamlDotNet;
-using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.CommandLine;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
@@ -37,12 +37,60 @@ using Transformalize.Transforms.Xml;
 namespace Transformalize.Cli {
    class Program {
 
-      static void Main(string[] args) {
+      static int Main(string[] args) {
 
-         Parser.Default.ParseArguments<RunOptions>(args)
-            .WithParsed(Run)
-            .WithNotParsed(CommandLineError); 
+         var arrangementOption = new Option<string>("--arrangement") {
+            Description = "An arrangement (aka configuration) file, or url. Note: you may add an optional query string.",
+            Required = true
+         };
+         arrangementOption.Aliases.Add("-a");
 
+         var modeOption = new Option<string>("--mode") {
+            Description = "A system or user-defined mode (init, schema, default, etc).",
+            DefaultValueFactory = _ => "default"
+         };
+         modeOption.Aliases.Add("-m");
+
+         var formatOption = new Option<string>("--format") {
+            Description = "Output format for console provider (csv, json).",
+            DefaultValueFactory = _ => "csv"
+         };
+         formatOption.Aliases.Add("-f");
+
+         var logLevelOption = new Option<LogLevel>("--log-level") {
+            Description = "Sets the log level (Info, Debug, Warn, Error, None).",
+            DefaultValueFactory = _ => LogLevel.Info
+         };
+         logLevelOption.Aliases.Add("-l");
+
+         // AllowMultipleArgumentsPerToken = true supports both syntaxes:
+         //   -p key1=val1 -p key2=val2  (repeated flags, industry standard)
+         //   -p key1=val1 key2=val2     (space-separated sequence)
+         var parameterOption = new Option<string[]>("--parameter") {
+            Description = "Add parameters that correspond to the arrangement's parameters and/or place holders.",
+            AllowMultipleArgumentsPerToken = true
+         };
+         parameterOption.Aliases.Add("-p");
+
+         var rootCommand = new RootCommand("Run a Transformalize arrangement.");
+         rootCommand.Options.Add(arrangementOption);
+         rootCommand.Options.Add(modeOption);
+         rootCommand.Options.Add(formatOption);
+         rootCommand.Options.Add(logLevelOption);
+         rootCommand.Options.Add(parameterOption);
+
+         rootCommand.SetAction(parseResult => {
+            Run(new RunOptions {
+               Arrangement = parseResult.GetValue(arrangementOption),
+               Mode = parseResult.GetValue(modeOption),
+               Format = parseResult.GetValue(formatOption),
+               LogLevel = parseResult.GetValue(logLevelOption),
+               Parameters = parseResult.GetValue(parameterOption) ?? Array.Empty<string>()
+            });
+            return 0;
+         });
+
+         return rootCommand.Parse(args).Invoke();
       }
 
       static void Run(RunOptions options) {
@@ -165,10 +213,5 @@ namespace Transformalize.Cli {
             }
          }
       }
-      static void CommandLineError(IEnumerable<Error> errors) {
-         Environment.Exit(1);
-      }
-
-
    }
 }
