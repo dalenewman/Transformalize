@@ -1,37 +1,22 @@
 using System;
 using System.Collections.Generic;
-using CommandLine;
 
 namespace Transformalize.Cli {
 
-   [Verb("run", isDefault:true, HelpText = "Run your arrangement (the default).")]
    public class RunOptions {
 
-      // would like to make this an a value parameter option but it gets confused with the verb
-      [Option('a', "arrangement", Required = true, HelpText = "An arrangement (aka configuration) file, or url. Note: you may add an optional query string.")]
       public string Arrangement { get; set; }
-
-      [Option('m', "mode", Default = "default", Required = false, HelpText = "A system or user-defined mode (init, schema, default, etc).")]
-      public string Mode { get; set; }
-
-      [Option('f', "format", Default = "csv", Required = false, HelpText = "Output format for console provider (csv, json).")]
-      public string Format { get; set; }
-
-      [Option('l', "log-level", Default = Contracts.LogLevel.Info, HelpText = "Sets the log level (Info, Debug, Warn, Error, None).")]
-      public Contracts.LogLevel LogLevel { get; set; }
-
-      [Option('p', "parameter", HelpText = "Add parameters that correspond to the arrangement's parameters and/or place holders.")]
-      public IEnumerable<string> Parameters { get; set; }
+      public string Mode { get; set; } = "default";
+      public string Format { get; set; } = "csv";
+      public Contracts.LogLevel LogLevel { get; set; } = Contracts.LogLevel.Info;
+      public string[] Parameters { get; set; } = Array.Empty<string>();
 
       public Dictionary<string, string> GetParameters() {
          var parameters = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-
-         if (Parameters != null) {
-            foreach (var parameter in Parameters) {
-               if (parameter.Contains('=')) {
-                  var split = parameter.Split('=');
-                  parameters[split[0]] = split[1];
-               }
+         foreach (var parameter in Parameters) {
+            var idx = parameter.IndexOf('=');
+            if (idx > 0) {
+               parameters[parameter[..idx]] = parameter[(idx + 1)..];
             }
          }
          return parameters;
