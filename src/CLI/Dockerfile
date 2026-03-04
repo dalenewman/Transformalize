@@ -13,7 +13,7 @@ COPY ["src/CLI/CLI.csproj", "src/CLI/"]
 COPY ["src/Providers/Console/Console.Autofac/Console.Autofac.csproj", "src/Providers/Console/Console.Autofac/"]
 COPY ["src/Providers/Console/Console/Console.csproj", "src/Providers/Console/Console/"]
 COPY ["src/Transformalize/Transformalize.csproj", "src/Transformalize/"]
-COPY ["src/Containers/Autofac/Autofac/Autofac.csproj", "src/Containers/Autofac/Autofac/"]
+COPY ["src/Containers/Autofac/Autofac.csproj", "src/Containers/Autofac/"]
 RUN dotnet restore "src/CLI/CLI.csproj"
 COPY . .
 WORKDIR "/src/src/CLI"
