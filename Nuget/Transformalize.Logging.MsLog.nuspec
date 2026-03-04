@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+   <metadata>
+      <id>Transformalize.Logging.MsLog</id>
+      <version>0.11.8-beta</version>
+      <title>Transformalize Logging MsLog</title>
+      <authors>Dale Newman</authors>
+      <owners>Dale Newman</owners>
+      <projectUrl>https://github.com/dalenewman/Transformalize</projectUrl>
+      <requireLicenseAcceptance>false</requireLicenseAcceptance>
+      <description>Microsoft.Extensions.Logging implementation (text and JSON console output)</description>
+      <!--<license type="expression">Apache-2.0</license>-->
+      <releaseNotes>maint</releaseNotes>
+      <copyright>Copyright 2013-2026</copyright>
+      <tags>etl</tags>
+      <dependencies>
+         <group targetFramework="net10.0">
+            <dependency id="Transformalize" version="0.11.8-beta" />
+            <dependency id="Microsoft.Extensions.Logging.Console" version="10.0.0" />
+         </group>
+      </dependencies>
+   </metadata>
+   <files>
+      <file src="..\src\Logging\MsLog\bin\Release\net10.0\Transformalize.Logging.MsLog.dll" target="lib\net10.0\Transformalize.Logging.MsLog.dll" />
+      <file src="..\src\Logging\MsLog\bin\Release\net10.0\Transformalize.Logging.MsLog.deps.json" target="lib\net10.0\Transformalize.Logging.MsLog.deps.json" />
+   </files>
+</package>

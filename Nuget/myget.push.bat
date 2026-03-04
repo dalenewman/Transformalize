@@ -31,3 +31,4 @@ REM nuget push "c:\temp\modules\Transformalize.Transform.Xml.0.11.4-beta.nupkg" 
 
 REM Misc
 nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.11.7-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json
+nuget push "c:\temp\modules\Transformalize.Logging.MsLog.0.11.8-beta.nupkg" -source https://www.myget.org/F/transformalize/api/v3/index.json

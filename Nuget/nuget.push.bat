@@ -2,6 +2,7 @@ REM nuget push "c:\temp\modules\Transformalize.0.10.5-beta.nupkg" -source https:
 REM nuget push "c:\temp\modules\Transformalize.Container.Autofac.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM 
 REM nuget push "c:\temp\modules\Transformalize.Logging.NLog.0.10.5-beta.nupkg" -source https://api.nuget.org/v3/index.json
+REM nuget push "c:\temp\modules\Transformalize.Logging.MsLog.0.11.8-beta.nupkg" -source https://api.nuget.org/v3/index.json
 REM 
 REM REM PROVIDERS
 REM nuget push "c:\temp\modules\Transformalize.Provider.Ado.0.11.4-beta.nupkg" -source https://api.nuget.org/v3/index.json
