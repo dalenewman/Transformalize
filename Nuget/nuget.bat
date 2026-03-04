@@ -5,6 +5,7 @@ nuget pack Transformalize.Container.Autofac.nuspec -OutputDirectory "c:\temp\mod
 
 REM REM MISC
 nuget pack Transformalize.Logging.NLog.nuspec -OutputDirectory "c:\temp\modules"
+nuget pack Transformalize.Logging.MsLog.nuspec -OutputDirectory "c:\temp\modules"
 
 REM PROVIDERS
 nuget pack Transformalize.Provider.Bogus.nuspec -OutputDirectory "c:\temp\modules"
