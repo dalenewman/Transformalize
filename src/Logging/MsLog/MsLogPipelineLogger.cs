@@ -16,8 +16,8 @@
 // limitations under the License.
 #endregion
 using System;
-using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Transformalize.Contracts;
 using Transformalize.Logging;
 using MelLogLevel = Microsoft.Extensions.Logging.LogLevel;
@@ -33,10 +33,8 @@ namespace Transformalize.Logging.MsLog {
             _factory = LoggerFactory.Create(builder => {
                 builder.SetMinimumLevel(ToMelLevel(level));
                 if (jsonFormat) {
-                    builder.AddJsonConsole(o => {
-                        o.IncludeScopes = true;
-                        o.TimestampFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
-                    });
+                    builder.AddConsoleFormatter<TflJsonFormatter, ConsoleFormatterOptions>();
+                    builder.AddConsole(o => o.FormatterName = TflJsonFormatter.FormatterName);
                 } else {
                     builder.AddSimpleConsole(o => {
                         o.IncludeScopes = false;
@@ -50,32 +48,32 @@ namespace Transformalize.Logging.MsLog {
 
         public void Debug(IContext context, Func<string> lambda) {
             if (!DebugEnabled) return;
-            using (_logger.BeginScope(Scope(context)))
-                _logger.LogDebug("{Context} | {Message}", ForLog(context), lambda());
+            _logger.LogDebug("{Process} | {Entity} | {Field} | {Operation} | {Message}",
+                Process(context), Entity(context), Field(context), Operation(context), lambda());
         }
 
         public void Info(IContext context, string message, params object[] args) {
             if (!InfoEnabled) return;
-            using (_logger.BeginScope(Scope(context)))
-                _logger.LogInformation("{Context} | {Message}", ForLog(context), string.Format(message, args));
+            _logger.LogInformation("{Process} | {Entity} | {Field} | {Operation} | {Message}",
+                Process(context), Entity(context), Field(context), Operation(context), string.Format(message, args));
         }
 
         public void Warn(IContext context, string message, params object[] args) {
             if (!WarnEnabled) return;
-            using (_logger.BeginScope(Scope(context)))
-                _logger.LogWarning("{Context} | {Message}", ForLog(context), string.Format(message, args));
+            _logger.LogWarning("{Process} | {Entity} | {Field} | {Operation} | {Message}",
+                Process(context), Entity(context), Field(context), Operation(context), string.Format(message, args));
         }
 
         public void Error(IContext context, string message, params object[] args) {
             if (!ErrorEnabled) return;
-            using (_logger.BeginScope(Scope(context)))
-                _logger.LogError("{Context} | {Message}", ForLog(context), string.Format(message, args));
+            _logger.LogError("{Process} | {Entity} | {Field} | {Operation} | {Message}",
+                Process(context), Entity(context), Field(context), Operation(context), string.Format(message, args));
         }
 
         public void Error(IContext context, Exception exception, string message, params object[] args) {
             if (!ErrorEnabled) return;
-            using (_logger.BeginScope(Scope(context)))
-                _logger.LogError(exception, "{Context} | {Message}", ForLog(context), string.Format(message, args));
+            _logger.LogError(exception, "{Process} | {Entity} | {Field} | {Operation} | {Message}",
+                Process(context), Entity(context), Field(context), Operation(context), string.Format(message, args));
         }
 
         public void SuppressConsole() {
@@ -89,16 +87,10 @@ namespace Transformalize.Logging.MsLog {
 
         public void Dispose() => _factory.Dispose();
 
-        private static string ForLog(IContext context) {
-            return string.Format("{0} | {1} | {2}", context.ForLog);
-        }
-
-        private static Dictionary<string, object?> Scope(IContext context) => new() {
-            ["Process"]   = context.Process?.Name,
-            ["Entity"]    = context.Entity?.Alias,
-            ["Field"]     = context.Field?.Alias,
-            ["Operation"] = context.Operation?.Method
-        };
+        private static string Process(IContext c)   => c.Process?.Name ?? string.Empty;
+        private static string Entity(IContext c)    => c.Entity?.Alias ?? string.Empty;
+        private static string Field(IContext c)     => c.Field?.Alias ?? string.Empty;
+        private static string Operation(IContext c) => c.Operation?.Method ?? string.Empty;
 
         private static MelLogLevel ToMelLevel(TflLogLevel level) => level switch {
             TflLogLevel.Debug => MelLogLevel.Debug,
