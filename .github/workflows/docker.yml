@@ -1,0 +1,212 @@
+name: Docker
+
+on:
+  push:
+    branches: ["master"]
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: dalenewman/transformalize.cli
+
+jobs:
+  build:
+    name: Build (${{ matrix.variant }}/${{ matrix.platform }})
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+            variant: regular
+            base_image: mcr.microsoft.com/dotnet/runtime:10.0
+            build_image: mcr.microsoft.com/dotnet/sdk:10.0
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            variant: regular
+            base_image: mcr.microsoft.com/dotnet/runtime:10.0
+            build_image: mcr.microsoft.com/dotnet/sdk:10.0
+          - platform: linux/amd64
+            runner: ubuntu-latest
+            variant: alpine
+            base_image: mcr.microsoft.com/dotnet/runtime:10.0-alpine
+            build_image: mcr.microsoft.com/dotnet/sdk:10.0-alpine
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            variant: alpine
+            base_image: mcr.microsoft.com/dotnet/runtime:10.0-alpine
+            build_image: mcr.microsoft.com/dotnet/sdk:10.0-alpine
+
+    steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/CLI/Dockerfile
+          platforms: ${{ matrix.platform }}
+          build-args: |
+            BASE_IMAGE=${{ matrix.base_image }}
+            BUILD_IMAGE=${{ matrix.build_image }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Push without a tag (by digest only) so no partial single-arch image is ever visible
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},push-by-digest=true,name-canonical=true,push=true
+          provenance: true
+          sbom: true
+          cache-from: type=gha,scope=${{ matrix.variant }}-${{ env.PLATFORM_PAIR }}
+          cache-to: type=gha,scope=${{ matrix.variant }}-${{ env.PLATFORM_PAIR }},mode=max
+
+      - name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digest-${{ matrix.variant }}-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    name: Merge manifests
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Download regular digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests/regular
+          pattern: digest-regular-*
+          merge-multiple: true
+
+      - name: Download alpine digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests/alpine
+          pattern: digest-alpine-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Steps are ordered intentionally: each metadata step sets DOCKER_METADATA_OUTPUT_JSON,
+      # and the immediately following imagetools step consumes it before the next metadata step overwrites it.
+
+      - name: Extract metadata (regular)
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
+
+      - name: Create regular manifest
+        working-directory: ${{ runner.temp }}/digests/regular
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+
+      - name: Extract metadata (alpine)
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            suffix=-alpine
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=ref,event=branch
+            type=sha
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/master' }}
+
+      - name: Create alpine manifest
+        working-directory: ${{ runner.temp }}/digests/alpine
+        run: |
+          docker buildx imagetools create \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+
+  scan:
+    name: Scan
+    runs-on: ubuntu-latest
+    needs: merge
+    permissions:
+      contents: read
+      packages: read
+      security-events: write
+    steps:
+      - name: Compute short SHA
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Scan the regular amd64 image - it has more OS packages than alpine, giving broader coverage.
+      # TRIVY_PLATFORM tells Trivy which arch to pull from the multi-arch manifest.
+      - name: Run Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ env.SHORT_SHA }}
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+        env:
+          TRIVY_PLATFORM: linux/amd64
+
+      # Results appear in Security tab → Code scanning (free for public repos, no setup needed)
+      - name: Upload results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        if: always()
+        with:
+          sarif_file: trivy-results.sarif
+          category: container-scan

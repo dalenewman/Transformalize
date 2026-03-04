@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Bogus</id>
-    <version>0.11.1-beta</version>
+    <version>0.12.0-beta</version>
     <title>Transformalize Provider for Bogus</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="Transformalize" version="0.11.1-beta" />
+        <dependency id="Transformalize" version="0.12.0-beta" />
         <dependency id="Bogus" version="35.6.1" />
       </group>
     </dependencies>

@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.Elasticsearch</id>
-    <version>0.11.1-beta</version>
+    <version>0.12.0-beta</version>
     <title>Transformalize Transform using Elasticsearch</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -15,7 +15,7 @@
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="Transformalize" version="0.11.1-beta" />
+        <dependency id="Transformalize" version="0.12.0-beta" />
         <dependency id="Elasticsearch.Net" version="7.17.5" />
         <dependency id="Newtonsoft.Json" version="13.0.3" />
         <dependency id="Microsoft.CSharp" version="4.7.0" />
