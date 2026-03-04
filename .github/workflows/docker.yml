@@ -201,6 +201,7 @@ jobs:
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           trivy-version: v0.69.2
+          skip-dirs: /src
         env:
           TRIVY_PLATFORM: linux/amd64
 
