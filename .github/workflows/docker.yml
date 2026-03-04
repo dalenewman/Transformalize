@@ -201,9 +201,9 @@ jobs:
           severity: CRITICAL,HIGH
           ignore-unfixed: true
           trivy-version: v0.69.2
-          skip-dirs: /src
         env:
           TRIVY_PLATFORM: linux/amd64
+          TRIVY_QUIET: "true"
 
       # Results appear in Security tab → Code scanning (free for public repos, no setup needed)
       - name: Upload results to GitHub Security tab
