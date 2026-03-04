@@ -40,6 +40,7 @@
       <ProjectReference Include="..\Providers\Solr\Transformalize.Provider.Solr.Autofac\Transformalize.Provider.Solr.Autofac.csproj" />
    </ItemGroup>
    <ItemGroup>
+      <ProjectReference Include="..\Logging\MsLog\MsLog.csproj" />
       <ProjectReference Include="..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />

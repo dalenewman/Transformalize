@@ -10,6 +10,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Autofac;
 using Transformalize.Providers.Bogus.Autofac;
+using Transformalize.Logging.MsLog;
 using Transformalize.Providers.Console;
 using Transformalize.Providers.Console.Autofac;
 using Transformalize.Providers.CsvHelper.Autofac;
@@ -61,6 +62,12 @@ namespace Transformalize.Cli {
          };
          logLevelOption.Aliases.Add("-l");
 
+         var logFormatOption = new Option<string>("--log-format") {
+            Description = "Sets the log format (text, json).",
+            DefaultValueFactory = _ => "text",
+            Recursive = true
+         };
+
          // AllowMultipleArgumentsPerToken = true supports both syntaxes:
          //   -p key1=val1 -p key2=val2  (repeated flags, industry standard)
          //   -p key1=val1 key2=val2     (space-separated sequence)
@@ -84,6 +91,7 @@ namespace Transformalize.Cli {
             Mode = mode,
             Format = r.GetValue(formatOption),
             LogLevel = r.GetValue(logLevelOption),
+            LogFormat = r.GetValue(logFormatOption) ?? "text",
             Parameters = r.GetValue(parameterOption) ?? Array.Empty<string>()
          };
 
@@ -92,6 +100,7 @@ namespace Transformalize.Cli {
          rootCommand.Options.Add(modeOption);
          rootCommand.Options.Add(formatOption);
          rootCommand.Options.Add(logLevelOption);
+         rootCommand.Options.Add(logFormatOption);
          rootCommand.Options.Add(parameterOption);
 
          // Root action — unchanged for backwards compatibility; -m init / -m schema still work here
@@ -136,7 +145,9 @@ namespace Transformalize.Cli {
 
       static void Run(RunOptions options) {
 
-         var logger = new ConsoleLogger(options.LogLevel);
+         IPipelineLogger logger = options.LogFormat == "json"
+            ? new MsLogPipelineLogger(options.LogLevel, jsonFormat: true)
+            : new ConsoleLogger(options.LogLevel);
 
          var operations = new List<Autofac.Core.IModule> {
             new JintTransformModule(),

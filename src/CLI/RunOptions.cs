@@ -8,6 +8,7 @@ namespace Transformalize.Cli {
       public string Arrangement { get; set; }
       public string Mode { get; set; } = "default";
       public string Format { get; set; } = "csv";
+      public string LogFormat { get; set; } = "text";
       public Contracts.LogLevel LogLevel { get; set; } = Contracts.LogLevel.Info;
       public string[] Parameters { get; set; } = Array.Empty<string>();
 
