@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Transforms.LambdaParser</RootNamespace>
     <AssemblyName>Transformalize.Transform.LambdaParser</AssemblyName>
-    <Version>0.11.1-beta</Version>
-    <FileVersion>0.11.1</FileVersion>
-    <AssemblyVersion>0.11.1</AssemblyVersion>
+    <Version>0.12.0-beta</Version>
+    <FileVersion>0.12.0</FileVersion>
+    <AssemblyVersion>0.12.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NReco.LambdaParser" Version="1.1.3" />

@@ -4,7 +4,7 @@
     <RootNamespace>Transformalize.Validators.Jint.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Validate.Jint.Autofac</AssemblyName>
     <IncludeSymbols>true</IncludeSymbols>
-    <Version>0.11.2-beta</Version>
+    <Version>0.12.0-beta</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <Description>A Transformalize validator Autofac module using Jint</Description>
@@ -14,8 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>etl,transformalize,jint,javascript</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <FileVersion>0.11.2</FileVersion>
-    <AssemblyVersion>0.11.2</AssemblyVersion>
+    <FileVersion>0.12.0</FileVersion>
+    <AssemblyVersion>0.12.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Validate.Jint\Transformalize.Validate.Jint.csproj" />

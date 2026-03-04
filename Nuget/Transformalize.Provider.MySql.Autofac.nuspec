@@ -2,7 +2,7 @@
 <package>
    <metadata>
       <id>Transformalize.Provider.MySql.Autofac</id>
-      <version>0.10.2-beta</version>
+      <version>0.12.0-beta</version>
       <title>Transformalize Transform using MySql Autofac Module</title>
       <authors>Dale Newman</authors>
       <owners>Dale Newman</owners>
@@ -15,8 +15,8 @@
       <tags>etl</tags>
       <dependencies>
          <group targetFramework="netstandard2.0">
-            <dependency id="Transformalize.Provider.MySql" version="0.10.2-beta" />
-            <dependency id="Transformalize.Container.Autofac" version="0.11.4-beta" />
+            <dependency id="Transformalize.Provider.MySql" version="0.12.0-beta" />
+            <dependency id="Transformalize.Container.Autofac" version="0.12.0-beta" />
          </group>
       </dependencies>
    </metadata>

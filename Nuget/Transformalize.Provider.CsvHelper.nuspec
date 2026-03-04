@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Transformalize.Provider.CsvHelper</id>
-    <version>0.11.1-beta</version>
+    <version>0.12.0-beta</version>
     <title>Transformalize Provider using CsvHelper</title>
     <authors>Dale Newman</authors>
     <owners>Dale Newman</owners>
@@ -16,7 +16,7 @@
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="CsvHelper" version="33.0.1" />
-        <dependency id="Transformalize.Provider.File" version="0.11.1-beta" />
+        <dependency id="Transformalize.Provider.File" version="0.12.0-beta" />
       </group>
     </dependencies>
   </metadata>
