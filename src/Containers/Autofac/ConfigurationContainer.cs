@@ -144,7 +144,8 @@ namespace Transformalize.Containers.Autofac {
          builder.Register(ctx => {
 
             // If any parameters have transforms, they must be resolved before the main process is built.
-            var transformed = TransformParameters(ctx, cfg);
+            // This also injects environment variable values into the parameters dictionary.
+            var transformed = TransformParameters(ctx, cfg, parameters);
 
             // Dependencies passed to the Cfg-Net loader. 
             // These include the expanded shorthand and parameter modifiers.
@@ -166,11 +167,14 @@ namespace Transformalize.Containers.Autofac {
       /// <summary>
       /// Resolves transforms applied directly to parameters by running a "mini-pipeline".
       /// This is necessary before the main process is instantiated because parameters may affect global settings.
+      /// Also injects environment variable values for parameters that declare an <c>env</c> attribute,
+      /// provided the caller has not already supplied a value for that parameter name.
       /// </summary>
       /// <param name="ctx">The Autofac component context.</param>
       /// <param name="cfg">The raw configuration string.</param>
+      /// <param name="callerParameters">The caller-supplied parameters (CLI / query-string). Env-var values are added here when not already present.</param>
       /// <returns>A serialized configuration string with resolved parameter values, or null if no parameter transforms were found.</returns>
-      private string TransformParameters(IComponentContext ctx, string cfg) {
+      private string TransformParameters(IComponentContext ctx, string cfg, IDictionary<string, string> callerParameters) {
 
          var parameters = new Dictionary<string, string>();
          var dependencies = new List<IDependency>() {
@@ -182,6 +186,17 @@ namespace Transformalize.Containers.Autofac {
          dependencies.AddRange(_dependencies);
 
          var preProcess = new ConfigurationFacade.Process(cfg, parameters, dependencies.ToArray());
+
+         // Inject environment variable values for parameters that declare env="VAR_NAME",
+         // but only when the caller has not already provided a value for that parameter.
+         foreach (var p in preProcess.Parameters) {
+            if (!string.IsNullOrEmpty(p.Env) && !callerParameters.ContainsKey(p.Name)) {
+               var envValue = Environment.GetEnvironmentVariable(p.Env);
+               if (envValue != null) {
+                  callerParameters[p.Name] = envValue;
+               }
+            }
+         }
 
          if (!preProcess.Parameters.Any(pr => pr.Transforms.Any()))
             return null;
