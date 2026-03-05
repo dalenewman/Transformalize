@@ -99,6 +99,9 @@
       <None Update="arrangements\bogus.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="arrangements\bogus-env.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="arrangements\denormalize-northwind.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

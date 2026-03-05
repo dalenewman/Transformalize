@@ -39,6 +39,9 @@ namespace Transformalize.ConfigurationFacade {
       public string Value { get; set; }
 
       [Cfg]
+      public string Env { get; set; }
+
+      [Cfg]
       public string Scope { get; set; }
 
       [Cfg]
@@ -142,6 +145,7 @@ namespace Transformalize.ConfigurationFacade {
             InvalidCharacters = this.InvalidCharacters,
             Name = this.Name,
             Value = this.Value,
+            Env = this.Env,
             Scope = this.Scope,
             Map = this.Map,
             Type = this.Type,

@@ -56,6 +56,9 @@ namespace Transformalize.Configuration {
       [Cfg(value = null)]
       public string Value { get; set; }
 
+      [Cfg(value = "")]
+      public string Env { get; set; }
+
       [Cfg(value = Constants.DefaultSetting, domain = Constants.DefaultSetting + ",update,insert", toLower = true, trim = true)]
       public string Scope { get; set; }
 

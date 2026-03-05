@@ -1,0 +1,29 @@
+﻿<cfg name="Bogus" read-only="true">
+
+   <parameters>
+      <add name="Seed" value="1" env="TFL_SEED" />
+      <add name="Size" value="5" env="TFL_SIZE" />
+   </parameters>
+
+   <connections>
+      <add name="input" provider="bogus" seed="@[Seed]" />
+   </connections>
+
+   <entities>
+      <add name="Contact" size="@[Size]">
+         <fields>
+            <add name="Identity" type="int" />
+            <add name="FirstName" />
+            <add name="LastName" />
+            <add name="Email" />
+            <add name="Phone" format="(###) ###-####" />
+            <add name="Stars" type="byte" min="1" max="5" />
+            <add name="Recent" alias="LastSeen" type="datetime" />
+         </fields>
+         <calculated-fields>
+            <add name="TimeAgo" t="copy(LastSeen).timeAgo()" />
+         </calculated-fields>
+      </add>
+   </entities>
+
+</cfg>
