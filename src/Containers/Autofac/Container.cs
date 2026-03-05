@@ -162,8 +162,7 @@ namespace Transformalize.Containers.Autofac {
                var outputController = ctx.IsRegisteredWithName<IOutputController>(entity.Key) ? ctx.ResolveNamed<IOutputController>(entity.Key) : new NullOutputController();
                var pipeline = new DefaultPipeline(outputController, context);
 
-               // Inputs: Providers like SqlServer register their readers with the entity key.
-               // TODO: rely on IInputProvider's Read method instead (after every provider has one)
+               // Inputs: Providers like SqlServer register their entity readers with the entity key.
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IRead)) ? ctx.ResolveNamed<IRead>(entity.Key) : null);
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IInputProvider)) ? ctx.ResolveNamed<IInputProvider>(entity.Key) : null);
 
@@ -185,8 +184,7 @@ namespace Transformalize.Containers.Autofac {
                // Log: Allows logging specific row data if configured.
                pipeline.Register(new LogTransform(context));
 
-               // Output: Providers like SqlServer register their writers with the entity key.
-               // writer, TODO: rely on IOutputProvider instead (after every provider has one)
+               // Output: Providers like SqlServer register their entity writers with the entity key.
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IWrite)) ? ctx.ResolveNamed<IWrite>(entity.Key) : null);
                pipeline.Register(ctx.IsRegisteredWithName(entity.Key, typeof(IOutputProvider)) ? ctx.ResolveNamed<IOutputProvider>(entity.Key) : null);
 
