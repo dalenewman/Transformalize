@@ -22,6 +22,8 @@ using System.Text.RegularExpressions;
 using Cfg.Net.Contracts;
 using RazorEngineCore;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Razor {
 
@@ -87,5 +89,7 @@ namespace Transformalize.Providers.Razor {
          }
       }
 
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

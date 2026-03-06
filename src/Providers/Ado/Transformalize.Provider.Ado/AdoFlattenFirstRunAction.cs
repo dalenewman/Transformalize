@@ -24,6 +24,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoFlattenFirstRunAction : IAction {
@@ -71,5 +73,7 @@ namespace Transformalize.Providers.Ado {
          return new ActionResponse(200, message);
 
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

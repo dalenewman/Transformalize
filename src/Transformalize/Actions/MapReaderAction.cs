@@ -17,6 +17,8 @@
 #endregion
 using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -50,6 +52,10 @@ namespace Transformalize.Actions {
             response.Message = "Could not read map " + _map.Name + ". Using query: " + _map.Query + ". Error: " + ex.Message;
          }
          return response;
+      }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         return Task.FromResult(Execute());
       }
    }
 }

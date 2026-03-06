@@ -16,9 +16,12 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Contracts {
     public interface IWrite {
       void Write(IEnumerable<IRow> rows);
+      Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default);
    }
 }

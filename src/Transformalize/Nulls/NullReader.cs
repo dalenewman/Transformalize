@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -34,6 +36,10 @@ namespace Transformalize.Nulls {
                 _context.Info("Null Reading...");
 
             return Enumerable.Empty<IRow>();
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
         }
     }
 }

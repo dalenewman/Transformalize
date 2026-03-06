@@ -23,6 +23,8 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoFlattenInsertByViewAction : IAction {
@@ -69,5 +71,7 @@ AND m.{_model.Batch} > @Threshold;";
 
          return new ActionResponse(200, "Ok");
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

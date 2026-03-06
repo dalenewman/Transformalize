@@ -25,6 +25,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityInserter : IWrite {
@@ -65,5 +67,7 @@ namespace Transformalize.Providers.Ado {
             }
             _output.Entity.Inserts += count;
         }
+
+    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
     }
 }

@@ -16,7 +16,10 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
+using Transformalize.Actions;
 using System;
 
 namespace Transformalize.Impl {
@@ -35,8 +38,16 @@ namespace Transformalize.Impl {
             _pipeline.Execute();
         }
 
+        public Task ExecuteAsync(CancellationToken token = default) {
+            return _pipeline.ExecuteAsync(token);
+        }
+
         public ActionResponse Initialize() {
             return _pipeline.Initialize();
+        }
+
+        public Task<ActionResponse> InitializeAsync(CancellationToken token = default) {
+            return _pipeline.InitializeAsync(token);
         }
 
         public void Register(IMapReader mapReader) {
@@ -73,6 +84,10 @@ namespace Transformalize.Impl {
 
         public IEnumerable<IRow> Read() {
             return _pipeline.Read();
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return _pipeline.ReadAsync(token);
         }
 
         /// <inheritdoc />

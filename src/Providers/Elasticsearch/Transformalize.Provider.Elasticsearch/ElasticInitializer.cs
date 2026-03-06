@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
    public class ElasticInitializer : IInitializer {
@@ -55,5 +57,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          return response;
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

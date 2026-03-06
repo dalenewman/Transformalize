@@ -25,6 +25,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoDeleter : IDelete {
@@ -67,5 +69,7 @@ namespace Transformalize.Providers.Ado {
             }
 
         }
+
+    public Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Delete(rows); return Task.CompletedTask; }
     }
 }

@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -51,5 +53,9 @@ namespace Transformalize.Providers.Ado {
          _stopWatch.Stop();
          _context.Debug(() => $"Star process ending: {_stopWatch.Elapsed}");
       }
+
+   public Task EndAsync(CancellationToken token = default) { End(); return Task.CompletedTask; }
+   public Task<ActionResponse> InitializeAsync(CancellationToken token = default) { return Task.FromResult(Initialize()); }
+   public Task StartAsync(CancellationToken token = default) { Start(); return Task.CompletedTask; }
    }
 }

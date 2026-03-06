@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -187,6 +189,10 @@ namespace Transformalize.Providers.SqlServer {
          }
       }
 
+      public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         Write(rows);
+         return Task.CompletedTask;
+      }
 
    }
 

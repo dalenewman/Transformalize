@@ -16,11 +16,15 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
     public interface IRunTimeExecute {
         void Execute(Process process);
+        Task ExecuteAsync(Process process, CancellationToken token = default);
         void Execute(string cfg, Dictionary<string, string> parameters);
+        Task ExecuteAsync(string cfg, Dictionary<string, string> parameters, CancellationToken token = default);
     }
 }

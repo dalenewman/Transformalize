@@ -25,6 +25,7 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
+using System.Threading;
 
 namespace Transformalize.Providers.Excel {
 
@@ -119,5 +120,8 @@ namespace Transformalize.Providers.Excel {
          };
       }
 
+
+   public Task<Schema> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) { return Task.FromResult(Read(entity)); }
    }
 }

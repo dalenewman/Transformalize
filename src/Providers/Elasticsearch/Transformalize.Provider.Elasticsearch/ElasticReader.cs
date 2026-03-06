@@ -27,6 +27,8 @@ using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
@@ -469,5 +471,7 @@ namespace Transformalize.Providers.Elasticsearch {
       private void LogError(IApiCallDetails response) {
          _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

@@ -15,10 +15,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
     public class NullMasterUpdater : IUpdate {
         public void Update() { }
+
+        public Task UpdateAsync(CancellationToken token = default) {
+            return Task.CompletedTask;
+        }
     }
 }

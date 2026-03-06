@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -36,6 +38,10 @@ namespace Transformalize.Impl {
                 row[field] = field.Convert(field.Default == Constants.DefaultSetting ? types[field.Type] : field.Convert(field.Default));
             }
             yield return row;
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
         }
     }
 }

@@ -25,6 +25,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.XPath;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -374,6 +376,10 @@ namespace Transformalize.Providers.Solr {
          if (processedValue.Length > 0)
             phrases.AddRange(processedValue.Split(delimiter.ToCharArray()));
          return phrases;
+      }
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         return Task.FromResult(Read());
       }
    }
 }

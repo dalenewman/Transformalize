@@ -23,6 +23,8 @@ using System.Linq;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityMatchingKeysReader : IBatchReader {
@@ -126,5 +128,7 @@ namespace Transformalize.Providers.Ado {
             return batch;
         }
 
+
+    public Task<Batch> ReadAsync(IEnumerable<IRow> input, CancellationToken token = default) { return Task.FromResult(Read(input)); }
     }
 }

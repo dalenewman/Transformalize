@@ -17,6 +17,8 @@
 #endregion
 using Autofac;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -60,6 +62,10 @@ namespace Transformalize.Containers.Autofac {
          }
 
          return response;
+      }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         return Task.FromResult(Execute());
       }
    }
 }

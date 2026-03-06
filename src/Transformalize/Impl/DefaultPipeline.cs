@@ -17,6 +17,7 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -51,6 +52,10 @@ namespace Transformalize.Impl {
 
       public ActionResponse Initialize() {
          return _controller.Initialize();
+      }
+
+      public virtual Task<ActionResponse> InitializeAsync(CancellationToken token = default) {
+         return _controller.InitializeAsync(token);
       }
 
       public void Register(IMapReader mapReader) {
@@ -154,6 +159,51 @@ namespace Transformalize.Impl {
          }
          Updater.Update();
          _controller.End();
+      }
+
+      public virtual async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         Context.Debug(() => $"Running {Transforms.Count} transforms.");
+         if (Context.Entity.NeedsUpdate(Context)) {
+            if (Context.Process.Mode != "init") {
+               if (Context.Entity.Version != string.Empty) {
+                  var version = Context.Entity.GetVersionField();
+                  if (version.Type == "byte[]") {
+                     var min = Context.Entity.MinVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' });
+                     var max = Context.Entity.MaxVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' });
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", max, min);
+                  } else {
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", Context.Entity.MaxVersion ?? "null", Context.Entity.MinVersion ?? "null");
+                  }
+               }
+            }
+            var data = Reader == null ? await InputProvider.ReadAsync(token).ConfigureAwait(false) : await Reader.ReadAsync(token).ConfigureAwait(false);
+
+            if (Transforms.Any()) {
+               data = Transforms.Aggregate(data, (rows, t) => t.Operate(rows));
+            }
+
+            if (Validators.Any()) {
+               data = Validators.Aggregate(data, (rows, v) => v.Operate(rows));
+            }
+
+            return data;
+         }
+         Context.Info("Change Detected: No.");
+         return Enumerable.Empty<IRow>();
+      }
+
+      public virtual async Task ExecuteAsync(CancellationToken token = default) {
+         await _controller.StartAsync(token).ConfigureAwait(false);
+         if (DeleteHandler != null) {
+            await DeleteHandler.DeleteAsync(token).ConfigureAwait(false);
+         }
+         if (Writer == null) {
+            await OutputProvider.WriteAsync(await ReadAsync(token).ConfigureAwait(false), token).ConfigureAwait(false);
+         } else {
+            await Writer.WriteAsync(await ReadAsync(token).ConfigureAwait(false), token).ConfigureAwait(false);
+         }
+         await Updater.UpdateAsync(token).ConfigureAwait(false);
+         await _controller.EndAsync(token).ConfigureAwait(false);
       }
 
       /// <inheritdoc />

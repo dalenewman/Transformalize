@@ -6,6 +6,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    /// <summary>
@@ -67,5 +69,8 @@ namespace Transformalize.Providers.Ado {
                 && input.Provider == "sqlserver";  // only implemented for SQL Server to start
       }
 
+
+   public Task DeleteAsync(CancellationToken token = default) { Delete(); return Task.CompletedTask; }
+   public Task<IEnumerable<IRow>> DetermineDeletesAsync(CancellationToken token = default) { return Task.FromResult(DetermineDeletes()); }
    }
 }

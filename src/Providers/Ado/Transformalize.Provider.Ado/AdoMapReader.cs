@@ -25,6 +25,8 @@ using System.Dynamic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoMapReader : IMapReader {
@@ -142,5 +144,7 @@ namespace Transformalize.Providers.Ado {
             }
          }
       }
+
+   public Task<IEnumerable<MapItem>> ReadAsync(IContext context, CancellationToken token = default) { return Task.FromResult(Read(context)); }
    }
 }

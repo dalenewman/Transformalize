@@ -17,11 +17,14 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
     public interface IMapReader {
         IEnumerable<MapItem> Read(IContext context);
+        Task<IEnumerable<MapItem>> ReadAsync(IContext context, CancellationToken token = default);
     }
 
     public class DefaultMapReader : IMapReader {
@@ -29,6 +32,10 @@ namespace Transformalize.Contracts {
         public IEnumerable<MapItem> Read(IContext context) {
             var map = context.Process.Maps.FirstOrDefault(m => m.Name == context.Operation.Map);
             return map == null ? Enumerable.Empty<MapItem>() : map.Items;
+        }
+
+        public Task<IEnumerable<MapItem>> ReadAsync(IContext context, CancellationToken token = default) {
+            return Task.FromResult(Read(context));
         }
     }
 }

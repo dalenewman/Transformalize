@@ -22,6 +22,8 @@ using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
@@ -55,5 +57,8 @@ namespace Transformalize.Providers.Elasticsearch {
                 _client.Update<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
             }
         }
+
+    public Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Delete(rows); return Task.CompletedTask; }
+    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
     }
 }

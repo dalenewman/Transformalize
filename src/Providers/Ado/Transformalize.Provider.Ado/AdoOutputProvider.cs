@@ -24,6 +24,8 @@ using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -197,5 +199,16 @@ namespace Transformalize.Providers.Ado {
             _cn.Dispose();
          }
       }
+
+   public Task DeleteAsync(CancellationToken token = default) { Delete(); return Task.CompletedTask; }
+   public Task EndAsync(CancellationToken token = default) { End(); return Task.CompletedTask; }
+   public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) { return Task.FromResult(GetMaxTflKey()); }
+   public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
+   public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) { return Task.FromResult(GetNextTflBatchId()); }
+   public Task InitializeAsync(CancellationToken token = default) { Initialize(); return Task.CompletedTask; }
+   public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) { return Task.FromResult(Match(rows)); }
+   public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) { return Task.FromResult(ReadKeys()); }
+   public Task StartAsync(CancellationToken token = default) { Start(); return Task.CompletedTask; }
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

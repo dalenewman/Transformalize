@@ -24,6 +24,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
 using Transformalize.Providers.Trace;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tests {
 
@@ -129,5 +131,7 @@ namespace Tests {
         public void Delete(IEnumerable<IRow> rows) {
             Data = Data.Except(rows, new KeyComparer(_entity.GetPrimaryKey())).ToList();
         }
+
+    public Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Delete(rows); return Task.CompletedTask; }
     }
 }

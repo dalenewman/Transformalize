@@ -21,6 +21,8 @@ using System.IO;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
 
@@ -142,5 +144,7 @@ namespace Transformalize.Providers.GeoJson {
          jw.Flush();
 
       }
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

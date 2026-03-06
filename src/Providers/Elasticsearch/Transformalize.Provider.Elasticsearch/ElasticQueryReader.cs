@@ -23,6 +23,8 @@ using Newtonsoft.Json.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
@@ -136,5 +138,7 @@ namespace Transformalize.Providers.Elasticsearch {
             return results;
         }
 
+
+    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
     }
 }

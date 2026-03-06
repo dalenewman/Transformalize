@@ -24,6 +24,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -84,5 +86,7 @@ WHERE m.{_model.Batch} > @Threshold;
 
          return new ActionResponse(200, "Ok");
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

@@ -26,6 +26,8 @@ using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoFlattenTwoPartUpdateAction : IAction {
@@ -103,5 +105,7 @@ namespace Transformalize.Providers.Ado {
             }
          }
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

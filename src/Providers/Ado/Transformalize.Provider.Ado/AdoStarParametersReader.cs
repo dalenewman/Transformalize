@@ -24,6 +24,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoStarParametersReader : IRead {
@@ -107,5 +109,7 @@ namespace Transformalize.Providers.Ado {
                 _output.Info("{0} from {1}", rowCount, _output.Connection.Name);
             }
         }
+
+    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
     }
 }

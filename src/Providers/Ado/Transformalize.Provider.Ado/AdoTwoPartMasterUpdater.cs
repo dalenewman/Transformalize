@@ -27,6 +27,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -160,5 +162,7 @@ namespace Transformalize.Providers.Ado {
                 }
             }
         }
+
+    public Task UpdateAsync(CancellationToken token = default) { Update(); return Task.CompletedTask; }
     }
 }

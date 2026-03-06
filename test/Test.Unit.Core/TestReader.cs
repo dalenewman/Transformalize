@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tests {
     public class TestReader : IRead {
@@ -29,5 +31,7 @@ namespace Tests {
         public IEnumerable<IRow> Read() {
             return Data;
         }
+
+    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
     }
 }

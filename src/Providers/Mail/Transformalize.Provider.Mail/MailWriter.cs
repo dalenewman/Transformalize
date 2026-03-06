@@ -26,6 +26,8 @@ using System.Security.Cryptography.X509Certificates;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Mail {
    public class MailWriter : IWrite {
@@ -159,5 +161,7 @@ namespace Transformalize.Providers.Mail {
          return false;
       }
 
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

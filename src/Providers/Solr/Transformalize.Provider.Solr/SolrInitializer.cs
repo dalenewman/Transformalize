@@ -25,6 +25,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
@@ -122,6 +124,10 @@ namespace Transformalize.Providers.Solr {
          // _solr.Commit();  /* wait until after writing the new records */
 
          return new ActionResponse();
+      }
+
+      public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         return Task.FromResult(Execute());
       }
    }
 }

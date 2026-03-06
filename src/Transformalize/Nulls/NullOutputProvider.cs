@@ -17,6 +17,9 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -64,6 +67,51 @@ namespace Transformalize.Nulls {
 
         public void Write(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public Task InitializeAsync(CancellationToken token = default) {
+            Initialize();
+            return Task.CompletedTask;
+        }
+
+        public Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxVersion());
+        }
+
+        public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) {
+            return Task.FromResult(GetNextTflBatchId());
+        }
+
+        public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxTflKey());
+        }
+
+        public Task StartAsync(CancellationToken token = default) {
+            Start();
+            return Task.CompletedTask;
+        }
+
+        public Task EndAsync(CancellationToken token = default) {
+            End();
+            return Task.CompletedTask;
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteAsync(CancellationToken token = default) {
+            Delete();
+            return Task.CompletedTask;
+        }
+
+        public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) {
+            return Task.FromResult(ReadKeys());
+        }
+
+        public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            return Task.FromResult(Match(rows));
         }
     }
 }

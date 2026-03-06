@@ -15,11 +15,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
     public interface ISchemaReader {
         Schema Read();
+        Task<Schema> ReadAsync(CancellationToken token = default);
         Schema Read(Entity entity);
+        Task<Schema> ReadAsync(Entity entity, CancellationToken token = default);
     }
 }

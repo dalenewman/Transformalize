@@ -3,6 +3,8 @@ using System.IO;
 using System.Text;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
    public class CsvHelperReader : IRead {
@@ -20,5 +22,7 @@ namespace Transformalize.Providers.CsvHelper {
          var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
          return new CsvHelperStreamReader(_context, new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), encoding), _rowFactory).Read();
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

@@ -26,6 +26,8 @@ using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -186,5 +188,8 @@ namespace Transformalize.Providers.Ado {
          schema.Entities.Add(newEntity);
          return schema;
       }
+
+   public Task<Schema> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) { return Task.FromResult(Read(entity)); }
    }
 }

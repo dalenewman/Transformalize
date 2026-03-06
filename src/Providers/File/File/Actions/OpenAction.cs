@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
@@ -39,6 +41,10 @@ namespace Transformalize.Providers.File.Actions {
                 response.Message = $"Error opening {_action.File}. {ex.Message}";
             }
             return response;
+        }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            return Task.FromResult(Execute());
         }
     }
 }

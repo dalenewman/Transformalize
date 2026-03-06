@@ -1,6 +1,8 @@
 ﻿using Humanizer;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms.Humanizer.Actions {
    public class HumanizeLabels : IAction {
@@ -31,5 +33,7 @@ namespace Transformalize.Transforms.Humanizer.Actions {
 
          return new ActionResponse(200) { Action = _action };
       }
+
+   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
    }
 }

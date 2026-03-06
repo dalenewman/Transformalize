@@ -16,10 +16,13 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
     public interface IRunTimeRun {
         IEnumerable<IRow> Run(Process process);
+        Task<IEnumerable<IRow>> RunAsync(Process process, CancellationToken token = default);
     }
 }

@@ -25,6 +25,8 @@ using System.Dynamic;
 using System.Linq;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado.Actions {
     public class AdoRunAction : IAction {
@@ -94,5 +96,7 @@ namespace Transformalize.Providers.Ado.Actions {
             }
             return response;
         }
+
+    public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
     }
 }

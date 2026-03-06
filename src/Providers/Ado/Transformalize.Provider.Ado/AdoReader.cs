@@ -21,6 +21,8 @@ using System.Data;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    /// <summary>
@@ -95,5 +97,7 @@ namespace Transformalize.Providers.Ado {
             _context.Info("{0} from {1}", _rowCount, _connection.Name);
          }
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

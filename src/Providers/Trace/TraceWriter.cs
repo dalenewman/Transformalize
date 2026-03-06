@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Trace {
@@ -30,6 +32,11 @@ namespace Transformalize.Providers.Trace {
             foreach (var row in rows) {
                 System.Diagnostics.Trace.WriteLine(_serializer.Serialize(row));
             }
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

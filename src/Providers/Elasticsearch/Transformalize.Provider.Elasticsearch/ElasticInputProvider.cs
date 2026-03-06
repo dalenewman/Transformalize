@@ -25,6 +25,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Elasticsearch.Ext;
 using Newtonsoft.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
     public class ElasticInputProvider : IInputProvider {
@@ -73,5 +75,9 @@ namespace Transformalize.Providers.Elasticsearch {
         public IEnumerable<IRow> Read() {
             throw new NotImplementedException();
         }
+
+    public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
+    public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) { return Task.FromResult(GetSchema(entity)); }
+    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
     }
 }

@@ -4,6 +4,8 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityDepthChecker : IAction {
@@ -47,5 +49,7 @@ namespace Transformalize.Providers.Ado {
             return response;
 
         }
+
+    public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
     }
 }

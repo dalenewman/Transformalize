@@ -21,6 +21,8 @@ using System.Linq;
 using Elasticsearch.Net;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
    public class ElasticSchemaReader : ISchemaReader {
@@ -146,5 +148,8 @@ namespace Transformalize.Providers.Elasticsearch {
          return schema;
       }
 
+
+   public Task<Schema> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) { return Task.FromResult(Read(entity)); }
    }
 }

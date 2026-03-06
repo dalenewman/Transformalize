@@ -6,6 +6,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityFormCommands : IAction {
@@ -116,6 +118,8 @@ namespace Transformalize.Providers.Ado {
             return $"DELETE FROM {cf.Enclose(c.Entity.Name)} WHERE {criteria}{cf.Terminator}";
         }
 
+
+    public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
     }
 
 }

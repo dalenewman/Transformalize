@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -32,6 +34,18 @@ namespace Transformalize.Nulls {
 
         public IEnumerable<IRow> Read() {
             return Enumerable.Empty<IRow>();
+        }
+
+        public Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxVersion());
+        }
+
+        public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) {
+            return Task.FromResult(GetSchema(entity));
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
         }
     }
 }

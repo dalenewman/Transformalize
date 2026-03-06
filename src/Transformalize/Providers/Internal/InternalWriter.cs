@@ -18,6 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -51,6 +53,11 @@ namespace Transformalize.Providers.Internal {
                 _context.Info("{0} inserts into {1} {2}", _context.Entity.Inserts, _context.Connection.Name, _context.Entity.Alias);
             }
 
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

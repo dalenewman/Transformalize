@@ -17,10 +17,14 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Transformalize.Actions;
 
 namespace Transformalize.Contracts {
     public interface IPipeline : IRead, IDisposable {
         ActionResponse Initialize();
+        Task<ActionResponse> InitializeAsync(CancellationToken token = default);
         void Register(IMapReader mapReader);
         void Register(IRead reader);
         void Register(ITransform transformer);
@@ -33,6 +37,7 @@ namespace Transformalize.Contracts {
         void Register(IOutputProvider output);
         void Register(IInputProvider input);
         void Execute();
+        Task ExecuteAsync(CancellationToken token = default);
 
         IContext Context { get; }
     }
