@@ -2,11 +2,13 @@
 
   <parameters>
      <add name="Mode" value="default" />
+     <add name="SqliteInputFile" value="files/northwind-input.sqlite3" />
+     <add name="SqliteOutputFile" value="files/northwind-output.sqlite3" />
   </parameters>
 
   <connections>
-     <add name="input" provider="sqlite" file="files/northwind-input.sqlite3" />
-     <add name="output" provider="sqlite" file="files/northwind-output.sqlite3" />
+     <add name="input" provider="sqlite" file="@[SqliteInputFile]" />
+     <add name="output" provider="sqlite" file="@[SqliteOutputFile]" />
   </connections>
 
   <maps>

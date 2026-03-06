@@ -44,35 +44,37 @@ namespace Test.Integration.Core {
 
    [TestClass]
    [DoNotParallelize]
-   public class Integration {
+   public class IntegrationAsync {
 
       public string SqliteTestFile { get; set; } = @"files/NorthWindIntegrationSqlite.xml";
       public string ElasticTestFile { get; set; } = @"files/NorthWindSqliteToElasticsearch.xml";
+      public static string SqliteInputFile {get; set;} = @"files/northwind-input-async.sqlite3";
+      public static string SqliteOutputFile {get; set;} = @"files/northwind-output-async.sqlite3";
 
       public Connection InputConnection => new Connection {
          Name = "input",
          Provider = "sqlite",
-         File = "files/northwind-input.sqlite3"
+         File = SqliteInputFile
       };
 
       public Connection OutputConnection => new Connection {
          Name = "output",
          Provider = "sqlite",
-         File = "files/northwind-output.sqlite3"
+         File = SqliteOutputFile
       };
 
       [ClassInitialize]
       public static void ClassInit(TestContext context) {
-         File.Copy("files/northwind-sqlite.db", "files/northwind-input.sqlite3", overwrite: true);
-         if (File.Exists("files/northwind-output.sqlite3")) {
-            File.Delete("files/northwind-output.sqlite3");
+         File.Copy("files/northwind-sqlite.db", SqliteInputFile, overwrite: true);
+         if (File.Exists(SqliteOutputFile)) {
+            File.Delete(SqliteOutputFile);
          }
       }
 
       private string ElasticFileParams =>
          $"ElasticServer={Tester.ElasticServer}&ElasticPort={Tester.ElasticPort}" +
          $"&ElasticUser={Tester.ElasticUser}&ElasticPassword={Tester.ElasticPassword}" +
-         $"&ElasticVersion={Tester.ElasticVersion}";
+         $"&ElasticVersion={Tester.ElasticVersion}&SqliteFile={SqliteOutputFile}";
 
       private static string ColorsCsvToElasticXml => $@"<add name='ColorsCsvToElastic' mode='init' read-only='true'>
   <connections>
@@ -97,12 +99,12 @@ namespace Test.Integration.Core {
   </entities>
 </add>";
 
-      private static void BuildColorsIndex(uint? expectedInserts = null) {
+      private async Task BuildColorsIndex(uint? expectedInserts = null) {
          var logger = new ConsoleLogger(LogLevel.Info);
          using (var outer = new ConfigurationContainer().CreateScope(ColorsCsvToElasticXml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new CsvHelperProviderModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
-               inner.Resolve<IProcessController>().Execute();
+               await inner.Resolve<IProcessController>().ExecuteAsync();
                if (expectedInserts.HasValue) {
                   Assert.AreEqual(expectedInserts.Value, process.Entities.First().Inserts);
                }
@@ -112,7 +114,7 @@ namespace Test.Integration.Core {
 
       [TestMethod]
       [DoNotParallelize]
-      public void SqliteToElastic() {
+      public async Task SqliteToElastic() {
 
          var logger = new ConsoleLogger(LogLevel.Info);
 
@@ -122,11 +124,11 @@ namespace Test.Integration.Core {
             .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
          var client = new ElasticLowLevelClient(settings);
 
-         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?Mode=init", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?Mode=init&SqliteInputFile={SqliteInputFile}&SqliteOutputFile={SqliteOutputFile}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -134,7 +136,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -146,7 +148,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -161,11 +163,11 @@ namespace Test.Integration.Core {
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?SqliteInputFile={SqliteInputFile}&SqliteOutputFile={SqliteOutputFile}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -182,7 +184,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -216,11 +218,11 @@ namespace Test.Integration.Core {
          }
 
          // RUN AND CHECK SQL
-         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}", logger)) {
+         using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?SqliteInputFile={SqliteInputFile}&SqliteOutputFile={SqliteOutputFile}", logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -236,7 +238,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -265,13 +267,13 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      public void Colors00BuildIndexFromCsv() {
-         BuildColorsIndex(865);
+      public async Task Colors00BuildIndexFromCsv() {
+         await BuildColorsIndex(865);
       }
 
       [TestMethod]
-      public void TestSingleIndexMapping() {
-         BuildColorsIndex();
+      public async Task TestSingleIndexMapping() {
+         await BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -295,13 +297,13 @@ namespace Test.Integration.Core {
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
 
-         Assert.AreEqual(9, schemaReader.GetFields("rows").Count());
+         Assert.AreEqual(9, (await schemaReader.GetFieldsAsync("rows")).Count());
 
       }
 
       [TestMethod]
-      public void TestAllIndexMapping() {
-         BuildColorsIndex();
+      public async Task TestAllIndexMapping() {
+         await BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -325,13 +327,13 @@ namespace Test.Integration.Core {
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
 
-         Assert.AreEqual(1, schemaReader.GetEntities().Count());
+         Assert.AreEqual(1, (await schemaReader.GetEntitiesAsync()).Count());
 
       }
 
       [TestMethod]
-      public void TestReadAll() {
-         BuildColorsIndex();
+      public async Task TestReadAll() {
+         await BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -358,14 +360,14 @@ namespace Test.Integration.Core {
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
-         var rows = reader.Read().ToArray();
+         var rows = (await reader.ReadAsync()).ToArray();
          Assert.AreEqual(865, rows.Length);
 
       }
 
       [TestMethod]
-      public void TestReadPage() {
-         BuildColorsIndex();
+      public async Task TestReadPage() {
+         await BuildColorsIndex();
 
          var connection = new Connection {
             Name = "input",
@@ -397,7 +399,7 @@ namespace Test.Integration.Core {
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
-         var rows = reader.Read().ToArray();
+         var rows = (await reader.ReadAsync()).ToArray();
          Assert.AreEqual(20, rows.Length);
 
       }

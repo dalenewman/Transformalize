@@ -162,7 +162,7 @@ namespace Transformalize.Providers.Elasticsearch {
          return schema;
       }
 
-      private async Task<List<Field>> GetFieldsAsync(string name, CancellationToken token = default) {
+      public async Task<List<Field>> GetFieldsAsync(string name, CancellationToken token = default) {
 
          var version = ElasticVersionParser.ParseVersion(_input);
 
@@ -194,7 +194,7 @@ namespace Transformalize.Providers.Elasticsearch {
          return new List<Field>();
       }
 
-      private async Task<List<Entity>> GetEntitiesAsync(CancellationToken token = default) {
+      public async Task<List<Entity>> GetEntitiesAsync(CancellationToken token = default) {
 
          var results = new List<Entity>();
          var version = ElasticVersionParser.ParseVersion(_input);

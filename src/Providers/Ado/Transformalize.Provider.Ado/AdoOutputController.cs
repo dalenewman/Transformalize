@@ -18,7 +18,10 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -172,6 +175,140 @@ namespace Transformalize.Providers.Ado {
             }
 
             OutputProvider.End();
+
+            _stopWatch.Stop();
+            Context.Debug(() => $"Entity {Context.Entity} ending {_stopWatch.Elapsed}");
+        }
+
+        public override async Task StartAsync(CancellationToken token = default) {
+
+            if (_cf.AdoProvider == AdoProvider.Access) {
+                SqlMapper.AddTypeMap(typeof(DateTime), DbType.Date);
+            }
+
+            _stopWatch.Start();
+            await base.StartAsync(token).ConfigureAwait(false);
+
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                Context.Debug(() => "Loading BatchId.");
+                var sql = Context.SqlControlStartBatch(_cf);
+                try {
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandText = sql;
+                    cmd.CommandType = CommandType.Text;
+
+                    var batchId = cmd.CreateParameter();
+                    batchId.ParameterName = "BatchId";
+                    batchId.DbType = DbType.Int32;
+                    batchId.Value = Context.Entity.BatchId;
+
+                    var entity = cmd.CreateParameter();
+                    entity.ParameterName = "Entity";
+                    entity.DbType = DbType.String;
+                    entity.Value = Context.Entity.Alias;
+
+                    var mode = cmd.CreateParameter();
+                    mode.ParameterName = "Mode";
+                    mode.DbType = DbType.String;
+                    mode.Value = Context.Process.Mode;
+
+                    var start = cmd.CreateParameter();
+                    start.ParameterName = "Start";
+                    start.DbType = _cf.AdoProvider == AdoProvider.Access ? DbType.Date : DbType.DateTime;
+                    start.Value = DateTime.Now;
+
+                    cmd.Parameters.Add(batchId);
+                    cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(mode);
+                    cmd.Parameters.Add(start);
+
+                    await ((DbCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+                } catch (Exception e) {
+                    Context.Error(e.Message);
+                }
+                if (cn.State != ConnectionState.Closed) {
+                    cn.Close();
+                }
+            }
+
+        }
+
+        public override async Task EndAsync(CancellationToken token = default) {
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                var sql = Context.SqlControlEndBatch(_cf);
+                if (_cf.AdoProvider == AdoProvider.Access) {
+                    var cmd = cn.CreateCommand();
+                    cmd.CommandType = CommandType.Text;
+                    cmd.CommandText = sql;
+
+                    var inserts = cmd.CreateParameter();
+                    inserts.ParameterName = "Inserts";
+                    inserts.DbType = DbType.Int32;
+                    inserts.Value = Convert.ToInt32(Context.Entity.Inserts);
+
+                    var updates = cmd.CreateParameter();
+                    updates.ParameterName = "Updates";
+                    updates.DbType = DbType.Int32;
+                    updates.Value = Convert.ToInt32(Context.Entity.Updates);
+
+                    var deletes = cmd.CreateParameter();
+                    deletes.ParameterName = "Deletes";
+                    deletes.DbType = DbType.Int32;
+                    deletes.Value = Convert.ToInt32(Context.Entity.Deletes);
+
+                    var end = cmd.CreateParameter();
+                    end.ParameterName = "End";
+                    end.DbType = DbType.Date;
+                    end.Value = DateTime.Now;
+
+                    var entity = cmd.CreateParameter();
+                    entity.ParameterName = "Entity";
+                    entity.DbType = DbType.String;
+                    entity.Value = Context.Entity.Alias;
+
+                    var batchId = cmd.CreateParameter();
+                    batchId.ParameterName = "BatchId";
+                    batchId.DbType = DbType.Int32;
+                    batchId.Value = Context.Entity.BatchId;
+
+                    cmd.Parameters.Add(inserts);
+                    cmd.Parameters.Add(updates);
+                    cmd.Parameters.Add(deletes);
+                    cmd.Parameters.Add(end);
+                    cmd.Parameters.Add(entity);
+                    cmd.Parameters.Add(batchId);
+
+                    await ((DbCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+
+                } else {
+                    try {
+                        await cn.ExecuteAsync(sql, new {
+                            Inserts = Convert.ToInt64(Context.Entity.Inserts),
+                            Updates = Convert.ToInt64(Context.Entity.Updates),
+                            Deletes = Convert.ToInt64(Context.Entity.Deletes),
+                            End = DateTime.Now,
+                            Entity = Context.Entity.Alias,
+                            Input = Context.Entity.Input,
+                            Context.Entity.BatchId
+                        }).ConfigureAwait(false);
+                    } catch (System.Data.Common.DbException e) {
+                        Context.Error("Error writing to the control table.");
+                        Context.Error(e.Message);
+                        Context.Debug(() => e.StackTrace);
+                        Context.Debug(() => sql);
+                        return;
+                    }
+
+                }
+                if (cn.State != ConnectionState.Closed) {
+                    cn.Close();
+                }
+            }
+
+            await OutputProvider.EndAsync(token).ConfigureAwait(false);
 
             _stopWatch.Stop();
             Context.Debug(() => $"Entity {Context.Entity} ending {_stopWatch.Elapsed}");

@@ -32,7 +32,7 @@ namespace Test.Unit.SqlServer {
 
    [TestClass]
    [DoNotParallelize]
-   public class NorthWindIntegrationSqlServer {
+   public class NorthWindIntegrationSqlServerAsync {
 
       public string TestFile { get; set; } = $@"files/NorthWind.xml?Server={Tester.Server},{Tester.Port}&User={Tester.User}&Pw={Tester.Pw}";
 
@@ -49,9 +49,9 @@ namespace Test.Unit.SqlServer {
       };
 
       [TestMethod]
-      [DoNotParallelize]
       //[Ignore]
-      public void SqlServer_Integration() {
+      [DoNotParallelize]
+      public async Task SqlServer_Integration() {
 
          // Northwind database is automatically initialized by TestContainers
          var logger = new ConsoleLogger();
@@ -73,7 +73,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -90,7 +90,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -113,7 +113,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -139,7 +139,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -166,7 +166,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
@@ -193,7 +193,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
