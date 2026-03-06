@@ -25,24 +25,41 @@ namespace Transformalize.Providers.CsvHelper {
 
          if (_context.Connection.Header == Constants.DefaultSetting) {
             WriteHeader(_csv);
-            _csv.NextRecordAsync().ConfigureAwait(false);
+            _csv.NextRecord();
          }
 
          foreach (var row in rows) {
             WriteRow(_csv, row);
             _context.Entity.Inserts++;
-            _csv.NextRecordAsync().ConfigureAwait(false);
-            _csv.FlushAsync().ConfigureAwait(false);
+            _csv.NextRecord();
+            _csv.Flush();
          }
 
-         _csv.FlushAsync().ConfigureAwait(false);
-         
+         _csv.Flush();
+
       }
 
       public void Dispose() {
          _csv?.Dispose();
       }
 
-   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+
+         if (_context.Connection.Header == Constants.DefaultSetting) {
+            WriteHeader(_csv);
+            await _csv.NextRecordAsync().ConfigureAwait(false);
+         }
+
+         foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            WriteRow(_csv, row);
+            _context.Entity.Inserts++;
+            await _csv.NextRecordAsync().ConfigureAwait(false);
+            await _csv.FlushAsync().ConfigureAwait(false);
+         }
+
+         await _csv.FlushAsync().ConfigureAwait(false);
+
+      }
    }
 }

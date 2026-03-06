@@ -36,6 +36,11 @@ namespace Transformalize.Providers.CsvHelper {
          return _transforms.Aggregate(PreRead(), (rows, transform) => transform.Operate(rows));
       }
 
+      public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         var rows = await PreReadAsync(token).ConfigureAwait(false);
+         return _transforms.Aggregate((IEnumerable<IRow>)rows, (current, transform) => transform.Operate(current));
+      }
+
       private IEnumerable<IRow> PreRead() {
 
          _context.Debug(() => "Reading file stream.");
@@ -51,20 +56,7 @@ namespace Transformalize.Providers.CsvHelper {
 
          var current = _context.Connection.Start;
 
-         var configuration = new CsvConfiguration(CultureInfo.InvariantCulture) {
-            IgnoreBlankLines = true,
-            Delimiter = string.IsNullOrEmpty(_context.Connection.Delimiter) ? "," : _context.Connection.Delimiter,
-            Encoding = Encoding.GetEncoding(_context.Connection.Encoding)
-         };
-
-         if (_context.Connection.ErrorMode.Equals("IgnoreAndContinue", System.StringComparison.OrdinalIgnoreCase)) {
-            configuration.BadDataFound = null;  // skip the record
-         }
-
-         if (_context.Connection.TextQualifier != string.Empty) {
-            configuration.Escape = _context.Connection.TextQualifier[0];
-            configuration.Quote = _context.Connection.TextQualifier[0];
-         }
+         var configuration = CreateConfiguration();
 
          using (var csv = new CsvReader(_streamReader, configuration)) {
 
@@ -91,11 +83,76 @@ namespace Transformalize.Providers.CsvHelper {
             }
          }
 
-         _streamReader.Close();
+         _streamReader.Dispose();
 
       }
 
+      private async Task<List<IRow>> PreReadAsync(CancellationToken token = default) {
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+         _context.Debug(() => "Reading file stream asynchronously.");
+
+         var rows = new List<IRow>();
+         var ignoreFirstLines = _context.Connection.Start > 1 ? _context.Connection.Start - 1 : _context.Connection.Start;
+
+         var start = _context.Connection.Start;
+         var end = 0;
+         if (_context.Entity.IsPageRequest()) {
+            start += (_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size;
+            end = start + _context.Entity.Size;
+         }
+
+         var current = _context.Connection.Start;
+         var configuration = CreateConfiguration();
+
+         using (var csv = new CsvReader(_streamReader, configuration)) {
+
+            while (await csv.ReadAsync().ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+
+               if (csv.Parser.RawRow <= ignoreFirstLines) {
+                  continue;
+               }
+
+               if (end == 0 || current.Between(start, end)) {
+                  var row = _rowFactory.Create();
+                  for (int i = 0; i < _context.InputFields.Length; i++) {
+                     var data = csv.GetField(i);
+                     var field = _context.InputFields[i];
+                     row[field] = data;
+                  }
+                  rows.Add(row);
+                  ++_context.Entity.Hits;
+               }
+
+               ++current;
+               if (current == end) {
+                  break;
+               }
+            }
+         }
+
+         _streamReader.Dispose();
+
+         return rows;
+      }
+
+      private CsvConfiguration CreateConfiguration() {
+         var configuration = new CsvConfiguration(CultureInfo.InvariantCulture) {
+            IgnoreBlankLines = true,
+            Delimiter = string.IsNullOrEmpty(_context.Connection.Delimiter) ? "," : _context.Connection.Delimiter,
+            Encoding = Encoding.GetEncoding(_context.Connection.Encoding)
+         };
+
+         if (_context.Connection.ErrorMode.Equals("IgnoreAndContinue", System.StringComparison.OrdinalIgnoreCase)) {
+            configuration.BadDataFound = null;  // skip the record
+         }
+
+         if (_context.Connection.TextQualifier != string.Empty) {
+            configuration.Escape = _context.Connection.TextQualifier[0];
+            configuration.Quote = _context.Connection.TextQualifier[0];
+         }
+
+         return configuration;
+      }
    }
 }

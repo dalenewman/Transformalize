@@ -198,9 +198,6 @@ namespace Transformalize.ConfigurationFacade {
       public string MaxDegreeOfParallism { get; set; }
 
       [Cfg]
-      public string Synchronous { get; set; }
-
-      [Cfg]
       public string Service { get; set; }
       
       [Cfg]
@@ -320,9 +317,6 @@ namespace Transformalize.ConfigurationFacade {
 
          bool.TryParse(this.StartTls, out bool startTls);
          c.StartTls = startTls;
-
-         bool.TryParse(this.Synchronous, out bool synchronous);
-         c.Synchronous = synchronous;
 
          bool.TryParse(this.Mars, out bool mars);
          c.Mars = mars;

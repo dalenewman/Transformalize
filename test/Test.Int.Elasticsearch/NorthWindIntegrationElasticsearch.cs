@@ -76,7 +76,7 @@ namespace Test.Integration.Core {
 
       private static string ColorsCsvToElasticXml => $@"<add name='ColorsCsvToElastic' mode='init' read-only='true'>
   <connections>
-    <add name='input' provider='file' delimiter=',' file='files/colors.csv' synchronous='true' start='0' />
+    <add name='input' provider='file' delimiter=',' file='files/colors.csv' start='0' />
     <add name='output' provider='elasticsearch' server='{Tester.ElasticServer}' port='{Tester.ElasticPort}' index='colors' user='{Tester.ElasticUser}' password='{Tester.ElasticPassword}' useSsl='true' version='{Tester.ElasticVersion}' />
   </connections>
   <entities>
