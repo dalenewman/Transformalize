@@ -139,6 +139,19 @@ namespace Transformalize.Providers.Elasticsearch {
         }
 
 
-    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+        public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            _context.Debug(() => _context.Entity.Query);
+            var response = await _client.SearchAsync<DynamicResponse>(PostData.String(_context.Entity.Query), (SearchRequestParameters)null, token).ConfigureAwait(false);
+
+            if (response.Success) {
+                if (response.Body != null && response.Body["aggregations"].HasValue) {
+                    return Flatten("aggregations", response.Body["aggregations"].Value);
+                }
+                _context.Warn("An elastic query should return aggregations, but yours does not.");
+            } else {
+                _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            }
+            return new IRow[0];
+        }
     }
 }

@@ -222,6 +222,29 @@ namespace Transformalize.Providers.Elasticsearch {
       }
 
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         _context.Warn("Initializing");
+
+         var version = ElasticVersionParser.ParseVersion(_context);
+
+         var properties = new Dictionary<string, object> { { "properties", GetFields() } };
+         var typeName = _context.Entity.Alias.ToLower();
+         var json = JsonConvert.SerializeObject(properties);
+
+         var elasticResponse = await _client.Indices.PutMappingAsync<DynamicResponse>(_context.Connection.Index, json, null, token).ConfigureAwait(false);
+
+         var response = new ActionResponse(
+            elasticResponse.HttpStatusCode ?? 500,
+            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+         ) {
+            Action = new Configuration.Action() {
+               Type = "internal",
+               ErrorMode = "continue",
+               Description = $"Initialize {typeName} entity."
+            }
+         };
+
+         return response;
+      }
    }
 }

@@ -58,7 +58,18 @@ namespace Transformalize.Providers.Elasticsearch {
             }
         }
 
-    public Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Delete(rows); return Task.CompletedTask; }
-    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+        public async Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            foreach (var row in rows) {
+                var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
+                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
+            }
+        }
+
+        public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            foreach (var row in rows) {
+                var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
+                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
+            }
+        }
     }
 }

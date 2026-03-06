@@ -172,13 +172,109 @@ namespace Transformalize.Providers.Elasticsearch {
 
    public Task DeleteAsync(CancellationToken token = default) { Delete(); return Task.CompletedTask; }
    public Task EndAsync(CancellationToken token = default) { End(); return Task.CompletedTask; }
-   public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) { return Task.FromResult(GetMaxTflKey()); }
-   public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
-   public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) { return Task.FromResult(GetNextTflBatchId()); }
+
+   public async Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
+         var result = await GetAggregationsAsync(token).ConfigureAwait(false);
+
+         if (result.Success) {
+            var key = result.Body["aggregations"]["k"]["value"].Value;
+            return (key == null ? 0 : (int)key);
+         } else {
+            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            return 0;
+         }
+      }
+
+   public async Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+
+         if (string.IsNullOrEmpty(_context.Entity.Version))
+            return null;
+
+         var version = _context.Entity.GetVersionField();
+
+         _context.Debug(() => $"Detecting Max Output Version: {_context.Connection.Index}.{_context.TypeName()}.{version.Alias.ToLower()}.");
+
+         var body = new {
+            aggs = new {
+               version = new {
+                  max = new {
+                     field = version.Alias.ToLower()
+                  }
+               }
+            },
+            size = 0
+         };
+
+         var result = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)), (SearchRequestParameters)null, token).ConfigureAwait(false);
+         dynamic value = null;
+         if (result.Success) {
+            try {
+               value = result.Body["aggregations"]["version"]["value"].Value;
+            } catch (Exception ex) {
+               _context.Error(ex, ex.Message);
+            }
+         } else {
+            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+         }
+         var converted = value ?? null;
+
+         if (converted != null && version.Type.StartsWith("date")) {
+            try {
+               var ms = Convert.ToInt64(converted);
+               converted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms);
+            } catch (Exception e) {
+               _context.Error(e, $"Failed converting {version.Name} value {converted} to long (for epoch_millis) conversion to datetime.");
+            }
+         }
+
+         _context.Debug(() => $"Found value: {converted ?? "null"}");
+         return converted;
+      }
+
+   public async Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) {
+
+         var result = await GetAggregationsAsync(token).ConfigureAwait(false);
+
+         if (result.Success) {
+            var batchId = result.Body["aggregations"]["b"]["value"].Value;
+            return (batchId == null ? 0 : (int)batchId) + 1;
+         } else {
+            _context.Error(result.OriginalException.Message);
+            _context.Debug(() => result.DebugInformation);
+            return 0;
+         }
+      }
+
    public Task InitializeAsync(CancellationToken token = default) { Initialize(); return Task.CompletedTask; }
    public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) { return Task.FromResult(Match(rows)); }
    public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) { return Task.FromResult(ReadKeys()); }
    public Task StartAsync(CancellationToken token = default) { Start(); return Task.CompletedTask; }
    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+
+      private async Task<DynamicResponse> GetAggregationsAsync(CancellationToken token = default) {
+
+         if (_commonAggregations != null) {
+            return _commonAggregations;
+         }
+
+         var body = new {
+            aggs = new {
+               b = new {
+                  max = new {
+                     field = "tflbatchid"
+                  }
+               },
+               k = new {
+                  max = new {
+                     field = "tflkey"
+                  }
+               }
+            },
+            size = 0
+         };
+
+         _commonAggregations = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)), (SearchRequestParameters)null, token).ConfigureAwait(false);
+         return _commonAggregations;
+      }
    }
 }

@@ -472,6 +472,171 @@ namespace Transformalize.Providers.Elasticsearch {
          _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
       }
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+      public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+
+         var results = new List<IRow>();
+
+         DynamicResponse response;
+         dynamic hits;
+
+         var from = 0;
+         var size = 10;
+         string body;
+         bool warned = false;
+
+         var scroll = !_context.Entity.IsPageRequest();
+
+         if (!scroll) {
+            from = (_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size;
+            body = WriteQuery(_fields, _readFrom, _context, scroll: false, from: from, size: _context.Entity.Size);
+         } else {
+            body = WriteQuery(_fields, _readFrom, _context, scroll: false, from: 0, size: 0);
+            response = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(body), (SearchRequestParameters)null, token).ConfigureAwait(false);
+            if (response.Success) {
+               hits = response.Body["hits"];
+               if (hits != null && hits.HasValue) {
+                  var total = hits["total"];
+
+                  try {
+                     if (_version.Major >= 7) {
+                        size = Convert.ToInt32(total["value"].Value);
+                     } else {
+                        size = Convert.ToInt32(total.Value);
+                     }
+                  } catch (Exception ex) {
+                     warned = true;
+                     _context.Debug(() => total);
+                     _context.Warn($"Could not get total number of matching documents from the elasticsearch response.  Are you sure you using version {_version}?");
+                     _context.Error(ex, ex.Message);
+                  }
+                  body = WriteQuery(_fields, _readFrom, _context, scroll: true, from: 0, size: size > ElasticsearchDefaultSizeLimit ? DefaultSize : size);
+               }
+            }
+         }
+
+         _context.Debug(() => body);
+         _context.Entity.Query = body;
+
+         var parameters = new SearchRequestParameters();
+         parameters.SetQueryString("scroll", _context.Connection.Scroll);
+
+         response = scroll
+            ? await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, body, parameters, token).ConfigureAwait(false)
+            : await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, body, (SearchRequestParameters)null, token).ConfigureAwait(false);
+
+         if (!response.Success) {
+            LogError(response);
+            return results;
+         }
+
+         try {
+            if (_version.Major >= 7) {
+               _context.Entity.Hits = Convert.ToInt32(response.Body["hits"]["total"]["value"].Value);
+            } else {
+               _context.Entity.Hits = Convert.ToInt32(response.Body["hits"]["total"].Value);
+            }
+         } catch (Exception ex) {
+            if (!warned) {
+               _context.Debug(() => response.Body["hits"]);
+               _context.Warn($"Could not get total number of matching documents from the elasticsearch response.  Are you sure you using version {_version}?");
+               _context.Error(ex.Message);
+            }
+         }
+
+         hits = response.Body["hits"]["hits"];
+
+         if (hits == null || !hits.HasValue) {
+            _context.Warn("No hits from elasticsearch");
+            return results;
+         }
+
+         var docs = hits.Value as IList<object>;
+         if (docs == null) {
+            _context.Error("No documents returned from elasticsearch!");
+            return results;
+         }
+
+         // if any of the fields do not exist, return empty
+         if (docs.Count > 0) {
+            var doc = docs.First() as IDictionary<string, object>;
+            var source = doc?["_source"] as IDictionary<string, object>;
+            if (source == null) {
+               _context.Error("Missing _source from elasticsearch response!");
+               return results;
+            }
+
+            for (var i = 0; i < _fields.Length; i++) {
+               if (source.ContainsKey(_fieldNames[i]))
+                  continue;
+
+               _context.Error($"Field {_fieldNames[i]} does not exist!");
+               return results;
+            }
+         }
+
+         var count = 0;
+         foreach (var d in docs) {
+            var doc = (IDictionary<string, object>)d;
+            var row = _rowFactory.Create();
+            var source = (IDictionary<string, object>)doc["_source"];
+            for (var i = 0; i < _fields.Length; i++) {
+               row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
+            }
+            results.Add(row);
+         }
+         count += docs.Count;
+
+         // get this from first search response (maybe), unless you have to aggregate it from all...
+         foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
+            var map = _context.Process.Maps.First(m => m.Name == filter.Map);
+            var buckets = response.Body["aggregations"][filter.Key]["buckets"];
+            if (buckets == null || !buckets.HasValue)
+               continue;
+
+            var items = buckets.Value as IEnumerable<object>;
+
+            if (items == null)
+               continue;
+
+            foreach (var item in items.OfType<IDictionary<string, object>>()) {
+               map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"] });
+            }
+         }
+
+         if (!response.Body.ContainsKey("_scroll_id"))
+            return results;
+
+         if (size == count) {
+            await _client.ClearScrollAsync<DynamicResponse>(PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })), (ClearScrollRequestParameters)null, token).ConfigureAwait(false);
+            return results;
+         }
+
+         var scrolls = new HashSet<string>();
+
+         do {
+            var scrollId = response.Body["_scroll_id"].Value;
+            scrolls.Add(scrollId);
+            response = await _client.ScrollAsync<DynamicResponse>(PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), (ScrollRequestParameters)null, token).ConfigureAwait(false);
+            if (response.Success) {
+               docs = (IList<object>)response.Body["hits"]["hits"].Value;
+               foreach (var d in docs) {
+                  var doc = (IDictionary<string, object>)d;
+                  var row = _rowFactory.Create();
+                  var source = (IDictionary<string, object>)doc["_source"];
+                  for (var i = 0; i < _fields.Length; i++) {
+                     row[_fields[i]] = _fields[i].Convert(source[_fieldNames[i]]);
+                  }
+                  results.Add(row);
+               }
+               count += docs.Count;
+            } else {
+               LogError(response);
+            }
+         } while (response.Success && count < size);
+
+         await _client.ClearScrollAsync<DynamicResponse>(PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })), (ClearScrollRequestParameters)null, token).ConfigureAwait(false);
+
+         return results;
+      }
    }
 }
