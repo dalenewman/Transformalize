@@ -200,7 +200,7 @@ jobs:
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
           ignore-unfixed: true
-          version: 0.69.2
+          version: latest
         env:
           TRIVY_PLATFORM: linux/amd64
           TRIVY_QUIET: "true"
