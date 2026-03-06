@@ -15,12 +15,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 
 namespace Transformalize.Contracts {
     public interface IOutputController {
         ActionResponse Initialize();
+        Task<ActionResponse> InitializeAsync(CancellationToken token = default);
         void Start();
+        Task StartAsync(CancellationToken token = default);
         void End();
+        Task EndAsync(CancellationToken token = default);
     }
 }

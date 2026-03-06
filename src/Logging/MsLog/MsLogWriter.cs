@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -92,6 +94,11 @@ namespace Transformalize.Logging.MsLog {
                         break;
                 }
             }
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
 
         public void Dispose() {

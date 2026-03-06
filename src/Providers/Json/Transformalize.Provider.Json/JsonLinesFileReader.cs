@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
@@ -38,5 +40,7 @@ namespace Transformalize.Providers.Json {
       public IEnumerable<IRow> Read() {
          return _streamReader.Read();
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

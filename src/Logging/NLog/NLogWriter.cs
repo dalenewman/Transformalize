@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using NLog;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -66,6 +68,11 @@ namespace Transformalize.Logging.NLog {
 
             _logger.Info("flushing log writer");
             LogManager.Flush();
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

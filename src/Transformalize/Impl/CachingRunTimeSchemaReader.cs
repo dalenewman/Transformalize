@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -57,6 +59,17 @@ namespace Transformalize.Impl {
             return schema;
         }
 
+        public Task<Schema> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
+        }
+
+        public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+            return Task.FromResult(Read(entity));
+        }
+
+        public Task<Schema> ReadAsync(Process process, CancellationToken token = default) {
+            return Task.FromResult(Read(process));
+        }
 
     }
 }

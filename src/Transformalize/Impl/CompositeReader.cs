@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -34,6 +36,10 @@ namespace Transformalize.Impl {
 
       public IEnumerable<IRow> Read() {
          return _readers.SelectMany(reader => reader.Read());
+      }
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         return Task.FromResult(Read());
       }
 
    }

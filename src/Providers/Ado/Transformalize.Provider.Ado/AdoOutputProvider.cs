@@ -20,10 +20,13 @@ using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -196,6 +199,140 @@ namespace Transformalize.Providers.Ado {
             }
             _cn.Dispose();
          }
+      }
+
+      public Task DeleteAsync(CancellationToken token = default) { Delete(); return Task.CompletedTask; }
+
+      public async Task EndAsync(CancellationToken token = default) {
+         if (_context.Process.Mode != "init" || _context.Entity == null)
+            return;
+
+         if (_context.Entity.Version != string.Empty) {
+
+            try {
+               if (_cn.State != ConnectionState.Open) {
+                  await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+               }
+
+               var version = _context.Entity.GetVersionField();
+               await _cn.ExecuteAsync(_context.SqlCreateVersionIndex(_cf, version), commandTimeout: _context.Connection.RequestTimeout).ConfigureAwait(false);
+               _context.Debug(() => $"Indexed version for {_context.Entity.Alias}.");
+               _context.Debug(() => _context.SqlCreateVersionIndex(_cf, version));
+
+               if (_context.Entity.IsMaster) {
+                  await _cn.ExecuteAsync(_context.SqlCreateBatchIndex(_cf), commandTimeout: _context.Connection.RequestTimeout).ConfigureAwait(false);
+                  _context.Debug(() => $"Indexed batch for {_context.Entity.Alias}.");
+                  _context.Debug(() => _context.SqlCreateBatchIndex(_cf));
+               }
+
+            } catch (DbException ex) {
+               _context.Warn($"Error creating index: {ex.Message}");
+               _context.Debug(() => ex.StackTrace);
+
+            }
+         }
+
+         if (_context.Entity.RelationshipToMaster.Any()) {
+            var response = await new AdoEntityDepthChecker(_context, _cf).ExecuteAsync(token).ConfigureAwait(false);
+            if (response.Code != 200) {
+               _context.Warn(response.Message);
+            }
+         }
+
+      }
+
+      public async Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
+         if (_cn.State != ConnectionState.Open) {
+            await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+         }
+
+         var tableName = _context.Entity.OutputTableName(_context.Process.Name);
+         var sql = $"SELECT MAX({_cf.Enclose(_context.Entity.TflKey().FieldName())}) FROM {_cf.Enclose(tableName)};";
+         var result = 0;
+         try {
+            result = await _cn.ExecuteScalarAsync<int>(sql).ConfigureAwait(false);
+         } catch (DbException e) {
+            _context.Error($"Error retrieving maximum surrogate key (TflKey) from {tableName}.");
+            _context.Error(e.Message);
+            _context.Debug(() => sql);
+            _context.Debug(() => e.StackTrace);
+         }
+
+         return result;
+      }
+
+      public async Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+
+         if (string.IsNullOrEmpty(_context.Entity.Version))
+            return null;
+
+         var version = _context.Entity.GetVersionField();
+         string sql;
+         string objectName;
+
+         switch (_cf.AdoProvider) {
+            case AdoProvider.SqlCe:
+               objectName = _cf.Enclose(_context.Entity.OutputTableName(_context.Process.Name));
+               break;
+            default:
+               objectName = _cf.Enclose(_context.Entity.OutputViewName(_context.Process.Name));
+               break;
+         }
+
+         switch (_cf.AdoProvider) {
+            case AdoProvider.PostgreSql:
+               sql = _context.Entity.Delete ? $"SELECT {_cf.Enclose(version.Alias)} FROM {objectName} WHERE {_cf.Enclose(Constants.TflDeleted)} = false ORDER BY {_cf.Enclose(version.Alias)} DESC LIMIT 1;" : $"SELECT {_cf.Enclose(version.Alias)} FROM {objectName} ORDER BY {_cf.Enclose(version.Alias)} DESC LIMIT 1;";
+               break;
+            case AdoProvider.SqlCe:
+               sql = _context.Entity.Delete ? $"SELECT MAX({_cf.Enclose(version.FieldName())}) FROM {objectName} WHERE {_cf.Enclose(_context.Entity.TflDeleted().FieldName())} = 0;" : $"SELECT MAX({_cf.Enclose(version.FieldName())}) FROM {objectName};";
+               break;
+            default:
+               sql = _context.Entity.Delete ? $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {objectName} WHERE {_cf.Enclose(Constants.TflDeleted)} = 0;" : $"SELECT MAX({_cf.Enclose(version.Alias)}) FROM {objectName};";
+               break;
+         }
+
+         _context.Debug(() => $"Loading Output Version: {sql}");
+
+         try {
+            if (_cn.State != ConnectionState.Open) {
+               await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+            }
+            var result = await _cn.ExecuteScalarAsync(sql, commandTimeout: _context.Connection.RequestTimeout).ConfigureAwait(false);
+            return result == DBNull.Value ? null : result;
+         } catch (DbException ex) {
+            _context.Error($"Error retrieving maximum version from {_context.Connection.Name}, {objectName}.");
+            _context.Error(ex.Message);
+            _context.Debug(() => ex.StackTrace);
+            _context.Debug(() => sql);
+            return null;
+         }
+      }
+
+      public async Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) {
+         if (_cn.State != ConnectionState.Open) {
+            await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+         }
+         var sql = _context.SqlControlLastBatchId(_cf);
+
+         var result = 0;
+         try {
+            result = await _cn.ExecuteScalarAsync<int>(sql).ConfigureAwait(false) + 1;
+         } catch (DbException e) {
+            _context.Error(e.Message);
+            _context.Debug(() => sql);
+            _context.Debug(() => e.StackTrace);
+         }
+
+         return result;
+      }
+
+      public Task InitializeAsync(CancellationToken token = default) { Initialize(); return Task.CompletedTask; }
+      public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) { return Task.FromResult(Match(rows)); }
+      public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) { return Task.FromResult(ReadKeys()); }
+      public Task StartAsync(CancellationToken token = default) { Start(); return Task.CompletedTask; }
+
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         await _writer.WriteAsync(rows, token).ConfigureAwait(false);
       }
    }
 }

@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
@@ -61,6 +63,29 @@ namespace Transformalize.Impl {
       public void Delete() {
          if (_context.Process.Mode != "init") {
             _outputDeleter.Delete(DetermineDeletes());
+         }
+      }
+
+      public async Task<IEnumerable<IRow>> DetermineDeletesAsync(CancellationToken token = default) {
+         var input = await _inputReader.ReadAsync(token).ConfigureAwait(false);
+         if (_context.Entity.Pipeline == "parallel.linq") {
+            input = input.AsParallel();
+         }
+
+         // I believe this is here in case the primary key depends on transformations
+         var transformed = _transforms.Aggregate(input, (current, transform) => current.Select(transform.Operate));
+
+         var output = await _outputReader.ReadAsync(token).ConfigureAwait(false);
+         if (_context.Entity.Pipeline == "parallel.linq") {
+            output = output.AsParallel();
+         }
+
+         return output.Except(transformed, new KeyComparer(_context.Entity.GetPrimaryKey()));
+      }
+
+      public async Task DeleteAsync(CancellationToken token = default) {
+         if (_context.Process.Mode != "init") {
+            await _outputDeleter.DeleteAsync(await DetermineDeletesAsync(token).ConfigureAwait(false), token).ConfigureAwait(false);
          }
       }
 

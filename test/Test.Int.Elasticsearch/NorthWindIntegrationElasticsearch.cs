@@ -111,6 +111,7 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
+      [DoNotParallelize]
       public void SqliteToElastic() {
 
          var logger = new ConsoleLogger(LogLevel.Info);

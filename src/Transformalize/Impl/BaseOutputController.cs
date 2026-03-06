@@ -15,6 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
+using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -46,6 +49,11 @@ namespace Transformalize.Impl {
          return Initializer.Execute();
       }
 
+      public virtual Task<ActionResponse> InitializeAsync(CancellationToken token = default) {
+         Context.Debug(() => $"Initializing with {Initializer.GetType().Name}");
+         return Initializer.ExecuteAsync(token);
+      }
+
       /// <summary>
       /// Implementation should over-ride Start, but still run base.Start() to set
       /// Context.Entity.MaxVersion and Context.Entity.MinVersion.  In addition, the 
@@ -63,11 +71,24 @@ namespace Transformalize.Impl {
          Context.Entity.Identity = OutputProvider.GetMaxTflKey();
       }
 
+      public virtual async Task StartAsync(CancellationToken token = default) {
+         Context.Debug(() => "Starting");
+         Context.Entity.MaxVersion = await InputProvider.GetMaxVersionAsync(token).ConfigureAwait(false);
+         Context.Entity.MinVersion = await OutputProvider.GetMaxVersionAsync(token).ConfigureAwait(false);
+         Context.Entity.BatchId = await OutputProvider.GetNextTflBatchIdAsync(token).ConfigureAwait(false);
+         Context.Entity.Identity = await OutputProvider.GetMaxTflKeyAsync(token).ConfigureAwait(false);
+      }
+
       /// <summary>
       /// Implementation may optionally over-ride End
       /// </summary>
       public virtual void End() {
          Context.Debug(() => "Ending");
+      }
+
+      public virtual Task EndAsync(CancellationToken token = default) {
+         Context.Debug(() => "Ending");
+         return Task.CompletedTask;
       }
    }
 }

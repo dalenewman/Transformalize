@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
 
@@ -40,5 +42,7 @@ namespace Transformalize.Providers.CsvHelper {
       public void Dispose() {
          _csv?.Dispose();
       }
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

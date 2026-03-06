@@ -17,6 +17,8 @@
 #endregion
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Actions;
 using Transformalize.Contracts;
 using Action = Transformalize.Configuration.Action;
@@ -51,6 +53,10 @@ namespace Transformalize.Providers.File.Actions {
             }
 
             return new ActionResponse(status, message) { Action = _action };
+        }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            return Task.FromResult(Execute());
         }
     }
 }

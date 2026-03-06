@@ -18,11 +18,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityMatchingKeysReader : IBatchReader {
@@ -126,5 +130,52 @@ namespace Transformalize.Providers.Ado {
             return batch;
         }
 
+
+    public async Task<Batch> ReadAsync(IEnumerable<IRow> input, CancellationToken token = default) {
+
+            var batch = new Batch();
+
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                _context.Debug(() => "begin transaction");
+                var trans = cn.BeginTransaction();
+
+                try {
+                    var createSql = SqlCreateKeysTable(_tempTable);
+                    await cn.ExecuteAsync(createSql, null, trans).ConfigureAwait(false);
+
+                    var index = 0;
+                    var keys = new List<ExpandoObject>();
+                    foreach (var row in input) {
+                        var obj = row.ToExpandoObject(_keys);
+                        ((IDictionary<string, object>)obj)["TflIndex"] = index;
+                        keys.Add(obj);
+                        ++index;
+                    }
+
+                    var insertSql = SqlInsertTemplate(_context, _tempTable, _keys);
+                    await cn.ExecuteAsync(insertSql, keys, trans, 0, CommandType.Text).ConfigureAwait(false);
+                    var i = _fields.Length;
+
+                    using (var reader = (DbDataReader)await cn.ExecuteReaderAsync(SqlQuery(), null, trans, 0, CommandType.Text).ConfigureAwait(false)) {
+                        while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                            batch[reader.GetInt32(i)] = _rowCreator.Create(reader, _fields);
+                        }
+                    }
+
+                    var sqlDrop = SqlDrop(_tempTable);
+                    await cn.ExecuteAsync(sqlDrop, null, trans).ConfigureAwait(false);
+
+                    _context.Debug(() => "commit transaction");
+                    trans.Commit();
+
+                } catch (Exception ex) {
+                    _context.Error(ex.Message);
+                    _context.Warn("rollback transaction");
+                    trans.Rollback();
+                }
+            }
+            return batch;
+        }
     }
 }

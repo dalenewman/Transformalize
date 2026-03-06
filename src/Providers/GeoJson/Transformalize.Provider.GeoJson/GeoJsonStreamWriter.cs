@@ -23,6 +23,8 @@ using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
 
@@ -174,5 +176,7 @@ namespace Transformalize.Providers.GeoJson {
          jw.FlushAsync().ConfigureAwait(false);
 
       }
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

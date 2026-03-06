@@ -18,6 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -69,6 +71,10 @@ namespace Transformalize.Providers.Internal {
 
       public IEnumerable<IRow> Read() {
          return _transforms.Aggregate(PreRead(), (rows, transform) => transform.Operate(rows));
+      }
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         return Task.FromResult(Read());
       }
 
       public object GetVersion() {

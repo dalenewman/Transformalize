@@ -1,0 +1,102 @@
+name: CLI Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to create or update (for example v0.12.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Publish (${{ matrix.rid }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - rid: linux-x64
+            runner: ubuntu-latest
+            archive_ext: tar.gz
+          - rid: linux-arm64
+            runner: ubuntu-24.04-arm
+            archive_ext: tar.gz
+          - rid: osx-x64
+            runner: macos-13
+            archive_ext: tar.gz
+          - rid: osx-arm64
+            runner: macos-14
+            archive_ext: tar.gz
+          - rid: win-x64
+            runner: windows-latest
+            archive_ext: zip
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Resolve release tag
+        id: release
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ github.event.inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          out_dir="dist/tfl-${{ matrix.rid }}"
+          dotnet publish src/CLI/CLI.csproj \
+            -c Release \
+            -r "${{ matrix.rid }}" \
+            --self-contained true \
+            -p:PublishSingleFile=true \
+            -p:PublishTrimmed=false \
+            -p:DebugType=None \
+            -p:DebugSymbols=false \
+            -o "$out_dir"
+
+      - name: Package archive (tar.gz)
+        if: matrix.archive_ext == 'tar.gz'
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive_name="tfl-${{ matrix.rid }}.tar.gz"
+          tar -C dist -czf "$archive_name" "tfl-${{ matrix.rid }}"
+          shasum -a 256 "$archive_name" > "$archive_name.sha256"
+
+      - name: Package archive (zip)
+        if: matrix.archive_ext == 'zip'
+        shell: pwsh
+        run: |
+          $ArchiveName = "tfl-${{ matrix.rid }}.zip"
+          Compress-Archive -Path "dist/tfl-${{ matrix.rid }}/*" -DestinationPath $ArchiveName -Force
+          $Hash = (Get-FileHash -Path $ArchiveName -Algorithm SHA256).Hash.ToLower()
+          "$Hash  $ArchiveName" | Out-File -FilePath "$ArchiveName.sha256" -Encoding ascii
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.release.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          append_body: true
+          overwrite_files: true
+          files: |
+            tfl-${{ matrix.rid }}.${{ matrix.archive_ext }}
+            tfl-${{ matrix.rid }}.${{ matrix.archive_ext }}.sha256

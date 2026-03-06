@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using SolrNet;
 using SolrNet.Exceptions;
 using Transformalize.Configuration;
@@ -74,6 +76,11 @@ namespace Transformalize.Providers.Solr {
                _context.Error($"Failed to commit {fullCount} documents. {ex.Message}");
             }
          }
+      }
+
+      public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         Write(rows);
+         return Task.CompletedTask;
       }
    }
 }

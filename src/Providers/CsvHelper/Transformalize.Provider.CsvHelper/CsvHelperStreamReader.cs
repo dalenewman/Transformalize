@@ -10,6 +10,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Transforms;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
 
@@ -93,5 +95,7 @@ namespace Transformalize.Providers.CsvHelper {
 
       }
 
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

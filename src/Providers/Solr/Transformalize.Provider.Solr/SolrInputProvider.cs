@@ -17,6 +17,8 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 using Transformalize.Configuration;
@@ -65,6 +67,18 @@ namespace Transformalize.Providers.Solr {
 
         public IEnumerable<IRow> Read() {
             throw new NotImplementedException();
+        }
+
+        public Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxVersion());
+        }
+
+        public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) {
+            return Task.FromResult(GetSchema(entity));
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
         }
     }
 }

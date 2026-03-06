@@ -23,6 +23,8 @@ using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -59,6 +61,33 @@ namespace Transformalize.Providers.Ado {
                   TflBatchId = _output.Entity.BatchId,
                   MasterTflBatchId = _master.BatchId
                }, null, 0, System.Data.CommandType.Text);
+               _output.Info(rowCount + " updates to master");
+            } catch (DbException ex) {
+               _output.Error("error executing: {0}", sql);
+               _output.Error(ex, ex.Message);
+            }
+         }
+      }
+
+   public async Task UpdateAsync(CancellationToken token = default) {
+
+         if (_master == null) {
+            _output.Error("The master isn't set, which indicates your arrangement has errors.");
+            return;
+         }
+
+         var status = _output.GetEntityStatus();
+         if (!status.NeedsUpdate())
+            return;
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            var sql = _queryWriter.Write(status);
+            try {
+               var rowCount = await cn.ExecuteAsync(sql, new {
+                  TflBatchId = _output.Entity.BatchId,
+                  MasterTflBatchId = _master.BatchId
+               }, null, 0, System.Data.CommandType.Text).ConfigureAwait(false);
                _output.Info(rowCount + " updates to master");
             } catch (DbException ex) {
                _output.Error("error executing: {0}", sql);

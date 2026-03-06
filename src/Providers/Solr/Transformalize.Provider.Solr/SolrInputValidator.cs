@@ -17,6 +17,8 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using SolrNet;
 using Transformalize.Actions;
 using Transformalize.Context;
@@ -48,6 +50,10 @@ namespace Transformalize.Providers.Solr {
             }
             response.Message = response.Message.TrimEnd(Environment.NewLine.ToCharArray());
             return response;
+        }
+
+        public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            return Task.FromResult(Execute());
         }
     }
 }

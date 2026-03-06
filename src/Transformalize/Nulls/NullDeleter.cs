@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -34,6 +36,11 @@ namespace Transformalize.Nulls {
         public void Delete(IEnumerable<IRow> rows) {
             if (_log)
                 _context.Info("Null Deleting...");
+        }
+
+        public Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Delete(rows);
+            return Task.CompletedTask;
         }
     }
 }

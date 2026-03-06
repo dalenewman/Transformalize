@@ -19,12 +19,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoDeleter : IDelete {
@@ -56,6 +59,36 @@ namespace Transformalize.Providers.Ado {
                         0,
                         CommandType.Text
                         ));
+                    trans.Commit();
+                    count += batchCount;
+                }
+                _output.Entity.Deletes += count;
+
+                if (_output.Entity.Deletes > 0) {
+                    _output.Info("{0} deletes from {1}", _output.Entity.Deletes, _output.Connection.Name);
+                }
+            }
+
+        }
+
+    public async Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+
+            var criteria = string.Join(" AND ", _output.Entity.GetPrimaryKey().Select(f => f.FieldName()).Select(n => _cf.Enclose(n) + " = @" + n));
+            var sql = $"UPDATE {_cf.Enclose(_output.Entity.OutputTableName(_output.Process.Name))} SET {_output.Entity.TflDeleted().FieldName()} = CAST(1 AS BIT), {_output.Entity.TflBatchId().FieldName()} = {_output.Entity.BatchId} WHERE {criteria}";
+            _output.Debug(()=>sql);
+
+            var count = (uint)0;
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                foreach (var batch in rows.Partition(_output.Entity.DeleteSize)) {
+                    var trans = cn.BeginTransaction();
+                    var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
+                        sql,
+                        batch.Select(r => r.ToExpandoObject(_fields)),
+                        trans,
+                        0,
+                        CommandType.Text
+                        ).ConfigureAwait(false));
                     trans.Commit();
                     count += batchCount;
                 }

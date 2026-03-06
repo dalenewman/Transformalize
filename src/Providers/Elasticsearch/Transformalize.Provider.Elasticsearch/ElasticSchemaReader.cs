@@ -21,6 +21,8 @@ using System.Linq;
 using Elasticsearch.Net;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
    public class ElasticSchemaReader : ISchemaReader {
@@ -146,5 +148,92 @@ namespace Transformalize.Providers.Elasticsearch {
          return schema;
       }
 
+
+   public async Task<Schema> ReadAsync(CancellationToken token = default) {
+         var schema = new Schema { Connection = _input.Connection };
+         schema.Entities.AddRange(await GetEntitiesAsync(token).ConfigureAwait(false));
+         return schema;
+      }
+
+      public async Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+         var schema = new Schema { Connection = _input.Connection };
+         entity.Fields = (await GetFieldsAsync(entity.Name, token).ConfigureAwait(false)).ToList();
+         schema.Entities.Add(entity);
+         return schema;
+      }
+
+      public async Task<List<Field>> GetFieldsAsync(string name, CancellationToken token = default) {
+
+         var version = ElasticVersionParser.ParseVersion(_input);
+
+         var response = await _client.Indices.GetMappingAsync<DynamicResponse>(_index, null, token).ConfigureAwait(false);
+
+         if (response.Success) {
+            var mappings = response.Body[_index]["mappings"];
+            if (mappings != null && mappings.HasValue) {
+               var mappingsDict = mappings.Value as IDictionary<string, object>;
+               if (mappingsDict != null) {
+                  if (mappingsDict.ContainsKey(name)) {
+                     var typed = mappingsDict[name] as IDictionary<string, object>;
+                     if (typed != null && typed.ContainsKey("properties")) {
+                        return PropertiesToFields(name, typed["properties"] as IDictionary<string, object>).ToList();
+                     }
+                  }
+
+                  if (mappingsDict.ContainsKey("properties")) {
+                     return PropertiesToFields(name, mappingsDict["properties"] as IDictionary<string, object>).ToList();
+                  }
+               }
+            }
+
+            _input.Error("Could not find properties for index {0} type {1}.", _index, name);
+         } else {
+            _input.Error(response.ToString());
+         }
+
+         return new List<Field>();
+      }
+
+      public async Task<List<Entity>> GetEntitiesAsync(CancellationToken token = default) {
+
+         var results = new List<Entity>();
+         var version = ElasticVersionParser.ParseVersion(_input);
+
+         var response = await _client.Indices.GetMappingAsync<DynamicResponse>(_index, null, token).ConfigureAwait(false);
+
+         if (response.Success) {
+            var mappings = response.Body[_index]["mappings"];
+            if (mappings != null && mappings.HasValue) {
+               var types = mappings.Value as IDictionary<string, object>;
+               if (types != null) {
+                  if (types.ContainsKey("properties")) {
+                     var e = new Entity { Name = "rows" };
+                     e.Fields = PropertiesToFields(e.Name, types["properties"] as IDictionary<string, object>).ToList();
+                     results.Add(e);
+                     return results;
+                  }
+
+                  foreach (var pair in types) {
+                     var e = new Entity { Name = pair.Key };
+                     var attributes = pair.Value as IDictionary<string, object>;
+                     if (attributes != null && attributes.ContainsKey("properties")) {
+                        e.Fields = PropertiesToFields(pair.Key, attributes["properties"] as IDictionary<string, object>).ToList();
+                     } else {
+                        _input.Error("Could not find properties for index {0} type {1}.", _input, pair.Key);
+                     }
+                     results.Add(e);
+                  }
+               } else {
+                  _input.Error("Could not find types in index {0}.", _index);
+               }
+            } else {
+               _input.Error("Could not find mappings for index {0}.", _index);
+            }
+         } else {
+            _input.Error(response.ToString());
+         }
+
+         return results;
+      }
    }
 }

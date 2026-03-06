@@ -18,6 +18,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -39,39 +41,84 @@ namespace Transformalize.Providers.Internal {
             _context.Process.Rows.Clear();
         }
 
+        public Task InitializeAsync(CancellationToken token = default) {
+            Initialize();
+            return Task.CompletedTask;
+        }
+
         public object GetMaxVersion() {
             return null;
+        }
+
+        public Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxVersion());
         }
 
         public int GetNextTflBatchId() {
             return _context.Entity.Index;
         }
 
+        public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) {
+            return Task.FromResult(GetNextTflBatchId());
+        }
+
         public int GetMaxTflKey() {
             return 0;
+        }
+
+        public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
+            return Task.FromResult(GetMaxTflKey());
         }
 
         public void Start() {
 
         }
 
+        public Task StartAsync(CancellationToken token = default) {
+            Start();
+            return Task.CompletedTask;
+        }
+
         public void End() {
+        }
+
+        public Task EndAsync(CancellationToken token = default) {
+            End();
+            return Task.CompletedTask;
         }
 
         public void Write(IEnumerable<IRow> rows) {
             _writer.Write(rows);
         }
 
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
+        }
+
         public void Delete() {
             throw new NotImplementedException();
+        }
+
+        public Task DeleteAsync(CancellationToken token = default) {
+            Delete();
+            return Task.CompletedTask;
         }
 
         public IEnumerable<IRow> ReadKeys() {
             throw new NotImplementedException();
         }
 
+        public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) {
+            return Task.FromResult(ReadKeys());
+        }
+
         public IEnumerable<IRow> Match(IEnumerable<IRow> rows) {
             throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            return Task.FromResult(Match(rows));
         }
     }
 }
