@@ -16,11 +16,15 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Contracts
 {
     public interface IEntityDeleteHandler {
         IEnumerable<IRow> DetermineDeletes();
+        Task<IEnumerable<IRow>> DetermineDeletesAsync(CancellationToken token = default);
         void Delete();
+        Task DeleteAsync(CancellationToken token = default);
     }
 }

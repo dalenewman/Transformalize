@@ -19,6 +19,7 @@ using Cfg.Net.Ext;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -128,6 +129,14 @@ namespace Transformalize {
                 Connection = _process.Connections.FirstOrDefault(c => c.Name == entity.Input),
                 Entities = new List<Entity> { newEntity }
             };
+        }
+
+        public Task<Schema> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
+        }
+
+        public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+            return Task.FromResult(Read(entity));
         }
 
     }

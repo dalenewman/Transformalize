@@ -25,6 +25,8 @@ using System.Dynamic;
 using System.Linq;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado.Actions {
     public class AdoRunAction : IAction {
@@ -83,6 +85,61 @@ namespace Transformalize.Providers.Ado.Actions {
                         _node.RowCount = cn.Execute(_node.Command, parameters, commandTimeout: _node.TimeOut);
                     } else {
                         _node.RowCount = cn.Execute(_node.Command, commandTimeout: _node.TimeOut);
+                    }
+                    var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
+                    response.Message = message;
+                    _context.Info(message);
+                } catch (DbException ex) {
+                    response.Code = 500;
+                    response.Message = ex.Message + Environment.NewLine + _node.Command.Replace("{", "{{").Replace("}", "}}");
+                }
+            }
+            return response;
+        }
+
+    public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            var response = new ActionResponse { Action = _node };
+            using (var cn = _cf.GetConnection()) {
+
+                try {
+                    await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                } catch (DbException e) {
+                    _context.Error($"Can't open {_cf.AdoProvider} connection specified in {_node.Type} action.");
+                    response.Message = e.Message;
+                    response.Code = 500;
+                    return response;
+                }
+
+                try {
+
+                    if (_node.Command == string.Empty) {
+                        var logger = new Cfg.Net.Loggers.MemoryLogger();
+                        _node.Command = _commandReader.Read(_node.Url == string.Empty ? _node.File : _node.Url, new Dictionary<string, string>(), logger);
+                        foreach (var warning in logger.Warnings()) {
+                            _context.Warn(warning);
+                        }
+                        foreach (var error in logger.Errors()) {
+                            _context.Error(error);
+                        }
+                    }
+
+                    if (_node.Command.Contains("@")) {
+                        var parameters = new ExpandoObject();
+                        var editor = (IDictionary<string, object>)parameters;
+                       foreach (var parameter in _context.Process.Parameters) {
+                            if (parameter.Name.Contains(".")) {
+                                parameter.Name = parameter.Name.Replace(".", "_");
+                            }
+                        }
+                        foreach (var name in new AdoParameterFinder().Find(_node.Command).Distinct().ToList()) {
+                            var match = _context.Process.Parameters.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                            if (match != null) {
+                                editor[match.Name] = match.Convert(match.Value);
+                            }
+                        }
+                        _node.RowCount = await cn.ExecuteAsync(new CommandDefinition(_node.Command, parameters, commandTimeout: _node.TimeOut, cancellationToken: token)).ConfigureAwait(false);
+                    } else {
+                        _node.RowCount = await cn.ExecuteAsync(new CommandDefinition(_node.Command, commandTimeout: _node.TimeOut, cancellationToken: token)).ConfigureAwait(false);
                     }
                     var message = $"{(_node.Description == string.Empty ? _node.Type + " action" : "'" + _node.Description + "'")} affected {(_node.RowCount == -1 ? 0 : _node.RowCount)} row{_node.RowCount.Plural()}.";
                     response.Message = message;

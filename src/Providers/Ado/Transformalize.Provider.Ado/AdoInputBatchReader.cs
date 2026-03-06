@@ -17,9 +17,12 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Data.Common;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -60,5 +63,20 @@ namespace Transformalize.Providers.Ado {
             _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
         }
 
+
+    public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            var results = new List<IRow>();
+            using (var cn = (DbConnection)_cf.GetConnection()) {
+                await cn.OpenAsync(token).ConfigureAwait(false);
+                foreach (var batch in _reader.Read().Partition(_input.Entity.ReadSize)) {
+                    foreach (var row in _fieldsReader.Read(batch)) {
+                        _rowCount++;
+                        results.Add(row);
+                    }
+                }
+            }
+            _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
+            return results;
+        }
     }
 }

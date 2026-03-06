@@ -18,12 +18,15 @@
 
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoStarParametersReader : IRead {
@@ -106,6 +109,76 @@ namespace Transformalize.Providers.Ado {
                 }
                 _output.Info("{0} from {1}", rowCount, _output.Connection.Name);
             }
+        }
+
+    public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+
+            var results = new List<IRow>();
+
+            if (_parent.Entities.Sum(e => e.Inserts + e.Updates + e.Deletes) == 0) {
+                return results;
+            };
+
+            var batches = _parent.Entities.Select(e => e.BatchId).ToArray();
+            var minBatchId = batches.Min();
+            var maxBatchId = batches.Max();
+            _output.Info("Batch Range: {0} to {1}.", minBatchId, maxBatchId);
+
+            var threshold = minBatchId - 1;
+
+            var sql = string.Empty;
+
+            if (_cf.AdoProvider == AdoProvider.SqlCe) {
+
+                var ctx = new PipelineContext(_output.Logger, _parent);
+                var master = _parent.Entities.First(e => e.IsMaster);
+                var builder = new StringBuilder();
+
+                builder.AppendLine($"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1])))}");
+                foreach (var from in ctx.SqlStarFroms(_cf)) {
+                    builder.AppendLine(@from);
+                }
+                builder.AppendLine($"WHERE {_cf.Enclose(Utility.GetExcelName(master.Index))}.{_cf.Enclose(master.TflBatchId().FieldName())} > @Threshold;");
+
+                sql = builder.ToString();
+
+            } else {
+                sql = $@"
+                SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))}
+                FROM {_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)}
+                WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
+            }
+
+            _output.Debug(() => sql);
+
+            using (var cn = (DbConnection)_cf.GetConnection()) {
+                await cn.OpenAsync(token).ConfigureAwait(false);
+
+                var cmd = (DbCommand)cn.CreateCommand();
+
+                cmd.CommandTimeout = 0;
+                cmd.CommandType = CommandType.Text;
+                cmd.CommandText = sql;
+
+                var min = cmd.CreateParameter();
+                min.ParameterName = "@Threshold";
+                min.Value = threshold;
+                min.Direction = ParameterDirection.Input;
+                min.DbType = DbType.Int32;
+
+                cmd.Parameters.Add(min);
+
+                var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, token).ConfigureAwait(false);
+                var rowCount = 0;
+                var fieldArray = _output.Entity.Fields.ToArray();
+                while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                    rowCount++;
+                    results.Add(_rowCreator.Create(reader, fieldArray));
+                }
+                _output.Info("{0} from {1}", rowCount, _output.Connection.Name);
+            }
+
+            return results;
         }
     }
 }

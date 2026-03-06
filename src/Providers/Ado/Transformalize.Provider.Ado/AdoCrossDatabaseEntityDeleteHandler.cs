@@ -6,6 +6,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    /// <summary>
@@ -67,5 +69,20 @@ namespace Transformalize.Providers.Ado {
                 && input.Provider == "sqlserver";  // only implemented for SQL Server to start
       }
 
+
+   public async Task DeleteAsync(CancellationToken token = default) {
+         var sql = _context.SqlDeleteOutputCrossDatabase(_cf, _context.Entity.BatchId);
+         using(var cn = _cf.GetConnection(Constants.ApplicationName)) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            try {
+               _context.Entity.Deletes = System.Convert.ToUInt32(await cn.ExecuteAsync(sql).ConfigureAwait(false));
+            } catch (DbException ex) {
+               _context.Error("Unable to perform cross-database delete!");
+               _context.Error(ex.Message);
+            }
+         }
+      }
+
+   public Task<IEnumerable<IRow>> DetermineDeletesAsync(CancellationToken token = default) { return Task.FromResult(DetermineDeletes()); }
    }
 }

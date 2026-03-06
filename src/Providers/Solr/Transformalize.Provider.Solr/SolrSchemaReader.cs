@@ -18,6 +18,8 @@
 using SolrNet;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
@@ -71,5 +73,12 @@ namespace Transformalize.Providers.Solr {
             return schema;
         }
 
+        public Task<Schema> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
+        }
+
+        public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+            return Task.FromResult(Read(entity));
+        }
     }
 }

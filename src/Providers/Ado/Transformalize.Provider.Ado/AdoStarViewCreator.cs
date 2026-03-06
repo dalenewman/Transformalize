@@ -22,6 +22,8 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -53,5 +55,24 @@ namespace Transformalize.Providers.Ado {
             }
             return new ActionResponse();
         }
+
+    public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         if (_cf.AdoProvider == AdoProvider.SqlCe)
+            return new ActionResponse();
+
+         var drop = _output.SqlDropStarView(_cf);
+         var create = _output.SqlCreateStarView(_cf);
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            try {
+               await cn.ExecuteAsync(drop).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _output.Debug(()=>ex.Message);
+            }
+            await cn.ExecuteAsync(create).ConfigureAwait(false);
+         }
+         return new ActionResponse();
+      }
     }
 }

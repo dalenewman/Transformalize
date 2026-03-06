@@ -15,11 +15,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
     public interface IRunTimeSchemaReader : ISchemaReader {
         Process Process { get; set; }
         Schema Read(Process process);
+        Task<Schema> ReadAsync(Process process, CancellationToken token = default);
     }
 }

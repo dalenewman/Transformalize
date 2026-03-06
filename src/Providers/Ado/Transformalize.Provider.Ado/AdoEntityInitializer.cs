@@ -23,6 +23,8 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoEntityInitializer : IAction {
@@ -115,6 +117,90 @@ namespace Transformalize.Providers.Ado {
             }
             Destroy(cn);
             Create(cn);
+         }
+         return new ActionResponse();
+      }
+
+   private async Task DestroyAsync(IDbConnection cn) {
+
+         _context.Warn("Initializing");
+
+         if (!_context.Connection.DropControl) {
+            try {
+               await cn.ExecuteAsync(_context.SqlDeleteEntityFromControl(_cf), new { Entity = _context.Entity.Alias }).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _context.Debug(() => ex.Message);
+            }
+         }
+
+         var droppedOutputView = false;
+         try {
+            var sql = _context.SqlDropOutputView(_cf);
+            await cn.ExecuteAsync(sql).ConfigureAwait(false);
+            droppedOutputView = true;
+         } catch (DbException ex) {
+            _context.Warn($"Could not drop output view {_context.Entity.OutputViewName(_context.Process.Name)}");
+            _context.Debug(() => ex.Message);
+         }
+
+         if (!droppedOutputView) {
+            try {
+               await cn.ExecuteAsync(_context.SqlDropOutputViewAsTable(_cf)).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _context.Debug(() => ex.Message);
+            }
+         }
+
+         try {
+            var sql = _context.SqlDropOutput(_cf);
+            await cn.ExecuteAsync(sql).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Warn($"Could not drop output {_context.Entity.OutputTableName(_context.Process.Name)}");
+            _context.Debug(() => ex.Message);
+         }
+
+      }
+
+      private async Task CreateAsync(IDbConnection cn) {
+         var createSql = _context.SqlCreateOutput(_cf);
+         try {
+            await cn.ExecuteAsync(createSql).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Error($"Could not create output {_context.Entity.OutputTableName(_context.Process.Name)}");
+            _context.Error(ex, ex.Message);
+         }
+
+         try {
+            var createIndex = _context.SqlCreateOutputUniqueIndex(_cf);
+            await cn.ExecuteAsync(createIndex).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Error($"Could not create unique index on output {_context.Entity.OutputTableName(_context.Process.Name)}");
+            _context.Error(ex, ex.Message);
+         }
+
+         if (_cf.AdoProvider == AdoProvider.SqlCe)
+            return;
+
+         try {
+            var createView = _context.SqlCreateOutputView(_cf);
+            await cn.ExecuteAsync(createView).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Error($"Could not create output view {_context.Entity.OutputViewName(_context.Process.Name)}");
+            _context.Error(ex, ex.Message);
+         }
+      }
+
+      public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         using (var cn = _cf.GetConnection()) {
+            try {
+               await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _context.Error($"Couldn't open {_context.Connection}.");
+               _context.Error(e.Message);
+               return new ActionResponse(500, e.Message) { Action = new Configuration.Action { Type = "internal", ErrorMode = "abort" } };
+            }
+            await DestroyAsync(cn).ConfigureAwait(false);
+            await CreateAsync(cn).ConfigureAwait(false);
          }
          return new ActionResponse();
       }

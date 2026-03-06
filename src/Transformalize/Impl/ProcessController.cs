@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Contracts;
 
@@ -68,30 +69,48 @@ namespace Transformalize.Impl {
          }
       }
 
-
-#if ASYNC
-      public async Task ExecuteAsync() {
-
-         Task task = Task.Run(() => Execute());
-         try {
-            await task.ConfigureAwait(false);
-         } catch (Exception ex) {
-            _context.Error(ex, ex.Message);
-            if (task != null && task.Exception != null) {
-               if (task.Exception.Message != ex.Message) {
-                  _context.Error(task.Exception, task.Exception.Message);
+      public async Task ExecuteAsync(CancellationToken token = default) {
+         if (await PreExecuteAsync(token).ConfigureAwait(false)) {
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Initializing {entity.GetType().Name}");
+               if (!MayContinue(await entity.InitializeAsync(token).ConfigureAwait(false))) {
+                  return;
                }
-               if (task.Exception.InnerException != null && task.Exception.InnerException.Message != task.Exception.Message && task.Exception.InnerException.Message != ex.Message) {
-                  _context.Error(task.Exception, task.Exception.InnerException.Message);
-               }
+            }
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Executing {entity.GetType().Name}");
+               await entity.ExecuteAsync(token).ConfigureAwait(false);
+            }
+            await PostExecuteAsync(token).ConfigureAwait(false);
+         } else {
+            _context.Error("Pre-Execute failed!");
+         }
+      }
+
+      private async Task<bool> PreExecuteAsync(CancellationToken token) {
+         foreach (var action in PreActions) {
+            _context.Debug(() => $"Pre-Executing {action.GetType().Name}");
+            if (!MayContinue(await action.ExecuteAsync(token).ConfigureAwait(false))) {
+               return false;
+            }
+         }
+         return true;
+      }
+
+      private async Task PostExecuteAsync(CancellationToken token) {
+         foreach (var action in PostActions) {
+            _context.Debug(() => $"Post-Executing {action.GetType().Name}");
+            if (!MayContinue(await action.ExecuteAsync(token).ConfigureAwait(false))) {
+               return;
             }
          }
       }
-#else
-      public Task ExecuteAsync() {
-         throw new NotImplementedException("Must be using .NET 4.6.2 or .NET Standard 2.0 library for this method to work");
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         // ReadAsync aggregates pipeline reads - since Read() uses yield return,
+         // we collect all results
+         return Task.FromResult(Read());
       }
-#endif
 
       private void PostExecute() {
          foreach (var action in PostActions) {

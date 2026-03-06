@@ -18,6 +18,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -46,6 +48,11 @@ namespace Transformalize.Writers {
             if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
                 Builder.Append(_context.Connection.Footer);
             }
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

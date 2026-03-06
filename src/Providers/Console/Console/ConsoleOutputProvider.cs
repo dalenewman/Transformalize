@@ -17,6 +17,8 @@
 #endregion
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -68,5 +70,16 @@ namespace Transformalize.Providers.Console {
         public void Write(IEnumerable<IRow> rows) {
             _writer.Write(rows);
         }
+
+        public Task InitializeAsync(CancellationToken token = default) { return Task.CompletedTask; }
+        public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
+        public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) { return Task.FromResult(GetNextTflBatchId()); }
+        public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) { return Task.FromResult(GetMaxTflKey()); }
+        public Task StartAsync(CancellationToken token = default) { return Task.CompletedTask; }
+        public Task EndAsync(CancellationToken token = default) { return Task.CompletedTask; }
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { return _writer.WriteAsync(rows, token); }
+        public Task DeleteAsync(CancellationToken token = default) { return Task.CompletedTask; }
+        public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) { throw new NotImplementedException(); }
+        public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) { throw new NotImplementedException(); }
     }
 }

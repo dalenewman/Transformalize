@@ -1,9 +1,12 @@
 using Dapper;
 using System.Data;
+using System.Data.Common;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityDepthChecker : IAction {
@@ -46,6 +49,36 @@ namespace Transformalize.Providers.Ado {
 
             return response;
 
+        }
+
+    public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            var response = new ActionResponse();
+
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                var depth = await GetDepthAsync(cn).ConfigureAwait(false);
+                if (depth <= 1) {
+                    _context.Debug(() => $"The relationship to {_context.Entity.Alias} checks out. The field(s) used are unique.");
+                    return response;
+                }
+
+                response.Code = 500;
+                response.Message = $"The relationship to {_context.Entity.Alias} produces duplicates, as many as {depth} per join.";
+            }
+
+            return response;
+        }
+
+        private async Task<int> GetDepthAsync(System.Data.IDbConnection cn) {
+            _context.Debug(() => "Checking Depth");
+
+            try {
+                return await cn.ExecuteScalarAsync<int>(_context.SqlDepthFinder(_cf)).ConfigureAwait(false);
+            } catch (DbException ex) {
+                _context.Warn($"Could not check depth of {_context.Entity.OutputViewName(_context.Process.Name)}");
+                _context.Debug(() => ex.Message);
+                return 1;
+            }
         }
     }
 }

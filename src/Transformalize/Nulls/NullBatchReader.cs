@@ -16,12 +16,18 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
     public class NullBatchReader : IBatchReader {
         public Batch Read(IEnumerable<IRow> input) {
             return new Batch();
+        }
+
+        public Task<Batch> ReadAsync(IEnumerable<IRow> input, CancellationToken token = default) {
+            return Task.FromResult(Read(input));
         }
     }
 }

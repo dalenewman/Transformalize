@@ -20,6 +20,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -134,6 +136,10 @@ namespace Transformalize.Providers.File {
                }
             }
          }
+      }
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         return Task.FromResult(Read());
       }
    }
 }

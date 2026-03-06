@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -51,6 +53,11 @@ namespace Transformalize.Providers.Console {
          if (!string.IsNullOrEmpty(_serializer.Footer)) {
             System.Console.Out.WriteLine(_serializer.Footer);
          }
+      }
+
+      public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         Write(rows);
+         return Task.CompletedTask;
       }
    }
 }

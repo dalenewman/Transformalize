@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
@@ -40,5 +42,7 @@ namespace Transformalize.Providers.Json {
             _streamWriter.BaseStream.CopyTo(fileStream);
          }
       }
+
+   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
    }
 }

@@ -26,6 +26,8 @@ using Dapper;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
@@ -183,6 +185,135 @@ namespace Transformalize.Providers.Ado {
          var schema = new Schema { Connection = _c.Connection };
          var newEntity = entity.Clone();
          newEntity.Fields = GetFields(entity.Name, entity.Query, entity.Schema).ToList();
+         schema.Entities.Add(newEntity);
+         return schema;
+      }
+
+   private async Task<IEnumerable<Field>> GetFieldsAsync(string name, string query, string schema, CancellationToken token) {
+
+         var fields = new List<Field>();
+
+         using (var cn = (DbConnection)_cf.GetConnection()) {
+            await cn.OpenAsync(token).ConfigureAwait(false);
+            DataTable table = null;
+
+            var cmd = (DbCommand)cn.CreateCommand();
+            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query;
+            try {
+               var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
+               table = reader.GetSchemaTable();
+            } catch (DbException ex1) {
+               if(_c.Connection.Provider == "postgresql" && !_c.Connection.Enclose) {
+                  _c.Warn(ex1.Message);
+                  _c.Info("Trying with table/view enclosed (with double quotes)...");
+                  _c.Connection.Enclose = true;
+                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;";
+
+                  try {
+                     var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
+                     table = reader.GetSchemaTable();
+                  } catch (DbException ex2) {
+                     _c.Error(ex2.Message);
+                  }
+               } else {
+                  _c.Error(ex1.Message);
+               }
+            }
+
+            if (table == null)
+               return fields;
+
+            foreach (DataRow row in table.Rows) {
+
+               var column = row["ColumnName"].ToString();
+               var ordinal = Convert.ToInt16(row["ColumnOrdinal"]);
+               var isHidden = table.Columns.Cast<DataColumn>().Any(c => c.ColumnName == "IsHidden") && row["IsHidden"] != DBNull.Value && Convert.ToBoolean(row["IsHidden"]);
+               var dataType = Utility.ToPreferredTypeName(row["DataType"] == DBNull.Value ? "string" : ((Type)row["DataType"]).Name.ToLower());
+               var isKey = row["IsKey"] != DBNull.Value && Convert.ToBoolean(row["IsKey"]);
+
+               var field = fields.FirstOrDefault(f => f.Name.Equals(column, StringComparison.OrdinalIgnoreCase));
+
+               if (!isHidden) {
+                  if (field == null) {
+                     field = new Field {
+                        Name = column,
+                        Alias = column,
+                        Ordinal = ordinal,
+                        Type = dataType,
+                        PrimaryKey = isKey
+                     };
+                     AddLengthAndPrecision(field, row);
+                     fields.Add(field);
+                  } else {
+                     field.Type = dataType;
+                     AddLengthAndPrecision(field, row);
+                  }
+
+               }
+            }
+         }
+         return fields;
+      }
+
+      private async Task<IEnumerable<Entity>> GetEntitiesAsync(CancellationToken token) {
+         var entities = new List<Entity>();
+
+         string sql;
+         switch (_c.Connection.Provider) {
+            case "mysql":
+               sql = $"SELECT '' as table_schema, table_name from information_schema.tables where table_schema = '{_c.Connection.Database}' order by table_name";
+               break;
+            case "sqlite":
+               sql = "SELECT '' as table_schema, name as table_name FROM sqlite_master WHERE type in ('table','view') ORDER by name";
+               break;
+            case "postgresql":
+               sql = "select table_schema, table_name from information_schema.tables where table_schema NOT IN ('information_schema','pg_catalog') order by table_name";
+               break;
+            default:
+               sql = "select table_schema, table_name from information_schema.tables order by table_name";
+               break;
+         }
+
+         using (var cn = (DbConnection)_cf.GetConnection()) {
+            await cn.OpenAsync(token).ConfigureAwait(false);
+            var cmd = (DbCommand)cn.CreateCommand();
+            cmd.CommandText = sql;
+            using (var reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false)) {
+               while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                  entities.Add(new Entity {
+                     Schema = reader.GetString(0),
+                     Name = reader.GetString(1),
+                     Input = _c.Connection.Name
+                  });
+               }
+            }
+         }
+         return entities;
+      }
+
+      public async Task<Schema> ReadAsync(CancellationToken token = default) {
+         var schema = new Schema { Connection = _c.Connection };
+         if (_c.Connection.Table == Constants.DefaultSetting) {
+            schema.Entities.AddRange(await GetEntitiesAsync(token).ConfigureAwait(false));
+            foreach (var entity in schema.Entities) {
+               entity.Fields.AddRange(await GetFieldsAsync(entity.Name, entity.Query, entity.Schema, token).ConfigureAwait(false));
+            }
+         } else {
+            var owner = _c.Connection.Schema == Constants.DefaultSetting ? string.Empty : _c.Connection.Schema;
+            schema.Entities.Add(new Entity {
+               Name = _c.Connection.Table,
+               Schema = owner,
+               Input = _c.Connection.Name,
+               Fields = (await GetFieldsAsync(_c.Connection.Table, string.Empty, owner, token).ConfigureAwait(false)).ToList()
+            });
+         }
+         return schema;
+      }
+
+      public async Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+         var schema = new Schema { Connection = _c.Connection };
+         var newEntity = entity.Clone();
+         newEntity.Fields = (await GetFieldsAsync(entity.Name, entity.Query, entity.Schema, token).ConfigureAwait(false)).ToList();
          schema.Entities.Add(newEntity);
          return schema;
       }

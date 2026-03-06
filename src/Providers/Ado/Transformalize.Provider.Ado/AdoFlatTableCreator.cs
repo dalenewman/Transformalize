@@ -22,6 +22,8 @@ using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoFlatTableCreator : IAction {
@@ -49,6 +51,26 @@ namespace Transformalize.Providers.Ado {
             cn.Execute(create);
             cn.Execute(createIndex);
             cn.Execute(createBatchIndex);
+         }
+         return new ActionResponse();
+      }
+
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         var drop = _output.SqlDropFlatTable(_cf);
+         var create = _output.SqlCreateFlatTable(_cf);
+         var createIndex = _output.SqlCreateFlatIndex(_cf);
+         var createBatchIndex = _output.SqlCreateBatchIndexOnFlat(_cf);
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            try {
+               await cn.ExecuteAsync(drop).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _output.Debug(() => ex.Message);
+            }
+            await cn.ExecuteAsync(create).ConfigureAwait(false);
+            await cn.ExecuteAsync(createIndex).ConfigureAwait(false);
+            await cn.ExecuteAsync(createBatchIndex).ConfigureAwait(false);
          }
          return new ActionResponse();
       }

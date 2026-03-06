@@ -25,6 +25,8 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoFlattenInsertBySelectAction : IAction {
@@ -68,6 +70,39 @@ namespace Transformalize.Providers.Ado {
          try {
             _output.Debug(() => command);
             var count = _model.Threshold > 0 ? _cn.Execute(command, new { _model.Threshold }, commandTimeout: 0, transaction: _trans) : _cn.Execute(command, commandTimeout: 0, transaction: _trans);
+            _output.Info($"{count} record{count.Plural()} inserted into flat");
+         } catch (DbException ex) {
+            return new ActionResponse(500, ex.Message);
+         }
+
+         return new ActionResponse(200, "Ok");
+      }
+
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         var masterAlias = Utility.GetExcelName(_model.MasterEntity.Index);
+         var builder = new StringBuilder();
+         builder.AppendLine($"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)})");
+         builder.AppendLine($"SELECT {_output.SqlStarFields(_cf)}");
+
+         var close = _cf.AdoProvider != AdoProvider.Access ? string.Empty : ")";
+
+         foreach (var from in _output.SqlStarFroms(_cf)) {
+            builder.AppendLine(@from);
+         }
+
+         builder.AppendLine($"LEFT OUTER JOIN {_cf.Enclose(_output.Process.Name + _output.Process.FlatSuffix)} flat ON (flat.{_model.EnclosedKeyLongName} = {masterAlias}.{_model.EnclosedKeyShortName}){close}");
+         builder.AppendLine($" WHERE flat.{_model.EnclosedKeyLongName} IS NULL AND {masterAlias}.{_model.Batch} > @Threshold; ");
+
+         var command = builder.ToString();
+
+         if (_cn.State != ConnectionState.Open) {
+            await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+         }
+
+         try {
+            _output.Debug(() => command);
+            var count = _model.Threshold > 0 ? await _cn.ExecuteAsync(command, new { _model.Threshold }, commandTimeout: 0, transaction: _trans).ConfigureAwait(false) : await _cn.ExecuteAsync(command, commandTimeout: 0, transaction: _trans).ConfigureAwait(false);
             _output.Info($"{count} record{count.Plural()} inserted into flat");
          } catch (DbException ex) {
             return new ActionResponse(500, ex.Message);

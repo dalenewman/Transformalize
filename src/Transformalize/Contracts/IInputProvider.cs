@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 
 namespace Transformalize.Contracts {
@@ -24,14 +26,17 @@ namespace Transformalize.Contracts {
         /// Get the maximum input version respecting the filter, or null if no version is defined
         /// </summary>
         object GetMaxVersion();
+        Task<object> GetMaxVersionAsync(CancellationToken token = default);
 
         Schema GetSchema(Entity entity = null);
+        Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default);
 
         /// <summary>
         /// Read all or just what is necessary from the input
         /// </summary>
         /// <returns></returns>
         IEnumerable<IRow> Read();
+        Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default);
 
     }
 }

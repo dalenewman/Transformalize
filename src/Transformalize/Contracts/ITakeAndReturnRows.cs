@@ -16,10 +16,13 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Contracts {
     public interface IBatchReader {
         Batch Read(IEnumerable<IRow> input);
+        Task<Batch> ReadAsync(IEnumerable<IRow> input, CancellationToken token = default);
     }
 
 }

@@ -5,6 +5,8 @@ using System.Linq;
 using Bogus;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Bogus {
    public class BogusReader : IRead {
@@ -377,5 +379,7 @@ namespace Transformalize.Providers.Bogus {
             person = new Person(_context.Entity.Locale);
          }
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

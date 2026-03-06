@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
@@ -35,6 +37,11 @@ namespace Transformalize.Nulls {
         public void Write(IEnumerable<IRow> rows) {
             if (_log)
                 _context.Info("Null writing...");
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
 
     }

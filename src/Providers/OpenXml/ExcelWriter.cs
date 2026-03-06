@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using OpenXmlPowerTools;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -72,6 +74,11 @@ namespace Transformalize.Providers.OpenXml {
 
             SpreadsheetWriter.Write(_fileInfo.FullName, _workbook);
             _context.Entity.Inserts = Convert.ToUInt32(count);
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
 
     }

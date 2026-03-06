@@ -17,6 +17,8 @@
 #endregion
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -38,6 +40,11 @@ namespace Transformalize.Providers.Kml {
                 _stream.Seek(0, SeekOrigin.Begin);
                 _stream.CopyTo(fileStream);
             }
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

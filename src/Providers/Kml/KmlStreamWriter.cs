@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -139,6 +141,11 @@ namespace Transformalize.Providers.Kml {
             _xmlWriter.WriteEndElement();//kml
             _xmlWriter.Flush();
 
+        }
+
+        public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(rows);
+            return Task.CompletedTask;
         }
     }
 }

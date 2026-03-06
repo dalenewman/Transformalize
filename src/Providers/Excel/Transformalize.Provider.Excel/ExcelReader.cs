@@ -22,6 +22,8 @@ using ExcelDataReader;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Excel {
    public class ExcelReader : IRead {
@@ -133,5 +135,7 @@ namespace Transformalize.Providers.Excel {
 
          }
       }
+
+   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

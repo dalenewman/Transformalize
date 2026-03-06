@@ -20,12 +20,15 @@ using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Providers.Ado.Ext;
 using Transformalize.Transforms.System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
    public class AdoEntityUpdater : IWrite {
@@ -78,5 +81,39 @@ namespace Transformalize.Providers.Ado {
 
       }
 
+
+   public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         await InternalWriteAsync(_minDates != null ? _minDates.Operate(rows) : rows, token).ConfigureAwait(false);
+      }
+
+      private async Task InternalWriteAsync(IEnumerable<IRow> rows, CancellationToken token) {
+         _output.Entity.UpdateCommand = _output.SqlUpdateOutput(_cf);
+         var count = (uint)0;
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            _output.Debug(() => "begin transaction");
+            var trans = cn.BeginTransaction();
+            try {
+               foreach (var batch in rows.Partition(_output.Entity.UpdateSize)) {
+                  var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
+                      _output.Entity.UpdateCommand,
+                      batch.Select(r => r.ToExpandoObject(_output.GetUpdateFields().ToArray())),
+                      trans,
+                      0,
+                      CommandType.Text
+                  ).ConfigureAwait(false));
+                  count += batchCount;
+               }
+               _output.Debug(() => "commit transaction");
+               trans.Commit();
+               _output.Entity.Updates += count;
+               _output.Info("{0} to {1}", count, _output.Connection.Name);
+            } catch (Exception ex) {
+               _output.Error(ex.Message);
+               _output.Warn("rollback transaction");
+               trans.Rollback();
+            }
+         }
+      }
    }
 }

@@ -27,6 +27,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
@@ -93,6 +95,60 @@ namespace Transformalize.Providers.Elasticsearch {
             var parameters = new BulkRequestParameters();
             parameters.SetQueryString("refresh", @"true");
             var response = _client.Bulk<DynamicResponse>(PostData.String(builder.ToString()), parameters);
+
+            if (response.Success) {
+               var count = batchCount;
+               _context.Entity.Inserts += count;
+               _context.Debug(() => $"{count} to output");
+            } else {
+               _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            }
+            builder.Clear();
+            batchCount = 0;
+         }
+
+         _context.Info($"{fullCount} to output");
+      }
+
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         var builder = new StringBuilder();
+         var fullCount = 0;
+         var batchCount = (uint)0;
+
+         foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
+            foreach (var row in part) {
+               batchCount++;
+               fullCount++;
+               foreach (var af in _fields) {
+
+                  switch (af.Field.Type) {
+                     case "guid":
+                        row[af.Field] = ((Guid)row[af.Field]).ToString();
+                        break;
+                     case "datetime":
+                        row[af.Field] = ((DateTime)row[af.Field]).ToString("o");
+                        break;
+                  }
+                  if (af.Field.SearchType == "geo_point") {
+                     var gp = row[af.Field].ToString();
+                     row[af.Field] = new Dictionary<string, string> {
+                        { "text", gp },
+                        { "location", gp }
+                     };
+                  }
+               }
+
+               builder.Append(_prefix);
+               foreach (var key in _fields.Where(af => af.Field.PrimaryKey)) {
+                  builder.Append(row[key.Field]);
+               }
+               builder.AppendLine("\"}}");
+               builder.AppendLine(JsonConvert.SerializeObject(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _settings));
+            }
+
+            var parameters = new BulkRequestParameters();
+            parameters.SetQueryString("refresh", @"true");
+            var response = await _client.BulkAsync<DynamicResponse>(PostData.String(builder.ToString()), parameters, token).ConfigureAwait(false);
 
             if (response.Success) {
                var count = batchCount;

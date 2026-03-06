@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Nulls;
@@ -151,6 +153,10 @@ namespace Transformalize.Impl {
          }
          yield return row;
 
+      }
+
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         return Task.FromResult(Read());
       }
    }
 }

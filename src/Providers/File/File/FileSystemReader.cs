@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
@@ -100,6 +102,10 @@ namespace Transformalize.Providers.File {
                 yield return row;
             }
 
+        }
+
+        public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+            return Task.FromResult(Read());
         }
     }
 }

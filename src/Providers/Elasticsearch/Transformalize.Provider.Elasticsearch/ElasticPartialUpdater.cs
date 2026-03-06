@@ -22,6 +22,8 @@ using Elasticsearch.Net;
 using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
@@ -53,6 +55,20 @@ namespace Transformalize.Providers.Elasticsearch {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 _client.Update<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
+            }
+        }
+
+        public async Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            foreach (var row in rows) {
+                var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
+                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
+            }
+        }
+
+        public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            foreach (var row in rows) {
+                var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
+                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
             }
         }
     }

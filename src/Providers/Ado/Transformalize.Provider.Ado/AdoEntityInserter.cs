@@ -19,12 +19,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Dapper;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 using Transformalize.Providers.Ado.Ext;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
     public class AdoEntityInserter : IWrite {
@@ -53,6 +56,36 @@ namespace Transformalize.Providers.Ado {
                             0,
                             CommandType.Text
                         ));
+                        count += batchCount;
+                    }
+                    trans.Commit();
+                } catch (Exception ex) {
+                    _output.Error(ex, ex.Message);
+                    _output.Warn("Rolling back");
+                    trans.Rollback();
+                }
+                _output.Debug(() => $"{count} to {_output.Connection.Name}");
+            }
+            _output.Entity.Inserts += count;
+        }
+
+    public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            _output.Entity.InsertCommand = _output.SqlInsertIntoOutput(_cf);
+            var count = (uint)0;
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                var trans = cn.BeginTransaction();
+
+                try {
+                    foreach (var batch in rows.Partition(_output.Entity.InsertSize)) {
+                        var records = batch.Select(r => r.ToExpandoObject(_output.OutputFields));
+                        var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
+                            _output.Entity.InsertCommand,
+                            records,
+                            trans,
+                            0,
+                            CommandType.Text
+                        ).ConfigureAwait(false));
                         count += batchCount;
                     }
                     trans.Commit();

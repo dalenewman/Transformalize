@@ -21,6 +21,8 @@ using Newtonsoft.Json.Linq;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
    public class ElasticInitializer : IInitializer {
@@ -41,6 +43,30 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
          var elasticResponse = _client.Indices.Create<DynamicResponse>(_context.Connection.Index, settings.ToString());
+
+         var response = new ActionResponse(
+            elasticResponse.HttpStatusCode ?? 500,
+            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+         ) {
+            Action = new Configuration.Action() {
+               Type = "internal",
+               ErrorMode = "continue",
+               Description = "Elasticsearch Initializer"
+            }
+         };
+
+         return response;
+      }
+
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         var existsResponse = await _client.Indices.ExistsAsync<DynamicResponse>(_context.Connection.Index, null, token).ConfigureAwait(false);
+         if (existsResponse.HttpStatusCode == 200) {
+            await _client.Indices.DeleteAsync<VoidResponse>(_context.Connection.Index, null, token).ConfigureAwait(false);
+         }
+
+         var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
+         var elasticResponse = await _client.Indices.CreateAsync<DynamicResponse>(_context.Connection.Index, settings.ToString(), null, token).ConfigureAwait(false);
 
          var response = new ActionResponse(
             elasticResponse.HttpStatusCode ?? 500,
