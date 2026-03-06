@@ -11,12 +11,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Mail provider for Transformalize</description>
     <releaseNotes>maintenance</releaseNotes>
-    <copyright>Copyright © 2017-2025</copyright>
+    <copyright>Copyright © 2017-2026</copyright>
     <tags>etl</tags>
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="Transformalize" version="0.12.0-beta" />
-        <dependency id="MailKit" version="4.8.0" />
+        <dependency id="MailKit" version="4.15.1" />
       </group>
     </dependencies>
   </metadata>

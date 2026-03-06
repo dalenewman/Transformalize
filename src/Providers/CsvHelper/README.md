@@ -7,7 +7,7 @@ using [CsvHelper](https://joshclose.github.io/CsvHelper/) to read/write files.
 <add name='BogusWrite' read-only='true'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='file' file='c:\temp\bogus.csv' synchronous='true' />
+    <add name='output' provider='file' file='c:\temp\bogus.csv' />
   </connections>
   <entities>
     <add name='Contact' size='1000'>
@@ -23,14 +23,14 @@ using [CsvHelper](https://joshclose.github.io/CsvHelper/) to read/write files.
 </add>
 ```
 
-This writes 1000 rows of bogus data to a file. ⚠️ Presently you have to add `synchronous='true'`.
+This writes 1000 rows of bogus data to a file.
 
 ### Read Usage
 
 ```xml
 <add name='BogusRead' >
   <connections>
-    <add name='input' provider='file' file='c:\temp\bogus.csv' synchronous='true' />
+    <add name='input' provider='file' file='c:\temp\bogus.csv' />
   </connections>
   <entities>
     <add name='Bogus' page='1' size='10'>

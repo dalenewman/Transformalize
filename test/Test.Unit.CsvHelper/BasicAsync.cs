@@ -2,6 +2,7 @@ using Autofac;
 using CsvHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
@@ -12,14 +13,14 @@ using Transformalize.Providers.CsvHelper.Autofac;
 namespace Test.Integration.Core {
 
    [TestClass]
-   public class Basic {
+   public class BasicAsync {
 
 
       /// <summary>
       /// Presently the provider only works reliably when synchronous is true.
       /// </summary>
       [TestMethod]
-      public void Write() {
+      public async Task Write() {
 
          const string writeXml = @"<add name='file' read-only='true'>
   <parameters>
@@ -27,7 +28,7 @@ namespace Test.Integration.Core {
   </parameters>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='file' delimiter=',' file='files/bogus-test.csv' />
+    <add name='output' provider='file' delimiter=',' file='files/bogus-test-async.csv' />
   </connections>
   <entities>
     <add name='Contact' size='@[Size]'>
@@ -47,14 +48,14 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
                Assert.AreEqual((uint)1000, process.Entities.First().Inserts, "wrote 1000 rows to bogus-test.csv");
             }
          }
 
          const string readXml = @"<add name='file' read-only='true'>
   <connections>
-    <add name='input' provider='file' delimiter=',' file='files/bogus-test.csv' />
+    <add name='input' provider='file' delimiter=',' file='files/bogus-test-async.csv' />
   </connections>
   <entities>
     <add name='Contact'>
@@ -73,7 +74,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
                Assert.AreEqual(1000, process.Entities.First().Hits, "read 1000 rows from bogus-test.csv");
             }
          }
@@ -82,11 +83,11 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod]
-      public void WriteWithSomeLineBreaks() {
+      public async Task WriteWithSomeLineBreaks() {
          const string xml = @"<add name='file' mode='init' read-only='true'>
   <connections>
     <add name='input' provider='internal' />
-    <add name='output' provider='file' delimiter=',' file='files/data-with-line-breaks-and-commas-test.csv' text-qualifier='""' synchronous='true' />
+    <add name='output' provider='file' delimiter=',' file='files/data-with-line-breaks-and-commas-test-async.csv' text-qualifier='""' />
   </connections>
   <entities>
     <add name='Contact'>
@@ -110,13 +111,13 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, new ConsoleLogger(LogLevel.Info))) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
       }
 
       [TestMethod]
-      public void Read() {
+      public async Task Read() {
 
          const string xml = @"<add name='file' read-only='true'>
   <connections>
@@ -140,7 +141,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               var rows = controller.Read().ToArray();
+               var rows = (await controller.ReadAsync()).ToArray();
                Assert.AreEqual(20, rows.Length);
                var row = rows[3].ToFriendlyDictionary(process.Entities[0].Fields.ToArray());
                Assert.AreEqual(row["Identity"].ToString(), "4");
@@ -154,7 +155,7 @@ namespace Test.Integration.Core {
       }
 
       [TestMethod, ExpectedException(typeof(BadDataException))]
-      public void ThrowOnBadData() {
+      public async Task ThrowOnBadData() {
 
          const string xml = @"<add name='file' mode='init' read-only='true'>
   <connections>
@@ -176,14 +177,14 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               await controller.ExecuteAsync();
             }
          }
 
       }
 
       [TestMethod]
-      public void IgnoreBadData() {
+      public async Task IgnoreBadData() {
 
          const string xml = @"<add name='file' mode='init' read-only='true'>
   <connections>
@@ -205,7 +206,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               var rows = controller.Read();
+               var rows = await controller.ReadAsync();
                Assert.AreEqual(3, rows.Count());
             }
          }
