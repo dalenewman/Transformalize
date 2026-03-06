@@ -72,6 +72,33 @@ AND m.{_model.Batch} > @Threshold;";
          return new ActionResponse(200, "Ok");
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         var open = _cf.AdoProvider == AdoProvider.Access ? "((" : string.Empty;
+         var close = _cf.AdoProvider == AdoProvider.Access ? ")" : string.Empty;
+
+         var command = $@"
+INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)})
+SELECT s.{string.Join(",s.", _model.Aliases)}
+FROM {open}{_model.Master} m
+LEFT OUTER JOIN {_model.Flat} f ON (f.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName}){close}
+INNER JOIN {_model.Star} s ON (s.{_model.EnclosedKeyLongName} = m.{_model.EnclosedKeyShortName}){close}
+WHERE f.{_model.EnclosedKeyLongName} IS NULL
+AND m.{_model.Batch} > @Threshold;";
+
+         if (_cn.State != ConnectionState.Open) {
+            await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+         }
+
+         try {
+            _output.Debug(() => command);
+            var count = _model.Threshold > 0 ? await _cn.ExecuteAsync(command, new { _model.Threshold }, commandTimeout: 0, transaction: _trans).ConfigureAwait(false) : await _cn.ExecuteAsync(command, commandTimeout: 0, transaction: _trans).ConfigureAwait(false);
+            _output.Info($"{count} record{count.Plural()} inserted into flat");
+         } catch (DbException ex) {
+            return new ActionResponse(500, ex.Message);
+         }
+
+         return new ActionResponse(200, "Ok");
+      }
    }
 }

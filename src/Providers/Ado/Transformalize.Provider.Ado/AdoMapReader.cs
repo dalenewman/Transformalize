@@ -145,6 +145,92 @@ namespace Transformalize.Providers.Ado {
          }
       }
 
-   public Task<IEnumerable<MapItem>> ReadAsync(IContext context, CancellationToken token = default) { return Task.FromResult(Read(context)); }
+   public async Task<IEnumerable<MapItem>> ReadAsync(IContext context, CancellationToken token = default) {
+
+         var items = new List<MapItem>();
+         var map = context.Process.Maps.First(m => m.Name == _mapName);
+         var connection = context.Process.Connections.First(c => c.Name == map.Connection);
+
+         var cn = _cn ?? _connectionFactory.GetConnection(Constants.ApplicationName);
+
+         try {
+            if (cn.State != ConnectionState.Open) {
+               await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            }
+         } catch (DbException e) {
+            _context.Error($"Can't open {_connectionFactory.AdoProvider} connection for {_mapName} map.");
+            _context.Error(e.Message);
+            return items;
+         }
+
+         var cmd = (DbCommand)cn.CreateCommand();
+         cmd.CommandType = CommandType.Text;
+         cmd.CommandTimeout = connection.RequestTimeout;
+         cmd.CommandText = map.Query;
+
+         DbDataReader reader = null;
+
+         if (cmd.CommandText.Contains("@")) {
+            var parameters = new ExpandoObject();
+            var editor = (IDictionary<string, object>)parameters;
+            var active = _context.Process.Parameters;
+            foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
+               var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+               if (match != null) {
+                  editor[match.Name] = match.Convert(match.Value);
+               }
+            }
+
+            try {
+               foreach (var kvp in (IDictionary<string, object>)parameters) {
+                  var p = cmd.CreateParameter();
+                  p.ParameterName = "@" + kvp.Key;
+                  p.Value = kvp.Value ?? DBNull.Value;
+                  cmd.Parameters.Add(p);
+               }
+               reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _context.Error($"Unable to execute query for {_mapName} map.");
+               _context.Error(e.Message);
+               Utility.CodeToError(_context, cmd.CommandText);
+            }
+
+         } else {
+
+            try {
+               reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _context.Error($"Unable to execute query for {_mapName} map.");
+               _context.Error(e.Message);
+               Utility.CodeToError(_context, cmd.CommandText);
+            }
+         }
+
+         if (reader == null) {
+            return items;
+         }
+
+         using (reader) {
+            while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+               if (reader.FieldCount <= 0)
+                  continue;
+               if (reader.FieldCount > 1) {
+                  items.Add(new MapItem {
+                     From = reader.IsDBNull(0) ? null : reader[0],
+                     To = reader.IsDBNull(1) ? null : reader[1]
+                  });
+               } else {
+                  items.Add(new MapItem {
+                     From = reader.IsDBNull(0) ? null : reader[0],
+                     To = reader.IsDBNull(0) ? null : reader[0]
+                  });
+               }
+            }
+         }
+
+         CloseAndDisposeConnection(cn);
+
+         return items;
+      }
    }
 }

@@ -18,6 +18,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
@@ -98,6 +99,42 @@ namespace Transformalize.Providers.Ado {
          }
       }
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+
+         var results = new List<IRow>();
+
+         using (var cn = (DbConnection)_cf.GetConnection()) {
+            await cn.OpenAsync(token).ConfigureAwait(false);
+            var cmd = (DbCommand)cn.CreateCommand();
+
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = $@"
+                    SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))}
+                    FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}
+                    {_filter};";
+            _context.Debug(() => cmd.CommandText);
+
+            DbDataReader reader;
+            try {
+               reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _context.Error($"Error reading data from {_connection.Name}, {_tableOrView}.");
+               _context.Error(e.Message);
+               return results;
+            }
+
+            using (reader) {
+               while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                  _rowCount++;
+                  results.Add(_rowCreator.Create(reader, _fields));
+               }
+            }
+
+            _context.Info("{0} from {1}", _rowCount, _connection.Name);
+         }
+
+         return results;
+      }
    }
 }

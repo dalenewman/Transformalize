@@ -119,7 +119,10 @@ namespace Transformalize.Providers.Ado {
         }
 
 
-    public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+    public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            token.ThrowIfCancellationRequested();
+            return Task.FromResult(Execute());
+        }
     }
 
 }

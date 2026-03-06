@@ -177,7 +177,112 @@ namespace Transformalize.Providers.Ado {
          }
       }
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+
+         var results = new List<IRow>();
+
+         using (var cn = (DbConnection)_factory.GetConnection(Constants.ApplicationName)) {
+
+            try {
+               await cn.OpenAsync(token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _input.Error($"Can't open {_input.Connection} for reading.");
+               _input.Error(e.Message);
+               return results;
+            }
+
+            var cmd = (DbCommand)cn.CreateCommand();
+
+            if (string.IsNullOrEmpty(_input.Entity.Query)) {
+
+               if (_input.Entity.MinVersion == null) {
+                  cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
+                  _input.Debug(() => cmd.CommandText);
+               } else {
+                  cmd.CommandText = _input.SqlSelectInputWithMinVersion(_fields, _factory);
+                  _input.Debug(() => cmd.CommandText);
+
+                  var parameter = cmd.CreateParameter();
+                  parameter.ParameterName = "@MinVersion";
+                  parameter.Direction = ParameterDirection.Input;
+                  parameter.Value = _input.Entity.MinVersion;
+                  cmd.Parameters.Add(parameter);
+               }
+
+               if (_input.Entity.IsPageRequest()) {
+                  var countCmd = (DbCommand)cn.CreateCommand();
+                  var filter = _input.ResolveFilter(_factory);
+                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  _input.Debug(() => countCmd.CommandText);
+                  AddAdoParameters(countCmd);
+                  try {
+                     _input.Entity.Hits = Convert.ToInt32(await countCmd.ExecuteScalarAsync(token).ConfigureAwait(false));
+                  } catch (DbException ex) {
+                     _input.Error($"Error counting {_input.Entity.Name} records.");
+                     _input.Error(ex.Message);
+                  }
+               }
+               _input.Entity.Query = cmd.CommandText;
+            } else {
+               // may need to load query from a script
+               if (_input.Entity.Query.Length <= 128 && _input.Process.Scripts.Any(s => s.Name == _input.Entity.Query)) {
+                  var script = _input.Process.Scripts.First(s => s.Name == _input.Entity.Query);
+                  if (script.Content != string.Empty) {
+                     _input.Entity.Query = script.Content;
+                  }
+               }
+               cmd.CommandText = _input.Entity.Query;
+            }
+
+            // automatic facet filter maps need connections and queries and map readers
+            foreach (var filter in _input.Entity.Filter.Where(f => f.Type == "facet" && f.Map != string.Empty)) {
+               var map = _input.Process.Maps.First(m => m.Name == filter.Map);
+               if (!map.Items.Any() && map.Query == string.Empty) {
+                  map.Connection = _input.Connection.Name;
+                  map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
+                  foreach (var mapItem in new AdoMapReader(_input, cn, map.Name).Read(_input)) {
+                     if (mapItem.To != null) {
+                        var value = mapItem.To.ToString();
+                        if (value.Contains("'")) {
+                           mapItem.To = value.Replace("'", "''");
+                        }
+                     }
+                     map.Items.Add(mapItem);
+                  }
+               }
+            }
+
+            // handle ado parameters
+            AddAdoParameters(cmd);
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandTimeout = _input.Connection.RequestTimeout;
+
+            DbDataReader reader;
+
+            try {
+               reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, token).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _input.Error(ex.Message);
+               return results;
+            }
+
+            using (reader) {
+
+               if (_fields.Length < reader.FieldCount) {
+                  _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
+               }
+
+               while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                  _rowCount++;
+                  results.Add(_rowCreator.Create(reader, _fields));
+               }
+            }
+         }
+
+         _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
+
+         return results;
+      }
    }
 
 }

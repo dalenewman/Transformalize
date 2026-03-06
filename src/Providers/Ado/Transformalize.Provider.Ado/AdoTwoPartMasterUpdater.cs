@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Text;
@@ -163,6 +164,45 @@ namespace Transformalize.Providers.Ado {
             }
         }
 
-    public Task UpdateAsync(CancellationToken token = default) { Update(); return Task.CompletedTask; }
+    public async Task UpdateAsync(CancellationToken token = default) {
+            var status = _c.GetEntityStatus();
+            if (!status.NeedsUpdate())
+                return;
+
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                var select = SelectStatement(status);
+                var update = UpdateStatement(status);
+                var trans = cn.BeginTransaction();
+                try {
+                    foreach (var batch in (await ReadAsync(cn, select).ConfigureAwait(false)).Partition(_master.UpdateSize)) {
+                        var expanded = batch.ToArray();
+                        await cn.ExecuteAsync(update, expanded, trans).ConfigureAwait(false);
+                    }
+                    trans.Commit();
+                } catch (Exception ex) {
+                    _c.Error("error executing: {0} {1}", select, ex.Message);
+                    _c.Error(ex, ex.Message);
+                    _c.Warn("rolling back");
+                    trans.Rollback();
+                }
+            }
+        }
+
+        private async Task<List<ExpandoObject>> ReadAsync(IDbConnection cn, string select) {
+            var results = new List<ExpandoObject>();
+            using (var reader = await cn.ExecuteReaderAsync(select, new { TflBatchId = _c.Entity.BatchId, MasterTflBatchId = _master.BatchId }, null, 0, CommandType.Text).ConfigureAwait(false)) {
+                while (reader.Read()) {
+                    var obj = new ExpandoObject();
+                    var dict = (IDictionary<string, object>)obj;
+                    for (var i = 0; i < reader.FieldCount; i++) {
+                        dict[reader.GetName(i)] = reader.GetValue(i);
+                    }
+                    dict[_master.TflBatchId().FieldName()] = _c.Entity.BatchId;
+                    results.Add(obj);
+                }
+            }
+            return results;
+        }
     }
 }

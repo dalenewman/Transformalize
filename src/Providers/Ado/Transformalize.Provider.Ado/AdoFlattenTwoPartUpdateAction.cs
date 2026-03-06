@@ -106,6 +106,39 @@ namespace Transformalize.Providers.Ado {
          }
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         var updateVariables = string.Join(", ", _model.Fields.Where(f => f.Name != _model.KeyLongName).Select(f => $"{_cf.Enclose(f.Alias)} = @{f.FieldName()}"));
+
+         var builder = new StringBuilder();
+         builder.AppendLine($"UPDATE {_output.Process.Name + _output.Process.FlatSuffix}");
+         builder.AppendLine($"SET {updateVariables}");
+         builder.AppendLine($"WHERE {_model.EnclosedKeyLongName} = @{_model.KeyShortName};");
+
+         var command = builder.ToString();
+
+         var count = 0;
+
+         try {
+            foreach (var batch in Read(_cn, _sql, _model).Partition(_model.MasterEntity.UpdateSize)) {
+               var expanded = batch.ToArray();
+               await _cn.ExecuteAsync(command, expanded, _trans).ConfigureAwait(false);
+               count += expanded.Length;
+            }
+            _output.Info($"{count} record{count.Plural()} updated in flat");
+         } catch (Exception ex) {
+            _output.Error(ex.Message);
+            _output.Error(_sql);
+            return new ActionResponse(500, ex.Message) {
+               Action = new Configuration.Action {
+                  Type = "internal",
+                  Description = "Flatten Action",
+                  ErrorMode = "abort"
+               }
+            };
+         }
+
+         return new ActionResponse(200, "Ok");
+      }
    }
 }

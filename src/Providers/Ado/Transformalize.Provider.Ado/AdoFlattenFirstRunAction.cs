@@ -74,6 +74,37 @@ namespace Transformalize.Providers.Ado {
 
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         var message = "Ok";
+
+         var sqlInsert = _cf.AdoProvider == AdoProvider.SqlCe ?
+             $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) {_context.SqlSelectStar(_cf)}{_cf.Terminator}" :
+             $"INSERT INTO {_model.Flat}({string.Join(",", _model.Aliases)}) SELECT {string.Join(",", _model.Aliases)} FROM {_model.Star}{_cf.Terminator}";
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            var trans = cn.BeginTransaction();
+
+            try {
+               _context.Debug(() => sqlInsert);
+               var count = await cn.ExecuteAsync(sqlInsert, commandTimeout: 0, transaction: trans).ConfigureAwait(false);
+               message = $"{count} record{count.Plural()} inserted into flat";
+               _context.Info(message);
+               trans.Commit();
+            } catch (DbException ex) {
+               trans.Rollback();
+               return new ActionResponse(500, ex.Message) {
+                  Action = new Action {
+                     Type = "internal",
+                     Description = "Flatten Action",
+                     ErrorMode = "abort"
+                  }
+               };
+            }
+
+         }
+
+         return new ActionResponse(200, message);
+      }
    }
 }

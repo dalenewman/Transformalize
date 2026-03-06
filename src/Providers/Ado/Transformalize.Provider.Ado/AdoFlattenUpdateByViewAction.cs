@@ -87,6 +87,45 @@ WHERE m.{_model.Batch} > @Threshold;
          return new ActionResponse(200, "Ok");
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         var prefix = _model.AdoProvider == AdoProvider.PostgreSql ? string.Empty : "f.";
+         var updates = string.Join(", ", _model.Aliases.Where(f => f != _model.EnclosedKeyLongName).Select(f => $"{prefix}{f} = s.{f}"));
+         string command;
+
+         if(_model.AdoProvider == AdoProvider.PostgreSql) {
+            command = $@"
+UPDATE {_model.Flat} f
+SET {updates}
+FROM {_model.Master} m, {_model.Star} s
+WHERE m.{_model.EnclosedKeyShortName} = f.{_model.EnclosedKeyLongName}
+AND f.{_model.EnclosedKeyLongName} = s.{_model.EnclosedKeyLongName}
+AND m.{_model.Batch} > @Threshold;
+";
+         } else {
+            command = $@"
+UPDATE f
+SET {updates}
+FROM {_model.Flat} f
+INNER JOIN {_model.Master} m ON (m.{_model.EnclosedKeyShortName} = f.{_model.EnclosedKeyLongName})
+INNER JOIN {_model.Star} s ON (f.{_model.EnclosedKeyLongName} = s.{_model.EnclosedKeyLongName})
+WHERE m.{_model.Batch} > @Threshold;
+";
+         }
+
+         if(_cn.State != ConnectionState.Open) {
+            await ((DbConnection)_cn).OpenAsync(token).ConfigureAwait(false);
+         }
+
+         try {
+            _output.Debug(() => command);
+            var count = await _cn.ExecuteAsync(command, new { _model.Threshold }, commandTimeout: 0, transaction: _trans).ConfigureAwait(false);
+            _output.Info($"{count} record{count.Plural()} updated in flat");
+         } catch (DbException ex) {
+            return new ActionResponse(500, ex.Message) { Action = new Action { Type = "internal", Description = "Flatten Action", ErrorMode = "abort" } };
+         }
+
+         return new ActionResponse(200, "Ok");
+      }
    }
 }

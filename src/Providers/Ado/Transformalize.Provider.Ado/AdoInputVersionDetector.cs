@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -104,8 +105,66 @@ namespace Transformalize.Providers.Ado {
          throw new NotImplementedException();
       }
 
-   public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
-   public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) { return Task.FromResult(GetSchema(entity)); }
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+   public async Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+
+         if (string.IsNullOrEmpty(_context.Entity.Version))
+            return null;
+
+         var version = _context.Entity.GetVersionField();
+
+         var schema = _context.Entity.Schema == string.Empty ? string.Empty : _cf.Enclose(_context.Entity.Schema) + ".";
+
+         var filter = string.Empty;
+         if (_context.Entity.Filter.Any()) {
+            filter = _context.ResolveFilter(_cf);
+         }
+
+         string sql;
+         var versionName = _context.Connection.Provider == "postgresql" && version.Name == "xmin" ? "xmin::text" : _cf.Enclose(version.Name);
+         if (_context.Connection.Provider == "sqlserver" && version.Type == "byte[]" && version.Length == "8") {
+            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} WHERE {versionName} < MIN_ACTIVE_ROWVERSION() {(filter == string.Empty ? string.Empty : " AND " + filter)}";
+         } else {
+            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+         }
+
+         _context.Debug(() => $"Loading Input Version: {sql}");
+
+         try {
+            using (var cn = (DbConnection)_cf.GetConnection()) {
+               await cn.OpenAsync(token).ConfigureAwait(false);
+
+               var cmd = (DbCommand)cn.CreateCommand();
+               cmd.CommandText = sql;
+               cmd.CommandType = CommandType.Text;
+               cmd.CommandTimeout = _context.Connection.RequestTimeout;
+
+               // handle ado parameters
+               if (cmd.CommandText.Contains("@")) {
+                  var active = _context.Process.Parameters;
+                  foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
+                     var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+                     if (match != null) {
+                        var parameter = cmd.CreateParameter();
+                        parameter.ParameterName = match.Name;
+                        parameter.Value = match.Convert(match.Value);
+                        cmd.Parameters.Add(parameter);
+                     }
+                  }
+               }
+
+               var result = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
+               return result == DBNull.Value ? null : result;
+            }
+         } catch (DbException ex) {
+            _context.Error($"Error retrieving max version from {_context.Connection.Name}, {_context.Entity.Alias}.");
+            _context.Error(ex.Message);
+            _context.Debug(() => ex.StackTrace);
+            _context.Debug(() => sql);
+            return null;
+         }
+      }
+
+      public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) { return Task.FromResult(GetSchema(entity)); }
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
    }
 }

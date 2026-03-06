@@ -20,6 +20,7 @@ using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -79,6 +80,34 @@ namespace Transformalize.Providers.Ado {
 
 
 
-   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+   public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         await InternalWriteAsync(_minDates != null ? _minDates.Operate(rows) : rows, token).ConfigureAwait(false);
+      }
+
+      private async Task InternalWriteAsync(IEnumerable<IRow> rows, CancellationToken token) {
+         var sql = _context.SqlUpdateCalculatedFields(_parent, _cf);
+         var fields = _context.GetUpdateCalculatedFields().ToArray();
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            var trans = cn.BeginTransaction();
+            try {
+
+               foreach (var batch in rows.Partition(_context.Entity.UpdateSize)) {
+                  _context.Debug(() => "got a batch!");
+                  var data = batch.Select(r => r.ToExpandoObject(fields));
+                  _context.Debug(() => "converted to expando object");
+                  var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(sql, data, trans, 0, CommandType.Text).ConfigureAwait(false));
+                  _context.Debug(() => $"Updated {batchCount} calculated field records!");
+               }
+               trans.Commit();
+               _context.Debug(() => "Committed updates.");
+
+            } catch (Exception ex) {
+               _context.Error(ex, ex.Message);
+               trans.Rollback();
+            }
+         }
+      }
    }
 }

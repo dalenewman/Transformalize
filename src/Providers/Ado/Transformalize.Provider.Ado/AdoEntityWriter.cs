@@ -90,6 +90,55 @@ namespace Transformalize.Providers.Ado {
 
         }
 
-    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+    public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+            var tflHashCode = _output.Entity.TflHashCode();
+            var tflDeleted = _output.Entity.TflDeleted();
+
+            foreach (var part in rows.Partition(_output.Entity.InsertSize)) {
+
+                var inserts = new List<IRow>(_output.Entity.InsertSize);
+                var updates = new List<IRow>(_output.Entity.InsertSize);
+                var batchCount = (uint)0;
+
+                if (_output.Process.Mode == "init" || (_output.Entity.Insert && !_output.Entity.Update)) {
+                    foreach (var row in part) {
+                        inserts.Add(row);
+                        batchCount++;
+                    }
+                } else {
+                    var newRows = part.ToArray();
+                    var oldRows = _matcher.Read(newRows);
+                    for (int i = 0, batchLength = newRows.Length; i < batchLength; i++) {
+                        var row = newRows[i];
+                        if (oldRows.Contains(i)) {
+                            if (oldRows[i][tflDeleted].Equals(true) || !oldRows[i][tflHashCode].Equals(row[tflHashCode])) {
+                                updates.Add(row);
+                            }
+                        } else {
+                            inserts.Add(row);
+                        }
+                        batchCount++;
+                    }
+                }
+
+                if (inserts.Any()) {
+                    await _inserter.WriteAsync(inserts, token).ConfigureAwait(false);
+                }
+
+                if (updates.Any()) {
+                    await _updater.WriteAsync(updates, token).ConfigureAwait(false);
+                }
+
+            }
+
+            if (_output.Entity.Inserts > 0) {
+                _output.Info("{0} inserts into {1}", _output.Entity.Inserts, _output.Connection.Name);
+            }
+
+            if (_output.Entity.Updates > 0) {
+                _output.Info("{0} updates to {1}", _output.Entity.Updates, _output.Connection.Name);
+            }
+
+        }
     }
 }

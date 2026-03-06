@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using Transformalize.Configuration;
@@ -143,6 +144,108 @@ namespace Transformalize.Providers.Ado {
          }
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         if (_output.Process.Entities.Sum(e => e.Inserts + e.Updates + e.Deletes) == 0) {
+            return new ActionResponse(200, "nothing to flatten");
+         }
+
+         var model = new AdoSqlModel(_output, _cf);
+
+         if (_output.Process.Mode == "init") {
+            return await new AdoFlattenFirstRunAction(_output, _cf, model).ExecuteAsync(token).ConfigureAwait(false);
+         }
+
+         ActionResponse updateResponse = null;
+         ActionResponse insertResponse = null;
+
+         using (var cn = _cf.GetConnection(Constants.ApplicationName)) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+
+            using (var trans = cn.BeginTransaction()) {
+
+               _output.Info("Begin Flat Insert/Update Transaction");
+
+               if (model.MasterEntity.Inserts > 0) {
+
+                  if (_cf.AdoProvider == AdoProvider.SqlCe) {
+                     insertResponse = await new AdoFlattenInsertBySelectAction(_output, _cf, model, cn, trans).ExecuteAsync(token).ConfigureAwait(false);
+                     insertResponse.Action = new Action {
+                        Type = "internal",
+                        Description = "Flatten Action",
+                        ErrorMode = "abort"
+                     };
+                     if (insertResponse.Code != 200) {
+                        trans.Rollback();
+                        return insertResponse;
+                     }
+                  } else {
+                     insertResponse = await new AdoFlattenInsertByViewAction(_output, _cf, model, cn, trans).ExecuteAsync(token).ConfigureAwait(false);
+                     insertResponse.Action = new Action {
+                        Type = "internal",
+                        Description = "Flatten Action",
+                        ErrorMode = "abort"
+                     };
+                     if (insertResponse.Code != 200) {
+                        trans.Rollback();
+                        return insertResponse;
+                     }
+                  }
+               }
+
+               switch (_cf.AdoProvider) {
+                  case AdoProvider.SqlCe:
+                     // this provider does NOT support views, and does NOT support UPDATE ... SET ... FROM ... syntax
+
+                     var masterAlias = Utility.GetExcelName(model.MasterEntity.Index);
+                     var builder = new StringBuilder();
+                     builder.AppendLine($"SELECT {_output.SqlStarFields(_cf)}");
+
+                     foreach (var from in _output.SqlStarFroms(_cf)) {
+                        builder.AppendLine(@from);
+                     }
+
+                     builder.AppendFormat("INNER JOIN {0} flat ON (flat.{1} = {2}.{3})", _cf.Enclose(_output.Process.Name + _output.Process.FlatSuffix), model.EnclosedKeyLongName, masterAlias, model.EnclosedKeyShortName);
+
+                     builder.AppendLine($" WHERE {masterAlias}.{model.Batch} > @Threshold; ");
+
+                     updateResponse = await new AdoFlattenTwoPartUpdateAction(_output, _cf, model, builder.ToString(), cn, trans).ExecuteAsync(token).ConfigureAwait(false);
+                     break;
+                  case AdoProvider.SqLite:
+
+                     // this provider supports views, but does NOT support UPDATE ... SET ... FROM ... syntax
+
+                     var sql = $@"
+                        SELECT s.{string.Join(",s.", model.Aliases)}
+                        FROM {model.Master} m
+                        INNER JOIN {model.Flat} f ON (f.{model.EnclosedKeyLongName} = m.{model.EnclosedKeyShortName})
+                        INNER JOIN {model.Star} s ON (s.{model.EnclosedKeyLongName} = m.{model.EnclosedKeyShortName})
+                        WHERE m.{model.Batch} > @Threshold;";
+
+                     updateResponse = await new AdoFlattenTwoPartUpdateAction(_output, _cf, model, sql, cn, trans).ExecuteAsync(token).ConfigureAwait(false);
+                     break;
+                  default:
+                     // these providers support views and UPDATE ... SET ... FROM ... syntax (server based)
+                     updateResponse = await new AdoFlattenUpdateByViewAction(_output, model, cn, trans).ExecuteAsync(token).ConfigureAwait(false);
+                     break;
+               }
+
+               if (updateResponse.Code == 200) {
+                  trans.Commit();
+                  _output.Info("Committed Flat Insert/Update Transaction");
+               } else {
+                  updateResponse.Action = new Action {
+                      Type = "internal",
+                      Description = "Flatten Action",
+                      ErrorMode = "abort"
+                   };
+                  trans.Rollback();
+                  _output.Warn("Rolled Back Flat Insert/Update Transaction");
+               }
+
+               return updateResponse;
+            }
+         }
+      }
    }
 }

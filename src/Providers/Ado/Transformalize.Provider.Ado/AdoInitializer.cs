@@ -73,7 +73,42 @@ namespace Transformalize.Providers.Ado {
          return new ActionResponse();
       }
 
-   public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) { return Task.FromResult(Execute()); }
+   private async Task DestroyAsync(IDbConnection cn) {
+         try {
+            if (!_context.Connection.DropControl)
+               return;
+
+            var sql = _context.SqlDropControl(_cf);
+            await cn.ExecuteAsync(sql).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Debug(() => ex.Message);
+         }
+      }
+
+      private async Task CreateAsync(IDbConnection cn) {
+         try {
+            var sql = _context.SqlCreateControl(_cf);
+            await cn.ExecuteAsync(sql).ConfigureAwait(false);
+         } catch (DbException ex) {
+            _context.Debug(() => ex.Message);
+         }
+      }
+
+   public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         using (var cn = _cf.GetConnection()) {
+            try {
+               await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _context.Error($"Couldn't open {_context.Connection}.");
+               _context.Error(ex.Message);
+               return new ActionResponse(500, ex.Message) { Action = new Configuration.Action { Type = "internal", ErrorMode = "abort" } };
+            }
+
+            await DestroyAsync(cn).ConfigureAwait(false);
+            await CreateAsync(cn).ConfigureAwait(false);
+         }
+         return new ActionResponse();
+      }
    }
 
 }
