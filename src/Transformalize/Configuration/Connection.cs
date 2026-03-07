@@ -111,6 +111,18 @@ namespace Transformalize.Configuration {
       [Cfg(value = Constants.DefaultSetting)]
       public string Version { get; set; }
 
+      [Cfg(value = double.NaN)]
+      public double MinLat { get; set; }
+
+      [Cfg(value = double.NaN)]
+      public double MinLon { get; set; }
+
+      [Cfg(value = double.NaN)]
+      public double MaxLat { get; set; }
+
+      [Cfg(value = double.NaN)]
+      public double MaxLon { get; set; }
+
       [Cfg(value = "GET")]
       public string WebMethod { get; set; }
 
@@ -311,6 +323,9 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
       public string ModelType { get; set; }
+
+      [Cfg(value = "minimal", domain = "role,minimal,legacy", toLower = true)]
+      public string Type { get; set; }
 
       [Cfg(value = "")]
       public string Command { get; set; }

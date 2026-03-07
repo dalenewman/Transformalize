@@ -17,6 +17,7 @@
 #endregion
 
 using Autofac;
+using System.Text.Json;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
@@ -34,7 +35,7 @@ namespace Test {
          const string xml = @"<add name='Test' mode='init'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='geojson' file='bogus.geo.json' />
+    <add name='output' provider='geojson' type='legacy' file='bogus.geo.json' />
   </connections>
   <entities>
     <add name='Contact' size='2'>
@@ -62,6 +63,99 @@ namespace Test {
                
                Assert.AreEqual((uint)2, process.Entities.First().Inserts);
                Assert.AreEqual(expected, actual);
+            }
+         }
+      }
+
+      [TestMethod]
+      public void WriteRoleModelWithBBox() {
+         const string xml = @"<add name='Test' mode='init'>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+    <add name='output' provider='geojson' type='role' file='bogus-role.geo.json' min-lat='24.0' min-lon='-125.0' max-lat='50.0' max-lon='-66.0' />
+  </connections>
+  <entities>
+    <add name='Contact' size='2'>
+      <fields>
+        <add name='Identity' type='int' role='id' />
+        <add name='FirstName' role='property' />
+        <add name='IgnoreMe' />
+        <add name='Latitude' type='double' min='24.396308' max='49.384358' role='latitude' />
+        <add name='Longitude' type='double' min='-125.0' max='-66.93457' role='longitude' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = new Container(new BogusModule(), new GeoJsonProviderModule()).CreateScope(process, logger)) {
+               var controller = inner.Resolve<IProcessController>();
+               controller.Execute();
+
+               var actual = File.ReadAllText("bogus-role.geo.json");
+               using var doc = JsonDocument.Parse(actual);
+               var root = doc.RootElement;
+
+               Assert.AreEqual("FeatureCollection", root.GetProperty("type").GetString());
+
+               var bbox = root.GetProperty("bbox").EnumerateArray().Select(x => x.GetDouble()).ToArray();
+               CollectionAssert.AreEqual(new[] { -125d, 24d, -66d, 50d }, bbox);
+
+               var features = root.GetProperty("features").EnumerateArray().ToArray();
+               Assert.AreEqual(2, features.Length);
+
+               for (var i = 0; i < features.Length; i++) {
+                  var feature = features[i];
+                  var geometry = feature.GetProperty("geometry");
+                  Assert.AreEqual("Point", geometry.GetProperty("type").GetString());
+                  var coordinates = geometry.GetProperty("coordinates").EnumerateArray().ToArray();
+                  Assert.AreEqual(2, coordinates.Length);
+                  var id = feature.GetProperty("id");
+                  Assert.AreEqual(i + 1, id.GetInt32());
+
+                  var properties = feature.GetProperty("properties");
+                  Assert.IsFalse(properties.TryGetProperty("Identity", out _));
+                  Assert.IsTrue(properties.TryGetProperty("FirstName", out _));
+                  Assert.IsFalse(properties.TryGetProperty("IgnoreMe", out _));
+               }
+
+               Assert.AreEqual((uint)2, process.Entities.First().Inserts);
+            }
+         }
+      }
+
+      [TestMethod]
+      public void WriteDefaultsToMinimalType() {
+         const string xml = @"<add name='Test' mode='init'>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+    <add name='output' provider='geojson' file='bogus-minimal.geo.json' />
+  </connections>
+  <entities>
+    <add name='Contact' size='1'>
+      <fields>
+        <add name='Identity' type='int' />
+        <add name='Latitude' type='double' min='24.396308' max='49.384358' />
+        <add name='Longitude' type='double' min='-125.0' max='-66.93457' />
+        <add name='Color' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            using (var inner = new Container(new BogusModule(), new GeoJsonProviderModule()).CreateScope(process, logger)) {
+               var controller = inner.Resolve<IProcessController>();
+               controller.Execute();
+
+               var actual = File.ReadAllText("bogus-minimal.geo.json");
+               using var doc = JsonDocument.Parse(actual);
+               var properties = doc.RootElement.GetProperty("features")[0].GetProperty("properties");
+               Assert.AreEqual("add geojson-description to output", properties.GetProperty("description").GetString());
+               Assert.IsFalse(properties.TryGetProperty("marker-color", out _));
+               Assert.AreEqual((uint)1, process.Entities.First().Inserts);
             }
          }
       }

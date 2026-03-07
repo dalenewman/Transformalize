@@ -108,6 +108,18 @@ namespace Transformalize.ConfigurationFacade {
       public string Version { get; set; }
 
       [Cfg]
+      public string MinLat { get; set; }
+
+      [Cfg]
+      public string MinLon { get; set; }
+
+      [Cfg]
+      public string MaxLat { get; set; }
+
+      [Cfg]
+      public string MaxLon { get; set; }
+
+      [Cfg]
       public string WebMethod { get; set; }
 
       [Cfg]
@@ -160,6 +172,9 @@ namespace Transformalize.ConfigurationFacade {
 
       [Cfg]
       public string ModelType { get; set; }
+
+      [Cfg]
+      public string Type { get; set; }
 
       [Cfg]
       public string Command { get; set; }
@@ -240,6 +255,11 @@ namespace Transformalize.ConfigurationFacade {
             Index = this.Index,
             LinePattern = this.LinePattern,
             ModelType = this.ModelType,
+            Type = this.Type,
+            MinLat = double.NaN,
+            MinLon = double.NaN,
+            MaxLat = double.NaN,
+            MaxLon = double.NaN,
             Name = this.Name,
             OpenWith = this.OpenWith,
             Password = this.Password,
@@ -284,6 +304,22 @@ namespace Transformalize.ConfigurationFacade {
 
          short.TryParse(this.MinLength, out short minLength);
          c.MinLength = minLength;
+
+         if (double.TryParse(this.MinLat, out var minLat)) {
+            c.MinLat = minLat;
+         }
+
+         if (double.TryParse(this.MinLon, out var minLon)) {
+            c.MinLon = minLon;
+         }
+
+         if (double.TryParse(this.MaxLat, out var maxLat)) {
+            c.MaxLat = maxLat;
+         }
+
+         if (double.TryParse(this.MaxLon, out var maxLon)) {
+            c.MaxLon = maxLon;
+         }
 
          int.TryParse(this.Port, out int port);
          c.Port = port;

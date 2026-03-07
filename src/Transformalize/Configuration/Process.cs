@@ -311,12 +311,32 @@ namespace Transformalize.Configuration {
       public int EntityLogLimit { get; set; }
       public int FieldLogLimit { get; set; }
 
-      protected override void Validate() {
-         ValidateRelationshipEntities();
-         this.Validate(e => Error(e), w => Warn(w));
-      }
+    protected override void Validate(){
+      ValidateRelationshipEntities();
+      ValidateGeoJsonOutput();
+      this.Validate(e => Error(e), w => Warn(w));
+    }
 
-      private void ValidateRelationshipEntities() {
+    private void ValidateGeoJsonOutput()
+    {
+      var output = GetOutputConnection();
+      if (output.Provider == "geojson" && output.Type == "role")
+      {
+        if (Entities.Any())
+        {
+          var entity = Entities.First();
+          var fields = entity.GetAllFields().ToArray();
+          var hasLat = fields.Any(f => f.Role == "latitude");
+          var hasLon = fields.Any(f => f.Role == "longitude");
+          if (!hasLat || !hasLon)
+          {
+            Error("When using geojson provider with type role, you must have a latitude and longitude role in fields.");
+          }
+        }
+      }
+    }
+
+    private void ValidateRelationshipEntities() {
          foreach (var relationship in Relationships) {
             if (!Entities.Exists(e => e.Name == relationship.LeftEntity || e.Alias == relationship.LeftEntity)) {
                Error("The left entity {0} does not exist in entities.", relationship.LeftEntity);

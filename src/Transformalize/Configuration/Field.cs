@@ -484,8 +484,10 @@ namespace Transformalize.Configuration {
       public string Class { get; set; }
       [Cfg(value = "")]
       public string Style { get; set; }
+
       [Cfg(value = "")]
       public string Role { get; set; }
+      
       [Cfg(value = "")]
       public string HRef { get; set; }
       [Cfg(value = "")]

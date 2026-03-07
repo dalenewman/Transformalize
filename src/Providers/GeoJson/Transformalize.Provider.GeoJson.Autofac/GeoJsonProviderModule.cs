@@ -35,8 +35,8 @@ namespace Transformalize.Providers.GeoJson.Autofac {
       private Process _process;
       private readonly StreamWriter _streamWriter;
       private const string GeoJson = "geojson";
-
-      public bool UseAsyncMethods { get; set; }
+      private const string RoleType = "role";
+      private const string LegacyType = "legacy";
 
       /// <summary>
       /// Create a GeoJson module with an optional stream to write to
@@ -98,19 +98,23 @@ namespace Transformalize.Providers.GeoJson.Autofac {
                   foreach (var entity in _process.Entities) {
                      builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        if (UseAsyncMethods) {
-                           return new GeoJsonMinimalProcessStreamWriter(output, writer);
-                        } else {
-                           // may need sync version
-                           return new GeoJsonMinimalProcessStreamWriterSync(output, writer);
+                        if (outputConnection.Type == RoleType) {
+                           return new GeoJsonRoleProcessStreamWriter(output, writer);
                         }
+                        return new GeoJsonMinimalProcessStreamWriter(output, writer);
                      }).Named<IWrite>(entity.Key);
                   }
                } else {
                   foreach (var entity in _process.Entities) {
                      builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        return new GeoJsonFileWriter(output) { UseAsyncMethods = UseAsyncMethods };
+                        if (outputConnection.Type == RoleType) {
+                           return new GeoJsonRoleFileWriter(output);
+                        }
+                        if (outputConnection.Type == LegacyType) {
+                           return new GeoJsonFileWriter(output);
+                        }
+                        return new GeoJsonMinimalFileWriter(output);
                      }).Named<IWrite>(entity.Key);
                   }
                }
