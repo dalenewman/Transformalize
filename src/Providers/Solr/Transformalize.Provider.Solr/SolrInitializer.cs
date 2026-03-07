@@ -126,8 +126,74 @@ namespace Transformalize.Providers.Solr {
          return new ActionResponse();
       }
 
-      public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
-         return Task.FromResult(Execute());
+      public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+
+         _context.Warn("Initializing");
+
+         List<CoreResult> cores = null;
+         try {
+            cores = _admin.Status();
+         } catch (SolrConnectionException ex) {
+            return new ActionResponse { Code = 500, Message = $"Count not access {_context.Connection.Url}: {ex.Message}" };
+         }
+
+         var coreFolder = new DirectoryInfo(Path.Combine(_context.Connection.Folder, _context.Connection.Core));
+
+         if (!coreFolder.Exists) {
+            try {
+               coreFolder.Create();
+            } catch (UnauthorizedAccessException ex) {
+               _context.Warn("Unable to create core folder: {0}", ex.Message);
+            }
+         }
+
+         var sourceFolder = new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "files", "solr"));
+
+         try {
+            foreach (var d in Directory.GetDirectories(sourceFolder.FullName, "*", SearchOption.AllDirectories)) {
+               Directory.CreateDirectory(d.Replace(sourceFolder.FullName, coreFolder.FullName));
+            }
+
+            var fileCount = 0;
+            _context.Debug(() => $"Copying SOLR files to {coreFolder.FullName}.");
+            foreach (var f in Directory.GetFiles(sourceFolder.FullName, "*.*", SearchOption.AllDirectories)) {
+               var solrFileInfo = new FileInfo(f.Replace(sourceFolder.FullName, coreFolder.FullName));
+
+               File.Copy(f, solrFileInfo.FullName, true);
+               _context.Debug(() => $"Copied {solrFileInfo.Name}.");
+               fileCount++;
+            }
+            _context.Info($"Copied {fileCount} SOLR file{fileCount.Plural()}.");
+
+            File.WriteAllText(Path.Combine(Path.Combine(coreFolder.FullName, "conf"), "schema.xml"), _schemaEngine.Render());
+            File.WriteAllText(Path.Combine(Path.Combine(coreFolder.FullName, "conf"), "solrconfig.xml"), _configEngine.Render());
+
+         } catch (UnauthorizedAccessException ex) {
+            _context.Warn("Unable to transfer configuration files to core folder: {0}", ex.Message);
+         }
+
+         if (cores.Any(c => c.Name == _context.Connection.Core)) {
+
+            try {
+               _admin.Reload(_context.Connection.Core);
+            } catch (SolrConnectionException ex) {
+               _context.Warn("Unable to reload core");
+               _context.Warn(ex.Message);
+            }
+
+         } else {
+
+            try {
+               _admin.Create(_context.Connection.Core, _context.Connection.Core);
+            } catch (SolrConnectionException ex) {
+               _context.Warn("Unable to create core");
+               _context.Error(ex, ex.Message);
+            }
+
+         }
+
+         await _solr.DeleteAsync(SolrQuery.All).ConfigureAwait(false);
+         return new ActionResponse();
       }
    }
 }

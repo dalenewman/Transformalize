@@ -210,7 +210,7 @@ namespace Transformalize.ConfigurationFacade {
       public string Replicas { get; set; }
 
       [Cfg]
-      public string MaxDegreeOfParallism { get; set; }
+      public string MaxDegreeOfParallelism { get; set; }
 
       [Cfg]
       public string Service { get; set; }
@@ -296,7 +296,7 @@ namespace Transformalize.ConfigurationFacade {
          int.TryParse(this.ErrorLimit, out var errorLimit);
          c.ErrorLimit = errorLimit;
 
-         int.TryParse(this.MaxDegreeOfParallism, out int mdop);
+         int.TryParse(this.MaxDegreeOfParallelism, out int mdop);
          c.MaxDegreeOfParallelism = mdop;
 
          short.TryParse(this.MaxLength, out short maxLength);

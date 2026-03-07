@@ -70,7 +70,10 @@ namespace Transformalize.Providers.Solr {
         }
 
         public Task<object> GetMaxVersionAsync(CancellationToken token = default) {
-            return Task.FromResult(GetMaxVersion());
+            if (string.IsNullOrEmpty(_context.Entity.Version))
+                return Task.FromResult<object>(null);
+
+            return GetMaxVersionInternalAsync(token);
         }
 
         public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) {
@@ -79,6 +82,30 @@ namespace Transformalize.Providers.Solr {
 
         public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             return Task.FromResult(Read());
+        }
+
+        private async Task<object> GetMaxVersionInternalAsync(CancellationToken token) {
+            var version = _context.Entity.GetVersionField();
+
+            _context.Debug(() => $"Detecting Max Input Version: {_context.Connection.Database}.{version.Alias.ToLower()}.");
+
+            var result = await _solr.QueryAsync(
+                SolrQuery.All,
+                new QueryOptions {
+                    StartOrCursor = new StartOrCursor.Start(0),
+                    Rows = 1,
+                    Fields = new List<string> { version.Name },
+                    OrderBy = new List<SortOrder> { new SortOrder(version.Name, SolrNet.Order.DESC) }
+                },
+                token
+            ).ConfigureAwait(false);
+
+            var value = result.NumFound > 0 ? result[0][version.Name] : null;
+            if (value != null && value.GetType() != Constants.TypeSystem()[version.Type]) {
+                value = version.Convert(value);
+            }
+            _context.Debug(() => $"Found value: {value ?? "null"}");
+            return value;
         }
     }
 }

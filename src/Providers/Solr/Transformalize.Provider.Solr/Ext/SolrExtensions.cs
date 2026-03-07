@@ -18,6 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using SolrNet;
 using SolrNet.Commands.Parameters;
 using Transformalize.Configuration;
@@ -47,6 +49,21 @@ namespace Transformalize.Providers.Solr.Ext {
             return result.NumFound > 0 ? result[0][fieldName] : null;
         }
 
+        public static async Task<object> GetMaxValueAsync(this ISolrReadOnlyOperations<Dictionary<string, object>> solr, string field, AbstractSolrQuery baseQuery = null, CancellationToken token = default) {
+            var fieldName = field.ToLower();
+            var result = await solr.QueryAsync(
+                baseQuery ?? SolrQuery.All,
+                new QueryOptions {
+                    StartOrCursor = new StartOrCursor.Start(0),
+                    Rows = 1,
+                    Fields = new List<string> { fieldName },
+                    OrderBy = new List<SortOrder> { new SortOrder(fieldName, Order.DESC) }
+                },
+                token
+            ).ConfigureAwait(false);
+            return result.NumFound > 0 ? result[0][fieldName] : null;
+        }
+
         public static int GetCount(this ISolrReadOnlyOperations<Dictionary<string, object>> solr, AbstractSolrQuery baseQuery = null) {
             var result = solr.Query(
                 baseQuery ?? SolrQuery.All,
@@ -56,6 +73,19 @@ namespace Transformalize.Providers.Solr.Ext {
                     Fields = new Collection<string>()
                 });
             return result.NumFound > int.MaxValue ? int.MaxValue : (int) result.NumFound;
+        }
+
+        public static async Task<int> GetCountAsync(this ISolrReadOnlyOperations<Dictionary<string, object>> solr, AbstractSolrQuery baseQuery = null, CancellationToken token = default) {
+            var result = await solr.QueryAsync(
+                baseQuery ?? SolrQuery.All,
+                new QueryOptions {
+                    StartOrCursor = new StartOrCursor.Start(0),
+                    Rows = 0,
+                    Fields = new Collection<string>()
+                },
+                token
+            ).ConfigureAwait(false);
+            return result.NumFound > int.MaxValue ? int.MaxValue : (int)result.NumFound;
         }
 
     }

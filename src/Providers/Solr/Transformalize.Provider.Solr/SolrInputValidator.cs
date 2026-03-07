@@ -52,8 +52,20 @@ namespace Transformalize.Providers.Solr {
             return response;
         }
 
-        public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
-            return Task.FromResult(Execute());
+        public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+            var response = new ActionResponse();
+
+            var schema = await _solr.GetSchemaAsync(_context.Connection.SchemaFileName).ConfigureAwait(false);
+
+            foreach (var field in _context.InputFields) {
+                var solrField = schema.FindSolrFieldByName(field.Name);
+                if (!solrField.IsStored) {
+                    response.Code = 500;
+                    response.Message += $"The solr field {solrField.Name} is not stored, so it can not be retrieved.  You must remove the field or add input='false' to it." + Environment.NewLine;
+                }
+            }
+            response.Message = response.Message.TrimEnd(Environment.NewLine.ToCharArray());
+            return response;
         }
     }
 }

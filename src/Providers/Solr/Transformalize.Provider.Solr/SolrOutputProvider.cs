@@ -112,9 +112,46 @@ namespace Transformalize.Providers.Solr {
         }
 
         public Task InitializeAsync(CancellationToken token = default) { Initialize(); return Task.CompletedTask; }
-        public Task<object> GetMaxVersionAsync(CancellationToken token = default) { return Task.FromResult(GetMaxVersion()); }
-        public Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) { return Task.FromResult(GetNextTflBatchId()); }
-        public Task<int> GetMaxTflKeyAsync(CancellationToken token = default) { return Task.FromResult(GetMaxTflKey()); }
+        public async Task<object> GetMaxVersionAsync(CancellationToken token = default) {
+            if (_context.Process.Mode == "init")
+                return null;
+
+            if (string.IsNullOrEmpty(_context.Entity.Version))
+                return null;
+
+            var version = _context.Entity.GetVersionField();
+            var versionName = version.Alias.ToLower();
+
+            _context.Debug(() => $"Detecting Max Output Version: {_context.Connection.Database}.{versionName}.");
+
+            var result = await _solr.QueryAsync(
+                _context.Entity.Delete ? new SolrQueryByField(_context.Entity.TflDeleted().Alias.ToLower(), "false") : SolrQuery.All,
+                new QueryOptions {
+                    StartOrCursor = new StartOrCursor.Start(0),
+                    Rows = 1,
+                    Fields = new List<string> { versionName },
+                    OrderBy = new List<SortOrder> { new SortOrder(versionName, Order.DESC) }
+                },
+                token
+            ).ConfigureAwait(false);
+
+            var value = result.NumFound > 0 ? result[0][versionName] : null;
+            if (value != null && value.GetType() != Constants.TypeSystem()[version.Type]) {
+                value = version.Convert(value);
+            }
+            _context.Debug(() => $"Found value: {value ?? "null"}");
+            return value;
+        }
+        public async Task<int> GetNextTflBatchIdAsync(CancellationToken token = default) {
+            var batchIdField = _context.Entity.TflBatchId();
+            var batchId = await _solr.GetMaxValueAsync(batchIdField.Alias.ToLower(), token: token).ConfigureAwait(false);
+            return batchId != null ? Convert.ToInt32(batchId) + 1 : 0;
+        }
+        public async Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
+            var identityField = _context.Entity.TflKey();
+            var identity = await _solr.GetMaxValueAsync(identityField.Alias.ToLower(), token: token).ConfigureAwait(false);
+            return identity != null ? Convert.ToInt32(identity) : 0;
+        }
         public Task StartAsync(CancellationToken token = default) { Start(); return Task.CompletedTask; }
         public Task EndAsync(CancellationToken token = default) { End(); return Task.CompletedTask; }
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }

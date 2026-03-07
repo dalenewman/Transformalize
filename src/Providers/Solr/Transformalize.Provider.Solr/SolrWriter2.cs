@@ -91,9 +91,43 @@ namespace Transformalize.Providers.Solr {
          }
       }
 
-      public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
-         Write(rows);
-         return Task.CompletedTask;
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         var fullCount = 0;
+
+         foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
+            token.ThrowIfCancellationRequested();
+            var batchCount = 0;
+            foreach (var row in part) {
+               var doc = _documents[batchCount];
+               foreach (var field in _fields) {
+                  doc[field.Alias] = row[field];
+               }
+               batchCount++;
+               fullCount++;
+            }
+            var response = await _solr.AddRangeAsync(_documents.Take(batchCount)).ConfigureAwait(false);
+
+            if (response.Status == 0) {
+               var count = batchCount;
+               _context.Debug(() => $"{count} to output");
+            } else {
+               _context.Error($"Couldn't add range of documents to SOLR.");
+            }
+         }
+
+         if (fullCount > 0) {
+            try {
+               var commit = await _solr.CommitAsync().ConfigureAwait(false);
+               if (commit.Status == 0) {
+                  _context.Entity.Inserts += Convert.ToUInt32(fullCount);
+                  _context.Info($"Committed {fullCount} documents in {TimeSpan.FromMilliseconds(commit.QTime)}");
+               } else {
+                  _context.Error($"Failed to commit {fullCount} documents.  SOLR returned status {commit.Status}.");
+               }
+            } catch (SolrNetException ex) {
+               _context.Error($"Failed to commit {fullCount} documents. {ex.Message}");
+            }
+         }
       }
    }
 }

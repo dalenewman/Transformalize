@@ -90,9 +90,68 @@ namespace Transformalize.Providers.Solr {
          }
       }
 
-      public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
-         Write(rows);
-         return Task.CompletedTask;
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         _count = 0;
+         _originalConnectionLimit = ServicePointManager.DefaultConnectionLimit;
+         ServicePointManager.DefaultConnectionLimit = _context.Connection.MaxDegreeOfParallelism * 2;
+         var maxParallelism = _options.MaxDegreeOfParallelism <= 0 ? 1 : _options.MaxDegreeOfParallelism;
+         using var throttler = new SemaphoreSlim(maxParallelism, maxParallelism);
+
+         try {
+            var writes = new List<Task>();
+            foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
+               token.ThrowIfCancellationRequested();
+               writes.Add(WritePartAsync(part, throttler, token));
+            }
+            await Task.WhenAll(writes).ConfigureAwait(false);
+         } catch (OperationCanceledException) {
+            throw;
+         } catch (AggregateException ex) {
+            foreach (var exception in ex.InnerExceptions) {
+               _context.Error(exception.Message);
+               _context.Error(exception.StackTrace);
+            }
+            return;
+         } catch (Exception ex) {
+            _context.Error(ex.Message);
+            _context.Error(ex.StackTrace);
+            return;
+         } finally {
+            ServicePointManager.DefaultConnectionLimit = _originalConnectionLimit;
+         }
+
+         if (_count > 0) {
+            try {
+               var commit = await _solr.CommitAsync().ConfigureAwait(false);
+               if (commit.Status == 0) {
+                  _context.Entity.Inserts += Convert.ToUInt32(_count);
+                  _context.Info($"Committed {_count} documents in {TimeSpan.FromMilliseconds(commit.QTime)}");
+               } else {
+                  _context.Error($"Failed to commit {_count} documents. SOLR returned status {commit.Status}.");
+               }
+            } catch (SolrNetException ex) {
+               _context.Error($"Failed to commit {_count} documents. {ex.Message}");
+            }
+         }
+
+         async Task WritePartAsync(IEnumerable<IRow> part, SemaphoreSlim semaphore, CancellationToken cancellationToken) {
+            await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try {
+               var docs = new List<Dictionary<string, object>>();
+               foreach (var row in part) {
+                  cancellationToken.ThrowIfCancellationRequested();
+                  Interlocked.Increment(ref _count);
+                  docs.Add(_fields.ToDictionary(field => field.Alias.ToLower(), field => row[field]));
+               }
+
+               var response = await _solr.AddRangeAsync(docs).ConfigureAwait(false);
+               if (response.Status != 0) {
+                  _context.Error($"Couldn't add range of {docs.Count} document{docs.Count.Plural()} to SOLR.");
+               }
+            } finally {
+               semaphore.Release();
+            }
+         }
       }
    }
 }

@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using SolrNet;
+using SolrNet.Schema;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -33,52 +34,60 @@ namespace Transformalize.Providers.Solr {
             _solr = solr;
         }
 
-        private IEnumerable<Field> GetFields() {
+        private IEnumerable<Field> GetFields(SolrSchema schema) {
             string type;
-            var s = _solr.GetSchema(_c.SchemaFileName);
             var typeSet = Constants.TypeSet();
 
-            foreach (var field in s.SolrFields.Where(f => f.IsStored)) {
+            foreach (var field in schema.SolrFields.Where(f => f.IsStored)) {
                 type = field.Type.Name.ToLower();
-                yield return new Field { Name = field.Name, Type = typeSet.Contains(type) ? type : "string", PrimaryKey = field.Name == s.UniqueKey};
+                yield return new Field { Name = field.Name, Type = typeSet.Contains(type) ? type : "string", PrimaryKey = field.Name == schema.UniqueKey};
             }
 
-            foreach (var field in s.SolrCopyFields) {
-                var d = s.FindSolrFieldByName(field.Destination);
+            foreach (var field in schema.SolrCopyFields) {
+                var d = schema.FindSolrFieldByName(field.Destination);
                 type = d.Type.Name.ToLower();
                 yield return new Field { Name = field.Destination, Type = typeSet.Contains(type) ? type : "string" };
             }
-            foreach (var field in s.SolrDynamicFields) {
+            foreach (var field in schema.SolrDynamicFields) {
                 yield return new Field { Name = field.Name, Type = "string" };
             }
         }
 
-        private IEnumerable<Entity> GetEntities() {
+        private IEnumerable<Entity> GetEntities(SolrSchema schema) {
             yield return new Entity {
                 Name = "Fields",
-                Fields = GetFields().ToList()
+                Fields = GetFields(schema).ToList()
             };
         }
 
         public Schema Read() {
+            var solrSchema = _solr.GetSchema(_c.SchemaFileName);
             var schema = new Schema { Connection = _c };
-            schema.Entities.AddRange(GetEntities());
+            schema.Entities.AddRange(GetEntities(solrSchema));
             return schema;
         }
 
         public Schema Read(Entity entity) {
+            var solrSchema = _solr.GetSchema(_c.SchemaFileName);
             var schema = new Schema { Connection = _c };
-            entity.Fields = GetFields().ToList();
+            entity.Fields = GetFields(solrSchema).ToList();
             schema.Entities.Add(entity);
             return schema;
         }
 
-        public Task<Schema> ReadAsync(CancellationToken token = default) {
-            return Task.FromResult(Read());
+        public async Task<Schema> ReadAsync(CancellationToken token = default) {
+            var solrSchema = await _solr.GetSchemaAsync(_c.SchemaFileName).ConfigureAwait(false);
+            var schema = new Schema { Connection = _c };
+            schema.Entities.AddRange(GetEntities(solrSchema));
+            return schema;
         }
 
-        public Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
-            return Task.FromResult(Read(entity));
+        public async Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
+            var solrSchema = await _solr.GetSchemaAsync(_c.SchemaFileName).ConfigureAwait(false);
+            var schema = new Schema { Connection = _c };
+            entity.Fields = GetFields(solrSchema).ToList();
+            schema.Entities.Add(entity);
+            return schema;
         }
     }
 }
