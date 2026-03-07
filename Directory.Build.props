@@ -4,4 +4,10 @@
     <!--<Nullable>enable</Nullable>-->
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Benchmark'))">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'CLI'">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
 </Project>

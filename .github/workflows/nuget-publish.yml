@@ -1,0 +1,54 @@
+name: NuGet Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Package version (for example 0.12.1-beta)"
+        required: true
+        type: string
+      publish_nuget:
+        description: "Push to NuGet.org"
+        required: true
+        default: true
+        type: boolean
+      publish_myget:
+        description: "Push to MyGet Transformalize feed"
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  pack-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Pack NuGet modules
+        run: ./scripts/nuget-pack.sh --package-version "${{ inputs.version }}"
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ inputs.version }}
+          path: artifacts/nuget/*.nupkg
+          if-no-files-found: error
+
+      - name: Push to NuGet.org
+        if: ${{ inputs.publish_nuget && secrets.NUGET_API_KEY != '' }}
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: ./scripts/nuget-push.sh --source nuget --api-key-env NUGET_API_KEY
+
+      - name: Push to MyGet
+        if: ${{ inputs.publish_myget && secrets.MYGET_API_KEY != '' }}
+        env:
+          MYGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
+        run: ./scripts/nuget-push.sh --source myget --api-key-env MYGET_API_KEY

@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.CsvHelper</RootNamespace>
-    <PackageOutputPath>c:\temp\modules</PackageOutputPath>
-    <IncludeSymbols>true</IncludeSymbols>
     <Title>Transformalize File Provider using CsvHelper Autofac Module</Title>
     <Version>0.12.0-beta</Version>
     <Authors>Dale Newman</Authors>

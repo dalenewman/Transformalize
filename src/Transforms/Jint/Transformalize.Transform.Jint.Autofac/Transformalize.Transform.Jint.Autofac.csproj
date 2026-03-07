@@ -3,7 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Transforms.Jint.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Transform.Jint.Autofac</AssemblyName>
-    <IncludeSymbols>true</IncludeSymbols>
     <Version>0.12.0-beta</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
