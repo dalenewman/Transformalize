@@ -53,3 +53,25 @@ The file will look like this:
   ]
 }
 ```
+
+### Role-Based GeoJson (Additional Implementation)
+
+Set the output connection `type='role'` to use the new generic role-driven writer:
+
+```xml
+<add name='output' provider='geojson' type='role' file='points.geojson' min-lat='24.396308' min-lon='-125.0' max-lat='49.384358' max-lon='-66.93457' />
+```
+
+Field roles:
+- `role='latitude'`
+- `role='longitude'`
+- `role='altitude'` (optional third coordinate)
+- `role='property'` (included in `feature.properties`)
+
+Any field without a role is ignored by this writer.
+
+If all of `min-lat`, `min-lon`, `max-lat`, and `max-lon` are set on the connection, a collection `bbox` is written as:
+
+```json
+"bbox": [minLon, minLat, maxLon, maxLat]
+```

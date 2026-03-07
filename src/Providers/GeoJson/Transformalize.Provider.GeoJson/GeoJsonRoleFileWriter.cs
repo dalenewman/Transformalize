@@ -1,14 +1,14 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2022 Dale Newman
-//  
+// Copyright 2013-2026 Dale Newman
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,35 +23,23 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
-
-   /// <summary>
-   /// Writes GeoJson out to file
-   /// </summary>
-   public class GeoJsonFileWriter : IWrite {
+   public class GeoJsonRoleFileWriter : IWrite {
       private readonly OutputContext _context;
 
-      /// <summary>
-      /// Given an output context, prepare to write a GeoJson file.
-      /// </summary>
-      /// <param name="context">a transformalize output context</param>
-      public GeoJsonFileWriter(OutputContext context) {
+      public GeoJsonRoleFileWriter(OutputContext context) {
          _context = context;
       }
 
-      /// <summary>
-      /// Given rows, write them to a GeoJson file.
-      /// </summary>
-      /// <param name="rows">transformalize rows</param>
       public void Write(IEnumerable<IRow> rows) {
          using (var fileStream = File.Create(_context.Connection.File)) {
-            var streamWriter = new GeoJsonStreamWriter(_context, fileStream);
+            var streamWriter = new GeoJsonRoleStreamWriter(_context, fileStream);
             streamWriter.Write(rows);
          }
       }
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true)) {
-            var streamWriter = new GeoJsonStreamWriter(_context, fileStream);
+            var streamWriter = new GeoJsonRoleStreamWriter(_context, fileStream);
             await streamWriter.WriteAsync(rows, token).ConfigureAwait(false);
             await fileStream.FlushAsync(token).ConfigureAwait(false);
          }

@@ -1,4 +1,4 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
@@ -66,7 +66,6 @@ namespace Transformalize.Providers.GeoJson {
          _symbolField = fields.FirstOrDefault(f => f.Alias.ToLower() == "geojson-symbol") ?? fields.FirstOrDefault(f => f.Alias.ToLower() == "symbol");
          _hasStyle = _colorField != null || _sizeField != null || _symbolField != null;
          _propertyFields = fields.Where(f => f.Output && !f.System && !f.Alias.ToLower().StartsWith("kml-") || f.Alias == "BatchValue").Except(new[] { _latitudeField, _longitudeField, _colorField, _sizeField, _symbolField }).ToArray();
-
       }
 
       /// <summary>
@@ -74,47 +73,60 @@ namespace Transformalize.Providers.GeoJson {
       /// </summary>
       /// <param name="rows"></param>
       public void Write(IEnumerable<IRow> rows) {
+         using (var textWriter = new StreamWriter(_stream, new UTF8Encoding(false), 1024, true))
+         using (var jw = new JsonTextWriter(textWriter)) {
+            WriteCore(jw, rows);
+            jw.Flush();
+            textWriter.Flush();
+         }
+      }
 
-         var textWriter = new StreamWriter(_stream);
-         var jw = new JsonTextWriter(textWriter);
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         using (var textWriter = new StreamWriter(_stream, new UTF8Encoding(false), 1024, true))
+         using (var jw = new JsonTextWriter(textWriter)) {
+            await WriteCoreAsync(jw, rows, token).ConfigureAwait(false);
+            await jw.FlushAsync(token).ConfigureAwait(false);
+            await textWriter.FlushAsync().ConfigureAwait(false);
+         }
+      }
 
-         jw.WriteStartObjectAsync().ConfigureAwait(false); //root
+      private void WriteCore(JsonWriter jw, IEnumerable<IRow> rows) {
+         jw.WriteStartObject(); //root
 
-         jw.WritePropertyNameAsync("type").ConfigureAwait(false);
-         jw.WriteValueAsync("FeatureCollection").ConfigureAwait(false);
+         jw.WritePropertyName("type");
+         jw.WriteValue("FeatureCollection");
 
-         jw.WritePropertyNameAsync("features").ConfigureAwait(false);
-         jw.WriteStartArrayAsync().ConfigureAwait(false);  //features
+         jw.WritePropertyName("features");
+         jw.WriteStartArray(); //features
 
          var tableBuilder = new StringBuilder();
 
          foreach (var row in rows) {
+            jw.WriteStartObject(); //feature
+            jw.WritePropertyName("type");
+            jw.WriteValue("Feature");
+            jw.WritePropertyName("geometry");
+            jw.WriteStartObject(); //geometry
+            jw.WritePropertyName("type");
+            jw.WriteValue("Point");
 
-            jw.WriteStartObjectAsync().ConfigureAwait(false); //feature
-            jw.WritePropertyNameAsync("type").ConfigureAwait(false);
-            jw.WriteValueAsync("Feature").ConfigureAwait(false);
-            jw.WritePropertyNameAsync("geometry").ConfigureAwait(false);
-            jw.WriteStartObjectAsync().ConfigureAwait(false); //geometry 
-            jw.WritePropertyNameAsync("type").ConfigureAwait(false);
-            jw.WriteValueAsync("Point").ConfigureAwait(false);
+            jw.WritePropertyName("coordinates");
+            jw.WriteStartArray();
+            jw.WriteValue(row[_longitudeField]);
+            jw.WriteValue(row[_latitudeField]);
+            jw.WriteEndArray();
 
-            jw.WritePropertyNameAsync("coordinates").ConfigureAwait(false);
-            jw.WriteStartArrayAsync().ConfigureAwait(false);
-            jw.WriteValueAsync(row[_longitudeField]).ConfigureAwait(false);
-            jw.WriteValueAsync(row[_latitudeField]).ConfigureAwait(false);
-            jw.WriteEndArrayAsync().ConfigureAwait(false);
+            jw.WriteEndObject(); //geometry
 
-            jw.WriteEndObjectAsync().ConfigureAwait(false); //geometry
-
-            jw.WritePropertyNameAsync("properties").ConfigureAwait(false);
-            jw.WriteStartObjectAsync().ConfigureAwait(false); //properties
+            jw.WritePropertyName("properties");
+            jw.WriteStartObject(); //properties
 
             foreach (var field in _propertyFields) {
-               jw.WritePropertyNameAsync(field.Label).ConfigureAwait(false);
-               jw.WriteValueAsync(field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field])).ConfigureAwait(false);
+               jw.WritePropertyName(field.Label);
+               jw.WriteValue(field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
             }
 
-            jw.WritePropertyNameAsync("description").ConfigureAwait(false);
+            jw.WritePropertyName("description");
             tableBuilder.Clear();
             tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
             foreach (var field in _propertyFields.Where(f => f.Alias != "BatchValue")) {
@@ -131,52 +143,149 @@ namespace Transformalize.Providers.GeoJson {
                tableBuilder.AppendLine("</tr>");
             }
             tableBuilder.AppendLine("</table>");
-            jw.WriteValueAsync(tableBuilder.ToString()).ConfigureAwait(false);
+            jw.WriteValue(tableBuilder.ToString());
 
-            if (_hasStyle) {
-               if (_colorField != null) {
-                  jw.WritePropertyNameAsync("marker-color").ConfigureAwait(false);
-                  var color = row[_colorField].ToString().TrimStart('#').Right(6);
-                  jw.WriteValueAsync("#" + (color.Length == 6 ? color : "0080ff")).ConfigureAwait(false);
-               }
+            WriteStyle(jw, row);
 
-               if (_sizeField != null) {
-                  jw.WritePropertyNameAsync("marker-size").ConfigureAwait(false);
-                  var size = row[_sizeField].ToString().ToLower();
-                  if (_sizes.Contains(size)) {
-                     jw.WriteValueAsync(size).ConfigureAwait(false);
-                  } else {
-                     jw.WriteValueAsync(_scales.ContainsKey(size) ? _scales[size] : "medium").ConfigureAwait(false);
-                  }
-               }
-
-               if (_symbolField != null) {
-                  var symbol = row[_symbolField].ToString();
-                  if (symbol.StartsWith("http")) {
-                     symbol = "marker";
-                  }
-                  jw.WritePropertyNameAsync("marker-symbol").ConfigureAwait(false);
-                  jw.WriteValueAsync(symbol).ConfigureAwait(false);
-               }
-
-            }
-
-            jw.WriteEndObjectAsync().ConfigureAwait(false); //properties
-
-            jw.WriteEndObjectAsync().ConfigureAwait(false); //feature
-
+            jw.WriteEndObject(); //properties
+            jw.WriteEndObject(); //feature
             _context.Entity.Inserts++;
-
-            jw.FlushAsync().ConfigureAwait(false);
+            jw.Flush();
          }
 
-         jw.WriteEndArrayAsync().ConfigureAwait(false); //features
-
-         jw.WriteEndObjectAsync().ConfigureAwait(false); //root
-         jw.FlushAsync().ConfigureAwait(false);
-
+         jw.WriteEndArray(); //features
+         jw.WriteEndObject(); //root
       }
 
-   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+      private async Task WriteCoreAsync(JsonWriter jw, IEnumerable<IRow> rows, CancellationToken token) {
+         await jw.WriteStartObjectAsync(token).ConfigureAwait(false); //root
+
+         await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
+         await jw.WriteValueAsync("FeatureCollection", token).ConfigureAwait(false);
+
+         await jw.WritePropertyNameAsync("features", token).ConfigureAwait(false);
+         await jw.WriteStartArrayAsync(token).ConfigureAwait(false); //features
+
+         var tableBuilder = new StringBuilder();
+
+         foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+
+            await jw.WriteStartObjectAsync(token).ConfigureAwait(false); //feature
+            await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
+            await jw.WriteValueAsync("Feature", token).ConfigureAwait(false);
+            await jw.WritePropertyNameAsync("geometry", token).ConfigureAwait(false);
+            await jw.WriteStartObjectAsync(token).ConfigureAwait(false); //geometry
+            await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
+            await jw.WriteValueAsync("Point", token).ConfigureAwait(false);
+
+            await jw.WritePropertyNameAsync("coordinates", token).ConfigureAwait(false);
+            await jw.WriteStartArrayAsync(token).ConfigureAwait(false);
+            await jw.WriteValueAsync(row[_longitudeField], token).ConfigureAwait(false);
+            await jw.WriteValueAsync(row[_latitudeField], token).ConfigureAwait(false);
+            await jw.WriteEndArrayAsync(token).ConfigureAwait(false);
+
+            await jw.WriteEndObjectAsync(token).ConfigureAwait(false); //geometry
+
+            await jw.WritePropertyNameAsync("properties", token).ConfigureAwait(false);
+            await jw.WriteStartObjectAsync(token).ConfigureAwait(false); //properties
+
+            foreach (var field in _propertyFields) {
+               await jw.WritePropertyNameAsync(field.Label, token).ConfigureAwait(false);
+               await jw.WriteValueAsync(field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]), token).ConfigureAwait(false);
+            }
+
+            await jw.WritePropertyNameAsync("description", token).ConfigureAwait(false);
+            tableBuilder.Clear();
+            tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
+            foreach (var field in _propertyFields.Where(f => f.Alias != "BatchValue")) {
+               tableBuilder.AppendLine("<tr>");
+
+               tableBuilder.AppendLine("<td><strong>");
+               tableBuilder.AppendLine(field.Label);
+               tableBuilder.AppendLine(":</strong></td>");
+
+               tableBuilder.AppendLine("<td>");
+               tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
+               tableBuilder.AppendLine("</td>");
+
+               tableBuilder.AppendLine("</tr>");
+            }
+            tableBuilder.AppendLine("</table>");
+            await jw.WriteValueAsync(tableBuilder.ToString(), token).ConfigureAwait(false);
+
+            await WriteStyleAsync(jw, row, token).ConfigureAwait(false);
+
+            await jw.WriteEndObjectAsync(token).ConfigureAwait(false); //properties
+            await jw.WriteEndObjectAsync(token).ConfigureAwait(false); //feature
+            _context.Entity.Inserts++;
+            await jw.FlushAsync(token).ConfigureAwait(false);
+         }
+
+         await jw.WriteEndArrayAsync(token).ConfigureAwait(false); //features
+         await jw.WriteEndObjectAsync(token).ConfigureAwait(false); //root
+      }
+
+      private void WriteStyle(JsonWriter jw, IRow row) {
+         if (!_hasStyle) {
+            return;
+         }
+
+         if (_colorField != null) {
+            jw.WritePropertyName("marker-color");
+            var color = row[_colorField].ToString().TrimStart('#').Right(6);
+            jw.WriteValue("#" + (color.Length == 6 ? color : "0080ff"));
+         }
+
+         if (_sizeField != null) {
+            jw.WritePropertyName("marker-size");
+            var size = row[_sizeField].ToString().ToLower();
+            if (_sizes.Contains(size)) {
+               jw.WriteValue(size);
+            } else {
+               jw.WriteValue(_scales.ContainsKey(size) ? _scales[size] : "medium");
+            }
+         }
+
+         if (_symbolField != null) {
+            var symbol = row[_symbolField].ToString();
+            if (symbol.StartsWith("http")) {
+               symbol = "marker";
+            }
+            jw.WritePropertyName("marker-symbol");
+            jw.WriteValue(symbol);
+         }
+      }
+
+      private async Task WriteStyleAsync(JsonWriter jw, IRow row, CancellationToken token) {
+         if (!_hasStyle) {
+            return;
+         }
+
+         if (_colorField != null) {
+            await jw.WritePropertyNameAsync("marker-color", token).ConfigureAwait(false);
+            var color = row[_colorField].ToString().TrimStart('#').Right(6);
+            await jw.WriteValueAsync("#" + (color.Length == 6 ? color : "0080ff"), token).ConfigureAwait(false);
+         }
+
+         if (_sizeField != null) {
+            await jw.WritePropertyNameAsync("marker-size", token).ConfigureAwait(false);
+            var size = row[_sizeField].ToString().ToLower();
+            if (_sizes.Contains(size)) {
+               await jw.WriteValueAsync(size, token).ConfigureAwait(false);
+            } else {
+               await jw.WriteValueAsync(_scales.ContainsKey(size) ? _scales[size] : "medium", token).ConfigureAwait(false);
+            }
+         }
+
+         if (_symbolField != null) {
+            var symbol = row[_symbolField].ToString();
+            if (symbol.StartsWith("http")) {
+               symbol = "marker";
+            }
+            await jw.WritePropertyNameAsync("marker-symbol", token).ConfigureAwait(false);
+            await jw.WriteValueAsync(symbol, token).ConfigureAwait(false);
+         }
+      }
    }
 }
