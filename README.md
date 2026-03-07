@@ -5,6 +5,8 @@ incremental denormalization of relational data.  It may be
 used for other types of [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
 as well.  
 
+NuGet packaging and publishing (cross-platform): [docs/nuget-packaging.md](./docs/nuget-packaging.md)
+
 The supported inputs and outputs are below. 
 
 <div class="table-responsive" style="font-size:smaller;">

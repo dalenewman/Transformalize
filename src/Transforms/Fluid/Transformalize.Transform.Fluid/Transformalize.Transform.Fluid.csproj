@@ -10,7 +10,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>transformalize,etl,liquid,fluid</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <FileVersion>0.12.0</FileVersion>
     <AssemblyVersion>0.12.0</AssemblyVersion>
   </PropertyGroup>
@@ -19,5 +19,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Transformalize\Transformalize.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 </Project>

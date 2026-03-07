@@ -4,7 +4,6 @@
     <RootNamespace>Transformalize.Providers.Ado</RootNamespace>
     <AssemblyName>Transformalize.Provider.Ado</AssemblyName>
     <Version>0.12.0-beta</Version>
-    <PackageOutputPath>c:\temp\modules</PackageOutputPath>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <Description>An ADO Provider for Transformalize</Description>
@@ -14,7 +13,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>etl,ado,transformalize</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <FileVersion>0.12.0</FileVersion>
     <AssemblyVersion>0.12.0</AssemblyVersion>
   </PropertyGroup>

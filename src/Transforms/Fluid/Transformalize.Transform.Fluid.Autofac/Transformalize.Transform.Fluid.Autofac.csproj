@@ -7,7 +7,7 @@
     <PackageProjectUrl>https://github.com/dalenewman/Transformalize.Transform.Fluid</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dalenewman/Transformalize.Transform.Fluid.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <Copyright>Copyright (c) 2020-2025 Dale Newman</Copyright>
     <PackageTags>transformalize,etl,liquid,fluid,autofac</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
