@@ -60,7 +60,9 @@ namespace Test {
 
                var expected = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-74.145,49.3317]},\"properties\":{\"Identity\":1,\"FirstName\":\"Justin\",\"LastName\":\"Konopelski\",\"description\":\"<table class=\\\"table table-striped table-condensed\\\">\\n<tr>\\n<td><strong>\\nIdentity\\n:</strong></td>\\n<td>\\n1\\n</td>\\n</tr>\\n<tr>\\n<td><strong>\\nFirstName\\n:</strong></td>\\n<td>\\nJustin\\n</td>\\n</tr>\\n<tr>\\n<td><strong>\\nLastName\\n:</strong></td>\\n<td>\\nKonopelski\\n</td>\\n</tr>\\n</table>\\n\",\"marker-color\":\"#661c0c\"}},{\"type\":\"Feature\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[-117.9625,49.2812]},\"properties\":{\"Identity\":2,\"FirstName\":\"Duane\",\"LastName\":\"Will\",\"description\":\"<table class=\\\"table table-striped table-condensed\\\">\\n<tr>\\n<td><strong>\\nIdentity\\n:</strong></td>\\n<td>\\n2\\n</td>\\n</tr>\\n<tr>\\n<td><strong>\\nFirstName\\n:</strong></td>\\n<td>\\nDuane\\n</td>\\n</tr>\\n<tr>\\n<td><strong>\\nLastName\\n:</strong></td>\\n<td>\\nWill\\n</td>\\n</tr>\\n</table>\\n\",\"marker-color\":\"#6c5975\"}}]}";
                var actual = File.ReadAllText("bogus.geo.json");
-               
+               // Normalize newline escape sequences so the test passes on Windows and Unix-like systems
+               actual = actual.Replace("\\r\\n", "\\n");
+
                Assert.AreEqual((uint)2, process.Entities.First().Inserts);
                Assert.AreEqual(expected, actual);
             }
