@@ -1,14 +1,14 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2025 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -35,6 +36,7 @@ namespace Transformalize.Providers.Json {
       private readonly Field[] _fields;
       private readonly IRowFactory _rowFactory;
       private readonly Dictionary<string, Field> _fieldLookup;
+
       public JsonStreamReader(InputContext context, Stream stream, IRowFactory rowFactory) {
          _context = context;
          _stream = stream;
@@ -44,7 +46,30 @@ namespace Transformalize.Providers.Json {
       }
 
       public IEnumerable<IRow> Read() {
+         ResetStreamPosition();
+         using (var textReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true))
+         using (var reader = new JsonTextReader(textReader)) {
+            return ReadRows(reader);
+         }
+      }
 
+      public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         ResetStreamPosition();
+
+         using (var textReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
+            var json = await textReader.ReadToEndAsync().ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+
+            using (var stringReader = new StringReader(json))
+            using (var reader = new JsonTextReader(stringReader)) {
+               return ReadRows(reader);
+            }
+         }
+      }
+
+      private List<IRow> ReadRows(JsonReader reader) {
+         var rows = new List<IRow>();
          IRow row = null;
          Field field = null;
          var types = Constants.TypeSystem();
@@ -57,14 +82,10 @@ namespace Transformalize.Providers.Json {
             end = start + _context.Entity.Size;
          }
 
-         var textReader = new StreamReader(_stream);
-         var reader = new JsonTextReader(textReader);
-
          var textWriter = new StringWriter();
          var jsonWriter = new JsonTextWriter(textWriter);
 
          while (reader.Read()) {
-
             switch (reader.TokenType) {
                case JsonToken.StartObject:
                   if (reader.Depth == 1) {
@@ -77,11 +98,12 @@ namespace Transformalize.Providers.Json {
                case JsonToken.EndObject:
                   if (reader.Depth == 1) {
                      if (end == 0 || current.Between(start, end)) {
-                        yield return row;
+                        rows.Add(row);
                      }
                      ++current;
                      if (current == end) {
-                        yield break;
+                        _context.Entity.Hits = current;
+                        return rows;
                      }
                   }
                   if (reader.Depth > 1 && field != null) {
@@ -94,21 +116,19 @@ namespace Transformalize.Providers.Json {
                   }
                   break;
                case JsonToken.StartArray:
-                  if(reader.Depth > 0) {
+                  if (reader.Depth > 0) {
                      jsonWriter.WriteStartArray();
                   }
                   break;
                case JsonToken.EndArray:
-                  if(reader.Depth > 0) {
+                  if (reader.Depth > 0) {
                      jsonWriter.WriteEndArray();
                   }
                   break;
                case JsonToken.PropertyName:
                   var name = (string)reader.Value;
-                  if (_fieldLookup.ContainsKey(name)) {
-                     if (reader.Depth == 2) {
-                        field = _fieldLookup[name];
-                     }
+                  if (_fieldLookup.ContainsKey(name) && reader.Depth == 2) {
+                     field = _fieldLookup[name];
                   }
                   if (reader.Depth > 2) {
                      jsonWriter.WritePropertyName(name);
@@ -131,8 +151,13 @@ namespace Transformalize.Providers.Json {
          }
 
          _context.Entity.Hits = current;
+         return rows;
       }
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+      private void ResetStreamPosition() {
+         if (_stream.CanSeek) {
+            _stream.Seek(0, SeekOrigin.Begin);
+         }
+      }
    }
 }

@@ -23,7 +23,6 @@ using Transformalize.Configuration;
 namespace Transformalize.Providers.Json.Autofac {
    public class JsonProviderModule : Module {
       private readonly StreamWriter _streamWriter;
-      public bool UseAsyncMethods { get; set; }
 
       public JsonProviderModule(StreamWriter streamWriter = null) {
          _streamWriter = streamWriter;
@@ -37,7 +36,7 @@ namespace Transformalize.Providers.Json.Autofac {
 
          var process = (Process)builder.Properties["Process"];
 
-         var b = new JsonProviderBuilder(process, builder, _streamWriter) { UseAsyncMethods = UseAsyncMethods };
+         var b = new JsonProviderBuilder(process, builder, _streamWriter);
          b.Build();
       }
    }

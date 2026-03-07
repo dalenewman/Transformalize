@@ -53,24 +53,49 @@ namespace Transformalize.Providers.Json {
 
          foreach (var row in rows) {
 
-            jw.WriteStartObjectAsync().ConfigureAwait(false);
+            jw.WriteStartObject();
 
             for (int i = 0; i < _fields.Length; i++) {
-               jw.WritePropertyNameAsync(_fields[i].Alias).ConfigureAwait(false);
+               jw.WritePropertyName(_fields[i].Alias);
                if (_formats[i] == string.Empty) {
-                  jw.WriteValueAsync(row[_fields[i]]).ConfigureAwait(false);
+                  jw.WriteValue(row[_fields[i]]);
                } else {
-                  jw.WriteValueAsync(string.Format(_formats[i], row[_fields[i]])).ConfigureAwait(false);
+                  jw.WriteValue(string.Format(_formats[i], row[_fields[i]]));
                }
             }
-            jw.WriteEndObjectAsync().ConfigureAwait(false);
-            jw.WriteRawAsync(Environment.NewLine).ConfigureAwait(false);
+            jw.WriteEndObject();
+            jw.WriteRaw(Environment.NewLine);
             _context.Entity.Inserts++;
          }
 
-         jw.FlushAsync().ConfigureAwait(false);
+         jw.Flush();
       }
 
-   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+
+         var jw = new JsonTextWriter(_streamWriter) {
+            Formatting = Formatting.None
+         };
+
+         foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
+
+            for (int i = 0; i < _fields.Length; i++) {
+               await jw.WritePropertyNameAsync(_fields[i].Alias, token).ConfigureAwait(false);
+               if (_formats[i] == string.Empty) {
+                  jw.WriteValue(row[_fields[i]]);
+               } else {
+                  await jw.WriteValueAsync(string.Format(_formats[i], row[_fields[i]]), token).ConfigureAwait(false);
+               }
+            }
+
+            await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
+            await jw.WriteRawAsync(Environment.NewLine, token).ConfigureAwait(false);
+            _context.Entity.Inserts++;
+         }
+
+         await jw.FlushAsync(token).ConfigureAwait(false);
+      }
    }
 }
