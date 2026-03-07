@@ -378,8 +378,261 @@ namespace Transformalize.Providers.Solr {
          return phrases;
       }
 
-      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
-         return Task.FromResult(Read());
+      public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+
+         int counter = 0;
+         var rows = new List<IRow>();
+         var query = SolrQuery.All;
+         var filterQueries = new Collection<ISolrQuery>();
+         var facetQueries = new Collection<ISolrFacetQuery>();
+
+         if (_context.Entity.Filter.Any()) {
+            var queries = new Collection<ISolrQuery>();
+
+            foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "search" && f.Value != "*")) {
+               if (filter.Field == string.Empty) {
+                  _context.Debug(() => "Adding query expression: {filter.Expression}");
+                  queries.Add(new SolrQuery(filter.Expression));
+               } else {
+                  foreach (var term in Terms(filter.Value)) {
+                     _context.Debug(() => $"Adding {filter.Field} field query: {term}");
+                     queries.Add(new SolrQueryByField(filter.Field, term) { Quoted = false });
+                  }
+               }
+            }
+
+            query = queries.Any() ? new SolrMultipleCriteriaQuery(queries, "AND") : SolrQuery.All;
+
+            foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "filter")) {
+               if (filter.Field == string.Empty) {
+                  _context.Debug(() => "Adding filter query expression: {filter.Expression}");
+                  filterQueries.Add(new SolrQuery(filter.Expression));
+               } else {
+                  if (filter.Value != "*") {
+                     foreach (var term in Terms(filter.Value)) {
+                        _context.Debug(() => $"Adding {filter.Field} field filter query: {term}");
+                        filterQueries.Add(new SolrQueryByField(filter.Field, term) { Quoted = false });
+                     }
+                  }
+               }
+            }
+
+            foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet")) {
+               facetQueries.Add(new SolrFacetFieldQuery(filter.Field) {
+                  MinCount = filter.Min,
+                  Limit = filter.Size
+               });
+               if (filter.Value != "*") {
+                  if (filter.Value.IndexOf(',') > 0) {
+                     _context.Debug(() => $"Adding {filter.Field} field list query: {filter.Value}");
+                     filterQueries.Add(new SolrQueryInList(filter.Field, filter.Value.Split(new[] { ',' })));
+                  } else {
+                     filterQueries.Add(new SolrQueryByField(filter.Field, filter.Value));
+                  }
+               }
+            }
+         }
+
+         var sortOrder = new Collection<SortOrder>();
+         if (_context.Entity.Order.Any()) {
+            foreach (var orderBy in _context.Entity.Order) {
+               if (_context.Entity.TryGetField(orderBy.Field, out var field)) {
+                  var name = field.SortField.ToLower();
+                  sortOrder.Add(new SortOrder(name, orderBy.Sort == "asc" ? Order.ASC : Order.DESC));
+               }
+            }
+         }
+         sortOrder.Add(new SortOrder("score", Order.DESC));
+
+         if (_context.Entity.IsPageRequest()) {
+
+            SolrQueryResults<Dictionary<string, object>> page = null;
+
+            try {
+               page = await _solr.QueryAsync(
+                   query,
+                   new QueryOptions {
+                      StartOrCursor = new StartOrCursor.Start(_context.Entity.Page * _context.Entity.Size - _context.Entity.Size),
+                      Rows = _context.Entity.Size,
+                      Fields = _fieldNames,
+                      OrderBy = sortOrder,
+                      FilterQueries = filterQueries,
+                      Facet = new FacetParameters { Queries = facetQueries, Sort = false }
+                   },
+                   token
+               ).ConfigureAwait(false);
+            } catch (SolrConnectionException ex) {
+
+               var msg = GetErrorMessage(ex.Message);
+               if (msg == null) {
+                  _context.Error(ex, ex.Message);
+               } else {
+                  _context.Error(msg);
+               }
+               return rows;
+            }
+
+            TransferFacetsToMaps(page);
+            _context.Entity.Hits = page.NumFound > int.MaxValue ? int.MaxValue : (int)page.NumFound;
+
+            rows.AddRange(page.Select(x => DocToRow(_rowFactory.Create(), _fields, x)));
+            return rows;
+         }
+
+         var readSize = _context.Entity.ReadSize > 0 ? _context.Entity.ReadSize : 500;
+         var version = SolrVersionParser.ParseVersion(_context);
+
+         if (version.Major > 4 || version.Major == 4 && version.Minor >= 7) {
+
+            string uniqueKey;
+            if (_context.Entity.GetAllFields().Any(f => f.PrimaryKey && !f.System)) {
+               uniqueKey = _context.Entity.GetAllFields().First(f => f.PrimaryKey && !f.System).Name;
+            } else {
+               var key = new SolrSchemaReader(_context.Connection, _solr).Read().Entities.First().GetAllFields().FirstOrDefault(f => f.PrimaryKey);
+               if (key == null) {
+                  _context.Error($"Can't find unique key for {_context.Connection}.");
+                  return rows;
+               }
+               uniqueKey = key.Name;
+               _context.Debug(() => $"Had to query a primary key: {uniqueKey}.");
+            }
+
+            if (sortOrder.All(s => s.FieldName != uniqueKey)) {
+               sortOrder.Add(new SortOrder(uniqueKey, Order.ASC));
+            }
+
+            SolrQueryResults<Dictionary<string, object>> part = null;
+
+            try {
+               part = await _solr.QueryAsync(
+                   query,
+                   new QueryOptions {
+                      StartOrCursor = new StartOrCursor.Cursor("*"),
+                      Rows = readSize,
+                      Fields = _fieldNames,
+                      OrderBy = sortOrder,
+                      FilterQueries = filterQueries,
+                      Facet = new FacetParameters { Queries = facetQueries, Sort = false }
+                   },
+                   token
+               ).ConfigureAwait(false);
+            } catch (SolrConnectionException ex) {
+
+               var msg = GetErrorMessage(ex.Message);
+               if (msg == null) {
+                  _context.Error(ex, ex.Message);
+               } else {
+                  _context.Error(msg);
+               }
+
+               return rows;
+            }
+
+            TransferFacetsToMaps(part);
+            _context.Entity.Hits = part.NumFound > int.MaxValue ? int.MaxValue : (int)part.NumFound;
+
+            foreach (var row in part.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
+               ++counter;
+               rows.Add(row);
+            }
+
+            if (part.Count == part.NumFound) {
+               return rows;
+            }
+
+            while (counter < part.NumFound) {
+               token.ThrowIfCancellationRequested();
+               part = await _solr.QueryAsync(
+                   query,
+                   new QueryOptions {
+                      StartOrCursor = part.NextCursorMark,
+                      Rows = readSize,
+                      Fields = _fieldNames,
+                      OrderBy = sortOrder,
+                      FilterQueries = filterQueries,
+                      Facet = new FacetParameters { Queries = facetQueries, Sort = false }
+                   },
+                   token
+               ).ConfigureAwait(false);
+
+               if (part.Count == 0) {
+                  return rows;
+               }
+
+               foreach (var row in part.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
+                  ++counter;
+                  rows.Add(row);
+               }
+            }
+
+         } else {
+
+            SolrQueryResults<Dictionary<string, object>> part;
+            try {
+               part = await _solr.QueryAsync(
+                   query,
+                   new QueryOptions {
+                      Rows = readSize,
+                      Fields = _fieldNames,
+                      OrderBy = sortOrder,
+                      FilterQueries = filterQueries,
+                      Facet = new FacetParameters { Queries = facetQueries, Sort = false }
+                   },
+                   token
+               ).ConfigureAwait(false);
+            } catch (SolrConnectionException ex) {
+
+               var msg = GetErrorMessage(ex.Message);
+               if (msg == null) {
+                  _context.Error(ex, ex.Message);
+               } else {
+                  _context.Error(msg);
+               }
+
+               return rows;
+            }
+
+            TransferFacetsToMaps(part);
+
+            _context.Entity.Hits = part.NumFound > int.MaxValue ? int.MaxValue : (int)part.NumFound;
+
+            if (part.Count == part.NumFound) {
+               return rows;
+            }
+
+            foreach (var row in part.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
+               ++counter;
+               rows.Add(row);
+            }
+
+            var pages = part.NumFound / readSize;
+            for (var p = 1; p <= pages; p++) {
+               token.ThrowIfCancellationRequested();
+               part = await _solr.QueryAsync(
+                   query,
+                   new QueryOptions {
+                      StartOrCursor = new StartOrCursor.Start(p * readSize),
+                      Rows = readSize,
+                      Fields = _fieldNames,
+                      OrderBy = sortOrder,
+                      FilterQueries = filterQueries,
+                      Facet = new FacetParameters { Queries = facetQueries, Sort = false }
+                   },
+                   token
+               ).ConfigureAwait(false);
+
+               if (part.Count == 0) {
+                  return rows;
+               }
+
+               foreach (var row in part.Select(r => DocToRow(_rowFactory.Create(), _fields, r))) {
+                  ++counter;
+                  rows.Add(row);
+               }
+            }
+         }
+
+         return rows;
       }
    }
 }
