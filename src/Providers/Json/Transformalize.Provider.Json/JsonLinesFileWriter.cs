@@ -17,32 +17,33 @@
 #endregion
 using System.Collections.Generic;
 using System.IO;
-using Transformalize.Context;
-using Transformalize.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
+using Transformalize.Context;
+using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Json {
 
    public class JsonLinesFileWriter : IWrite {
       private readonly OutputContext _context;
-      private readonly IWrite _jsonStreamWriter;
-      private readonly StreamWriter _streamWriter;
 
       public JsonLinesFileWriter(OutputContext context) {
          _context = context;
-         _streamWriter = new StreamWriter(new MemoryStream());
-         _jsonStreamWriter = new JsonLinesStreamWriter(context, _streamWriter);
       }
 
       public void Write(IEnumerable<IRow> rows) {
-         using (var fileStream = File.Create(_context.Connection.File)) {
-            _jsonStreamWriter.Write(rows);
-            _streamWriter.BaseStream.Seek(0, SeekOrigin.Begin);
-            _streamWriter.BaseStream.CopyTo(fileStream);
+         using (var fileStream = File.Create(_context.Connection.File))
+         using (var streamWriter = new StreamWriter(fileStream)) {
+            new JsonLinesStreamWriter(_context, streamWriter).Write(rows);
          }
       }
 
-   public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+      public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
+         using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous))
+         using (var streamWriter = new StreamWriter(fileStream)) {
+            await new JsonLinesStreamWriter(_context, streamWriter).WriteAsync(rows, token).ConfigureAwait(false);
+            await streamWriter.FlushAsync().ConfigureAwait(false);
+         }
+      }
    }
 }

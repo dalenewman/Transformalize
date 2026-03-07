@@ -14,8 +14,6 @@ namespace Transformalize.Providers.Json.Autofac {
       private readonly Process _process;
       private readonly StreamWriter _streamWriter;
 
-      public bool UseAsyncMethods { get; set; } = false;
-
       public JsonProviderBuilder(Process process, ContainerBuilder builder, StreamWriter streamWriter = null) {
          _process = process ?? throw new ArgumentException("Json Provider Builder's constructor must be provided with a non-null process.", nameof(process));
          _builder = builder ?? throw new ArgumentException("Json Provider Builder's constructor must be provided with a non-null builder.", nameof(builder));
@@ -56,14 +54,10 @@ namespace Transformalize.Providers.Json.Autofac {
                   bool jsonLines = Path.GetExtension(_process.GetOutputConnection().File).ToLower() == ".jsonl";
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   if (output.Connection.Stream && _streamWriter != null) {
-                     if (UseAsyncMethods) {  // orchard core (asp.net core) requires all output stream operations to be async
-                        return new JsonStreamWriter(output, _streamWriter);
+                     if (jsonLines) {
+                        return new JsonLinesStreamWriter(output, _streamWriter);
                      } else {
-                        if(jsonLines) {
-                           return new JsonLinesStreamWriterSync(output, _streamWriter); // to avoid: The stream is currently in use by a previous operation on the stream
-                        } else {
-                           return new JsonStreamWriterSync(output, _streamWriter); // to avoid: The stream is currently in use by a previous operation on the stream
-                        }
+                        return new JsonStreamWriter(output, _streamWriter);
                      }
                   } else {
                      if (jsonLines) {

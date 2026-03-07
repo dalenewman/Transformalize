@@ -1,14 +1,14 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2024 Dale Newman
-//  
+// Copyright 2013-2025 Dale Newman
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -35,6 +36,7 @@ namespace Transformalize.Providers.Json {
       private readonly Field[] _fields;
       private readonly IRowFactory _rowFactory;
       private readonly Dictionary<string, Field> _fieldLookup;
+
       public JsonLinesStreamReader(InputContext context, Stream stream, IRowFactory rowFactory) {
          _context = context;
          _stream = stream;
@@ -44,11 +46,49 @@ namespace Transformalize.Providers.Json {
       }
 
       public IEnumerable<IRow> Read() {
+         ResetStreamPosition();
+         using (var lineReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
+            return ReadRows(lineReader);
+         }
+      }
 
+      public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         ResetStreamPosition();
+
+         var rows = new List<IRow>();
+         using (var lineReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
+            string line;
+            while ((line = await lineReader.ReadLineAsync().ConfigureAwait(false)) != null) {
+               token.ThrowIfCancellationRequested();
+               if (ParseLine(line.TrimEnd('\r'), rows)) {
+                  break;
+               }
+            }
+         }
+
+         return rows;
+      }
+
+      private List<IRow> ReadRows(StreamReader lineReader) {
+         var rows = new List<IRow>();
+         string line;
+
+         while ((line = lineReader.ReadLine()) != null) {
+            if (ParseLine(line.TrimEnd('\r'), rows)) {
+               break;
+            }
+         }
+
+         return rows;
+      }
+
+      private bool ParseLine(string line, List<IRow> rows) {
          IRow row = null;
          Field field = null;
          var types = Constants.TypeSystem();
-         var current = 0;
+
+         var current = _context.Entity.Hits;
          var start = 0;
          var end = 0;
 
@@ -57,91 +97,86 @@ namespace Transformalize.Providers.Json {
             end = start + _context.Entity.Size;
          }
 
-         using (StreamReader lineReader = new StreamReader(_stream)) {
+         var textReader = new StringReader(line);
+         var reader = new JsonTextReader(textReader);
 
-            string line;
+         var textWriter = new StringWriter();
+         var jsonWriter = new JsonTextWriter(textWriter);
 
-            while ((line = lineReader.ReadLine()) != null) {
+         while (reader.Read()) {
 
-               var textReader = new StringReader(line.TrimEnd('\r'));
-               var reader = new JsonTextReader(textReader);
-
-               var textWriter = new StringWriter();
-               var jsonWriter = new JsonTextWriter(textWriter);
-
-               while (reader.Read()) {
-
-                  switch (reader.TokenType) {
-                     case JsonToken.StartObject:
-                        if (reader.Depth == 0) {
-                           row = _rowFactory.Create();
-                        }
-                        if (reader.Depth > 0) {
-                           jsonWriter.WriteStartObject();
-                        }
-                        break;
-                     case JsonToken.EndObject:
-                        if (reader.Depth == 0) {
-                           if (end == 0 || current.Between(start, end)) {
-                              yield return row;
-                           }
-                           ++current;
-                           if (current == end) {
-                              yield break;
-                           }
-                        }
-                        if (reader.Depth > 0 && field != null) {
-                           jsonWriter.WriteEndObject();
-                           jsonWriter.Flush();
-                           row[field] = textWriter.ToString();
-                           field = null;
-                           textWriter = new StringWriter();
-                           jsonWriter = new JsonTextWriter(textWriter);
-                        }
-                        break;
-                     case JsonToken.StartArray:
-                        if (reader.Depth > 0) {
-                           jsonWriter.WriteStartArray();
-                        }
-                        break;
-                     case JsonToken.EndArray:
-                        if (reader.Depth > 0) {
-                           jsonWriter.WriteEndArray();
-                        }
-                        break;
-                     case JsonToken.PropertyName:
-                        var name = (string)reader.Value;
-                        if (_fieldLookup.ContainsKey(name)) {
-                           if (reader.Depth == 1) {
-                              field = _fieldLookup[name];
-                           }
-                        }
-                        if (reader.Depth > 1) {
-                           jsonWriter.WritePropertyName(name);
-                        }
-                        break;
-                     default:
-                        if (reader.Depth == 1 && reader.Value != null && field != null) {
-                           if (types[field.Type] == reader.ValueType) {
-                              row[field] = reader.Value;
-                           } else {
-                              row[field] = field.Convert(reader.Value);
-                           }
-                           field = null;
-                        }
-                        if (reader.Depth > 1 && reader.Value != null) {
-                           jsonWriter.WriteValue(reader.Value);
-                        }
-                        break;
+            switch (reader.TokenType) {
+               case JsonToken.StartObject:
+                  if (reader.Depth == 0) {
+                     row = _rowFactory.Create();
                   }
-               }
-
-               _context.Entity.Hits = current;
+                  if (reader.Depth > 0) {
+                     jsonWriter.WriteStartObject();
+                  }
+                  break;
+               case JsonToken.EndObject:
+                  if (reader.Depth == 0) {
+                     if (end == 0 || current.Between(start, end)) {
+                        rows.Add(row);
+                     }
+                     ++current;
+                     _context.Entity.Hits = current;
+                     if (current == end) {
+                        return true;
+                     }
+                  }
+                  if (reader.Depth > 0 && field != null) {
+                     jsonWriter.WriteEndObject();
+                     jsonWriter.Flush();
+                     row[field] = textWriter.ToString();
+                     field = null;
+                     textWriter = new StringWriter();
+                     jsonWriter = new JsonTextWriter(textWriter);
+                  }
+                  break;
+               case JsonToken.StartArray:
+                  if (reader.Depth > 0) {
+                     jsonWriter.WriteStartArray();
+                  }
+                  break;
+               case JsonToken.EndArray:
+                  if (reader.Depth > 0) {
+                     jsonWriter.WriteEndArray();
+                  }
+                  break;
+               case JsonToken.PropertyName:
+                  var name = (string)reader.Value;
+                  if (_fieldLookup.ContainsKey(name) && reader.Depth == 1) {
+                     field = _fieldLookup[name];
+                  }
+                  if (reader.Depth > 1) {
+                     jsonWriter.WritePropertyName(name);
+                  }
+                  break;
+               default:
+                  if (reader.Depth == 1 && reader.Value != null && field != null) {
+                     if (types[field.Type] == reader.ValueType) {
+                        row[field] = reader.Value;
+                     } else {
+                        row[field] = field.Convert(reader.Value);
+                     }
+                     field = null;
+                  }
+                  if (reader.Depth > 1 && reader.Value != null) {
+                     jsonWriter.WriteValue(reader.Value);
+                  }
+                  break;
             }
          }
 
+         return false;
       }
 
-   public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+      private void ResetStreamPosition() {
+         if (_stream.CanSeek) {
+            _stream.Seek(0, SeekOrigin.Begin);
+            _context.Entity.Hits = 0;
+         }
+      }
    }
 }
