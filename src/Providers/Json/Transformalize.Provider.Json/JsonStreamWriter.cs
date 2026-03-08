@@ -91,7 +91,7 @@ namespace Transformalize.Providers.Json {
             for (int i = 0; i < _fields.Length; i++) {
                await jw.WritePropertyNameAsync(_fields[i].Alias, token).ConfigureAwait(false);
                if (_formats[i] == string.Empty) {
-                  jw.WriteValue(row[_fields[i]]);
+                  await jw.WriteValueAsync(row[_fields[i]], token).ConfigureAwait(false);
                } else {
                   await jw.WriteValueAsync(string.Format(_formats[i], row[_fields[i]]), token).ConfigureAwait(false);
                }

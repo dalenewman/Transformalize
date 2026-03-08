@@ -64,8 +64,31 @@ namespace Transformalize.Containers.Autofac {
          return response;
       }
 
-      public Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
-         return Task.FromResult(Execute());
+      public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
+         var response = new ActionResponse() { Action = _action };
+
+         using (var outer = new ConfigurationContainer().CreateScope(_cfg, _context.Logger, null, _action.PlaceHolderStyle)) {
+            var process = outer.Resolve<Process>();
+            foreach (var warning in process.Warnings()) {
+               _context.Warn(warning);
+            }
+            if (process.Errors().Any()) {
+               foreach (var error in process.Errors()) {
+                  _context.Error(error);
+               }
+               response.Code = 500;
+               response.Message = $"TFL Pipeline Action '{_cfg.Left(30)}'... has errors!";
+               return response;
+            } else {
+               using (var inner = new Container().CreateScope(process, _context.Logger)) {
+                  await inner.Resolve<IProcessController>().ExecuteAsync(token);
+                  response.Code = System.Convert.ToInt32(process.Status);
+                  response.Message = process.Message;
+               }
+            }
+         }
+
+         return response;
       }
    }
 }

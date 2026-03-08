@@ -36,7 +36,7 @@ namespace Transformalize.Providers.GeoJson {
          LatitudeField = fields.FirstOrDefault(f => RoleEquals(f, "latitude"));
          LongitudeField = fields.FirstOrDefault(f => RoleEquals(f, "longitude"));
          AltitudeField = fields.FirstOrDefault(f => RoleEquals(f, "altitude"));
-         PropertyFields = fields.Where(f => f.Output && !f.System && RoleEquals(f, "property")).ToArray();
+         PropertyFields = fields.Where(f => RoleEquals(f, "property")).ToArray();
 
          if (LatitudeField == null || LongitudeField == null) {
             throw new InvalidOperationException($"GeoJson role writer requires fields with role='latitude' and role='longitude' for entity '{context.Entity.Alias}'.");

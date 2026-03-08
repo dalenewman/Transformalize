@@ -125,6 +125,10 @@ if [[ "$DRY_RUN" -eq 1 ]]; then
   exit 0
 fi
 
+if [[ -d "$OUTPUT_DIR" ]]; then
+  echo "Cleaning output directory: $OUTPUT_DIR"
+  rm -f "$OUTPUT_DIR"/*.nupkg "$OUTPUT_DIR"/*.snupkg
+fi
 mkdir -p "$OUTPUT_DIR"
 
 for project in "${PACKAGE_PROJECTS[@]}"; do
