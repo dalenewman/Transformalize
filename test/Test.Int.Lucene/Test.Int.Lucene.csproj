@@ -11,15 +11,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Files\NorthWindSqliteToLucene.xml" />
-    <None Remove="Files\northwind-sqlite.db" />
+    <None Remove="files\NorthWindSqliteToLucene.xml" />
+    <None Remove="files\northwind-sqlite.db" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Files\NorthWindSqliteToLucene.xml">
+    <Content Include="files\NorthWindSqliteToLucene.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Files\northwind-sqlite.db">
+    <Content Include="files\northwind-sqlite.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
