@@ -167,9 +167,10 @@ namespace Transformalize.Providers.Lucene.Autofac {
 
                   switch (output.Connection.Provider) {
                      case "lucene":
+                        var initializer = process.Mode == "init" ? (IAction)new LuceneInitializer(output) : new NullInitializer();
                         return new LuceneOutputController(
                             output,
-                            new LuceneInitializer(output),
+                            initializer,
                             ctx.ResolveNamed<IInputProvider>(entity.Key),
                             new LuceneOutputProvider(output, ctx.ResolveNamed<SearcherFactory>(entity.Key))
                         );
