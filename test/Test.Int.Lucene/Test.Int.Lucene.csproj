@@ -1,0 +1,40 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <Version>0.12.0-beta</Version>
+    <FileVersion>0.12.0</FileVersion>
+    <AssemblyVersion>0.12.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="files\NorthWindSqliteToLucene.xml" />
+    <None Remove="files\northwind-sqlite.db" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="files\NorthWindSqliteToLucene.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="files\northwind-sqlite.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Lucene/Transformalize.Provider.Lucene/Transformalize.Provider.Lucene.csproj" />
+    <ProjectReference Include="../../src/Providers/Lucene/Transformalize.Provider.Lucene.Autofac/Transformalize.Provider.Lucene.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Sqlite/Transformalize.Provider.Sqlite.Autofac/Transformalize.Provider.Sqlite.Autofac.csproj" />
+    <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>
