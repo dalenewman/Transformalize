@@ -86,21 +86,20 @@ namespace Transformalize.Providers.Lucene {
                f = new TextField(field.Field.Alias, Utility.BytesToHexString((byte[])value), s);
                break;
             case "string":
-               var iString = field.SearchType.Index ? (
-                       field.SearchType.Analyzer.Equals("keyword") ?
-                       (field.SearchType.Norms ? LuceneField.Index.NOT_ANALYZED : LuceneField.Index.NOT_ANALYZED_NO_NORMS) :
-                       (field.SearchType.Norms ? LuceneField.Index.ANALYZED : LuceneField.Index.ANALYZED_NO_NORMS)
-                    ) :
-                       LuceneField.Index.NO;
-
-               f = new LuceneField(field.Field.Alias, value.ToString(), s, iString);
+               if (!field.SearchType.Index) {
+                  f = new StoredField(field.Field.Alias, value.ToString());
+               } else if (field.SearchType.Analyzer.Equals("keyword")) {
+                  f = new StringField(field.Field.Alias, value.ToString(), s);
+               } else {
+                  f = new TextField(field.Field.Alias, value.ToString(), s);
+               }
                break;
             default:
-               var i = field.SearchType.Index ?
-                   (field.SearchType.Norms ? LuceneField.Index.NOT_ANALYZED : LuceneField.Index.NOT_ANALYZED_NO_NORMS) :
-                   LuceneField.Index.NO;
-
-               f = new LuceneField(field.Field.Alias, value.ToString(), s, i);
+               if (!field.SearchType.Index) {
+                  f = new StoredField(field.Field.Alias, value.ToString());
+               } else {
+                  f = new StringField(field.Field.Alias, value.ToString(), s);
+               }
                break;
          }
          return f;
@@ -124,7 +123,7 @@ namespace Transformalize.Providers.Lucene {
                foreach (var field in _fieldSearchTypes.Where(field => field.SearchType.Store || field.SearchType.Index)) {
                   doc.Add(CreateField(field, row[field.Field]));
                }
-               doc.Add(new LuceneField("TflId", tflId, LuceneField.Store.YES, LuceneField.Index.NOT_ANALYZED_NO_NORMS));
+               doc.Add(new StringField("TflId", tflId, LuceneField.Store.YES));
                if (_output.Process.Mode == "init") {
                   writer.AddDocument(doc);
                   _output.Entity.Inserts += 1;
