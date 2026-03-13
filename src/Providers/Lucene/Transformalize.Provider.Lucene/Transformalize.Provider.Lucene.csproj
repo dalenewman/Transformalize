@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Transformalize.Providers.Lucene</RootNamespace>
+    <AssemblyName>Transformalize.Provider.Lucene</AssemblyName>
+    <Version>0.12.0-beta</Version>
+    <FileVersion>0.12.0</FileVersion>
+    <AssemblyVersion>0.12.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lucene.Net" Version="4.8.0-beta00016" />
+    <PackageReference Include="Lucene.Net.Grouping" Version="4.8.0-beta00016" />
+    <PackageReference Include="Lucene.Net.QueryParser" Version="4.8.0-beta00016" />
+    <ProjectReference Include="../../../Transformalize/Transformalize.csproj" />
+  </ItemGroup>
+
+</Project>

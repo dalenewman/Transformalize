@@ -1,0 +1,31 @@
+<Project Sdk="MSTest.Sdk/3.8.2">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <Version>0.12.0-beta</Version>
+    <FileVersion>0.12.0</FileVersion>
+    <AssemblyVersion>0.12.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Files\NorthWindSqlServerToLucene.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Files\NorthWindSqlServerToLucene.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/Lucene/Transformalize.Provider.Lucene/Transformalize.Provider.Lucene.csproj" />
+    <ProjectReference Include="../../src/Providers/Lucene/Transformalize.Provider.Lucene.Autofac/Transformalize.Provider.Lucene.Autofac.csproj" />
+    <ProjectReference Include="../../src/Providers/SqlServer/Transformalize.Provider.SqlServer.Autofac/Transformalize.Provider.SqlServer.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>
