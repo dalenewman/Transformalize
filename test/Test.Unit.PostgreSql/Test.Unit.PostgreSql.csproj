@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="8.0.9" />
-    <PackageReference Include="Testcontainers.PostgreSql" Version="4.6.0" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="4.11.0" />
   </ItemGroup>
 
   <ItemGroup>

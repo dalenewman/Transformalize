@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Testcontainers" Version="4.6.0" />
+    <PackageReference Include="Testcontainers" Version="4.11.0" />
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console/Console.csproj" />
