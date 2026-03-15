@@ -35,7 +35,7 @@
    <ItemGroup>
       <PackageReference Include="Cfg-NET.Parser.YamlDotNet" Version="0.15.0-beta" />
       <PackageReference Include="System.CommandLine" Version="2.0.3" />
-      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+      <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
       <ProjectReference Include="..\Providers\Solr\Transformalize.Provider.Solr.Autofac\Transformalize.Provider.Solr.Autofac.csproj" />
    </ItemGroup>
