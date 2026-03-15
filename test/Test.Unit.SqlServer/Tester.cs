@@ -29,8 +29,7 @@ namespace Test.Unit.SqlServer {
 
          // Build and start the container
          // Using 2019-latest as it's more compatible with ARM64 (Apple Silicon) via emulation
-         var builder = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2019-latest")
+         var builder = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2019-latest")
             .WithPassword(Pw)
             .WithCleanUp(true);
 
