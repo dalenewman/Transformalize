@@ -20,8 +20,7 @@ namespace Test {
       public static async Task InitializeContainer() {
          Console.WriteLine("Starting MySQL container...");
 
-         var builder = new MySqlBuilder()
-            .WithImage("mysql:8.0")
+         var builder = new MySqlBuilder("mysql:8.0")
             .WithPassword(Pw)
             .WithCleanUp(true);
 

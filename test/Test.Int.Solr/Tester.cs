@@ -69,11 +69,13 @@ namespace IntegrationTests {
       private static async Task StartSolrContainer() {
          Console.WriteLine($"Starting Solr container with data dir: {_hostDataDir}");
 
+         var containerDataDir = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "/var/solr/data" : _hostDataDir!;
+
          _solrContainer = new ContainerBuilder()
              .WithImage($"solr:{SolrVersion}")
              .WithPortBinding(8983, true)
-             .WithBindMount(_hostDataDir!, _hostDataDir!) // Same path on host and container
-             .WithEnvironment("SOLR_HOME", _hostDataDir!)
+             .WithBindMount(_hostDataDir!, containerDataDir)
+             .WithEnvironment("SOLR_HOME", containerDataDir)
              .WithWaitStrategy(Wait.ForUnixContainer()
                  .UntilHttpRequestIsSucceeded(r => r.ForPath("/solr/admin/cores").ForPort(8983)))
              .WithCleanUp(true)
