@@ -18,7 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
+using System.Text.Json;
+using Elastic.Transport;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.Threading;
@@ -28,9 +29,9 @@ namespace Transformalize.Providers.Elasticsearch {
    public class ElasticSchemaReader : ISchemaReader {
       private readonly IConnectionContext _input;
       private readonly string _index;
-      private readonly IElasticLowLevelClient _client;
+      private readonly ITransport _client;
 
-      public ElasticSchemaReader(IConnectionContext input, IElasticLowLevelClient client) {
+      public ElasticSchemaReader(IConnectionContext input, ITransport client) {
          _input = input;
          _client = client;
          _index = input.Connection.Index;
@@ -41,12 +42,13 @@ namespace Transformalize.Providers.Elasticsearch {
          var version = ElasticVersionParser.ParseVersion(_input);
          DynamicResponse response;
 
-         response = _client.Indices.GetMapping<DynamicResponse>(_index);
+         var getMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
+         response = _client.Request<DynamicResponse>(ref getMappingPath);
 
-         if (response.Success) {
+         if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
             if (mappings != null && mappings.HasValue) {
-               var mappingsDict = mappings.Value as IDictionary<string, object>;
+               var mappingsDict = DynamicToDict(mappings);
                if (mappingsDict != null) {
                   // Typed mappings (ES 6 and earlier, or include_type_name)
                   if (mappingsDict.ContainsKey(name)) {
@@ -70,6 +72,15 @@ namespace Transformalize.Providers.Elasticsearch {
 
          return Enumerable.Empty<Field>();
 
+      }
+
+      private static IDictionary<string, object> DynamicToDict(dynamic dynamicValue) {
+         if (dynamicValue == null || !dynamicValue.HasValue) return null;
+         var val = (object)dynamicValue.Value;
+         if (val is IDictionary<string, object> dict) return dict;
+         if (val is JsonElement je && je.ValueKind == JsonValueKind.Object)
+            return DynamicValue.ConsumeJsonElement(typeof(object), je) as IDictionary<string, object>;
+         return null;
       }
 
       private IEnumerable<Field> PropertiesToFields(string name, IDictionary<string, object> properties) {
@@ -97,12 +108,13 @@ namespace Transformalize.Providers.Elasticsearch {
          var version = ElasticVersionParser.ParseVersion(_input);
          DynamicResponse response;
 
-         response = _client.Indices.GetMapping<DynamicResponse>(_index);
+         var getEntitiesMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
+         response = _client.Request<DynamicResponse>(ref getEntitiesMappingPath);
 
-         if (response.Success) {
+         if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
             if (mappings != null && mappings.HasValue) {
-               var types = mappings.Value as IDictionary<string, object>;
+               var types = DynamicToDict(mappings);
                if (types != null) {
                   // Typeless mappings (ES 7+)
                   if (types.ContainsKey("properties")) {
@@ -166,12 +178,13 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var version = ElasticVersionParser.ParseVersion(_input);
 
-         var response = await _client.Indices.GetMappingAsync<DynamicResponse>(_index, null, token).ConfigureAwait(false);
+         var getFieldsMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
+         var response = await _client.RequestAsync<DynamicResponse>(ref getFieldsMappingPath, null, token).ConfigureAwait(false);
 
-         if (response.Success) {
+         if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
             if (mappings != null && mappings.HasValue) {
-               var mappingsDict = mappings.Value as IDictionary<string, object>;
+               var mappingsDict = DynamicToDict(mappings);
                if (mappingsDict != null) {
                   if (mappingsDict.ContainsKey(name)) {
                      var typed = mappingsDict[name] as IDictionary<string, object>;
@@ -199,12 +212,13 @@ namespace Transformalize.Providers.Elasticsearch {
          var results = new List<Entity>();
          var version = ElasticVersionParser.ParseVersion(_input);
 
-         var response = await _client.Indices.GetMappingAsync<DynamicResponse>(_index, null, token).ConfigureAwait(false);
+         var getEntitiesAsyncMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
+         var response = await _client.RequestAsync<DynamicResponse>(ref getEntitiesAsyncMappingPath, null, token).ConfigureAwait(false);
 
-         if (response.Success) {
+         if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
             if (mappings != null && mappings.HasValue) {
-               var types = mappings.Value as IDictionary<string, object>;
+               var types = DynamicToDict(mappings);
                if (types != null) {
                   if (types.ContainsKey("properties")) {
                      var e = new Entity { Name = "rows" };

@@ -18,7 +18,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json;
 using Transformalize.Actions;
 using Transformalize.Context;
@@ -30,7 +30,7 @@ namespace Transformalize.Providers.Elasticsearch {
    public class ElasticEntityInitializer : IAction {
 
       private readonly OutputContext _context;
-      private readonly IElasticLowLevelClient _client;
+      private readonly ITransport _client;
 
       private static string TranslateType(string type) {
          switch (type) {
@@ -101,7 +101,7 @@ namespace Transformalize.Providers.Elasticsearch {
         };
 
 
-      public ElasticEntityInitializer(OutputContext context, IElasticLowLevelClient client) {
+      public ElasticEntityInitializer(OutputContext context, ITransport client) {
          _context = context;
          _client = client;
       }
@@ -117,11 +117,12 @@ namespace Transformalize.Providers.Elasticsearch {
 
          DynamicResponse elasticResponse;
 
-         elasticResponse = _client.Indices.PutMapping<DynamicResponse>(_context.Connection.Index, json);
+         var putMappingPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}/_mapping");
+         elasticResponse = _client.Request<DynamicResponse>(ref putMappingPath, PostData.String(json));
 
          var response = new ActionResponse(
-            elasticResponse.HttpStatusCode ?? 500,
-            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+            (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
+            elasticResponse.ApiCallDetails?.OriginalException == null ? string.Empty : (elasticResponse.ApiCallDetails?.DebugInformation ?? string.Empty).Replace("{", "{{").Replace("}", "}}")
          ) {
             Action = new Configuration.Action() {
                Type = "internal",
@@ -231,11 +232,12 @@ namespace Transformalize.Providers.Elasticsearch {
          var typeName = _context.Entity.Alias.ToLower();
          var json = JsonConvert.SerializeObject(properties);
 
-         var elasticResponse = await _client.Indices.PutMappingAsync<DynamicResponse>(_context.Connection.Index, json, null, token).ConfigureAwait(false);
+         var putMappingPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}/_mapping");
+         var elasticResponse = await _client.RequestAsync<DynamicResponse>(ref putMappingPath, PostData.String(json), token).ConfigureAwait(false);
 
          var response = new ActionResponse(
-            elasticResponse.HttpStatusCode ?? 500,
-            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+            (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
+            elasticResponse.ApiCallDetails?.OriginalException == null ? string.Empty : (elasticResponse.ApiCallDetails?.DebugInformation ?? string.Empty).Replace("{", "{{").Replace("}", "}}")
          ) {
             Action = new Configuration.Action() {
                Type = "internal",

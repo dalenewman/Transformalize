@@ -17,7 +17,7 @@
 #endregion
 
 using Autofac;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,31 +61,25 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                   server.Url = server.GetElasticUrl();
                   uris.Add(new Uri(server.Url));
                }
-               // for now, just use static connection pool, there are 2 other types...
-               _builder.Register<IConnectionPool>(ctx => new StaticConnectionPool(uris)).Named<IConnectionPool>(connection.Key);
+               // for now, just use static node pool, there are 2 other types...
+               _builder.Register<NodePool>(ctx => new StaticNodePool(uris)).Named<NodePool>(connection.Key);
             } else {
                connection.Url = connection.GetElasticUrl();
-               _builder.Register<IConnectionPool>(ctx => new SingleNodeConnectionPool(new Uri(connection.Url))).Named<IConnectionPool>(connection.Key);
+               _builder.Register<NodePool>(ctx => new SingleNodePool(new Uri(connection.Url))).Named<NodePool>(connection.Key);
             }
 
-            // Elasticsearch.Net
+            // Elastic.Transport
             _builder.Register(ctx => {
 
-               var pool = ctx.ResolveNamed<IConnectionPool>(connection.Key);
-               var settings = new ConnectionConfiguration(pool);
-
-               var version = ElasticVersionParser.ParseVersion(ctx.ResolveNamed<IConnectionContext>(connection.Key));
+               var pool = ctx.ResolveNamed<NodePool>(connection.Key);
+               var settings = new TransportConfigurationDescriptor(pool);
 
                if (!string.IsNullOrEmpty(connection.User)) {
-                  settings = settings.BasicAuthentication(connection.User, connection.Password);
-               }
-
-               if(version.Major > 7 || (version.Major == 7 && version.Minor >= 11)) {
-                  settings.EnableApiVersioningHeader(true);
+                  settings = settings.Authentication(new BasicAuthentication(connection.User, connection.Password));
                }
 
                if (string.IsNullOrEmpty(connection.CertificateFingerprint)) {
-                  settings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);    
+                  settings = settings.ServerCertificateValidationCallback(CertificateValidations.AllowAll);
                } else {
                   settings = settings.CertificateFingerprint(connection.CertificateFingerprint);
                }
@@ -97,15 +91,15 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                   settings = settings.PingTimeout(new TimeSpan(0, 0, connection.Timeout));
                }
 
-               return new ElasticLowLevelClient(settings);
-            }).Named<IElasticLowLevelClient>(connection.Key);
+               return new DistributedTransport(settings);
+            }).Named<ITransport>(connection.Key);
 
             // Process-Level Schema Reader
-            _builder.Register<ISchemaReader>(ctx => new ElasticSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), ctx.ResolveNamed<IElasticLowLevelClient>(connection.Key))).Named<ISchemaReader>(connection.Key);
+            _builder.Register<ISchemaReader>(ctx => new ElasticSchemaReader(ctx.ResolveNamed<IConnectionContext>(connection.Key), ctx.ResolveNamed<ITransport>(connection.Key))).Named<ISchemaReader>(connection.Key);
 
             // Entity Level Schema Readers
             foreach (var entity in _process.Entities.Where(e => e.Input == connection.Name)) {
-               _builder.Register<ISchemaReader>(ctx => new ElasticSchemaReader(ctx.ResolveNamed<IConnectionContext>(entity.Key), ctx.ResolveNamed<IElasticLowLevelClient>(connection.Key))).Named<ISchemaReader>(entity.Key);
+               _builder.Register<ISchemaReader>(ctx => new ElasticSchemaReader(ctx.ResolveNamed<IConnectionContext>(entity.Key), ctx.ResolveNamed<ITransport>(connection.Key))).Named<ISchemaReader>(entity.Key);
             }
 
          }
@@ -115,7 +109,7 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
 
             _builder.Register<IInputProvider>(ctx => {
                var input = ctx.ResolveNamed<InputContext>(entity.Key);
-               return new ElasticInputProvider(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key));
+               return new ElasticInputProvider(input, ctx.ResolveNamed<ITransport>(input.Connection.Key));
             }).Named<IInputProvider>(entity.Key);
 
             // INPUT READER
@@ -124,9 +118,9 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                var rowFactory = ctx.ResolveNamed<IRowFactory>(entity.Key, new NamedParameter("capacity", input.RowCapacity));
 
                if (entity.Query == string.Empty) {
-                  return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory, ReadFrom.Input);
+                  return new ElasticReader(input, input.InputFields, ctx.ResolveNamed<ITransport>(input.Connection.Key), rowFactory, ReadFrom.Input);
                }
-               return new ElasticQueryReader(input, ctx.ResolveNamed<IElasticLowLevelClient>(input.Connection.Key), rowFactory);
+               return new ElasticQueryReader(input, ctx.ResolveNamed<ITransport>(input.Connection.Key), rowFactory);
             }).Named<IRead>(entity.Key);
 
          }
@@ -140,7 +134,7 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
             // PROCESS INITIALIZER
             _builder.Register<IInitializer>(ctx => {
                var output = ctx.Resolve<OutputContext>();
-               return new ElasticInitializer(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key));
+               return new ElasticInitializer(output, ctx.ResolveNamed<ITransport>(output.Connection.Key));
             }).As<IInitializer>();
 
             foreach (var entity in _process.Entities) {
@@ -158,13 +152,13 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                   var output = ctx.ResolveNamed<OutputContext>(entity.Key);
                   switch (output.Connection.Provider) {
                      case "elasticsearch":
-                        var initializer = _process.Mode == "init" ? (IAction)new ElasticEntityInitializer(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)) : new NullInitializer();
+                        var initializer = _process.Mode == "init" ? (IAction)new ElasticEntityInitializer(output, ctx.ResolveNamed<ITransport>(output.Connection.Key)) : new NullInitializer();
                         return new ElasticOutputController(
                             output,
                             initializer,
                             ctx.ResolveNamed<IInputProvider>(entity.Key),
-                            new ElasticOutputProvider(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)),
-                            ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key)
+                            new ElasticOutputProvider(output, ctx.ResolveNamed<ITransport>(output.Connection.Key)),
+                            ctx.ResolveNamed<ITransport>(output.Connection.Key)
                         );
                      default:
                         return new NullOutputController();
@@ -178,7 +172,7 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
 
                   switch (output.Connection.Provider) {
                      case "elasticsearch":
-                        return new ElasticWriter(output, ctx.ResolveNamed<IElasticLowLevelClient>(output.Connection.Key));
+                        return new ElasticWriter(output, ctx.ResolveNamed<ITransport>(output.Connection.Key));
                      default:
                         return new NullWriter(output);
                   }
@@ -199,7 +193,7 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                            input = new ElasticReader(
                                inputContext,
                                primaryKey,
-                               ctx.ResolveNamed<IElasticLowLevelClient>(inputContext.Connection.Key),
+                               ctx.ResolveNamed<ITransport>(inputContext.Connection.Key),
                                rowFactory,
                                ReadFrom.Input
                            );
@@ -216,14 +210,14 @@ namespace Transformalize.Providers.Elasticsearch.Autofac {
                            output = new ElasticReader(
                                outputContext,
                                primaryKey,
-                               ctx.ResolveNamed<IElasticLowLevelClient>(inputContext.Connection.Key),
+                               ctx.ResolveNamed<ITransport>(inputContext.Connection.Key),
                                rowFactory,
                                ReadFrom.Output
                            );
                            deleter = new ElasticPartialUpdater(
                                outputContext,
                                new[] { context.Entity.TflDeleted() },
-                               ctx.ResolveNamed<IElasticLowLevelClient>(inputContext.Connection.Key)
+                               ctx.ResolveNamed<ITransport>(inputContext.Connection.Key)
                            );
                            break;
                      }

@@ -18,7 +18,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
@@ -30,7 +30,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
     public class ElasticQueryReader : IRead {
 
-        readonly IElasticLowLevelClient _client;
+        readonly ITransport _client;
         private readonly IRowFactory _rowFactory;
         readonly InputContext _context;
         private readonly Dictionary<string, Field> _fields;
@@ -38,7 +38,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
         public ElasticQueryReader(
             InputContext context,
-            IElasticLowLevelClient client,
+            ITransport client,
             IRowFactory rowFactory
         ) {
             _context = context;
@@ -49,15 +49,16 @@ namespace Transformalize.Providers.Elasticsearch {
 
         public IEnumerable<IRow> Read() {
             _context.Debug(() => _context.Entity.Query);
-            var response = _client.Search<DynamicResponse>(PostData.String(_context.Entity.Query));
+            var searchPath = new EndpointPath(HttpMethod.POST, "/_search");
+            var response = _client.Request<DynamicResponse>(ref searchPath, PostData.String(_context.Entity.Query));
 
-            if (response.Success) {
+            if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                 if (response.Body != null && response.Body["aggregations"].HasValue) {
                     return Flatten("aggregations", response.Body["aggregations"].Value);
                 }
                 _context.Warn("An elastic query should return aggregations, but yours does not.");
             } else {
-                _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+                _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
             return new IRow[0];
         }
@@ -141,15 +142,16 @@ namespace Transformalize.Providers.Elasticsearch {
 
         public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             _context.Debug(() => _context.Entity.Query);
-            var response = await _client.SearchAsync<DynamicResponse>(PostData.String(_context.Entity.Query), (SearchRequestParameters)null, token).ConfigureAwait(false);
+            var asyncSearchPath = new EndpointPath(HttpMethod.POST, "/_search");
+            var response = await _client.RequestAsync<DynamicResponse>(ref asyncSearchPath, PostData.String(_context.Entity.Query), token).ConfigureAwait(false);
 
-            if (response.Success) {
+            if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                 if (response.Body != null && response.Body["aggregations"].HasValue) {
                     return Flatten("aggregations", response.Body["aggregations"].Value);
                 }
                 _context.Warn("An elastic query should return aggregations, but yours does not.");
             } else {
-                _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+                _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
             return new IRow[0];
         }

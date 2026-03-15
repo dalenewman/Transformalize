@@ -17,9 +17,8 @@
 #endregion
 
 using System;
-using System.Reflection;
 using System.Collections.Generic;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -32,9 +31,9 @@ namespace Transformalize.Providers.Elasticsearch {
     public class ElasticInputProvider : IInputProvider {
 
         readonly InputContext _context;
-        readonly IElasticLowLevelClient _client;
+        readonly ITransport _client;
 
-        public ElasticInputProvider(InputContext context, IElasticLowLevelClient client) {
+        public ElasticInputProvider(InputContext context, ITransport client) {
             _context = context;
             _client = client;
         }
@@ -61,7 +60,8 @@ namespace Transformalize.Providers.Elasticsearch {
                 size = 0
             };
             var json = JsonConvert.SerializeObject(body);
-            var result = _client.Search<DynamicResponse>(_context.Connection.Index, PostData.String(json));
+            var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+            var result = _client.Request<DynamicResponse>(ref searchPath, PostData.String(json));
 
             var value = version.Convert(result.Body["aggregations"]["version"]["value"].Value);
             _context.Debug(()=>$"Found value: {value}");
@@ -96,7 +96,8 @@ namespace Transformalize.Providers.Elasticsearch {
                 size = 0
             };
             var json = JsonConvert.SerializeObject(body);
-            var result = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(json), (SearchRequestParameters)null, token).ConfigureAwait(false);
+            var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+            var result = await _client.RequestAsync<DynamicResponse>(ref asyncSearchPath, PostData.String(json), token).ConfigureAwait(false);
 
             var value = version.Convert(result.Body["aggregations"]["version"]["value"].Value);
             _context.Debug(() => $"Found value: {value}");

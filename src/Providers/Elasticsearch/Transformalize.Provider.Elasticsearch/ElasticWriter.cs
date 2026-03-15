@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Transformalize.Configuration;
@@ -35,7 +35,7 @@ namespace Transformalize.Providers.Elasticsearch {
    public class ElasticWriter : IWrite {
 
       readonly OutputContext _context;
-      readonly IElasticLowLevelClient _client;
+      readonly ITransport _client;
       readonly string _prefix;
       readonly AliasField[] _fields;
       private readonly JsonSerializerSettings _settings;
@@ -45,7 +45,7 @@ namespace Transformalize.Providers.Elasticsearch {
          public Field Field { get; set; }
       }
 
-      public ElasticWriter(OutputContext context, IElasticLowLevelClient client) {
+      public ElasticWriter(OutputContext context, ITransport client) {
          _context = context;
          _client = client;
          _prefix = "{\"index\": {\"_index\": \"" + context.Connection.Index + "\", \"_id\": \"";
@@ -92,16 +92,15 @@ namespace Transformalize.Providers.Elasticsearch {
                builder.AppendLine(JsonConvert.SerializeObject(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _settings));
             }
 
-            var parameters = new BulkRequestParameters();
-            parameters.SetQueryString("refresh", @"true");
-            var response = _client.Bulk<DynamicResponse>(PostData.String(builder.ToString()), parameters);
+            var bulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
+            var response = _client.Request<DynamicResponse>(ref bulkPath, PostData.String(builder.ToString()));
 
-            if (response.Success) {
+            if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                var count = batchCount;
                _context.Entity.Inserts += count;
                _context.Debug(() => $"{count} to output");
             } else {
-               _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+               _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
             builder.Clear();
             batchCount = 0;
@@ -146,16 +145,15 @@ namespace Transformalize.Providers.Elasticsearch {
                builder.AppendLine(JsonConvert.SerializeObject(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _settings));
             }
 
-            var parameters = new BulkRequestParameters();
-            parameters.SetQueryString("refresh", @"true");
-            var response = await _client.BulkAsync<DynamicResponse>(PostData.String(builder.ToString()), parameters, token).ConfigureAwait(false);
+            var asyncBulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
+            var response = await _client.RequestAsync<DynamicResponse>(ref asyncBulkPath, PostData.String(builder.ToString()), token).ConfigureAwait(false);
 
-            if (response.Success) {
+            if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                var count = batchCount;
                _context.Entity.Inserts += count;
                _context.Debug(() => $"{count} to output");
             } else {
-               _context.Error(response.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+               _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             }
             builder.Clear();
             batchCount = 0;
