@@ -61,7 +61,7 @@ namespace Transformalize.Providers.Elasticsearch {
             };
             var json = JsonConvert.SerializeObject(body);
             var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            var result = _client.Request<DynamicResponse>(ref searchPath, PostData.String(json));
+            var result = _client.Request<DynamicResponse>(in searchPath, PostData.String(json));
 
             var value = version.Convert(result.Body["aggregations"]["version"]["value"].Value);
             _context.Debug(()=>$"Found value: {value}");
@@ -97,7 +97,7 @@ namespace Transformalize.Providers.Elasticsearch {
             };
             var json = JsonConvert.SerializeObject(body);
             var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            var result = await _client.RequestAsync<DynamicResponse>(ref asyncSearchPath, PostData.String(json), token).ConfigureAwait(false);
+            var result = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(json), token).ConfigureAwait(false);
 
             var value = version.Convert(result.Body["aggregations"]["version"]["value"].Value);
             _context.Debug(() => $"Found value: {value}");

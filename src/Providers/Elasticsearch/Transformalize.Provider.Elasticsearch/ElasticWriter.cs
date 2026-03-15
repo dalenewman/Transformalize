@@ -93,7 +93,7 @@ namespace Transformalize.Providers.Elasticsearch {
             }
 
             var bulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
-            var response = _client.Request<DynamicResponse>(ref bulkPath, PostData.String(builder.ToString()));
+            var response = _client.Request<DynamicResponse>(in bulkPath, PostData.String(builder.ToString()));
 
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                var count = batchCount;
@@ -146,7 +146,7 @@ namespace Transformalize.Providers.Elasticsearch {
             }
 
             var asyncBulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
-            var response = await _client.RequestAsync<DynamicResponse>(ref asyncBulkPath, PostData.String(builder.ToString()), token).ConfigureAwait(false);
+            var response = await _client.RequestAsync<DynamicResponse>(in asyncBulkPath, PostData.String(builder.ToString()), token).ConfigureAwait(false);
 
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                var count = batchCount;

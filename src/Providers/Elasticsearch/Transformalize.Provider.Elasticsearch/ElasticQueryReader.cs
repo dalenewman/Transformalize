@@ -50,7 +50,7 @@ namespace Transformalize.Providers.Elasticsearch {
         public IEnumerable<IRow> Read() {
             _context.Debug(() => _context.Entity.Query);
             var searchPath = new EndpointPath(HttpMethod.POST, "/_search");
-            var response = _client.Request<DynamicResponse>(ref searchPath, PostData.String(_context.Entity.Query));
+            var response = _client.Request<DynamicResponse>(in searchPath, PostData.String(_context.Entity.Query));
 
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                 if (response.Body != null && response.Body["aggregations"].HasValue) {
@@ -143,7 +143,7 @@ namespace Transformalize.Providers.Elasticsearch {
         public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             _context.Debug(() => _context.Entity.Query);
             var asyncSearchPath = new EndpointPath(HttpMethod.POST, "/_search");
-            var response = await _client.RequestAsync<DynamicResponse>(ref asyncSearchPath, PostData.String(_context.Entity.Query), token).ConfigureAwait(false);
+            var response = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(_context.Entity.Query), token).ConfigureAwait(false);
 
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                 if (response.Body != null && response.Body["aggregations"].HasValue) {

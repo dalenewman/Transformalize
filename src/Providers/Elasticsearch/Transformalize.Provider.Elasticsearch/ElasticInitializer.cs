@@ -38,14 +38,14 @@ namespace Transformalize.Providers.Elasticsearch {
       public ActionResponse Execute() {
 
          var existsPath = new EndpointPath(HttpMethod.HEAD, $"/{_context.Connection.Index}");
-         if (_client.Request<DynamicResponse>(ref existsPath).ApiCallDetails.HttpStatusCode == 200) {
+         if (_client.Request<DynamicResponse>(in existsPath).ApiCallDetails.HttpStatusCode == 200) {
             var deletePath = new EndpointPath(HttpMethod.DELETE, $"/{_context.Connection.Index}");
-            _client.Request<DynamicResponse>(ref deletePath);
+            _client.Request<DynamicResponse>(in deletePath);
          }
 
          var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
          var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
-         var elasticResponse = _client.Request<DynamicResponse>(ref createPath, PostData.String(settings.ToString()));
+         var elasticResponse = _client.Request<DynamicResponse>(in createPath, PostData.String(settings.ToString()));
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
@@ -64,15 +64,15 @@ namespace Transformalize.Providers.Elasticsearch {
    public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
 
          var existsPath = new EndpointPath(HttpMethod.HEAD, $"/{_context.Connection.Index}");
-         var existsResponse = await _client.RequestAsync<DynamicResponse>(ref existsPath, null, token).ConfigureAwait(false);
+         var existsResponse = await _client.RequestAsync<DynamicResponse>(in existsPath, null, token).ConfigureAwait(false);
          if (existsResponse.ApiCallDetails.HttpStatusCode == 200) {
             var deletePath = new EndpointPath(HttpMethod.DELETE, $"/{_context.Connection.Index}");
-            await _client.RequestAsync<DynamicResponse>(ref deletePath, null, token).ConfigureAwait(false);
+            await _client.RequestAsync<DynamicResponse>(in deletePath, null, token).ConfigureAwait(false);
          }
 
          var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
          var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
-         var elasticResponse = await _client.RequestAsync<DynamicResponse>(ref createPath, PostData.String(settings.ToString()), token).ConfigureAwait(false);
+         var elasticResponse = await _client.RequestAsync<DynamicResponse>(in createPath, PostData.String(settings.ToString()), token).ConfigureAwait(false);
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,

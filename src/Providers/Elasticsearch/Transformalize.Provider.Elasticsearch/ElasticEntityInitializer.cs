@@ -118,7 +118,7 @@ namespace Transformalize.Providers.Elasticsearch {
          DynamicResponse elasticResponse;
 
          var putMappingPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}/_mapping");
-         elasticResponse = _client.Request<DynamicResponse>(ref putMappingPath, PostData.String(json));
+         elasticResponse = _client.Request<DynamicResponse>(in putMappingPath, PostData.String(json));
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
@@ -233,7 +233,7 @@ namespace Transformalize.Providers.Elasticsearch {
          var json = JsonConvert.SerializeObject(properties);
 
          var putMappingPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}/_mapping");
-         var elasticResponse = await _client.RequestAsync<DynamicResponse>(ref putMappingPath, PostData.String(json), token).ConfigureAwait(false);
+         var elasticResponse = await _client.RequestAsync<DynamicResponse>(in putMappingPath, PostData.String(json), token).ConfigureAwait(false);
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,

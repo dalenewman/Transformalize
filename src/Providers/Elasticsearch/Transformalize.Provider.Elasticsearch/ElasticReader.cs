@@ -318,7 +318,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } else {
             body = WriteQuery(_fields, _readFrom, _context, scroll:false, from: 0, size: 0);
             var countPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            response = _client.Request<DynamicResponse>(ref countPath, PostData.String(body));
+            response = _client.Request<DynamicResponse>(in countPath, PostData.String(body));
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                hits = response.Body["hits"];
                if (hits != null && hits.HasValue) {
@@ -346,10 +346,10 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (scroll) {
             var scrollSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search?scroll={_context.Connection.Scroll}");
-            response = _client.Request<DynamicResponse>(ref scrollSearchPath, PostData.String(body));
+            response = _client.Request<DynamicResponse>(in scrollSearchPath, PostData.String(body));
          } else {
             var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            response = _client.Request<DynamicResponse>(ref searchPath, PostData.String(body));
+            response = _client.Request<DynamicResponse>(in searchPath, PostData.String(body));
          }
 
          if (!response.ApiCallDetails.HasSuccessfulStatusCode) {
@@ -437,7 +437,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (size == count) {
             var clearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-            _client.Request<DynamicResponse>(ref clearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })));
+            _client.Request<DynamicResponse>(in clearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })));
             yield break;
          }
 
@@ -447,7 +447,7 @@ namespace Transformalize.Providers.Elasticsearch {
             var scrollId = response.Body["_scroll_id"].Value;
             scrolls.Add(scrollId.ToString());
             var doScrollPath = new EndpointPath(HttpMethod.POST, "/_search/scroll");
-            response = _client.Request<DynamicResponse>(ref doScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })));
+            response = _client.Request<DynamicResponse>(in doScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })));
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                docs = ExtractDocs((object)response.Body["hits"]["hits"]);
                if (docs != null) {
@@ -468,7 +468,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } while (response.ApiCallDetails.HasSuccessfulStatusCode && count < size);
 
          var finalClearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-         _client.Request<DynamicResponse>(ref finalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })));
+         _client.Request<DynamicResponse>(in finalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })));
       }
 
       private static bool Scroll(int from, int size) {
@@ -530,7 +530,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } else {
             body = WriteQuery(_fields, _readFrom, _context, scroll: false, from: 0, size: 0);
             var asyncCountPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            response = await _client.RequestAsync<DynamicResponse>(ref asyncCountPath, PostData.String(body), token).ConfigureAwait(false);
+            response = await _client.RequestAsync<DynamicResponse>(in asyncCountPath, PostData.String(body), token).ConfigureAwait(false);
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                hits = response.Body["hits"];
                if (hits != null && hits.HasValue) {
@@ -558,10 +558,10 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (scroll) {
             var asyncScrollSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search?scroll={_context.Connection.Scroll}");
-            response = await _client.RequestAsync<DynamicResponse>(ref asyncScrollSearchPath, PostData.String(body), token).ConfigureAwait(false);
+            response = await _client.RequestAsync<DynamicResponse>(in asyncScrollSearchPath, PostData.String(body), token).ConfigureAwait(false);
          } else {
             var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-            response = await _client.RequestAsync<DynamicResponse>(ref asyncSearchPath, PostData.String(body), token).ConfigureAwait(false);
+            response = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(body), token).ConfigureAwait(false);
          }
 
          if (!response.ApiCallDetails.HasSuccessfulStatusCode) {
@@ -648,7 +648,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (size == count) {
             var asyncClearPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-            await _client.RequestAsync<DynamicResponse>(ref asyncClearPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })), token).ConfigureAwait(false);
+            await _client.RequestAsync<DynamicResponse>(in asyncClearPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })), token).ConfigureAwait(false);
             return results;
          }
 
@@ -658,7 +658,7 @@ namespace Transformalize.Providers.Elasticsearch {
             var scrollId = response.Body["_scroll_id"].Value;
             scrolls.Add(scrollId.ToString());
             var asyncDoScrollPath = new EndpointPath(HttpMethod.POST, "/_search/scroll");
-            response = await _client.RequestAsync<DynamicResponse>(ref asyncDoScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), token).ConfigureAwait(false);
+            response = await _client.RequestAsync<DynamicResponse>(in asyncDoScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), token).ConfigureAwait(false);
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                docs = ExtractDocs((object)response.Body["hits"]["hits"]);
                if (docs != null) {
@@ -679,7 +679,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } while (response.ApiCallDetails.HasSuccessfulStatusCode && count < size);
 
          var asyncFinalClearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-         await _client.RequestAsync<DynamicResponse>(ref asyncFinalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })), token).ConfigureAwait(false);
+         await _client.RequestAsync<DynamicResponse>(in asyncFinalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })), token).ConfigureAwait(false);
 
          return results;
       }

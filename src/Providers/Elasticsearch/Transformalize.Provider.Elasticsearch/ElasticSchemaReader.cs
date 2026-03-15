@@ -43,7 +43,7 @@ namespace Transformalize.Providers.Elasticsearch {
          DynamicResponse response;
 
          var getMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
-         response = _client.Request<DynamicResponse>(ref getMappingPath);
+         response = _client.Request<DynamicResponse>(in getMappingPath);
 
          if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
@@ -109,7 +109,7 @@ namespace Transformalize.Providers.Elasticsearch {
          DynamicResponse response;
 
          var getEntitiesMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
-         response = _client.Request<DynamicResponse>(ref getEntitiesMappingPath);
+         response = _client.Request<DynamicResponse>(in getEntitiesMappingPath);
 
          if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
@@ -179,7 +179,7 @@ namespace Transformalize.Providers.Elasticsearch {
          var version = ElasticVersionParser.ParseVersion(_input);
 
          var getFieldsMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
-         var response = await _client.RequestAsync<DynamicResponse>(ref getFieldsMappingPath, null, token).ConfigureAwait(false);
+         var response = await _client.RequestAsync<DynamicResponse>(in getFieldsMappingPath, null, token).ConfigureAwait(false);
 
          if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];
@@ -213,7 +213,7 @@ namespace Transformalize.Providers.Elasticsearch {
          var version = ElasticVersionParser.ParseVersion(_input);
 
          var getEntitiesAsyncMappingPath = new EndpointPath(HttpMethod.GET, $"/{_index}/_mapping");
-         var response = await _client.RequestAsync<DynamicResponse>(ref getEntitiesAsyncMappingPath, null, token).ConfigureAwait(false);
+         var response = await _client.RequestAsync<DynamicResponse>(in getEntitiesAsyncMappingPath, null, token).ConfigureAwait(false);
 
          if (response.ApiCallDetails.HasSuccessfulStatusCode) {
             var mappings = response.Body[_index]["mappings"];

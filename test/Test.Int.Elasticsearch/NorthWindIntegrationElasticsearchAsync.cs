@@ -144,9 +144,9 @@ namespace Test.Integration.Core {
          }
 
          var refreshPath = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
-         client.Request<DynamicResponse>(ref refreshPath);
+         client.Request<DynamicResponse>(in refreshPath);
          var countPath = new EndpointPath(ElasticHttpMethod.GET, "/northwind/_count");
-         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(ref countPath, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
+         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(in countPath, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
 
          // FIRST DELTA, NO CHANGES
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?{ElasticFileParams}", logger)) {
@@ -158,9 +158,9 @@ namespace Test.Integration.Core {
          }
 
          var refreshPath2 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
-         client.Request<DynamicResponse>(ref refreshPath2);
+         client.Request<DynamicResponse>(in refreshPath2);
          var countPath2 = new EndpointPath(ElasticHttpMethod.GET, "/northwind/_count");
-         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(ref countPath2, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
+         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(in countPath2, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
 
          // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO
          using (var cn = new SqliteConnectionFactory(InputConnection).GetConnection()) {
@@ -196,9 +196,9 @@ namespace Test.Integration.Core {
          }
 
          var refreshPath3 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
-         client.Request<DynamicResponse>(ref refreshPath3);
+         client.Request<DynamicResponse>(in refreshPath3);
          var searchPath1 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_search");
-         var response = client.Request<DynamicResponse>(ref searchPath1, PostData.String(@"{
+         var response = client.Request<DynamicResponse>(in searchPath1, PostData.String(@"{
    ""query"" : {
       ""constant_score"" : {
          ""filter"" : {
@@ -251,9 +251,9 @@ namespace Test.Integration.Core {
          }
 
          var refreshPath4 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
-         client.Request<DynamicResponse>(ref refreshPath4);
+         client.Request<DynamicResponse>(in refreshPath4);
          var searchPath2 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_search");
-         response = client.Request<DynamicResponse>(ref searchPath2, PostData.String(@"{
+         response = client.Request<DynamicResponse>(in searchPath2, PostData.String(@"{
    ""query"" : {
       ""constant_score"" : {
          ""filter"" : {
@@ -414,12 +414,12 @@ namespace Test.Integration.Core {
 
       private static IDictionary<string, object> GetFirstSource(DynamicResponse response) {
          var hitsVal = response.Body["hits"]["hits"].Value;
-         IList<object> hits;
+         IList<object>? hits;
          if (hitsVal is JsonElement je && je.ValueKind == JsonValueKind.Array)
             hits = DynamicValue.ConsumeJsonElement(typeof(object), je) as IList<object>;
          else
             hits = hitsVal as IList<object>;
-         var hit = (IDictionary<string, object>)hits[0]!;
+         var hit = (IDictionary<string, object>)hits![0]!;
          return (IDictionary<string, object>)hit["_source"]!;
       }
 
