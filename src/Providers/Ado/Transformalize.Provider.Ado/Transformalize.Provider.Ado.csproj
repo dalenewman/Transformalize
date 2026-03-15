@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Ado</RootNamespace>
     <AssemblyName>Transformalize.Provider.Ado</AssemblyName>
-    <Version>0.12.0-beta</Version>
+    <Version>0.12.2-beta</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <Description>An ADO Provider for Transformalize</Description>
@@ -14,8 +14,8 @@
     <PackageTags>etl,ado,transformalize</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <FileVersion>0.12.0</FileVersion>
-    <AssemblyVersion>0.12.0</AssemblyVersion>
+    <FileVersion>0.12.2</FileVersion>
+    <AssemblyVersion>0.12.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.72" />

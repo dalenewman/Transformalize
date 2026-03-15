@@ -123,7 +123,7 @@ namespace Test.Integration.Core {
             var process = x.Resolve<Process>();
             using (var y = new Container(new BogusModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                y.Resolve<IProcessController>().Execute();
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
+               Assert.AreEqual((uint)1000, process.Entities.First().Inserts);
             }
          }
       }

@@ -212,11 +212,23 @@ namespace Transformalize {
                if(x is string str) {
                   return ConversionMap["date"](str);
                }
+               if (x is DateTime dt) {
+                  return dt;
+               }
+               if (!(x is IConvertible)) {
+                  return Convert.ToDateTime(x.ToString());
+               }
                return Convert.ToDateTime(x);
                })},
             {"datetime", (x => {
                if(x is string str) {
                   return ConversionMap["datetime"](str);
+               }
+               if (x is DateTime dt) {
+                  return dt;
+               }
+               if (!(x is IConvertible)) {
+                  return Convert.ToDateTime(x.ToString());
                }
                return Convert.ToDateTime(x);
                })},

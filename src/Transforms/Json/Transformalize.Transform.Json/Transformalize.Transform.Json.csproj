@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Transforms.Json</RootNamespace>
     <AssemblyName>Transformalize.Transform.Json</AssemblyName>
-    <Version>0.12.0-beta</Version>
-    <FileVersion>0.12.0</FileVersion>
-    <AssemblyVersion>0.12.0</AssemblyVersion>
+    <Version>0.12.2-beta</Version>
+    <FileVersion>0.12.2</FileVersion>
+    <AssemblyVersion>0.12.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />

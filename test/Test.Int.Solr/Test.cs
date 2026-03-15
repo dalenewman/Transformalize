@@ -59,8 +59,9 @@ namespace IntegrationTests {
 
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
-
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
+               var actual = process.Entities.First().Inserts;
+               var expected = (uint)1000;
+               Assert.AreEqual(expected, actual);
             }
          }
       }
@@ -128,7 +129,7 @@ namespace IntegrationTests {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
 
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
+               Assert.AreEqual((uint)1000, process.Entities.First().Inserts);
             }
          }
       }
@@ -163,7 +164,7 @@ namespace IntegrationTests {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
 
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)2);
+               Assert.AreEqual((uint)2, process.Entities.First().Inserts);
             }
          }
       }

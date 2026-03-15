@@ -213,9 +213,9 @@ namespace Test.Integration.Core {
 
          var source = GetFirstSource(response);
 
-         Assert.AreEqual(source["orderdetailsunitprice"], 15.0);
-         Assert.AreEqual(source["orderdetailsquantity"], (long)40);
-         Assert.AreEqual(source["orderdetailsextendedprice"], 40 * 15.0);
+         Assert.AreEqual(15.0, source["orderdetailsunitprice"]);
+         Assert.AreEqual((long)40, source["orderdetailsquantity"]);
+         Assert.AreEqual(40 * 15.0, source["orderdetailsextendedprice"]);
 
          // CHANGE 1 RECORD'S CUSTOMERID AND FREIGHT ON ORDERS TABLE
          using (var cn = new SqliteConnectionFactory(InputConnection).GetConnection()) {
@@ -267,8 +267,8 @@ namespace Test.Integration.Core {
 
          source = GetFirstSource(response);
 
-         Assert.AreEqual(source["orderscustomerid"], "VICTE");
-         Assert.AreEqual(source["ordersfreight"], 20.11);
+         Assert.AreEqual("VICTE", source["orderscustomerid"]);
+         Assert.AreEqual(20.11, source["ordersfreight"]);
 
       }
 

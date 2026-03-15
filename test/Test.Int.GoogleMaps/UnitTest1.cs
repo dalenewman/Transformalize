@@ -16,8 +16,8 @@ namespace Test {
       public const string GoogleKey = "<key>";
 
       [TestMethod]
-      public void UsefulTest(){
-         Assert.AreEqual(1,1, "Try this for Github Actions");
+      public void UsefulTest() {
+         Assert.AreEqual(1, Convert.ToInt32("1"), "Try this for Github Actions");
       }
 
       [Ignore]

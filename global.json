@@ -1,0 +1,9 @@
+{
+  "sdk": {
+    "rollForward": "latestFeature",
+    "version": "10.0.103"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
+  }
+}
