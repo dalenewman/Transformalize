@@ -1,7 +1,7 @@
 <Project Sdk="MSTest.Sdk/3.8.2">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <IsTestProject>true</IsTestProject>
     
     <ImplicitUsings>enable</ImplicitUsings>
@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="8.0.9" />
+    <PackageReference Include="Npgsql" Version="10.0.2" />
     <PackageReference Include="Testcontainers.PostgreSql" Version="4.11.0" />
   </ItemGroup>
 

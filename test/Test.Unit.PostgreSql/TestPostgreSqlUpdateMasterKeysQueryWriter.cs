@@ -77,7 +77,7 @@ AND (B.B2 = @TflBatchId OR A.A2 >= @MasterTflBatchId)
 ";
             var actual = writer.Write(entityStatus);
 
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected.Replace("\r\n", "\n").Trim(), actual.Replace("\r\n", "\n").Trim());
 
          }
 
