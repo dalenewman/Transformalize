@@ -61,7 +61,7 @@ namespace Test {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
 
-               Assert.AreEqual(process.Entities.First().Inserts, (uint)1000);
+               Assert.AreEqual((uint)1000, process.Entities.First().Inserts);
             }
          }
 

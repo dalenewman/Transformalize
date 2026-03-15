@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
@@ -13,7 +14,7 @@ namespace Integration.Test.Mail {
 
       [TestMethod]
       public void UsefulTest(){
-         Assert.AreEqual(1,1, "Try this for Github Actions");
+         Assert.AreEqual(1, Convert.ToInt32("1"), "Try this for Github Actions");
       }
 
       [TestMethod]

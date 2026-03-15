@@ -143,17 +143,17 @@ namespace Test.Integration.Core {
                var rows = controller.Read().ToArray();
                Assert.AreEqual(20, rows.Length);
                var row = rows[3].ToFriendlyDictionary(process.Entities[0].Fields.ToArray());
-               Assert.AreEqual(row["Identity"].ToString(), "4");
-               Assert.AreEqual(row["FirstName"].ToString(), "Caleb");
-               Assert.AreEqual(row["LastName"].ToString(), "Hane");
-               Assert.AreEqual(row["Stars"].ToString(), "4");
-               Assert.AreEqual(row["Reviewers"].ToString(), "78");
+               Assert.AreEqual("4", row["Identity"].ToString());
+               Assert.AreEqual("Caleb", row["FirstName"].ToString());
+               Assert.AreEqual("Hane", row["LastName"].ToString());
+               Assert.AreEqual("4", row["Stars"].ToString());
+               Assert.AreEqual("78", row["Reviewers"].ToString());
             }
          }
 
       }
 
-      [TestMethod, ExpectedException(typeof(BadDataException))]
+      [TestMethod]
       public void ThrowOnBadData() {
 
          const string xml = @"<add name='file' mode='init' read-only='true'>
@@ -176,7 +176,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               Assert.ThrowsExactly<BadDataException>(() => controller.Execute());
             }
          }
 

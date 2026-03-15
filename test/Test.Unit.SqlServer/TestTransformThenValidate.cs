@@ -67,7 +67,7 @@ namespace Test.Unit.SqlServer {
                   var controller = inner.Resolve<IProcessController>();
                   var rows = controller.Read().ToArray();
 
-                  Assert.AreEqual(rows.Length, 2);
+                  Assert.AreEqual(2, rows.Length);
                   Assert.IsTrue((bool)rows[0][process.Entities.First().GetField("Valid")]);
                   Assert.IsFalse((bool)rows[1][process.Entities.First().GetField("Valid")]);
                }
