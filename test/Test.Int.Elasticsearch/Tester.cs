@@ -26,8 +26,7 @@ namespace Test.Integration.Core {
       private static async Task StartElasticContainer() {
          Console.WriteLine("Starting Elasticsearch container...");
 
-         _elasticContainer = new Testcontainers.Elasticsearch.ElasticsearchBuilder()
-             .WithImage("docker.elastic.co/elasticsearch/elasticsearch:8.12.0")
+         _elasticContainer = new ElasticsearchBuilder("docker.elastic.co/elasticsearch/elasticsearch:8.12.0")
              .WithPassword(ElasticPassword)
              .WithCleanUp(true)
              .Build();

@@ -25,8 +25,7 @@ namespace Test {
 
          Console.WriteLine("Starting PostgreSQL container...");
 
-         var builder = new PostgreSqlBuilder()
-            .WithImage("postgres:16")
+         var builder = new PostgreSqlBuilder("postgres:16")
             .WithUsername(User)
             .WithPassword(Pw)
             .WithDatabase("postgres")

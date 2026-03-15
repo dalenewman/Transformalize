@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
@@ -34,8 +35,8 @@
 
   <ItemGroup>
     <PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.17.3" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.7" />
-    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.6.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.11.0" />
   </ItemGroup>
 
   <ItemGroup>

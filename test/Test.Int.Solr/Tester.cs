@@ -71,8 +71,7 @@ namespace IntegrationTests {
 
          var containerDataDir = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "/var/solr/data" : _hostDataDir!;
 
-         _solrContainer = new ContainerBuilder()
-             .WithImage($"solr:{SolrVersion}")
+         _solrContainer = new ContainerBuilder($"solr:{SolrVersion}")
              .WithPortBinding(8983, true)
              .WithBindMount(_hostDataDir!, containerDataDir)
              .WithEnvironment("SOLR_HOME", containerDataDir)
