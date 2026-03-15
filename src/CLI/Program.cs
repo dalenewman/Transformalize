@@ -16,6 +16,7 @@ using Transformalize.Providers.Console.Autofac;
 using Transformalize.Providers.CsvHelper.Autofac;
 using Transformalize.Providers.Elasticsearch.Autofac;
 using Transformalize.Providers.Json.Autofac;
+using Transformalize.Providers.Lucene;
 using Transformalize.Providers.Mail.Autofac;
 using Transformalize.Providers.MySql.Autofac;
 using Transformalize.Providers.PostgreSql.Autofac;
@@ -34,6 +35,7 @@ using Transformalize.Transforms.Json.Autofac;
 using Transformalize.Transforms.LambdaParser.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Xml;
+using Transformalize.Providers.Lucene.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -238,6 +240,7 @@ namespace Transformalize.Cli {
             providers.Add(new RazorProviderModule());
             providers.Add(new MailModule());
             providers.Add(new SolrModule());
+            providers.Add(new LuceneModule());
 
             var modules = providers.Union(operations).ToArray();
 
