@@ -2,13 +2,13 @@
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,7 @@
 // limitations under the License.
 #endregion
 
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json.Linq;
 using Transformalize.Actions;
 using Transformalize.Context;
@@ -28,25 +28,28 @@ namespace Transformalize.Providers.Elasticsearch {
    public class ElasticInitializer : IInitializer {
 
       private readonly OutputContext _context;
-      private readonly IElasticLowLevelClient _client;
+      private readonly ITransport _client;
 
-      public ElasticInitializer(OutputContext context, IElasticLowLevelClient client) {
+      public ElasticInitializer(OutputContext context, ITransport client) {
          _context = context;
          _client = client;
       }
 
       public ActionResponse Execute() {
 
-         if (_client.Indices.Exists<DynamicResponse>(_context.Connection.Index).HttpStatusCode == 200) {
-            _client.Indices.Delete<VoidResponse>(_context.Connection.Index);
+         var existsPath = new EndpointPath(HttpMethod.HEAD, $"/{_context.Connection.Index}");
+         if (_client.Request<DynamicResponse>(in existsPath).ApiCallDetails.HttpStatusCode == 200) {
+            var deletePath = new EndpointPath(HttpMethod.DELETE, $"/{_context.Connection.Index}");
+            _client.Request<DynamicResponse>(in deletePath);
          }
 
          var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
-         var elasticResponse = _client.Indices.Create<DynamicResponse>(_context.Connection.Index, settings.ToString());
+         var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
+         var elasticResponse = _client.Request<DynamicResponse>(in createPath, PostData.String(settings.ToString()));
 
          var response = new ActionResponse(
-            elasticResponse.HttpStatusCode ?? 500,
-            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+            (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
+            elasticResponse.ApiCallDetails?.OriginalException == null ? string.Empty : (elasticResponse.ApiCallDetails?.DebugInformation ?? string.Empty).Replace("{", "{{").Replace("}", "}}")
          ) {
             Action = new Configuration.Action() {
                Type = "internal",
@@ -60,17 +63,20 @@ namespace Transformalize.Providers.Elasticsearch {
 
    public async Task<ActionResponse> ExecuteAsync(CancellationToken token = default) {
 
-         var existsResponse = await _client.Indices.ExistsAsync<DynamicResponse>(_context.Connection.Index, null, token).ConfigureAwait(false);
-         if (existsResponse.HttpStatusCode == 200) {
-            await _client.Indices.DeleteAsync<VoidResponse>(_context.Connection.Index, null, token).ConfigureAwait(false);
+         var existsPath = new EndpointPath(HttpMethod.HEAD, $"/{_context.Connection.Index}");
+         var existsResponse = await _client.RequestAsync<DynamicResponse>(in existsPath, null, token).ConfigureAwait(false);
+         if (existsResponse.ApiCallDetails.HttpStatusCode == 200) {
+            var deletePath = new EndpointPath(HttpMethod.DELETE, $"/{_context.Connection.Index}");
+            await _client.RequestAsync<DynamicResponse>(in deletePath, null, token).ConfigureAwait(false);
          }
 
          var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
-         var elasticResponse = await _client.Indices.CreateAsync<DynamicResponse>(_context.Connection.Index, settings.ToString(), null, token).ConfigureAwait(false);
+         var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
+         var elasticResponse = await _client.RequestAsync<DynamicResponse>(in createPath, PostData.String(settings.ToString()), token).ConfigureAwait(false);
 
          var response = new ActionResponse(
-            elasticResponse.HttpStatusCode ?? 500,
-            elasticResponse.OriginalException == null ? string.Empty : elasticResponse.DebugInformation.Replace("{", "{{").Replace("}", "}}") ?? string.Empty
+            (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
+            elasticResponse.ApiCallDetails?.OriginalException == null ? string.Empty : (elasticResponse.ApiCallDetails?.DebugInformation ?? string.Empty).Replace("{", "{{").Replace("}", "}}")
          ) {
             Action = new Configuration.Action() {
                Type = "internal",

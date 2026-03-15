@@ -18,7 +18,8 @@
 
 using System;
 using System.Collections.Generic;
-using Elasticsearch.Net;
+using System.Text.Json;
+using Elastic.Transport;
 using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -30,10 +31,10 @@ namespace Transformalize.Providers.Elasticsearch {
    public class ElasticOutputProvider : IOutputProvider {
 
       private readonly OutputContext _context;
-      private readonly IElasticLowLevelClient _client;
+      private readonly ITransport _client;
       private DynamicResponse _commonAggregations;
 
-      public ElasticOutputProvider(OutputContext context, IElasticLowLevelClient client) {
+      public ElasticOutputProvider(OutputContext context, ITransport client) {
          _context = context;
          _client = client;
       }
@@ -64,26 +65,29 @@ namespace Transformalize.Providers.Elasticsearch {
             size = 0
          };
 
-         var result = _client.Search<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)));
-         dynamic value = null;
-         if (result.Success) {
+         var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+         var result = _client.Request<DynamicResponse>(in searchPath, PostData.String(JsonConvert.SerializeObject(body)));
+         dynamic converted = null;
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
             try {
-               value = result.Body["aggregations"]["version"]["value"].Value;
+               var dynValue = result.Body["aggregations"]["version"]["value"];
+               if (dynValue.HasValue) {
+                  if (version.Type.StartsWith("date")) {
+                     try {
+                        var ms = DynamicToLong(dynValue);
+                        converted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms);
+                     } catch (Exception e) {
+                        _context.Error(e, $"Failed converting {version.Name} value to long (for epoch_millis) conversion to datetime.");
+                     }
+                  } else {
+                     converted = DynamicToObject(dynValue);
+                  }
+               }
             } catch (Exception ex) {
                _context.Error(ex, ex.Message);
             }
          } else {
-            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
-         }
-         var converted = value ?? null;
-
-         if (converted != null && version.Type.StartsWith("date")) {
-            try {
-               var ms = Convert.ToInt64(converted);
-               converted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms);
-            } catch (Exception e) {
-               _context.Error(e, $"Failed converting {version.Name} value {converted} to long (for epoch_millis) conversion to datetime.");
-            }
+            _context.Error(result.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
          }
 
          _context.Debug(() => $"Found value: {converted ?? "null"}");
@@ -98,12 +102,11 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var result = GetAggregations();
 
-         if (result.Success) {
-            var batchId = result.Body["aggregations"]["b"]["value"].Value;
-            return (batchId == null ? 0 : (int)batchId) + 1;
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
+            return DynamicToInt(result.Body["aggregations"]["b"]["value"]) + 1;
          } else {
-            _context.Error(result.OriginalException.Message);
-            _context.Debug(() => result.DebugInformation);
+            _context.Error(result.ApiCallDetails.OriginalException.Message);
+            _context.Debug(() => result.ApiCallDetails.DebugInformation);
             return 0;
          }
 
@@ -112,11 +115,10 @@ namespace Transformalize.Providers.Elasticsearch {
       public int GetMaxTflKey() {
          var result = GetAggregations();
 
-         if (result.Success) {
-            var key = result.Body["aggregations"]["k"]["value"].Value;
-            return (key == null ? 0 : (int)key);
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
+            return DynamicToInt(result.Body["aggregations"]["k"]["value"]);
          } else {
-            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            _context.Error(result.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             return 0;
          }
       }
@@ -163,8 +165,41 @@ namespace Transformalize.Providers.Elasticsearch {
             size = 0
          };
 
-         _commonAggregations = _client.Search<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)));
+         var aggPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+         _commonAggregations = _client.Request<DynamicResponse>(in aggPath, PostData.String(JsonConvert.SerializeObject(body)));
          return _commonAggregations;
+      }
+
+      private static int DynamicToInt(dynamic dynamicValue) {
+         if (dynamicValue == null || !dynamicValue.HasValue) return 0;
+         var val = dynamicValue.Value;
+         if (val is JsonElement je)
+            return je.ValueKind == JsonValueKind.Null ? 0 : (int)je.GetDouble();
+         return val == null ? 0 : Convert.ToInt32(val);
+      }
+
+      private static long DynamicToLong(dynamic dynamicValue) {
+         if (dynamicValue == null || !dynamicValue.HasValue) return 0L;
+         var val = dynamicValue.Value;
+         if (val is JsonElement je)
+            return je.ValueKind == JsonValueKind.Null ? 0L : (long)je.GetDouble();
+         return val == null ? 0L : Convert.ToInt64(val);
+      }
+
+      private static object DynamicToObject(dynamic dynamicValue) {
+         if (dynamicValue == null || !dynamicValue.HasValue) return null;
+         var val = dynamicValue.Value;
+         if (val is JsonElement je) {
+            return je.ValueKind switch {
+               JsonValueKind.String => je.GetString(),
+               JsonValueKind.Number => je.TryGetInt64(out var l) ? (object)l : je.GetDouble(),
+               JsonValueKind.True => true,
+               JsonValueKind.False => false,
+               JsonValueKind.Null => null,
+               _ => je.ToString()
+            };
+         }
+         return val;
       }
 
       public void Dispose() {
@@ -176,11 +211,10 @@ namespace Transformalize.Providers.Elasticsearch {
    public async Task<int> GetMaxTflKeyAsync(CancellationToken token = default) {
          var result = await GetAggregationsAsync(token).ConfigureAwait(false);
 
-         if (result.Success) {
-            var key = result.Body["aggregations"]["k"]["value"].Value;
-            return (key == null ? 0 : (int)key);
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
+            return DynamicToInt(result.Body["aggregations"]["k"]["value"]);
          } else {
-            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            _context.Error(result.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
             return 0;
          }
       }
@@ -205,26 +239,29 @@ namespace Transformalize.Providers.Elasticsearch {
             size = 0
          };
 
-         var result = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)), (SearchRequestParameters)null, token).ConfigureAwait(false);
-         dynamic value = null;
-         if (result.Success) {
+         var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+         var result = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(JsonConvert.SerializeObject(body)), token).ConfigureAwait(false);
+         dynamic converted = null;
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
             try {
-               value = result.Body["aggregations"]["version"]["value"].Value;
+               var dynValue = result.Body["aggregations"]["version"]["value"];
+               if (dynValue.HasValue) {
+                  if (version.Type.StartsWith("date")) {
+                     try {
+                        var ms = DynamicToLong(dynValue);
+                        converted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms);
+                     } catch (Exception e) {
+                        _context.Error(e, $"Failed converting {version.Name} value to long (for epoch_millis) conversion to datetime.");
+                     }
+                  } else {
+                     converted = DynamicToObject(dynValue);
+                  }
+               }
             } catch (Exception ex) {
                _context.Error(ex, ex.Message);
             }
          } else {
-            _context.Error(result.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
-         }
-         var converted = value ?? null;
-
-         if (converted != null && version.Type.StartsWith("date")) {
-            try {
-               var ms = Convert.ToInt64(converted);
-               converted = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(ms);
-            } catch (Exception e) {
-               _context.Error(e, $"Failed converting {version.Name} value {converted} to long (for epoch_millis) conversion to datetime.");
-            }
+            _context.Error(result.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
          }
 
          _context.Debug(() => $"Found value: {converted ?? "null"}");
@@ -235,12 +272,11 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var result = await GetAggregationsAsync(token).ConfigureAwait(false);
 
-         if (result.Success) {
-            var batchId = result.Body["aggregations"]["b"]["value"].Value;
-            return (batchId == null ? 0 : (int)batchId) + 1;
+         if (result.ApiCallDetails.HasSuccessfulStatusCode) {
+            return DynamicToInt(result.Body["aggregations"]["b"]["value"]) + 1;
          } else {
-            _context.Error(result.OriginalException.Message);
-            _context.Debug(() => result.DebugInformation);
+            _context.Error(result.ApiCallDetails.OriginalException.Message);
+            _context.Debug(() => result.ApiCallDetails.DebugInformation);
             return 0;
          }
       }
@@ -273,7 +309,8 @@ namespace Transformalize.Providers.Elasticsearch {
             size = 0
          };
 
-         _commonAggregations = await _client.SearchAsync<DynamicResponse>(_context.Connection.Index, PostData.String(JsonConvert.SerializeObject(body)), (SearchRequestParameters)null, token).ConfigureAwait(false);
+         var asyncAggPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
+         _commonAggregations = await _client.RequestAsync<DynamicResponse>(in asyncAggPath, PostData.String(JsonConvert.SerializeObject(body)), token).ConfigureAwait(false);
          return _commonAggregations;
       }
    }

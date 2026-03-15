@@ -18,7 +18,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -29,13 +29,13 @@ namespace Transformalize.Providers.Elasticsearch {
 
     public class ElasticPartialUpdater : IDelete, IWrite {
 
-        readonly IElasticLowLevelClient _client;
+        readonly ITransport _client;
         readonly Configuration.Field[] _fields;
         readonly OutputContext _context;
         // private readonly string _type;
         private readonly string _index;
 
-        public ElasticPartialUpdater(OutputContext context, Configuration.Field[] fields, IElasticLowLevelClient client) {
+        public ElasticPartialUpdater(OutputContext context, Configuration.Field[] fields, ITransport client) {
             _context = context;
             _fields = fields;
             _client = client;
@@ -47,28 +47,32 @@ namespace Transformalize.Providers.Elasticsearch {
             // Could probably do bulk updates with partition and bulk operation
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                _client.Update<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
+                var updatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
+                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
             }
         }
 
         public void Write(IEnumerable<IRow> rows) {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                _client.Update<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
+                var updatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
+                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
             }
         }
 
         public async Task DeleteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
+                var asyncUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
+                await _client.RequestAsync<DynamicResponse>(in asyncUpdatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
             }
         }
 
         public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
-                await _client.UpdateAsync<VoidResponse>(_index, id, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), (UpdateRequestParameters)null, token).ConfigureAwait(false);
+                var asyncWriteUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
+                await _client.RequestAsync<DynamicResponse>(in asyncWriteUpdatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
             }
         }
     }

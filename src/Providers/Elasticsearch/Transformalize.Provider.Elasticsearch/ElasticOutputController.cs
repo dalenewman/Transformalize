@@ -17,7 +17,7 @@
 #endregion
 
 using System.Diagnostics;
-using Elasticsearch.Net;
+using Elastic.Transport;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Impl;
@@ -26,7 +26,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
     public class ElasticOutputController : BaseOutputController {
 
-        private readonly IElasticLowLevelClient _client;
+        private readonly ITransport _client;
         private readonly Stopwatch _stopWatch;
 
         public ElasticOutputController(
@@ -34,7 +34,7 @@ namespace Transformalize.Providers.Elasticsearch {
             IAction initializer,
             IInputProvider inputProvider,
             IOutputProvider outputProvider,
-            IElasticLowLevelClient client
+            ITransport client
             ) : base(
                 context,
                 initializer,

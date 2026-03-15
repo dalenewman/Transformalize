@@ -18,7 +18,9 @@
 
 using Autofac;
 using Dapper;
-using Elasticsearch.Net;
+using Elastic.Transport;
+using ElasticHttpMethod = Elastic.Transport.HttpMethod;
+using TflField = Transformalize.Configuration.Field;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,7 @@ using Transformalize.Providers.Elasticsearch;
 using Transformalize.Providers.Elasticsearch.Autofac;
 using Transformalize.Providers.Elasticsearch.Ext;
 using System.IO;
+using System.Text.Json;
 using Transformalize.Providers.Sqlite.Autofac;
 using Transformalize.Providers.SQLite;
 using Transformalize.Transforms.Jint.Autofac;
@@ -116,11 +119,11 @@ namespace Test.Integration.Core {
 
          var logger = new ConsoleLogger(LogLevel.Info);
 
-         var pool = new SingleNodeConnectionPool(new Uri(Tester.ElasticUrl));
-         var settings = new ConnectionConfiguration(pool)
+         var pool = new SingleNodePool(new Uri(Tester.ElasticUrl));
+         var settings = new TransportConfigurationDescriptor(pool)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
-         var client = new ElasticLowLevelClient(settings);
+            .Authentication(new BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword));
+         ITransport client = new DistributedTransport(settings);
 
          using (var outer = new ConfigurationContainer(new JintTransformModule()).CreateScope($"{SqliteTestFile}?Mode=init", logger)) {
             var process = outer.Resolve<Process>();
@@ -138,8 +141,10 @@ namespace Test.Integration.Core {
             }
          }
 
-         client.Indices.Refresh<DynamicResponse>("northwind");
-         Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"].Value);
+         var refreshPath = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
+         client.Request<DynamicResponse>(in refreshPath);
+         var countPath = new EndpointPath(ElasticHttpMethod.GET, "/northwind/_count");
+         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(in countPath, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
 
          // FIRST DELTA, NO CHANGES
          using (var outer = new ConfigurationContainer().CreateScope($"{ElasticTestFile}?{ElasticFileParams}", logger)) {
@@ -150,8 +155,10 @@ namespace Test.Integration.Core {
             }
          }
 
-         client.Indices.Refresh<DynamicResponse>("northwind");
-         Assert.AreEqual(2155, client.Count<DynamicResponse>("northwind", PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"].Value);
+         var refreshPath2 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
+         client.Request<DynamicResponse>(in refreshPath2);
+         var countPath2 = new EndpointPath(ElasticHttpMethod.GET, "/northwind/_count");
+         Assert.AreEqual(2155, (int)client.Request<DynamicResponse>(in countPath2, PostData.String("{\"query\" : { \"match_all\" : { }}}")).Body["count"]);
 
          // CHANGE 2 FIELDS IN 1 RECORD IN MASTER TABLE THAT WILL CAUSE CALCULATED FIELD TO BE UPDATED TOO
          using (var cn = new SqliteConnectionFactory(InputConnection).GetConnection()) {
@@ -186,9 +193,10 @@ namespace Test.Integration.Core {
             }
          }
 
-         client.Indices.Refresh<DynamicResponse>("northwind");
-         var response = client.Search<DynamicResponse>(
-             "northwind", PostData.String(@"{
+         var refreshPath3 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
+         client.Request<DynamicResponse>(in refreshPath3);
+         var searchPath1 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_search");
+         var response = client.Request<DynamicResponse>(in searchPath1, PostData.String(@"{
    ""query"" : {
       ""constant_score"" : {
          ""filter"" : {
@@ -240,10 +248,10 @@ namespace Test.Integration.Core {
             }
          }
 
-         client.Indices.Refresh<DynamicResponse>("northwind");
-         response = client.Search<DynamicResponse>(
-             "northwind",
-             PostData.String(@"{
+         var refreshPath4 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_refresh");
+         client.Request<DynamicResponse>(in refreshPath4);
+         var searchPath2 = new EndpointPath(ElasticHttpMethod.POST, "/northwind/_search");
+         response = client.Request<DynamicResponse>(in searchPath2, PostData.String(@"{
    ""query"" : {
       ""constant_score"" : {
          ""filter"" : {
@@ -287,11 +295,11 @@ namespace Test.Integration.Core {
 
          connection.Url = connection.GetElasticUrl();
 
-         var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool)
+         var pool = new SingleNodePool(new Uri(connection.Url));
+         var settings = new TransportConfigurationDescriptor(pool)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
-         var client = new ElasticLowLevelClient(settings);
+            .Authentication(new BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword));
+         ITransport client = new DistributedTransport(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
 
@@ -317,11 +325,11 @@ namespace Test.Integration.Core {
 
          connection.Url = connection.GetElasticUrl();
 
-         var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool)
+         var pool = new SingleNodePool(new Uri(connection.Url));
+         var settings = new TransportConfigurationDescriptor(pool)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
-         var client = new ElasticLowLevelClient(settings);
+            .Authentication(new BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword));
+         ITransport client = new DistributedTransport(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger()), connection);
          var schemaReader = new ElasticSchemaReader(context, client);
 
@@ -347,14 +355,14 @@ namespace Test.Integration.Core {
 
          connection.Url = connection.GetElasticUrl();
 
-         var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool)
+         var pool = new SingleNodePool(new Uri(connection.Url));
+         var settings = new TransportConfigurationDescriptor(pool)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
-         var client = new ElasticLowLevelClient(settings);
+            .Authentication(new BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword));
+         ITransport client = new DistributedTransport(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity { Name = "rows", Alias = "rows" }), connection);
-         var code = new Field { Name = "code", Index = 0 };
-         var total = new Field { Name = "total", Type = "int", Index = 1 };
+         var code = new TflField { Name = "code", Index = 0 };
+         var total = new TflField { Name = "total", Type = "int", Index = 1 };
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
@@ -381,19 +389,19 @@ namespace Test.Integration.Core {
 
          connection.Url = connection.GetElasticUrl();
 
-         var pool = new SingleNodeConnectionPool(new Uri(connection.Url));
-         var settings = new ConnectionConfiguration(pool)
+         var pool = new SingleNodePool(new Uri(connection.Url));
+         var settings = new TransportConfigurationDescriptor(pool)
             .ServerCertificateValidationCallback(CertificateValidations.AllowAll)
-            .BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword);
-         var client = new ElasticLowLevelClient(settings);
+            .Authentication(new BasicAuthentication(Tester.ElasticUser, Tester.ElasticPassword));
+         ITransport client = new DistributedTransport(settings);
          var context = new ConnectionContext(new PipelineContext(new DebugLogger(), null, new Entity {
             Name = "rows",
             Alias = "rows",
             Page = 2,
             Size = 20
          }), connection);
-         var code = new Field { Name = "code", Index = 0 };
-         var total = new Field { Name = "total", Type = "int", Index = 1 };
+         var code = new TflField { Name = "code", Index = 0 };
+         var total = new TflField { Name = "total", Type = "int", Index = 1 };
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
@@ -403,8 +411,13 @@ namespace Test.Integration.Core {
       }
 
       private static IDictionary<string, object> GetFirstSource(DynamicResponse response) {
-         var hits = (IList<object>)response.Body["hits"]["hits"].Value!;
-         var hit = (IDictionary<string, object>)hits[0]!;
+         var hitsVal = response.Body["hits"]["hits"].Value;
+         IList<object>? hits;
+         if (hitsVal is JsonElement je && je.ValueKind == JsonValueKind.Array)
+            hits = DynamicValue.ConsumeJsonElement(typeof(object), je) as IList<object>;
+         else
+            hits = hitsVal as IList<object>;
+         var hit = (IDictionary<string, object>)hits![0]!;
          return (IDictionary<string, object>)hit["_source"]!;
       }
 
