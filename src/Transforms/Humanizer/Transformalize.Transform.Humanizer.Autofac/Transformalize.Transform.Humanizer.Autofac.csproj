@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Transforms.Humanizer.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Transform.Humanizer.Autofac</AssemblyName>
-    <Version>0.12.0-beta</Version>
-    <FileVersion>0.12.0</FileVersion>
-    <AssemblyVersion>0.12.0</AssemblyVersion>
+    <Version>0.12.2-beta</Version>
+    <FileVersion>0.12.2</FileVersion>
+    <AssemblyVersion>0.12.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Transform.Humanizer\Transformalize.Transform.Humanizer.csproj" />

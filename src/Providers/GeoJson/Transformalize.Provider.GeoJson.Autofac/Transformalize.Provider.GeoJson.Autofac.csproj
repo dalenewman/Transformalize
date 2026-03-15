@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.GeoJson.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.GeoJson.Autofac</AssemblyName>
-    <Version>0.12.1-beta</Version>
-    <FileVersion>0.12.1</FileVersion>
-    <AssemblyVersion>0.12.1</AssemblyVersion>
+    <Version>0.12.2-beta</Version>
+    <FileVersion>0.12.2</FileVersion>
+    <AssemblyVersion>0.12.2</AssemblyVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>
