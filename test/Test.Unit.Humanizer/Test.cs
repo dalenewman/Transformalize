@@ -105,7 +105,7 @@ namespace UnitTests {
 
                Assert.AreEqual("sampleText", rows[0][camelized]);
                Assert.AreEqual("sampleTexts", rows[1][camelized]);
-               Assert.AreEqual("$ample-text", rows[2][camelized]);
+               Assert.AreEqual("$ampleText", rows[2][camelized]);
 
                Assert.AreEqual(1000d, rows[0][fromMetric]);
                Assert.AreEqual(16d, rows[1][fromMetric]);
@@ -125,7 +125,7 @@ namespace UnitTests {
 
                Assert.AreEqual("SampleText", rows[0][pascalized]);
                Assert.AreEqual("SampleTexts", rows[1][pascalized]);
-               Assert.AreEqual("$ample-text", rows[2][pascalized]);
+               Assert.AreEqual("$ampleText", rows[2][pascalized]);
 
                Assert.AreEqual("sample texts", rows[0][pluralized]);
                Assert.AreEqual("Sample_Texts", rows[1][pluralized]);

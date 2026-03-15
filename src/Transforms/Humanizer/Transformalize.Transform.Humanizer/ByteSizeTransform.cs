@@ -18,9 +18,9 @@
 
 using System;
 using System.Collections.Generic;
-using Humanizer.Bytes;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Humanizer;
 
 namespace Transformalize.Transforms.Humanizer {
    public class ByteSizeTransform : BaseTransform {
