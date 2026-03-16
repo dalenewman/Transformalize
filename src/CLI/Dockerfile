@@ -6,6 +6,11 @@ ARG BUILD_IMAGE=mcr.microsoft.com/dotnet/sdk:10.0
 FROM ${BASE_IMAGE} AS base
 WORKDIR /app
 
+# for postgres npgsql
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libkrb5-3 \
+    && rm -rf /var/lib/apt/lists/*
+
 FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 WORKDIR /src
 COPY ["nuget.config", "."]
