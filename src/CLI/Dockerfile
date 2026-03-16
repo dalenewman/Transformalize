@@ -7,9 +7,12 @@ FROM ${BASE_IMAGE} AS base
 WORKDIR /app
 
 # for postgres npgsql
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libkrb5-3 \
-    && rm -rf /var/lib/apt/lists/*
+RUN if command -v apk > /dev/null; then \
+        apk add --no-cache krb5-libs; \
+    elif command -v apt-get > /dev/null; then \
+        apt-get update && apt-get install -y --no-install-recommends libkrb5-3 \
+        && rm -rf /var/lib/apt/lists/*; \
+    fi
 
 FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 WORKDIR /src
