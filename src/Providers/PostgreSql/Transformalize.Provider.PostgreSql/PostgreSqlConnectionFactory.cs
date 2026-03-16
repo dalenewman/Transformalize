@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Npgsql;
 using Transformalize.Configuration;
 using Transformalize.Providers.Ado;
@@ -911,6 +912,7 @@ namespace Transformalize.Providers.PostgreSql {
             Username = _c.User,
             Port = _c.Port == 0 ? 5432 : _c.Port,
             Timeout = _c.RequestTimeout,
+            GssEncryptionMode = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? GssEncryptionMode.Disable : GssEncryptionMode.Prefer
          }.ConnectionString;
 
          return _c.ConnectionString;
