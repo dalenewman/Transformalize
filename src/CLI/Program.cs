@@ -36,6 +36,7 @@ using Transformalize.Transforms.LambdaParser.Autofac;
 using Transformalize.Transforms.Razor.Autofac;
 using Transformalize.Transforms.Xml;
 using Transformalize.Providers.Lucene.Autofac;
+using Transformalize.Providers.GeoJson.Autofac;
 
 namespace Transformalize.Cli {
    class Program {
@@ -241,6 +242,7 @@ namespace Transformalize.Cli {
             providers.Add(new MailModule());
             providers.Add(new SolrModule());
             providers.Add(new LuceneModule());
+            providers.Add(new GeoJsonProviderModule());
 
             var modules = providers.Union(operations).ToArray();
 

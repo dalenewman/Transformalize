@@ -317,20 +317,16 @@ namespace Transformalize.Configuration {
       this.Validate(e => Error(e), w => Warn(w));
     }
 
-    private void ValidateGeoJsonOutput()
-    {
+    private void ValidateGeoJsonOutput() {
       var output = GetOutputConnection();
-      if (output.Provider == "geojson" && output.Type == "role")
-      {
-        if (Entities.Any())
-        {
+      if (output.Provider == "geojson" && output.Use == "geo") {
+        if (Entities.Any()) {
           var entity = Entities.First();
           var fields = entity.GetAllFields().ToArray();
-          var hasLat = fields.Any(f => f.Role == "latitude");
-          var hasLon = fields.Any(f => f.Role == "longitude");
-          if (!hasLat || !hasLon)
-          {
-            Error("When using geojson provider with type role, you must have a latitude and longitude role in fields.");
+          var hasLat = fields.Any(f => f.Geo == "latitude");
+          var hasLon = fields.Any(f => f.Geo == "longitude");
+          if (!hasLat || !hasLon) {
+            Error("When using geojson provider with type geo, you must have a latitude and longitude set in the field's geo attribute.");
           }
         }
       }

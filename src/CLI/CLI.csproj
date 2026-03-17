@@ -42,27 +42,28 @@
    </ItemGroup>
    <ItemGroup>
       <ProjectReference Include="..\Logging\MsLog\MsLog.csproj" />
-      <ProjectReference Include="..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Ado\Transformalize.Provider.Ado.Autofac\Transformalize.Provider.Ado.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Bogus\Transformalize.Provider.Bogus.Autofac\Transformalize.Provider.Bogus.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\Elasticsearch\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
-      <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
-      <ProjectReference Include="..\Transforms\Humanizer\Transformalize.Transform.Humanizer.Autofac\Transformalize.Transform.Humanizer.Autofac.csproj" />
-      <ProjectReference Include="..\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\Console\Console.Autofac\Console.Autofac.csproj" />
       <ProjectReference Include="..\Providers\CsvHelper\Transformalize.Provider.CsvHelper.Autofac\Transformalize.Provider.CsvHelper.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\Elasticsearch\Transformalize.Provider.Elasticsearch.Autofac\Transformalize.Provider.Elasticsearch.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\GeoJson\Transformalize.Provider.GeoJson.Autofac\Transformalize.Provider.GeoJson.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Json\Transformalize.Provider.Json.Autofac\Transformalize.Provider.Json.Autofac.csproj" />
-      <ProjectReference Include="..\Transforms\Json\Transformalize.Transform.Json.Autofac\Transformalize.Transform.Json.Autofac.csproj" />
-      <ProjectReference Include="..\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Mail\Transformalize.Provider.Mail.Autofac\Transformalize.Provider.Mail.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\MySql\Transformalize.Provider.MySql.Autofac\Transformalize.Provider.MySql.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\PostgreSql\Transformalize.Provider.PostgreSql.Autofac\Transformalize.Provider.PostgreSql.Autofac.csproj" />
       <ProjectReference Include="..\Providers\Razor\Transformalize.Provider.Razor.Autofac\Transformalize.Provider.Razor.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\Sqlite\Transformalize.Provider.Sqlite.Autofac\Transformalize.Provider.Sqlite.Autofac.csproj" />
+      <ProjectReference Include="..\Providers\SqlServer\Transformalize.Provider.SqlServer.Autofac\Transformalize.Provider.SqlServer.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Compression\Compression.csproj" />
       <ProjectReference Include="..\Transforms\Fluid\Transformalize.Transform.Fluid.Autofac\Transformalize.Transform.Fluid.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Geography\Geography.csproj" />
       <ProjectReference Include="..\Transforms\Globalization\Globalization.csproj" />
       <ProjectReference Include="..\Transforms\GoogleMaps\Transformalize.Transform.GoogleMaps\Transformalize.Transform.GoogleMaps.csproj" />
+      <ProjectReference Include="..\Transforms\Humanizer\Transformalize.Transform.Humanizer.Autofac\Transformalize.Transform.Humanizer.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Jint\Transformalize.Transform.Jint.Autofac\Transformalize.Transform.Jint.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\Json\Transformalize.Transform.Json.Autofac\Transformalize.Transform.Json.Autofac.csproj" />
+      <ProjectReference Include="..\Transforms\LambdaParser\Transformalize.Transform.LambdaParser.Autofac\Transformalize.Transform.LambdaParser.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Razor\Transformalize.Transform.Razor.Autofac\Transformalize.Transform.Razor.Autofac.csproj" />
       <ProjectReference Include="..\Transforms\Xml\Xml.csproj" />
    </ItemGroup>
@@ -89,6 +90,15 @@
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="arrangements\bogus-to-razor.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="arrangements\bogus-to-geojson.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="arrangements\bogus-to-geojson-min.xml">
+         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="arrangements\bogus-to-geojson-geo.xml">
          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="arrangements\bogus-to-sqlite.xml">

@@ -39,7 +39,7 @@ namespace Transformalize.Providers.GeoJson {
          PropertyFields = fields.Where(f => RoleEquals(f, "property")).ToArray();
 
          if (LatitudeField == null || LongitudeField == null) {
-            throw new InvalidOperationException($"GeoJson role writer requires fields with role='latitude' and role='longitude' for entity '{context.Entity.Alias}'.");
+            throw new InvalidOperationException($"GeoJson geo writer requires fields with geo='latitude' and geo='longitude' for entity '{context.Entity.Alias}'.");
          }
 
          if (!double.IsNaN(context.Connection.MinLat) &&
@@ -56,7 +56,7 @@ namespace Transformalize.Providers.GeoJson {
       }
 
       private static bool RoleEquals(Field field, string role) {
-         return string.Equals(field?.Role?.Trim(), role, StringComparison.OrdinalIgnoreCase);
+         return field != null && field.Geo == role;
       }
 
       public static string PropertyName(Field field) {
