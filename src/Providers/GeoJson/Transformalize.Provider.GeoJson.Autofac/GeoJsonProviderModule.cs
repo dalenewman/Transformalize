@@ -18,8 +18,9 @@
 
 using System.IO;
 using System.Linq;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Autofac;
-using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -91,10 +92,8 @@ namespace Transformalize.Providers.GeoJson.Autofac {
          if (outputConnection != null) {
             if (outputConnection.Provider == GeoJson) {
                if (outputConnection.Stream) {
-                  var writer = new JsonTextWriter(_streamWriter);
-
-                  //var options = new JsonWriterOptions() { Indented = outputConnection.Format == "json" };
-                  //var writer = new Utf8JsonWriter(_stream, options);
+                  var options = new JsonWriterOptions { Indented = outputConnection.Format == "json", Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+                  var writer = new Utf8JsonWriter(_streamWriter.BaseStream, options);
 
                   foreach (var entity in _process.Entities) {
                      builder.Register<IWrite>(ctx => {

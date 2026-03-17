@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Autofac;
 using Cfg.Net.Shorthand;
-using Newtonsoft.Json;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.Json.Autofac {
@@ -17,7 +17,7 @@ namespace Transformalize.Transforms.Json.Autofac {
          _shortHand = builder.Properties.ContainsKey("ShortHand") ? (ShorthandRoot)builder.Properties["ShortHand"] : new ShorthandRoot();
 
          RegisterTransform(builder, c => new JsonPathTransform(c), new JsonPathTransform().GetSignatures());
-         RegisterTransform(builder, c => new FromJsonTransform(c, o => JsonConvert.SerializeObject(o, Formatting.None)), new FromJsonTransform().GetSignatures());
+         RegisterTransform(builder, c => new FromJsonTransform(c, o => JsonSerializer.Serialize(o)), new FromJsonTransform().GetSignatures());
          RegisterTransform(builder, c => new ToJsonTransform(c), new ToJsonTransform().GetSignatures());
 
       }

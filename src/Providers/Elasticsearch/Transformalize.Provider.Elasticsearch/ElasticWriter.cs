@@ -20,9 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using Elastic.Transport;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -38,7 +37,18 @@ namespace Transformalize.Providers.Elasticsearch {
       readonly ITransport _client;
       readonly string _prefix;
       readonly AliasField[] _fields;
-      private readonly JsonSerializerSettings _settings;
+      private readonly JsonSerializerOptions _options = new JsonSerializerOptions {
+         Converters = { new DecimalToDoubleConverter() }
+      };
+
+      private sealed class DecimalToDoubleConverter : System.Text.Json.Serialization.JsonConverter<decimal> {
+         public override decimal Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) => reader.GetDecimal();
+         public override void Write(Utf8JsonWriter writer, decimal value, JsonSerializerOptions options) {
+            // Format with explicit decimal point so JSON parsers treat as floating-point (not integer)
+            var s = value.ToString("0.0###########################", System.Globalization.CultureInfo.InvariantCulture);
+            writer.WriteRawValue(s);
+         }
+      }
 
       private class AliasField {
          public string Alias { get; set; }
@@ -50,10 +60,6 @@ namespace Transformalize.Providers.Elasticsearch {
          _client = client;
          _prefix = "{\"index\": {\"_index\": \"" + context.Connection.Index + "\", \"_id\": \"";
          _fields = context.OutputFields.Select(f => new AliasField { Alias = f.Alias.ToLower(), Field = f }).ToArray();
-         _settings = new JsonSerializerSettings {
-            Formatting = Formatting.None,
-            ContractResolver = new DefaultContractResolver()
-         };
       }
 
       public void Write(IEnumerable<IRow> rows) {
@@ -89,7 +95,7 @@ namespace Transformalize.Providers.Elasticsearch {
                   builder.Append(row[key.Field]);
                }
                builder.AppendLine("\"}}");
-               builder.AppendLine(JsonConvert.SerializeObject(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _settings));
+               builder.AppendLine(JsonSerializer.Serialize(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _options));
             }
 
             var bulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
@@ -142,7 +148,7 @@ namespace Transformalize.Providers.Elasticsearch {
                   builder.Append(row[key.Field]);
                }
                builder.AppendLine("\"}}");
-               builder.AppendLine(JsonConvert.SerializeObject(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _settings));
+               builder.AppendLine(JsonSerializer.Serialize(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _options));
             }
 
             var asyncBulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");

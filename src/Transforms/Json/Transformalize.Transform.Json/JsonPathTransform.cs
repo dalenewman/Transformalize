@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using Json.Path;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Nodes;
 using Transformalize.Contracts;
 
 namespace Transformalize.Transforms.Json {
@@ -26,29 +26,19 @@ namespace Transformalize.Transforms.Json {
       }
 
       public override IRow Operate(IRow row) {
-         JObject o;
          var json = GetString(row, _input);
          try {
-            o = JObject.Parse(json);
-            try {
-               var result = o.SelectToken(Context.Operation.Expression);
-               row[Context.Field] = result == null ? Context.Field.DefaultValue() : result.ToString();
-            } catch (JsonException find) {
-               if (find.Message == "Path returned multiple tokens.") {
-                  row[Context.Field] = o.SelectTokens(Context.Operation.Expression).First().ToString();
-               } else {
-                  Context.Warn(find.Message);
-                  Context.Warn("No result with JSON expression: {0}", Context.Operation.Expression);
-                  Context.Debug(() => json);
-                  Context.Debug(() => find.StackTrace);
-                  row[Context.Field] = Context.Field.DefaultValue();
-               }
-            }
-         } catch (JsonReaderException parse) {
+            var node = JsonNode.Parse(json);
+            var path = JsonPath.Parse(Context.Operation.Expression);
+            var results = path.Evaluate(node);
+            var match = results.Matches.FirstOrDefault();
+            row[Context.Field] = match == null ? Context.Field.DefaultValue() : (match.Value == null ? Context.Field.DefaultValue() : match.Value.ToString());
+         } catch (global::System.Text.Json.JsonException parse) {
             Context.Warn("Could not parse JSON in {0}", _input.Alias);
             Context.Warn(parse.Message);
-            Context.Debug(() => json);
-            Context.Debug(() => parse.StackTrace);
+            row[Context.Field] = Context.Field.DefaultValue();
+         } catch (PathParseException ex) {
+            Context.Warn(ex.Message);
             row[Context.Field] = Context.Field.DefaultValue();
          }
          return row;

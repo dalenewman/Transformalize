@@ -18,12 +18,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Elastic.Transport;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Elasticsearch.Ext;
-using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -59,7 +59,7 @@ namespace Transformalize.Providers.Elasticsearch {
                 },
                 size = 0
             };
-            var json = JsonConvert.SerializeObject(body);
+            var json = JsonSerializer.Serialize(body);
             var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
             var result = _client.Request<DynamicResponse>(in searchPath, PostData.String(json));
 
@@ -95,7 +95,7 @@ namespace Transformalize.Providers.Elasticsearch {
                 },
                 size = 0
             };
-            var json = JsonConvert.SerializeObject(body);
+            var json = JsonSerializer.Serialize(body);
             var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
             var result = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(json), token).ConfigureAwait(false);
 

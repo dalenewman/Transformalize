@@ -18,8 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Elastic.Transport;
-using Newtonsoft.Json;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -113,7 +113,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var properties = new Dictionary<string, object> { { "properties", GetFields() } };
          var typeName = _context.Entity.Alias.ToLower();
-         var json = JsonConvert.SerializeObject(properties);
+         var json = JsonSerializer.Serialize(properties);
 
          DynamicResponse elasticResponse;
 
@@ -230,7 +230,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          var properties = new Dictionary<string, object> { { "properties", GetFields() } };
          var typeName = _context.Entity.Alias.ToLower();
-         var json = JsonConvert.SerializeObject(properties);
+         var json = JsonSerializer.Serialize(properties);
 
          var putMappingPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}/_mapping");
          var elasticResponse = await _client.RequestAsync<DynamicResponse>(in putMappingPath, PostData.String(json), token).ConfigureAwait(false);

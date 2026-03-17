@@ -3,7 +3,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize.Transforms.Jint</RootNamespace>
       <AssemblyName>Transformalize.Transform.Jint</AssemblyName>
-      <Version>0.12.2-beta</Version>
+      <Version>0.12.3-beta</Version>
       <Authors>Dale Newman</Authors>
       <Company>Transformalize</Company>
       <Description>A Transformalize transform using Jint</Description>
@@ -13,8 +13,8 @@
       <RepositoryType>git</RepositoryType>
       <PackageTags>etl,transformalize,jint,javascript</PackageTags>
       <NeutralLanguage>en-US</NeutralLanguage>
-      <FileVersion>0.12.2</FileVersion>
-      <AssemblyVersion>0.12.2</AssemblyVersion>
+      <FileVersion>0.12.3</FileVersion>
+      <AssemblyVersion>0.12.3</AssemblyVersion>
       
    </PropertyGroup>
    <ItemGroup>

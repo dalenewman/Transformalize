@@ -3,9 +3,9 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<AssemblyName>Transformalize.Transform.GoogleMaps</AssemblyName>
 		<RootNamespace>Transformalize.Transforms.GoogleMaps</RootNamespace>
-		<Version>0.12.2-beta</Version>
-		<FileVersion>0.12.2</FileVersion>
-		<AssemblyVersion>0.12.2</AssemblyVersion>
+		<Version>0.12.3-beta</Version>
+		<FileVersion>0.12.3</FileVersion>
+		<AssemblyVersion>0.12.3</AssemblyVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="gmaps-api-net" Version="0.33.0" />

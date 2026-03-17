@@ -19,7 +19,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Elastic.Transport;
-using Newtonsoft.Json.Linq;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;

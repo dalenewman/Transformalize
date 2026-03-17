@@ -155,7 +155,7 @@ namespace Test {
                var actual = File.ReadAllText("bogus-legacy.geo.json");
                using var doc = JsonDocument.Parse(actual);
                var properties = doc.RootElement.GetProperty("features")[0].GetProperty("properties");
-               Assert.AreEqual("<table", properties.GetProperty("description").GetString().Substring(0,6));
+               Assert.AreEqual("<table", properties.GetProperty("description").GetString()?.Substring(0,6));
                Assert.IsTrue(properties.TryGetProperty("marker-color", out _));
                Assert.AreEqual((uint)1, process.Entities.First().Inserts);
             }
