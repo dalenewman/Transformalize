@@ -1,0 +1,21 @@
+﻿<add name='TestProcess'>
+  <connections>
+    <add name='input' provider='bogus' seed='1' />
+    <add name='output' provider='geojson' use="geo" file='bogus.geo.json' min-lat='24.396308' min-lon='-125.0' max-lat='49.384358' max-lon='-66.93457' />
+  </connections>
+  <entities>
+    <add name='Contact' size='1'>
+      <fields>
+        <add name='Identity' type='int' primary-key='true' geo="id" />
+        <add name='FirstName' />
+        <add name='LastName' />
+        <add name='Latitude' type='double' min='24.396308' max='49.384358' geo="latitude" />
+        <add name='Longitude' type='double' min='-125.0' max='-66.93457' geo="longitude" />
+        <add name='Color' alias="color" geo="property" />
+      </fields>
+      <calculated-fields>
+        <add name="description" t="format(This guy's name is {FirstName} {LastName})" length="128" geo="property" />
+      </calculated-fields>
+    </add>
+  </entities>
+</add>

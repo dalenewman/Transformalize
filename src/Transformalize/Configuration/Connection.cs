@@ -324,8 +324,8 @@ namespace Transformalize.Configuration {
       [Cfg(value = Constants.DefaultSetting, domain = Constants.ModelDomain, toLower = true)]
       public string ModelType { get; set; }
 
-      [Cfg(value = "minimal", domain = "role,minimal,legacy", toLower = true)]
-      public string Type { get; set; }
+      [Cfg(value = Constants.DefaultSetting, domain = "geo,minimal,legacy," + Constants.DefaultSetting, toLower = true)]
+      public string Use { get; set; }
 
       [Cfg(value = "")]
       public string Command { get; set; }

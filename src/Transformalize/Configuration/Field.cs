@@ -487,7 +487,10 @@ namespace Transformalize.Configuration {
 
       [Cfg(value = "")]
       public string Role { get; set; }
-      
+
+      [Cfg(value = Constants.DefaultSetting, domain = Constants.GeoDomain, toLower = true, trim = true)]
+      public string Geo { get; set; }
+
       [Cfg(value = "")]
       public string HRef { get; set; }
       [Cfg(value = "")]

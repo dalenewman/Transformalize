@@ -52,6 +52,7 @@ namespace Transformalize {
 
       public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=,in,notin,like,notlike";
       public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;
+      public const string GeoDomain = DefaultSetting + ",latitude,longitude,altitude,id,property";
 
       public const string TflHashCode = "TflHashCode";
       public const string TflKey = "TflKey";

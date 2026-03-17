@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2020 Dale Newman
+// Copyright 2013-2026 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +35,9 @@ namespace Transformalize.Providers.GeoJson.Autofac {
       private Process _process;
       private readonly StreamWriter _streamWriter;
       private const string GeoJson = "geojson";
-      private const string RoleType = "role";
+      private const string GeoType = "geo";
       private const string LegacyType = "legacy";
+      private const string MinimalType = "minimal";
 
       /// <summary>
       /// Create a GeoJson module with an optional stream to write to
@@ -98,7 +99,7 @@ namespace Transformalize.Providers.GeoJson.Autofac {
                   foreach (var entity in _process.Entities) {
                      builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        if (outputConnection.Type == RoleType) {
+                        if (outputConnection.Use == GeoType) {
                            return new GeoJsonRoleProcessStreamWriter(output, writer);
                         }
                         return new GeoJsonMinimalProcessStreamWriter(output, writer);
@@ -108,13 +109,14 @@ namespace Transformalize.Providers.GeoJson.Autofac {
                   foreach (var entity in _process.Entities) {
                      builder.Register<IWrite>(ctx => {
                         var output = ctx.ResolveNamed<OutputContext>(entity.Key);
-                        if (outputConnection.Type == RoleType) {
+                        if (outputConnection.Use == GeoType) {
                            return new GeoJsonRoleFileWriter(output);
                         }
-                        if (outputConnection.Type == LegacyType) {
-                           return new GeoJsonFileWriter(output);
+                        if (outputConnection.Use == MinimalType) {
+                           return new GeoJsonMinimalFileWriter(output);
                         }
-                        return new GeoJsonMinimalFileWriter(output);
+                        return new GeoJsonFileWriter(output);
+                        
                      }).Named<IWrite>(entity.Key);
                   }
                }

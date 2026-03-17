@@ -35,7 +35,7 @@ namespace Test {
          const string xml = @"<add name='Test' mode='init'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='geojson' type='legacy' file='bogus.geo.json' />
+    <add name='output' provider='geojson' use='legacy' file='bogus.geo.json' />
   </connections>
   <entities>
     <add name='Contact' size='2'>
@@ -74,16 +74,16 @@ namespace Test {
          const string xml = @"<add name='Test' mode='init'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='geojson' type='role' file='bogus-role.geo.json' min-lat='24.0' min-lon='-125.0' max-lat='50.0' max-lon='-66.0' />
+    <add name='output' provider='geojson' use='geo' file='bogus-role.geo.json' min-lat='24.0' min-lon='-125.0' max-lat='50.0' max-lon='-66.0' />
   </connections>
   <entities>
     <add name='Contact' size='2'>
       <fields>
-        <add name='Identity' type='int' role='id' />
-        <add name='FirstName' role='property' />
+        <add name='Identity' type='int' geo='id' />
+        <add name='FirstName' geo='property' />
         <add name='IgnoreMe' />
-        <add name='Latitude' type='double' min='24.396308' max='49.384358' role='latitude' />
-        <add name='Longitude' type='double' min='-125.0' max='-66.93457' role='longitude' />
+        <add name='Latitude' type='double' min='24.396308' max='49.384358' geo='latitude' />
+        <add name='Longitude' type='double' min='-125.0' max='-66.93457' geo='longitude' />
       </fields>
     </add>
   </entities>
@@ -128,11 +128,11 @@ namespace Test {
       }
 
       [TestMethod]
-      public void WriteDefaultsToMinimalType() {
+      public void WriteDefaultsToLegacyType() {
          const string xml = @"<add name='Test' mode='init'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
-    <add name='output' provider='geojson' file='bogus-minimal.geo.json' />
+    <add name='output' provider='geojson' file='bogus-legacy.geo.json' />
   </connections>
   <entities>
     <add name='Contact' size='1'>
@@ -152,11 +152,11 @@ namespace Test {
                var controller = inner.Resolve<IProcessController>();
                controller.Execute();
 
-               var actual = File.ReadAllText("bogus-minimal.geo.json");
+               var actual = File.ReadAllText("bogus-legacy.geo.json");
                using var doc = JsonDocument.Parse(actual);
                var properties = doc.RootElement.GetProperty("features")[0].GetProperty("properties");
-               Assert.AreEqual("add geojson-description to output", properties.GetProperty("description").GetString());
-               Assert.IsFalse(properties.TryGetProperty("marker-color", out _));
+               Assert.AreEqual("<table", properties.GetProperty("description").GetString().Substring(0,6));
+               Assert.IsTrue(properties.TryGetProperty("marker-color", out _));
                Assert.AreEqual((uint)1, process.Entities.First().Inserts);
             }
          }

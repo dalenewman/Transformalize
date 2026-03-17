@@ -174,7 +174,7 @@ namespace Transformalize.ConfigurationFacade {
       public string ModelType { get; set; }
 
       [Cfg]
-      public string Type { get; set; }
+      public string Use { get; set; }
 
       [Cfg]
       public string Command { get; set; }
@@ -255,7 +255,7 @@ namespace Transformalize.ConfigurationFacade {
             Index = this.Index,
             LinePattern = this.LinePattern,
             ModelType = this.ModelType,
-            Type = this.Type,
+            Use = this.Use,
             MinLat = double.NaN,
             MinLon = double.NaN,
             MaxLat = double.NaN,

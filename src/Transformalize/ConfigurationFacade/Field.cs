@@ -147,6 +147,8 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Role { get; set; }
       [Cfg]
+      public string Geo { get; set; }
+      [Cfg]
       public string HRef { get; set; }
       [Cfg]
       public string Target { get; set; }
