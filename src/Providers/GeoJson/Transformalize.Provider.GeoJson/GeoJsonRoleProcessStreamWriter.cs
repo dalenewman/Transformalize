@@ -15,9 +15,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using System.Threading;
@@ -26,10 +27,10 @@ using System.Threading.Tasks;
 namespace Transformalize.Providers.GeoJson {
    public class GeoJsonRoleProcessStreamWriter : IWrite {
       private readonly OutputContext _context;
-      private readonly JsonWriter _jw;
+      private readonly Utf8JsonWriter _jw;
       private readonly GeoJsonRoleMap _map;
 
-      public GeoJsonRoleProcessStreamWriter(OutputContext context, JsonWriter jsonWriter) {
+      public GeoJsonRoleProcessStreamWriter(OutputContext context, Utf8JsonWriter jsonWriter) {
          _context = context;
          _jw = jsonWriter;
          _map = new GeoJsonRoleMap(context);
@@ -55,18 +56,18 @@ namespace Transformalize.Providers.GeoJson {
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          if (Equals(_context.Process.Entities.First(), _context.Entity)) {
-            await WriteCollectionStartAsync(token).ConfigureAwait(false);
+            WriteCollectionStart();
          }
 
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
-            await WriteFeatureAsync(row, token).ConfigureAwait(false);
+            WriteFeature(row);
             _context.Entity.Inserts++;
             await _jw.FlushAsync(token).ConfigureAwait(false);
          }
 
          if (Equals(_context.Process.Entities.Last(), _context.Entity)) {
-            await WriteCollectionEndAsync(token).ConfigureAwait(false);
+            WriteCollectionEnd();
          }
 
          await _jw.FlushAsync(token).ConfigureAwait(false);
@@ -75,19 +76,10 @@ namespace Transformalize.Providers.GeoJson {
       private void WriteCollectionStart() {
          _jw.WriteStartObject();
          _jw.WritePropertyName("type");
-         _jw.WriteValue("FeatureCollection");
+         _jw.WriteStringValue("FeatureCollection");
          WriteBBox();
          _jw.WritePropertyName("features");
          _jw.WriteStartArray();
-      }
-
-      private async Task WriteCollectionStartAsync(CancellationToken token) {
-         await _jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await _jw.WriteValueAsync("FeatureCollection", token).ConfigureAwait(false);
-         await WriteBBoxAsync(token).ConfigureAwait(false);
-         await _jw.WritePropertyNameAsync("features", token).ConfigureAwait(false);
-         await _jw.WriteStartArrayAsync(token).ConfigureAwait(false);
       }
 
       private void WriteCollectionEnd() {
@@ -95,30 +87,25 @@ namespace Transformalize.Providers.GeoJson {
          _jw.WriteEndObject();
       }
 
-      private async Task WriteCollectionEndAsync(CancellationToken token) {
-         await _jw.WriteEndArrayAsync(token).ConfigureAwait(false);
-         await _jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-      }
-
       private void WriteFeature(IRow row) {
          _jw.WriteStartObject();
          _jw.WritePropertyName("type");
-         _jw.WriteValue("Feature");
+         _jw.WriteStringValue("Feature");
          if (_map.IdField != null) {
             _jw.WritePropertyName("id");
-            _jw.WriteValue(row[_map.IdField]);
+            WriteValue(_jw, row[_map.IdField]);
          }
 
          _jw.WritePropertyName("geometry");
          _jw.WriteStartObject();
          _jw.WritePropertyName("type");
-         _jw.WriteValue("Point");
+         _jw.WriteStringValue("Point");
          _jw.WritePropertyName("coordinates");
          _jw.WriteStartArray();
-         _jw.WriteValue(row[_map.LongitudeField]);
-         _jw.WriteValue(row[_map.LatitudeField]);
+         WriteValue(_jw, row[_map.LongitudeField]);
+         WriteValue(_jw, row[_map.LatitudeField]);
          if (_map.AltitudeField != null) {
-            _jw.WriteValue(row[_map.AltitudeField]);
+            WriteValue(_jw, row[_map.AltitudeField]);
          }
          _jw.WriteEndArray();
          _jw.WriteEndObject();
@@ -127,45 +114,11 @@ namespace Transformalize.Providers.GeoJson {
          _jw.WriteStartObject();
          foreach (var field in _map.PropertyFields) {
             _jw.WritePropertyName(GeoJsonRoleMap.PropertyName(field));
-            _jw.WriteValue(row[field]);
+            WriteValue(_jw, row[field]);
          }
          _jw.WriteEndObject();
 
          _jw.WriteEndObject();
-      }
-
-      private async Task WriteFeatureAsync(IRow row, CancellationToken token) {
-         await _jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await _jw.WriteValueAsync("Feature", token).ConfigureAwait(false);
-         if (_map.IdField != null) {
-            await _jw.WritePropertyNameAsync("id", token).ConfigureAwait(false);
-            await _jw.WriteValueAsync(row[_map.IdField], token).ConfigureAwait(false);
-         }
-
-         await _jw.WritePropertyNameAsync("geometry", token).ConfigureAwait(false);
-         await _jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await _jw.WriteValueAsync("Point", token).ConfigureAwait(false);
-         await _jw.WritePropertyNameAsync("coordinates", token).ConfigureAwait(false);
-         await _jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-         await _jw.WriteValueAsync(row[_map.LongitudeField], token).ConfigureAwait(false);
-         await _jw.WriteValueAsync(row[_map.LatitudeField], token).ConfigureAwait(false);
-         if (_map.AltitudeField != null) {
-            await _jw.WriteValueAsync(row[_map.AltitudeField], token).ConfigureAwait(false);
-         }
-         await _jw.WriteEndArrayAsync(token).ConfigureAwait(false);
-         await _jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-
-         await _jw.WritePropertyNameAsync("properties", token).ConfigureAwait(false);
-         await _jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         foreach (var field in _map.PropertyFields) {
-            await _jw.WritePropertyNameAsync(GeoJsonRoleMap.PropertyName(field), token).ConfigureAwait(false);
-            await _jw.WriteValueAsync(row[field], token).ConfigureAwait(false);
-         }
-         await _jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-
-         await _jw.WriteEndObjectAsync(token).ConfigureAwait(false);
       }
 
       private void WriteBBox() {
@@ -176,22 +129,24 @@ namespace Transformalize.Providers.GeoJson {
          _jw.WritePropertyName("bbox");
          _jw.WriteStartArray();
          foreach (var number in _map.BBox) {
-            _jw.WriteValue(number);
+            _jw.WriteNumberValue(number);
          }
          _jw.WriteEndArray();
       }
 
-      private async Task WriteBBoxAsync(CancellationToken token) {
-         if (_map.BBox == null) {
-            return;
+      private static void WriteValue(Utf8JsonWriter jw, object value) {
+         switch (value) {
+            case null: jw.WriteNullValue(); break;
+            case bool b: jw.WriteBooleanValue(b); break;
+            case int i: jw.WriteNumberValue(i); break;
+            case long l: jw.WriteNumberValue(l); break;
+            case float f: jw.WriteNumberValue(f); break;
+            case double d: jw.WriteNumberValue(d); break;
+            case decimal dec: jw.WriteNumberValue(dec); break;
+            case DateTime dt: jw.WriteStringValue(dt.ToString("o")); break;
+            case Guid g: jw.WriteStringValue(g.ToString()); break;
+            default: jw.WriteStringValue(value.ToString()); break;
          }
-
-         await _jw.WritePropertyNameAsync("bbox", token).ConfigureAwait(false);
-         await _jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-         foreach (var number in _map.BBox) {
-            await _jw.WriteValueAsync(number, token).ConfigureAwait(false);
-         }
-         await _jw.WriteEndArrayAsync(token).ConfigureAwait(false);
       }
    }
 }

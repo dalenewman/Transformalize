@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -47,9 +47,9 @@ namespace Transformalize.Providers.Json {
 
       public IEnumerable<IRow> Read() {
          ResetStreamPosition();
-         using (var textReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true))
-         using (var reader = new JsonTextReader(textReader)) {
-            return ReadRows(reader);
+         using (var textReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
+            var json = textReader.ReadToEnd();
+            return ReadRows(json);
          }
       }
 
@@ -60,19 +60,13 @@ namespace Transformalize.Providers.Json {
          using (var textReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
             var json = await textReader.ReadToEndAsync().ConfigureAwait(false);
             token.ThrowIfCancellationRequested();
-
-            using (var stringReader = new StringReader(json))
-            using (var reader = new JsonTextReader(stringReader)) {
-               return ReadRows(reader);
-            }
+            return ReadRows(json);
          }
       }
 
-      private List<IRow> ReadRows(JsonReader reader) {
+      private List<IRow> ReadRows(string json) {
          var rows = new List<IRow>();
-         IRow row = null;
-         Field field = null;
-         var types = Constants.TypeSystem();
+
          var current = 0;
          var start = 0;
          var end = 0;
@@ -82,76 +76,44 @@ namespace Transformalize.Providers.Json {
             end = start + _context.Entity.Size;
          }
 
-         var textWriter = new StringWriter();
-         var jsonWriter = new JsonTextWriter(textWriter);
+         using var doc = JsonDocument.Parse(json);
+         foreach (var element in doc.RootElement.EnumerateArray()) {
+            if (end > 0 && !current.Between(start, end)) {
+               ++current;
+               if (current == end) {
+                  _context.Entity.Hits = current;
+                  return rows;
+               }
+               continue;
+            }
 
-         while (reader.Read()) {
-            switch (reader.TokenType) {
-               case JsonToken.StartObject:
-                  if (reader.Depth == 1) {
-                     row = _rowFactory.Create();
-                  }
-                  if (reader.Depth > 1) {
-                     jsonWriter.WriteStartObject();
-                  }
-                  break;
-               case JsonToken.EndObject:
-                  if (reader.Depth == 1) {
-                     if (end == 0 || current.Between(start, end)) {
-                        rows.Add(row);
-                     }
-                     ++current;
-                     if (current == end) {
-                        _context.Entity.Hits = current;
-                        return rows;
-                     }
-                  }
-                  if (reader.Depth > 1 && field != null) {
-                     jsonWriter.WriteEndObject();
-                     jsonWriter.Flush();
-                     row[field] = textWriter.ToString();
-                     field = null;
-                     textWriter = new StringWriter();
-                     jsonWriter = new JsonTextWriter(textWriter);
-                  }
-                  break;
-               case JsonToken.StartArray:
-                  if (reader.Depth > 0) {
-                     jsonWriter.WriteStartArray();
-                  }
-                  break;
-               case JsonToken.EndArray:
-                  if (reader.Depth > 0) {
-                     jsonWriter.WriteEndArray();
-                  }
-                  break;
-               case JsonToken.PropertyName:
-                  var name = (string)reader.Value;
-                  if (_fieldLookup.ContainsKey(name) && reader.Depth == 2) {
-                     field = _fieldLookup[name];
-                  }
-                  if (reader.Depth > 2) {
-                     jsonWriter.WritePropertyName(name);
-                  }
-                  break;
-               default:
-                  if (reader.Depth == 2 && reader.Value != null && field != null) {
-                     if (types[field.Type] == reader.ValueType) {
-                        row[field] = reader.Value;
-                     } else {
-                        row[field] = field.Convert(reader.Value);
-                     }
-                     field = null;
-                  }
-                  if (reader.Depth > 2 && reader.Value != null) {
-                     jsonWriter.WriteValue(reader.Value);
-                  }
-                  break;
+            var row = _rowFactory.Create();
+            foreach (var prop in element.EnumerateObject()) {
+               if (_fieldLookup.TryGetValue(prop.Name, out var field)) {
+                  row[field] = field.Convert(ConvertJsonElement(prop.Value));
+               }
+            }
+            rows.Add(row);
+            ++current;
+            if (current == end) {
+               _context.Entity.Hits = current;
+               return rows;
             }
          }
 
          _context.Entity.Hits = current;
          return rows;
+      }
+
+      private static object ConvertJsonElement(JsonElement el) {
+         return el.ValueKind switch {
+            JsonValueKind.String => el.GetString(),
+            JsonValueKind.Number => el.TryGetInt64(out var l) ? (object)l : el.GetDouble(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Null => null,
+            _ => el.GetRawText()
+         };
       }
 
       private void ResetStreamPosition() {

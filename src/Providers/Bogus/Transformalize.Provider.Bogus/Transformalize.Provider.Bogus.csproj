@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Bogus</RootNamespace>
     <AssemblyName>Transformalize.Provider.Bogus</AssemblyName>
-    <Version>0.12.2-beta</Version>
-    <FileVersion>0.12.2</FileVersion>
-    <AssemblyVersion>0.12.2</AssemblyVersion>
+    <Version>0.12.3-beta</Version>
+    <FileVersion>0.12.3</FileVersion>
+    <AssemblyVersion>0.12.3</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />

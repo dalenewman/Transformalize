@@ -15,10 +15,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using Newtonsoft.Json;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using System.Threading;
@@ -37,8 +38,8 @@ namespace Transformalize.Providers.GeoJson {
       }
 
       public void Write(IEnumerable<IRow> rows) {
-         using (var textWriter = new StreamWriter(_stream, new UTF8Encoding(false), 1024, true))
-         using (var jw = new JsonTextWriter(textWriter)) {
+         var options = new JsonWriterOptions { Indented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+         using (var jw = new Utf8JsonWriter(_stream, options)) {
             WriteCollectionStart(jw);
             foreach (var row in rows) {
                WriteFeature(jw, row);
@@ -47,73 +48,56 @@ namespace Transformalize.Providers.GeoJson {
             }
             WriteCollectionEnd(jw);
             jw.Flush();
-            textWriter.Flush();
          }
       }
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
-         using (var textWriter = new StreamWriter(_stream, new UTF8Encoding(false), 1024, true))
-         using (var jw = new JsonTextWriter(textWriter)) {
-            await WriteCollectionStartAsync(jw, token).ConfigureAwait(false);
-            foreach (var row in rows) {
-               token.ThrowIfCancellationRequested();
-               await WriteFeatureAsync(jw, row, token).ConfigureAwait(false);
-               _context.Entity.Inserts++;
-               await jw.FlushAsync(token).ConfigureAwait(false);
-            }
-            await WriteCollectionEndAsync(jw, token).ConfigureAwait(false);
-            await jw.FlushAsync(token).ConfigureAwait(false);
-            await textWriter.FlushAsync().ConfigureAwait(false);
+         var options = new JsonWriterOptions { Indented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+         var jw = new Utf8JsonWriter(_stream, options);
+         WriteCollectionStart(jw);
+         foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(jw, row);
+            _context.Entity.Inserts++;
+            jw.Flush();
          }
+         WriteCollectionEnd(jw);
+         await jw.FlushAsync(token).ConfigureAwait(false);
       }
 
-      private void WriteCollectionStart(JsonWriter jw) {
+      private void WriteCollectionStart(Utf8JsonWriter jw) {
          jw.WriteStartObject();
          jw.WritePropertyName("type");
-         jw.WriteValue("FeatureCollection");
+         jw.WriteStringValue("FeatureCollection");
          WriteBBox(jw);
          jw.WritePropertyName("features");
          jw.WriteStartArray();
       }
 
-      private async Task WriteCollectionStartAsync(JsonWriter jw, CancellationToken token) {
-         await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await jw.WriteValueAsync("FeatureCollection", token).ConfigureAwait(false);
-         await WriteBBoxAsync(jw, token).ConfigureAwait(false);
-         await jw.WritePropertyNameAsync("features", token).ConfigureAwait(false);
-         await jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-      }
-
-      private static void WriteCollectionEnd(JsonWriter jw) {
+      private static void WriteCollectionEnd(Utf8JsonWriter jw) {
          jw.WriteEndArray();
          jw.WriteEndObject();
       }
 
-      private static async Task WriteCollectionEndAsync(JsonWriter jw, CancellationToken token) {
-         await jw.WriteEndArrayAsync(token).ConfigureAwait(false);
-         await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-      }
-
-      private void WriteFeature(JsonWriter jw, IRow row) {
+      private void WriteFeature(Utf8JsonWriter jw, IRow row) {
          jw.WriteStartObject();
          jw.WritePropertyName("type");
-         jw.WriteValue("Feature");
+         jw.WriteStringValue("Feature");
          if (_map.IdField != null) {
             jw.WritePropertyName("id");
-            jw.WriteValue(row[_map.IdField]);
+            WriteValue(jw, row[_map.IdField]);
          }
 
          jw.WritePropertyName("geometry");
          jw.WriteStartObject();
          jw.WritePropertyName("type");
-         jw.WriteValue("Point");
+         jw.WriteStringValue("Point");
          jw.WritePropertyName("coordinates");
          jw.WriteStartArray();
-         jw.WriteValue(row[_map.LongitudeField]);
-         jw.WriteValue(row[_map.LatitudeField]);
+         WriteValue(jw, row[_map.LongitudeField]);
+         WriteValue(jw, row[_map.LatitudeField]);
          if (_map.AltitudeField != null) {
-            jw.WriteValue(row[_map.AltitudeField]);
+            WriteValue(jw, row[_map.AltitudeField]);
          }
          jw.WriteEndArray();
          jw.WriteEndObject();
@@ -122,48 +106,14 @@ namespace Transformalize.Providers.GeoJson {
          jw.WriteStartObject();
          foreach (var field in _map.PropertyFields) {
             jw.WritePropertyName(GeoJsonRoleMap.PropertyName(field));
-            jw.WriteValue(row[field]);
+            WriteValue(jw, row[field]);
          }
          jw.WriteEndObject();
 
          jw.WriteEndObject();
       }
 
-      private async Task WriteFeatureAsync(JsonWriter jw, IRow row, CancellationToken token) {
-         await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await jw.WriteValueAsync("Feature", token).ConfigureAwait(false);
-         if (_map.IdField != null) {
-            await jw.WritePropertyNameAsync("id", token).ConfigureAwait(false);
-            await jw.WriteValueAsync(row[_map.IdField], token).ConfigureAwait(false);
-         }
-
-         await jw.WritePropertyNameAsync("geometry", token).ConfigureAwait(false);
-         await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         await jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-         await jw.WriteValueAsync("Point", token).ConfigureAwait(false);
-         await jw.WritePropertyNameAsync("coordinates", token).ConfigureAwait(false);
-         await jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-         await jw.WriteValueAsync(row[_map.LongitudeField], token).ConfigureAwait(false);
-         await jw.WriteValueAsync(row[_map.LatitudeField], token).ConfigureAwait(false);
-         if (_map.AltitudeField != null) {
-            await jw.WriteValueAsync(row[_map.AltitudeField], token).ConfigureAwait(false);
-         }
-         await jw.WriteEndArrayAsync(token).ConfigureAwait(false);
-         await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-
-         await jw.WritePropertyNameAsync("properties", token).ConfigureAwait(false);
-         await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
-         foreach (var field in _map.PropertyFields) {
-            await jw.WritePropertyNameAsync(GeoJsonRoleMap.PropertyName(field), token).ConfigureAwait(false);
-            await jw.WriteValueAsync(row[field], token).ConfigureAwait(false);
-         }
-         await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-
-         await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-      }
-
-      private void WriteBBox(JsonWriter jw) {
+      private void WriteBBox(Utf8JsonWriter jw) {
          if (_map.BBox == null) {
             return;
          }
@@ -171,22 +121,24 @@ namespace Transformalize.Providers.GeoJson {
          jw.WritePropertyName("bbox");
          jw.WriteStartArray();
          foreach (var number in _map.BBox) {
-            jw.WriteValue(number);
+            jw.WriteNumberValue(number);
          }
          jw.WriteEndArray();
       }
 
-      private async Task WriteBBoxAsync(JsonWriter jw, CancellationToken token) {
-         if (_map.BBox == null) {
-            return;
+      private static void WriteValue(Utf8JsonWriter jw, object value) {
+         switch (value) {
+            case null: jw.WriteNullValue(); break;
+            case bool b: jw.WriteBooleanValue(b); break;
+            case int i: jw.WriteNumberValue(i); break;
+            case long l: jw.WriteNumberValue(l); break;
+            case float f: jw.WriteNumberValue(f); break;
+            case double d: jw.WriteNumberValue(d); break;
+            case decimal dec: jw.WriteNumberValue(dec); break;
+            case DateTime dt: jw.WriteStringValue(dt.ToString("o")); break;
+            case Guid g: jw.WriteStringValue(g.ToString()); break;
+            default: jw.WriteStringValue(value.ToString()); break;
          }
-
-         await jw.WritePropertyNameAsync("bbox", token).ConfigureAwait(false);
-         await jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-         foreach (var number in _map.BBox) {
-            await jw.WriteValueAsync(number, token).ConfigureAwait(false);
-         }
-         await jw.WriteEndArrayAsync(token).ConfigureAwait(false);
       }
    }
 }

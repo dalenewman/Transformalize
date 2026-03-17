@@ -16,8 +16,8 @@
 // limitations under the License.
 #endregion
 
+using System.Text.Json;
 using Elastic.Transport;
-using Newtonsoft.Json.Linq;
 using Transformalize.Actions;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -43,9 +43,10 @@ namespace Transformalize.Providers.Elasticsearch {
             _client.Request<DynamicResponse>(in deletePath);
          }
 
-         var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
+         var settingsObj = new { settings = new { number_of_shards = _context.Connection.Shards, number_of_replicas = _context.Connection.Replicas } };
+         var settingsJson = JsonSerializer.Serialize(settingsObj);
          var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
-         var elasticResponse = _client.Request<DynamicResponse>(in createPath, PostData.String(settings.ToString()));
+         var elasticResponse = _client.Request<DynamicResponse>(in createPath, PostData.String(settingsJson));
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,
@@ -70,9 +71,10 @@ namespace Transformalize.Providers.Elasticsearch {
             await _client.RequestAsync<DynamicResponse>(in deletePath, null, token).ConfigureAwait(false);
          }
 
-         var settings = new JObject { { "settings", new JObject { { "number_of_shards", _context.Connection.Shards }, { "number_of_replicas", _context.Connection.Replicas } } } };
+         var settingsObj2 = new { settings = new { number_of_shards = _context.Connection.Shards, number_of_replicas = _context.Connection.Replicas } };
+         var settingsJson2 = JsonSerializer.Serialize(settingsObj2);
          var createPath = new EndpointPath(HttpMethod.PUT, $"/{_context.Connection.Index}");
-         var elasticResponse = await _client.RequestAsync<DynamicResponse>(in createPath, PostData.String(settings.ToString()), token).ConfigureAwait(false);
+         var elasticResponse = await _client.RequestAsync<DynamicResponse>(in createPath, PostData.String(settingsJson2), token).ConfigureAwait(false);
 
          var response = new ActionResponse(
             (int?)elasticResponse.ApiCallDetails?.HttpStatusCode ?? 500,

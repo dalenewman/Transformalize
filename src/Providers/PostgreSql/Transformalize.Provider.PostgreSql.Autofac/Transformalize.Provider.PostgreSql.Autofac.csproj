@@ -3,9 +3,9 @@
     <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <RootNamespace>Transformalize.Providers.PostgreSql.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.PostgreSql.Autofac</AssemblyName>
-    <Version>0.12.2-beta</Version>
-    <FileVersion>0.12.2</FileVersion>
-    <AssemblyVersion>0.12.2</AssemblyVersion>
+    <Version>0.12.3-beta</Version>
+    <FileVersion>0.12.3</FileVersion>
+    <AssemblyVersion>0.12.3</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" Version="10.0.2" />

@@ -18,8 +18,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Elastic.Transport;
-using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using System.Threading;
@@ -48,7 +48,7 @@ namespace Transformalize.Providers.Elasticsearch {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 var updatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
-                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
+                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))));
             }
         }
 
@@ -56,7 +56,7 @@ namespace Transformalize.Providers.Elasticsearch {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 var updatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
-                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))));
+                _client.Request<DynamicResponse>(in updatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))));
             }
         }
 
@@ -64,7 +64,7 @@ namespace Transformalize.Providers.Elasticsearch {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 var asyncUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
-                await _client.RequestAsync<DynamicResponse>(in asyncUpdatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
+                await _client.RequestAsync<DynamicResponse>(in asyncUpdatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
             }
         }
 
@@ -72,7 +72,7 @@ namespace Transformalize.Providers.Elasticsearch {
             foreach (var row in rows) {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 var asyncWriteUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
-                await _client.RequestAsync<DynamicResponse>(in asyncWriteUpdatePath, PostData.String(JsonConvert.SerializeObject(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
+                await _client.RequestAsync<DynamicResponse>(in asyncWriteUpdatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
             }
         }
     }

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Elastic.Transport;
-using Newtonsoft.Json;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Elasticsearch.Ext;
@@ -66,7 +65,7 @@ namespace Transformalize.Providers.Elasticsearch {
          };
 
          var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-         var result = _client.Request<DynamicResponse>(in searchPath, PostData.String(JsonConvert.SerializeObject(body)));
+         var result = _client.Request<DynamicResponse>(in searchPath, PostData.String(JsonSerializer.Serialize(body)));
          dynamic converted = null;
          if (result.ApiCallDetails.HasSuccessfulStatusCode) {
             try {
@@ -166,7 +165,7 @@ namespace Transformalize.Providers.Elasticsearch {
          };
 
          var aggPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-         _commonAggregations = _client.Request<DynamicResponse>(in aggPath, PostData.String(JsonConvert.SerializeObject(body)));
+         _commonAggregations = _client.Request<DynamicResponse>(in aggPath, PostData.String(JsonSerializer.Serialize(body)));
          return _commonAggregations;
       }
 
@@ -240,7 +239,7 @@ namespace Transformalize.Providers.Elasticsearch {
          };
 
          var asyncSearchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-         var result = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(JsonConvert.SerializeObject(body)), token).ConfigureAwait(false);
+         var result = await _client.RequestAsync<DynamicResponse>(in asyncSearchPath, PostData.String(JsonSerializer.Serialize(body)), token).ConfigureAwait(false);
          dynamic converted = null;
          if (result.ApiCallDetails.HasSuccessfulStatusCode) {
             try {
@@ -310,7 +309,7 @@ namespace Transformalize.Providers.Elasticsearch {
          };
 
          var asyncAggPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search");
-         _commonAggregations = await _client.RequestAsync<DynamicResponse>(in asyncAggPath, PostData.String(JsonConvert.SerializeObject(body)), token).ConfigureAwait(false);
+         _commonAggregations = await _client.RequestAsync<DynamicResponse>(in asyncAggPath, PostData.String(JsonSerializer.Serialize(body)), token).ConfigureAwait(false);
          return _commonAggregations;
       }
    }

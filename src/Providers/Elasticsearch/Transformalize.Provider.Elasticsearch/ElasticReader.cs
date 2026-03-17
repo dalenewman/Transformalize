@@ -24,7 +24,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Elastic.Transport;
-using Newtonsoft.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.Threading;
@@ -80,22 +79,20 @@ namespace Transformalize.Providers.Elasticsearch {
           int size = 10
           ) {
 
-         var sb = new StringBuilder();
-         var sw = new StringWriter(sb);
-
-         using (var writer = new JsonTextWriter(sw)) {
+         using var ms = new MemoryStream();
+         using (var writer = new Utf8JsonWriter(ms)) {
             writer.WriteStartObject();
 
             if (!scroll) {
                writer.WritePropertyName("from");
-               writer.WriteValue(from);
+               writer.WriteNumberValue(from);
             }
 
             writer.WritePropertyName("size");
-            writer.WriteValue(size);
+            writer.WriteNumberValue(size);
             if (_version.Major >= 6) {  // for now, everything below expects to know total number of hits
                writer.WritePropertyName("track_total_hits");
-               writer.WriteValue(true);
+               writer.WriteBooleanValue(true);
             }
 
             writer.WritePropertyName("_source");
@@ -103,7 +100,7 @@ namespace Transformalize.Providers.Elasticsearch {
             writer.WritePropertyName("includes");
             writer.WriteStartArray();
             foreach (var field in fields) {
-               writer.WriteValue(readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower());
+               writer.WriteStringValue(readFrom == ReadFrom.Input ? field.Name : field.Alias.ToLower());
             }
             writer.WriteEndArray();
             writer.WriteEndObject();
@@ -136,7 +133,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
                               writer.WriteStartArray(); // values
                               foreach (var value in filter.Value.Split(',')) {
-                                 writer.WriteValue(value);
+                                 writer.WriteStringValue(value);
                               }
                               writer.WriteEndArray(); //values
 
@@ -146,7 +143,7 @@ namespace Transformalize.Providers.Elasticsearch {
                               writer.WritePropertyName("term");
                               writer.WriteStartObject();
                               writer.WritePropertyName(filter.LeftField.Name);
-                              writer.WriteValue(filter.Value);
+                              writer.WriteStringValue(filter.Value);
                               writer.WriteEndObject();
                            }
                            break;
@@ -160,18 +157,18 @@ namespace Transformalize.Providers.Elasticsearch {
                                  writer.WriteStartObject(); // query_string
 
                                  writer.WritePropertyName("query");
-                                 writer.WriteValue(filter.Value);
+                                 writer.WriteStringValue(filter.Value);
 
                                  writer.WritePropertyName("default_field");
-                                 writer.WriteValue(filter.LeftField.Name);
+                                 writer.WriteStringValue(filter.LeftField.Name);
 
                                  writer.WritePropertyName("analyze_wildcard");
-                                 writer.WriteValue(true);
+                                 writer.WriteBooleanValue(true);
 
                                  writer.WritePropertyName("default_operator");
-                                 writer.WriteValue("AND");
+                                 writer.WriteStringValue("AND");
 
-                                 writer.WriteEnd(); // query_string
+                                 writer.WriteEndObject(); // query_string
                               } else {
                                  // match query
                                  writer.WritePropertyName("match");
@@ -181,10 +178,10 @@ namespace Transformalize.Providers.Elasticsearch {
                                  writer.WriteStartObject(); // field name
 
                                  writer.WritePropertyName("query");
-                                 writer.WriteValue(filter.Value);
+                                 writer.WriteStringValue(filter.Value);
 
                                  writer.WritePropertyName("operator");
-                                 writer.WriteValue(filter.Continuation.ToLower());
+                                 writer.WriteStringValue(filter.Continuation.ToLower());
 
                                  writer.WriteEndObject(); // field name
                                  writer.WriteEndObject(); // match
@@ -195,20 +192,20 @@ namespace Transformalize.Providers.Elasticsearch {
                               writer.WriteStartObject(); // query_string
 
                               writer.WritePropertyName("query");
-                              writer.WriteValue(filter.Expression);
+                              writer.WriteStringValue(filter.Expression);
 
                               if (filter.Field != string.Empty) {
                                  writer.WritePropertyName("default_field");
-                                 writer.WriteValue(filter.LeftField.Name);
+                                 writer.WriteStringValue(filter.LeftField.Name);
                               }
 
                               writer.WritePropertyName("analyze_wildcard");
-                              writer.WriteValue(true);
+                              writer.WriteBooleanValue(true);
 
                               writer.WritePropertyName("default_operator");
-                              writer.WriteValue("AND");
+                              writer.WriteStringValue("AND");
 
-                              writer.WriteEnd(); // query_string
+                              writer.WriteEndObject(); // query_string
                            }
 
                            break;
@@ -232,7 +229,7 @@ namespace Transformalize.Providers.Elasticsearch {
                writer.WritePropertyName("term");
                writer.WriteStartObject();
                writer.WritePropertyName("tfldeleted");
-               writer.WriteValue(false);
+               writer.WriteBooleanValue(false);
                writer.WriteEndObject();
                writer.WriteEndObject();
                writer.WriteEndObject();
@@ -251,7 +248,7 @@ namespace Transformalize.Providers.Elasticsearch {
                      writer.WritePropertyName(name);
                      writer.WriteStartObject();
                      writer.WritePropertyName("order");
-                     writer.WriteValue(orderBy.Sort);
+                     writer.WriteStringValue(orderBy.Sort);
                      writer.WriteEndObject();
                      writer.WriteEndObject();
                   }
@@ -273,16 +270,16 @@ namespace Transformalize.Providers.Elasticsearch {
                   writer.WritePropertyName("terms");
                   writer.WriteStartObject();
                   writer.WritePropertyName("field");
-                  writer.WriteValue(filter.LeftField.Name);
+                  writer.WriteStringValue(filter.LeftField.Name);
                   writer.WritePropertyName("size");
-                  writer.WriteValue(filter.Size);
+                  writer.WriteNumberValue(filter.Size);
                   writer.WritePropertyName("min_doc_count");
-                  writer.WriteValue(filter.Min);
+                  writer.WriteNumberValue(filter.Min);
 
                   writer.WritePropertyName("order");
                   writer.WriteStartObject();
                   writer.WritePropertyName(filter.OrderBy);
-                  writer.WriteValue(filter.Order);
+                  writer.WriteStringValue(filter.Order);
                   writer.WriteEndObject(); //order
 
 
@@ -295,7 +292,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
             writer.WriteEndObject();
             writer.Flush();
-            return sb.ToString();
+            return Encoding.UTF8.GetString(ms.ToArray());
          }
 
       }
@@ -437,7 +434,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (size == count) {
             var clearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-            _client.Request<DynamicResponse>(in clearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })));
+            _client.Request<DynamicResponse>(in clearScrollPath, PostData.String(JsonSerializer.Serialize(new { scroll_id = response.Body["_scroll_id"].Value })));
             yield break;
          }
 
@@ -447,7 +444,7 @@ namespace Transformalize.Providers.Elasticsearch {
             var scrollId = response.Body["_scroll_id"].Value;
             scrolls.Add(scrollId.ToString());
             var doScrollPath = new EndpointPath(HttpMethod.POST, "/_search/scroll");
-            response = _client.Request<DynamicResponse>(in doScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })));
+            response = _client.Request<DynamicResponse>(in doScrollPath, PostData.String(JsonSerializer.Serialize(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })));
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                docs = ExtractDocs((object)response.Body["hits"]["hits"]);
                if (docs != null) {
@@ -468,7 +465,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } while (response.ApiCallDetails.HasSuccessfulStatusCode && count < size);
 
          var finalClearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-         _client.Request<DynamicResponse>(in finalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })));
+         _client.Request<DynamicResponse>(in finalClearScrollPath, PostData.String(JsonSerializer.Serialize(new { scroll_id = scrolls.ToArray() })));
       }
 
       private static bool Scroll(int from, int size) {
@@ -488,7 +485,7 @@ namespace Transformalize.Providers.Elasticsearch {
          if (value is JsonElement je) {
             return je.ValueKind switch {
                JsonValueKind.String => je.GetString(),
-               JsonValueKind.Number => je.TryGetInt64(out var l) ? (object)l : je.GetDouble(),
+               JsonValueKind.Number => je.GetDouble(),
                JsonValueKind.True => true,
                JsonValueKind.False => false,
                JsonValueKind.Null => null,
@@ -648,7 +645,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          if (size == count) {
             var asyncClearPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-            await _client.RequestAsync<DynamicResponse>(in asyncClearPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = response.Body["_scroll_id"].Value })), token).ConfigureAwait(false);
+            await _client.RequestAsync<DynamicResponse>(in asyncClearPath, PostData.String(JsonSerializer.Serialize(new { scroll_id = response.Body["_scroll_id"].Value })), token).ConfigureAwait(false);
             return results;
          }
 
@@ -658,7 +655,7 @@ namespace Transformalize.Providers.Elasticsearch {
             var scrollId = response.Body["_scroll_id"].Value;
             scrolls.Add(scrollId.ToString());
             var asyncDoScrollPath = new EndpointPath(HttpMethod.POST, "/_search/scroll");
-            response = await _client.RequestAsync<DynamicResponse>(in asyncDoScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), token).ConfigureAwait(false);
+            response = await _client.RequestAsync<DynamicResponse>(in asyncDoScrollPath, PostData.String(JsonSerializer.Serialize(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), token).ConfigureAwait(false);
             if (response.ApiCallDetails.HasSuccessfulStatusCode) {
                docs = ExtractDocs((object)response.Body["hits"]["hits"]);
                if (docs != null) {
@@ -679,7 +676,7 @@ namespace Transformalize.Providers.Elasticsearch {
          } while (response.ApiCallDetails.HasSuccessfulStatusCode && count < size);
 
          var asyncFinalClearScrollPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
-         await _client.RequestAsync<DynamicResponse>(in asyncFinalClearScrollPath, PostData.String(JsonConvert.SerializeObject(new { scroll_id = scrolls.ToArray() })), token).ConfigureAwait(false);
+         await _client.RequestAsync<DynamicResponse>(in asyncFinalClearScrollPath, PostData.String(JsonSerializer.Serialize(new { scroll_id = scrolls.ToArray() })), token).ConfigureAwait(false);
 
          return results;
       }

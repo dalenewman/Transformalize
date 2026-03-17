@@ -1,14 +1,14 @@
-﻿#region license
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2025 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using System.Text;
+using System.Text.Json;
 using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
@@ -47,55 +48,77 @@ namespace Transformalize.Providers.Json {
 
       public void Write(IEnumerable<IRow> rows) {
 
-         var jw = new JsonTextWriter(_streamWriter) {
-            Formatting = Formatting.None
-         };
+         var options = new JsonWriterOptions { Indented = false };
 
          foreach (var row in rows) {
 
-            jw.WriteStartObject();
+            using var ms = new MemoryStream();
+            using (var jw = new Utf8JsonWriter(ms, options)) {
+               jw.WriteStartObject();
 
-            for (int i = 0; i < _fields.Length; i++) {
-               jw.WritePropertyName(_fields[i].Alias);
-               if (_formats[i] == string.Empty) {
-                  jw.WriteValue(row[_fields[i]]);
-               } else {
-                  jw.WriteValue(string.Format(_formats[i], row[_fields[i]]));
+               for (int i = 0; i < _fields.Length; i++) {
+                  jw.WritePropertyName(_fields[i].Alias);
+                  if (_formats[i] == string.Empty) {
+                     WriteValue(jw, row[_fields[i]]);
+                  } else {
+                     jw.WriteStringValue(string.Format(_formats[i], row[_fields[i]]));
+                  }
                }
+               jw.WriteEndObject();
             }
-            jw.WriteEndObject();
-            jw.WriteRaw(Environment.NewLine);
+
+            _streamWriter.BaseStream.Write(ms.ToArray(), 0, (int)ms.Length);
+            _streamWriter.BaseStream.Write(Encoding.UTF8.GetBytes(Environment.NewLine), 0, Encoding.UTF8.GetByteCount(Environment.NewLine));
             _context.Entity.Inserts++;
          }
 
-         jw.Flush();
+         _streamWriter.Flush();
       }
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
 
-         var jw = new JsonTextWriter(_streamWriter) {
-            Formatting = Formatting.None
-         };
+         var options = new JsonWriterOptions { Indented = false };
+         var newlineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
 
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
-            await jw.WriteStartObjectAsync(token).ConfigureAwait(false);
 
-            for (int i = 0; i < _fields.Length; i++) {
-               await jw.WritePropertyNameAsync(_fields[i].Alias, token).ConfigureAwait(false);
-               if (_formats[i] == string.Empty) {
-                  await jw.WriteValueAsync(row[_fields[i]], token).ConfigureAwait(false);
-               } else {
-                  await jw.WriteValueAsync(string.Format(_formats[i], row[_fields[i]]), token).ConfigureAwait(false);
+            using var ms = new MemoryStream();
+            using (var jw = new Utf8JsonWriter(ms, options)) {
+               jw.WriteStartObject();
+
+               for (int i = 0; i < _fields.Length; i++) {
+                  jw.WritePropertyName(_fields[i].Alias);
+                  if (_formats[i] == string.Empty) {
+                     WriteValue(jw, row[_fields[i]]);
+                  } else {
+                     jw.WriteStringValue(string.Format(_formats[i], row[_fields[i]]));
+                  }
                }
+               jw.WriteEndObject();
             }
 
-            await jw.WriteEndObjectAsync(token).ConfigureAwait(false);
-            await jw.WriteRawAsync(Environment.NewLine, token).ConfigureAwait(false);
+            await _streamWriter.BaseStream.WriteAsync(ms.ToArray(), 0, (int)ms.Length, token).ConfigureAwait(false);
+            await _streamWriter.BaseStream.WriteAsync(newlineBytes, 0, newlineBytes.Length, token).ConfigureAwait(false);
             _context.Entity.Inserts++;
          }
 
-         await jw.FlushAsync(token).ConfigureAwait(false);
+         await _streamWriter.FlushAsync().ConfigureAwait(false);
+      }
+
+      private static void WriteValue(Utf8JsonWriter jw, object value) {
+         switch (value) {
+            case null: jw.WriteNullValue(); break;
+            case bool b: jw.WriteBooleanValue(b); break;
+            case int i: jw.WriteNumberValue(i); break;
+            case long l: jw.WriteNumberValue(l); break;
+            case float f: jw.WriteNumberValue(f); break;
+            case double d: jw.WriteNumberValue(d); break;
+            case decimal dec: jw.WriteNumberValue(dec); break;
+            case DateTime dt: jw.WriteStringValue(dt.ToString("o")); break;
+            case Guid g: jw.WriteStringValue(g.ToString()); break;
+            default: jw.WriteStringValue(value.ToString()); break;
+         }
       }
    }
 }

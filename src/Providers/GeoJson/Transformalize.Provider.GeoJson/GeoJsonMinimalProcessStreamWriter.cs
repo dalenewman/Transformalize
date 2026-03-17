@@ -2,22 +2,23 @@
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #endregion
-using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using System.Threading;
@@ -41,7 +42,7 @@ namespace Transformalize.Providers.GeoJson {
       private readonly bool _hasDescription;
       private readonly bool _hasBatchValue;
       private readonly IContext _context;
-      private readonly JsonWriter _jw;
+      private readonly Utf8JsonWriter _jw;
       private readonly Field[] _properties;
 
       /// <summary>
@@ -49,7 +50,7 @@ namespace Transformalize.Providers.GeoJson {
       /// </summary>
       /// <param name="context"></param>
       /// <param name="jsonWriter"></param>
-      public GeoJsonMinimalProcessStreamWriter(IContext context, JsonWriter jsonWriter) {
+      public GeoJsonMinimalProcessStreamWriter(IContext context, Utf8JsonWriter jsonWriter) {
          _context = context;
          _jw = jsonWriter;
 
@@ -79,7 +80,7 @@ namespace Transformalize.Providers.GeoJson {
          if (Equals(_context.Process.Entities.First(), _context.Entity)) {
             _jw.WriteStartObject(); //root
             _jw.WritePropertyName("type");
-            _jw.WriteValue("FeatureCollection");
+            _jw.WriteStringValue("FeatureCollection");
             _jw.WritePropertyName("features");
             _jw.WriteStartArray(); //features
          }
@@ -87,16 +88,16 @@ namespace Transformalize.Providers.GeoJson {
          foreach (var row in rows) {
             _jw.WriteStartObject(); //feature
             _jw.WritePropertyName("type");
-            _jw.WriteValue("Feature");
+            _jw.WriteStringValue("Feature");
             _jw.WritePropertyName("geometry");
             _jw.WriteStartObject(); //geometry
             _jw.WritePropertyName("type");
-            _jw.WriteValue("Point");
+            _jw.WriteStringValue("Point");
 
             _jw.WritePropertyName("coordinates");
             _jw.WriteStartArray();
-            _jw.WriteValue(row[_longitudeField]);
-            _jw.WriteValue(row[_latitudeField]);
+            WriteValue(_jw, row[_longitudeField]);
+            WriteValue(_jw, row[_latitudeField]);
             _jw.WriteEndArray();
 
             _jw.WriteEndObject(); //geometry
@@ -106,29 +107,29 @@ namespace Transformalize.Providers.GeoJson {
 
             if (_hasDescription) {
                _jw.WritePropertyName("description");
-               _jw.WriteValue(row[_descriptionField]);
+               WriteValue(_jw, row[_descriptionField]);
             }
 
             if (_hasBatchValue) {
                _jw.WritePropertyName("batch-value");
-               _jw.WriteValue(row[_batchField]);
+               WriteValue(_jw, row[_batchField]);
             }
 
             if (_hasColor) {
                _jw.WritePropertyName("marker-color");
-               _jw.WriteValue(row[_colorField]);
+               WriteValue(_jw, row[_colorField]);
             }
 
             if (_hasSymbol) {
                var symbol = row[_symbolField].ToString();
                _jw.WritePropertyName("marker-symbol");
-               _jw.WriteValue(symbol);
+               _jw.WriteStringValue(symbol);
             }
 
             foreach (var field in _properties) {
                var name = field.Label == string.Empty ? field.Alias : field.Label;
                _jw.WritePropertyName(name);
-               _jw.WriteValue(row[field]);
+               WriteValue(_jw, row[field]);
             }
 
             _jw.WriteEndObject(); //properties
@@ -147,74 +148,89 @@ namespace Transformalize.Providers.GeoJson {
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          if (Equals(_context.Process.Entities.First(), _context.Entity)) {
-            await _jw.WriteStartObjectAsync(token).ConfigureAwait(false); //root
-            await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-            await _jw.WriteValueAsync("FeatureCollection", token).ConfigureAwait(false);
-            await _jw.WritePropertyNameAsync("features", token).ConfigureAwait(false);
-            await _jw.WriteStartArrayAsync(token).ConfigureAwait(false); //features
+            _jw.WriteStartObject(); //root
+            _jw.WritePropertyName("type");
+            _jw.WriteStringValue("FeatureCollection");
+            _jw.WritePropertyName("features");
+            _jw.WriteStartArray(); //features
          }
 
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
 
-            await _jw.WriteStartObjectAsync(token).ConfigureAwait(false); //feature
-            await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-            await _jw.WriteValueAsync("Feature", token).ConfigureAwait(false);
-            await _jw.WritePropertyNameAsync("geometry", token).ConfigureAwait(false);
-            await _jw.WriteStartObjectAsync(token).ConfigureAwait(false); //geometry
-            await _jw.WritePropertyNameAsync("type", token).ConfigureAwait(false);
-            await _jw.WriteValueAsync("Point", token).ConfigureAwait(false);
+            _jw.WriteStartObject(); //feature
+            _jw.WritePropertyName("type");
+            _jw.WriteStringValue("Feature");
+            _jw.WritePropertyName("geometry");
+            _jw.WriteStartObject(); //geometry
+            _jw.WritePropertyName("type");
+            _jw.WriteStringValue("Point");
 
-            await _jw.WritePropertyNameAsync("coordinates", token).ConfigureAwait(false);
-            await _jw.WriteStartArrayAsync(token).ConfigureAwait(false);
-            await _jw.WriteValueAsync(row[_longitudeField], token).ConfigureAwait(false);
-            await _jw.WriteValueAsync(row[_latitudeField], token).ConfigureAwait(false);
-            await _jw.WriteEndArrayAsync(token).ConfigureAwait(false);
+            _jw.WritePropertyName("coordinates");
+            _jw.WriteStartArray();
+            WriteValue(_jw, row[_longitudeField]);
+            WriteValue(_jw, row[_latitudeField]);
+            _jw.WriteEndArray();
 
-            await _jw.WriteEndObjectAsync(token).ConfigureAwait(false); //geometry
+            _jw.WriteEndObject(); //geometry
 
-            await _jw.WritePropertyNameAsync("properties", token).ConfigureAwait(false);
-            await _jw.WriteStartObjectAsync(token).ConfigureAwait(false); //properties
+            _jw.WritePropertyName("properties");
+            _jw.WriteStartObject(); //properties
 
             if (_hasDescription) {
-               await _jw.WritePropertyNameAsync("description", token).ConfigureAwait(false);
-               await _jw.WriteValueAsync(row[_descriptionField], token).ConfigureAwait(false);
+               _jw.WritePropertyName("description");
+               WriteValue(_jw, row[_descriptionField]);
             }
 
             if (_hasBatchValue) {
-               await _jw.WritePropertyNameAsync("batch-value", token).ConfigureAwait(false);
-               await _jw.WriteValueAsync(row[_batchField], token).ConfigureAwait(false);
+               _jw.WritePropertyName("batch-value");
+               WriteValue(_jw, row[_batchField]);
             }
 
             if (_hasColor) {
-               await _jw.WritePropertyNameAsync("marker-color", token).ConfigureAwait(false);
-               await _jw.WriteValueAsync(row[_colorField], token).ConfigureAwait(false);
+               _jw.WritePropertyName("marker-color");
+               WriteValue(_jw, row[_colorField]);
             }
 
             if (_hasSymbol) {
                var symbol = row[_symbolField].ToString();
-               await _jw.WritePropertyNameAsync("marker-symbol", token).ConfigureAwait(false);
-               await _jw.WriteValueAsync(symbol, token).ConfigureAwait(false);
+               _jw.WritePropertyName("marker-symbol");
+               _jw.WriteStringValue(symbol);
             }
 
             foreach (var field in _properties) {
                var name = field.Label == string.Empty ? field.Alias : field.Label;
-               await _jw.WritePropertyNameAsync(name, token).ConfigureAwait(false);
-               await _jw.WriteValueAsync(row[field], token).ConfigureAwait(false);
+               _jw.WritePropertyName(name);
+               WriteValue(_jw, row[field]);
             }
 
-            await _jw.WriteEndObjectAsync(token).ConfigureAwait(false); //properties
-            await _jw.WriteEndObjectAsync(token).ConfigureAwait(false); //feature
+            _jw.WriteEndObject(); //properties
+            _jw.WriteEndObject(); //feature
             _context.Entity.Inserts++;
             await _jw.FlushAsync(token).ConfigureAwait(false);
          }
 
          if (Equals(_context.Process.Entities.Last(), _context.Entity)) {
-            await _jw.WriteEndArrayAsync(token).ConfigureAwait(false); //features
-            await _jw.WriteEndObjectAsync(token).ConfigureAwait(false); //root
+            _jw.WriteEndArray(); //features
+            _jw.WriteEndObject(); //root
          }
 
          await _jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      private static void WriteValue(Utf8JsonWriter jw, object value) {
+         switch (value) {
+            case null: jw.WriteNullValue(); break;
+            case bool b: jw.WriteBooleanValue(b); break;
+            case int i: jw.WriteNumberValue(i); break;
+            case long l: jw.WriteNumberValue(l); break;
+            case float f: jw.WriteNumberValue(f); break;
+            case double d: jw.WriteNumberValue(d); break;
+            case decimal dec: jw.WriteNumberValue(dec); break;
+            case DateTime dt: jw.WriteStringValue(dt.ToString("o")); break;
+            case Guid g: jw.WriteStringValue(g.ToString()); break;
+            default: jw.WriteStringValue(value.ToString()); break;
+         }
       }
    }
 }

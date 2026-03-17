@@ -7,9 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    <Version>0.12.2-beta</Version>
-    <FileVersion>0.12.2</FileVersion>
-    <AssemblyVersion>0.12.2</AssemblyVersion>
+    <Version>0.12.3-beta</Version>
+    <FileVersion>0.12.3</FileVersion>
+    <AssemblyVersion>0.12.3</AssemblyVersion>
   </PropertyGroup>
 
 
