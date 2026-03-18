@@ -7,9 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
-    <Version>0.12.3-beta</Version>
-    <FileVersion>0.12.3</FileVersion>
-    <AssemblyVersion>0.12.3</AssemblyVersion>
+    <Version>0.12.4-beta</Version>
+    <FileVersion>0.12.4</FileVersion>
+    <AssemblyVersion>0.12.4</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
     <PackageReference Include="Testcontainers.MsSql" Version="4.11.0" />
   </ItemGroup>
 
