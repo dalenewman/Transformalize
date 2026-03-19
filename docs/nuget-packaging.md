@@ -18,7 +18,7 @@ Optional flags:
 ./scripts/nuget-pack.sh --fail-on-missing
 ```
 
-`nuget-pack.sh` resolves package targets by discovering SDK-style `src/**/*.csproj` projects where `IsPackable=true`, and filtering by package id prefix (`Transformalize` by default). This avoids manual `.bat` and `.nuspec` drift.
+`nuget-pack.sh` resolves package targets by discovering SDK-style `src/**/*.csproj` projects where `IsPackable=true`, and filtering by package id prefix (`Transformalize` by default).
 
 ## Local publishing
 
