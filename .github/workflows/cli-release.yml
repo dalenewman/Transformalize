@@ -49,21 +49,26 @@ jobs:
       - name: Resolve release tag
         id: release
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ github.event.inputs.release_tag }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "tag=${{ github.event.inputs.release_tag }}" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
           else
             echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Publish CLI
         shell: bash
+        env:
+          RID: ${{ matrix.rid }}
         run: |
           set -euo pipefail
-          out_dir="dist/tfl-${{ matrix.rid }}"
+          out_dir="dist/tfl-$RID"
           dotnet publish src/CLI/CLI.csproj \
             -c Release \
-            -r "${{ matrix.rid }}" \
+            -r "$RID" \
             --self-contained true \
             -p:PublishSingleFile=true \
             -p:PublishTrimmed=false \
@@ -74,18 +79,22 @@ jobs:
       - name: Package archive (tar.gz)
         if: matrix.archive_ext == 'tar.gz'
         shell: bash
+        env:
+          RID: ${{ matrix.rid }}
         run: |
           set -euo pipefail
-          archive_name="tfl-${{ matrix.rid }}.tar.gz"
-          tar -C dist -czf "$archive_name" "tfl-${{ matrix.rid }}"
+          archive_name="tfl-$RID.tar.gz"
+          tar -C dist -czf "$archive_name" "tfl-$RID"
           shasum -a 256 "$archive_name" > "$archive_name.sha256"
 
       - name: Package archive (zip)
         if: matrix.archive_ext == 'zip'
         shell: pwsh
+        env:
+          RID: ${{ matrix.rid }}
         run: |
-          $ArchiveName = "tfl-${{ matrix.rid }}.zip"
-          Compress-Archive -Path "dist/tfl-${{ matrix.rid }}/*" -DestinationPath $ArchiveName -Force
+          $ArchiveName = "tfl-$env:RID.zip"
+          Compress-Archive -Path "dist/tfl-$env:RID/*" -DestinationPath $ArchiveName -Force
           $Hash = (Get-FileHash -Path $ArchiveName -Algorithm SHA256).Hash.ToLower()
           "$Hash  $ArchiveName" | Out-File -FilePath "$ArchiveName.sha256" -Encoding ascii
 
