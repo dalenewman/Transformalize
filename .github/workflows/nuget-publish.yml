@@ -24,6 +24,7 @@ jobs:
     env:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       MYGET_API_KEY: ${{ secrets.MYGET_API_KEY }}
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v6
 

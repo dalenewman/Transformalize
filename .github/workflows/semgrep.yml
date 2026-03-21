@@ -19,6 +19,7 @@ jobs:
       contents: read
     env:
       SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     container:
       image: semgrep/semgrep
     steps:
