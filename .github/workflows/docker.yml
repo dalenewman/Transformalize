@@ -193,7 +193,7 @@ jobs:
       # Scan the regular amd64 image - it has more OS packages than alpine, giving broader coverage.
       # TRIVY_PLATFORM tells Trivy which arch to pull from the multi-arch manifest.
       - name: Run Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@0.34.2
+        uses: aquasecurity/trivy-action@v0.35.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ env.SHORT_SHA }}
           format: sarif
