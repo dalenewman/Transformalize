@@ -3,7 +3,7 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize.Validators.Jint</RootNamespace>
       <AssemblyName>Transformalize.Validate.Jint</AssemblyName>
-      <Version>0.12.3-beta</Version>
+      <Version>1.0.0</Version>
       <Authors>Dale Newman</Authors>
       <Company>Transformalize</Company>
       <Description>A Transformalize validator using Jint</Description>
@@ -13,8 +13,8 @@
       <RepositoryType>git</RepositoryType>
       <PackageTags>etl,transformalize,jint,javascript</PackageTags>
       <NeutralLanguage>en-US</NeutralLanguage>
-      <FileVersion>0.12.3</FileVersion>
-      <AssemblyVersion>0.12.3</AssemblyVersion>
+      <FileVersion>1.0.0</FileVersion>
+      <AssemblyVersion>1.0.0</AssemblyVersion>
       
    </PropertyGroup>
    <ItemGroup>

@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2025 Dale Newman
+// Copyright 2013-2026 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ using System;
 namespace Transformalize.Impl {
 
    [Obsolete("No longer necessary.  AsParallel() is now applied in DefaultPipeline.")]
-   public class ParallelPipeline : IPipeline {
+   internal class ParallelPipeline : IPipeline {
         private readonly IPipeline _pipeline;
 
         public IContext Context => _pipeline.Context;
