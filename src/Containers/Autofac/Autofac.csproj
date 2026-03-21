@@ -17,9 +17,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="9.1.0" />
-    <PackageReference Include="Cfg-NET.Environment" Version="0.15.0-beta" />
-    <PackageReference Include="Cfg-NET.Reader" Version="0.15.0-beta" />
-    <PackageReference Include="Cfg-NET.Shorthand" Version="0.15.0-beta" />
+    <PackageReference Include="Cfg-NET.Environment" Version="0.16.0-beta" />
+    <PackageReference Include="Cfg-NET.Reader" Version="0.16.0-beta" />
+    <PackageReference Include="Cfg-NET.Shorthand" Version="0.16.0-beta" />
     <PackageReference Include="DateMath" Version="1.3.0" />
   </ItemGroup>
   <ItemGroup>
