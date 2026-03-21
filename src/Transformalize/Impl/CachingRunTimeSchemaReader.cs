@@ -1,7 +1,7 @@
 ﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2025 Dale Newman
+// Copyright 2013-2026 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
-    public class CachingRunTimeSchemaReader : IRunTimeSchemaReader {
+    internal class CachingRunTimeSchemaReader : IRunTimeSchemaReader {
 
         private readonly IRunTimeSchemaReader _schemaReader;
         private readonly Dictionary<string, Schema> _cache = new Dictionary<string, Schema>();

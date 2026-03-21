@@ -1,248 +1,28 @@
 # Transformalize
 
-Transformalize is a configuration based ETL tool that automates 
-incremental denormalization of relational data.  It may be 
-used for other types of [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load) 
-as well.  
-
-NuGet packaging and publishing (cross-platform): [docs/nuget-packaging.md](./docs/nuget-packaging.md)
-
-The supported inputs and outputs are below. 
-
-<div class="table-responsive" style="font-size:smaller;">
-<table class="table table-condensed">
-    <thead>
-      <!--<tr>
-         <th colspan="3" style="text-align:center">Cross Platform</th>
-      </tr>-->
-        <tr>
-            <th>Relational</th>
-            <th colspan="2" style="text-align:center">Non-Relational</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="./src/Providers/SqlServer/README.md">SQL Server</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/MySql/README.md">MySql</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/PostgreSql/README.md">PostgreSql</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Sqlite/README.md">SQLite</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="./src/Providers/Elasticsearch/README.md">Elasticsearch</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Excel/README.md">Excel</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/CsvHelper/README.md">Files</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Mail/README.md">Mail</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/GeoJson/README.md">GeoJson</td>
-                            <td>Out</td>
-                        </tr>           
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Console</td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Razor/README.md">Razor</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td title="Forms in Orchard CMS Module"><a href="https://github.com/dalenewman/OrchardCore.Transformalize">Forms</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Bogus/README.md">Bogus</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td><a href="./src/Providers/Json/README.md">JSON</td>
-                            <td>Out</td>
-                        </tr>    
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
-
-<!--<div class="table-responsive" style="font-size:smaller;">
-<table class="table table-condensed">
-    <thead>
-      <tr>
-         <th colspan="3" style="text-align:center">Windows Only<span style="font-size:smaller"></span></th>
-      </tr>
-      <tr>
-         <th>Relational</th>
-         <th colspan="2" style="text-align:center">Non-Relational</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.SqlCe">SqlCe</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Access">Access</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Lucene">Lucene</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Solr">SOLR</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.Excel">Excel</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.FileHelpers">Files</a></td>
-                            <td>In/Out</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="vertical-align:top">
-                <table class="table table-condensed">
-                    <thead>
-                        <tr>
-                            <th>Provider</th>
-                            <th>Support</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td title="SQL Server Analysis Services"><a href="https://github.com/dalenewman/Transformalize.Provider.Ssas">SSAS</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.RethinkDb">RethinkDB</a></td>
-                            <td>Out</td>
-                        </tr>
-                        <tr>
-                            <td><a href="https://github.com/dalenewman/Transformalize.Provider.ActiveDirectory">Active Directory</a></td>
-                            <td>In</td>
-                        </tr>
-                        <tr>
-                            <td> &nbsp;</td>
-                            <td> &nbsp;</td>
-                        </tr>                        
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>-->
+Transformalize is a configuration based ETL tool that automates
+incremental denormalization of relational data.  It may be
+used for other types of [ETL](https://en.wikipedia.org/wiki/Extract,_transform,_load)
+as well. The supported providers are [SQL Server](./src/Providers/SqlServer/README.md), [MySql](./src/Providers/MySql/README.md), [PostgreSql](./src/Providers/PostgreSql/README.md), [SQLite](./src/Providers/Sqlite/README.md), [Elasticsearch](./src/Providers/Elasticsearch/README.md), [Excel](./src/Providers/Excel/README.md), [Files](./src/Providers/CsvHelper/README.md), [Mail](./src/Providers/Mail/README.md), [GeoJson](./src/Providers/GeoJson/README.md), Console, [Razor](./src/Providers/Razor/README.md), [Forms](https://github.com/dalenewman/OrchardCore.Transformalize), [Bogus](./src/Providers/Bogus/README.md), [JSON](./src/Providers/Json/README.md), [Lucene](./src/Providers/Lucene/README.md), and [Solr](./src/Providers/Solr/README.md).
 
 ---
 
 ### Getting Started
 
 This *readme* demonstrates how to denormalize a relational database and load it into Elasticsearch.
- 
+
 To follow along, see the [prerequisites](https://github.com/dalenewman/Transformalize/wiki/README-Prerequisites).
 
-When you start denormalizing a database, it's good to have a diagram. 
+When you start denormalizing a database, it's good to have a diagram.
 
 <img src="./Files/northwind-diagram.png" class="img-responsive img-thumbnail" alt="Northwind Schema" />
 
-This shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization) 
-tables related to *Order Details*. 
+This shows eight [normalized](https://en.wikipedia.org/wiki/Database_normalization)
+tables related to *Order Details*.
 
 > This section introduces `<connections/>`, `<entities/>`, and the `page` and `size` attributes.
 
-Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON). 
+Transformalize arrangements are written in [XML](https://en.wikipedia.org/wiki/XML) or [JSON](https://en.wikipedia.org/wiki/JSON).
 They are validated before execution.
 
 To get started, open VS Code and paste this in:
@@ -258,12 +38,12 @@ To get started, open VS Code and paste this in:
 </cfg>
 ```
 
-This defines an *input* as the `Order Details` table inside the Northwind database. 
-Save it as *NorthWind.xml* and press CTRL-P to find and execute the `tfl:run` command. 
+This defines an *input* as the `Order Details` table inside the Northwind database.
+Save it as *NorthWind.xml* and press CTRL-P to find and execute the `tfl:run` command.
 
 ![Step01](./Files/Demo/step01-cp.gif "Step 1")
 
-Transformalize returned the first page of rows from the `Order Details` table. 
+Transformalize returned the first page of rows from the `Order Details` table.
 To transform and save this data, the `<fields/>` must be defined.
 
 > Introducing `<fields/>`.
@@ -311,8 +91,8 @@ Add **`<calculated-fields/>`** right after **`<fields/>`** like this:
 
 ```xml
 <calculated-fields>
-  <add name="Revenue" 
-       type="decimal" 
+  <add name="Revenue"
+       type="decimal"
        t="js(Quantity * ((1-Discount) * UnitPrice)).round(2)" />
 </calculated-fields>
 ```
@@ -377,9 +157,9 @@ Note that writing *Order Details* into PostgreSQL frees up the standard output f
 
 #### Mapping
 
-Transformalize doesn't *map* input to pre-existing output. Instead, it 
-creates a control table and a consistent output structure 
-for handling incremental updates.  
+Transformalize doesn't *map* input to pre-existing output. Instead, it
+creates a control table and a consistent output structure
+for handling incremental updates.
 
 You decide:
 
@@ -393,13 +173,13 @@ You decide:
 
 > Introducing the **`version`** attribute for an **`entity`**
 
-An *initialization* is a full rebuild and may be time-consuming. So, by default, 
-Transformalize performs incrementals. To determine if an update or insert 
+An *initialization* is a full rebuild and may be time-consuming. So, by default,
+Transformalize performs incrementals. To determine if an update or insert
 is necessary, it compares input with output.
 
-While keys and hashes are used, comparison is unnecessary 
-when an input's provider is queryable and has a row version. 
-A row version increments when the row changes.  Many tables 
+While keys and hashes are used, comparison is unnecessary
+when an input's provider is queryable and has a row version.
+A row version increments when the row changes.  Many tables
 have these by design, but if not, you can add them like this:
 
 ```sql
@@ -412,8 +192,8 @@ ALTER TABLE `Order Details` ADD COLUMN RowVersion TIMESTAMP DEFAULT CURRENT_TIME
 /* PostgreSql, use the system field xmin */
 ```
 
-To demonstrate incrementals, add a row version to each of the eight tables 
-in the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for 
+To demonstrate incrementals, add a row version to each of the eight tables
+in the SQL Server *Northwind* database.  I have provided a [script](./Files/Demo/add-row-versions-sql-server.sql) for
 convenience.
 
 Once added, we have add the `RowVersion` to our arrangement like this:
@@ -456,21 +236,21 @@ With a `version` in place, the second run doesn't read and compare un-changed da
 
 ### Denormalization
 
-Relational data is [normalized](https://en.wikipedia.org/wiki/Database_normalization) and 
-stored in many tables. It's optimized for efficient storage and integrity. It may be 
+Relational data is [normalized](https://en.wikipedia.org/wiki/Database_normalization) and
+stored in many tables. It's optimized for efficient storage and integrity. It may be
 queried, but not without an overhead of joining busy tables. This makes retrieval slower.
 
-[De-normalization](https://en.wikipedia.org/wiki/Denormalization) is the process of 
-joining related data back together. The data is pre-joined (and duplicated) to 
+[De-normalization](https://en.wikipedia.org/wiki/Denormalization) is the process of
+joining related data back together. The data is pre-joined (and duplicated) to
 avoid joining tables at run-time. Retrieval of de-normalized data is faster.
 
-The output of *Order Details* (above) is numeric. Some numbers 
-are [foreign keys](https://en.wikipedia.org/wiki/Foreign_key) (e.g. `ProductID`, `OrderID`). 
-These refer to more descriptive information in related entities. Others are 
+The output of *Order Details* (above) is numeric. Some numbers
+are [foreign keys](https://en.wikipedia.org/wiki/Foreign_key) (e.g. `ProductID`, `OrderID`).
+These refer to more descriptive information in related entities. Others are
 [measures](https://en.wikipedia.org/wiki/Measure_(data_warehouse)) (i.e. `Quantity`, `UnitPrice`).
 
-To denormalize *Order Details*, we need to use the foreign keys `OrderID` and `ProductID` to 
-retrieve the related information from *Orders* and *Products* (see diagram).  This means we have 
+To denormalize *Order Details*, we need to use the foreign keys `OrderID` and `ProductID` to
+retrieve the related information from *Orders* and *Products* (see diagram).  This means we have
 to add the *Orders* and *Products* entities to our arrangement.
 
 ### Adding an Entity
@@ -507,7 +287,7 @@ Moreover, if I add another entity to my arrangement, I must relate it to the fir
 
 > Introducing the **`<relationships/>`** section
 
-All entities must be related to the first entity in the `<relationships/>` section which 
+All entities must be related to the first entity in the `<relationships/>` section which
 follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your arrangement:
 
 ```xml
@@ -516,7 +296,7 @@ follows `<entities/>`.  To relate *Orders* to *Order Details*, add this to your 
 </relationships>
 ```
 
-This tells Transformalize to use `OrderID` to relate the two entities. Now re-initialize 
+This tells Transformalize to use `OrderID` to relate the two entities. Now re-initialize
 and run Transformalize:
 
 <pre style="font-size:smaller;">
@@ -537,9 +317,9 @@ info  | NorthWind |               | Time elapsed: 00:00:00.25
 
 ![Step05](./Files/Demo/step05-cp.gif "Step 5")
 
-Logging indicates records were processed from *Order Details* and *Orders*. In addition, 
-a view called `NorthWindStar` is created in the output.  *NorthWindStar* joins Transformalize's 
-[star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a 
+Logging indicates records were processed from *Order Details* and *Orders*. In addition,
+a view called `NorthWindStar` is created in the output.  *NorthWindStar* joins Transformalize's
+[star-schema](https://en.wikipedia.org/wiki/Star_schema) output so that it appears to be a
 single entity.
 
 Query *NorthWindStar* to make sure Transformalize is working:
@@ -584,19 +364,19 @@ LIMIT 10;
 
 > Introducing the **`flatten`** attribute
 
-Transformalize de-normalizes in two phases.  First, it moves data 
+Transformalize de-normalizes in two phases.  First, it moves data
 from a relational model into a [star-schema](https://en.wikipedia.org/wiki/Star_schema).
-Secondly, it moves data into a completely de-normalized (flat) output. 
+Secondly, it moves data into a completely de-normalized (flat) output.
 
 ![Relational to Star](https://raw.githubusercontent.com/dalenewman/Transformalize/master/Files/transformalize-diagram.jpg)
 
-To create a star-schema, it moves the foreign keys to the center.  Data retrieval is 
+To create a star-schema, it moves the foreign keys to the center.  Data retrieval is
 faster because everything is directly related.
 
-To create a flat output, it moves *everything* to the center.  Data retrieval is 
+To create a flat output, it moves *everything* to the center.  Data retrieval is
 even faster because there aren't any relations.
 
-To completely de-normalize, set `flatten` to `true` 
+To completely de-normalize, set `flatten` to `true`
 in the main `<cfg/>` like this:
 
 ```xml
@@ -605,12 +385,12 @@ in the main `<cfg/>` like this:
 </cfg>
 ```
 
-When you re-initialize, a single output structure named *NorthWindFlat* is created and populated. 
+When you re-initialize, a single output structure named *NorthWindFlat* is created and populated.
 You may query it just as you queried *NorthWindStar*.
 
 ### More Relationships
 
-To add all the entities from NorthWind database (diagrammed above), follow the *Add an Entity* 
+To add all the entities from NorthWind database (diagrammed above), follow the *Add an Entity*
 process (above) for *Products*, *Customers*, *Employees*, *Shippers*, *Suppliers*, and *Categories*.
 
 In the end, the relationships should look like this:
@@ -705,7 +485,7 @@ info  | NorthWind | Categories    | Change Detected: No.
 info  | NorthWind |               | Time elapsed: 00:00:01.79
 </pre>
 
-Using the version, Transformalize picked up the one change in *Customers*.  Since this 
+Using the version, Transformalize picked up the one change in *Customers*.  Since this
 customer has purchased 35 items (in *Order Details*), the flat table is updated as well.
 
 ![Incrementals](./Files/Demo/incrementals-cp.gif "Incrementals")
@@ -717,10 +497,10 @@ customer has purchased 35 items (in *Order Details*), the flat table is updated 
 > * the **`format`** transform
 > * the **`toUpper`** transform
 
-Most often, in addition to de-normalization, you'll need to transform records too. 
+Most often, in addition to de-normalization, you'll need to transform records too.
 Transformalize de-normalizes and transforms at the same time (thus, the name).
 
-Let's add some time [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) fields. 
+Let's add some time [dimension](https://en.wikipedia.org/wiki/Dimension_(data_warehouse)) fields.
 Modify the *Orders* entity to include a `<calculated-fields/>` section like this:
 
 ```xml
@@ -729,15 +509,15 @@ Modify the *Orders* entity to include a `<calculated-fields/>` section like this
   <add name="OrderMonthSortable" t="format({OrderDate:MM-MMM}).toUpper()" />
   <add name="OrderDaySortable" t="format({OrderDate:yyyy-MM-dd})" />
   <add name="OrderDayOfWeek" t="copy(OrderDate).datePart(dayOfWeek)" />
-</calculated-fields>		
+</calculated-fields>
 ```
 
-**Note**: The **`copy`** method is mainly used to copy 
-other fields into your transformation.  Generally speaking, when a 
-transform uses field names in it's expression (e.g. **`js`**, **`cs`**, and **`format`**), 
+**Note**: The **`copy`** method is mainly used to copy
+other fields into your transformation.  Generally speaking, when a
+transform uses field names in it's expression (e.g. **`js`**, **`cs`**, and **`format`**),
 you don't need to preceed it with a **`copy`** method.
 
-After re-initializing, *NorthWindFlat* has some helpful time related fields that allow you 
+After re-initializing, *NorthWindFlat* has some helpful time related fields that allow you
 to run queries like:
 
 ```sql
@@ -754,7 +534,7 @@ Tuesday     272113.27
 Wednesday   266546.72
 </pre>
 
-Note that the query isn't dealing with joins or parsing dates. This is 
+Note that the query isn't dealing with joins or parsing dates. This is
 because we de-normalized it and pre-calculated useful fields.
 
 ![Time Dimension](./Files/Demo/time-dimension-cp.gif "Time Dimension")
@@ -766,7 +546,7 @@ because we de-normalized it and pre-calculated useful fields.
 
 Transformalize must use a relational output to de-normalize (i.e. PostgreSQL).  However, now that it's flat, we can leverage the non-relational providers as well.
 
-Transformalize records four *system* fields that may 
+Transformalize records four *system* fields that may
 be used by additional `tfl` arrangements and/or other systems:
 
 * TflKey - a surrogate key (an auto-incrementing value)
@@ -774,15 +554,15 @@ be used by additional `tfl` arrangements and/or other systems:
 * TflHashCode - a numerical value calculated from every field (used for comparisons)
 * TflDeleted - a boolean field tracking deletes (an optional setting)
 
-**Note:** You can disable system fields by setting `read-only` 
+**Note:** You can disable system fields by setting `read-only`
 to `true` in the top-most `<cfg/>` element.
 
 ### Leveraging Elasticsearch & Kibana
 
 > Introducing the **elasticsearch** provider
 
-This section demonstrates how to load the flattened Northwind 
-data into [Elasticsearch](https://www.elastic.co/products/elasticsearch) 
+This section demonstrates how to load the flattened Northwind
+data into [Elasticsearch](https://www.elastic.co/products/elasticsearch)
 and view it with [Kibana](https://www.elastic.co/products/kibana).
 
 #### Elasticsearch
@@ -793,11 +573,11 @@ Start a new arrangement with this in your XML editor:
 <cfg name="NorthWind">
   <connections>
     <add name="input" provider="postgresql" user="postgres" password="Secret1!" database="TflNorthwind" />
-    <add name="output" 
-         provider="elasticsearch" 
-         server="localhost" 
-         port="9200" 
-         index="northwind" 
+    <add name="output"
+         provider="elasticsearch"
+         server="localhost"
+         port="9200"
+         index="northwind"
          version="7.9.3" />
   </connections>
   <entities>
@@ -874,10 +654,10 @@ The arrangement for this is:
 ```xml
 <cfg name="NorthWind">
   <connections>
-    <add name="input" 
-         provider="elasticsearch" 
-         server="host.docker.internal" 
-         index="northwind" 
+    <add name="input"
+         provider="elasticsearch"
+         server="host.docker.internal"
+         index="northwind"
          version="7.9.3" />
   </connections>
   <entities>
@@ -899,10 +679,10 @@ The arrangement for this is:
 
 > * Introducing the `parameter` attribute in fields.
 
-The report arrangement above is using the field's `parameter` attribute.  This is only for 
+The report arrangement above is using the field's `parameter` attribute.  This is only for
 the Orchard Core module.  It is a short-cut that sets up parameters and filters.  It has three settings:
 
-- *facet* : a drop-down for selecting a single value 
+- *facet* : a drop-down for selecting a single value
 - *facets* : a drop-down for selecting multiple values
 - *search* : a text box for searching
 

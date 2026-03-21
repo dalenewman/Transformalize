@@ -3,9 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Bogus.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.Bogus.Autofac</AssemblyName>
-    <Version>0.12.3-beta</Version>
-    <FileVersion>0.12.3</FileVersion>
-    <AssemblyVersion>0.12.3</AssemblyVersion>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Transformalize.Provider.Bogus\Transformalize.Provider.Bogus.csproj" />

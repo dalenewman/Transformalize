@@ -1,7 +1,7 @@
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
-// Copyright 2013-2025 Dale Newman
+// Copyright 2013-2026 Dale Newman
 //  
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ using System;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
-    public class NullParser : IParser {
+    internal class NullParser : IParser {
         public bool Parse(string script, Action<string, object[]> error) {
             return true;
         }

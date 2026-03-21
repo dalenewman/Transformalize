@@ -9,9 +9,9 @@
       <Copyright>Copyright © 2013-2026 Dale Newman</Copyright>
       <PackageIcon>tfl.png</PackageIcon>
 
-      <Version>0.12.3-beta</Version>
-      <FileVersion>0.12.3</FileVersion>
-      <AssemblyVersion>0.12.3</AssemblyVersion>
+      <Version>1.0.0</Version>
+      <FileVersion>1.0.0</FileVersion>
+      <AssemblyVersion>1.0.0</AssemblyVersion>
 
       <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <DockerfileContext>..\..</DockerfileContext>
@@ -33,7 +33,7 @@
       </None>
    </ItemGroup>
    <ItemGroup>
-      <PackageReference Include="Cfg-NET.Parser.YamlDotNet" Version="0.15.0-beta" />
+      <PackageReference Include="Cfg-NET.Parser.YamlDotNet" Version="0.16.0-beta" />
       <PackageReference Include="System.CommandLine" Version="2.0.5" />
       <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
       <PackageReference Include="NETStandard.Library" Version="2.0.3" />
