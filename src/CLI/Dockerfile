@@ -8,7 +8,6 @@ WORKDIR /app
 
 FROM --platform=$BUILDPLATFORM ${BUILD_IMAGE} AS build
 WORKDIR /src
-COPY ["nuget.config", "."]
 COPY ["src/CLI/CLI.csproj", "src/CLI/"]
 COPY ["src/Providers/Console/Console.Autofac/Console.Autofac.csproj", "src/Providers/Console/Console.Autofac/"]
 COPY ["src/Providers/Console/Console/Console.csproj", "src/Providers/Console/Console/"]
