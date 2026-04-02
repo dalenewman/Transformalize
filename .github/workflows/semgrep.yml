@@ -13,15 +13,31 @@ on:
 name: Semgrep
 jobs:
   semgrep:
-    name: semgrep/ci
+    name: Semgrep Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    container:
-      image: semgrep/semgrep
+      security-events: write
     steps:
-    - uses: actions/checkout@v6
-    - run: semgrep ci
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Semgrep
+        run: pip install semgrep
+
+      - name: Run Semgrep scan
+        run: semgrep scan --config auto --sarif -o semgrep-results.sarif
+
+      - name: Upload results as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: semgrep-results
+          path: semgrep-results.sarif
+          retention-days: 30
+
+      - name: Upload SARIF to GitHub
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: semgrep-results.sarif
