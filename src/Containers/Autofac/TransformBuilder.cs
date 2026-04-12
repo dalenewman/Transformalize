@@ -85,6 +85,7 @@ namespace Transformalize.Containers.Autofac {
          RegisterTransform(_builder, (ctx, c) => new RightTransform(c), new RightTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new ToLowerTransform(c), new ToLowerTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new MapTransform(c), new MapTransform().GetSignatures());
+         RegisterTransform(_builder, (ctx, c) => new BucketizeTransform(c), new BucketizeTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new RegexMatchTransform(c), new RegexMatchTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new RegexMatchingTransform(c), new RegexMatchingTransform().GetSignatures());
          RegisterTransform(_builder, (ctx, c) => new MultiplyTransform(c), new MultiplyTransform().GetSignatures());
