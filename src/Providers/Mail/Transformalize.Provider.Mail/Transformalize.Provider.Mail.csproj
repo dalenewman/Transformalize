@@ -8,7 +8,7 @@
     <AssemblyVersion>1.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="4.15.1" />
+    <PackageReference Include="MailKit" Version="4.16.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../../Transformalize/Transformalize.csproj" />
