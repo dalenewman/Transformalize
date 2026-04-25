@@ -53,6 +53,7 @@ namespace Transformalize {
       public const string ComparisonDomain = "equal,equals,eq,notequal,notequals,neq,lessthan,lt,greaterthan,lte,lessthanequal,gt,greaterthanequal,gte,=,==,!=,<,<=,>,>=,in,notin,like,notlike";
       public const string ModelDomain = "decisiontree,knn,rbfkernelperceptron,polykernelperceptron,linearregression," + DefaultSetting;
       public const string GeoDomain = DefaultSetting + ",latitude,longitude,altitude,id,property";
+      public const string InputTypeDomain = "defer,button,checkbox,color,date,datetime-local,email,file,google-places-autocomplete,hidden,image,location,map,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week";
 
       public const string TflHashCode = "TflHashCode";
       public const string TflKey = "TflKey";
