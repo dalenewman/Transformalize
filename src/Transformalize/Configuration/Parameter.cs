@@ -266,7 +266,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Sticky { get; set; }
 
-      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,google-places-autocomplete,hidden,image,location,map,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
+      [Cfg(value = "defer", domain = Constants.InputTypeDomain, toLower = true)]
       public string InputType { get; set; }
 
       [Cfg(value = "", toLower = true)]
