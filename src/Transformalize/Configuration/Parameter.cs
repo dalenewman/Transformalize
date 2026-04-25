@@ -162,6 +162,22 @@ namespace Transformalize.Configuration {
             }
          }
 
+         if (InputType == "map") {
+            if (string.IsNullOrEmpty(InputCapture)) {
+               if (Name.Equals("latitude", StringComparison.OrdinalIgnoreCase)) {
+                  InputCapture = "latitude";
+               } else if (Name.Equals("longitude", StringComparison.OrdinalIgnoreCase)) {
+                  InputCapture = "longitude";
+               }
+            }
+            if (InputCapture != "latitude" && InputCapture != "longitude") {
+               Error("If input-type is map, input-capture must be latitude or longitude (or the parameter must be named Latitude or Longitude).");
+            }
+            if (Type != "double") {
+               Error("If input-type is map, type must be double.");
+            }
+         }
+
       }
 
       [Cfg(value = "string", domain = Constants.TypeDomain, ignoreCase = true)]
@@ -250,7 +266,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = false)]
       public bool Sticky { get; set; }
 
-      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,google-places-autocomplete,hidden,image,location,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
+      [Cfg(value = "defer", domain = "defer,button,checkbox,color,date,datetime-local,email,file,google-places-autocomplete,hidden,image,location,map,month,number,password,radio,range,reset,scan,search,submit,tel,text,time,url,week", toLower = true)]
       public string InputType { get; set; }
 
       [Cfg(value = "", toLower = true)]
