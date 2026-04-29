@@ -82,7 +82,7 @@ namespace Transformalize.Providers.Ado {
                     var start = cmd.CreateParameter();
                     start.ParameterName = "Start";
                     start.DbType = _cf.AdoProvider == AdoProvider.Access ? DbType.Date : DbType.DateTime;
-                    start.Value = DateTime.Now;
+                    start.Value = DateTime.UtcNow;
 
                     cmd.Parameters.Add(batchId);
                     cmd.Parameters.Add(entity);
@@ -128,7 +128,7 @@ namespace Transformalize.Providers.Ado {
                     var end = cmd.CreateParameter();
                     end.ParameterName = "End";
                     end.DbType = DbType.Date;
-                    end.Value = DateTime.Now;
+                    end.Value = DateTime.UtcNow;
 
                     var entity = cmd.CreateParameter();
                     entity.ParameterName = "Entity";
@@ -155,7 +155,7 @@ namespace Transformalize.Providers.Ado {
                             Inserts = Convert.ToInt64(Context.Entity.Inserts),
                             Updates = Convert.ToInt64(Context.Entity.Updates),
                             Deletes = Convert.ToInt64(Context.Entity.Deletes),
-                            End = DateTime.Now,
+                            End = DateTime.UtcNow,
                             Entity = Context.Entity.Alias,
                             Input = Context.Entity.Input,
                             Context.Entity.BatchId
@@ -216,7 +216,7 @@ namespace Transformalize.Providers.Ado {
                     var start = cmd.CreateParameter();
                     start.ParameterName = "Start";
                     start.DbType = _cf.AdoProvider == AdoProvider.Access ? DbType.Date : DbType.DateTime;
-                    start.Value = DateTime.Now;
+                    start.Value = DateTime.UtcNow;
 
                     cmd.Parameters.Add(batchId);
                     cmd.Parameters.Add(entity);
@@ -262,7 +262,7 @@ namespace Transformalize.Providers.Ado {
                     var end = cmd.CreateParameter();
                     end.ParameterName = "End";
                     end.DbType = DbType.Date;
-                    end.Value = DateTime.Now;
+                    end.Value = DateTime.UtcNow;
 
                     var entity = cmd.CreateParameter();
                     entity.ParameterName = "Entity";
@@ -289,7 +289,7 @@ namespace Transformalize.Providers.Ado {
                             Inserts = Convert.ToInt64(Context.Entity.Inserts),
                             Updates = Convert.ToInt64(Context.Entity.Updates),
                             Deletes = Convert.ToInt64(Context.Entity.Deletes),
-                            End = DateTime.Now,
+                            End = DateTime.UtcNow,
                             Entity = Context.Entity.Alias,
                             Input = Context.Entity.Input,
                             Context.Entity.BatchId
