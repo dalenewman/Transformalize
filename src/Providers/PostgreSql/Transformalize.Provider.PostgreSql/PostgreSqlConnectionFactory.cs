@@ -933,7 +933,7 @@ namespace Transformalize.Providers.PostgreSql {
          if (_c.Enclose) {
             return L + name + R;
          }
-         return name.Contains(" ") || Reserved.Contains(name) ? L + name + R : name;
+         return name.Contains(" ") || name.Contains("-") || Reserved.Contains(name) ? L + name + R : name;
       }
 
       public string SqlDataType(Field f) {

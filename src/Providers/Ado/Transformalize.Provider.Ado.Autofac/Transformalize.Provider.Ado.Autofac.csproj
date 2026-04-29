@@ -3,7 +3,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.Ado.Autofac</RootNamespace>
     <AssemblyName>Transformalize.Provider.Ado.Autofac</AssemblyName>
-    <Version>1.0.0</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <Description>An ADO Provider Autofac Module for Transformalize</Description>
@@ -14,8 +13,9 @@
     <PackageTags>etl,ado,transformalize</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <FileVersion>1.0.0</FileVersion>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0</FileVersion>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
