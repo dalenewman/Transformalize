@@ -141,5 +141,186 @@ END");
          Assert.IsTrue(rows.Any(), "Expected rows — negated FTS should return products that don't match 'Chai'");
          Assert.IsFalse(rows.Any(r => r["ProductName"].ToString().Contains("Chai")), "Expected no rows with ProductName 'Chai' in negated result");
       }
+
+      [TestMethod]
+      public void PhraseSearchFindsExactProduct() {
+         if (!_ftsAvailable) {
+            Assert.Inconclusive("SQL Server Full-Text Search is not installed in this environment.");
+            return;
+         }
+         // CONTAINS phrase syntax wraps the phrase in double quotes: "Aniseed Syrup"
+         var xml = $@"<add name='NorthwindFtsPhrase'>
+  <search-types>
+    <add name='fulltext' />
+  </search-types>
+  <parameters>
+    <add name='search' value='&quot;Aniseed Syrup&quot;' prompt='true' />
+  </parameters>
+  <connections>
+    <add name='input' provider='sqlserver' server='{Tester.Server},{Tester.Port}' encrypt='true' trust-server-certificate='true' database='Northwind' user='{Tester.User}' password='{Tester.Pw}' />
+    <add name='output' provider='internal' />
+  </connections>
+  <entities>
+    <add name='Products'>
+      <filter>
+        <add field='ProductName' value='@[search]' type='search' />
+      </filter>
+      <fields>
+        <add name='ProductID' type='int' primary-key='true' />
+        <add name='ProductName' search-type='fulltext' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using var outer = new ConfigurationContainer().CreateScope(xml, logger);
+         var process = outer.Resolve<Process>();
+         Assert.AreEqual(0, process.Errors().Length, string.Join(", ", process.Errors()));
+
+         using var inner = new Container(new SqlServerModule()).CreateScope(process, logger);
+         var controller = inner.Resolve<IProcessController>();
+         controller.Execute();
+
+         var rows = process.Entities.First().Rows;
+         Assert.AreEqual(1, rows.Count, "Phrase search for 'Aniseed Syrup' should return exactly one product");
+         Assert.AreEqual("Aniseed Syrup", rows.First()["ProductName"].ToString());
+      }
+
+      [TestMethod]
+      public void BooleanOrFindsMultipleProducts() {
+         if (!_ftsAvailable) {
+            Assert.Inconclusive("SQL Server Full-Text Search is not installed in this environment.");
+            return;
+         }
+         // CONTAINS boolean OR: "Chai" OR "Chang"
+         var xml = $@"<add name='NorthwindFtsBoolOr'>
+  <search-types>
+    <add name='fulltext' />
+  </search-types>
+  <parameters>
+    <add name='search' value='&quot;Chai&quot; OR &quot;Chang&quot;' prompt='true' />
+  </parameters>
+  <connections>
+    <add name='input' provider='sqlserver' server='{Tester.Server},{Tester.Port}' encrypt='true' trust-server-certificate='true' database='Northwind' user='{Tester.User}' password='{Tester.Pw}' />
+    <add name='output' provider='internal' />
+  </connections>
+  <entities>
+    <add name='Products'>
+      <filter>
+        <add field='ProductName' value='@[search]' type='search' />
+      </filter>
+      <fields>
+        <add name='ProductID' type='int' primary-key='true' />
+        <add name='ProductName' search-type='fulltext' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using var outer = new ConfigurationContainer().CreateScope(xml, logger);
+         var process = outer.Resolve<Process>();
+         Assert.AreEqual(0, process.Errors().Length, string.Join(", ", process.Errors()));
+
+         using var inner = new Container(new SqlServerModule()).CreateScope(process, logger);
+         var controller = inner.Resolve<IProcessController>();
+         controller.Execute();
+
+         var rows = process.Entities.First().Rows;
+         Assert.AreEqual(2, rows.Count, "Boolean OR should return exactly Chai and Chang");
+         Assert.IsTrue(rows.Any(r => r["ProductName"].ToString() == "Chai"));
+         Assert.IsTrue(rows.Any(r => r["ProductName"].ToString() == "Chang"));
+      }
+
+      [TestMethod]
+      public void PrefixSearchFindsChefProducts() {
+         if (!_ftsAvailable) {
+            Assert.Inconclusive("SQL Server Full-Text Search is not installed in this environment.");
+            return;
+         }
+         // CONTAINS prefix syntax: "Chef*"
+         var xml = $@"<add name='NorthwindFtsPrefix'>
+  <search-types>
+    <add name='fulltext' />
+  </search-types>
+  <parameters>
+    <add name='search' value='&quot;Chef*&quot;' prompt='true' />
+  </parameters>
+  <connections>
+    <add name='input' provider='sqlserver' server='{Tester.Server},{Tester.Port}' encrypt='true' trust-server-certificate='true' database='Northwind' user='{Tester.User}' password='{Tester.Pw}' />
+    <add name='output' provider='internal' />
+  </connections>
+  <entities>
+    <add name='Products'>
+      <filter>
+        <add field='ProductName' value='@[search]' type='search' />
+      </filter>
+      <fields>
+        <add name='ProductID' type='int' primary-key='true' />
+        <add name='ProductName' search-type='fulltext' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using var outer = new ConfigurationContainer().CreateScope(xml, logger);
+         var process = outer.Resolve<Process>();
+         Assert.AreEqual(0, process.Errors().Length, string.Join(", ", process.Errors()));
+
+         using var inner = new Container(new SqlServerModule()).CreateScope(process, logger);
+         var controller = inner.Resolve<IProcessController>();
+         controller.Execute();
+
+         var rows = process.Entities.First().Rows;
+         Assert.AreEqual(2, rows.Count, "Prefix 'Chef*' should return both Chef Anton products");
+         Assert.IsTrue(rows.All(r => r["ProductName"].ToString()!.StartsWith("Chef")));
+      }
+
+      [TestMethod]
+      public void BooleanAndRequiresBothTerms() {
+         if (!_ftsAvailable) {
+            Assert.Inconclusive("SQL Server Full-Text Search is not installed in this environment.");
+            return;
+         }
+         // CONTAINS boolean AND: "Cajun" AND "Seasoning" — both words are in "Chef Anton's Cajun Seasoning"
+         var xml = $@"<add name='NorthwindFtsBoolAnd'>
+  <search-types>
+    <add name='fulltext' />
+  </search-types>
+  <parameters>
+    <add name='search' value='&quot;Cajun&quot; AND &quot;Seasoning&quot;' prompt='true' />
+  </parameters>
+  <connections>
+    <add name='input' provider='sqlserver' server='{Tester.Server},{Tester.Port}' encrypt='true' trust-server-certificate='true' database='Northwind' user='{Tester.User}' password='{Tester.Pw}' />
+    <add name='output' provider='internal' />
+  </connections>
+  <entities>
+    <add name='Products'>
+      <filter>
+        <add field='ProductName' value='@[search]' type='search' />
+      </filter>
+      <fields>
+        <add name='ProductID' type='int' primary-key='true' />
+        <add name='ProductName' search-type='fulltext' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+
+         var logger = new ConsoleLogger(LogLevel.Info);
+         using var outer = new ConfigurationContainer().CreateScope(xml, logger);
+         var process = outer.Resolve<Process>();
+         Assert.AreEqual(0, process.Errors().Length, string.Join(", ", process.Errors()));
+
+         using var inner = new Container(new SqlServerModule()).CreateScope(process, logger);
+         var controller = inner.Resolve<IProcessController>();
+         controller.Execute();
+
+         var rows = process.Entities.First().Rows;
+         Assert.AreEqual(1, rows.Count, "AND of 'Cajun' and 'Seasoning' should return only 'Chef Anton's Cajun Seasoning'");
+         Assert.AreEqual("Chef Anton's Cajun Seasoning", rows.First()["ProductName"].ToString());
+      }
    }
 }
