@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
+using System.Diagnostics;
 using Testcontainers.MsSql;
 
 namespace Test.Unit.SqlServer {
@@ -27,9 +28,30 @@ namespace Test.Unit.SqlServer {
       public static async Task InitializeContainer() {
          Console.WriteLine("Starting SQL Server container...");
 
-         // Build and start the container
-         // Using 2019-latest as it's more compatible with ARM64 (Apple Silicon) via emulation
-         var builder = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2019-latest")
+         // Build a custom image that installs mssql-server-fts on top of SQL Server 2022.
+         // Dockerfile.fts uses --platform=linux/amd64 so it works on ARM64 (Apple Silicon) via emulation.
+         var dockerfileDir = Path.GetDirectoryName(typeof(Tester).Assembly.Location)!;
+         const string imageName = "mssql-fts:testcontainers";
+
+         Console.WriteLine($"Building SQL Server FTS image from {dockerfileDir}...");
+         var buildProcess = new Process {
+            StartInfo = new ProcessStartInfo {
+               FileName = "docker",
+               Arguments = $"build -f \"{Path.Combine(dockerfileDir, "Dockerfile.fts")}\" -t {imageName} \"{dockerfileDir}\"",
+               RedirectStandardOutput = true,
+               RedirectStandardError = true,
+               UseShellExecute = false
+            }
+         };
+         buildProcess.Start();
+         var buildOutput = await buildProcess.StandardOutput.ReadToEndAsync();
+         var buildError = await buildProcess.StandardError.ReadToEndAsync();
+         await buildProcess.WaitForExitAsync();
+         if (buildProcess.ExitCode != 0)
+            throw new Exception($"docker build failed:\n{buildError}");
+         Console.WriteLine($"Built image: {imageName}");
+
+         var builder = new MsSqlBuilder(imageName)
             .WithPassword(Pw)
             .WithCleanUp(true);
 

@@ -13,6 +13,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Dockerfile.fts">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="files\DeleteIntegration.xml" />
     <None Remove="files\instnwnd.sql" />
     <None Remove="files\northwind-rowversion.sql" />
