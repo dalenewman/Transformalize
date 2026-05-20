@@ -1,3 +1,9 @@
+### Change Log
+
+#### 1.4.1
+
+- Fix: Port was ignored when building the connection string. `DataSource` now uses `server,port` format when a non-zero port is configured.
+
 ### Overview
 
 This adds a `SqlServer` provider to Transformalize.
