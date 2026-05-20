@@ -76,8 +76,57 @@ namespace Transformalize.Providers.Ado.Ext {
       private static string ResolveExpression(IContext c, Filter filter, IConnectionFactory factory) {
          if (!string.IsNullOrEmpty(filter.Expression))
             return filter.Expression;
+
+         if (filter.Type == "search" && filter.LeftField != null) {
+            var searchType = c.Process.SearchTypes.FirstOrDefault(st => st.Name == filter.LeftField.SearchType);
+            if (searchType != null && searchType.Name != "default") {
+               return ResolveFullTextExpression(c, filter, factory, searchType);
+            }
+         }
+
          var resolvedOperator = ResolveOperator(c, filter);
          return $"{ResolveSide(filter, "left", resolvedOperator, factory)} {resolvedOperator} {ResolveSide(filter, "right", resolvedOperator, factory)}";
+      }
+
+      private static string ResolveFullTextExpression(IContext c, Filter filter, IConnectionFactory factory, SearchType searchType) {
+         var fieldName = factory.Enclose(filter.Field);
+         var value = filter.Value.Replace("'", "''");
+         var negate = ConvertOperator(filter.Operator) == "!=";
+
+         string expr;
+         switch (factory.AdoProvider) {
+            case AdoProvider.SqlServer:
+               var langClause = string.IsNullOrEmpty(searchType.Analyzer) ? string.Empty : $" LANGUAGE '{searchType.Analyzer}'";
+               expr = $"CONTAINS({fieldName}, '{value}'{langClause})";
+               break;
+            case AdoProvider.PostgreSql:
+               var lang = string.IsNullOrEmpty(searchType.Analyzer) ? "english" : searchType.Analyzer;
+               var tsQueryFn = searchType.QueryType switch {
+                  "web" => "websearch_to_tsquery",
+                  "phrase" => "phraseto_tsquery",
+                  "raw" => "to_tsquery",
+                  _ => "plainto_tsquery"
+               };
+               expr = $"to_tsvector('{lang}', {fieldName}) @@ {tsQueryFn}('{lang}', '{value}')";
+               break;
+            case AdoProvider.MySql:
+               var modeClause = searchType.Mode switch {
+                  "natural" => "IN NATURAL LANGUAGE MODE",
+                  "expansion" => "WITH QUERY EXPANSION",
+                  _ => "IN BOOLEAN MODE"
+               };
+               expr = $"MATCH({fieldName}) AGAINST('{value}' {modeClause})";
+               break;
+            case AdoProvider.SqLite:
+               var ftsTable = factory.Enclose(c.Entity.Name + "_fts");
+               expr = $"rowid IN (SELECT rowid FROM {ftsTable} WHERE {ftsTable} MATCH '{value}')";
+               break;
+            default:
+               expr = $"{fieldName} LIKE '%{value}%'";
+               break;
+         }
+
+         return negate ? $"NOT ({expr})" : expr;
       }
 
       private static string ResolveSide(Filter filter, string side, string resolvedOperator, IConnectionFactory factory) {

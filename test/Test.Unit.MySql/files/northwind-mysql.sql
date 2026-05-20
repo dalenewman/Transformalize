@@ -304,159 +304,159 @@ INSERT INTO Category(categoryid, categoryname, description)
 -- Populate table Products
 
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(1, N'Product HHYDP', 1, 1, 18.00, 0);
+  VALUES(1, N'Chai', 1, 1, 18.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(2, N'Product RECZE', 1, 1, 19.00, 0);
+  VALUES(2, N'Chang', 1, 1, 19.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(3, N'Product IMEHJ', 1, 2, 10.00, 0);
+  VALUES(3, N'Aniseed Syrup', 1, 2, 10.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(4, N'Product KSBRM', 2, 2, 22.00, 0);
+  VALUES(4, N'Chef Anton''s Cajun Seasoning', 2, 2, 22.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(5, N'Product EPEIM', 2, 2, 21.35, 1);
+  VALUES(5, N'Chef Anton''s Gumbo Mix', 2, 2, 21.35, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(6, N'Product VAIIV', 3, 2, 25.00, 0);
+  VALUES(6, N'Grandma''s Boysenberry Spread', 3, 2, 25.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(7, N'Product HMLNI', 3, 7, 30.00, 0);
+  VALUES(7, N'Uncle Bob''s Organic Dried Pears', 3, 7, 30.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(8, N'Product WVJFP', 3, 2, 40.00, 0);
+  VALUES(8, N'Northwoods Cranberry Sauce', 3, 2, 40.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(9, N'Product AOZBW', 4, 6, 97.00, 1);
+  VALUES(9, N'Mishi Kobe Niku', 4, 6, 97.00, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(10, N'Product YHXGE', 4, 8, 31.00, 0);
+  VALUES(10, N'Ikura', 4, 8, 31.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(11, N'Product QMVUN', 5, 4, 21.00, 0);
+  VALUES(11, N'Queso Cabrales', 5, 4, 21.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(12, N'Product OSFNS', 5, 4, 38.00, 0);
+  VALUES(12, N'Queso Manchego La Pastora', 5, 4, 38.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(13, N'Product POXFU', 6, 8, 6.00, 0);
+  VALUES(13, N'Konbu', 6, 8, 6.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(14, N'Product PWCJB', 6, 7, 23.25, 0);
+  VALUES(14, N'Tofu', 6, 7, 23.25, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(15, N'Product KSZOI', 6, 2, 15.50, 0);
+  VALUES(15, N'Genen Shouyu', 6, 2, 15.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(16, N'Product PAFRH', 7, 3, 17.45, 0);
+  VALUES(16, N'Pavlova', 7, 3, 17.45, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(17, N'Product BLCAX', 7, 6, 39.00, 1);
+  VALUES(17, N'Alice Mutton', 7, 6, 39.00, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(18, N'Product CKEDC', 7, 8, 62.50, 0);
+  VALUES(18, N'Carnarvon Tigers', 7, 8, 62.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(19, N'Product XKXDO', 8, 3, 9.20, 0);
+  VALUES(19, N'Teatime Chocolate Biscuits', 8, 3, 9.20, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(20, N'Product QHFFP', 8, 3, 81.00, 0);
+  VALUES(20, N'Sir Rodney''s Marmalade', 8, 3, 81.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(21, N'Product VJZZH', 8, 3, 10.00, 0);
+  VALUES(21, N'Sir Rodney''s Scones', 8, 3, 10.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(22, N'Product CPHFY', 9, 5, 21.00, 0);
+  VALUES(22, N'Gustaf''s Knäckebröd', 9, 5, 21.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(23, N'Product JLUDZ', 9, 5, 9.00, 0);
+  VALUES(23, N'Tunnbröd', 9, 5, 9.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(24, N'Product QOGNU', 10, 1, 4.50, 1);
+  VALUES(24, N'Guaraná Fantástica', 10, 1, 4.50, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(25, N'Product LYLNI', 11, 3, 14.00, 0);
+  VALUES(25, N'NuNuCa Nuß-Nougat-Creme', 11, 3, 14.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(26, N'Product HLGZA', 11, 3, 31.23, 0);
+  VALUES(26, N'Gumbär Gummibärchen', 11, 3, 31.23, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(27, N'Product SMIOH', 11, 3, 43.90, 0);
+  VALUES(27, N'Schoggi Schokolade', 11, 3, 43.90, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(28, N'Product OFBNT', 12, 7, 45.60, 1);
+  VALUES(28, N'Rössle Sauerkraut', 12, 7, 45.60, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(29, N'Product VJXYN', 12, 6, 123.79, 1);
+  VALUES(29, N'Thüringer Rostbratwurst', 12, 6, 123.79, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(30, N'Product LYERX', 13, 8, 25.89, 0);
+  VALUES(30, N'Nord-Ost Matjeshering', 13, 8, 25.89, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(31, N'Product XWOXC', 14, 4, 12.50, 0);
+  VALUES(31, N'Gorgonzola Telino', 14, 4, 12.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(32, N'Product NUNAW', 14, 4, 32.00, 0);
+  VALUES(32, N'Mascarpone Fabioli', 14, 4, 32.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(33, N'Product ASTMN', 15, 4, 2.50, 0);
+  VALUES(33, N'Geitost', 15, 4, 2.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(34, N'Product SWNJY', 16, 1, 14.00, 0);
+  VALUES(34, N'Sasquatch Ale', 16, 1, 14.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(35, N'Product NEVTJ', 16, 1, 18.00, 0);
+  VALUES(35, N'Steeleye Stout', 16, 1, 18.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(36, N'Product GMKIJ', 17, 8, 19.00, 0);
+  VALUES(36, N'Inlagd Sill', 17, 8, 19.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(37, N'Product EVFFA', 17, 8, 26.00, 0);
+  VALUES(37, N'Gravad lax', 17, 8, 26.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(38, N'Product QDOMO', 18, 1, 263.50, 0);
+  VALUES(38, N'Côte de Blaye', 18, 1, 263.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(39, N'Product LSOFL', 18, 1, 18.00, 0);
+  VALUES(39, N'Chartreuse verte', 18, 1, 18.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(40, N'Product YZIXQ', 19, 8, 18.40, 0);
+  VALUES(40, N'Boston Crab Meat', 19, 8, 18.40, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(41, N'Product TTEEX', 19, 8, 9.65, 0);
+  VALUES(41, N'Jack''s New England Clam Chowder', 19, 8, 9.65, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(42, N'Product RJVNM', 20, 5, 14.00, 1);
+  VALUES(42, N'Singaporean Hokkien Fried Mee', 20, 5, 14.00, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(43, N'Product ZZZHR', 20, 1, 46.00, 0);
+  VALUES(43, N'Ipoh Coffee', 20, 1, 46.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(44, N'Product VJIEO', 20, 2, 19.45, 0);
+  VALUES(44, N'Gula Malacca', 20, 2, 19.45, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(45, N'Product AQOKR', 21, 8, 9.50, 0);
+  VALUES(45, N'Rogede sild', 21, 8, 9.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(46, N'Product CBRRL', 21, 8, 12.00, 0);
+  VALUES(46, N'Spegesild', 21, 8, 12.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(47, N'Product EZZPR', 22, 3, 9.50, 0);
+  VALUES(47, N'Zaanse koeken', 22, 3, 9.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(48, N'Product MYNXN', 22, 3, 12.75, 0);
+  VALUES(48, N'Chocolade', 22, 3, 12.75, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(49, N'Product FPYPN', 23, 3, 20.00, 0);
+  VALUES(49, N'Maxilaku', 23, 3, 20.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(50, N'Product BIUDV', 23, 3, 16.25, 0);
+  VALUES(50, N'Valkoinen suklaa', 23, 3, 16.25, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(51, N'Product APITJ', 24, 7, 53.00, 0);
+  VALUES(51, N'Manjimup Dried Apples', 24, 7, 53.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(52, N'Product QSRXF', 24, 5, 7.00, 0);
+  VALUES(52, N'Filo Mix', 24, 5, 7.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(53, N'Product BKGEA', 24, 6, 32.80, 1);
+  VALUES(53, N'Perth Pasties', 24, 6, 32.80, 1);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(54, N'Product QAQRL', 25, 6, 7.45, 0);
+  VALUES(54, N'Tourtière', 25, 6, 7.45, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(55, N'Product YYWRT', 25, 6, 24.00, 0);
+  VALUES(55, N'Pâté chinois', 25, 6, 24.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(56, N'Product VKCMF', 26, 5, 38.00, 0);
+  VALUES(56, N'Gnocchi di nonna Alice', 26, 5, 38.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(57, N'Product OVLQI', 26, 5, 19.50, 0);
+  VALUES(57, N'Ravioli Angelo', 26, 5, 19.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(58, N'Product ACRVI', 27, 8, 13.25, 0);
+  VALUES(58, N'Escargots de Bourgogne', 27, 8, 13.25, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(59, N'Product UKXRI', 28, 4, 55.00, 0);
+  VALUES(59, N'Raclette Courdavault', 28, 4, 55.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(60, N'Product WHBYK', 28, 4, 34.00, 0);
+  VALUES(60, N'Camembert Pierrot', 28, 4, 34.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(61, N'Product XYZPE', 29, 2, 28.50, 0);
+  VALUES(61, N'Sirop d''érable', 29, 2, 28.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(62, N'Product WUXYK', 29, 3, 49.30, 0);
+  VALUES(62, N'Tarte au sucre', 29, 3, 49.30, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(63, N'Product ICKNK', 7, 2, 43.90, 0);
+  VALUES(63, N'Vegie-spread', 7, 2, 43.90, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(64, N'Product HCQDE', 12, 5, 33.25, 0);
+  VALUES(64, N'Wimmers gute Semmelknödel', 12, 5, 33.25, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(65, N'Product XYWBZ', 2, 2, 21.05, 0);
+  VALUES(65, N'Louisiana Fiery Hot Pepper Sauce', 2, 2, 21.05, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(66, N'Product LQMGN', 2, 2, 17.00, 0);
+  VALUES(66, N'Louisiana Hot Spiced Okra', 2, 2, 17.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(67, N'Product XLXQF', 16, 1, 14.00, 0);
+  VALUES(67, N'Laughing Lumberjack Lager', 16, 1, 14.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(68, N'Product TBTBL', 8, 3, 12.50, 0);
+  VALUES(68, N'Scottish Longbreads', 8, 3, 12.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(69, N'Product COAXA', 15, 4, 36.00, 0);
+  VALUES(69, N'Gudbrandsdalsost', 15, 4, 36.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(70, N'Product TOONT', 7, 1, 15.00, 0);
+  VALUES(70, N'Outback Lager', 7, 1, 15.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(71, N'Product MYMOI', 15, 4, 21.50, 0);
+  VALUES(71, N'Flotemysost', 15, 4, 21.50, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(72, N'Product GEEOO', 14, 4, 34.80, 0);
+  VALUES(72, N'Mozzarella di Giovanni', 14, 4, 34.80, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(73, N'Product WEUJZ', 17, 8, 15.00, 0);
+  VALUES(73, N'Röd Kaviar', 17, 8, 15.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(74, N'Product BKAZJ', 4, 7, 10.00, 0);
+  VALUES(74, N'Longlife Tofu', 4, 7, 10.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(75, N'Product BWRLG', 12, 1, 7.75, 0);
+  VALUES(75, N'Rhönbräu Klosterbier', 12, 1, 7.75, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(76, N'Product JYGFE', 23, 1, 18.00, 0);
+  VALUES(76, N'Lakkalikööri', 23, 1, 18.00, 0);
 INSERT INTO Product(productid, productname, supplierid, categoryid, unitprice, discontinued)
-  VALUES(77, N'Product LUNZZ', 12, 2, 13.00, 0);
+  VALUES(77, N'Original Frankfurter grüne Soße', 12, 2, 13.00, 0);
 
 
 INSERT INTO Customer(custid, companyname, contactname, contacttitle, address, city, region, postalcode, country, phone, fax)

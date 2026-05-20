@@ -90,6 +90,8 @@ namespace Transformalize {
          switch (l) {
             case "boolean":
                return "bool";
+            case "dateonly":
+               return "date";
             case "float":
                return "single";
             case "int16":

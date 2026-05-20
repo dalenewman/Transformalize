@@ -39,5 +39,21 @@ namespace Transformalize.Configuration {
 
         [Cfg(value = "defer")]
         public string Type { get; set; }
+
+        /// <summary>
+        /// For PostgreSQL full-text search: which tsquery function to use.
+        /// Options: "plain" (plainto_tsquery), "web" (websearch_to_tsquery),
+        /// "phrase" (phraseto_tsquery), "raw" (to_tsquery)
+        /// </summary>
+        [Cfg(value = "plain")]
+        public string QueryType { get; set; }
+
+        /// <summary>
+        /// For MySQL full-text search: the AGAINST mode.
+        /// Options: "boolean" (IN BOOLEAN MODE), "natural" (IN NATURAL LANGUAGE MODE),
+        /// "expansion" (WITH QUERY EXPANSION)
+        /// </summary>
+        [Cfg(value = "boolean")]
+        public string Mode { get; set; }
     }
 }
