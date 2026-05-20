@@ -102,7 +102,7 @@ namespace Transformalize.Providers.SqlServer {
          _c.ConnectionString = (new SqlConnectionStringBuilder {
             ApplicationName = appName ?? Constants.ApplicationName,
             ConnectTimeout = _c.RequestTimeout,
-            DataSource = _c.Server,
+            DataSource = _c.Port > 0 ? $"{_c.Server},{_c.Port}" : _c.Server,
             InitialCatalog = _c.Database,
             MultipleActiveResultSets = _c.Mars,
             IntegratedSecurity = _c.User == string.Empty,
