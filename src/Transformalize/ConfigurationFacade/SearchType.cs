@@ -17,8 +17,10 @@
 #endregion
 using Cfg.Net;
 
-namespace Transformalize.ConfigurationFacade {
-    public class SearchType : CfgNode {
+namespace Transformalize.ConfigurationFacade
+{
+    public class SearchType : CfgNode
+    {
         [Cfg]
         public string Name { get; set; }
 
@@ -39,5 +41,38 @@ namespace Transformalize.ConfigurationFacade {
 
         [Cfg]
         public string Type { get; set; }
+
+        [Cfg]
+        public string QueryType { get; set; }
+
+        [Cfg]
+        public string Mode { get; set; }
+
+        public Configuration.SearchType ToSearchType()
+        {
+            var st = new Configuration.SearchType
+            {
+                Name = this.Name,
+                Analyzer = this.Analyzer,
+                Type = this.Type,
+                QueryType = this.QueryType,
+                Mode = this.Mode
+            };
+
+            bool.TryParse(this.Store, out bool store);
+            st.Store = store;
+
+            bool.TryParse(this.Index, out bool index);
+            st.Index = index;
+
+            bool.TryParse(this.MultiValued, out bool multiValued);
+            st.MultiValued = multiValued;
+
+            bool.TryParse(this.Norms, out bool norms);
+            st.Norms = norms;
+
+            return st;
+        }
+
     }
 }

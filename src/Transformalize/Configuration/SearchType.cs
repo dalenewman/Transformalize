@@ -41,11 +41,12 @@ namespace Transformalize.Configuration {
         public string Type { get; set; }
 
         /// <summary>
-        /// For PostgreSQL full-text search: which tsquery function to use.
-        /// Options: "plain" (plainto_tsquery), "web" (websearch_to_tsquery),
-        /// "phrase" (phraseto_tsquery), "raw" (to_tsquery)
+        /// Controls the FTS predicate used by the provider.
+        /// SQL Server: "freetext" → FREETEXT(); anything else (default) → CONTAINS() with auto-normalizer.
+        /// PostgreSQL: "plain" (plainto_tsquery), "web" (websearch_to_tsquery),
+        ///   "phrase" (phraseto_tsquery), "raw" (to_tsquery).
         /// </summary>
-        [Cfg(value = "plain")]
+        [Cfg(value = "plain", domain="plain,web,phrase,raw,contains,freetext", toLower = true)]
         public string QueryType { get; set; }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace Transformalize.Configuration {
         /// Options: "boolean" (IN BOOLEAN MODE), "natural" (IN NATURAL LANGUAGE MODE),
         /// "expansion" (WITH QUERY EXPANSION)
         /// </summary>
-        [Cfg(value = "boolean")]
+        [Cfg(value = "boolean", domain="boolean,natural,expansion", toLower = true)]
         public string Mode { get; set; }
     }
 }

@@ -48,28 +48,89 @@ Using `operator='notequal'` on the filter negates the expression (`NOT (...)`).
 |---|---|---|
 | `name` | *(required)* | Unique name; referenced by a field's `search-type` attribute. |
 | `analyzer` | `""` | Language/analyzer name. Meaning is provider-specific (see below). |
-| `query-type` | `plain` | PostgreSQL only — controls which `tsquery` function is used. |
+| `query-type` | `plain` | SQL Server: `"contains"` → `CONTAINS()` with auto-normalizer; anything else (default) → `FREETEXT()`. PostgreSQL: `"plain"`, `"web"`, `"phrase"`, `"raw"` — controls which `tsquery` function is used. |
 | `mode` | `boolean` | MySQL only — controls the `AGAINST` mode. |
 
 ---
 
 ## SQL Server
 
-### Generated SQL
+SQL Server supports two FTS predicates. **`CONTAINS` is the default** and uses the auto-normalizer to fix common query syntax mistakes. `FREETEXT` is simpler (plain natural-language text, no operators) — set `query-type='freetext'` to opt in.
+
+### CONTAINS (default, with auto-normalizer)
+
+`CONTAINS` supports precise phrase, prefix, boolean, and proximity searches but requires a specific query syntax. Set `query-type='contains'` to use it. Transformalize applies an auto-normalizer to help users who don't know the syntax:
+
+| User input | Normalizer output | Rule applied |
+|---|---|---|
+| `chai` | `chai` | single word — unchanged |
+| `chef*` | `"chef*"` | unquoted prefix — auto-quoted |
+| `"chef*"` | `"chef*"` | already quoted — unchanged |
+| `*chai` | `chai` | suffix/leading `*` not supported — stripped |
+| `*chai*` | `"chai*"` | strip leading `*`, quote remaining trailing `*` |
+| `chai chang` | `chai AND chang` | bare multi-word — joined with AND |
+| `chef* cajun` | `"chef*" AND cajun` | prefix + word — prefix quoted, then AND-joined |
+| `"Aniseed Syrup"` | `"Aniseed Syrup"` | quoted phrase — unchanged |
+| `chai OR chang` | `chai OR chang` | explicit OR — operator preserved, terms normalized |
+| `chef* OR chang` | `"chef*" OR chang` | OR preserved, unquoted prefix still fixed |
+| `*chai OR *chang` | `chai OR chang` | OR preserved, leading `*` stripped from each term |
+| `"Chai" AND NOT "Chang"` | `"Chai" AND NOT "Chang"` | explicit AND NOT — unchanged |
+| `chai NOT chang` | `chai AND NOT chang` | bare NOT after value — AND inserted |
+| `OR chai` | `chai` | leading operator with no left-hand term — stripped |
+| `AND NOT chai` | `chai` | leading operator with no left-hand term — stripped |
+| `chai AND` | `chai` | trailing operator with no right-hand term — stripped |
+| `something* AND somethingelse OR` | `"something*" AND somethingelse` | trailing OR stripped, prefix still fixed |
+| `chai AND OR chang` | `chai AND chang` | consecutive operators — first kept, second dropped |
 
 ```sql
--- default (no analyzer)
+-- default (no query-type attribute)
 CONTAINS(ProductName, 'chai')
 
--- with analyzer='french'
+-- normalizer auto-quotes unquoted prefix
+CONTAINS(ProductName, '"chef*"')
+
+-- explicit boolean OR passed through
+CONTAINS(ProductName, '"Chai" OR "Chang"')
+
+-- with language
 CONTAINS(ProductName, 'chai' LANGUAGE 'french')
 ```
 
-`analyzer` maps to the `LANGUAGE` clause of `CONTAINS`. Leave it empty to use the column's default language.
+**Arrangement:**
+
+```xml
+<search-types>
+  <add name='fulltext' />
+  <!-- with language: -->
+  <!-- <add name='fulltext' analyzer='french' /> -->
+</search-types>
+```
+
+### FREETEXT (opt-in)
+
+`FREETEXT` performs word breaking, stemming, and thesaurus lookup automatically. Users type plain words and SQL Server finds relevant matches — no special syntax required. Set `query-type='freetext'` to use it.
+
+```sql
+-- query-type='freetext'
+FREETEXT(ProductName, 'chai')
+
+-- with language
+FREETEXT(ProductName, 'chai' LANGUAGE 'french')
+```
+
+**Arrangement:**
+
+```xml
+<search-types>
+  <add name='fulltext' query-type='freetext' />
+  <!-- with language: -->
+  <!-- <add name='fulltext' query-type='freetext' analyzer='french' /> -->
+</search-types>
+```
 
 ### Creating the full-text index
 
-SQL Server requires a full-text catalog and an index on the column.
+SQL Server requires a full-text catalog and an index on the column (needed for both `FREETEXT` and `CONTAINS`).
 
 ```sql
 -- 1. Create a catalog (once per database)
@@ -93,17 +154,7 @@ BEGIN
 END
 ```
 
-> **Note:** Full-Text Search must be installed on the SQL Server instance. The Docker image `mcr.microsoft.com/mssql/server` does not include it by default — see the `Dockerfile.fts` in the test project for an image that does.
-
-### Arrangement
-
-```xml
-<search-types>
-  <add name='fulltext' />
-  <!-- with a language override: -->
-  <!-- <add name='fulltext' analyzer='french' /> -->
-</search-types>
-```
+> **Note:** Full-Text Search must be installed on the SQL Server instance. The Docker image `mcr.microsoft.com/mssql/server` does not include it by default — see the `Dockerfile.fts` in the test project for an image that does.  Also, if you intend to run full text queries on a view, it has to have schema binding on, and be indexed.
 
 ---
 
