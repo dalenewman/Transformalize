@@ -88,6 +88,99 @@ namespace Transformalize.Providers.Ado.Ext {
          return $"{ResolveSide(filter, "left", resolvedOperator, factory)} {resolvedOperator} {ResolveSide(filter, "right", resolvedOperator, factory)}";
       }
 
+      // CONTAINS operator keywords, longest match first so "AND NOT" wins over "AND"
+      private static readonly string[] _containsOperators = { "AND NOT", "AND", "OR", "NEAR", "NOT" };
+
+      private enum ContainsTokenKind { Word, Operator, Quoted }
+
+      private static List<(string Text, ContainsTokenKind Kind)> ParseContainsTokens(string value) {
+         var result = new List<(string, ContainsTokenKind)>();
+         var i = 0;
+         while (i < value.Length) {
+            while (i < value.Length && char.IsWhiteSpace(value[i])) i++;
+            if (i >= value.Length) break;
+
+            if (value[i] == '"') {
+               var end = value.IndexOf('"', i + 1);
+               if (end == -1) end = value.Length - 1;
+               result.Add((value.Substring(i, end - i + 1), ContainsTokenKind.Quoted));
+               i = end + 1;
+               continue;
+            }
+
+            var matched = false;
+            foreach (var op in _containsOperators) {
+               if (i + op.Length <= value.Length &&
+                   string.Compare(value, i, op, 0, op.Length, StringComparison.OrdinalIgnoreCase) == 0 &&
+                   (i + op.Length >= value.Length || char.IsWhiteSpace(value[i + op.Length]))) {
+                  result.Add((op.ToUpperInvariant(), ContainsTokenKind.Operator));
+                  i += op.Length;
+                  matched = true;
+                  break;
+               }
+            }
+            if (matched) continue;
+
+            var end2 = i;
+            while (end2 < value.Length && !char.IsWhiteSpace(value[end2]) && value[end2] != '"') end2++;
+            result.Add((value.Substring(i, end2 - i), ContainsTokenKind.Word));
+            i = end2;
+         }
+         return result;
+      }
+
+      // Strip invalid leading wildcards and quote valid trailing-wildcard (prefix) tokens.
+      // Returns null when the token normalizes to empty and should be dropped.
+      private static string NormalizeBareWord(string word) {
+         var stripped = word.TrimStart('*');
+         if (stripped.Length == 0) return null;
+         return stripped.EndsWith("*") ? $"\"{stripped}\"" : stripped;
+      }
+
+      private static string NormalizeContainsQuery(string value) {
+         var tokens = ParseContainsTokens(value.Trim());
+         var parts = new List<string>(tokens.Count * 2);
+         var prevWasValue = false;
+
+         foreach (var (text, kind) in tokens) {
+            switch (kind) {
+               case ContainsTokenKind.Operator:
+                  // Only emit an operator when there is a left-hand term.
+                  // Dangling leading operators (e.g. "OR chai", "AND something") are skipped.
+                  // Consecutive operators (e.g. "chai AND OR chang") keep only the first.
+                  if (prevWasValue) {
+                     parts.Add(text == "NOT" ? "AND NOT" : text);
+                     prevWasValue = false;
+                  }
+                  break;
+               case ContainsTokenKind.Quoted:
+                  if (prevWasValue) parts.Add("AND");
+                  parts.Add(text);
+                  prevWasValue = true;
+                  break;
+               default: // Word
+                  var normalized = NormalizeBareWord(text);
+                  if (normalized != null) {
+                     if (prevWasValue) parts.Add("AND");
+                     parts.Add(normalized);
+                     prevWasValue = true;
+                  }
+                  break;
+            }
+         }
+
+         // Remove any trailing operator that has no right-hand term (e.g. "chai AND", "chai OR")
+         while (parts.Count > 0) {
+            var last = parts[parts.Count - 1];
+            if (last == "AND" || last == "OR" || last == "AND NOT" || last == "NEAR")
+               parts.RemoveAt(parts.Count - 1);
+            else
+               break;
+         }
+
+         return string.Join(" ", parts);
+      }
+
       private static string ResolveFullTextExpression(IContext c, Filter filter, IConnectionFactory factory, SearchType searchType) {
          var fieldName = factory.Enclose(filter.Field);
          var value = filter.Value.Replace("'", "''");
@@ -97,7 +190,11 @@ namespace Transformalize.Providers.Ado.Ext {
          switch (factory.AdoProvider) {
             case AdoProvider.SqlServer:
                var langClause = string.IsNullOrEmpty(searchType.Analyzer) ? string.Empty : $" LANGUAGE '{searchType.Analyzer}'";
-               expr = $"CONTAINS({fieldName}, '{value}'{langClause})";
+               if (searchType.QueryType == "freetext") {
+                  expr = $"FREETEXT({fieldName}, '{value}'{langClause})";
+               } else {
+                  expr = $"CONTAINS({fieldName}, '{NormalizeContainsQuery(value)}'{langClause})";
+               }
                break;
             case AdoProvider.PostgreSql:
                var lang = string.IsNullOrEmpty(searchType.Analyzer) ? "english" : searchType.Analyzer;

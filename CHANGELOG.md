@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2] - 2026-05-21
+
+### Changed
+
+- **SQL Server FTS — CONTAINS is now the default** (`Ado 1.4.2`, `Transformalize 1.4.2`): When a field has a `search-type` and the filter `type='search'`, SQL Server now generates `CONTAINS()` by default (previously generated `CONTAINS` without a normalizer). Use `query-type='freetext'` to opt into `FREETEXT()` (natural-language, no operators).
+- **CONTAINS auto-normalizer** (`Ado 1.4.2`): User input is automatically normalized before being passed to `CONTAINS()` so common syntax mistakes are fixed transparently:
+  - Unquoted prefix terms (`chef*`) are auto-quoted (`"chef*"`).
+  - Leading wildcards (`*chai`) are stripped; both-side wildcards (`*chai*`) strip the leading `*` and quote the remainder (`"chai*"`).
+  - Bare multi-word input (`chai chang`) is joined with `AND` (`chai AND chang`).
+  - Bare `NOT` is promoted to `AND NOT` (`chai NOT chang` → `chai AND NOT chang`).
+  - Dangling leading operators (`OR chai`, `AND NOT chai`) are stripped.
+  - Dangling trailing operators (`chai AND`, `something* AND somethingelse OR`) are stripped.
+  - Consecutive operators (`chai AND OR chang`) keep the first and drop the second (`chai AND chang`).
+  - Explicit `AND`, `OR`, `AND NOT`, and `NEAR` operators are preserved, with each operand still individually normalized.
+- **`query-type` and `mode` domain validation** (`Transformalize 1.4.2`): `SearchType.QueryType` now validates against `plain,web,phrase,raw,contains,freetext`; `SearchType.Mode` validates against `boolean,natural,expansion`.
+
 ## [1.4.1] - 2026-05-19
 
 ### Fixed
