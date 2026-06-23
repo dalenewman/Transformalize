@@ -87,7 +87,7 @@ END");
          inner.Resolve<IProcessController>().Execute();
          var rows = process.Entities.First().Rows;
          Assert.IsTrue(rows.Any(), "Expected at least one row from FREETEXT search for 'Chai'");
-         Assert.IsTrue(rows.Any(r => r["ProductName"].ToString().Contains("Chai")));
+         Assert.IsTrue(rows.Any(r => (r["ProductName"]?.ToString() ?? string.Empty).Contains("Chai")), "Expected at least one row with ProductName containing 'Chai'");
       }
 
       [TestMethod]
@@ -161,7 +161,9 @@ END");
          inner.Resolve<IProcessController>().Execute();
          var rows = process.Entities.First().Rows;
          Assert.IsTrue(rows.Any(), "Negated FREETEXT should return products that don't match 'Chai'");
-         Assert.IsFalse(rows.Any(r => r["ProductName"].ToString().Contains("Chai")));
+         foreach (var row in rows) {
+            Assert.DoesNotContain(row["ProductName"]?.ToString() ?? string.Empty, "Chai");
+         }
       }
 
       // --- CONTAINS (opt-in via query-type='contains') ---

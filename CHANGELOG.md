@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3] - 2026-06-22
+
+### Changed
+
+- **Dependency alignment with OrchardCore 3.0.0** (`1.4.3`): bumped shared dependencies to match the versions OrchardCore 3.0.0 ships, so projects co-hosted with OrchardCore (e.g. `OrchardCore.Transformalize`) resolve a single, consistent version of each:
+  - `System.Text.Json` 10.0.5 → 10.0.8 (`Provider.Json`, `Transform.Json`, `Provider.GeoJson`).
+  - `Jint` 4.6.3 → 4.9.2 (`Transform.Jint`, `Validate.Jint`).
+  - `MailKit` 4.16.0 → 4.17.0 (`Provider.Mail`).
+  - `DocumentFormat.OpenXml` 3.4.1 → 3.5.1 (`Provider.OpenXml`).
+  - `Lucene.Net*` 4.8.0-beta00016 → 4.8.0-beta00017 (`Provider.Lucene`).
+- The corresponding `.Autofac` wrapper packages were revved alongside their base packages so consumers (which reference the `.Autofac` packages) pick up the updated dependencies.
+
+### Security
+
+- **Patched native SQLite** (`Provider.Sqlite 1.4.3`): pinned `SQLitePCLRaw.bundle_e_sqlite3` to `3.0.3` to resolve **CVE-2025-6965** (NU1903, high severity — memory corruption in SQLite < 3.50.2). `Microsoft.Data.Sqlite` still floors the bundle at the vulnerable, deprecated `2.1.11`, so an explicit pin to the `3.0.x` bundle (which uses `SourceGear.sqlite3` ≥ 3.50.4.5) is the only mitigation. Revisit when `Microsoft.Data.Sqlite` references a non-vulnerable bundle itself.
+
 ## [1.4.2] - 2026-05-21
 
 ### Changed
