@@ -2,7 +2,7 @@
 
 # docker buildx create --driver=docker-container --name=container
 
-version="1.2.0"
+version="1.4.3"
 build="mcr.microsoft.com/dotnet/sdk:10.0"
 base="mcr.microsoft.com/dotnet/runtime:10.0"
 name="transformalize.cli"
