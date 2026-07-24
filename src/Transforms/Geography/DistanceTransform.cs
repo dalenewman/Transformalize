@@ -28,6 +28,8 @@ namespace Transformalize.Transforms.Geography {
 
       private readonly Field[] _fields;
       private readonly Func<IRow, double> _getDistance;
+      private readonly int _decimalPlaces;
+      private readonly DistanceUnit _distanceUnit;
       private int _emptyStringCount;
       private int _nonNumericCount;
       private readonly HashSet<string> _nonNumericValues = new HashSet<string>();
@@ -52,6 +54,9 @@ namespace Transformalize.Transforms.Geography {
             return;
          }
 
+         _decimalPlaces = context.Operation.DecimalPlaces;
+         _distanceUnit = Enum.TryParse<DistanceUnit>(context.Operation.DistanceUnit, ignoreCase: true, out var unit) ? unit : DistanceUnit.Miles;
+
          _getDistance = r => {
             var fromLat = ValueGetter(context.Operation.FromLat)(r);
             var fromLon = ValueGetter(context.Operation.FromLon)(r);
@@ -74,11 +79,10 @@ namespace Transformalize.Transforms.Geography {
                return -1;
             }
 
-            return Get(fromLat, fromLon, toLat, toLon);
+            return Get(fromLat, fromLon, toLat, toLon, _decimalPlaces, _distanceUnit);
          };
       }
 
-      // retrieves distance in meters
       public override IRow Operate(IRow row) {
          row[Context.Field] = _getDistance(row);
 
@@ -117,10 +121,10 @@ namespace Transformalize.Transforms.Geography {
 
       }
 
-      public static double Get(double fromLat, double fromLon, double toLat, double toLon) {
+      public static double Get(double fromLat, double fromLon, double toLat, double toLon, int decimalPlaces = 1, DistanceUnit distanceUnit = DistanceUnit.Miles) {
          var from = new Coordinate(fromLat, fromLon);
          var to = new Coordinate(toLat, toLon);
-         return GeoCalculator.GetDistance(from, to);
+         return GeoCalculator.GetDistance(from, to, decimalPlaces, distanceUnit);
       }
 
       private bool HasInvalidCoordinate(Field[] fields, Operation t, string valueOrField, string name) {
@@ -149,11 +153,13 @@ namespace Transformalize.Transforms.Geography {
       public override IEnumerable<OperationSignature> GetSignatures() {
          return new[] {
                 new OperationSignature("distance"){
-                    Parameters = new List<OperationParameter>(4) {
+                    Parameters = new List<OperationParameter>(6) {
                         new OperationParameter("from-lat"),
                         new OperationParameter("from-lon"),
                         new OperationParameter("to-lat"),
-                        new OperationParameter("to-lon")
+                        new OperationParameter("to-lon"),
+                        new OperationParameter("decimal-places", "1"),
+                        new OperationParameter("distance-unit", "miles")
                     }
                 }
             };

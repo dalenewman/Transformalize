@@ -201,6 +201,12 @@ namespace Transformalize.ConfigurationFacade {
       public string Decimals { get; set; }
 
       [Cfg]
+      public string DecimalPlaces { get; set; }
+
+      [Cfg]
+      public string DistanceUnit { get; set; }
+
+      [Cfg]
       public string Expression { get; set; }
 
       [Cfg]
@@ -273,6 +279,7 @@ namespace Transformalize.ConfigurationFacade {
             Country = this.Country,
             DayOfWeek = this.DayOfWeek,
             Direction = this.Direction,
+            DistanceUnit = this.DistanceUnit,
             Domain = this.Domain,
             Expression = this.Expression,
             FalseField = this.FalseField,
@@ -327,6 +334,10 @@ namespace Transformalize.ConfigurationFacade {
 
          int.TryParse(this.Decimals, out var decimals);
          operation.Decimals = decimals;
+
+         if (int.TryParse(this.DecimalPlaces, out var decimalPlaces)) {
+            operation.DecimalPlaces = decimalPlaces;
+         }
 
          bool.TryParse(this.Encode, out var encode);
          operation.Encode = encode;

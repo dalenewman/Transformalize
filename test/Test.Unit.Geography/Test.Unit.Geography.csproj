@@ -1,0 +1,20 @@
+<Project Sdk="MSTest.Sdk/4.1.0">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsTestProject>true</IsTestProject>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+    <Version>1.4.4</Version>
+    <FileVersion>1.4.4</FileVersion>
+    <AssemblyVersion>1.4.4</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Transforms/Geography/Geography.csproj" />
+    <ProjectReference Include="../../src/Providers/Console/Console.Autofac/Console.Autofac.csproj" />
+  </ItemGroup>
+
+</Project>
