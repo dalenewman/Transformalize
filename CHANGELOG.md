@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.4] - 2026-07-23
+
+### Added
+
+- **Configurable output unit and precision for the `distance` transform** (`Transformalize 1.4.4`, `Transform.Geography 1.4.4`): the `distance` transform now accepts two optional parameters, `decimal-places` and `distance-unit`, exposed as `Operation.DecimalPlaces` (int, default `1`) and `Operation.DistanceUnit` (default `miles`; domain `miles,kilometers,meters,nauticalmiles`). These are translated into the `int decimalPlaces` and `Geolocation.DistanceUnit` arguments passed to `GeoCalculator.GetDistance`. Previously the transform always used the library defaults (1 decimal place, miles) with no way to override them. Shorthand usage: `distance(from-lat,from-lon,to-lat,to-lon,decimal-places,distance-unit)`, e.g. `distance(FromLat,FromLon,ToLat,ToLon,2,kilometers)`.
+- **`Test.Unit.Geography` test project**: added unit tests for `DistanceTransform` covering the static distance calculation (unit conversions and decimal-place rounding) and end-to-end configuration wiring of the new `decimal-places`/`distance-unit` parameters through the `distance` shorthand.
+
 ## [1.4.3] - 2026-06-22
 
 ### Changed

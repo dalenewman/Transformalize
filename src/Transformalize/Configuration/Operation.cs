@@ -206,6 +206,12 @@ namespace Transformalize.Configuration {
       [Cfg(value = 0)]
       public int Decimals { get; set; }
 
+      [Cfg(value = 1)]
+      public int DecimalPlaces { get; set; }
+
+      [Cfg(value = "miles", domain = "miles,kilometers,meters,nauticalmiles", toLower = true, ignoreCase = true)]
+      public string DistanceUnit { get; set; }
+
       public string Returns { get; set; }
 
       [Cfg(value = "", trim = true)]
