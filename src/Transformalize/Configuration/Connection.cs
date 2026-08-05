@@ -50,6 +50,12 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Delimiter { get; set; }
 
+      /// <summary>
+      /// Line ending used when writing delimited files: environment (default), crlf, or lf
+      /// </summary>
+      [Cfg(value = "environment", domain = "environment,crlf,lf", toLower = true, ignoreCase = true)]
+      public string LineEnding { get; set; }
+
       [Cfg(value = 1)]
       public int MaxDegreeOfParallelism { get; set; }
 
