@@ -233,6 +233,9 @@ namespace Transformalize.ConfigurationFacade {
       [Cfg]
       public string Browse { get; set; }
 
+      [Cfg]
+      public string LineEnding { get; set; }
+
       public Configuration.Connection ToConnection() {
          var c = new Configuration.Connection {
             Arguments = this.Arguments,
@@ -281,7 +284,8 @@ namespace Transformalize.ConfigurationFacade {
             WebMethod = this.WebMethod,
             Scroll = this.Scroll,
             Service = this.Service,
-            CertificateFingerprint = this.CertificateFingerprint
+            CertificateFingerprint = this.CertificateFingerprint,
+            LineEnding = this.LineEnding
          };
 
          bool.TryParse(this.Buffer, out bool buffer);

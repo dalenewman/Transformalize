@@ -3,19 +3,19 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.CsvHelper.Autofac</RootNamespace>
     <Title>Transformalize File Provider using CsvHelper Autofac Module</Title>
-    <Version>1.0.0</Version>
+    <Version>1.4.5</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <Description>An Autofac module for Transformalize.Providers.CsvHelper.</Description>
-    <Copyright>Copyright © 2018-2025 Dale Newman</Copyright>
+    <Copyright>Copyright © 2018-2026 Dale Newman</Copyright>
     <PackageProjectUrl>https://github.com/dalenewman/Transformalize.Provider.CsvHelper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/dalenewman/Transformalize.Provider.CsvHelper.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>etl,csvhelper,transformalize,csv</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <FileVersion>1.0.0</FileVersion>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.4.5</FileVersion>
+    <AssemblyVersion>1.4.5</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
