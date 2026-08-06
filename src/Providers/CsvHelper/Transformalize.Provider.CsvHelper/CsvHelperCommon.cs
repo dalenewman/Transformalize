@@ -18,7 +18,7 @@ namespace Transformalize.Providers.CsvHelper {
          Config = new CsvConfiguration(System.Globalization.CultureInfo.CurrentCulture) {
             Delimiter = string.IsNullOrEmpty(_context.Connection.Delimiter) ? "," : _context.Connection.Delimiter,
             IgnoreBlankLines = true,
-            NewLine = Environment.NewLine
+            NewLine = GetNewLine(_context.Connection.LineEnding)
          };
 
          if (!string.IsNullOrEmpty(_context.Connection.TextQualifier)) {
@@ -26,6 +26,17 @@ namespace Transformalize.Providers.CsvHelper {
          }
          Config.Encoding = Encoding.GetEncoding(_context.Connection.Encoding);
          Config.TrimOptions = TrimOptions.None;
+      }
+
+      private static string GetNewLine(string lineEnding) {
+         switch (lineEnding) {
+            case "crlf":
+               return "\r\n";
+            case "lf":
+               return "\n";
+            default:
+               return Environment.NewLine;
+         }
       }
       public void WriteHeader(CsvWriter writer) {
          foreach (var field in _context.OutputFields) {
