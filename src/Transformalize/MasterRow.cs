@@ -20,9 +20,7 @@ using Transformalize.Contracts;
 namespace Transformalize {
     public class MasterRow : BaseRow, IRow {
 
-        public MasterRow(int capacity) : base(capacity) {
-            Storage = new object[capacity];
-        }
+        public MasterRow(int capacity) : base(capacity) { }
 
         public override object GetValue(IField field) {
             return Storage[field.MasterIndex];

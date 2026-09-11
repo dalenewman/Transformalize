@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6] - 2026-09-10
+
+### Changed
+
+- **Lower allocation overhead in the ETL pipeline** (`Transformalize 1.4.6`): removed a duplicate storage-array allocation for every master row. Default-value processing now uses a direct loop for calculated fields and checks whitespace without creating trimmed strings.
+- **Faster formatter setup** (`Transformalize 1.4.6`): reuse the compiled, fixed regex that identifies format placeholders. Each formatter still resolves its own format string and reads current row values.
+- **Less repeated work in ADO updates** (`Provider.Ado 1.4.6`): collect and sort update-field metadata once per write call instead of once per row, in both synchronous and asynchronous writes. Parameter values are still read from each row.
+- **Reuse JavaScript preparation** (`Transform.Jint 1.4.6`, `Validate.Jint 1.4.6`): prepare each operation's script once and reuse it while the source stays identical. If `Operation.Script` changes, prepare the new source before evaluating it. Row variables and results are evaluated on every call; engine state remains local to each transform or validator, and existing syntax-error handling is preserved.
+- **Avoid unused JavaScript engines during startup** (`Transform.Jint 1.4.6`, `Validate.Jint 1.4.6`): discovering operation signatures no longer creates an engine. Engines are created only when a context is supplied for execution.
+- Aligned the affected core, ADO, and Jint packages and their corresponding Autofac packages at **1.4.6**, so updating the Autofac packages brings in the optimized implementations. The CLI and Docker image tags also use **1.4.6**; Visual Studio Docker publish profiles now use .NET 10 images to match the CLI target.
+
+### Added
+
+- JavaScript regression coverage for changing row values, script-source changes between rows, independent engine state, and syntax-error handling after setup.
+
 ## [1.4.4] - 2026-07-23
 
 ### Added

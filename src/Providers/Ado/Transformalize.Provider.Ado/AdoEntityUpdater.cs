@@ -52,6 +52,7 @@ namespace Transformalize.Providers.Ado {
 
       private void InternalWrite(IEnumerable<IRow> rows) {
          _output.Entity.UpdateCommand = _output.SqlUpdateOutput(_cf);
+         var updateFields = _output.GetUpdateFields().ToArray();
          var count = (uint)0;
          using (var cn = _cf.GetConnection()) {
             cn.Open();
@@ -61,7 +62,7 @@ namespace Transformalize.Providers.Ado {
                foreach (var batch in rows.Partition(_output.Entity.UpdateSize)) {
                   var batchCount = Convert.ToUInt32(cn.Execute(
                       _output.Entity.UpdateCommand,
-                      batch.Select(r => r.ToExpandoObject(_output.GetUpdateFields().ToArray())),
+                      batch.Select(r => r.ToExpandoObject(updateFields)),
                       trans,
                       0,
                       CommandType.Text
@@ -88,6 +89,7 @@ namespace Transformalize.Providers.Ado {
 
       private async Task InternalWriteAsync(IEnumerable<IRow> rows, CancellationToken token) {
          _output.Entity.UpdateCommand = _output.SqlUpdateOutput(_cf);
+         var updateFields = _output.GetUpdateFields().ToArray();
          var count = (uint)0;
          using (var cn = _cf.GetConnection()) {
             await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
@@ -97,7 +99,7 @@ namespace Transformalize.Providers.Ado {
                foreach (var batch in rows.Partition(_output.Entity.UpdateSize)) {
                   var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
                       _output.Entity.UpdateCommand,
-                      batch.Select(r => r.ToExpandoObject(_output.GetUpdateFields().ToArray())),
+                      batch.Select(r => r.ToExpandoObject(updateFields)),
                       trans,
                       0,
                       CommandType.Text

@@ -26,17 +26,12 @@ namespace Transformalize.Transforms {
    public class BetterFormat {
 
       private const string Pattern = "(?<={)[^{}]+(?=})";
+      private static readonly Regex PlaceholderRegex = new Regex(Pattern, RegexOptions.Compiled);
       public readonly Func<IRow, string> Format = row => string.Empty;
       public bool Valid { get; set; }
 
       public BetterFormat(IContext context, string format, Func<IEnumerable<Field>> fallback) {
-         Regex regex = null;
-#if NETS10
-            regex = new Regex(Pattern);
-#else
-         regex = new Regex(Pattern, RegexOptions.Compiled);
-#endif
-         var matches = regex.Matches(format);
+         var matches = PlaceholderRegex.Matches(format);
 
          if (matches.Count == 0) {
             Format = row => format;

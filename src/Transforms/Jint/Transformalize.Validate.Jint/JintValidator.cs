@@ -33,7 +33,9 @@ namespace Transformalize.Validators.Jint {
    public class JintValidator : BaseValidate {
 
       private readonly Field[] _input;
-      private readonly Engine _jint = new Engine();
+      private readonly Engine _jint;
+      private string _preparedSource;
+      private Prepared<Acornima.Ast.Script> _preparedScript;
       private readonly ParameterMatcher _parameterMatcher = new ParameterMatcher();
       private readonly bool _hasHelp;
 
@@ -43,6 +45,7 @@ namespace Transformalize.Validators.Jint {
             return;
          }
 
+         _jint = new Engine();
          if (IsMissing(Context.Operation.Script)) {
             return;
          }
@@ -128,7 +131,7 @@ namespace Transformalize.Validators.Jint {
             _jint.SetValue(field.Alias, row[field]);
          }
          try {
-            var value = _jint.Evaluate(Context.Operation.Script).ToObject();
+            var value = EvaluateScript().ToObject();
             if (value == null) {
                Context.Error($"Jint transform in {Context.Field.Alias} returns null!");
             } else {
@@ -189,6 +192,21 @@ namespace Transformalize.Validators.Jint {
          }
 
          return row;
+      }
+
+      private JsValue EvaluateScript() {
+         var source = Context.Operation.Script;
+         if (!_preparedScript.IsValid || !string.Equals(source, _preparedSource, StringComparison.Ordinal)) {
+            try {
+               _preparedScript = Engine.PrepareScript(source);
+               _preparedSource = source;
+            } catch (ScriptPreparationException) {
+               // Keep Evaluate's JavaScript syntax-error handling if the source changes to invalid code.
+               return _jint.Evaluate(source);
+            }
+         }
+         // Cache preparation only; row bindings and engine state are evaluated on every call.
+         return _jint.Evaluate(_preparedScript);
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {

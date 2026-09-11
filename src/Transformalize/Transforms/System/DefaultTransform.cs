@@ -108,8 +108,10 @@ namespace Transformalize.Transforms.System {
       }
 
       private void ApplyDefaults(IRow row) {
-         foreach (var field in CalculatedFieldDefaults.Where(f => row[f] == null)) {
-            field.Setter(row);
+         foreach (var field in CalculatedFieldDefaults) {
+            if (row[field] == null) {
+               field.Setter(row);
+            }
          }
          foreach (var field in FieldDefaults) {
             if (row[field] == null) {
@@ -122,7 +124,7 @@ namespace Transformalize.Transforms.System {
 
             if (field.Type == "string") {
                if (field.DefaultWhiteSpace) {
-                  if (((string)row[field]).Trim() == string.Empty) {
+                  if (string.IsNullOrWhiteSpace((string)row[field])) {
                      field.Setter(row);
                   }
                } else if (field.DefaultEmpty) {
@@ -132,7 +134,7 @@ namespace Transformalize.Transforms.System {
                }
             } else {
                if (field.DefaultWhiteSpace) {
-                  if (row[field].ToString().Trim() == string.Empty) {
+                  if (string.IsNullOrWhiteSpace(row[field].ToString())) {
                      field.Setter(row);
                   }
                } else if (field.DefaultEmpty) {

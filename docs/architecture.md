@@ -2,6 +2,8 @@
 
 This document describes the high-level architecture of Transformalize.
 
+For a possible future extension, see the [asynchronous ETL streaming proposal](async-streaming-proposal.md), which discusses reducing async input buffering and adding optional streaming contracts.
+
 ## Overview
 
 Transformalize processes data through a pipeline that reads from input connections, applies transforms, and writes to a connection based on the provider's implementation. The pipeline is driven entirely by a configuration file (an *arrangement*) written in XML, JSON, or YAML.
