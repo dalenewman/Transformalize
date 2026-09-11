@@ -17,6 +17,7 @@
 #endregion
 using Cfg.Net.Contracts;
 using Jint;
+using Jint.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,9 @@ namespace Transformalize.Transforms.Jint {
    public class JintTransform : BaseTransform {
 
       private readonly Field[] _input;
-      private readonly Engine _jint = new Engine();
+      private readonly Engine _jint;
+      private string _preparedSource;
+      private Prepared<Acornima.Ast.Script> _preparedScript;
       private readonly ParameterMatcher _parameterMatcher = new ParameterMatcher();
 
       public JintTransform(IReader reader = null, IContext context = null) : base(context, null) {
@@ -37,6 +40,7 @@ namespace Transformalize.Transforms.Jint {
             return;
          }
 
+         _jint = new Engine();
          Returns = Context.Field.Type;
 
          if (IsMissing(Context.Operation.Script)) {
@@ -121,7 +125,7 @@ namespace Transformalize.Transforms.Jint {
             if (tryFirst) {
                try {
                   tryFirst = false;
-                  var obj = _jint.Evaluate(Context.Operation.Script).ToObject();
+                  var obj = EvaluateScript().ToObject();
                   var value = obj == null ? null : Context.Field.Convert(obj);
                   if (value == null) {
                      Context.Error($"Jint transform in {Context.Field.Alias} returns null!");
@@ -137,11 +141,26 @@ namespace Transformalize.Transforms.Jint {
                   }
                }
             } else {
-               row[Context.Field] = Context.Field.Convert(_jint.Evaluate(Context.Operation.Script).ToObject());
+               row[Context.Field] = Context.Field.Convert(EvaluateScript().ToObject());
             }
 
             yield return row;
          }
+      }
+
+      private JsValue EvaluateScript() {
+         var source = Context.Operation.Script;
+         if (!_preparedScript.IsValid || !string.Equals(source, _preparedSource, StringComparison.Ordinal)) {
+            try {
+               _preparedScript = Engine.PrepareScript(source);
+               _preparedSource = source;
+            } catch (ScriptPreparationException) {
+               // Keep Evaluate's JavaScript syntax-error handling if the source changes to invalid code.
+               return _jint.Evaluate(source);
+            }
+         }
+         // Cache preparation only; row bindings and engine state are evaluated on every call.
+         return _jint.Evaluate(_preparedScript);
       }
 
       public override IEnumerable<OperationSignature> GetSignatures() {

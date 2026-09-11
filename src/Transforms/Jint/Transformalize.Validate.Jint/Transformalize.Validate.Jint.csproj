@@ -3,18 +3,18 @@
       <TargetFramework>netstandard2.0</TargetFramework>
       <RootNamespace>Transformalize.Validators.Jint</RootNamespace>
       <AssemblyName>Transformalize.Validate.Jint</AssemblyName>
-      <Version>1.4.3</Version>
+      <Version>1.4.6</Version>
       <Authors>Dale Newman</Authors>
       <Company>Transformalize</Company>
       <Description>A Transformalize validator using Jint</Description>
-      <Copyright>Copyright © 2020-2025 Dale Newman</Copyright>
+      <Copyright>Copyright © 2020-2026 Dale Newman</Copyright>
       <PackageProjectUrl>https://github.com/dalenewman/Transformalize.Transform.Jint</PackageProjectUrl>
       <RepositoryUrl>https://github.com/dalenewman/Transformalize.Transform.Jint.git</RepositoryUrl>
       <RepositoryType>git</RepositoryType>
       <PackageTags>etl,transformalize,jint,javascript</PackageTags>
       <NeutralLanguage>en-US</NeutralLanguage>
-      <FileVersion>1.4.3</FileVersion>
-      <AssemblyVersion>1.4.3</AssemblyVersion>
+      <FileVersion>1.4.6</FileVersion>
+      <AssemblyVersion>1.4.6</AssemblyVersion>
       
    </PropertyGroup>
    <ItemGroup>
