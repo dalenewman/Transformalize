@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -25,7 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
-   public class GeoJsonRoleProcessStreamWriter : IWrite {
+   public class GeoJsonRoleProcessStreamWriter : IWriteStream, IWrite {
       private readonly OutputContext _context;
       private readonly Utf8JsonWriter _jw;
       private readonly GeoJsonRoleMap _map;
@@ -60,6 +60,26 @@ namespace Transformalize.Providers.GeoJson {
          }
 
          foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(row);
+            _context.Entity.Inserts++;
+            await _jw.FlushAsync(token).ConfigureAwait(false);
+         }
+
+         if (Equals(_context.Process.Entities.Last(), _context.Entity)) {
+            WriteCollectionEnd();
+         }
+
+         await _jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         // The document spans one call per entity; start and end are still emitted on the first and last.
+         if (Equals(_context.Process.Entities.First(), _context.Entity)) {
+            WriteCollectionStart();
+         }
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
             token.ThrowIfCancellationRequested();
             WriteFeature(row);
             _context.Entity.Inserts++;

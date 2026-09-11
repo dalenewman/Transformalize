@@ -1,3 +1,4 @@
+using Transformalize.Extensions;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -107,7 +108,7 @@ namespace Test.Integration.Core {
          using (var outer = new ConfigurationContainer().CreateScope(ColorsCsvToElasticXml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new CsvHelperProviderModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
-               await inner.Resolve<IProcessController>().ExecuteAsync();
+               await inner.Resolve<IProcessController>().ExecuteStreamAsync();
                if (expectedInserts.HasValue) {
                   Assert.AreEqual(expectedInserts.Value, process.Entities.First().Inserts);
                }
@@ -131,7 +132,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -139,7 +140,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -153,7 +154,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -174,7 +175,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -191,7 +192,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -230,7 +231,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -246,7 +247,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new SqliteModule(), new ElasticsearchModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -368,7 +369,7 @@ namespace Test.Integration.Core {
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
-         var rows = (await reader.ReadAsync()).ToArray();
+         var rows = (await reader.ReadStreamAsync().MaterializeAsync()).ToArray();
          Assert.AreEqual(865, rows.Length);
 
       }
@@ -407,7 +408,7 @@ namespace Test.Integration.Core {
 
          var reader = new ElasticReader(context, new[] { code, total }, client, new RowFactory(2, false, false), ReadFrom.Input);
 
-         var rows = (await reader.ReadAsync()).ToArray();
+         var rows = (await reader.ReadStreamAsync().MaterializeAsync()).ToArray();
          Assert.AreEqual(20, rows.Length);
 
       }

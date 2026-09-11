@@ -21,6 +21,8 @@ using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 
+using System.Threading.Tasks;
+
 namespace Transformalize.Transforms {
    public class JoinTransform : BaseTransform {
       private readonly Field[] _input;
@@ -75,6 +77,40 @@ namespace Transformalize.Transforms {
             }
          }
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(JoinTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         if (Run) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               if (_passed) {
+                  yield return Operate(row);
+               } else {
+                  IRow result = row;
+                  try {
+                     result = Operate(row);
+                     _passed = true;
+                  } catch (InvalidCastException ex) {
+                     Error(ex.Message);
+                  }
+                  yield return result;
+               }
+            }
+         } else {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+         }
+      }
+
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          return new[] {

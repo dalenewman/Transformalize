@@ -31,7 +31,7 @@ using Transformalize.Transforms.System;
 
 namespace Transformalize.Providers.SqlServer {
 
-   public class SqlServerWriter : IWrite {
+   public class SqlServerWriter : IWrite, IWriteStream {
 
       private SqlBulkCopyOptions _bulkCopyOptions;
       private readonly OutputContext _output;
@@ -273,6 +273,90 @@ namespace Transformalize.Providers.SqlServer {
 
       }
 
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+         token.ThrowIfCancellationRequested();
+         if (_minDates != null) rows = _minDates.OperateStreamAsync(rows, token);
+         using (var cn = new SqlConnection(_cf.GetConnectionString())) {
+            await cn.OpenAsync(token).ConfigureAwait(false);
+
+            using var dt = new DataTable();
+
+            try {
+               using var schemaCommand = cn.CreateCommand();
+               schemaCommand.CommandText = _output.SqlSelectOutputSchema(_cf);
+               using var schema = await schemaCommand.ExecuteReaderAsync(CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
+               for (var i = 0; i < schema.FieldCount; i++) {
+                  dt.Columns.Add(schema.GetName(i), schema.GetFieldType(i));
+               }
+            } catch (System.Data.Common.DbException e) {
+               _output.Error($"Error reading schema from {_output.Connection.Name}, {_output.Entity.Alias}.");
+               _output.Error(e.Message);
+               _output.Debug(() => e.StackTrace);
+               throw;
+            }
+
+            using (var bulkCopy = new SqlBulkCopy(cn, _bulkCopyOptions, null) {
+               BatchSize = _output.Entity.InsertSize,
+               BulkCopyTimeout = 0,
+               DestinationTableName = "[" + _output.Entity.OutputTableName(_output.Process.Name) + "]"
+            }) {
+
+               for (var i = 0; i < _output.OutputFields.Length; i++) {
+                  bulkCopy.ColumnMappings.Add(i, i);
+               }
+
+               if(_orderHint != null) {
+                  _orderHint.Set(bulkCopy, _output.OutputFields);
+               }
+
+               await foreach (var part in rows.PartitionStreamAsync(_output.Entity.InsertSize, token).ConfigureAwait(false)) {
+
+                  var batch = part.ToArray();
+
+                  if (_output.Process.Mode == "init" || (_output.Entity.Insert && !_output.Entity.Update)) {
+                     var inserts = new List<IRow>();
+                     inserts.AddRange(batch);
+                     await InsertStreamBatchAsync(bulkCopy, dt, inserts, token).ConfigureAwait(false);
+                  } else {
+                     var inserts = new List<IRow>();
+                     var updates = new List<IRow>();
+                     var tflHashCode = _output.Entity.TflHashCode();
+                     var tflDeleted = _output.Entity.TflDeleted();
+                     var matching = await _outputKeysReader.ReadAsync(batch, token).ConfigureAwait(false);
+
+                     for (int i = 0, batchLength = batch.Length; i < batchLength; i++) {
+                        var row = batch[i];
+                        if (matching.Contains(i)) {
+                           if (matching[i][tflDeleted].Equals(true) || !matching[i][tflHashCode].Equals(row[tflHashCode])) {
+                              updates.Add(row);
+                           }
+                        } else {
+                           inserts.Add(row);
+                        }
+                     }
+
+                     await InsertStreamBatchAsync(bulkCopy, dt, inserts, token).ConfigureAwait(false);
+
+                     if (updates.Any()) {
+                        await _sqlUpdater.WriteStreamAsync(updates.AsAsyncStream(token), token).ConfigureAwait(false);
+                     }
+                  }
+               }
+            }
+
+            if (_output.Entity.Inserts > 0) {
+               _output.Info("{0} inserts into {1} {2}", _output.Entity.Inserts, _output.Connection.Name, _output.Entity.Alias);
+            }
+
+            if (_output.Entity.Updates > 0) {
+               _output.Info("{0} updates to {1}", _output.Entity.Updates, _output.Connection.Name);
+            }
+
+         }
+
+      }
+
       private async Task InsertAsync(SqlBulkCopy bulkCopy, DataTable dt, IEnumerable<IRow> inserts, CancellationToken token) {
 
          var enumerated = inserts.ToArray();
@@ -292,6 +376,30 @@ namespace Transformalize.Providers.SqlServer {
             _output.Entity.Inserts += Convert.ToUInt32(enumerated.Length);
          } catch (Exception ex) {
             _output.Error(ex.Message);
+         } finally {
+            dt.Clear();
+         }
+      }
+      private async Task InsertStreamBatchAsync(SqlBulkCopy bulkCopy, DataTable dt, IEnumerable<IRow> inserts, CancellationToken token) {
+
+         var enumerated = inserts.ToArray();
+
+         if (enumerated.Length == 0)
+            return;
+
+         var rows = new List<DataRow>();
+         foreach (var insert in enumerated) {
+            var row = dt.NewRow();
+            row.ItemArray = insert.ToEnumerable(_output.OutputFields).ToArray();
+            rows.Add(row);
+         }
+
+         try {
+            await bulkCopy.WriteToServerAsync(rows.ToArray(), token).ConfigureAwait(false);
+            _output.Entity.Inserts += Convert.ToUInt32(enumerated.Length);
+         } catch (Exception ex) {
+            _output.Error(ex.Message);
+            throw;
          } finally {
             dt.Clear();
          }

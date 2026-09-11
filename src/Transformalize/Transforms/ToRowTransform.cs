@@ -1,8 +1,10 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms {
    public class ToRowTransform : BaseTransform {
@@ -72,6 +74,36 @@ namespace Transformalize.Transforms {
 
          }
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(ToRowTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         await foreach (var outer in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            var values = (string[])outer[_input];
+            if (values.Length == 0) {
+               yield return outer;
+            } else {
+               foreach (var value in values) {
+                  var inner = _rowFactory.Clone(outer, _fields);
+                  inner[Context.Field] = value;
+
+                  if (!Context.Process.ReadOnly) {
+                     inner[_hashCode] = HashcodeTransform.GetDeterministicHashCode(_fieldsToHash.Select(f => inner[f]));
+                  }
+
+                  yield return inner;
+               }
+            }
+         }
+      }
+
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("torow");

@@ -1,4 +1,5 @@
-﻿#region license
+﻿using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -26,7 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Excel {
-   public class ExcelReader : IRead {
+   public class ExcelReader : IReadStream, IRead {
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
       private readonly FileInfo _fileInfo;
@@ -134,6 +135,19 @@ namespace Transformalize.Providers.Excel {
             }
 
          }
+      }
+
+      /// <summary>Streams rows without a result list. The underlying source API is synchronous.</summary>
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         using (var rows = Read().GetEnumerator()) {
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               if (!rows.MoveNext()) break;
+               yield return rows.Current;
+            }
+         }
+         await Task.CompletedTask.ConfigureAwait(false);
       }
 
    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }

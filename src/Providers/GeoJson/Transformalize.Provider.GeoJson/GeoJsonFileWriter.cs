@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
@@ -27,7 +27,7 @@ namespace Transformalize.Providers.GeoJson {
    /// <summary>
    /// Writes GeoJson out to file
    /// </summary>
-   public class GeoJsonFileWriter : IWrite {
+   public class GeoJsonFileWriter : IWriteStream, IWrite {
       private readonly OutputContext _context;
 
       /// <summary>
@@ -53,6 +53,14 @@ namespace Transformalize.Providers.GeoJson {
          using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true)) {
             var streamWriter = new GeoJsonStreamWriter(_context, fileStream);
             await streamWriter.WriteAsync(rows, token).ConfigureAwait(false);
+            await fileStream.FlushAsync(token).ConfigureAwait(false);
+         }
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true)) {
+            var streamWriter = new GeoJsonStreamWriter(_context, fileStream);
+            await streamWriter.WriteStreamAsync(rows, token).ConfigureAwait(false);
             await fileStream.FlushAsync(token).ConfigureAwait(false);
          }
       }

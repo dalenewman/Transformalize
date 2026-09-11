@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Bogus {
-   public class BogusReader : IRead {
+   public class BogusReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
@@ -378,6 +380,19 @@ namespace Transformalize.Providers.Bogus {
          if (person == null) {
             person = new Person(_context.Entity.Locale);
          }
+      }
+
+      /// <summary>Streams rows without a result list. The underlying source API is synchronous.</summary>
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         using (var rows = Read().GetEnumerator()) {
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               if (!rows.MoveNext()) break;
+               yield return rows.Current;
+            }
+         }
+         await Task.CompletedTask.ConfigureAwait(false);
       }
 
    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }

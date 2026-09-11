@@ -1,14 +1,16 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
-//  
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-//   
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-//   
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,7 +30,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.File {
 
-   public class FileReader : IRead {
+   public class FileReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
@@ -92,7 +94,7 @@ namespace Transformalize.Providers.File {
                         prevLine = line;
                      }
 
-                  } else { // CURRENT LINE FAILS 
+                  } else { // CURRENT LINE FAILS
                      var combined = prevLine + " " + line;
 
                      if (regex.IsMatch(prevLine)) {
@@ -105,7 +107,7 @@ namespace Transformalize.Providers.File {
                         prevLine = line;
                         yield return row;
                         }
-                        
+
                      } else {
                         prevLine = combined;
                      }
@@ -135,6 +137,101 @@ namespace Transformalize.Providers.File {
 
                }
             }
+         }
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
+         var lineNo = 0;
+         if (_fileInfo.Extension == ".xml") {
+            var row = _rowFactory.Create();
+            using var stream = new FileStream(_fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+            using var reader = new StreamReader(stream, encoding);
+            row[_field] = await reader.ReadToEndAsync().ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            yield return row;
+         } else {
+            if (_context.Connection.LinePattern != string.Empty) {
+
+               var regex = new Regex(_context.Connection.LinePattern, RegexOptions.Compiled);
+               var prevLine = string.Empty;
+
+               await foreach (var line in ReadLinesStreamAsync(_fileInfo.FullName, encoding, token).ConfigureAwait(false)) {
+                  ++lineNo;
+
+                  if (_linesToKeep.Contains(lineNo)) {
+                     _context.Connection.Lines[lineNo] = line;
+                  }
+
+                  if (lineNo < _context.Connection.Start) continue;
+
+                  if (regex.IsMatch(line)) { // CURRENT LINE PASSES
+
+                     if (regex.IsMatch(prevLine)) {  // PREVIOUS LINE PASSES
+                        var row = _rowFactory.Create();
+                        row[_field] = prevLine;
+                        prevLine = line;
+                        yield return row;
+                     } else { // PREVIOUS LINE FAILS
+                        prevLine = line;
+                     }
+
+                  } else { // CURRENT LINE FAILS
+                     var combined = prevLine + " " + line;
+
+                     if (regex.IsMatch(prevLine)) {
+
+                        if (regex.IsMatch(combined)) { // IF COMBINED THEY STILL PASS, COMBINE AND CONTINUE
+                           prevLine = combined;
+                        } else { // IF COMBINED THEY FAIL, LET THE VALID PREVIOUS LINE THROUGH AND PUT LINE IN PREV LINE IN HOPES SUBSEQUENT LINES WILL MAKE IT PASS
+                        var row = _rowFactory.Create();
+                        row[_field] = prevLine;
+                        prevLine = line;
+                        yield return row;
+                        }
+
+                     } else {
+                        prevLine = combined;
+                     }
+                  }
+               }
+
+               if (regex.IsMatch(prevLine)) {
+                  var row = _rowFactory.Create();
+                  row[_field] = prevLine;
+                  yield return row;
+               }
+
+            } else {
+               await foreach (var line in ReadLinesStreamAsync(_fileInfo.FullName, encoding, token).ConfigureAwait(false)) {
+
+                  ++lineNo;
+
+                  if (_linesToKeep.Contains(lineNo)) {
+                     _context.Connection.Lines[lineNo] = line;
+                  }
+
+                  if (lineNo < _context.Connection.Start) continue;
+
+                  var row = _rowFactory.Create();
+                  row[_field] = line;
+                  yield return row;
+
+               }
+            }
+         }
+      }
+
+      private static async IAsyncEnumerable<string> ReadLinesStreamAsync(string path, Encoding encoding, [EnumeratorCancellation] CancellationToken token) {
+         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+         using var reader = new StreamReader(stream, encoding);
+         while (true) {
+            token.ThrowIfCancellationRequested();
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            if (line == null) yield break;
+            yield return line;
          }
       }
 

@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -25,7 +27,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonLinesFileReader : IRead {
+   public class JsonLinesFileReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
@@ -39,6 +41,15 @@ namespace Transformalize.Providers.Json {
          var fileInfo = FileUtility.Find(_context.Connection.File);
          using (var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
             return new JsonLinesStreamReader(_context, stream, _rowFactory).Read().ToList();
+         }
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         var fileInfo = FileUtility.Find(_context.Connection.File);
+         using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+         await foreach (var row in new JsonLinesStreamReader(_context, stream, _rowFactory).ReadStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) {
+            yield return row;
          }
       }
 

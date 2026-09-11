@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Transformalize.Extensions;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -31,6 +33,7 @@ using Transformalize.Transforms.Jint.Autofac;
 namespace IntegrationTests {
 
    [TestClass]
+   [DoNotParallelize]
    public class NorthWindIntegrationSqlite {
 
       public string TestFile { get; set; } = "files/NorthWindIntegrationSqlite.xml";
@@ -47,8 +50,8 @@ namespace IntegrationTests {
          File = "files/northwind-output.sqlite3"
       };
 
-      [ClassInitialize]
-      public static void ClassInit(TestContext context) {
+      public static void ClassInit() {
+         Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
          File.Copy("files/northwind-sqlite.db", "files/northwind-input.sqlite3", overwrite: true);
          if (File.Exists("files/northwind-output.sqlite3")) {
             File.Delete("files/northwind-output.sqlite3");
@@ -56,7 +59,10 @@ namespace IntegrationTests {
       }
 
       [TestMethod]
-      public void SqlLite_Integration() {
+      [DataRow(false)]
+      [DataRow(true)]
+      public async Task SqlLite_Integration(bool streaming) {
+         ClassInit();
 
          var logger = new ConsoleLogger(LogLevel.Info);
 
@@ -65,7 +71,7 @@ namespace IntegrationTests {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
             }
          }
 
@@ -80,7 +86,7 @@ namespace IntegrationTests {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
             }
          }
 
@@ -100,7 +106,7 @@ namespace IntegrationTests {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
             }
          }
 
@@ -122,7 +128,7 @@ namespace IntegrationTests {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new JintTransformModule(), new SqliteModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
             }
          }
 

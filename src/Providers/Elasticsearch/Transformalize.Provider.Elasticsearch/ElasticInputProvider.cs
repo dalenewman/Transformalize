@@ -105,6 +105,7 @@ namespace Transformalize.Providers.Elasticsearch {
         }
 
     public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) { return Task.FromResult(GetSchema(entity)); }
-    public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+      // Metadata-only provider: row reads are supplied by the separately registered entity reader.
+      public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
     }
 }

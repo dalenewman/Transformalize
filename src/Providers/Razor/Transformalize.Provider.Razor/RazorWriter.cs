@@ -25,9 +25,11 @@ using Transformalize.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Transformalize.Extensions;
+
 namespace Transformalize.Providers.Razor {
 
-   public class RazorWriter : IWrite {
+   public class RazorWriter : IWriteStream, IWrite {
 
       private readonly IConnectionContext _output;
       private readonly IReader _templateReader;
@@ -91,5 +93,15 @@ namespace Transformalize.Providers.Razor {
 
 
    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+
+      /// <summary>
+      /// Materializes on purpose. The template receives the rows as Model.Rows and may enumerate them
+      /// more than once, and the engine renders to a single string before anything is written; this is
+      /// a requirement of the template model, not of the streaming adapter. Implementing IWriteStream
+      /// keeps the buffering here, where it is attributable, rather than in the generic adapter.
+      /// </summary>
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         Write(await rows.MaterializeAsync(token).ConfigureAwait(false));
+      }
    }
 }

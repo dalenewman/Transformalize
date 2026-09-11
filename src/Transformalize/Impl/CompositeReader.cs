@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -23,7 +25,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
-   internal class CompositeReader : IRead {
+   internal class CompositeReader : IReadStream, IRead {
       private readonly IEnumerable<IRead> _readers;
 
       public CompositeReader(params IRead[] readers) {
@@ -36,6 +38,13 @@ namespace Transformalize.Impl {
 
       public IEnumerable<IRow> Read() {
          return _readers.SelectMany(reader => reader.Read());
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         foreach (var reader in _readers) {
+            await foreach (var row in reader.ReadStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) yield return row;
+         }
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

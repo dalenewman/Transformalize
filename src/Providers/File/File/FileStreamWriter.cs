@@ -24,7 +24,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.File {
-    public class FileStreamWriter : IWrite {
+    public class FileStreamWriter : IWriteStream, IWrite {
 
         private readonly OutputContext _context;
         private readonly FileInfo _fileInfo;
@@ -67,6 +67,31 @@ namespace Transformalize.Providers.File {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            var writer = _stream == null ? new StreamWriter(_fileInfo.FullName) : new StreamWriter(_stream);
+            var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
+
+            using (writer) {
+
+                if (!string.IsNullOrEmpty(_context.Connection.Header)) {
+                    await writer.WriteLineAsync(_context.Connection.Header).ConfigureAwait(false);
+                }
+
+                await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                    token.ThrowIfCancellationRequested();
+                    foreach (var field in fields) {
+                        await writer.WriteAsync(row[field]?.ToString()).ConfigureAwait(false);
+                    }
+                    await writer.WriteLineAsync().ConfigureAwait(false);
+                }
+
+                if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
+                    await writer.WriteAsync(_context.Connection.Footer).ConfigureAwait(false);
+                }
+                await writer.FlushAsync().ConfigureAwait(false);
+            }
         }
     }
 }

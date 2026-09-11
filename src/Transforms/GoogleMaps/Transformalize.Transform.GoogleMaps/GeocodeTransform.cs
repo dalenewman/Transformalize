@@ -132,6 +132,33 @@ namespace Transformalize.Transform.GoogleMaps {
          }
       }
 
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(GeocodeTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         if (!Run) yield break;
+         var size = Context.Entity.UpdateSize > 0 ? Context.Entity.UpdateSize : 250;
+         await foreach (var batch in rows.PartitionStreamAsync(size, token).WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            var enumerated = batch.ToArray();
+            var collected = new ConcurrentBag<IRow>();
+            Parallel.ForEach(enumerated, (row) => {
+               _rateGate.WaitToProceed();
+               collected.Add(Operate(row));
+            });
+            foreach (var row in collected) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+         }
+      }
+
+
       public override IRow Operate(IRow row) {
 
          var query = row[_input].ToString();

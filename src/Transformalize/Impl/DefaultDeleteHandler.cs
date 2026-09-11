@@ -16,6 +16,7 @@
 // limitations under the License.
 #endregion
 using System.Collections.Generic;
+using Transformalize.Extensions;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,7 +68,7 @@ namespace Transformalize.Impl {
       }
 
       public async Task<IEnumerable<IRow>> DetermineDeletesAsync(CancellationToken token = default) {
-         var input = await _inputReader.ReadAsync(token).ConfigureAwait(false);
+         IEnumerable<IRow> input = await _inputReader.ReadStreamAsync(token).MaterializeAsync(token).ConfigureAwait(false);
          if (_context.Entity.Pipeline == "parallel.linq") {
             input = input.AsParallel();
          }
@@ -75,7 +76,7 @@ namespace Transformalize.Impl {
          // I believe this is here in case the primary key depends on transformations
          var transformed = _transforms.Aggregate(input, (current, transform) => current.Select(transform.Operate));
 
-         var output = await _outputReader.ReadAsync(token).ConfigureAwait(false);
+         IEnumerable<IRow> output = await _outputReader.ReadStreamAsync(token).MaterializeAsync(token).ConfigureAwait(false);
          if (_context.Entity.Pipeline == "parallel.linq") {
             output = output.AsParallel();
          }

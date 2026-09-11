@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -16,6 +16,9 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
@@ -24,7 +27,7 @@ using Transformalize.Extensions;
 
 namespace Transformalize.Transforms {
 
-   public abstract class BaseTransform : ITransform {
+   public abstract class BaseTransform : ITransform, IOperateStream {
 
       private string _returns;
       private const StringComparison Sc = StringComparison.OrdinalIgnoreCase;
@@ -46,9 +49,58 @@ namespace Transformalize.Transforms {
       // this **must** be implemented
       public abstract IRow Operate(IRow row);
 
+      /// <summary>
+      /// One-time setup that must happen before the first row, for work that is not available at
+      /// construction (loading a map, compiling a template, resolving a connection). Runs once per
+      /// execution on both the synchronous and streaming paths, before any row is operated on, and
+      /// may set <see cref="Run"/>. Prefer this over overriding <c>Operate(IEnumerable&lt;IRow&gt;)</c>:
+      /// a sequence override forces the whole input to be buffered on the streaming path.
+      /// </summary>
+      protected virtual void Initialize() { }
+
+      public virtual IAsyncEnumerable<IRow> OperateStreamAsync(IAsyncEnumerable<IRow> rows,
+         CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A derived sequence overload may expand, aggregate, initialize or finalize rows.
+         // Only the unchanged base Select contract is safe to translate to per-row calls.
+         var sequenceMethod = GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) });
+         if (sequenceMethod.DeclaringType != typeof(BaseTransform)) {
+            Context?.Warn($"Streaming fallback: materializing the whole input for {GetType().Name}. It overrides Operate(IEnumerable<IRow>) without a native OperateStreamAsync, so memory is not bounded.");
+            return MaterializeFallbackAsync(rows, token);
+         }
+         // Setup runs eagerly here, at composition time, so ordering matches the synchronous path.
+         // A disabled transform is a pass-through and skips setup, which may rely on fields the
+         // constructor left unset when it turned Run off.
+         if (!(Run && Context != null)) return rows;
+         Initialize();
+         return StreamAsync(rows, token);
+      }
+
+      private async IAsyncEnumerable<IRow> MaterializeFallbackAsync(IAsyncEnumerable<IRow> rows,
+         [EnumeratorCancellation] CancellationToken token) {
+         var buffered = await rows.MaterializeAsync(token).ConfigureAwait(false);
+         foreach (var row in Operate(buffered)) {
+            token.ThrowIfCancellationRequested();
+            yield return row;
+         }
+      }
+
+      private async IAsyncEnumerable<IRow> StreamAsync(IAsyncEnumerable<IRow> rows,
+         [EnumeratorCancellation] CancellationToken token) {
+         // Initialize may have turned Run off (an invalid format, for example).
+         var run = Run;
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            yield return run ? Operate(row) : row;
+         }
+      }
+
+
       // this *may* be implemented
       public virtual IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-         return Run && Context != null ? rows.Select(Operate) : rows;
+         if (!(Run && Context != null)) return rows;
+         Initialize();
+         return Run ? rows.Select(Operate) : rows;
       }
 
       public string Returns {

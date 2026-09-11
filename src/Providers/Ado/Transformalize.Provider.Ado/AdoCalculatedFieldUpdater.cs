@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -32,7 +32,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
-   public class AdoCalculatedFieldUpdater : IWrite {
+   public class AdoCalculatedFieldUpdater : IWriteStream, IWrite {
       private readonly OutputContext _context;
       private readonly Process _parent;
       private readonly IConnectionFactory _cf;
@@ -82,6 +82,37 @@ namespace Transformalize.Providers.Ado {
 
    public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          await InternalWriteAsync(_minDates != null ? _minDates.Operate(rows) : rows, token).ConfigureAwait(false);
+      }
+
+      public Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         return InternalWriteStreamAsync(_minDates != null ? _minDates.OperateStreamAsync(rows, token) : rows, token);
+      }
+
+      private async Task InternalWriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token) {
+         var sql = _context.SqlUpdateCalculatedFields(_parent, _cf);
+         var fields = _context.GetUpdateCalculatedFields().ToArray();
+
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            var trans = cn.BeginTransaction();
+            try {
+
+               // At most update-size rows are held at a time; the transaction still spans the call.
+               await foreach (var batch in rows.PartitionStreamAsync(_context.Entity.UpdateSize, token).WithCancellation(token).ConfigureAwait(false)) {
+                  _context.Debug(() => "got a batch!");
+                  var data = batch.Select(r => r.ToExpandoObject(fields));
+                  _context.Debug(() => "converted to expando object");
+                  var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(sql, data, trans, 0, CommandType.Text).ConfigureAwait(false));
+                  _context.Debug(() => $"Updated {batchCount} calculated field records!");
+               }
+               trans.Commit();
+               _context.Debug(() => "Committed updates.");
+
+            } catch (Exception ex) {
+               _context.Error(ex, ex.Message);
+               trans.Rollback();
+            }
+         }
       }
 
       private async Task InternalWriteAsync(IEnumerable<IRow> rows, CancellationToken token) {

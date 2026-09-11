@@ -22,6 +22,15 @@ using System.Threading.Tasks;
 namespace Transformalize.Contracts {
    public interface IRead {
       IEnumerable<IRow> Read();
+      /// <summary>
+      /// Read asynchronously, returning the complete result.
+      /// </summary>
+      /// <remarks>
+      /// This is the buffered asynchronous read backing <c>ExecuteAsync</c>, and it remains fully
+      /// supported. For incremental enumeration, prefer the <c>ReadStreamAsync</c> extension in
+      /// <c>Transformalize.Extensions</c>; implement <c>IReadStream</c> to make it stream natively,
+      /// otherwise it adapts this method.
+      /// </remarks>
       Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default);
    }
 }

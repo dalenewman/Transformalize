@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms {
     public enum FilterType {
@@ -72,6 +74,25 @@ namespace Transformalize.Transforms {
         public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
             return _filterType == FilterType.Include ? rows.Where(row => _filter(row)) : rows.Where(row => !_filter(row));
         }
+
+        public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+           global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+           [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+           token.ThrowIfCancellationRequested();
+           // A further-derived sequence override still needs the conservative adapter.
+           if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(FilterTransform)) {
+              await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+              yield break;
+           }
+           var include = _filterType == FilterType.Include;
+           await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+              token.ThrowIfCancellationRequested();
+              if (_filter(row) == include) {
+                 yield return row;
+              }
+           }
+        }
+
 
         public static Func<IRow, bool> GetFunc(Field input, string @operator, object value) {
             // equal,notequal,lessthan,greaterthan,lessthanequal,greaterthanequal,=,==,!=,<,<=,>,>=

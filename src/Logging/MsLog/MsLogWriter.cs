@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -26,7 +26,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Logging.MsLog {
-    public class MsLogWriter : IWrite, IDisposable {
+    public class MsLogWriter : IWriteStream, IWrite, IDisposable {
 
         private readonly ILogger _logger;
         private readonly IField _level;
@@ -99,6 +99,33 @@ namespace Transformalize.Logging.MsLog {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+                var message = row[_message]?.ToString() ?? string.Empty;
+                switch (row[_level]?.ToString()?.ToLower()) {
+                    case "warn":
+                    case "warning":
+                        _logger.LogWarning(message);
+                        break;
+                    case "error":
+                        _logger.LogError(message);
+                        break;
+                    case "debug":
+                    case "trace":
+                        _logger.LogDebug(message);
+                        break;
+                    case "critical":
+                    case "fatal":
+                        _logger.LogCritical(message);
+                        break;
+                    default:
+                        _logger.LogInformation(message);
+                        break;
+                }
+            }
         }
 
         public void Dispose() {

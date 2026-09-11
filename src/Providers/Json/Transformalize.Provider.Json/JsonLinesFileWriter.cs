@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -24,7 +24,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonLinesFileWriter : IWrite {
+   public class JsonLinesFileWriter : IWriteStream, IWrite {
       private readonly OutputContext _context;
 
       public JsonLinesFileWriter(OutputContext context) {
@@ -42,6 +42,14 @@ namespace Transformalize.Providers.Json {
          using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous))
          using (var streamWriter = new StreamWriter(fileStream)) {
             await new JsonLinesStreamWriter(_context, streamWriter).WriteAsync(rows, token).ConfigureAwait(false);
+            await streamWriter.FlushAsync().ConfigureAwait(false);
+         }
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, FileOptions.Asynchronous))
+         using (var streamWriter = new StreamWriter(fileStream)) {
+            await new JsonLinesStreamWriter(_context, streamWriter).WriteStreamAsync(rows, token).ConfigureAwait(false);
             await streamWriter.FlushAsync().ConfigureAwait(false);
          }
       }

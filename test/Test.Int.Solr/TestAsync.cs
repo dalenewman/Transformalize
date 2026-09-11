@@ -1,3 +1,4 @@
+using Transformalize.Extensions;
 using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
@@ -116,7 +117,7 @@ namespace IntegrationTests {
          using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(modules).CreateScope(process, logger)) {
-               await inner.Resolve<IProcessController>().ExecuteAsync();
+               await inner.Resolve<IProcessController>().ExecuteStreamAsync();
                var entity = process.Entities.FirstOrDefault();
                return (entity?.Inserts ?? 0, entity?.Rows?.Count ?? 0);
             }

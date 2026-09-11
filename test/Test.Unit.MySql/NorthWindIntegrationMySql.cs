@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -29,6 +29,7 @@ using Transformalize.Transforms.Jint.Autofac;
 namespace Test {
 
    [TestClass]
+   [DoNotParallelize]
    public class NorthWindIntegrationMySql {
 
       public string TestFile { get; set; } = "files/NorthWindMySqlToMySql.xml";
@@ -42,6 +43,7 @@ namespace Test {
          new MySqlConnectionFactory(new Connection { ConnectionString = Tester.GetConnectionString("northwindstar") }).GetConnection();
 
       [TestMethod]
+      [DoNotParallelize]
       public void Integration() {
 
          var logger = new ConsoleLogger(LogLevel.Info);

@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -27,7 +29,7 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Providers.Internal {
 
-   public class InternalReader : IRead {
+   public class InternalReader : IReadStream, IRead {
 
       private readonly InputContext _input;
       private readonly IRowFactory _rowFactory;
@@ -71,6 +73,32 @@ namespace Transformalize.Providers.Internal {
 
       public IEnumerable<IRow> Read() {
          return _transforms.Aggregate(PreRead(), (rows, transform) => transform.Operate(rows));
+      }
+
+      public IAsyncEnumerable<IRow> ReadStreamAsync(CancellationToken token = default) {
+         return _transforms.Aggregate(ReadInputStreamAsync(token), (rows, transform) => transform.OperateStreamAsync(rows, token));
+      }
+
+      private async IAsyncEnumerable<IRow> ReadInputStreamAsync([EnumeratorCancellation] CancellationToken token) {
+         token.ThrowIfCancellationRequested();
+         var inputRows = _input.Entity.Rows;
+         _input.Entity.Hits = inputRows.Count;
+         foreach (var row in inputRows) {
+
+            token.ThrowIfCancellationRequested();
+            var stringRow = _rowFactory.Create();
+            foreach (var field in _fields) {
+               if (row.Map.ContainsKey(field.Name)) {
+                  stringRow[field] = row[field.Name];
+               } else {
+                  if (_missing.Add(field.Name)) {
+                     _input.Warn($"An internal row in {_input.Entity.Alias} is missing the field {field.Name}.");
+                  }
+               }
+            }
+            yield return stringRow;
+         }
+         await Task.CompletedTask.ConfigureAwait(false);
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

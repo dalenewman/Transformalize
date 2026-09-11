@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
@@ -32,7 +32,7 @@ namespace Transformalize.Providers.GeoJson {
    /// <summary>
    /// Write an entity's output as GeoJson to a stream with an emphasis on a light payload
    /// </summary>
-   public class GeoJsonMinimalEntityStreamWriter : IWrite {
+   public class GeoJsonMinimalEntityStreamWriter : IWriteStream, IWrite {
 
       private readonly Stream _stream;
       private readonly Field _latitudeField;
@@ -91,7 +91,14 @@ namespace Transformalize.Providers.GeoJson {
          await jw.FlushAsync(token).ConfigureAwait(false);
       }
 
-      private void WriteCore(Utf8JsonWriter jw, IEnumerable<IRow> rows) {
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var options = new JsonWriterOptions { Indented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+         var jw = new Utf8JsonWriter(_stream, options);
+         await WriteCoreStreamAsync(jw, rows, token).ConfigureAwait(false);
+         await jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      private void WriteCollectionStart(Utf8JsonWriter jw) {
          jw.WriteStartObject(); //root
 
          jw.WritePropertyName("type");
@@ -99,115 +106,86 @@ namespace Transformalize.Providers.GeoJson {
 
          jw.WritePropertyName("features");
          jw.WriteStartArray(); //features
+      }
 
-         foreach (var row in rows) {
-            jw.WriteStartObject(); //feature
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Feature");
-            jw.WritePropertyName("geometry");
-            jw.WriteStartObject(); //geometry
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Point");
-
-            jw.WritePropertyName("coordinates");
-            jw.WriteStartArray();
-            WriteValue(jw, row[_longitudeField]);
-            WriteValue(jw, row[_latitudeField]);
-            jw.WriteEndArray();
-
-            jw.WriteEndObject(); //geometry
-
-            jw.WritePropertyName("properties");
-            jw.WriteStartObject(); //properties
-
-            jw.WritePropertyName("description");
-            WriteValue(jw, _hasDescription ? row[_descriptionField] : "add geojson-description to output");
-
-            if (_hasBatchValue) {
-               jw.WritePropertyName("batch-value");
-               WriteValue(jw, row[_batchField]);
-            }
-
-            if (_hasColor) {
-               jw.WritePropertyName("marker-color");
-               WriteValue(jw, row[_colorField]);
-            }
-
-            if (_hasSymbol) {
-               var symbol = row[_symbolField].ToString();
-               jw.WritePropertyName("marker-symbol");
-               jw.WriteStringValue(symbol);
-            }
-
-            jw.WriteEndObject(); //properties
-            jw.WriteEndObject(); //feature
-            _context.Entity.Inserts++;
-            jw.Flush();
-         }
-
+      private void WriteCollectionEnd(Utf8JsonWriter jw) {
          jw.WriteEndArray(); //features
          jw.WriteEndObject(); //root
+      }
+
+      /// <summary>Writes one feature. Shared by the synchronous, enumerable, and streaming paths.</summary>
+      private void WriteFeature(Utf8JsonWriter jw, IRow row) {
+         jw.WriteStartObject(); //feature
+         jw.WritePropertyName("type");
+         jw.WriteStringValue("Feature");
+         jw.WritePropertyName("geometry");
+         jw.WriteStartObject(); //geometry
+         jw.WritePropertyName("type");
+         jw.WriteStringValue("Point");
+
+         jw.WritePropertyName("coordinates");
+         jw.WriteStartArray();
+         WriteValue(jw, row[_longitudeField]);
+         WriteValue(jw, row[_latitudeField]);
+         jw.WriteEndArray();
+
+         jw.WriteEndObject(); //geometry
+
+         jw.WritePropertyName("properties");
+         jw.WriteStartObject(); //properties
+
+         jw.WritePropertyName("description");
+         WriteValue(jw, _hasDescription ? row[_descriptionField] : "add geojson-description to output");
+
+         if (_hasBatchValue) {
+            jw.WritePropertyName("batch-value");
+            WriteValue(jw, row[_batchField]);
+         }
+
+         if (_hasColor) {
+            jw.WritePropertyName("marker-color");
+            WriteValue(jw, row[_colorField]);
+         }
+
+         if (_hasSymbol) {
+            var symbol = row[_symbolField].ToString();
+            jw.WritePropertyName("marker-symbol");
+            jw.WriteStringValue(symbol);
+         }
+
+         jw.WriteEndObject(); //properties
+         jw.WriteEndObject(); //feature
+         _context.Entity.Inserts++;
+         jw.Flush();
+      }
+
+      private void WriteCore(Utf8JsonWriter jw, IEnumerable<IRow> rows) {
+         WriteCollectionStart(jw);
+         foreach (var row in rows) {
+            WriteFeature(jw, row);
+         }
+         WriteCollectionEnd(jw);
       }
 
       private void WriteCoreSync(Utf8JsonWriter jw, IEnumerable<IRow> rows, CancellationToken token) {
-         jw.WriteStartObject(); //root
-
-         jw.WritePropertyName("type");
-         jw.WriteStringValue("FeatureCollection");
-
-         jw.WritePropertyName("features");
-         jw.WriteStartArray(); //features
-
+         WriteCollectionStart(jw);
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
-
-            jw.WriteStartObject(); //feature
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Feature");
-            jw.WritePropertyName("geometry");
-            jw.WriteStartObject(); //geometry
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Point");
-
-            jw.WritePropertyName("coordinates");
-            jw.WriteStartArray();
-            WriteValue(jw, row[_longitudeField]);
-            WriteValue(jw, row[_latitudeField]);
-            jw.WriteEndArray();
-
-            jw.WriteEndObject(); //geometry
-
-            jw.WritePropertyName("properties");
-            jw.WriteStartObject(); //properties
-
-            jw.WritePropertyName("description");
-            WriteValue(jw, _hasDescription ? row[_descriptionField] : "add geojson-description to output");
-
-            if (_hasBatchValue) {
-               jw.WritePropertyName("batch-value");
-               WriteValue(jw, row[_batchField]);
-            }
-
-            if (_hasColor) {
-               jw.WritePropertyName("marker-color");
-               WriteValue(jw, row[_colorField]);
-            }
-
-            if (_hasSymbol) {
-               var symbol = row[_symbolField].ToString();
-               jw.WritePropertyName("marker-symbol");
-               jw.WriteStringValue(symbol);
-            }
-
-            jw.WriteEndObject(); //properties
-            jw.WriteEndObject(); //feature
-            _context.Entity.Inserts++;
-            jw.Flush();
+            WriteFeature(jw, row);
          }
-
-         jw.WriteEndArray(); //features
-         jw.WriteEndObject(); //root
+         WriteCollectionEnd(jw);
       }
+
+      private async Task WriteCoreStreamAsync(Utf8JsonWriter jw, IAsyncEnumerable<IRow> rows, CancellationToken token) {
+         WriteCollectionStart(jw);
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(jw, row);
+         }
+         WriteCollectionEnd(jw);
+      }
+
+      
 
       private static void WriteValue(Utf8JsonWriter jw, object value) {
          switch (value) {

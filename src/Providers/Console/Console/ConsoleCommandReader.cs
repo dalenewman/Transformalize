@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -25,7 +27,7 @@ using Transformalize.Contracts;
 using Transformalize.Impl;
 
 namespace Transformalize.Providers.Console {
-   public class ConsoleCommandReader : IRead {
+   public class ConsoleCommandReader : IReadStream, IRead {
       private readonly InputContext _input;
       private readonly IRowFactory _rowFactory;
       private readonly IField _inputField;
@@ -89,6 +91,41 @@ namespace Transformalize.Providers.Console {
 
          };
 
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         if (_inputField == null) { _input.Error("You must have one input field for console provider input."); yield break; }
+         using var process = new Process {
+            StartInfo = { UseShellExecute = false, RedirectStandardOutput = true, FileName = _input.Connection.Command, Arguments = _input.Connection.Arguments }
+         };
+         if (_input.Connection.Folder != string.Empty) process.StartInfo.WorkingDirectory = _input.Connection.Folder;
+         var exited = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+         process.EnableRaisingEvents = true;
+         process.Exited += (sender, args) => exited.TrySetResult(true);
+         process.Start();
+         using var cancellation = token.Register(() => {
+            try { if (!process.HasExited) process.Kill(); } catch (System.InvalidOperationException) { }
+         });
+         try {
+            var lineNumber = 0;
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               var line = await process.StandardOutput.ReadLineAsync().ConfigureAwait(false);
+               token.ThrowIfCancellationRequested();
+               if (line == null) break;
+               ++lineNumber;
+               if (line == string.Empty || lineNumber < _input.Connection.Start) continue;
+               if (_input.Connection.End > 0 && lineNumber > _input.Connection.End) yield break;
+               var row = _rowFactory.Create();
+               row[_inputField] = line;
+               yield return row;
+            }
+            if (!process.HasExited) await exited.Task.ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+         } finally {
+            if (!process.HasExited) { process.Kill(); await exited.Task.ConfigureAwait(false); }
+         }
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -236,7 +236,6 @@ namespace Transformalize.Configuration.Ext {
             var connection = p.GetOutputConnection();
             if (connection != null) {
                switch (connection.Provider) {
-                  case "kml":
                   case "geojson":
                      var fields = entity.GetAllFields().ToArray();
                      var lat = fields.FirstOrDefault(f => f.Alias.ToLower() == "latitude") ?? fields.FirstOrDefault(f => f.Alias.ToLower().StartsWith("lat"));

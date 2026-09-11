@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -28,7 +30,7 @@ using Transformalize.Transforms;
 
 namespace Transformalize.Providers.Internal {
 
-   public class InternalParameterReader : IRead {
+   public class InternalParameterReader : IReadStream, IRead {
 
       private readonly InputContext _input;
       private readonly IRowFactory _rowFactory;
@@ -79,6 +81,19 @@ namespace Transformalize.Providers.Internal {
 
          yield return row;
          yield break;
+      }
+
+      /// <summary>Streams rows without a result list. The underlying source API is synchronous.</summary>
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         using (var rows = Read().GetEnumerator()) {
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               if (!rows.MoveNext()) break;
+               yield return rows.Current;
+            }
+         }
+         await Task.CompletedTask.ConfigureAwait(false);
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -26,7 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
-   public class GeoJsonRoleStreamWriter : IWrite {
+   public class GeoJsonRoleStreamWriter : IWriteStream, IWrite {
       private readonly Stream _stream;
       private readonly OutputContext _context;
       private readonly GeoJsonRoleMap _map;
@@ -56,6 +56,20 @@ namespace Transformalize.Providers.GeoJson {
          var jw = new Utf8JsonWriter(_stream, options);
          WriteCollectionStart(jw);
          foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(jw, row);
+            _context.Entity.Inserts++;
+            jw.Flush();
+         }
+         WriteCollectionEnd(jw);
+         await jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var options = new JsonWriterOptions { Indented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+         var jw = new Utf8JsonWriter(_stream, options);
+         WriteCollectionStart(jw);
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
             token.ThrowIfCancellationRequested();
             WriteFeature(jw, row);
             _context.Entity.Inserts++;

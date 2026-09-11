@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms {
 
@@ -76,6 +78,30 @@ namespace Transformalize.Transforms {
                 }
             }
         }
+
+        public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+           global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+           [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+           token.ThrowIfCancellationRequested();
+           // A further-derived sequence override still needs the conservative adapter.
+           if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(FromLengthsTransform)) {
+              await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+              yield break;
+           }
+           await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+              token.ThrowIfCancellationRequested();
+              var line = row[_input] as string;
+              if (line == null) {
+                 continue;
+              }
+              line = line.TrimEnd();
+              if (line.Length == 0) {
+                 continue;
+              }
+              yield return Operate(row);
+           }
+        }
+
 
         public override IRow Operate(IRow row) {
 

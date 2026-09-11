@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -31,7 +33,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
-   public class ElasticReader : IRead {
+   public class ElasticReader : IReadStream, IRead {
 
       private readonly Regex _isQueryString = new Regex(@" OR | AND |\*|\?", RegexOptions.Compiled);
       public const int ElasticsearchDefaultSizeLimit = 10000;
@@ -55,7 +57,7 @@ namespace Transformalize.Providers.Elasticsearch {
 
          _context = context;
          _fields = fields;
-         _fieldNames = fields.Select(f => _readFrom == ReadFrom.Input ? f.Name : f.Alias.ToLower()).ToArray();
+         _fieldNames = fields.Select(f => readFrom == ReadFrom.Input ? f.Name : f.Alias.ToLower()).ToArray();
          _client = client;
          _rowFactory = rowFactory;
          _readFrom = readFrom;
@@ -418,7 +420,7 @@ namespace Transformalize.Providers.Elasticsearch {
             if (buckets == null || !buckets.HasValue)
                continue;
 
-            var items = buckets.Value as IEnumerable<object>;
+            var items = ExtractDocs(buckets);
 
             if (items == null)
                continue;
@@ -505,6 +507,80 @@ namespace Transformalize.Providers.Elasticsearch {
 
       private void LogError(DynamicResponse response) {
          _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         var scroll = !_context.Entity.IsPageRequest();
+         var from = scroll ? 0 : (_context.Entity.Page - 1) * _context.Entity.Size;
+         var size = scroll ? (_context.Entity.ReadSize > 0 ? _context.Entity.ReadSize : DefaultSize) : _context.Entity.Size;
+         var body = WriteQuery(_fields, _readFrom, _context, scroll: scroll, from: from, size: size);
+         _context.Entity.Query = body;
+         _context.Debug(() => body);
+         string scrollId = null;
+         try {
+            var searchPath = new EndpointPath(HttpMethod.POST, $"/{_context.Connection.Index}/_search" + (scroll ? $"?scroll={_context.Connection.Scroll}" : string.Empty));
+            var response = await _client.RequestAsync<DynamicResponse>(in searchPath, PostData.String(body), token).ConfigureAwait(false);
+            var first = true;
+            while (true) {
+               // Capture the latest ID before any mapping that could fail. Cleanup also runs on break/cancellation.
+               if (response.Body != null && response.Body.ContainsKey("_scroll_id")) {
+                  scrollId = response.Body["_scroll_id"].Value?.ToString();
+               }
+               token.ThrowIfCancellationRequested();
+               if (!response.ApiCallDetails.HasSuccessfulStatusCode) {
+                  LogError(response);
+                  throw new InvalidOperationException("Elasticsearch streaming read failed. See the provider log for details.");
+               }
+               if (first) {
+                  _context.Entity.Hits = _version.Major >= 7
+                     ? DynamicToInt(response.Body["hits"]["total"]["value"])
+                     : DynamicToInt(response.Body["hits"]["total"]);
+                  // Facets must be available to transforms before the first row is emitted.
+                  foreach (var filter in _context.Entity.Filter.Where(f => f.Type == "facet" && !string.IsNullOrEmpty(f.Map))) {
+                     var map = _context.Process.Maps.First(m => m.Name == filter.Map);
+                     var buckets = response.Body["aggregations"][filter.Key]["buckets"];
+                     if (buckets == null || !buckets.HasValue) continue;
+                     var items = ExtractDocs(buckets);
+                     if (items == null) continue;
+                     foreach (var item in items.OfType<IDictionary<string, object>>()) {
+                        map.Items.Add(new MapItem { From = $"{item["key"]} ({item["doc_count"]})", To = item["key"] });
+                     }
+                  }
+                  first = false;
+               }
+               var docs = ExtractDocs((object)response.Body["hits"]["hits"]);
+               if (docs == null) throw new InvalidOperationException("No documents collection in Elasticsearch response.");
+               if (docs.Count == 0) yield break;
+               foreach (var item in docs) {
+                  token.ThrowIfCancellationRequested();
+                  var doc = (IDictionary<string, object>)item;
+                  var source = (IDictionary<string, object>)doc["_source"];
+                  var row = _rowFactory.Create();
+                  for (var i = 0; i < _fields.Length; i++) {
+                     row[_fields[i]] = _fields[i].Convert(UnwrapJsonElement(source[_fieldNames[i]]));
+                  }
+                  yield return row;
+               }
+               if (!scroll || scrollId == null) yield break;
+               var nextPath = new EndpointPath(HttpMethod.POST, "/_search/scroll");
+               response = await _client.RequestAsync<DynamicResponse>(in nextPath,
+                  PostData.String(JsonSerializer.Serialize(new { scroll = _context.Connection.Scroll, scroll_id = scrollId })), token).ConfigureAwait(false);
+            }
+         } finally {
+            if (scrollId != null) {
+               // A canceled caller must not prevent server-side cleanup. Bound the independent cleanup attempt.
+               using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+               try {
+                  var clearPath = new EndpointPath(HttpMethod.DELETE, "/_search/scroll");
+                  var response = await _client.RequestAsync<DynamicResponse>(in clearPath,
+                     PostData.String(JsonSerializer.Serialize(new { scroll_id = scrollId })), cleanup.Token).ConfigureAwait(false);
+                  if (!response.ApiCallDetails.HasSuccessfulStatusCode) _context.Warn("Could not clear the Elasticsearch scroll.");
+               } catch (Exception ex) {
+                  _context.Warn($"Could not clear the Elasticsearch scroll: {ex.Message}");
+               }
+            }
+         }
       }
 
       public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
@@ -630,7 +706,7 @@ namespace Transformalize.Providers.Elasticsearch {
             if (buckets == null || !buckets.HasValue)
                continue;
 
-            var items = buckets.Value as IEnumerable<object>;
+            var items = ExtractDocs(buckets);
 
             if (items == null)
                continue;

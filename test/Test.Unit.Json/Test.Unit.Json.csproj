@@ -27,4 +27,5 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup><Compile Include="../StreamingReaderSupport.cs" Link="StreamingReaderSupport.cs" /></ItemGroup>
 </Project>

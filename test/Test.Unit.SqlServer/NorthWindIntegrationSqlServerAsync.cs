@@ -1,4 +1,5 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -73,7 +74,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -90,7 +91,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -113,7 +114,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -139,7 +140,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -166,7 +167,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -193,7 +194,7 @@ namespace Test.Unit.SqlServer {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new AdoProviderModule(), new SqlServerModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 

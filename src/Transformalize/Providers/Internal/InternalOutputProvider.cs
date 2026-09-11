@@ -17,6 +17,7 @@
 #endregion
 
 using System;
+using Transformalize.Extensions;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Internal {
 
-    public class InternalOutputProvider : IOutputProvider {
+    public class InternalOutputProvider : IOutputProvider, IWriteStream {
         private readonly OutputContext _context;
         private readonly IWrite _writer;
 
@@ -120,5 +121,9 @@ namespace Transformalize.Providers.Internal {
         public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             return Task.FromResult(Match(rows));
         }
+      public Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         return _writer.WriteStreamAsync(rows, token);
+      }
+
     }
 }

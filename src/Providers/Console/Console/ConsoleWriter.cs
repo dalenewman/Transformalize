@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -23,7 +23,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
 
-   public class ConsoleWriter : IWrite {
+   public class ConsoleWriter : IWriteStream, IWrite {
       private readonly ISerialize _serializer;
       private readonly OutputContext _context;
 
@@ -58,6 +58,31 @@ namespace Transformalize.Providers.Console {
       public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          Write(rows);
          return Task.CompletedTask;
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         if (!string.IsNullOrEmpty(_serializer.Header)) {
+            System.Console.Out.WriteLine(_serializer.Header);
+         }
+
+         // One row of lookahead, so the last row can omit the row suffix.
+         await using (var enumerator = rows.GetAsyncEnumerator(token)) {
+            var last = !await enumerator.MoveNextAsync().ConfigureAwait(false);
+
+            while (!last) {
+               token.ThrowIfCancellationRequested();
+               var current = enumerator.Current;
+               last = !await enumerator.MoveNextAsync().ConfigureAwait(false);
+               System.Console.Out.Write(_serializer.RowPrefix);
+               System.Console.Out.Write(_serializer.Serialize(current));
+               System.Console.Out.WriteLine(last ? string.Empty : _serializer.RowSuffix);
+               ++_context.Entity.Inserts;
+            }
+         }
+
+         if (!string.IsNullOrEmpty(_serializer.Footer)) {
+            System.Console.Out.WriteLine(_serializer.Footer);
+         }
       }
    }
 }

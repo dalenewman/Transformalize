@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
@@ -33,7 +33,7 @@ namespace Transformalize.Providers.GeoJson {
    /// <summary>
    /// It writes data as GeoJson to a stream, converting non-geojson stuff to html in the description
    /// </summary>
-   public class GeoJsonStreamWriter : IWrite {
+   public class GeoJsonStreamWriter : IWriteStream, IWrite {
 
       private readonly Stream _stream;
       private readonly Field _latitudeField;
@@ -89,7 +89,14 @@ namespace Transformalize.Providers.GeoJson {
          await jw.FlushAsync(token).ConfigureAwait(false);
       }
 
-      private void WriteCore(Utf8JsonWriter jw, IEnumerable<IRow> rows) {
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var options = new JsonWriterOptions { Indented = false, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+         var jw = new Utf8JsonWriter(_stream, options);
+         await WriteCoreStreamAsync(jw, rows, token).ConfigureAwait(false);
+         await jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      private void WriteCollectionStart(Utf8JsonWriter jw) {
          jw.WriteStartObject(); //root
 
          jw.WritePropertyName("type");
@@ -97,133 +104,96 @@ namespace Transformalize.Providers.GeoJson {
 
          jw.WritePropertyName("features");
          jw.WriteStartArray(); //features
+      }
 
-         var tableBuilder = new StringBuilder();
-
-         foreach (var row in rows) {
-            jw.WriteStartObject(); //feature
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Feature");
-            jw.WritePropertyName("geometry");
-            jw.WriteStartObject(); //geometry
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Point");
-
-            jw.WritePropertyName("coordinates");
-            jw.WriteStartArray();
-            WriteValue(jw, row[_longitudeField]);
-            WriteValue(jw, row[_latitudeField]);
-            jw.WriteEndArray();
-
-            jw.WriteEndObject(); //geometry
-
-            jw.WritePropertyName("properties");
-            jw.WriteStartObject(); //properties
-
-            foreach (var field in _propertyFields) {
-               jw.WritePropertyName(field.Label);
-               WriteValue(jw, field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
-            }
-
-            jw.WritePropertyName("description");
-            tableBuilder.Clear();
-            tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
-            foreach (var field in _propertyFields.Where(f => f.Alias != "BatchValue")) {
-               tableBuilder.AppendLine("<tr>");
-
-               tableBuilder.AppendLine("<td><strong>");
-               tableBuilder.AppendLine(field.Label);
-               tableBuilder.AppendLine(":</strong></td>");
-
-               tableBuilder.AppendLine("<td>");
-               tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
-               tableBuilder.AppendLine("</td>");
-
-               tableBuilder.AppendLine("</tr>");
-            }
-            tableBuilder.AppendLine("</table>");
-            jw.WriteStringValue(tableBuilder.ToString());
-
-            WriteStyle(jw, row);
-
-            jw.WriteEndObject(); //properties
-            jw.WriteEndObject(); //feature
-            _context.Entity.Inserts++;
-            jw.Flush();
-         }
-
+      private void WriteCollectionEnd(Utf8JsonWriter jw) {
          jw.WriteEndArray(); //features
          jw.WriteEndObject(); //root
+      }
+
+      /// <summary>Writes one feature. Shared by the synchronous, enumerable, and streaming paths.</summary>
+      private void WriteFeature(Utf8JsonWriter jw, IRow row, StringBuilder tableBuilder) {
+         jw.WriteStartObject(); //feature
+         jw.WritePropertyName("type");
+         jw.WriteStringValue("Feature");
+         jw.WritePropertyName("geometry");
+         jw.WriteStartObject(); //geometry
+         jw.WritePropertyName("type");
+         jw.WriteStringValue("Point");
+
+         jw.WritePropertyName("coordinates");
+         jw.WriteStartArray();
+         WriteValue(jw, row[_longitudeField]);
+         WriteValue(jw, row[_latitudeField]);
+         jw.WriteEndArray();
+
+         jw.WriteEndObject(); //geometry
+
+         jw.WritePropertyName("properties");
+         jw.WriteStartObject(); //properties
+
+         foreach (var field in _propertyFields) {
+            jw.WritePropertyName(field.Label);
+            WriteValue(jw, field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
+         }
+
+         jw.WritePropertyName("description");
+         tableBuilder.Clear();
+         tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
+         foreach (var field in _propertyFields.Where(f => f.Alias != "BatchValue")) {
+            tableBuilder.AppendLine("<tr>");
+
+            tableBuilder.AppendLine("<td><strong>");
+            tableBuilder.AppendLine(field.Label);
+            tableBuilder.AppendLine(":</strong></td>");
+
+            tableBuilder.AppendLine("<td>");
+            tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
+            tableBuilder.AppendLine("</td>");
+
+            tableBuilder.AppendLine("</tr>");
+         }
+         tableBuilder.AppendLine("</table>");
+         jw.WriteStringValue(tableBuilder.ToString());
+
+         WriteStyle(jw, row);
+
+         jw.WriteEndObject(); //properties
+         jw.WriteEndObject(); //feature
+         _context.Entity.Inserts++;
+         jw.Flush();
+      }
+
+      private void WriteCore(Utf8JsonWriter jw, IEnumerable<IRow> rows) {
+         WriteCollectionStart(jw);
+         var tableBuilder = new StringBuilder();
+         foreach (var row in rows) {
+            WriteFeature(jw, row, tableBuilder);
+         }
+         WriteCollectionEnd(jw);
       }
 
       private void WriteCoreSync(Utf8JsonWriter jw, IEnumerable<IRow> rows, CancellationToken token) {
-         jw.WriteStartObject(); //root
-
-         jw.WritePropertyName("type");
-         jw.WriteStringValue("FeatureCollection");
-
-         jw.WritePropertyName("features");
-         jw.WriteStartArray(); //features
-
+         WriteCollectionStart(jw);
          var tableBuilder = new StringBuilder();
-
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
-
-            jw.WriteStartObject(); //feature
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Feature");
-            jw.WritePropertyName("geometry");
-            jw.WriteStartObject(); //geometry
-            jw.WritePropertyName("type");
-            jw.WriteStringValue("Point");
-
-            jw.WritePropertyName("coordinates");
-            jw.WriteStartArray();
-            WriteValue(jw, row[_longitudeField]);
-            WriteValue(jw, row[_latitudeField]);
-            jw.WriteEndArray();
-
-            jw.WriteEndObject(); //geometry
-
-            jw.WritePropertyName("properties");
-            jw.WriteStartObject(); //properties
-
-            foreach (var field in _propertyFields) {
-               jw.WritePropertyName(field.Label);
-               WriteValue(jw, field.Format == string.Empty ? row[field] : string.Format(string.Concat("{0:", field.Format, "}"), row[field]));
-            }
-
-            jw.WritePropertyName("description");
-            tableBuilder.Clear();
-            tableBuilder.AppendLine("<table class=\"table table-striped table-condensed\">");
-            foreach (var field in _propertyFields.Where(f => f.Alias != "BatchValue")) {
-               tableBuilder.AppendLine("<tr>");
-
-               tableBuilder.AppendLine("<td><strong>");
-               tableBuilder.AppendLine(field.Label);
-               tableBuilder.AppendLine(":</strong></td>");
-
-               tableBuilder.AppendLine("<td>");
-               tableBuilder.AppendLine(field.Raw ? row[field].ToString() : System.Security.SecurityElement.Escape(row[field].ToString()));
-               tableBuilder.AppendLine("</td>");
-
-               tableBuilder.AppendLine("</tr>");
-            }
-            tableBuilder.AppendLine("</table>");
-            jw.WriteStringValue(tableBuilder.ToString());
-
-            WriteStyle(jw, row);
-
-            jw.WriteEndObject(); //properties
-            jw.WriteEndObject(); //feature
-            _context.Entity.Inserts++;
-            jw.Flush();
+            WriteFeature(jw, row, tableBuilder);
          }
-
-         jw.WriteEndArray(); //features
-         jw.WriteEndObject(); //root
+         WriteCollectionEnd(jw);
       }
+
+      private async Task WriteCoreStreamAsync(Utf8JsonWriter jw, IAsyncEnumerable<IRow> rows, CancellationToken token) {
+         WriteCollectionStart(jw);
+         var tableBuilder = new StringBuilder();
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(jw, row, tableBuilder);
+         }
+         WriteCollectionEnd(jw);
+      }
+
+      
 
       private void WriteStyle(Utf8JsonWriter jw, IRow row) {
          if (!_hasStyle) {

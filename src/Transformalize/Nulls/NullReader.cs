@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -22,7 +24,7 @@ using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
-    public class NullReader : IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
+    public class NullReader : IReadStream, IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
         private readonly IContext _context;
         private readonly bool _log;
 
@@ -37,6 +39,19 @@ namespace Transformalize.Nulls {
 
             return Enumerable.Empty<IRow>();
         }
+
+      /// <summary>Streams rows without a result list. The underlying source API is synchronous.</summary>
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         using (var rows = Read().GetEnumerator()) {
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               if (!rows.MoveNext()) break;
+               yield return rows.Current;
+            }
+         }
+         await Task.CompletedTask.ConfigureAwait(false);
+      }
 
         public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             return Task.FromResult(Read());

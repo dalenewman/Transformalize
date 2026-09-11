@@ -29,7 +29,7 @@ using Transformalize.Extensions;
 
 namespace Transformalize.Providers.Solr {
 
-   public class SolrWriter : IWrite {
+   public class SolrWriter : IWriteStream, IWrite {
 
       private readonly OutputContext _context;
       readonly ISolrOperations<Dictionary<string, object>> _solr;
@@ -82,6 +82,44 @@ namespace Transformalize.Providers.Solr {
          var fullCount = 0;
 
          foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
+            token.ThrowIfCancellationRequested();
+            var batchCount = (uint)0;
+            var docs = new List<Dictionary<string, object>>();
+            foreach (var row in part) {
+               batchCount++;
+               fullCount++;
+               docs.Add(_fields.ToDictionary(field => field.Alias.ToLower(), field => row[field]));
+            }
+            var response = await _solr.AddRangeAsync(docs).ConfigureAwait(false);
+
+            if (response.Status == 0) {
+               var count = batchCount;
+               _context.Debug(() => $"{count} to output");
+            } else {
+               _context.Error($"Couldn't add range of {docs.Count} document{docs.Count.Plural()} to SOLR.");
+            }
+         }
+
+         if (fullCount > 0) {
+            try {
+               var commit = await _solr.CommitAsync().ConfigureAwait(false);
+               if (commit.Status == 0) {
+                  _context.Entity.Inserts += Convert.ToUInt32(fullCount);
+                  _context.Info($"Committed {fullCount} documents in {TimeSpan.FromMilliseconds(commit.QTime)}");
+               } else {
+                  _context.Error($"Failed to commit {fullCount} documents.  SOLR returned status {commit.Status}.");
+               }
+            } catch (SolrNetException ex) {
+               _context.Error($"Failed to commit {fullCount} documents. {ex.Message}");
+            }
+         }
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var fullCount = 0;
+
+         // At most insert-size documents are held at a time; each batch is posted before the next is pulled.
+         await foreach (var part in rows.PartitionStreamAsync(_context.Entity.InsertSize, token).WithCancellation(token).ConfigureAwait(false)) {
             token.ThrowIfCancellationRequested();
             var batchCount = (uint)0;
             var docs = new List<Dictionary<string, object>>();

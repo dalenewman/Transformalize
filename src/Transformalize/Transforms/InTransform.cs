@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -27,6 +27,7 @@ namespace Transformalize.Transforms {
       private readonly bool _inMap;
       private readonly Field _input;
       private readonly HashSet<object> _map = new HashSet<object>();
+      private Func<object, bool> _transform;
 
       public InTransform(IContext context = null) : base(context, "bool") {
 
@@ -49,24 +50,18 @@ namespace Transformalize.Transforms {
          _input = SingleInput();
       }
 
-      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+      protected override void Initialize() {
 
-         /* Override Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
+         /* Load the map here, because it may not be available at start up */
 
          foreach (var item in CreateMap().Items) {
             _map.Add(_input.Convert(item.From));
          }
 
-         Func<object, bool> transform;
          if (_inMap) {
-            transform = o => _map.Contains(o);
+            _transform = o => _map.Contains(o);
          } else {
-            transform = o => !_map.Contains(o);
-         }
-
-         foreach(var row in rows) {
-            row[Context.Field] = transform(row[_input]);
-            yield return row;
+            _transform = o => !_map.Contains(o);
          }
       }
 
@@ -93,7 +88,8 @@ namespace Transformalize.Transforms {
       }
 
       public override IRow Operate(IRow row) {
-         throw new NotImplementedException();
+         row[Context.Field] = _transform(row[_input]);
+         return row;
       }
    }
 }

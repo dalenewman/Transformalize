@@ -55,9 +55,9 @@ namespace Transformalize.Validators {
          _input = SingleInput();
       }
 
-      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+      protected override void Initialize() {
 
-         /* Over ride Operate(IEnumerable<IRow>) to load the map, which may not be available at start up */
+         /* Load the map here, because it may not be available at start up */
 
          var mapItems = CreateMap().Items;
          var usingTo = mapItems.Any(mi => !mi.To.Equals(Constants.DefaultSetting));
@@ -111,7 +111,6 @@ namespace Transformalize.Validators {
             }
          };
 
-         return rows.Select(Operate);
       }
 
       private Map CreateMap() {

@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Contracts;
 
+using System.Threading.Tasks;
+
 namespace Transformalize.Transforms {
 
    public class MapTransform : BaseTransform {
@@ -75,6 +77,45 @@ namespace Transformalize.Transforms {
             yield return Operate(row);
          }
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(MapTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         // Map setup can fail, which aborts the stream without emitting rows, as the sequence overload does.
+         foreach (var item in _operationMap.Items) {
+            if (item.From.Equals(CatchAll)) {
+               _catchAll = Context.Field.Convert(item.To);
+               continue;
+            }
+            var from = Constants.ObjectConversionMap[Received()](item.From);
+            if (item.To == null || item.To.Equals(Constants.DefaultSetting)) {
+               if (Context.Entity.TryGetField(item.Parameter, out var field)) {
+                  _map[from] = (r) => r[field];
+               } else {
+                  Context.Error($"Map {Context.Operation.Map} doesn't have a `to` value or a valid field referenced in `parameter`");
+                  yield break;
+               }
+            } else {
+               var to = Context.Field.Convert(item.To);
+               _map[from] = (r) => to;
+            }
+         }
+         if (_catchAll == null) {
+            _catchAll = Context.Field.DefaultValue();
+         }
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            yield return Operate(row);
+         }
+      }
+
 
       public override IRow Operate(IRow row) {
 

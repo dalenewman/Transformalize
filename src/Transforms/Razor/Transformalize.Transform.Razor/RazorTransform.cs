@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms.Razor {
 
@@ -96,6 +98,53 @@ namespace Transformalize.Transforms.Razor {
          }
 
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(RazorTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         if (!Run)
+            yield break;
+
+         var fileBasedTemplate = Context.Process.Templates.FirstOrDefault(t => t.Name == Context.Operation.Template);
+
+         if (fileBasedTemplate != null) {
+            Context.Operation.Template = fileBasedTemplate.Content;
+         }
+
+         var input = MultipleInput();
+         var matches = Context.Entity.GetFieldMatches(Context.Operation.Template);
+         _input = input.Union(matches).ToArray();
+
+         var engine = new RazorEngine();
+         IRazorEngineCompiledTemplate template;
+
+         try {
+            template = engine.Compile(Context.Operation.Template);
+         } catch (RazorEngineCompilationException ex) {
+            foreach (var error in ex.Errors) {
+               var line = error.Location.GetLineSpan();
+               Context.Error($"C# error on line {line.StartLinePosition.Line}, column {line.StartLinePosition.Character}.");
+               Context.Error(error.GetMessage());
+            }
+            Context.Error(ex.Message.Replace("{", "{{").Replace("}", "}}"));
+            Utility.CodeToError(Context, Context.Operation.Template);
+            yield break;
+         }
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            var output = template.Run(row.ToFriendlyExpandoObject(_input));
+            row[Context.Field] = _convert(output);
+            yield return row;
+         }
+      }
+
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("razor") {

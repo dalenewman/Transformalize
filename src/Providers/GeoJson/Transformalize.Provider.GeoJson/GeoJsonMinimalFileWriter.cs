@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -23,7 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.GeoJson {
-   public class GeoJsonMinimalFileWriter : IWrite {
+   public class GeoJsonMinimalFileWriter : IWriteStream, IWrite {
       private readonly OutputContext _context;
 
       public GeoJsonMinimalFileWriter(OutputContext context) {
@@ -41,6 +41,14 @@ namespace Transformalize.Providers.GeoJson {
          using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true)) {
             var streamWriter = new GeoJsonMinimalEntityStreamWriter(_context, fileStream);
             await streamWriter.WriteAsync(rows, token).ConfigureAwait(false);
+            await fileStream.FlushAsync(token).ConfigureAwait(false);
+         }
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         using (var fileStream = new FileStream(_context.Connection.File, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true)) {
+            var streamWriter = new GeoJsonMinimalEntityStreamWriter(_context, fileStream);
+            await streamWriter.WriteStreamAsync(rows, token).ConfigureAwait(false);
             await fileStream.FlushAsync(token).ConfigureAwait(false);
          }
       }

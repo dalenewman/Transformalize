@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Trace {
-    public class TraceWriter : IWrite {
+    public class TraceWriter : IWriteStream, IWrite {
         private readonly ISerialize _serializer;
 
         public TraceWriter(ISerialize serializer) {
@@ -37,6 +37,13 @@ namespace Transformalize.Providers.Trace {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+                System.Diagnostics.Trace.WriteLine(_serializer.Serialize(row));
+            }
         }
     }
 }

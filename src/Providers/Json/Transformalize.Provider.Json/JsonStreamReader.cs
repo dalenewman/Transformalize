@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -29,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonStreamReader : IRead {
+   public class JsonStreamReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly Stream _stream;
@@ -51,6 +52,32 @@ namespace Transformalize.Providers.Json {
             var json = textReader.ReadToEnd();
             return ReadRows(json);
          }
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         ResetStreamPosition();
+         var current = 0;
+         var start = _context.Entity.IsPageRequest() ? (_context.Entity.Page - 1) * _context.Entity.Size : 0;
+         var end = _context.Entity.IsPageRequest() ? start + _context.Entity.Size : 0;
+         using var utf8 = new Utf8JsonStream(_stream);
+         await foreach (var element in JsonSerializer.DeserializeAsyncEnumerable<JsonElement>(utf8, cancellationToken: token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            var include = end == 0 || current.Between(start, end);
+            ++current;
+            _context.Entity.Hits = current;
+            if (include) {
+               var row = _rowFactory.Create();
+               foreach (var prop in element.EnumerateObject()) {
+                  if (_fieldLookup.TryGetValue(prop.Name, out var field)) {
+                     row[field] = field.Convert(ConvertJsonElement(prop.Value));
+                  }
+               }
+               yield return row;
+            }
+            if (end > 0 && current >= end) yield break;
+         }
+         _context.Entity.Hits = current;
       }
 
       public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

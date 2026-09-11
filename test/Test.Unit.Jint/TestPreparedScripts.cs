@@ -1,3 +1,4 @@
+using Transformalize.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -64,6 +65,34 @@ namespace Tests {
          }
 
          Assert.AreEqual(1, Run(context, validator, Input()).Count());
+         Assert.IsTrue(((MemoryLogger)context.Logger).Log.Any(l => l.Exception is global::Jint.Runtime.JavaScriptException));
+      }
+
+      [TestMethod]
+      public async System.Threading.Tasks.Task StreamsWithOneEngineAndHandlesScriptChangesBetweenRows() {
+         var context = CreateContext("var count = (typeof count === 'undefined' ? 0 : count) + 1; value + count;");
+         using var operation = new JintTransform(context: context);
+         IEnumerable<IRow> Input() {
+            yield return CreateRow(10);
+            yield return CreateRow(20);
+            context.Operation.Script = "value + 100";
+            yield return CreateRow(30);
+         }
+         var rows = await operation.OperateStreamAsync(Input().AsAsyncStream()).MaterializeAsync();
+         CollectionAssert.AreEqual(new object[] { 11, 22, 130 }, rows.Select(r => r[context.Field]).ToArray());
+         var other = CreateContext("var count = (typeof count === 'undefined' ? 0 : count) + 1; value + count;");
+         using var otherOperation = new JintTransform(context: other);
+         var otherRows = await otherOperation.OperateStreamAsync(new[] { CreateRow(10) }.AsAsyncStream()).MaterializeAsync();
+         Assert.AreEqual(11, otherRows[0][other.Field]);
+      }
+
+      [TestMethod]
+      public async System.Threading.Tasks.Task StreamingPreservesFirstRowSyntaxErrorHandling() {
+         var context = CreateContext("value * 2");
+         using var operation = new JintTransform(context: context);
+         context.Operation.Script = "value +";
+         var rows = await operation.OperateStreamAsync(new[] { CreateRow(2) }.AsAsyncStream()).MaterializeAsync();
+         Assert.AreEqual(1, rows.Count);
          Assert.IsTrue(((MemoryLogger)context.Logger).Log.Any(l => l.Exception is global::Jint.Runtime.JavaScriptException));
       }
 

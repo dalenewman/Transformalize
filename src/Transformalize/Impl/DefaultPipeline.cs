@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -17,13 +17,14 @@
 #endregion
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Impl {
-   public class DefaultPipeline : IPipeline {
+   public class DefaultPipeline : IStreamingPipeline {
 
       private readonly IOutputController _controller;
 
@@ -192,6 +193,60 @@ namespace Transformalize.Impl {
          return Enumerable.Empty<IRow>();
       }
 
+      public virtual async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         Context.Debug(() => $"Running {Transforms.Count} transforms.");
+         if (Context.Entity.NeedsUpdate(Context)) {
+            if (Context.Process.Mode != "init") {
+               if (Context.Entity.Version != string.Empty) {
+                  var version = Context.Entity.GetVersionField();
+                  if (version.Type == "byte[]") {
+                     var min = Context.Entity.MinVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MinVersion).TrimStart(new[] { '0' });
+                     var max = Context.Entity.MaxVersion == null ? "null" : Utility.BytesToHexViaLookup32((byte[])Context.Entity.MaxVersion).TrimStart(new[] { '0' });
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", max, min);
+                  } else {
+                     Context.Info("Change Detected: Input:{0} > Output:{1}", Context.Entity.MaxVersion ?? "null", Context.Entity.MinVersion ?? "null");
+                  }
+               }
+            }
+            var data = Reader == null ? InputProvider.ReadStreamAsync(token) : Reader.ReadStreamAsync(token);
+
+            if (Transforms.Any()) {
+               data = Transforms.Aggregate(data, (rows, t) => t.OperateStreamAsync(rows, token));
+            }
+
+            if (Validators.Any()) {
+               data = Validators.Aggregate(data, (rows, v) => v.OperateStreamAsync(rows, token));
+            }
+
+            await foreach (var row in data.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+            yield break;
+         }
+         Context.Info("Change Detected: No.");
+         yield break;
+      }
+
+      public virtual async Task ExecuteStreamAsync(CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         await _controller.StartAsync(token).ConfigureAwait(false);
+         if (DeleteHandler != null) {
+            await DeleteHandler.DeleteAsync(token).ConfigureAwait(false);
+         }
+         if (Writer == null) {
+            if (!(OutputProvider is IWriteStream)) Context.Warn($"Streaming fallback: materializing the whole input for {OutputProvider.GetType().Name}. It does not implement IWriteStream, so memory is not bounded.");
+            await OutputProvider.WriteStreamAsync(ReadStreamAsync(token), token).ConfigureAwait(false);
+         } else {
+            if (!(Writer is IWriteStream)) Context.Warn($"Streaming fallback: materializing the whole input for {Writer.GetType().Name}. It does not implement IWriteStream, so memory is not bounded.");
+            await Writer.WriteStreamAsync(ReadStreamAsync(token), token).ConfigureAwait(false);
+         }
+         token.ThrowIfCancellationRequested();
+         await Updater.UpdateAsync(token).ConfigureAwait(false);
+         await _controller.EndAsync(token).ConfigureAwait(false);
+      }
+
       public virtual async Task ExecuteAsync(CancellationToken token = default) {
          await _controller.StartAsync(token).ConfigureAwait(false);
          if (DeleteHandler != null) {
@@ -205,6 +260,7 @@ namespace Transformalize.Impl {
          await Updater.UpdateAsync(token).ConfigureAwait(false);
          await _controller.EndAsync(token).ConfigureAwait(false);
       }
+
 
       /// <inheritdoc />
       /// <summary>

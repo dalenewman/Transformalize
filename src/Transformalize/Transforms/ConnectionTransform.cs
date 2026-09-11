@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -70,12 +70,6 @@ namespace Transformalize.Transforms {
          return row;
       }
 
-      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-         foreach (var row in rows) {
-            row[Context.Field] = Utility.GetPropValue(_connection, Context.Operation.Property);
-            yield return row;
-         }
-      }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("connection") {

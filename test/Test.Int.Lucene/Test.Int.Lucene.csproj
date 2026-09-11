@@ -38,4 +38,5 @@
     <ProjectReference Include="../../src/Transforms/Jint/Transformalize.Transform.Jint.Autofac/Transformalize.Transform.Jint.Autofac.csproj" />
   </ItemGroup>
 
+  <ItemGroup><Compile Include="../StreamingReaderSupport.cs" Link="StreamingReaderSupport.cs" /></ItemGroup>
 </Project>

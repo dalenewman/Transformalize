@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -22,7 +22,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Nulls {
 
-    public class NullWriter : IWrite {
+    public class NullWriter : IWriteStream, IWrite {
         readonly IContext _context;
         readonly bool _log;
 
@@ -42,6 +42,15 @@ namespace Transformalize.Nulls {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            if (_log)
+                _context.Info("Null writing...");
+            // The stream is still drained, so upstream side effects and counters happen as they would otherwise.
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+            }
         }
 
     }
