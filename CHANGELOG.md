@@ -33,8 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Native streaming read/write failures propagate and skip successful completion callbacks. Streaming ADO insert/update counters advance after transaction commit. Earlier entity batches may remain committed after later failures; execution does not provide a process-wide transaction.
 - Elasticsearch aggregation reads now handle the transport's `JsonElement` responses in both sync and streaming paths; streaming flattening retains only its current output row.
 - Async ADO key matching now passes cancellation to commands and propagates failures after rollback, avoiding an empty match result that could cause duplicate inserts.
-- ADO-generated filters now bind scalar, list, `LIKE`, and full-text values as typed command parameters instead of interpolating them into SQL
-- The redundant repository Semgrep workflow is removed in favor of GitHub code scanning.
+- ADO-generated filters now bind scalar, list, `LIKE`, and full-text values as typed command parameters instead of interpolating them into SQL.
 - Updated the test projects' `Testcontainers` packages to 4.15.0, which resolves the transitive `SSH.NET` dependency to the patched 2026.0.0 and clears the NU1903 advisory (GHSA-q939-rpr3-3284). The solution now builds with no warnings.
 - The PostgreSQL test project targets `net10.0` only, matching every other test project; it was the last one still multi-targeting `net8.0`.
 - No public API is deprecated or removed. Synchronous methods, `ReadAsync`, `ExecuteAsync`, enumerable-based `WriteAsync`, and the non-row async methods remain fully supported and warning-free, and `ExecuteAsync` is still implemented in terms of `ReadAsync`. Streaming is opt-in through the new contracts and extension methods; prefer `ReadStreamAsync` with async enumeration, or explicit `MaterializeAsync`, for new code.
