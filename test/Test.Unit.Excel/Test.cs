@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Threading.Tasks;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -67,7 +69,9 @@ namespace Test {
       }
 
       [TestMethod]
-      public void Read() {
+      [DataRow(false)]
+      [DataRow(true)]
+      public async Task Read(bool streaming) {
          const string xml = @"<add name='Excel'>
   <connections>
     <add name='input' provider='excel' file='bogus.xlsx' start='2' />
@@ -91,7 +95,7 @@ namespace Test {
             using (var inner = new Container(new ExcelModule()).CreateScope(process, logger)) {
 
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
                var rows = process.Entities.First().Rows;
 
                Assert.AreEqual(10, rows.Count);

@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.1.0">
+﻿<Project Sdk="MSTest.Sdk/4.1.0">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Testcontainers" Version="4.11.0" />
+    <PackageReference Include="Testcontainers" Version="4.15.0" />
     <ProjectReference Include="../../src/Containers/Autofac/Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Bogus/Transformalize.Provider.Bogus.Autofac/Transformalize.Provider.Bogus.Autofac.csproj" />
     <ProjectReference Include="../../src/Providers/Console/Console/Console.csproj" />
@@ -23,4 +23,5 @@
     <ProjectReference Include="../../src/Providers/Solr/Transformalize.Provider.Solr.Autofac/Transformalize.Provider.Solr.Autofac.csproj" />
   </ItemGroup>
 
+  <ItemGroup><Compile Include="../StreamingReaderSupport.cs" Link="StreamingReaderSupport.cs" /></ItemGroup>
 </Project>

@@ -16,6 +16,8 @@
 // limitations under the License.
 #endregion
 using System;
+using System.Runtime.CompilerServices;
+using Transformalize.Extensions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -24,7 +26,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Impl {
 
-   public class ProcessController : IProcessController {
+   public class ProcessController : IStreamingProcessController {
 
       private readonly IEnumerable<IPipeline> _pipelines;
       private readonly IContext _context;
@@ -84,6 +86,36 @@ namespace Transformalize.Impl {
             await PostExecuteAsync(token).ConfigureAwait(false);
          } else {
             _context.Error("Pre-Execute failed!");
+         }
+      }
+
+      public async Task ExecuteStreamAsync(CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         if (await PreExecuteAsync(token).ConfigureAwait(false)) {
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Initializing {entity.GetType().Name}");
+               if (!MayContinue(await entity.InitializeAsync(token).ConfigureAwait(false))) {
+                  return;
+               }
+            }
+            foreach (var entity in _pipelines) {
+               _context.Debug(() => $"Executing {entity.GetType().Name}");
+               await entity.ExecuteStreamAsync(token).ConfigureAwait(false);
+            }
+            token.ThrowIfCancellationRequested();
+            await PostExecuteAsync(token).ConfigureAwait(false);
+         } else {
+            _context.Error("Pre-Execute failed!");
+         }
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         foreach (var pipeline in _pipelines) {
+            await foreach (var row in pipeline.ReadStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
          }
       }
 

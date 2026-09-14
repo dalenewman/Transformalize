@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
-   public class ElasticWriter : IWrite {
+   public class ElasticWriter : IWriteStream, IWrite {
 
       readonly OutputContext _context;
       readonly ITransport _client;
@@ -121,6 +121,61 @@ namespace Transformalize.Providers.Elasticsearch {
          var batchCount = (uint)0;
 
          foreach (var part in rows.Partition(_context.Entity.InsertSize)) {
+            foreach (var row in part) {
+               batchCount++;
+               fullCount++;
+               foreach (var af in _fields) {
+
+                  switch (af.Field.Type) {
+                     case "guid":
+                        row[af.Field] = ((Guid)row[af.Field]).ToString();
+                        break;
+                     case "datetime":
+                        row[af.Field] = ((DateTime)row[af.Field]).ToString("o");
+                        break;
+                  }
+                  if (af.Field.SearchType == "geo_point") {
+                     var gp = row[af.Field].ToString();
+                     row[af.Field] = new Dictionary<string, string> {
+                        { "text", gp },
+                        { "location", gp }
+                     };
+                  }
+               }
+
+               builder.Append(_prefix);
+               foreach (var key in _fields.Where(af => af.Field.PrimaryKey)) {
+                  builder.Append(row[key.Field]);
+               }
+               builder.AppendLine("\"}}");
+               builder.AppendLine(JsonSerializer.Serialize(_fields.ToDictionary(af => af.Alias, af => row[af.Field]), _options));
+            }
+
+            var asyncBulkPath = new EndpointPath(HttpMethod.POST, "/_bulk?refresh=true");
+            var response = await _client.RequestAsync<DynamicResponse>(in asyncBulkPath, PostData.String(builder.ToString()), token).ConfigureAwait(false);
+
+            if (response.ApiCallDetails.HasSuccessfulStatusCode) {
+               var count = batchCount;
+               _context.Entity.Inserts += count;
+               _context.Debug(() => $"{count} to output");
+            } else {
+               _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            }
+            builder.Clear();
+            batchCount = 0;
+         }
+
+         _context.Info($"{fullCount} to output");
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var builder = new StringBuilder();
+         var fullCount = 0;
+         var batchCount = (uint)0;
+
+         // At most insert-size documents are staged in the bulk builder before it is posted and cleared.
+         await foreach (var part in rows.PartitionStreamAsync(_context.Entity.InsertSize, token).WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
             foreach (var row in part) {
                batchCount++;
                fullCount++;

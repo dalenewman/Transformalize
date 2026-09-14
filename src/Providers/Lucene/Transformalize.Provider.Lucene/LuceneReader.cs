@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -29,7 +31,7 @@ using Lucene.Net.Util;
 using Lucene.Net.QueryParsers.Classic;
 
 namespace Transformalize.Providers.Lucene {
-   public class LuceneReader : IRead, IDisposable {
+   public class LuceneReader : IReadStream, IRead, IDisposable {
 
       private const LuceneVersion V = LuceneVersion.LUCENE_48;
       private readonly IConnectionContext _context;
@@ -130,6 +132,40 @@ namespace Transformalize.Providers.Lucene {
                   yield return row;
                }
             }
+         }
+      }
+
+      /// <summary>Bounded document pages; Lucene search and stored-field reads are synchronous.</summary>
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         using var reader = _readerFactory.Create();
+         var searcher = new IndexSearcher(reader);
+         Query query = new MatchAllDocsQuery();
+         if (_readFrom == ReadFrom.Input && _context.Entity.Filter.Any()) {
+            var queryFields = _context.Entity.Filter.Select(f => f.Field).ToArray();
+            var expression = string.Join(" ", _context.Entity.Filter.Select(f => "(" + (string.IsNullOrEmpty(f.Expression) ? f.Field + ":" + f.Value : f.Expression) + ") " + f.Continuation.ToUpper()));
+            expression = expression.Remove(expression.Length - 3);
+            query = new MultiFieldQueryParser(V, queryFields, _analyzer).Parse(expression);
+         } else if (_readFrom == ReadFrom.Output) {
+            var deleted = _context.Entity.TflDeleted();
+            query = LuceneConversion.TypeSearch(deleted, deleted.Alias, false);
+         }
+         var fields = _fields.ToArray();
+         var size = _context.Entity.ReadSize > 0 ? _context.Entity.ReadSize : 500;
+         ScoreDoc after = null;
+         while (true) {
+            token.ThrowIfCancellationRequested();
+            var page = searcher.SearchAfter(after, query, size, Sort.INDEXORDER);
+            if (page.ScoreDocs.Length == 0) yield break;
+            foreach (var hit in page.ScoreDocs) {
+               token.ThrowIfCancellationRequested();
+               var document = searcher.Doc(hit.Doc);
+               var row = _rowFactory.Create();
+               foreach (var field in fields) row[field] = field.Convert(document.Get(_readFrom == ReadFrom.Input ? field.Name : field.Alias));
+               yield return row;
+            }
+            after = page.ScoreDocs[page.ScoreDocs.Length - 1];
+            if (page.ScoreDocs.Length < size) yield break;
          }
       }
 

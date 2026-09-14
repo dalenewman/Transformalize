@@ -40,7 +40,7 @@ namespace Transformalize.Providers.Ado {
          _c = connection;
       }
 
-      private IEnumerable<Field> GetFields(string name, string query, string schema) {
+      private IEnumerable<Field> GetFields(Entity entity) {
 
          var fields = new List<Field>();
 
@@ -49,7 +49,7 @@ namespace Transformalize.Providers.Ado {
             DataTable table = null;
 
             var cmd = cn.CreateCommand();
-            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query;
+            cmd.CommandText = entity.Query == string.Empty ? CreateSchemaOnlyQuery(entity) : entity.Query;
             try {
                var reader = cmd.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly);
                table = reader.GetSchemaTable();
@@ -58,7 +58,7 @@ namespace Transformalize.Providers.Ado {
                   _c.Warn(ex1.Message);
                   _c.Info("Trying with table/view enclosed (with double quotes)...");
                   _c.Connection.Enclose = true;
-                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;";
+                  cmd.CommandText = CreateSchemaOnlyQuery(entity);
 
                   try {
                      var reader = cmd.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly);
@@ -134,7 +134,7 @@ namespace Transformalize.Providers.Ado {
          string sql;
          switch (_c.Connection.Provider) {
             case "mysql":
-               sql = $"SELECT '' as table_schema, table_name from information_schema.tables where table_schema = '{_c.Connection.Database}' order by table_name";
+               sql = "SELECT '' as table_schema, table_name from information_schema.tables where table_schema = @Database order by table_name";
                break;
             case "sqlite":
                sql = "SELECT '' as table_schema, name as table_name FROM sqlite_master WHERE type in ('table','view') ORDER by name";
@@ -149,7 +149,8 @@ namespace Transformalize.Providers.Ado {
 
          using (var cn = _cf.GetConnection()) {
             cn.Open();
-            using (var reader = cn.ExecuteReader(sql)) {
+            var parameters = _c.Connection.Provider == "mysql" ? new { Database = _c.Connection.Database } : null;
+            using (var reader = cn.ExecuteReader(sql, parameters)) {
                while (reader.Read()) {
                   entities.Add(new Entity {
                      Schema = reader.GetString(0),
@@ -167,16 +168,17 @@ namespace Transformalize.Providers.Ado {
          if (_c.Connection.Table == Constants.DefaultSetting) {
             schema.Entities.AddRange(GetEntities());
             foreach (var entity in schema.Entities) {
-               entity.Fields.AddRange(GetFields(entity.Name, entity.Query, entity.Schema));
+               entity.Fields.AddRange(GetFields(entity));
             }
          } else {
             var owner = _c.Connection.Schema == Constants.DefaultSetting ? string.Empty : _c.Connection.Schema;
-            schema.Entities.Add(new Entity {
+            var entity = new Entity {
                Name = _c.Connection.Table,
                Schema = owner,
-               Input = _c.Connection.Name,
-               Fields = GetFields(_c.Connection.Table, string.Empty, owner).ToList()
-            });
+               Input = _c.Connection.Name
+            };
+            entity.Fields.AddRange(GetFields(entity));
+            schema.Entities.Add(entity);
          }
          return schema;
       }
@@ -184,12 +186,12 @@ namespace Transformalize.Providers.Ado {
       public Schema Read(Entity entity) {
          var schema = new Schema { Connection = _c.Connection };
          var newEntity = entity.Clone();
-         newEntity.Fields = GetFields(entity.Name, entity.Query, entity.Schema).ToList();
+         newEntity.Fields = GetFields(newEntity).ToList();
          schema.Entities.Add(newEntity);
          return schema;
       }
 
-   private async Task<IEnumerable<Field>> GetFieldsAsync(string name, string query, string schema, CancellationToken token) {
+      private async Task<IEnumerable<Field>> GetFieldsAsync(Entity entity, CancellationToken token) {
 
          var fields = new List<Field>();
 
@@ -198,7 +200,7 @@ namespace Transformalize.Providers.Ado {
             DataTable table = null;
 
             var cmd = (DbCommand)cn.CreateCommand();
-            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query;
+            cmd.CommandText = entity.Query == string.Empty ? CreateSchemaOnlyQuery(entity) : entity.Query;
             try {
                var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
                table = reader.GetSchemaTable();
@@ -207,7 +209,7 @@ namespace Transformalize.Providers.Ado {
                   _c.Warn(ex1.Message);
                   _c.Info("Trying with table/view enclosed (with double quotes)...");
                   _c.Connection.Enclose = true;
-                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;";
+                  cmd.CommandText = CreateSchemaOnlyQuery(entity);
 
                   try {
                      var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
@@ -261,7 +263,7 @@ namespace Transformalize.Providers.Ado {
          string sql;
          switch (_c.Connection.Provider) {
             case "mysql":
-               sql = $"SELECT '' as table_schema, table_name from information_schema.tables where table_schema = '{_c.Connection.Database}' order by table_name";
+               sql = "SELECT '' as table_schema, table_name from information_schema.tables where table_schema = @Database order by table_name";
                break;
             case "sqlite":
                sql = "SELECT '' as table_schema, name as table_name FROM sqlite_master WHERE type in ('table','view') ORDER by name";
@@ -278,6 +280,13 @@ namespace Transformalize.Providers.Ado {
             await cn.OpenAsync(token).ConfigureAwait(false);
             var cmd = (DbCommand)cn.CreateCommand();
             cmd.CommandText = sql;
+            if (_c.Connection.Provider == "mysql") {
+               var database = cmd.CreateParameter();
+               database.ParameterName = "@Database";
+               database.Direction = ParameterDirection.Input;
+               database.Value = _c.Connection.Database;
+               cmd.Parameters.Add(database);
+            }
             using (var reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false)) {
                while (await reader.ReadAsync(token).ConfigureAwait(false)) {
                   entities.Add(new Entity {
@@ -296,16 +305,17 @@ namespace Transformalize.Providers.Ado {
          if (_c.Connection.Table == Constants.DefaultSetting) {
             schema.Entities.AddRange(await GetEntitiesAsync(token).ConfigureAwait(false));
             foreach (var entity in schema.Entities) {
-               entity.Fields.AddRange(await GetFieldsAsync(entity.Name, entity.Query, entity.Schema, token).ConfigureAwait(false));
+               entity.Fields.AddRange(await GetFieldsAsync(entity, token).ConfigureAwait(false));
             }
          } else {
             var owner = _c.Connection.Schema == Constants.DefaultSetting ? string.Empty : _c.Connection.Schema;
-            schema.Entities.Add(new Entity {
+            var entity = new Entity {
                Name = _c.Connection.Table,
                Schema = owner,
-               Input = _c.Connection.Name,
-               Fields = (await GetFieldsAsync(_c.Connection.Table, string.Empty, owner, token).ConfigureAwait(false)).ToList()
-            });
+               Input = _c.Connection.Name
+            };
+            entity.Fields.AddRange(await GetFieldsAsync(entity, token).ConfigureAwait(false));
+            schema.Entities.Add(entity);
          }
          return schema;
       }
@@ -313,9 +323,18 @@ namespace Transformalize.Providers.Ado {
       public async Task<Schema> ReadAsync(Entity entity, CancellationToken token = default) {
          var schema = new Schema { Connection = _c.Connection };
          var newEntity = entity.Clone();
-         newEntity.Fields = (await GetFieldsAsync(entity.Name, entity.Query, entity.Schema, token).ConfigureAwait(false)).ToList();
+         newEntity.Fields = (await GetFieldsAsync(newEntity, token).ConfigureAwait(false)).ToList();
          schema.Entities.Add(newEntity);
          return schema;
+      }
+
+      private string CreateSchemaOnlyQuery(Entity entity) {
+         return string.Concat(
+            "SELECT * FROM ",
+            string.IsNullOrEmpty(entity.Schema) ? string.Empty : _cf.Enclose(entity.Schema) + ".",
+            _cf.Enclose(entity.Name),
+            " WHERE 1=2;"
+         );
       }
    }
 }

@@ -24,7 +24,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Writers {
-    public class StringWriter : IWrite {
+    public class StringWriter : IWriteStream, IWrite {
         private readonly OutputContext _context;
 
         public StringWriter(OutputContext context, StringBuilder builder = null) {
@@ -53,6 +53,23 @@ namespace Transformalize.Writers {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            if (!string.IsNullOrEmpty(_context.Connection.Header)) {
+                Builder.AppendLine(_context.Connection.Header);
+            }
+            var fields = _context.Entity.GetAllOutputFields().Cast<IField>().ToArray();
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+                foreach (var field in fields) {
+                    Builder.Append(row[field]);
+                }
+                Builder.AppendLine();
+            }
+            if (!string.IsNullOrEmpty(_context.Connection.Footer)) {
+                Builder.Append(_context.Connection.Footer);
+            }
         }
     }
 }

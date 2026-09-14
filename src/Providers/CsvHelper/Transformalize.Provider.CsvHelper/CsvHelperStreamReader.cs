@@ -1,4 +1,5 @@
-﻿using CsvHelper;
+﻿using System.Runtime.CompilerServices;
+using CsvHelper;
 using CsvHelper.Configuration;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
 
-   public class CsvHelperStreamReader : IRead {
+   public class CsvHelperStreamReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
@@ -35,6 +36,64 @@ namespace Transformalize.Providers.CsvHelper {
       public IEnumerable<IRow> Read() {
          return _transforms.Aggregate(PreRead(), (rows, transform) => transform.Operate(rows));
       }
+
+      public IAsyncEnumerable<IRow> ReadStreamAsync(CancellationToken token = default) {
+         return _transforms.Aggregate(PreReadStreamAsync(token), (rows, transform) => transform.OperateStreamAsync(rows, token));
+      }
+
+      private async IAsyncEnumerable<IRow> PreReadStreamAsync([EnumeratorCancellation] CancellationToken token) {
+
+         using var ownedReader = _streamReader;
+         token.ThrowIfCancellationRequested();
+         _context.Debug(() => "Reading file stream asynchronously.");
+
+         token.ThrowIfCancellationRequested();
+         var ignoreFirstLines = _context.Connection.Start > 1 ? _context.Connection.Start - 1 : _context.Connection.Start;
+
+         var start = _context.Connection.Start;
+         var end = 0;
+         if (_context.Entity.IsPageRequest()) {
+            start += (_context.Entity.Page * _context.Entity.Size) - _context.Entity.Size;
+            end = start + _context.Entity.Size;
+         }
+
+         var current = _context.Connection.Start;
+         var configuration = CreateConfiguration();
+
+         using (var csv = new CsvReader(_streamReader, configuration)) {
+
+            while (true) {
+               token.ThrowIfCancellationRequested();
+               if (!await csv.ReadAsync().ConfigureAwait(false)) break;
+               token.ThrowIfCancellationRequested();
+
+               if (csv.Parser.RawRow <= ignoreFirstLines) {
+                  continue;
+               }
+
+               if (end == 0 || current.Between(start, end)) {
+                  var row = _rowFactory.Create();
+                  for (int i = 0; i < _context.InputFields.Length; i++) {
+                     var data = csv.GetField(i);
+                     var field = _context.InputFields[i];
+                     row[field] = data;
+                  }
+                  ++_context.Entity.Hits;
+                  yield return row;
+               }
+
+               ++current;
+               if (current == end) {
+                  break;
+               }
+            }
+         }
+
+         _streamReader.Dispose();
+
+
+      }
+
 
       public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
          var rows = await PreReadAsync(token).ConfigureAwait(false);

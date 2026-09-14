@@ -1,4 +1,7 @@
-﻿#region license
+﻿using System.Text.Json;
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2017 Dale Newman
@@ -27,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
-    public class ElasticQueryReader : IRead {
+    public class ElasticQueryReader : IReadStream, IRead {
 
         readonly ITransport _client;
         private readonly IRowFactory _rowFactory;
@@ -62,81 +65,85 @@ namespace Transformalize.Providers.Elasticsearch {
             return new IRow[0];
         }
 
-        private IEnumerable<IRow> Flatten(string key, object obj, LinkedList<IRow> results = null) {
-
-            IField field = _fields.ContainsKey(key) ? _fields[key] : null;
-
-            // in the beginning, create an empty result
-            if (results == null) {
-                results = new LinkedList<IRow>();
-            }
-
-            if (obj == null)
-                return results;
-
-            var dict = obj as IDictionary<string, object>;
-            if (dict == null) {
-                var list = obj as IList<object>;
-                if (list != null) {
-                    foreach (var item in list) {
-                        results.AddLast(_rowFactory.Create());
-                        Flatten(key, item, results);
-                    }
-                }
-            } else {
-                if (dict.Count == 1 && dict.ContainsKey("value")) {
-
-                    if (field == null) {
-                        _missing.Add(key);
-                    } else {
-                        // set a field value
-                        var value = dict["value"];
-                        if (results.Last.Value[field] == null) {
-                            results.Last.Value[field] = value;
-                        } else {
-                            // this must be a total
-                            var total = _rowFactory.Create();
-                            total[field] = value;
-                            results.AddLast(total);
-                        }
-
-                    }
-                } else {
-                    if (dict.ContainsKey("buckets")) {
-                        Flatten(key, dict["buckets"], results);
-                    } else {
-                        if (dict.ContainsKey("key") && dict.ContainsKey("doc_count")) {
-                            foreach (var pair in dict) {
-                                if (pair.Key == "key") {
-                                    if (field == null) {
-                                        _missing.Add(key);
-                                    } else {
-                                        // set a key field value
-                                        results.Last()[field] = pair.Value;
-                                    }
-                                } else {
-                                    if (pair.Key != "doc_count") {
-                                        Flatten(pair.Key, pair.Value, results);
-                                    }
-                                }
-                            }
-                        } else {
-                            foreach (var pair in dict) {
-                                Flatten(pair.Key, pair.Value, results);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!_missing.Any())
-                return results;
-
-            foreach (var missing in _missing) {
-                _context.Warn($"The query returns field {missing}, but you do not have that field defined in {_context.Entity.Alias}.");
-            }
+        private IEnumerable<IRow> Flatten(string key, object obj) {
+            var results = new List<IRow>();
+            var state = new FlattenState();
+            foreach (var row in FlattenStream(key, obj, state, CancellationToken.None)) results.Add(row);
+            if (state.Row != null) results.Add(state.Row);
+            foreach (var missing in _missing) _context.Warn($"The query returns field {missing}, but you do not have that field defined in {_context.Entity.Alias}.");
             return results;
         }
+
+        public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         _context.Debug(() => _context.Entity.Query);
+         var path = new EndpointPath(HttpMethod.POST, "/_search");
+         var response = await _client.RequestAsync<DynamicResponse>(in path, PostData.String(_context.Entity.Query), token).ConfigureAwait(false);
+         token.ThrowIfCancellationRequested();
+         if (!response.ApiCallDetails.HasSuccessfulStatusCode) {
+            _context.Error(response.ApiCallDetails.DebugInformation.Replace("{", "{{").Replace("}", "}}"));
+            throw new System.InvalidOperationException("Elasticsearch aggregation query failed.");
+         }
+         if (response.Body == null || !response.Body["aggregations"].HasValue) {
+            _context.Warn("An elastic query should return aggregations, but yours does not.");
+            yield break;
+         }
+         var state = new FlattenState();
+         foreach (var row in FlattenStream("aggregations", response.Body["aggregations"].Value, state, token)) {
+            yield return row;
+         }
+         if (state.Row != null) yield return state.Row;
+         foreach (var missing in _missing) _context.Warn($"The query returns field {missing}, but you do not have that field defined in {_context.Entity.Alias}.");
+      }
+
+      private static object UnwrapValue(object value) {
+         return value is JsonElement element ? DynamicValue.ConsumeJsonElement(typeof(object), element) : value;
+      }
+
+      private sealed class FlattenState { public IRow Row; }
+
+      private IEnumerable<IRow> FlattenStream(string key, object obj, FlattenState state, CancellationToken token) {
+         token.ThrowIfCancellationRequested();
+         _fields.TryGetValue(key, out var field);
+         // Elastic.Transport exposes JsonElement nodes. Expand only this node;
+         // keep bucket arrays lazy instead of converting the complete response tree.
+         IEnumerable<object> list = obj as IList<object>;
+         if (obj is JsonElement element) {
+            if (element.ValueKind == JsonValueKind.Array) list = element.EnumerateArray().Select(item => (object)item);
+            else if (element.ValueKind == JsonValueKind.Object) obj = element.EnumerateObject().ToDictionary(p => p.Name, p => (object)p.Value);
+         }
+         if (list != null) {
+            foreach (var item in list) {
+               if (state.Row != null) yield return state.Row;
+               state.Row = _rowFactory.Create();
+               foreach (var row in FlattenStream(key, item, state, token)) yield return row;
+            }
+         } else if (obj is IDictionary<string, object> dict) {
+            if (dict.Count == 1 && dict.ContainsKey("value")) {
+               if (field == null) _missing.Add(key);
+               else {
+                  if (state.Row != null && state.Row[field] != null) { yield return state.Row; state.Row = null; }
+                  if (state.Row == null) state.Row = _rowFactory.Create();
+                  state.Row[field] = UnwrapValue(dict["value"]);
+               }
+            } else if (dict.ContainsKey("buckets")) {
+               foreach (var row in FlattenStream(key, dict["buckets"], state, token)) yield return row;
+            } else {
+               var bucket = dict.ContainsKey("key") && dict.ContainsKey("doc_count");
+               foreach (var pair in dict) {
+                  if (bucket && pair.Key == "key") {
+                     if (field == null) _missing.Add(key);
+                     else {
+                        if (state.Row == null) state.Row = _rowFactory.Create();
+                        state.Row[field] = UnwrapValue(pair.Value);
+                     }
+                  } else if (!bucket || pair.Key != "doc_count") {
+                     foreach (var row in FlattenStream(pair.Key, pair.Value, state, token)) yield return row;
+                  }
+               }
+            }
+         }
+      }
 
 
         public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

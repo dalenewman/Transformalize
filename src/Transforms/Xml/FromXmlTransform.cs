@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -23,6 +23,8 @@ using System.Xml;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
 using Transformalize.Impl;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms.Xml {
 
@@ -152,6 +154,82 @@ namespace Transformalize.Transforms.Xml {
             }
          }
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(FromXmlTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            var outerRow = row;
+            var innerRow = _rowFactory.Create();
+            foreach (var field in _fields) {
+               innerRow[field] = field.Default == Constants.DefaultSetting ? _typeDefaults[field.Type] : field.Convert(field.Default);
+            }
+
+            var innerRows = new List<IRow>();
+            string startKey = null;
+
+            var xml = row[_input] as string;
+
+            if (!string.IsNullOrEmpty(xml)) {
+               xml = xml.Trim();
+               using (var reader = XmlReader.Create(new StringReader(xml), Settings)) {
+
+                  if (_findRoot) {
+                     do {
+                        reader.Read();
+                     } while (reader.Name != _root);
+                  } else {
+                     reader.Read();
+                  }
+
+                  do {
+                     if (_nameMap.ContainsKey(reader.Name)) {
+
+                        // must while here because reader.Read*Xml advances the reader
+                        while (_nameMap.ContainsKey(reader.Name) && reader.IsStartElement()) {
+                           InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
+
+                           var field = _nameMap[reader.Name];
+                           var value = field.ReadInnerXml ? reader.ReadInnerXml() : reader.ReadOuterXml();
+                           if (value != string.Empty)
+                              innerRow[field] = field.Convert(value);
+                        }
+
+                     } else if (_searchAttributes && reader.HasAttributes) {
+                        for (var i = 0; i < reader.AttributeCount; i++) {
+                           reader.MoveToNextAttribute();
+                           if (!_nameMap.ContainsKey(reader.Name))
+                              continue;
+
+                           InnerRow(ref startKey, reader.Name, ref innerRow, ref outerRow, ref innerRows);
+
+                           var field = _nameMap[reader.Name];
+                           if (!string.IsNullOrEmpty(reader.Value)) {
+                              innerRow[field] = field.Convert(reader.Value);
+                           }
+                        }
+                     }
+                     if (_findRoot && !reader.IsStartElement() && reader.Name == _root) {
+                        break;
+                     }
+                  } while (reader.Read());
+               }
+            }
+            AddInnerRow(ref innerRow, ref outerRow, ref innerRows);
+            foreach (var r in innerRows) {
+               token.ThrowIfCancellationRequested();
+               yield return r;
+            }
+         }
+      }
+
 
       private static bool ShouldYieldRow(ref string startKey, string key) {
          if (startKey == null) {

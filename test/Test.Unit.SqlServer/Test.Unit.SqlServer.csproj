@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.1.0">
+﻿<Project Sdk="MSTest.Sdk/4.1.0">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -47,7 +47,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
-    <PackageReference Include="Testcontainers.MsSql" Version="4.11.0" />
+    <PackageReference Include="Testcontainers.MsSql" Version="4.15.0" />
   </ItemGroup>
 
   <ItemGroup>

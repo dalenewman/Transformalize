@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -53,15 +53,13 @@ namespace Transformalize.Transforms {
         /// </summary>
         /// <param name="rows"></param>
         /// <returns></returns>
-        public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
+        protected override void Initialize() {
             if (_template != null) {
                 Context.Operation.Format = _template.Content;
             }
 
             _betterFormat = new BetterFormat(Context, Context.Operation.Format, () => _input);
             Run = _betterFormat.Valid;
-
-            return base.Operate(rows);
         }
 
         public new IEnumerable<OperationSignature> GetSignatures() {

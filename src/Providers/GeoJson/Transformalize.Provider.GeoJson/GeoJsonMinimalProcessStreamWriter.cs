@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2022 Dale Newman
@@ -29,7 +29,7 @@ namespace Transformalize.Providers.GeoJson {
    /// <summary>
    /// Write a process' output as GeoJson to a stream with an emphasis on a light payload
    /// </summary>
-   public class GeoJsonMinimalProcessStreamWriter : IWrite {
+   public class GeoJsonMinimalProcessStreamWriter : IWriteStream, IWrite {
 
       private readonly Field _latitudeField;
       private readonly Field _longitudeField;
@@ -146,73 +146,105 @@ namespace Transformalize.Providers.GeoJson {
          _jw.Flush();
       }
 
+      /// <summary>Writes one feature. Shared by the enumerable and streaming paths.</summary>
+      private void WriteFeature(IRow row) {
+         _jw.WriteStartObject(); //feature
+         _jw.WritePropertyName("type");
+         _jw.WriteStringValue("Feature");
+         _jw.WritePropertyName("geometry");
+         _jw.WriteStartObject(); //geometry
+         _jw.WritePropertyName("type");
+         _jw.WriteStringValue("Point");
+
+         _jw.WritePropertyName("coordinates");
+         _jw.WriteStartArray();
+         WriteValue(_jw, row[_longitudeField]);
+         WriteValue(_jw, row[_latitudeField]);
+         _jw.WriteEndArray();
+
+         _jw.WriteEndObject(); //geometry
+
+         _jw.WritePropertyName("properties");
+         _jw.WriteStartObject(); //properties
+
+         if (_hasDescription) {
+            _jw.WritePropertyName("description");
+            WriteValue(_jw, row[_descriptionField]);
+         }
+
+         if (_hasBatchValue) {
+            _jw.WritePropertyName("batch-value");
+            WriteValue(_jw, row[_batchField]);
+         }
+
+         if (_hasColor) {
+            _jw.WritePropertyName("marker-color");
+            WriteValue(_jw, row[_colorField]);
+         }
+
+         if (_hasSymbol) {
+            var symbol = row[_symbolField].ToString();
+            _jw.WritePropertyName("marker-symbol");
+            _jw.WriteStringValue(symbol);
+         }
+
+         foreach (var field in _properties) {
+            var name = field.Label == string.Empty ? field.Alias : field.Label;
+            _jw.WritePropertyName(name);
+            WriteValue(_jw, row[field]);
+         }
+
+         _jw.WriteEndObject(); //properties
+         _jw.WriteEndObject(); //feature
+      }
+
+      private void WriteCollectionStart() {
+         _jw.WriteStartObject(); //root
+         _jw.WritePropertyName("type");
+         _jw.WriteStringValue("FeatureCollection");
+         _jw.WritePropertyName("features");
+         _jw.WriteStartArray(); //features
+      }
+
+      private void WriteCollectionEnd() {
+         _jw.WriteEndArray(); //features
+         _jw.WriteEndObject(); //root
+      }
+
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          if (Equals(_context.Process.Entities.First(), _context.Entity)) {
-            _jw.WriteStartObject(); //root
-            _jw.WritePropertyName("type");
-            _jw.WriteStringValue("FeatureCollection");
-            _jw.WritePropertyName("features");
-            _jw.WriteStartArray(); //features
+            WriteCollectionStart();
          }
 
          foreach (var row in rows) {
             token.ThrowIfCancellationRequested();
-
-            _jw.WriteStartObject(); //feature
-            _jw.WritePropertyName("type");
-            _jw.WriteStringValue("Feature");
-            _jw.WritePropertyName("geometry");
-            _jw.WriteStartObject(); //geometry
-            _jw.WritePropertyName("type");
-            _jw.WriteStringValue("Point");
-
-            _jw.WritePropertyName("coordinates");
-            _jw.WriteStartArray();
-            WriteValue(_jw, row[_longitudeField]);
-            WriteValue(_jw, row[_latitudeField]);
-            _jw.WriteEndArray();
-
-            _jw.WriteEndObject(); //geometry
-
-            _jw.WritePropertyName("properties");
-            _jw.WriteStartObject(); //properties
-
-            if (_hasDescription) {
-               _jw.WritePropertyName("description");
-               WriteValue(_jw, row[_descriptionField]);
-            }
-
-            if (_hasBatchValue) {
-               _jw.WritePropertyName("batch-value");
-               WriteValue(_jw, row[_batchField]);
-            }
-
-            if (_hasColor) {
-               _jw.WritePropertyName("marker-color");
-               WriteValue(_jw, row[_colorField]);
-            }
-
-            if (_hasSymbol) {
-               var symbol = row[_symbolField].ToString();
-               _jw.WritePropertyName("marker-symbol");
-               _jw.WriteStringValue(symbol);
-            }
-
-            foreach (var field in _properties) {
-               var name = field.Label == string.Empty ? field.Alias : field.Label;
-               _jw.WritePropertyName(name);
-               WriteValue(_jw, row[field]);
-            }
-
-            _jw.WriteEndObject(); //properties
-            _jw.WriteEndObject(); //feature
+            WriteFeature(row);
             _context.Entity.Inserts++;
             await _jw.FlushAsync(token).ConfigureAwait(false);
          }
 
          if (Equals(_context.Process.Entities.Last(), _context.Entity)) {
-            _jw.WriteEndArray(); //features
-            _jw.WriteEndObject(); //root
+            WriteCollectionEnd();
+         }
+
+         await _jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         // The document spans one call per entity; start and end are still emitted on the first and last.
+         if (Equals(_context.Process.Entities.First(), _context.Entity)) {
+            WriteCollectionStart();
+         }
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            WriteFeature(row);
+            _context.Entity.Inserts++;
+            await _jw.FlushAsync(token).ConfigureAwait(false);
+         }
+
+         if (Equals(_context.Process.Entities.Last(), _context.Entity)) {
+            WriteCollectionEnd();
          }
 
          await _jw.FlushAsync(token).ConfigureAwait(false);

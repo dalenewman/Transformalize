@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -99,6 +100,26 @@ namespace Transformalize.Providers.Ado {
                 cn.Execute(_drop, null, trans);
                 trans.Commit();
             }
+        }
+
+        public async IAsyncEnumerable<IRow> ReadStreamAsync(IEnumerable<IRow> input, [System.Runtime.CompilerServices.EnumeratorCancellation] System.Threading.CancellationToken token = default) {
+            token.ThrowIfCancellationRequested();
+            using var cn = (System.Data.Common.DbConnection)_cf.GetConnection();
+            await cn.OpenAsync(token).ConfigureAwait(false);
+            using var trans = cn.BeginTransaction();
+            await cn.ExecuteAsync(new CommandDefinition(_create, transaction: trans, cancellationToken: token)).ConfigureAwait(false);
+            var keys = input.Select(r => r.ToExpandoObject(_keys));
+            await cn.ExecuteAsync(new CommandDefinition(_insert, keys, trans, commandTimeout: 0, cancellationToken: token)).ConfigureAwait(false);
+            using (var reader = (System.Data.Common.DbDataReader)await cn.ExecuteReaderAsync(new CommandDefinition(_query, transaction: trans, commandTimeout: 0, cancellationToken: token)).ConfigureAwait(false)) {
+                while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                    token.ThrowIfCancellationRequested();
+                    yield return _rowCreator.Create(reader, _input.InputFields);
+                }
+            }
+            await cn.ExecuteAsync(new CommandDefinition(_drop, transaction: trans, cancellationToken: token)).ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            trans.Commit();
+            // Early disposal or failure disposes the uncommitted transaction and its temporary table.
         }
 
     }

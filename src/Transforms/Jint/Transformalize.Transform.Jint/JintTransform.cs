@@ -19,6 +19,9 @@ using Cfg.Net.Contracts;
 using Jint;
 using Jint.Native;
 using System;
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using Transformalize.Configuration;
@@ -119,6 +122,48 @@ namespace Transformalize.Transforms.Jint {
 
          bool tryFirst = true;
          foreach (var row in rows) {
+            foreach (var field in _input) {
+               _jint.SetValue(field.Alias, row[field]);
+            }
+            if (tryFirst) {
+               try {
+                  tryFirst = false;
+                  var obj = EvaluateScript().ToObject();
+                  var value = obj == null ? null : Context.Field.Convert(obj);
+                  if (value == null) {
+                     Context.Error($"Jint transform in {Context.Field.Alias} returns null!");
+                  } else {
+                     row[Context.Field] = value;
+                  }
+               } catch (global::Jint.Runtime.JavaScriptException jse) {
+                  Utility.CodeToError(Context, Context.Operation.Script);
+                  Context.Error(jse, "Error Message: " + jse.Message);
+                  Context.Error("Variables:");
+                  foreach (var field in _input) {
+                     Context.Error($"{field.Alias}:{row[field]}");
+                  }
+               }
+            } else {
+               row[Context.Field] = Context.Field.Convert(EvaluateScript().ToObject());
+            }
+
+            yield return row;
+         }
+      }
+
+      public override async IAsyncEnumerable<IRow> OperateStreamAsync(IAsyncEnumerable<IRow> rows, [EnumeratorCancellation] CancellationToken token = default) {
+
+         token.ThrowIfCancellationRequested();
+         if (!Run) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               yield return row;
+            }
+            yield break;
+         }
+
+         bool tryFirst = true;
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
             foreach (var field in _input) {
                _jint.SetValue(field.Alias, row[field]);
             }

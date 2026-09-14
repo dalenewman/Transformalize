@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.1.0">
+﻿<Project Sdk="MSTest.Sdk/4.1.0">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -36,7 +36,7 @@
   <ItemGroup>
     <PackageReference Include="Elastic.Clients.Elasticsearch" Version="9.3.3" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.5" />
-    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.11.0" />
+    <PackageReference Include="Testcontainers.Elasticsearch" Version="4.15.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,4 +49,5 @@
     <ProjectReference Include="../../src/Providers/Elasticsearch/Transformalize.Provider.Elasticsearch.Autofac/Transformalize.Provider.Elasticsearch.Autofac.csproj" />
   </ItemGroup>
 
+  <ItemGroup><Compile Include="../StreamingReaderSupport.cs" Link="StreamingReaderSupport.cs" /></ItemGroup>
 </Project>

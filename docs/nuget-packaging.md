@@ -58,3 +58,16 @@ Run the **NuGet Publish** workflow manually and select:
 - whether to publish to MyGet
 
 The workflow always uploads generated `.nupkg` files as artifacts.
+
+## 1.5.0 streaming release
+
+All 63 SDK package projects use version `1.5.0`, including their Autofac wrappers. See the [streaming migration guide](async-streaming-migration.md) before opting applications into the new execution path.
+
+To keep this release separate from older local packages:
+
+```bash
+./scripts/nuget-pack.sh --output-dir artifacts/nuget/1.5.0
+./scripts/nuget-push.sh --package-dir artifacts/nuget/1.5.0 --source nuget --api-key-env NUGET_API_KEY --dry-run
+```
+
+Remove `--dry-run` when ready to publish. The legacy non-SDK Oracle project is excluded from the packaging script.

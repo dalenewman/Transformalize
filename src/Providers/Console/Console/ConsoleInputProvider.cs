@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -22,7 +24,7 @@ using Transformalize.Configuration;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
-    public class ConsoleInputProvider : IInputProvider {
+    public class ConsoleInputProvider : IReadStream, IInputProvider {
         private readonly IRead _reader;
 
         public ConsoleInputProvider(IRead reader) {
@@ -48,6 +50,10 @@ namespace Transformalize.Providers.Console {
         public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) {
             return Task.FromResult(GetSchema(entity));
         }
+
+      public IAsyncEnumerable<IRow> ReadStreamAsync(CancellationToken token = default) {
+         return _reader.ReadStreamAsync(token);
+      }
 
         public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             return _reader.ReadAsync(token);

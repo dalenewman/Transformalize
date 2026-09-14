@@ -1,3 +1,4 @@
+using Transformalize.Extensions;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -63,7 +64,7 @@ namespace Test {
             }
             using (var inner = new Container(new PostgreSqlModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -78,7 +79,7 @@ namespace Test {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -98,7 +99,7 @@ namespace Test {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 
@@ -120,7 +121,7 @@ namespace Test {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new PostgreSqlModule(), new JintTransformModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
 

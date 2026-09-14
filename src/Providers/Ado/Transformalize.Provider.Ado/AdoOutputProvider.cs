@@ -18,6 +18,7 @@
 
 using Dapper;
 using System;
+using Transformalize.Extensions;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -30,7 +31,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
 
-   public class AdoOutputProvider : IOutputProvider {
+   public class AdoOutputProvider : IOutputProvider, IWriteStream {
 
       private readonly OutputContext _context;
       private readonly IConnectionFactory _cf;
@@ -334,5 +335,9 @@ namespace Transformalize.Providers.Ado {
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
          await _writer.WriteAsync(rows, token).ConfigureAwait(false);
       }
+      public Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         return _writer.WriteStreamAsync(rows, token);
+      }
+
    }
 }

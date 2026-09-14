@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Transformalize.Context;
@@ -7,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
-   public class CsvHelperReader : IRead {
+   public class CsvHelperReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly IRowFactory _rowFactory;
@@ -21,6 +23,17 @@ namespace Transformalize.Providers.CsvHelper {
          var fileInfo = File.FileUtility.Find(_context.Connection.File);
          var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
          return new CsvHelperStreamReader(_context, new StreamReader(new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), encoding), _rowFactory).Read();
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         var fileInfo = File.FileUtility.Find(_context.Connection.File);
+         var encoding = Encoding.GetEncoding(_context.Connection.Encoding);
+         using var stream = new FileStream(fileInfo.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.Asynchronous | FileOptions.SequentialScan);
+         using var reader = new StreamReader(stream, encoding);
+         await foreach (var row in new CsvHelperStreamReader(_context, reader, _rowFactory).ReadStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) {
+            yield return row;
+         }
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

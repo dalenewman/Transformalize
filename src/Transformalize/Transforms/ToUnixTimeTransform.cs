@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+
+using System.Threading.Tasks;
 
 namespace Transformalize.Transforms {
    public class ToUnixTimeTransform : BaseTransform {
@@ -61,6 +63,7 @@ namespace Transformalize.Transforms {
             foreach (var row in rows) {
                yield return row;
             }
+            yield break;
          }
 
          bool kindTested = false;
@@ -76,6 +79,39 @@ namespace Transformalize.Transforms {
             yield return Operate(row);
          }
       }
+
+      public override async global::System.Collections.Generic.IAsyncEnumerable<IRow> OperateStreamAsync(
+         global::System.Collections.Generic.IAsyncEnumerable<IRow> rows,
+         [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         // A further-derived sequence override still needs the conservative adapter.
+         if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(ToUnixTimeTransform)) {
+            await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+            yield break;
+         }
+         if (!Run) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+            yield break;
+         }
+
+         var kindTested = false;
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+            token.ThrowIfCancellationRequested();
+            if (!kindTested) {
+               var date = (DateTime)row[_input];
+               if (date.Kind != DateTimeKind.Utc) {
+                  Context.Warn("The date going into the ToUnixTime transform should be set to UTC by a TimeZone or SpecifyKind transform.");
+               }
+               kindTested = true;
+            }
+            yield return Operate(row);
+         }
+      }
+
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          return new[] {

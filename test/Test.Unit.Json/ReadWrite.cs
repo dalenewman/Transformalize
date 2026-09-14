@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Transformalize.Extensions;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -178,7 +179,7 @@ namespace Test.Integration {
                var process = outer.Resolve<Process>();
                using (var inner = new Container(new BogusModule(), new JsonProviderModule()).CreateScope(process, logger)) {
                   var controller = inner.Resolve<IProcessController>();
-                  await controller.ExecuteAsync();
+                  await controller.ExecuteStreamAsync();
                   Assert.AreEqual((uint)1000, process.Entities.First().Inserts);
                }
             }
@@ -205,7 +206,7 @@ namespace Test.Integration {
                var process = outer.Resolve<Process>();
                using (var inner = new Container(new JsonProviderModule()).CreateScope(process, logger)) {
                   var controller = inner.Resolve<IProcessController>();
-                  await controller.ExecuteAsync();
+                  await controller.ExecuteStreamAsync();
                   var rows = process.Entities.First().Rows.ToArray();
 
                   Assert.AreEqual(10, rows.Length);
@@ -250,7 +251,7 @@ namespace Test.Integration {
                var process = outer.Resolve<Process>();
                using (var inner = new Container(new BogusModule(), new JsonProviderModule()).CreateScope(process, logger)) {
                   var controller = inner.Resolve<IProcessController>();
-                  await controller.ExecuteAsync();
+                  await controller.ExecuteStreamAsync();
                   Assert.AreEqual((uint)1000, process.Entities.First().Inserts);
                }
             }
@@ -277,7 +278,7 @@ namespace Test.Integration {
                var process = outer.Resolve<Process>();
                using (var inner = new Container(new JsonProviderModule()).CreateScope(process, logger)) {
                   var controller = inner.Resolve<IProcessController>();
-                  await controller.ExecuteAsync();
+                  await controller.ExecuteStreamAsync();
                   var rows = process.Entities.First().Rows.ToArray();
 
                   Assert.AreEqual(10, rows.Length);

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.CsvHelper {
 
-   public class CsvHelperStreamWriter : CsvHelperWriterBase, IWrite, IDisposable {
+   public class CsvHelperStreamWriter : CsvHelperWriterBase, IWriteStream, IWrite, IDisposable {
 
       private readonly OutputContext _context;
       private readonly CsvWriter _csv;
@@ -63,6 +63,35 @@ namespace Transformalize.Providers.CsvHelper {
             }
 
             foreach (var row in rows) {
+               token.ThrowIfCancellationRequested();
+               WriteRow(csv, row);
+               _context.Entity.Inserts++;
+               csv.NextRecord(); // sync is safe: StringWriter writes to StringBuilder, not a stream
+               await _streamWriter.WriteAsync(sb.ToString()).ConfigureAwait(false);
+               sb.Clear();
+            }
+
+         }
+
+         await _streamWriter.FlushAsync().ConfigureAwait(false);
+
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+         // Same buffering note as WriteAsync: each row is staged in a StringBuilder, never the set.
+         var sb = new StringBuilder();
+         using (var sw = new StringWriter(sb))
+         using (var csv = new CsvWriter(sw, Config)) {
+
+            if (_context.Connection.Header == Constants.DefaultSetting) {
+               WriteHeader(csv);
+               csv.NextRecord(); // sync is safe: StringWriter writes to StringBuilder, not a stream
+               await _streamWriter.WriteAsync(sb.ToString()).ConfigureAwait(false);
+               sb.Clear();
+            }
+
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
                token.ThrowIfCancellationRequested();
                WriteRow(csv, row);
                _context.Entity.Inserts++;

@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -28,7 +28,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonStreamWriter : IWrite {
+   public class JsonStreamWriter : IWriteStream, IWrite {
 
       private readonly StreamWriter _streamWriter;
       private readonly Field[] _fields;
@@ -84,6 +84,36 @@ namespace Transformalize.Providers.Json {
          jw.WriteStartArray();
 
          foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+            jw.WriteStartObject();
+
+            for (int i = 0; i < _fields.Length; i++) {
+               jw.WritePropertyName(_fields[i].Alias);
+               if (_formats[i] == string.Empty) {
+                  WriteValue(jw, row[_fields[i]]);
+               } else {
+                  jw.WriteStringValue(string.Format(_formats[i], row[_fields[i]]));
+               }
+            }
+
+            jw.WriteEndObject();
+            _context.Entity.Inserts++;
+            await jw.FlushAsync(token).ConfigureAwait(false);
+         }
+
+         jw.WriteEndArray();
+         await jw.FlushAsync(token).ConfigureAwait(false);
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+         var options = new JsonWriterOptions { Indented = _context.Connection.Format == "json" };
+         var jw = new Utf8JsonWriter(_streamWriter.BaseStream, options);
+
+         token.ThrowIfCancellationRequested();
+         jw.WriteStartArray();
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
             token.ThrowIfCancellationRequested();
             jw.WriteStartObject();
 

@@ -1,4 +1,6 @@
-﻿using Autofac;
+﻿using Transformalize.Extensions;
+using System.Threading.Tasks;
+using Autofac;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
 using Transformalize.Contracts;
@@ -7,9 +9,12 @@ using Transformalize.Providers.Console;
 
 namespace Tests.Unit {
    [TestClass]
+   [DoNotParallelize]
    public class UnitTest1 {
       [TestMethod]
-      public void Read() {
+      [DataRow(false)]
+      [DataRow(true)]
+      public async Task Read(bool streaming) {
          const string xml = @"<add name='Bogus'>
   <connections>
     <add name='input' provider='bogus' seed='1' />
@@ -36,7 +41,7 @@ namespace Tests.Unit {
             using (var inner = new Container(new BogusModule()).CreateScope(process, logger)) {
 
                var controller = inner.Resolve<IProcessController>();
-               controller.Execute();
+               if (streaming) await controller.ExecuteStreamAsync(); else controller.Execute();
                var rows = process.Entities.First().Rows;
 
                Assert.AreEqual(10, rows.Count);

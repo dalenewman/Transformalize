@@ -96,7 +96,7 @@ namespace Test.Unit {
             using (var inner = new Container(new AdoProviderModule()).CreateScope(process, logger)) {
                var context = inner.ResolveNamed<InputContext>("nameBogusStar");
                var actual = context.SqlSelectInput(context.Entity.GetAllFields().Where(f => f.Input).ToArray(), new NullConnectionFactory());
-               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (Stars = 2)", actual);
+               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (Stars = @TflFilter0)", actual);
             }
 
          }
@@ -184,7 +184,7 @@ namespace Test.Unit {
             using (var inner = new Container(new AdoProviderModule()).CreateScope(process, logger)) {
                var context = inner.ResolveNamed<InputContext>("nameBogusStar");
                var actual = context.SqlSelectInput(context.Entity.GetAllFields().Where(f => f.Input).ToArray(), new NullConnectionFactory());
-               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (FirstName LIKE '%Dale%')", actual);
+               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (FirstName LIKE @TflFilter0)", actual);
             }
 
          }
@@ -229,7 +229,7 @@ namespace Test.Unit {
             using (var inner = new Container(new AdoProviderModule()).CreateScope(process, logger)) {
                var context = inner.ResolveNamed<InputContext>("nameBogusStar");
                var actual = context.SqlSelectInput(context.Entity.GetAllFields().Where(f => f.Input).ToArray(), new NullConnectionFactory());
-               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (FirstName LIKE 'Dale%' AND 1=1)", actual);
+               Assert.AreEqual("SELECT Identity,FirstName,LastName,Stars,Reviewers FROM BogusStar WHERE (FirstName LIKE @TflFilter0 AND 1=1)", actual);
             }
 
          }
@@ -318,7 +318,7 @@ namespace Test.Unit {
             using (var inner = new Container(new AdoProviderModule()).CreateScope(process, logger)) {
                var context = inner.ResolveNamed<InputContext>("TestFact");
                var actual = context.SqlSelectInput(context.Entity.GetAllFields().Where(f => f.Input).ToArray(), new NullConnectionFactory());
-               Assert.AreEqual("SELECT f1,f2,d1 FROM Fact WHERE (f2 IN ('v1','v2'))", actual);
+               Assert.AreEqual("SELECT f1,f2,d1 FROM Fact WHERE (f2 IN (@TflFilter0_0,@TflFilter0_1))", actual);
             }
 
          }
@@ -362,7 +362,7 @@ namespace Test.Unit {
             using (var inner = new Container(new AdoProviderModule()).CreateScope(process, logger)) {
                var context = inner.ResolveNamed<InputContext>("TestFact");
                var actual = context.SqlSelectInput(context.Entity.GetAllFields().Where(f => f.Input).ToArray(), new NullConnectionFactory());
-               Assert.AreEqual("SELECT f1,f2,d1 FROM Fact WHERE (f2 IN (1,2))", actual);
+               Assert.AreEqual("SELECT f1,f2,d1 FROM Fact WHERE (f2 IN (@TflFilter0_0,@TflFilter0_1))", actual);
             }
 
          }

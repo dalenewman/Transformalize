@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -49,6 +50,33 @@ namespace Transformalize.Transforms {
             var tried = false;
             var input = SingleInput();
             foreach (var row in rows) {
+                if (tried) {
+                    row[Context.Field] = _convert(row[input]);
+                } else {
+                    try {
+                        row[Context.Field] = _convert(row[input]);
+                        tried = true;
+                    } catch (Exception) {
+                        Context.Error($"Couldn't convert {row[input]} to {_type}.");
+                        yield break;
+                    }
+                }
+
+                yield return row;
+            }
+
+        }
+
+        public override async IAsyncEnumerable<IRow> OperateStreamAsync(IAsyncEnumerable<IRow> rows, [global::System.Runtime.CompilerServices.EnumeratorCancellation] global::System.Threading.CancellationToken token = default) {
+            token.ThrowIfCancellationRequested();
+            // A further-derived sequence override still needs the conservative adapter.
+            if (GetType().GetMethod(nameof(Operate), new[] { typeof(IEnumerable<IRow>) }).DeclaringType != typeof(ConvertTransform)) {
+                await foreach (var row in base.OperateStreamAsync(rows, token).ConfigureAwait(false)) yield return row;
+                yield break;
+            }
+            var tried = false;
+            var input = SingleInput();
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
                 if (tried) {
                     row[Context.Field] = _convert(row[input]);
                 } else {

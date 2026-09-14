@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-09-11
+
+### Added
+
+- Opt-in asynchronous ETL streaming: `IReadStream`, `IWriteStream`, `IOperateStream`, `IExecuteStream`, `IStreamingPipeline`, and `IStreamingProcessController`, with extension methods for existing interface variables and Autofac registrations for streaming controllers/pipelines.
+- Native ADO input/key streaming with cancellation and enumeration-scoped resource cleanup; bounded ADO entity writes and SQL Server bulk copy; incremental internal output; native Jint transforms preserving engine state and first-row error handling.
+- Native streaming for Elasticsearch search/scroll, Solr paging, CSV records, JSON arrays/Lines, file/console input, specialized ADO readers, and internal/composite readers; lazy streams over synchronous Bogus, Excel, filesystem, and Lucene APIs. Elasticsearch scrolls and owned input resources are released on early exit/cancellation. Aggregation responses and whole-document rows retain their format-specific memory requirements.
+- Streaming type conversion avoids buffering CSV/internal input while preserving first-row error handling; incremental JSON parsing preserves BOM encoding detection.
+- Safe transform/validator adaptation: unchanged base row operations stream, while third-party sequence overrides materialize once and retain their full-sequence contract. Mixed providers use explicit compatibility adapters. Input `buffer=true` closes the native ADO reader before yielding output.
+- **All built-in transforms and validators stream.** A protected `Initialize()` hook on `BaseTransform`/`BaseValidate` carries one-time setup (map loading, template compilation, connection resolution) that previously required overriding `Operate(IEnumerable<IRow>)` and therefore buffered the whole input. `filter`, `format`, `map`, `in`, `join`, `fromLengths`, `toRow`, `toUnixTime`, `fromXml`, `razor`, `fluid`, `geocode`, `place`, `adoRun`, and the `map` validator no longer materialize. A unit test enforces that no built-in operation relies on the fallback.
+- **All built-in row writers stream.** CSV, JSON, JSON Lines, file, console, trace, string, null, and log writers now implement `IWriteStream` and write row by row; Solr, Elasticsearch, and Lucene writers consume batches bounded by `insert-size`. The parallel Solr writer takes its throttle before pulling the next batch, bounding resident batches at `max-degree-of-parallelism` instead of the whole input.
+- **Nothing shipped in this repository buffers through a compatibility adapter.** The remaining GeoJSON writers (all eight), `MailWriter`, `ElasticPartialUpdater`, and `AdoCalculatedFieldUpdater` now implement `IWriteStream`. `ExcelWriter` and `RazorWriter` implement it too but materialize inside, on purpose, because their formats are finalized as one document; the buffering is now attributable to the format instead of hidden in the adapter. A test linked into every streaming test project fails if a shipped reader or writer drops off the contract.
+- Streaming fallbacks now log at **warning** level naming the offending type, instead of debug, so a third-party component that buffers the whole input cannot do so silently.
+- Sync/streaming parity and regression coverage for lifecycle, ordering, bounded demand, early termination, cancellation, failures, sequence expansion/finalization, Jint state, and ADO resource cleanup.
+- `NorthWindIntegrationMySqlAsync`, the streaming counterpart to the existing MySQL Northwind integration test, so MySQL now covers both execution paths like SQLite, SQL Server, and PostgreSQL.
+- [Streaming migration guide](docs/async-streaming-migration.md), including the OrchardCore.Transformalize follow-up, materialization boundaries, and partial-commit behavior.
+
+### Changed
+
+- **Retired the KML provider.** `src/Providers/Kml` and its `Transformalize.Provider.Kml` package are removed, along with `kml` in `Constants.ProviderDomain` and its case in `ProcessValidate`. Nothing in the repository referenced the project and no Autofac module registered it, so it could not be composed through the normal container; the last published version was 1.0.0. Arrangements using `provider="kml"` will now fail validation with an invalid-provider error. The `kml-` alias filter in `GeoJsonStreamWriter` is left in place so GeoJSON output is unchanged for arrangements that still carry those fields.
+
+- Fixed `toUnixTime`: with `Run` disabled it was missing a `yield break`, so it enumerated its input twice and emitted every row twice.
+- `action`, `connection`, `parameter`, and `script` transforms now honor `Run` like every other transform; their redundant sequence overrides ran even after the constructor disabled them.
+
+- Aligned **all packable projects and their Autofac packages at 1.5.0**, plus the CLI and its Docker publish profile tags. Core remains `netstandard2.0`, with `Microsoft.Bcl.AsyncInterfaces 10.0.8` providing async enumeration contracts.
+- Native streaming read/write failures propagate and skip successful completion callbacks. Streaming ADO insert/update counters advance after transaction commit. Earlier entity batches may remain committed after later failures; execution does not provide a process-wide transaction.
+- Elasticsearch aggregation reads now handle the transport's `JsonElement` responses in both sync and streaming paths; streaming flattening retains only its current output row.
+- Async ADO key matching now passes cancellation to commands and propagates failures after rollback, avoiding an empty match result that could cause duplicate inserts.
+- ADO-generated filters now bind scalar, list, `LIKE`, and full-text values as typed command parameters instead of interpolating them into SQL.
+- Updated the test projects' `Testcontainers` packages to 4.15.0, which resolves the transitive `SSH.NET` dependency to the patched 2026.0.0 and clears the NU1903 advisory (GHSA-q939-rpr3-3284). The solution now builds with no warnings.
+- The PostgreSQL test project targets `net10.0` only, matching every other test project; it was the last one still multi-targeting `net8.0`.
+- No public API is deprecated or removed. Synchronous methods, `ReadAsync`, `ExecuteAsync`, enumerable-based `WriteAsync`, and the non-row async methods remain fully supported and warning-free, and `ExecuteAsync` is still implemented in terms of `ReadAsync`. Streaming is opt-in through the new contracts and extension methods; prefer `ReadStreamAsync` with async enumeration, or explicit `MaterializeAsync`, for new code.
+
 ## [1.4.6] - 2026-09-10
 
 ### Changed

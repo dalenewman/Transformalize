@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 
-using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -26,6 +25,8 @@ using Transformalize.Configuration;
 using Transformalize.Context;
 using Transformalize.Contracts;
 using Transformalize.Providers.Ado.Ext;
+using System.Runtime.CompilerServices;
+using Transformalize.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +34,7 @@ namespace Transformalize.Providers.Ado {
    /// <summary>
    /// A reader for an entity's input (source).
    /// </summary>
-   public class AdoInputReader : IRead {
+   public class AdoInputReader : IReadStream, IRead {
 
       private int _rowCount;
       private readonly InputContext _input;
@@ -81,7 +82,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  countCmd.CommandText = CreateCountQuery(filter);
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -109,7 +110,7 @@ namespace Transformalize.Providers.Ado {
                if (!map.Items.Any() && map.Query == string.Empty) {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
-                  foreach (var mapItem in new AdoMapReader(_input, cn, map.Name).Read(_input)) {
+                  foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
                      if (mapItem.To != null) {
                         var value = mapItem.To.ToString();
                         if (value.Contains("'")) {
@@ -163,18 +164,16 @@ namespace Transformalize.Providers.Ado {
       }
 
       public void AddAdoParameters(IDbCommand cmd) {
-         if (cmd.CommandText.Contains("@")) {
-            var active = _input.Process.Parameters;
-            foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-               var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-               if (match != null) {
-                  var parameter = cmd.CreateParameter();
-                  parameter.ParameterName = match.Name;
-                  parameter.Value = match.Convert(match.Value);
-                  cmd.Parameters.Add(parameter);
-               }
-            }
-         }
+         cmd.AddAdoParameters(_input, _factory);
+      }
+
+      private string CreateCountQuery(string filter) {
+         return string.Concat(
+            "SELECT COUNT(*) FROM ",
+            _input.SqlInputName(_factory),
+            _factory.AdoProvider == AdoProvider.SqlServer ? " WITH (NOLOCK)" : string.Empty,
+            filter == string.Empty ? string.Empty : " WHERE " + filter
+         );
       }
 
    public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
@@ -212,7 +211,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = (DbCommand)cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  countCmd.CommandText = CreateCountQuery(filter);
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -240,7 +239,7 @@ namespace Transformalize.Providers.Ado {
                if (!map.Items.Any() && map.Query == string.Empty) {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
-                  foreach (var mapItem in new AdoMapReader(_input, cn, map.Name).Read(_input)) {
+                  foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
                      if (mapItem.To != null) {
                         var value = mapItem.To.ToString();
                         if (value.Contains("'")) {
@@ -282,6 +281,128 @@ namespace Transformalize.Providers.Ado {
          _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
 
          return results;
+      }
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         if (_input.Connection.Buffer) {
+            // Explicit buffering also closes the input connection before yielding output.
+            var buffered = await ReadUnbufferedStreamAsync(token).MaterializeAsync(token).ConfigureAwait(false);
+            foreach (var row in buffered) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+         } else {
+            await foreach (var row in ReadUnbufferedStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) {
+               yield return row;
+            }
+         }
+      }
+      private async IAsyncEnumerable<IRow> ReadUnbufferedStreamAsync([EnumeratorCancellation] CancellationToken token) {
+
+         token.ThrowIfCancellationRequested();
+
+         using (var cn = (DbConnection)_factory.GetConnection(Constants.ApplicationName)) {
+
+            try {
+               await cn.OpenAsync(token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _input.Error($"Can't open {_input.Connection} for reading.");
+               _input.Error(e.Message);
+               throw;
+            }
+
+            using var cmd = (DbCommand)cn.CreateCommand();
+
+            if (string.IsNullOrEmpty(_input.Entity.Query)) {
+
+               if (_input.Entity.MinVersion == null) {
+                  cmd.CommandText = _input.SqlSelectInput(_fields, _factory);
+                  _input.Debug(() => cmd.CommandText);
+               } else {
+                  cmd.CommandText = _input.SqlSelectInputWithMinVersion(_fields, _factory);
+                  _input.Debug(() => cmd.CommandText);
+
+                  var parameter = cmd.CreateParameter();
+                  parameter.ParameterName = "@MinVersion";
+                  parameter.Direction = ParameterDirection.Input;
+                  parameter.Value = _input.Entity.MinVersion;
+                  cmd.Parameters.Add(parameter);
+               }
+
+               if (_input.Entity.IsPageRequest()) {
+                  using var countCmd = (DbCommand)cn.CreateCommand();
+                  var filter = _input.ResolveFilter(_factory);
+                  countCmd.CommandText = CreateCountQuery(filter);
+                  _input.Debug(() => countCmd.CommandText);
+                  AddAdoParameters(countCmd);
+                  try {
+                     _input.Entity.Hits = Convert.ToInt32(await countCmd.ExecuteScalarAsync(token).ConfigureAwait(false));
+                  } catch (DbException ex) {
+                     _input.Error($"Error counting {_input.Entity.Name} records.");
+                     _input.Error(ex.Message);
+                  }
+               }
+               _input.Entity.Query = cmd.CommandText;
+            } else {
+               // may need to load query from a script
+               if (_input.Entity.Query.Length <= 128 && _input.Process.Scripts.Any(s => s.Name == _input.Entity.Query)) {
+                  var script = _input.Process.Scripts.First(s => s.Name == _input.Entity.Query);
+                  if (script.Content != string.Empty) {
+                     _input.Entity.Query = script.Content;
+                  }
+               }
+               cmd.CommandText = _input.Entity.Query;
+            }
+
+            // automatic facet filter maps need connections and queries and map readers
+            foreach (var filter in _input.Entity.Filter.Where(f => f.Type == "facet" && f.Map != string.Empty)) {
+               var map = _input.Process.Maps.First(m => m.Name == filter.Map);
+               if (!map.Items.Any() && map.Query == string.Empty) {
+                  map.Connection = _input.Connection.Name;
+                  map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
+                  foreach (var mapItem in await new AdoMapReader(_input, cn, _factory, map.Name).ReadAsync(_input, token).ConfigureAwait(false)) {
+                     if (mapItem.To != null) {
+                        var value = mapItem.To.ToString();
+                        if (value.Contains("'")) {
+                           mapItem.To = value.Replace("'", "''");
+                        }
+                     }
+                     map.Items.Add(mapItem);
+                  }
+               }
+            }
+
+            // handle ado parameters
+            AddAdoParameters(cmd);
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandTimeout = _input.Connection.RequestTimeout;
+
+            DbDataReader reader;
+
+            try {
+               reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, token).ConfigureAwait(false);
+            } catch (DbException ex) {
+               _input.Error(ex.Message);
+               throw;
+            }
+
+            using (reader) {
+
+               if (_fields.Length < reader.FieldCount) {
+                  _input.Warn($"The reader is returning {reader.FieldCount} fields, but the entity {_input.Entity.Alias} expects {_fields.Length}!");
+               }
+
+               while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                  _rowCount++;
+                  token.ThrowIfCancellationRequested();
+                  yield return _rowCreator.Create(reader, _fields);
+               }
+            }
+         }
+
+         _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
+
+
       }
    }
 

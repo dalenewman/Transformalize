@@ -30,7 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Mail {
-   public class MailWriter : IWrite {
+   public class MailWriter : IWriteStream, IWrite {
       private readonly OutputContext _context;
       private readonly Field[] _fields;
       private readonly bool _run = true;
@@ -77,44 +77,7 @@ namespace Transformalize.Providers.Mail {
             }
 
             foreach (var row in rows) {
-               var message = new MimeMessage();
-
-               foreach (var field in _fields) {
-                  switch (field.Alias.ToLower()) {
-                     case "to":
-                        foreach (var to in GetAddresses(row, field)) {
-                           message.To.Add(new MailboxAddress(to, to));
-                        }
-                        break;
-                     case "from":
-                        var from = row[field].ToString();
-                        message.From.Add(new MailboxAddress(from, from));
-                        break;
-                     case "cc":
-                        foreach (var cc in GetAddresses(row, field)) {
-                           message.Cc.Add(new MailboxAddress(cc, cc));
-                        }
-                        break;
-                     case "bcc":
-                        foreach (var bcc in GetAddresses(row, field)) {
-                           message.Bcc.Add(new MailboxAddress(bcc, bcc));
-                        }
-                        break;
-                     case "subject":
-                        message.Subject = row[field].ToString();
-                        break;
-                     case "body":
-                        if (field.Raw) {
-                           var builder = new BodyBuilder { HtmlBody = row[field].ToString() };
-                           message.Body = builder.ToMessageBody();
-                        } else {
-                           message.Body = new TextPart("plain") { Text = row[field].ToString() };
-                        }
-                        break;
-                  }
-               }
-
-               client.Send(message);
+               client.Send(BuildMessage(row));
             }
 
 
@@ -163,5 +126,81 @@ namespace Transformalize.Providers.Mail {
 
 
    public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+
+      /// <summary>Builds one message. Shared by the synchronous and streaming paths.</summary>
+      private MimeMessage BuildMessage(IRow row) {
+         var message = new MimeMessage();
+
+         foreach (var field in _fields) {
+            switch (field.Alias.ToLower()) {
+               case "to":
+                  foreach (var to in GetAddresses(row, field)) {
+                     message.To.Add(new MailboxAddress(to, to));
+                  }
+                  break;
+               case "from":
+                  var from = row[field].ToString();
+                  message.From.Add(new MailboxAddress(from, from));
+                  break;
+               case "cc":
+                  foreach (var cc in GetAddresses(row, field)) {
+                     message.Cc.Add(new MailboxAddress(cc, cc));
+                  }
+                  break;
+               case "bcc":
+                  foreach (var bcc in GetAddresses(row, field)) {
+                     message.Bcc.Add(new MailboxAddress(bcc, bcc));
+                  }
+                  break;
+               case "subject":
+                  message.Subject = row[field].ToString();
+                  break;
+               case "body":
+                  if (field.Raw) {
+                     var builder = new BodyBuilder { HtmlBody = row[field].ToString() };
+                     message.Body = builder.ToMessageBody();
+                  } else {
+                     message.Body = new TextPart("plain") { Text = row[field].ToString() };
+                  }
+                  break;
+            }
+         }
+
+         return message;
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+         if (!_run) {
+            return;
+         }
+
+         // The SMTP connection stays open for the whole enumeration, as it does in Write.
+         using (var client = new MailKit.Net.Smtp.SmtpClient()) {
+
+            client.ServerCertificateValidationCallback = CertificateValidationCallback;
+
+            var options = SecureSocketOptions.Auto;
+
+            if (_context.Connection.StartTls) {
+               options = SecureSocketOptions.StartTls;
+            } else if (_context.Connection.UseSsl) {
+               options = SecureSocketOptions.SslOnConnect;
+            }
+
+            await client.ConnectAsync(_context.Connection.Server, _context.Connection.Port, options, token).ConfigureAwait(false);
+
+            if (_context.Connection.User != string.Empty) {
+               await client.AuthenticateAsync(_context.Connection.User, _context.Connection.Password, token).ConfigureAwait(false);
+            }
+
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               await client.SendAsync(BuildMessage(row), token).ConfigureAwait(false);
+            }
+
+            await client.DisconnectAsync(true, token).ConfigureAwait(false);
+         }
+      }
    }
 }

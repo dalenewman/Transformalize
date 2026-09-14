@@ -1,4 +1,4 @@
-using Cfg.Net;
+﻿using Cfg.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,12 +52,6 @@ namespace Transformalize.Transforms {
          return row;
       }
 
-      public override IEnumerable<IRow> Operate(IEnumerable<IRow> rows) {
-         foreach (var row in rows) {
-            row[Context.Field] = Utility.GetPropValue(_parameter, Context.Operation.Property);
-            yield return row;
-         }
-      }
 
       public override IEnumerable<OperationSignature> GetSignatures() {
          yield return new OperationSignature("script") {

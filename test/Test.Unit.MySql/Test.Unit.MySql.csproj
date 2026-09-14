@@ -1,4 +1,4 @@
-<Project Sdk="MSTest.Sdk/4.1.0">
+﻿<Project Sdk="MSTest.Sdk/4.1.0">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
-    <PackageReference Include="Testcontainers.MySql" Version="4.11.0" />
+    <PackageReference Include="Testcontainers.MySql" Version="4.15.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 # Proposal: asynchronous ETL streaming
 
-Status: for future consideration. Recorded 2026-09-10; not implemented or assigned to a release.
+Status: implemented as an opt-in API for **1.5.0** (2026-09-11). See [implementation and migration guidance](async-streaming-migration.md) for the chosen contracts, provider coverage, compatibility fallbacks, cancellation, and transaction behavior. The original proposal below records the motivation and evaluation ideas; performance benchmarking and a producer/consumer queue remain future work.
 
 ## Motivation
 
@@ -76,3 +76,7 @@ Wrapping a lazy synchronous enumerable in a completed task can reduce buffering,
 5. Decide whether to extend the capability to other providers and expose it through the CLI. Revisit package compatibility and versioning before adopting public contracts.
 
 Open decisions include interface names, opt-in behavior, batch sizing, mixed-provider fallbacks, transaction guarantees, transform adaptation, and the minimum supported target frameworks.
+
+## Deferred to 2.0
+
+A strict mode that throws instead of buffering when a component lacks the streaming contract. In 1.5.0 the compatibility adapters log at warning level and name the offending type, but they still materialize, because a minor release has to keep third-party `IRead`/`IWrite` implementations working. Removing `Task<IEnumerable<IRow>> ReadAsync(CancellationToken)` from `IRead`/`IInputProvider`, or giving it a default implementation that forwards to `ReadStreamAsync`, belongs in the same release.

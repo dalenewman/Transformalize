@@ -29,7 +29,7 @@ using Field = Transformalize.Configuration.Field;
 using LuceneField = Lucene.Net.Documents.Field;
 
 namespace Transformalize.Providers.Lucene {
-   public class LuceneWriter : IWrite, IDisposable {
+   public class LuceneWriter : IWriteStream, IWrite, IDisposable {
 
       private readonly IndexWriterFactory _writerFactory;
       private readonly SearcherFactory _searcherFactory;
@@ -112,6 +112,41 @@ namespace Transformalize.Providers.Lucene {
       }
 
       public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { Write(rows); return Task.CompletedTask; }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         var tflKey = _output.Entity.TflKey();
+         var searcher = _searcherFactory.Create();
+         // The index writer stays open for the whole enumeration and commits once at the end.
+         using (var writer = _writerFactory.Create()) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+               token.ThrowIfCancellationRequested();
+               var tflId = string.Concat(_primaryKey.Select(pk => row[pk].ToString()));
+               var doc = new Document();
+               foreach (var field in _fieldSearchTypes.Where(field => field.SearchType.Store || field.SearchType.Index)) {
+                  doc.Add(CreateField(field, row[field.Field]));
+               }
+               doc.Add(new StringField("TflId", tflId, LuceneField.Store.YES));
+               if (_output.Process.Mode == "init") {
+                  writer.AddDocument(doc);
+                  _output.Entity.Inserts += 1;
+               } else {
+                  var term = new Term("TflId", tflId);
+                  var hits = searcher.Search(new TermQuery(term), null, 1);
+                  if (hits.TotalHits > 0) {
+                     var old = searcher.Doc(hits.ScoreDocs[0].Doc);
+                     doc.RemoveField(tflKey.Alias);
+                     doc.Add(new Int32Field(tflKey.Alias, Convert.ToInt32(old.Get(tflKey.Alias)), LuceneField.Store.YES));
+                     writer.UpdateDocument(term, doc);
+                     _output.Entity.Updates += 1;
+                  } else {
+                     writer.AddDocument(doc);
+                     _output.Entity.Inserts += 1;
+                  }
+               }
+            }
+            writer.Commit();
+         }
+      }
 
       public void Write(IEnumerable<IRow> rows) {
          var tflKey = _output.Entity.TflKey();

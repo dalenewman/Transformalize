@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Transformalize.Providers.CsvHelper</RootNamespace>
     <Title>Transformalize File Provider using CsvHelper Autofac Module</Title>
-    <Version>1.4.5</Version>
+    <Version>1.5.0</Version>
     <Authors>Dale Newman</Authors>
     <Company>Transformalize</Company>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -14,8 +14,8 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>etl,csvhelper,transformalize,csv</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <FileVersion>1.4.5</FileVersion>
-    <AssemblyVersion>1.4.5</AssemblyVersion>
+    <FileVersion>1.5.0</FileVersion>
+    <AssemblyVersion>1.5.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.1.0" />

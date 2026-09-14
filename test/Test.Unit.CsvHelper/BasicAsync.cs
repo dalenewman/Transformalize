@@ -1,3 +1,4 @@
+using Transformalize.Extensions;
 using Autofac;
 using CsvHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -48,7 +49,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
                Assert.AreEqual((uint)1000, process.Entities.First().Inserts, "wrote 1000 rows to bogus-test.csv");
             }
          }
@@ -74,7 +75,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
                Assert.AreEqual(1000, process.Entities.First().Hits, "read 1000 rows from bogus-test.csv");
             }
          }
@@ -111,7 +112,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, new ConsoleLogger(LogLevel.Info))) {
                var controller = inner.Resolve<IProcessController>();
-               await controller.ExecuteAsync();
+               await controller.ExecuteStreamAsync();
             }
          }
       }
@@ -141,7 +142,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               var rows = (await controller.ReadAsync()).ToArray();
+               var rows = (await controller.ReadStreamAsync().MaterializeAsync()).ToArray();
                Assert.AreEqual(20, rows.Length);
                var row = rows[3].ToFriendlyDictionary(process.Entities[0].Fields.ToArray());
                Assert.AreEqual("4", row["Identity"].ToString());
@@ -177,7 +178,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                 var controller = inner.Resolve<IProcessController>();
-                await Assert.ThrowsExactlyAsync<BadDataException>(() => controller.ExecuteAsync());
+                await Assert.ThrowsExactlyAsync<BadDataException>(() => controller.ExecuteStreamAsync());
             }
          }
 
@@ -206,7 +207,7 @@ namespace Test.Integration.Core {
             var process = outer.Resolve<Process>();
             using (var inner = new Container(new BogusModule(), new CsvHelperProviderModule()).CreateScope(process, logger)) {
                var controller = inner.Resolve<IProcessController>();
-               var rows = await controller.ReadAsync();
+               var rows = await controller.ReadStreamAsync().MaterializeAsync();
                Assert.AreEqual(3, rows.Count());
             }
          }

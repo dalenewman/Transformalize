@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -26,7 +26,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Logging.NLog {
-    public class NLogWriter : IWrite {
+    public class NLogWriter : IWriteStream, IWrite {
 
         private readonly Logger _logger;
         private readonly IField _level;
@@ -73,6 +73,38 @@ namespace Transformalize.Logging.NLog {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+                var message = row[_message] ?? string.Empty;
+                switch (row[_level].ToString().ToLower()) {
+                    case "warn":
+                    case "warning":
+                        _logger.Warn(message);
+                        break;
+                    case "error":
+                        _logger.Error(message);
+                        break;
+                    case "debug":
+                        _logger.Debug(message);
+                        break;
+                    case "trace":
+                        _logger.Trace(message);
+                        break;
+                    case "fatal":
+                        _logger.Fatal(message);
+                        break;
+                    default:
+                        _logger.Info(message);
+                        break;
+                }
+            }
+
+            _logger.Info("flushing log writer");
+            LogManager.Flush();
         }
     }
 }

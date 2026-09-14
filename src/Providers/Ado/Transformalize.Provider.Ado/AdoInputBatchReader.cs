@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -36,7 +37,7 @@ namespace Transformalize.Providers.Ado {
     /// you can also set no-lock on the entity to reduce blocking, but at the risk of 
     /// reading un-commited data.
     /// </summary>
-    public class AdoInputBatchReader : IRead {
+    public class AdoInputBatchReader : IReadStream, IRead {
         private readonly InputContext _input;
         private readonly IRead _reader;
         private readonly IConnectionFactory _cf;
@@ -62,6 +63,18 @@ namespace Transformalize.Providers.Ado {
             }
             _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
         }
+
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         await foreach (var batch in _reader.ReadStreamAsync(token).PartitionStreamAsync(_input.Entity.ReadSize, token).ConfigureAwait(false)) {
+            await foreach (var row in _fieldsReader.ReadStreamAsync(batch, token).WithCancellation(token).ConfigureAwait(false)) {
+               ++_rowCount;
+               yield return row;
+            }
+         }
+         _input.Info("{0} from {1}", _rowCount, _input.Connection.Name);
+      }
 
 
     public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

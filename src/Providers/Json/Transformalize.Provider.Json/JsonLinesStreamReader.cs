@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -29,7 +30,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonLinesStreamReader : IRead {
+   public class JsonLinesStreamReader : IReadStream, IRead {
 
       private readonly InputContext _context;
       private readonly Stream _stream;
@@ -49,6 +50,34 @@ namespace Transformalize.Providers.Json {
          ResetStreamPosition();
          using (var lineReader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true)) {
             return ReadRows(lineReader);
+         }
+      }
+
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         ResetStreamPosition();
+         var start = _context.Entity.IsPageRequest() ? (_context.Entity.Page - 1) * _context.Entity.Size : 0;
+         var end = _context.Entity.IsPageRequest() ? start + _context.Entity.Size : 0;
+         using var reader = new StreamReader(_stream, Encoding.UTF8, true, 1024, true);
+         while (true) {
+            token.ThrowIfCancellationRequested();
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            token.ThrowIfCancellationRequested();
+            if (line == null) yield break;
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            using var doc = JsonDocument.Parse(line);
+            if (doc.RootElement.ValueKind != JsonValueKind.Object) continue;
+            var current = _context.Entity.Hits++;
+            if (end == 0 || current.Between(start, end)) {
+               var row = _rowFactory.Create();
+               foreach (var prop in doc.RootElement.EnumerateObject()) {
+                  if (_fieldLookup.TryGetValue(prop.Name, out var field)) {
+                     row[field] = field.Convert(ConvertJsonElement(prop.Value));
+                  }
+               }
+               yield return row;
+            }
+            if (end > 0 && _context.Entity.Hits >= end) yield break;
          }
       }
 

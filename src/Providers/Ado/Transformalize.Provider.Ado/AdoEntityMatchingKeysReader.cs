@@ -138,11 +138,11 @@ namespace Transformalize.Providers.Ado {
             using (var cn = _cf.GetConnection()) {
                 await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
                 _context.Debug(() => "begin transaction");
-                var trans = cn.BeginTransaction();
+                using var trans = cn.BeginTransaction();
 
                 try {
                     var createSql = SqlCreateKeysTable(_tempTable);
-                    await cn.ExecuteAsync(createSql, null, trans).ConfigureAwait(false);
+                    await cn.ExecuteAsync(new CommandDefinition(createSql, transaction: trans, cancellationToken: token)).ConfigureAwait(false);
 
                     var index = 0;
                     var keys = new List<ExpandoObject>();
@@ -154,25 +154,27 @@ namespace Transformalize.Providers.Ado {
                     }
 
                     var insertSql = SqlInsertTemplate(_context, _tempTable, _keys);
-                    await cn.ExecuteAsync(insertSql, keys, trans, 0, CommandType.Text).ConfigureAwait(false);
+                    await cn.ExecuteAsync(new CommandDefinition(insertSql, keys, trans, commandTimeout: 0, commandType: CommandType.Text, cancellationToken: token)).ConfigureAwait(false);
                     var i = _fields.Length;
 
-                    using (var reader = (DbDataReader)await cn.ExecuteReaderAsync(SqlQuery(), null, trans, 0, CommandType.Text).ConfigureAwait(false)) {
+                    using (var reader = (DbDataReader)await cn.ExecuteReaderAsync(new CommandDefinition(SqlQuery(), transaction: trans, commandTimeout: 0, commandType: CommandType.Text, cancellationToken: token)).ConfigureAwait(false)) {
                         while (await reader.ReadAsync(token).ConfigureAwait(false)) {
                             batch[reader.GetInt32(i)] = _rowCreator.Create(reader, _fields);
                         }
                     }
 
                     var sqlDrop = SqlDrop(_tempTable);
-                    await cn.ExecuteAsync(sqlDrop, null, trans).ConfigureAwait(false);
+                    await cn.ExecuteAsync(new CommandDefinition(sqlDrop, transaction: trans, cancellationToken: token)).ConfigureAwait(false);
 
                     _context.Debug(() => "commit transaction");
+                    token.ThrowIfCancellationRequested();
                     trans.Commit();
 
                 } catch (Exception ex) {
                     _context.Error(ex.Message);
                     _context.Warn("rollback transaction");
                     trans.Rollback();
+                    throw;
                 }
             }
             return batch;

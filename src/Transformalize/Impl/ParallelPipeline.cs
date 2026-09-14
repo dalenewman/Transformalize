@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -25,7 +27,7 @@ using System;
 namespace Transformalize.Impl {
 
    [Obsolete("No longer necessary.  AsParallel() is now applied in DefaultPipeline.")]
-   internal class ParallelPipeline : IPipeline {
+   internal class ParallelPipeline : IReadStream, IPipeline {
         private readonly IPipeline _pipeline;
 
         public IContext Context => _pipeline.Context;
@@ -85,6 +87,10 @@ namespace Transformalize.Impl {
         public IEnumerable<IRow> Read() {
             return _pipeline.Read();
         }
+
+      public IAsyncEnumerable<IRow> ReadStreamAsync(CancellationToken token = default) {
+         return _pipeline.ReadStreamAsync(token);
+      }
 
         public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             return _pipeline.ReadAsync(token);

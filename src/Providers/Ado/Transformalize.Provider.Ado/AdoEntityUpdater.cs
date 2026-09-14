@@ -31,7 +31,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
-   public class AdoEntityUpdater : IWrite {
+   public class AdoEntityUpdater : IWrite, IWriteStream {
 
       private readonly OutputContext _output;
       private readonly IConnectionFactory _cf;
@@ -114,6 +114,39 @@ namespace Transformalize.Providers.Ado {
                _output.Error(ex.Message);
                _output.Warn("rollback transaction");
                trans.Rollback();
+            }
+         }
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         if (_minDates != null) rows = _minDates.OperateStreamAsync(rows, token);
+         _output.Entity.UpdateCommand = _output.SqlUpdateOutput(_cf);
+         var updateFields = _output.GetUpdateFields().ToArray();
+         var count = (uint)0;
+         using (var cn = _cf.GetConnection()) {
+            await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+            _output.Debug(() => "begin transaction");
+            using var trans = cn.BeginTransaction();
+            try {
+               await foreach (var batch in rows.PartitionStreamAsync(_output.Entity.UpdateSize, token).ConfigureAwait(false)) {
+                  var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
+                      new CommandDefinition(_output.Entity.UpdateCommand,
+                         batch.Select(r => r.ToExpandoObject(updateFields)), trans,
+                         commandTimeout: 0, commandType: CommandType.Text, cancellationToken: token)
+                  ).ConfigureAwait(false));
+                  count += batchCount;
+               }
+               _output.Debug(() => "commit transaction");
+               token.ThrowIfCancellationRequested();
+               trans.Commit();
+               _output.Entity.Updates += count;
+               _output.Info("{0} to {1}", count, _output.Connection.Name);
+            } catch (Exception ex) {
+               _output.Error(ex.Message);
+               _output.Warn("rollback transaction");
+               trans.Rollback();
+               throw;
             }
          }
       }

@@ -1,4 +1,6 @@
-﻿#region license
+﻿using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
+#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -23,7 +25,7 @@ using Transformalize.Context;
 using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Console {
-    public class ConsoleInputReader : IRead {
+    public class ConsoleInputReader : IReadStream, IRead {
 
         private readonly InputContext _input;
         private readonly IRowFactory _rowFactory;
@@ -69,6 +71,44 @@ namespace Transformalize.Providers.Console {
 
 
         }
+
+        public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+
+            token.ThrowIfCancellationRequested();
+            if (_inputField == null) {
+                _input.Error("You must have one input field for console provider input.");
+                yield break;
+            }
+
+            if (!System.Console.IsInputRedirected) {
+                yield break;
+            }
+
+
+            string line;
+            var lineNumber = 1;
+
+            while ((line = await System.Console.In.ReadLineAsync().ConfigureAwait(false)) != null) {
+
+                token.ThrowIfCancellationRequested();
+                if (line == string.Empty || lineNumber < _input.Connection.Start) {
+                    lineNumber++;
+                    continue;
+                }
+
+                if (_input.Connection.End > 0 && lineNumber > _input.Connection.End) {
+                    yield break;
+                }
+
+                var row = _rowFactory.Create();
+                row[_inputField] = line;
+                lineNumber++;
+                yield return row;
+            }
+
+
+        }
+
 
         public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
             return Task.FromResult(Read());

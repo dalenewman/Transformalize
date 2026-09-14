@@ -25,7 +25,7 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Internal {
 
-    public class InternalWriter : IWrite {
+    public class InternalWriter : IWrite, IWriteStream {
         private readonly OutputContext _context;
         private readonly IField[] _fields;
         public InternalWriter(OutputContext context) {
@@ -43,6 +43,31 @@ namespace Transformalize.Providers.Internal {
                 // only clear the output if rows need to be written, otherwise leave it alone
                 if (!cleared) {
                     _context.Entity.Rows.Clear();
+                    cleared = true;
+                }
+
+                _context.Entity.Rows.Add(row.ToCfgRow(_fields, keys));
+            }
+
+            if (_context.Entity.Inserts > 0) {
+                _context.Info("{0} inserts into {1} {2}", _context.Entity.Inserts, _context.Connection.Name, _context.Entity.Alias);
+            }
+
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+            token.ThrowIfCancellationRequested();
+            var keys = _fields.Select(f => f.Alias).ToArray();
+            var cleared = false;
+
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+
+                token.ThrowIfCancellationRequested();
+                // only clear the output if rows need to be written, otherwise leave it alone
+                if (!cleared) {
+                    // Replace output storage so a streaming internal reader can finish its original input collection.
+                    _context.Entity.Rows = new List<Transformalize.Impl.CfgRow>();
                     cleared = true;
                 }
 

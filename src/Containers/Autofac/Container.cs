@@ -193,7 +193,7 @@ namespace Transformalize.Containers.Autofac {
 
                return pipeline;
 
-            }).Named<IPipeline>(entity.Key);
+            }).Named<IPipeline>(entity.Key).Named<IStreamingPipeline>(entity.Key).InstancePerLifetimeScope();
          }
 
          // process pipeline
@@ -235,10 +235,10 @@ namespace Transformalize.Containers.Autofac {
             }
 
             return pipeline;
-         }).As<IPipeline>();
+         }).As<IPipeline>().As<IStreamingPipeline>().InstancePerLifetimeScope();
 
          // process controller
-         builder.Register<IProcessController>(ctx => {
+         builder.Register(ctx => {
 
             var pipelines = new List<IPipeline>();
 
@@ -286,7 +286,7 @@ namespace Transformalize.Containers.Autofac {
             }
 
             return controller;
-         }).As<IProcessController>();
+         }).As<IProcessController>().As<IStreamingProcessController>().InstancePerLifetimeScope();
 
          var build = builder.Build();
 

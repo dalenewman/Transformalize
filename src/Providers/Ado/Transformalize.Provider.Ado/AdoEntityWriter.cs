@@ -25,7 +25,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
-    public class AdoEntityWriter : IWrite {
+    public class AdoEntityWriter : IWrite, IWriteStream {
 
         private readonly OutputContext _output;
         private readonly IBatchReader _matcher;
@@ -127,6 +127,55 @@ namespace Transformalize.Providers.Ado {
 
                 if (updates.Any()) {
                     await _updater.WriteAsync(updates, token).ConfigureAwait(false);
+                }
+
+            }
+
+            if (_output.Entity.Inserts > 0) {
+                _output.Info("{0} inserts into {1}", _output.Entity.Inserts, _output.Connection.Name);
+            }
+
+            if (_output.Entity.Updates > 0) {
+                _output.Info("{0} updates to {1}", _output.Entity.Updates, _output.Connection.Name);
+            }
+
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            token.ThrowIfCancellationRequested();
+            var tflHashCode = _output.Entity.TflHashCode();
+            var tflDeleted = _output.Entity.TflDeleted();
+
+            await foreach (var part in rows.PartitionStreamAsync(_output.Entity.InsertSize, token).ConfigureAwait(false)) {
+
+                var inserts = new List<IRow>(_output.Entity.InsertSize);
+                var updates = new List<IRow>(_output.Entity.InsertSize);
+
+                if (_output.Process.Mode == "init" || (_output.Entity.Insert && !_output.Entity.Update)) {
+                    foreach (var row in part) {
+                        inserts.Add(row);
+                    }
+                } else {
+                    var newRows = part.ToArray();
+                    var oldRows = await _matcher.ReadAsync(newRows, token).ConfigureAwait(false);
+                    for (int i = 0, batchLength = newRows.Length; i < batchLength; i++) {
+                        var row = newRows[i];
+                        if (oldRows.Contains(i)) {
+                            if (oldRows[i][tflDeleted].Equals(true) || !oldRows[i][tflHashCode].Equals(row[tflHashCode])) {
+                                updates.Add(row);
+                            }
+                        } else {
+                            inserts.Add(row);
+                        }
+                    }
+                }
+
+                if (inserts.Any()) {
+                    await _inserter.WriteStreamAsync(inserts.AsAsyncStream(token), token).ConfigureAwait(false);
+                }
+
+                if (updates.Any()) {
+                    await _updater.WriteStreamAsync(updates.AsAsyncStream(token), token).ConfigureAwait(false);
                 }
 
             }

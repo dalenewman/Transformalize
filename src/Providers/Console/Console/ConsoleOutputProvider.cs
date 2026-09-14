@@ -22,8 +22,10 @@ using System.Threading.Tasks;
 using Transformalize.Context;
 using Transformalize.Contracts;
 
+using Transformalize.Extensions;
+
 namespace Transformalize.Providers.Console {
-    public class ConsoleOutputProvider : IOutputProvider {
+    public class ConsoleOutputProvider : IWriteStream, IOutputProvider {
 
         private readonly OutputContext _outputContext;
         private readonly IWrite _writer;
@@ -78,6 +80,7 @@ namespace Transformalize.Providers.Console {
         public Task StartAsync(CancellationToken token = default) { return Task.CompletedTask; }
         public Task EndAsync(CancellationToken token = default) { return Task.CompletedTask; }
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) { return _writer.WriteAsync(rows, token); }
+        public Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) { return _writer.WriteStreamAsync(rows, token); }
         public Task DeleteAsync(CancellationToken token = default) { return Task.CompletedTask; }
         public Task<IEnumerable<IRow>> ReadKeysAsync(CancellationToken token = default) { throw new NotImplementedException(); }
         public Task<IEnumerable<IRow>> MatchAsync(IEnumerable<IRow> rows, CancellationToken token = default) { throw new NotImplementedException(); }

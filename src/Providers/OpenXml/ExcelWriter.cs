@@ -27,7 +27,7 @@ using Transformalize.Contracts;
 using Transformalize.Extensions;
 
 namespace Transformalize.Providers.OpenXml {
-    public class ExcelWriter : IWrite {
+    public class ExcelWriter : IWriteStream, IWrite {
         private readonly IConnectionContext _context;
 
         private readonly WorkbookDfn _workbook;
@@ -79,6 +79,16 @@ namespace Transformalize.Providers.OpenXml {
         public Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
             Write(rows);
             return Task.CompletedTask;
+        }
+
+        /// <summary>
+        /// Materializes on purpose. SpreadsheetWriter writes the workbook as a unit, so every row
+        /// must be present before anything can be emitted; this is a requirement of the format, not
+        /// of the streaming adapter. Implementing IWriteStream keeps the buffering here, where it is
+        /// attributable, rather than in the generic compatibility adapter.
+        /// </summary>
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            Write(await rows.MaterializeAsync(token).ConfigureAwait(false));
         }
 
     }

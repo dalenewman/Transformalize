@@ -30,7 +30,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Ado {
-    public class AdoEntityInserter : IWrite {
+    public class AdoEntityInserter : IWrite, IWriteStream {
         private readonly OutputContext _output;
         private readonly IConnectionFactory _cf;
 
@@ -93,6 +93,36 @@ namespace Transformalize.Providers.Ado {
                     _output.Error(ex, ex.Message);
                     _output.Warn("Rolling back");
                     trans.Rollback();
+                }
+                _output.Debug(() => $"{count} to {_output.Connection.Name}");
+            }
+            _output.Entity.Inserts += count;
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            token.ThrowIfCancellationRequested();
+            _output.Entity.InsertCommand = _output.SqlInsertIntoOutput(_cf);
+            var count = (uint)0;
+            using (var cn = _cf.GetConnection()) {
+                await ((DbConnection)cn).OpenAsync(token).ConfigureAwait(false);
+                using var trans = cn.BeginTransaction();
+
+                try {
+                    await foreach (var batch in rows.PartitionStreamAsync(_output.Entity.InsertSize, token).ConfigureAwait(false)) {
+                        var records = batch.Select(r => r.ToExpandoObject(_output.OutputFields));
+                        var batchCount = Convert.ToUInt32(await cn.ExecuteAsync(
+                            new CommandDefinition(_output.Entity.InsertCommand, records, trans,
+                                commandTimeout: 0, commandType: CommandType.Text, cancellationToken: token)
+                        ).ConfigureAwait(false));
+                        count += batchCount;
+                    }
+                    token.ThrowIfCancellationRequested();
+                    trans.Commit();
+                } catch (Exception ex) {
+                    _output.Error(ex, ex.Message);
+                    _output.Warn("Rolling back");
+                    trans.Rollback();
+                    throw;
                 }
                 _output.Debug(() => $"{count} to {_output.Connection.Name}");
             }

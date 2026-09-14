@@ -1,3 +1,5 @@
+using Transformalize.Extensions;
+using System.Runtime.CompilerServices;
 #region license
 // Transformalize
 // Configurable Extract, Transform, and Load
@@ -23,13 +25,17 @@ using Transformalize.Contracts;
 
 namespace Transformalize.Providers.Internal {
 
-   public class InternalKeysReader : IReadInputKeysAndHashCodes {
+   public class InternalKeysReader : IReadStream, IReadInputKeysAndHashCodes {
       private readonly IRead _internalReader;
       public InternalKeysReader(IRead internalReader) {
          _internalReader = internalReader;
       }
       public IEnumerable<IRow> Read() {
          return _internalReader.Read();
+      }
+
+      public IAsyncEnumerable<IRow> ReadStreamAsync(CancellationToken token = default) {
+         return _internalReader.ReadStreamAsync(token);
       }
 
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {

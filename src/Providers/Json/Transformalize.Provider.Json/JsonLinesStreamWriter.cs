@@ -1,4 +1,4 @@
-#region license
+﻿#region license
 // Transformalize
 // Configurable Extract, Transform, and Load
 // Copyright 2013-2026 Dale Newman
@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Json {
 
-   public class JsonLinesStreamWriter : IWrite {
+   public class JsonLinesStreamWriter : IWriteStream, IWrite {
 
       private readonly StreamWriter _streamWriter;
       private readonly Field[] _fields;
@@ -81,6 +81,37 @@ namespace Transformalize.Providers.Json {
          var newlineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
 
          foreach (var row in rows) {
+            token.ThrowIfCancellationRequested();
+
+            using var ms = new MemoryStream();
+            using (var jw = new Utf8JsonWriter(ms, options)) {
+               jw.WriteStartObject();
+
+               for (int i = 0; i < _fields.Length; i++) {
+                  jw.WritePropertyName(_fields[i].Alias);
+                  if (_formats[i] == string.Empty) {
+                     WriteValue(jw, row[_fields[i]]);
+                  } else {
+                     jw.WriteStringValue(string.Format(_formats[i], row[_fields[i]]));
+                  }
+               }
+               jw.WriteEndObject();
+            }
+
+            await _streamWriter.BaseStream.WriteAsync(ms.ToArray(), 0, (int)ms.Length, token).ConfigureAwait(false);
+            await _streamWriter.BaseStream.WriteAsync(newlineBytes, 0, newlineBytes.Length, token).ConfigureAwait(false);
+            _context.Entity.Inserts++;
+         }
+
+         await _streamWriter.FlushAsync().ConfigureAwait(false);
+      }
+
+      public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+
+         var options = new JsonWriterOptions { Indented = false };
+         var newlineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+
+         await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
             token.ThrowIfCancellationRequested();
 
             using var ms = new MemoryStream();

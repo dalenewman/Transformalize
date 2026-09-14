@@ -27,7 +27,7 @@ using System.Threading.Tasks;
 
 namespace Transformalize.Providers.Elasticsearch {
 
-    public class ElasticPartialUpdater : IDelete, IWrite {
+    public class ElasticPartialUpdater : IWriteStream, IDelete, IWrite {
 
         readonly ITransport _client;
         readonly Configuration.Field[] _fields;
@@ -73,6 +73,15 @@ namespace Transformalize.Providers.Elasticsearch {
                 var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
                 var asyncWriteUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
                 await _client.RequestAsync<DynamicResponse>(in asyncWriteUpdatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
+            }
+        }
+
+        public async Task WriteStreamAsync(IAsyncEnumerable<IRow> rows, CancellationToken token = default) {
+            await foreach (var row in rows.WithCancellation(token).ConfigureAwait(false)) {
+                token.ThrowIfCancellationRequested();
+                var id = string.Concat(_context.OutputFields.Where(f => f.PrimaryKey).Select(f => row[f]));
+                var asyncUpdatePath = new EndpointPath(HttpMethod.POST, $"/{_index}/_update/{id}");
+                await _client.RequestAsync<DynamicResponse>(in asyncUpdatePath, PostData.String(JsonSerializer.Serialize(row.ToExpandoObject(_fields))), token).ConfigureAwait(false);
             }
         }
     }

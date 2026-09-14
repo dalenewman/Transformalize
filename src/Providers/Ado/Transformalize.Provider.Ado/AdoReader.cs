@@ -22,6 +22,8 @@ using System.Data.Common;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using System.Runtime.CompilerServices;
+using Transformalize.Extensions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +31,7 @@ namespace Transformalize.Providers.Ado {
    /// <summary>
    /// A reader for an entity's input (source) or output (destination).
    /// </summary>
-   public class AdoReader : IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
+   public class AdoReader : IReadStream, IReadInputKeysAndHashCodes, IReadOutputKeysAndHashCodes {
 
       private int _rowCount;
       private readonly IConnectionContext _context;
@@ -50,7 +52,7 @@ namespace Transformalize.Providers.Ado {
              : context.Process.Connections.First(c => c.Name == context.Entity.Input);
          _tableOrView = readFrom == ReadFrom.Output ? context.Entity.OutputTableName(context.Process.Name) : context.Entity.Name;
          _schemaPrefix = readFrom == ReadFrom.Output ? string.Empty : (context.Entity.Schema == string.Empty ? string.Empty : cf.Enclose(context.Entity.Schema) + ".");
-         _filter = readFrom == ReadFrom.Output ? $"WHERE {cf.Enclose(_context.Entity.TflDeleted().FieldName())} != 1" : string.Empty;
+         _filter = readFrom == ReadFrom.Output ? "WHERE " + cf.Enclose(_context.Entity.TflDeleted().FieldName()) + " != 1" : string.Empty;
          _fields = fields;
          _readFrom = readFrom;
          _rowCreator = new AdoRowCreator(context, rowFactory);
@@ -64,10 +66,7 @@ namespace Transformalize.Providers.Ado {
 
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = $@"
-                    SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))} 
-                    FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}
-                    {_filter};";
+            cmd.CommandText = CreateQuery();
             _context.Debug(() => cmd.CommandText);
 
             IDataReader reader;
@@ -109,10 +108,7 @@ namespace Transformalize.Providers.Ado {
 
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
-            cmd.CommandText = $@"
-                    SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))}
-                    FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}
-                    {_filter};";
+            cmd.CommandText = CreateQuery();
             _context.Debug(() => cmd.CommandText);
 
             DbDataReader reader;
@@ -135,6 +131,69 @@ namespace Transformalize.Providers.Ado {
          }
 
          return results;
+      }
+      public async IAsyncEnumerable<IRow> ReadStreamAsync([EnumeratorCancellation] CancellationToken token = default) {
+         token.ThrowIfCancellationRequested();
+         if (_connection.Buffer) {
+            // Explicit buffering also closes the input connection before yielding output.
+            var buffered = await ReadUnbufferedStreamAsync(token).MaterializeAsync(token).ConfigureAwait(false);
+            foreach (var row in buffered) {
+               token.ThrowIfCancellationRequested();
+               yield return row;
+            }
+         } else {
+            await foreach (var row in ReadUnbufferedStreamAsync(token).WithCancellation(token).ConfigureAwait(false)) {
+               yield return row;
+            }
+         }
+      }
+      private async IAsyncEnumerable<IRow> ReadUnbufferedStreamAsync([EnumeratorCancellation] CancellationToken token) {
+
+         token.ThrowIfCancellationRequested();
+
+         using (var cn = (DbConnection)_cf.GetConnection()) {
+            await cn.OpenAsync(token).ConfigureAwait(false);
+            using var cmd = (DbCommand)cn.CreateCommand();
+
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = CreateQuery();
+            _context.Debug(() => cmd.CommandText);
+
+            DbDataReader reader;
+            try {
+               reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess, token).ConfigureAwait(false);
+            } catch (DbException e) {
+               _context.Error($"Error reading data from {_connection.Name}, {_tableOrView}.");
+               _context.Error(e.Message);
+               throw;
+            }
+
+            using (reader) {
+               while (await reader.ReadAsync(token).ConfigureAwait(false)) {
+                  _rowCount++;
+                  token.ThrowIfCancellationRequested();
+                  yield return _rowCreator.Create(reader, _fields);
+               }
+            }
+
+            _context.Info("{0} from {1}", _rowCount, _connection.Name);
+         }
+
+
+      }
+
+      private string CreateQuery() {
+         return string.Concat(
+            "SELECT ",
+            string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name))),
+            " FROM ",
+            _schemaPrefix,
+            _cf.Enclose(_tableOrView),
+            _connection.Provider == "sqlserver" && _context.Entity.NoLock ? " WITH (NOLOCK)" : string.Empty,
+            _filter == string.Empty ? string.Empty : " " + _filter,
+            ";"
+         );
       }
    }
 }
