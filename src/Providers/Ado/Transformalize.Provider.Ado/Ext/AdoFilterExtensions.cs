@@ -18,7 +18,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data;
 using System.Linq;
 using System.Text;
 using Transformalize.Configuration;
@@ -41,11 +41,12 @@ namespace Transformalize.Providers.Ado.Ext {
          var builder = new StringBuilder();
          var filters = new List<ExpressionContinuation>();
 
-         foreach (var filter in c.Entity.Filter) {
+         for (var index = 0; index < c.Entity.Filter.Count; index++) {
+            var filter = c.Entity.Filter[index];
             if (filter.Value == filter.WildCard) {
                continue;  // ignore this filter
             } else {
-               var tried = new ExpressionContinuation { Expression = ResolveExpression(c, filter, factory), Continuation = filter.Continuation };
+               var tried = new ExpressionContinuation { Expression = ResolveExpression(c, filter, index, factory), Continuation = filter.Continuation };
                if (tried.Expression != string.Empty) {
                   filters.Add(tried);
                }
@@ -73,19 +74,19 @@ namespace Transformalize.Providers.Ado.Ext {
          return result == string.Empty ? string.Empty : $"({builder})";
       }
 
-      private static string ResolveExpression(IContext c, Filter filter, IConnectionFactory factory) {
+      private static string ResolveExpression(IContext c, Filter filter, int index, IConnectionFactory factory) {
          if (!string.IsNullOrEmpty(filter.Expression))
             return filter.Expression;
 
          if (filter.Type == "search" && filter.LeftField != null) {
             var searchType = c.Process.SearchTypes.FirstOrDefault(st => st.Name == filter.LeftField.SearchType);
             if (searchType != null && searchType.Name != "default") {
-               return ResolveFullTextExpression(c, filter, factory, searchType);
+               return ResolveFullTextExpression(c, filter, index, factory, searchType);
             }
          }
 
          var resolvedOperator = ResolveOperator(c, filter);
-         return $"{ResolveSide(filter, "left", resolvedOperator, factory)} {resolvedOperator} {ResolveSide(filter, "right", resolvedOperator, factory)}";
+         return $"{ResolveSide(filter, "left", resolvedOperator, index, factory)} {resolvedOperator} {ResolveSide(filter, "right", resolvedOperator, index, factory)}";
       }
 
       // CONTAINS operator keywords, longest match first so "AND NOT" wins over "AND"
@@ -181,9 +182,9 @@ namespace Transformalize.Providers.Ado.Ext {
          return string.Join(" ", parts);
       }
 
-      private static string ResolveFullTextExpression(IContext c, Filter filter, IConnectionFactory factory, SearchType searchType) {
+      private static string ResolveFullTextExpression(IContext c, Filter filter, int index, IConnectionFactory factory, SearchType searchType) {
          var fieldName = factory.Enclose(filter.Field);
-         var value = filter.Value.Replace("'", "''");
+         var parameter = ParameterName(index);
          var negate = ConvertOperator(filter.Operator) == "!=";
 
          string expr;
@@ -191,9 +192,9 @@ namespace Transformalize.Providers.Ado.Ext {
             case AdoProvider.SqlServer:
                var langClause = string.IsNullOrEmpty(searchType.Analyzer) ? string.Empty : $" LANGUAGE '{searchType.Analyzer}'";
                if (searchType.QueryType == "freetext") {
-                  expr = $"FREETEXT({fieldName}, '{value}'{langClause})";
+                  expr = $"FREETEXT({fieldName}, {parameter}{langClause})";
                } else {
-                  expr = $"CONTAINS({fieldName}, '{NormalizeContainsQuery(value)}'{langClause})";
+                  expr = $"CONTAINS({fieldName}, {parameter}{langClause})";
                }
                break;
             case AdoProvider.PostgreSql:
@@ -204,7 +205,7 @@ namespace Transformalize.Providers.Ado.Ext {
                   "raw" => "to_tsquery",
                   _ => "plainto_tsquery"
                };
-               expr = $"to_tsvector('{lang}', {fieldName}) @@ {tsQueryFn}('{lang}', '{value}')";
+               expr = $"to_tsvector('{lang}', {fieldName}) @@ {tsQueryFn}('{lang}', {parameter})";
                break;
             case AdoProvider.MySql:
                var modeClause = searchType.Mode switch {
@@ -212,21 +213,21 @@ namespace Transformalize.Providers.Ado.Ext {
                   "expansion" => "WITH QUERY EXPANSION",
                   _ => "IN BOOLEAN MODE"
                };
-               expr = $"MATCH({fieldName}) AGAINST('{value}' {modeClause})";
+               expr = $"MATCH({fieldName}) AGAINST({parameter} {modeClause})";
                break;
             case AdoProvider.SqLite:
                var ftsTable = factory.Enclose(c.Entity.Name + "_fts");
-               expr = $"rowid IN (SELECT rowid FROM {ftsTable} WHERE {ftsTable} MATCH '{value}')";
+               expr = $"rowid IN (SELECT rowid FROM {ftsTable} WHERE {ftsTable} MATCH {parameter})";
                break;
             default:
-               expr = $"{fieldName} LIKE '%{value}%'";
+               expr = $"{fieldName} LIKE {parameter}";
                break;
          }
 
          return negate ? $"NOT ({expr})" : expr;
       }
 
-      private static string ResolveSide(Filter filter, string side, string resolvedOperator, IConnectionFactory factory) {
+      private static string ResolveSide(Filter filter, string side, string resolvedOperator, int index, IConnectionFactory factory) {
 
          bool isField;
          string value;
@@ -252,44 +253,112 @@ namespace Transformalize.Providers.Ado.Ext {
             return "NULL";
 
          if (!otherIsField) {
-            if (double.TryParse(value, out double number)) {
-               return number.ToString(CultureInfo.InvariantCulture);
-            }
-            return TextQualifier + value + TextQualifier;
+            return ParameterName(index, side);
          }
 
          if (ListOperators.Contains(resolvedOperator)) {
             var items = new List<string>();
+            var itemIndex = 0;
             foreach (var item in value.Split(filter.Delimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)) {
-               if (AdoConstants.StringTypes.Any(st => st == otherField.Type)) {
-                  items.Add(TextQualifier + item + TextQualifier);
-               } else {
-                  items.Add(item);
-               }
+               items.Add(ParameterName(index, side, itemIndex++));
             }
             return "(" + string.Join(",", items) + ")";
          } else {
-            if(filter.Type == "search" && filter.WildCard != "%") {
-               if (value.Contains(filter.WildCard)) {
-                  value = value.Replace(filter.WildCard, "%");
-               } else {
-                  value = $"%{value}%";
+            return ParameterName(index, side);
+         }
+      }
+
+      /// <summary>
+      /// Adds both parameters referenced by a user-supplied query and the generated parameters used by entity filters.
+      /// </summary>
+      public static void AddAdoParameters(this IDbCommand command, IContext context, IConnectionFactory factory) {
+         var referenced = new HashSet<string>(new AdoParameterFinder().Find(command.CommandText), StringComparer.OrdinalIgnoreCase);
+         if (referenced.Count == 0) {
+            return;
+         }
+
+         var added = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+         foreach (IDataParameter existing in command.Parameters) {
+            added.Add(existing.ParameterName.TrimStart('@'));
+         }
+
+         for (var index = 0; index < context.Entity.Filter.Count; index++) {
+            var filter = context.Entity.Filter[index];
+            if (filter.Value == filter.WildCard || !string.IsNullOrEmpty(filter.Expression)) {
+               continue;
+            }
+
+            if (filter.Type == "search" && filter.LeftField != null) {
+               var searchType = context.Process.SearchTypes.FirstOrDefault(st => st.Name == filter.LeftField.SearchType);
+               if (searchType != null && searchType.Name != "default") {
+                  var value = factory.AdoProvider == AdoProvider.SqlServer && searchType.QueryType != "freetext"
+                     ? NormalizeContainsQuery(filter.Value)
+                     : filter.Value;
+                  AddFilterParameter(command, referenced, added, ParameterName(index), value);
+                  continue;
                }
             }
 
-            if (AdoConstants.StringTypes.Any(st => st == otherField.Type)) {
-               return TextQualifier + value + TextQualifier;
-            } else {
-               if (otherField.Type.StartsWith("bool")) {
-                  var v = value.ToLower();
-                  return v == "1" || v == "true" || v == "yes" ?
-                     factory.AdoProvider == AdoProvider.PostgreSql ? "True" : "1" : 
-                     factory.AdoProvider == AdoProvider.PostgreSql ? "False" : "0";
-               } else {
-                  return value;
-               }
+            var resolvedOperator = ResolveOperator(context, filter);
+            AddSideParameters(command, referenced, added, filter, "left", resolvedOperator, index);
+            AddSideParameters(command, referenced, added, filter, "right", resolvedOperator, index);
+         }
+
+         foreach (var parameter in context.Process.Parameters) {
+            if (referenced.Contains(parameter.Name) && added.Add(parameter.Name)) {
+               AddParameter(command, parameter.Name, parameter.Convert(parameter.Value));
             }
          }
+      }
+
+      private static void AddSideParameters(IDbCommand command, HashSet<string> referenced, HashSet<string> added, Filter filter, string side, string resolvedOperator, int index) {
+         var isLeft = side == "left";
+         var isField = isLeft ? filter.IsField : filter.ValueIsField;
+         var value = isLeft ? filter.Field : filter.Value;
+         var otherIsField = isLeft ? filter.ValueIsField : filter.IsField;
+         var otherField = isLeft ? filter.ValueField : filter.LeftField;
+
+         if (isField || value.Equals("null", StringComparison.OrdinalIgnoreCase)) {
+            return;
+         }
+
+         if (otherIsField && ListOperators.Contains(resolvedOperator)) {
+            var itemIndex = 0;
+            foreach (var item in value.Split(filter.Delimiter.ToCharArray(), StringSplitOptions.RemoveEmptyEntries)) {
+               AddFilterParameter(command, referenced, added, ParameterName(index, side, itemIndex++), ConvertFilterValue(otherField, item));
+            }
+            return;
+         }
+
+         if (otherIsField && filter.Type == "search" && filter.WildCard != "%") {
+            value = value.Contains(filter.WildCard) ? value.Replace(filter.WildCard, "%") : $"%{value}%";
+         }
+
+         AddFilterParameter(command, referenced, added, ParameterName(index, side), otherIsField ? ConvertFilterValue(otherField, value) : value);
+      }
+
+      private static object ConvertFilterValue(Field field, string value) {
+         return field == null || AdoConstants.StringTypes.Contains(field.Type) ? value : field.Convert(value);
+      }
+
+      private static void AddFilterParameter(IDbCommand command, HashSet<string> referenced, HashSet<string> added, string name, object value) {
+         var bareName = name.TrimStart('@');
+         if (referenced.Contains(bareName) && added.Add(bareName)) {
+            AddParameter(command, name, value);
+         }
+      }
+
+      private static void AddParameter(IDbCommand command, string name, object value) {
+         var parameter = command.CreateParameter();
+         parameter.ParameterName = name;
+         parameter.Direction = ParameterDirection.Input;
+         parameter.Value = value ?? DBNull.Value;
+         command.Parameters.Add(parameter);
+      }
+
+      private static string ParameterName(int index, string side = "right", int? itemIndex = null) {
+         return $"@TflFilter{index}{(side == "left" ? "Left" : string.Empty)}{(itemIndex.HasValue ? "_" + itemIndex.Value : string.Empty)}";
       }
 
       private static string ResolveOperator(IContext context, Filter filter) {

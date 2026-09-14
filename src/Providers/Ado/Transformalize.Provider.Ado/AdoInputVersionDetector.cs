@@ -67,23 +67,11 @@ namespace Transformalize.Providers.Ado {
                cn.Open();
 
                var cmd = cn.CreateCommand();
-               cmd.CommandText = sql;
+               cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
                cmd.CommandType = CommandType.Text;
                cmd.CommandTimeout = _context.Connection.RequestTimeout;
 
-               // handle ado parameters
-               if (cmd.CommandText.Contains("@")) {
-                  var active = _context.Process.Parameters;
-                  foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-                     var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                     if (match != null) {
-                        var parameter = cmd.CreateParameter();
-                        parameter.ParameterName = match.Name;
-                        parameter.Value = match.Convert(match.Value);
-                        cmd.Parameters.Add(parameter);
-                     }
-                  }
-               }
+               cmd.AddAdoParameters(_context, _cf);
 
                var result = cmd.ExecuteScalar();
                return result == DBNull.Value ? null : result;
@@ -134,23 +122,11 @@ namespace Transformalize.Providers.Ado {
                await cn.OpenAsync(token).ConfigureAwait(false);
 
                var cmd = (DbCommand)cn.CreateCommand();
-               cmd.CommandText = sql;
+               cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
                cmd.CommandType = CommandType.Text;
                cmd.CommandTimeout = _context.Connection.RequestTimeout;
 
-               // handle ado parameters
-               if (cmd.CommandText.Contains("@")) {
-                  var active = _context.Process.Parameters;
-                  foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-                     var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-                     if (match != null) {
-                        var parameter = cmd.CreateParameter();
-                        parameter.ParameterName = match.Name;
-                        parameter.Value = match.Convert(match.Value);
-                        cmd.Parameters.Add(parameter);
-                     }
-                  }
-               }
+               cmd.AddAdoParameters(_context, _cf);
 
                var result = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
                return result == DBNull.Value ? null : result;

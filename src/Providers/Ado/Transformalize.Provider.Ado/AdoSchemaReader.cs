@@ -49,7 +49,7 @@ namespace Transformalize.Providers.Ado {
             DataTable table = null;
 
             var cmd = cn.CreateCommand();
-            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query;
+            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- trusted schema configuration only
             try {
                var reader = cmd.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly);
                table = reader.GetSchemaTable();
@@ -58,7 +58,7 @@ namespace Transformalize.Providers.Ado {
                   _c.Warn(ex1.Message);
                   _c.Info("Trying with table/view enclosed (with double quotes)...");
                   _c.Connection.Enclose = true;
-                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;";
+                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- trusted, provider-enclosed identifiers only
 
                   try {
                      var reader = cmd.ExecuteReader(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly);
@@ -198,7 +198,7 @@ namespace Transformalize.Providers.Ado {
             DataTable table = null;
 
             var cmd = (DbCommand)cn.CreateCommand();
-            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query;
+            cmd.CommandText = query == string.Empty ? $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;" : query; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- trusted schema configuration only
             try {
                var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
                table = reader.GetSchemaTable();
@@ -207,7 +207,7 @@ namespace Transformalize.Providers.Ado {
                   _c.Warn(ex1.Message);
                   _c.Info("Trying with table/view enclosed (with double quotes)...");
                   _c.Connection.Enclose = true;
-                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;";
+                  cmd.CommandText = $"SELECT * FROM {(string.IsNullOrEmpty(schema) ? string.Empty : _cf.Enclose(schema) + ".")}{_cf.Enclose(name)} WHERE 1=2;"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- trusted, provider-enclosed identifiers only
 
                   try {
                      var reader = await cmd.ExecuteReaderAsync(CommandBehavior.KeyInfo | CommandBehavior.SchemaOnly, token).ConfigureAwait(false);
@@ -277,7 +277,7 @@ namespace Transformalize.Providers.Ado {
          using (var cn = (DbConnection)_cf.GetConnection()) {
             await cn.OpenAsync(token).ConfigureAwait(false);
             var cmd = (DbCommand)cn.CreateCommand();
-            cmd.CommandText = sql;
+            cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- trusted schema configuration only
             using (var reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false)) {
                while (await reader.ReadAsync(token).ConfigureAwait(false)) {
                   entities.Add(new Entity {

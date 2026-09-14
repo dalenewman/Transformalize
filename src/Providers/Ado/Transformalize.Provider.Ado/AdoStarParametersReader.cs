@@ -92,7 +92,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql;
+                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";
@@ -160,7 +160,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql;
+                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";
@@ -230,7 +230,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql;
+                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";

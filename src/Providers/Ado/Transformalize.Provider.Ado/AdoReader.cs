@@ -66,6 +66,7 @@ namespace Transformalize.Providers.Ado {
 
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
+            // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- only trusted, provider-enclosed identifiers are interpolated
             cmd.CommandText = $@"
                     SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))} 
                     FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}
@@ -111,6 +112,7 @@ namespace Transformalize.Providers.Ado {
 
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
+            // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- only trusted, provider-enclosed identifiers are interpolated
             cmd.CommandText = $@"
                     SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))}
                     FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}
@@ -163,6 +165,7 @@ namespace Transformalize.Providers.Ado {
 
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
+            // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- only trusted, provider-enclosed identifiers are interpolated
             cmd.CommandText = $@"
                     SELECT {string.Join(",", _fields.Select(f => _readFrom == ReadFrom.Output ? _cf.Enclose(f.FieldName()) : _cf.Enclose(f.Name)))}
                     FROM {_schemaPrefix}{_cf.Enclose(_tableOrView)} {(_connection.Provider == "sqlserver" && _context.Entity.NoLock ? "WITH (NOLOCK)" : string.Empty)}

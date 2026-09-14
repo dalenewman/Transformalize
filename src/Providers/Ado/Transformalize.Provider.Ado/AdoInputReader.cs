@@ -16,7 +16,6 @@
 // limitations under the License.
 #endregion
 
-using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -83,7 +82,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -111,7 +110,7 @@ namespace Transformalize.Providers.Ado {
                if (!map.Items.Any() && map.Query == string.Empty) {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
-                  foreach (var mapItem in new AdoMapReader(_input, cn, map.Name).Read(_input)) {
+                  foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
                      if (mapItem.To != null) {
                         var value = mapItem.To.ToString();
                         if (value.Contains("'")) {
@@ -165,18 +164,7 @@ namespace Transformalize.Providers.Ado {
       }
 
       public void AddAdoParameters(IDbCommand cmd) {
-         if (cmd.CommandText.Contains("@")) {
-            var active = _input.Process.Parameters;
-            foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-               var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-               if (match != null) {
-                  var parameter = cmd.CreateParameter();
-                  parameter.ParameterName = match.Name;
-                  parameter.Value = match.Convert(match.Value);
-                  cmd.Parameters.Add(parameter);
-               }
-            }
-         }
+         cmd.AddAdoParameters(_input, _factory);
       }
 
    public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
@@ -214,7 +202,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = (DbCommand)cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -242,7 +230,7 @@ namespace Transformalize.Providers.Ado {
                if (!map.Items.Any() && map.Query == string.Empty) {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
-                  foreach (var mapItem in new AdoMapReader(_input, cn, map.Name).Read(_input)) {
+                  foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
                      if (mapItem.To != null) {
                         var value = mapItem.To.ToString();
                         if (value.Contains("'")) {
@@ -335,7 +323,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   using var countCmd = (DbCommand)cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
+                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -363,7 +351,7 @@ namespace Transformalize.Providers.Ado {
                if (!map.Items.Any() && map.Query == string.Empty) {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
-                  foreach (var mapItem in await new AdoMapReader(_input, cn, map.Name).ReadAsync(_input, token).ConfigureAwait(false)) {
+                  foreach (var mapItem in await new AdoMapReader(_input, cn, _factory, map.Name).ReadAsync(_input, token).ConfigureAwait(false)) {
                      if (mapItem.To != null) {
                         var value = mapItem.To.ToString();
                         if (value.Contains("'")) {

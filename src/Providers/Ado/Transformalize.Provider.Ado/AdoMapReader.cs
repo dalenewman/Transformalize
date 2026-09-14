@@ -16,15 +16,13 @@
 // limitations under the License.
 #endregion
 
-using Dapper;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Dynamic;
 using System.Linq;
 using Transformalize.Configuration;
 using Transformalize.Contracts;
+using Transformalize.Providers.Ado.Ext;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,9 +41,10 @@ namespace Transformalize.Providers.Ado {
          _closeAndDisposeConnection = true;
       }
 
-      public AdoMapReader(IContext context, IDbConnection cn, string mapName) {
+      public AdoMapReader(IContext context, IDbConnection cn, IConnectionFactory connectionFactory, string mapName) {
          _context = context;
          _cn = cn;
+         _connectionFactory = connectionFactory;
          _mapName = mapName;
          _closeAndDisposeConnection = false;
       }
@@ -74,34 +73,13 @@ namespace Transformalize.Providers.Ado {
 
          IDataReader reader = null;
 
-         if (cmd.CommandText.Contains("@")) {
-            var parameters = new ExpandoObject();
-            var editor = (IDictionary<string, object>)parameters;
-            var active = _context.Process.Parameters;
-            foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-               var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-               if (match != null) {
-                  editor[match.Name] = match.Convert(match.Value);
-               }
-            }
-
-            try {
-               reader = cn.ExecuteReader(cmd.CommandText, parameters);
-            } catch (DbException e) {
-               _context.Error($"Unable to execute query for {_mapName} map.");
-               _context.Error(e.Message);
-               Utility.CodeToError(_context, cmd.CommandText);
-            }
-
-         } else {
-
-            try {
-               reader = cn.ExecuteReader(cmd.CommandText);
-            } catch (DbException e) {
-               _context.Error($"Unable to execute query for {_mapName} map.");
-               _context.Error(e.Message);
-               Utility.CodeToError(_context, cmd.CommandText);
-            }
+         cmd.AddAdoParameters(_context, _connectionFactory);
+         try {
+            reader = cmd.ExecuteReader();
+         } catch (DbException e) {
+            _context.Error($"Unable to execute query for {_mapName} map.");
+            _context.Error(e.Message);
+            Utility.CodeToError(_context, cmd.CommandText);
          }
 
          if (reader == null) {
@@ -170,40 +148,13 @@ namespace Transformalize.Providers.Ado {
 
          DbDataReader reader = null;
 
-         if (cmd.CommandText.Contains("@")) {
-            var parameters = new ExpandoObject();
-            var editor = (IDictionary<string, object>)parameters;
-            var active = _context.Process.Parameters;
-            foreach (var name in new AdoParameterFinder().Find(cmd.CommandText).Distinct().ToList()) {
-               var match = active.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-               if (match != null) {
-                  editor[match.Name] = match.Convert(match.Value);
-               }
-            }
-
-            try {
-               foreach (var kvp in (IDictionary<string, object>)parameters) {
-                  var p = cmd.CreateParameter();
-                  p.ParameterName = "@" + kvp.Key;
-                  p.Value = kvp.Value ?? DBNull.Value;
-                  cmd.Parameters.Add(p);
-               }
-               reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false);
-            } catch (DbException e) {
-               _context.Error($"Unable to execute query for {_mapName} map.");
-               _context.Error(e.Message);
-               Utility.CodeToError(_context, cmd.CommandText);
-            }
-
-         } else {
-
-            try {
-               reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false);
-            } catch (DbException e) {
-               _context.Error($"Unable to execute query for {_mapName} map.");
-               _context.Error(e.Message);
-               Utility.CodeToError(_context, cmd.CommandText);
-            }
+         cmd.AddAdoParameters(_context, _connectionFactory);
+         try {
+            reader = await cmd.ExecuteReaderAsync(token).ConfigureAwait(false);
+         } catch (DbException e) {
+            _context.Error($"Unable to execute query for {_mapName} map.");
+            _context.Error(e.Message);
+            Utility.CodeToError(_context, cmd.CommandText);
          }
 
          if (reader == null) {
