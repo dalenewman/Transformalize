@@ -43,22 +43,7 @@ namespace Transformalize.Providers.Ado {
          if (string.IsNullOrEmpty(_context.Entity.Version))
             return null;
 
-         var version = _context.Entity.GetVersionField();
-
-         var schema = _context.Entity.Schema == string.Empty ? string.Empty : _cf.Enclose(_context.Entity.Schema) + ".";
-
-         var filter = string.Empty;
-         if (_context.Entity.Filter.Any()) {
-            filter = _context.ResolveFilter(_cf);
-         }
-
-         string sql;
-         var versionName = _context.Connection.Provider == "postgresql" && version.Name == "xmin" ? "xmin::text" : _cf.Enclose(version.Name);
-         if (_context.Connection.Provider == "sqlserver" && version.Type == "byte[]" && version.Length == "8") {
-            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} WHERE {versionName} < MIN_ACTIVE_ROWVERSION() {(filter == string.Empty ? string.Empty : " AND " + filter)}";
-         } else {
-            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
-         }
+         var sql = CreateMaxVersionQuery();
 
          _context.Debug(() => $"Loading Input Version: {sql}");
 
@@ -67,10 +52,9 @@ namespace Transformalize.Providers.Ado {
                cn.Open();
 
                var cmd = cn.CreateCommand();
-               cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
+               cmd.CommandText = sql;
                cmd.CommandType = CommandType.Text;
                cmd.CommandTimeout = _context.Connection.RequestTimeout;
-
                cmd.AddAdoParameters(_context, _cf);
 
                var result = cmd.ExecuteScalar();
@@ -98,22 +82,7 @@ namespace Transformalize.Providers.Ado {
          if (string.IsNullOrEmpty(_context.Entity.Version))
             return null;
 
-         var version = _context.Entity.GetVersionField();
-
-         var schema = _context.Entity.Schema == string.Empty ? string.Empty : _cf.Enclose(_context.Entity.Schema) + ".";
-
-         var filter = string.Empty;
-         if (_context.Entity.Filter.Any()) {
-            filter = _context.ResolveFilter(_cf);
-         }
-
-         string sql;
-         var versionName = _context.Connection.Provider == "postgresql" && version.Name == "xmin" ? "xmin::text" : _cf.Enclose(version.Name);
-         if (_context.Connection.Provider == "sqlserver" && version.Type == "byte[]" && version.Length == "8") {
-            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} WHERE {versionName} < MIN_ACTIVE_ROWVERSION() {(filter == string.Empty ? string.Empty : " AND " + filter)}";
-         } else {
-            sql = $"SELECT MAX({versionName}) FROM {schema}{_cf.Enclose(_context.Entity.Name)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}";
-         }
+         var sql = CreateMaxVersionQuery();
 
          _context.Debug(() => $"Loading Input Version: {sql}");
 
@@ -122,10 +91,9 @@ namespace Transformalize.Providers.Ado {
                await cn.OpenAsync(token).ConfigureAwait(false);
 
                var cmd = (DbCommand)cn.CreateCommand();
-               cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
+               cmd.CommandText = sql;
                cmd.CommandType = CommandType.Text;
                cmd.CommandTimeout = _context.Connection.RequestTimeout;
-
                cmd.AddAdoParameters(_context, _cf);
 
                var result = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
@@ -143,5 +111,25 @@ namespace Transformalize.Providers.Ado {
       public Task<Schema> GetSchemaAsync(Entity entity = null, CancellationToken token = default) { return Task.FromResult(GetSchema(entity)); }
       // Metadata-only provider: row reads are supplied by the separately registered entity reader.
       public Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) { return Task.FromResult(Read()); }
+
+      private string CreateMaxVersionQuery() {
+         var version = _context.Entity.GetVersionField();
+         var versionName = _context.Connection.Provider == "postgresql" && version.Name == "xmin" ? "xmin::text" : _cf.Enclose(version.Name);
+         var schema = _context.Entity.Schema == string.Empty ? string.Empty : _cf.Enclose(_context.Entity.Schema) + ".";
+         var filter = _context.Entity.Filter.Any() ? _context.ResolveFilter(_cf) : string.Empty;
+         var from = string.Concat(" FROM ", schema, _cf.Enclose(_context.Entity.Name));
+         if (_context.Connection.Provider == "sqlserver" && version.Type == "byte[]" && version.Length == "8") {
+            return string.Concat(
+               "SELECT MAX(", versionName, ")", from,
+               " WHERE ", versionName, " < MIN_ACTIVE_ROWVERSION()",
+               filter == string.Empty ? string.Empty : " AND " + filter
+            );
+         }
+
+         return string.Concat(
+            "SELECT MAX(", versionName, ")", from,
+            filter == string.Empty ? string.Empty : " WHERE " + filter
+         );
+      }
    }
 }

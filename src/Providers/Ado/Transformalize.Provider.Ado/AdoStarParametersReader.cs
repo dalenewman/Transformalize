@@ -58,30 +58,7 @@ namespace Transformalize.Providers.Ado {
 
             var threshold = minBatchId - 1;
 
-            var sql = string.Empty;
-
-            if (_cf.AdoProvider == AdoProvider.SqlCe) {
-
-                // because SqlCe doesn't support views, re-construct the parent view's definition
-
-                var ctx = new PipelineContext(_output.Logger, _parent);
-                var master = _parent.Entities.First(e => e.IsMaster);
-                var builder = new StringBuilder();
-
-                builder.AppendLine($"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1])))}");
-                foreach (var from in ctx.SqlStarFroms(_cf)) {
-                    builder.AppendLine(@from);
-                }
-                builder.AppendLine($"WHERE {_cf.Enclose(Utility.GetExcelName(master.Index))}.{_cf.Enclose(master.TflBatchId().FieldName())} > @Threshold;");
-
-                sql = builder.ToString();
-
-            } else {
-                sql = $@"
-                SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))} 
-                FROM {_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} 
-                WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
-            }
+            var sql = CreateQuery();
 
             _output.Debug(() => sql);
 
@@ -92,7 +69,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
+                cmd.CommandText = sql;
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";
@@ -128,28 +105,7 @@ namespace Transformalize.Providers.Ado {
 
             var threshold = minBatchId - 1;
 
-            var sql = string.Empty;
-
-            if (_cf.AdoProvider == AdoProvider.SqlCe) {
-
-                var ctx = new PipelineContext(_output.Logger, _parent);
-                var master = _parent.Entities.First(e => e.IsMaster);
-                var builder = new StringBuilder();
-
-                builder.AppendLine($"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1])))}");
-                foreach (var from in ctx.SqlStarFroms(_cf)) {
-                    builder.AppendLine(@from);
-                }
-                builder.AppendLine($"WHERE {_cf.Enclose(Utility.GetExcelName(master.Index))}.{_cf.Enclose(master.TflBatchId().FieldName())} > @Threshold;");
-
-                sql = builder.ToString();
-
-            } else {
-                sql = $@"
-                SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))}
-                FROM {_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)}
-                WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
-            }
+            var sql = CreateQuery();
 
             _output.Debug(() => sql);
 
@@ -160,7 +116,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
+                cmd.CommandText = sql;
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";
@@ -198,28 +154,7 @@ namespace Transformalize.Providers.Ado {
 
             var threshold = minBatchId - 1;
 
-            var sql = string.Empty;
-
-            if (_cf.AdoProvider == AdoProvider.SqlCe) {
-
-                var ctx = new PipelineContext(_output.Logger, _parent);
-                var master = _parent.Entities.First(e => e.IsMaster);
-                var builder = new StringBuilder();
-
-                builder.AppendLine($"SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1])))}");
-                foreach (var from in ctx.SqlStarFroms(_cf)) {
-                    builder.AppendLine(@from);
-                }
-                builder.AppendLine($"WHERE {_cf.Enclose(Utility.GetExcelName(master.Index))}.{_cf.Enclose(master.TflBatchId().FieldName())} > @Threshold;");
-
-                sql = builder.ToString();
-
-            } else {
-                sql = $@"
-                SELECT {string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias)))}
-                FROM {_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix)} {(_cf.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)}
-                WHERE {_cf.Enclose(Constants.TflBatchId)} > @Threshold;";
-            }
+            var sql = CreateQuery();
 
             _output.Debug(() => sql);
 
@@ -230,7 +165,7 @@ namespace Transformalize.Providers.Ado {
 
                 cmd.CommandTimeout = 0;
                 cmd.CommandType = CommandType.Text;
-                cmd.CommandText = sql; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and threshold is an ADO parameter
+                cmd.CommandText = sql;
 
                 var min = cmd.CreateParameter();
                 min.ParameterName = "@Threshold";
@@ -251,6 +186,40 @@ namespace Transformalize.Providers.Ado {
             }
 
             return results;
+        }
+
+        private string CreateQuery() {
+            var builder = new StringBuilder();
+
+            if (_cf.AdoProvider == AdoProvider.SqlCe) {
+                // SqlCe does not support views, so re-construct the parent view definition.
+                var context = new PipelineContext(_output.Logger, _parent);
+                var master = _parent.Entities.First(e => e.IsMaster);
+                builder.Append("SELECT ");
+                builder.AppendLine(string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Source.Split('.')[0]) + "." + _cf.Enclose(f.Source.Split('.')[1]))));
+                foreach (var from in context.SqlStarFroms(_cf)) {
+                    builder.AppendLine(from);
+                }
+                builder.Append("WHERE ");
+                builder.Append(_cf.Enclose(Utility.GetExcelName(master.Index)));
+                builder.Append('.');
+                builder.Append(_cf.Enclose(master.TflBatchId().FieldName()));
+                builder.AppendLine(" > @Threshold;");
+            } else {
+                builder.Append("SELECT ");
+                builder.AppendLine(string.Join(",", _output.Entity.Fields.Where(f => f.Output).Select(f => _cf.Enclose(f.Alias))));
+                builder.Append("FROM ");
+                builder.Append(_cf.Enclose(_output.Process.Name + _output.Process.StarSuffix));
+                if (_cf.AdoProvider == AdoProvider.SqlServer) {
+                    builder.Append(" WITH (NOLOCK)");
+                }
+                builder.AppendLine();
+                builder.Append("WHERE ");
+                builder.Append(_cf.Enclose(Constants.TflBatchId));
+                builder.AppendLine(" > @Threshold;");
+            }
+
+            return builder.ToString();
         }
     }
 }

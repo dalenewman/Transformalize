@@ -82,7 +82,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
+                  countCmd.CommandText = CreateCountQuery(filter);
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -167,6 +167,15 @@ namespace Transformalize.Providers.Ado {
          cmd.AddAdoParameters(_input, _factory);
       }
 
+      private string CreateCountQuery(string filter) {
+         return string.Concat(
+            "SELECT COUNT(*) FROM ",
+            _input.SqlInputName(_factory),
+            _factory.AdoProvider == AdoProvider.SqlServer ? " WITH (NOLOCK)" : string.Empty,
+            filter == string.Empty ? string.Empty : " WHERE " + filter
+         );
+      }
+
    public async Task<IEnumerable<IRow>> ReadAsync(CancellationToken token = default) {
 
          var results = new List<IRow>();
@@ -202,7 +211,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   var countCmd = (DbCommand)cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
+                  countCmd.CommandText = CreateCountQuery(filter);
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
@@ -323,7 +332,7 @@ namespace Transformalize.Providers.Ado {
                if (_input.Entity.IsPageRequest()) {
                   using var countCmd = (DbCommand)cn.CreateCommand();
                   var filter = _input.ResolveFilter(_factory);
-                  countCmd.CommandText = $"SELECT COUNT(*) FROM {_input.SqlInputName(_factory)} {(_factory.AdoProvider == AdoProvider.SqlServer ? "WITH (NOLOCK)" : string.Empty)} {(filter == string.Empty ? string.Empty : " WHERE " + filter)}"; // nosemgrep: csharp.lang.security.sqli.csharp-sqli.csharp-sqli -- identifiers are provider-enclosed and filter values are ADO parameters
+                  countCmd.CommandText = CreateCountQuery(filter);
                   _input.Debug(() => countCmd.CommandText);
                   AddAdoParameters(countCmd);
                   try {
