@@ -115,7 +115,7 @@ namespace Transformalize.Providers.CsvHelper.Autofac {
                            return new NullWriter(output, true);
                         } else {
                            if (output.Connection.Stream && _streamWriter != null) {
-                                 return new CsvHelperStreamWriter(output, _streamWriter);
+                              return new CsvHelperStreamWriter(output, _streamWriter, false);
                            } else {
                               var fileInfo = new FileInfo(Path.Combine(output.Connection.Folder, output.Connection.File ?? output.Entity.OutputTableName(output.Process.Name)));
                               if (fileInfo.Exists) {
@@ -126,7 +126,7 @@ namespace Transformalize.Providers.CsvHelper.Autofac {
                                  }
                               }
                               var streamWriter = new StreamWriter(System.IO.File.OpenWrite(fileInfo.FullName));
-                              return new CsvHelperStreamWriter(output, streamWriter);
+                              return new CsvHelperStreamWriter(output, streamWriter, true);
                            }
 
                         }

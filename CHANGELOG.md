@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2026-09-16
+
+### Fixed
+
+- **CsvHelper provider and Autofac module** (`1.5.1`): asynchronously writing CSV to a caller-supplied `StreamWriter`, such as an ASP.NET Core HTTP response writer with synchronous I/O disabled, no longer performs a synchronous flush when the Autofac scope is disposed. The provider now creates its destination-backed `CsvWriter` only for synchronous writes, flushes async output before returning, and leaves caller-supplied writers open while continuing to dispose file writers it creates itself.
+- Added regression coverage for both buffered `WriteAsync` and streaming `WriteStreamAsync` execution against an async-only, caller-owned response stream.
+
 ## [1.5.0] - 2026-09-11
 
 ### Added

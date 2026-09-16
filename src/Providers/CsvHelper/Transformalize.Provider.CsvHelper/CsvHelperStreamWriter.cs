@@ -13,35 +13,51 @@ namespace Transformalize.Providers.CsvHelper {
    public class CsvHelperStreamWriter : CsvHelperWriterBase, IWriteStream, IWrite, IDisposable {
 
       private readonly OutputContext _context;
-      private readonly CsvWriter _csv;
       private readonly StreamWriter _streamWriter;
+      private readonly bool _ownsStreamWriter;
+      private CsvWriter _csv;
+      private CsvWriter Csv => _csv ?? (_csv = new CsvWriter(_streamWriter, Config, true));
 
-      public CsvHelperStreamWriter(OutputContext context, StreamWriter streamWriter) : base(context) {
+      public CsvHelperStreamWriter(OutputContext context, StreamWriter streamWriter) : this(context, streamWriter, true) {
+      }
+
+      public CsvHelperStreamWriter(OutputContext context, StreamWriter streamWriter, bool ownsStreamWriter) : base(context) {
          _context = context;
          _streamWriter = streamWriter;
-         _csv = new CsvWriter(_streamWriter, Config);
+         _ownsStreamWriter = ownsStreamWriter;
       }
 
       public void Write(IEnumerable<IRow> rows) {
 
+         // The async methods stage rows in memory and never need a CsvWriter over the destination
+         // stream. Create it only for the synchronous path and leave the underlying StreamWriter
+         // open so its ownership can be handled explicitly.
+         var csv = Csv;
+
          if (_context.Connection.Header == Constants.DefaultSetting) {
-            WriteHeader(_csv);
-            _csv.NextRecord();
+            WriteHeader(csv);
+            csv.NextRecord();
          }
 
          foreach (var row in rows) {
-            WriteRow(_csv, row);
+            WriteRow(csv, row);
             _context.Entity.Inserts++;
-            _csv.NextRecord();
-            _csv.Flush();
+            csv.NextRecord();
+            csv.Flush();
          }
 
-         _csv.Flush();
+         csv.Flush();
 
       }
 
       public void Dispose() {
-         _csv?.Dispose();
+         try {
+            _csv?.Dispose();
+         } finally {
+            if (_ownsStreamWriter) {
+               _streamWriter.Dispose();
+            }
+         }
       }
 
       public async Task WriteAsync(IEnumerable<IRow> rows, CancellationToken token = default) {
