@@ -2,7 +2,11 @@ using Transformalize.Extensions;
 using Autofac;
 using CsvHelper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Transformalize.Configuration;
 using Transformalize.Containers.Autofac;
@@ -15,6 +19,54 @@ namespace Test.Integration.Core {
 
    [TestClass]
    public class BasicAsync {
+
+      [TestMethod]
+      [DataRow(false)]
+      [DataRow(true)]
+      public async Task ResponseWriterRemainsCallerOwned(bool streaming) {
+
+         const string xml = @"<add name='csv' mode='init' read-only='true' output='output'>
+  <connections>
+    <add name='input' provider='internal' />
+    <add name='output' provider='file' delimiter=',' file='ignored.csv' stream='true' />
+  </connections>
+  <entities>
+    <add name='Contact' input='input'>
+      <rows>
+        <add Identity='1' FirstName='Dale' />
+        <add Identity='2' FirstName='Cynthia' />
+      </rows>
+      <fields>
+        <add name='Identity' type='int' />
+        <add name='FirstName' />
+      </fields>
+    </add>
+  </entities>
+</add>";
+
+         var responseBody = new AsyncOnlyStream();
+         await using var streamWriter = new StreamWriter(responseBody, new UTF8Encoding(false), 1024, true);
+         var logger = new ConsoleLogger(LogLevel.Info);
+
+         using (var outer = new ConfigurationContainer().CreateScope(xml, logger)) {
+            var process = outer.Resolve<Process>();
+            await using (var inner = new Container(new CsvHelperProviderModule(streamWriter)).CreateScope(process, logger)) {
+               var controller = inner.Resolve<IProcessController>();
+               if (streaming) {
+                  await controller.ExecuteStreamAsync();
+               } else {
+                  await controller.ExecuteAsync();
+               }
+            }
+         }
+
+         // Scope disposal must not synchronously flush or close a caller-owned response writer.
+         await streamWriter.FlushAsync();
+         var csv = Encoding.UTF8.GetString(responseBody.ToArray());
+         StringAssert.Contains(csv, "Identity,FirstName");
+         StringAssert.Contains(csv, "1,Dale");
+         StringAssert.Contains(csv, "2,Cynthia");
+      }
 
 
       /// <summary>
@@ -212,6 +264,16 @@ namespace Test.Integration.Core {
             }
          }
 
+      }
+
+      private sealed class AsyncOnlyStream : MemoryStream {
+         public override void Flush() {
+            throw new InvalidOperationException("Synchronous operations are disallowed.");
+         }
+
+         public override Task FlushAsync(CancellationToken cancellationToken) {
+            return Task.CompletedTask;
+         }
       }
 
    }
