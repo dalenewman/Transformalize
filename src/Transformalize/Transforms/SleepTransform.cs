@@ -33,11 +33,7 @@ namespace Transformalize.Transforms {
          _delay = global::System.TimeSpan.FromMilliseconds(Context.Operation.Time);
          _delayString = _delay.ToString();
 
-#if NETS10
-         _sleep = () => global::System.Threading.Tasks.Task.Delay(_delay).Wait();
-#else
          _sleep = () => global::System.Threading.Thread.Sleep(_delay);
-#endif
       }
 
       public override IRow Operate(IRow row) {

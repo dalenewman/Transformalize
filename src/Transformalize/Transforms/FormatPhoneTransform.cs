@@ -24,11 +24,7 @@ namespace Transformalize.Transforms {
     public class FormatPhoneTransform : StringTransform {
 
         private readonly Field _input;
-#if NETS10
-        private readonly Regex _clean = new Regex("[^0-9]");
-#else
         private readonly Regex _clean = new Regex("[^0-9]", RegexOptions.Compiled);
-#endif
 
         public FormatPhoneTransform(IContext context = null) : base(context, "string") {
             if (IsMissingContext()) {

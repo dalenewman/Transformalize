@@ -36,11 +36,7 @@ namespace Transformalize.Transforms {
             }
 
             _input = MultipleInput();
-#if NETS10
-            _regex = new Regex(Context.Operation.Pattern);
-#else
             _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
-#endif
         }
 
         public override IRow Operate(IRow row) {

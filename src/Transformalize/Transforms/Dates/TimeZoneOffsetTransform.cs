@@ -46,18 +46,12 @@ namespace Transformalize.Transforms.Dates {
 
          _input = SingleInput();
 
-#if NETS10
-         Run = false;
-         Context.Error($"The timezoneoffset transform in {Context.Field.Alias} is not yet implemented on .net standard 1.0.");
-         _transform = null;
-#else
          var fromTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.FromTimeZone);
          var toTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(Context.Operation.ToTimeZone);
 
          var adjustment = toTimeZoneInfo.BaseUtcOffset - fromTimeZoneInfo.BaseUtcOffset;
          var daylightAdjustment = adjustment.Add(new TimeSpan(0, 1, 0, 0));
          _transform = dt => toTimeZoneInfo.IsDaylightSavingTime(dt) ? daylightAdjustment.Hours : adjustment.Hours;
-#endif
 
 
 

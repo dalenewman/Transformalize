@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;  // needed for ! NETS10
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace Transformalize {
@@ -34,11 +34,7 @@ namespace Transformalize {
       private static Dictionary<string, Type> _typeSystem;
       private static Dictionary<string, Func<string, bool>> _canConvert;
 
-#if NETS10
-     private static readonly Regex _timeOffset = new Regex(@"[+|-][0-1][0-9]:[0-5][0-9]|Z$");
-#else
       private static readonly Regex _timeOffset = new Regex(@"[+|-][0-1][0-9]:[0-5][0-9]|Z$", RegexOptions.Compiled);
-#endif
 
       public const string ApplicationName = "Transformalize";
       public const string DefaultSetting = "[default]";
@@ -271,15 +267,11 @@ namespace Transformalize {
          if (obj is byte[] bytes)
             return bytes;
 
-#if NETS10
-                return new byte[0];
-#else
          var bf = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
          using (var ms = new MemoryStream()) {
             bf.Serialize(ms, obj);
             return ms.ToArray();
          }
-#endif
 
       }
 

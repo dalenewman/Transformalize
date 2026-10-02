@@ -37,11 +37,7 @@ namespace Transformalize.Validators {
             if (IsMissingContext()) {
                 return;
             }
-#if NETS10
-            _regex = new Regex(pattern);
-#else
             _regex = new Regex(pattern, RegexOptions.Compiled);
-#endif
 
             if (!Run) {
                 return;

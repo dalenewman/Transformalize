@@ -46,11 +46,7 @@ namespace Transformalize.Transforms {
             return;
          }
 
-#if NETS10
-         _props = typeof(Connection).GetRuntimeProperties().Where(prop => prop.GetCustomAttribute(typeof(CfgAttribute), true) != null).Select(prop => prop.Name).ToArray();
-#else
             _props = typeof(Connection).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
-#endif
 
          var set = new HashSet<string>(_props, StringComparer.OrdinalIgnoreCase);
 
