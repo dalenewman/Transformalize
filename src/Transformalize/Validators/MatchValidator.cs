@@ -40,11 +40,7 @@ namespace Transformalize.Validators {
                 return;
 
             _input = SingleInput();
-#if NETS10
-            _regex = new Regex(context.Operation.Pattern);
-#else
             _regex = new Regex(Context.Operation.Pattern, RegexOptions.Compiled);
-#endif
 
             var help = Context.Field.Help;
             if (help == string.Empty) {

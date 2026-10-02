@@ -30,11 +30,7 @@ namespace Transformalize.Actions {
 
         public ActionResponse Execute() {
             var message = _action.Type == "wait" ? $"Waited for {_action.TimeOut} ms" : $"Slept for {_action.TimeOut} ms";
-#if NETS10
-            System.Threading.Tasks.Task.Delay(_action.TimeOut).Wait();
-#else
             System.Threading.Thread.Sleep(_action.TimeOut);
-#endif
             return new ActionResponse(200, message) { Action = _action };
         }
 

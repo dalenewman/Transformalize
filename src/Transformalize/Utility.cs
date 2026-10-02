@@ -238,11 +238,7 @@ namespace Transformalize {
          return winner?.Character ?? default(char);
       }
       public static object GetPropValue(object src, string propName) {
-#if NETS10
-         return src.GetType().GetRuntimeProperty(propName).GetValue(src);
-#else
          return src.GetType().GetProperty(propName)?.GetValue(src, null);
-#endif
       }
 
       public static string GetMethodName(IContext context) {

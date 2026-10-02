@@ -46,11 +46,6 @@ namespace Transformalize.Transforms.Dates {
 
          _input = SingleInput();
 
-#if NETS10
-         Run = false;
-         Context.Error($"The timezone transform in {Context.Field.Alias} is not yet implemented on .net standard 1.0.");
-         _transform = null;
-#else
 
          var timeZones = new HashSet<string>(Operation.TimeZoneIdDomain.Split(','));
 
@@ -86,7 +81,6 @@ namespace Transformalize.Transforms.Dates {
                return TimeZoneInfo.ConvertTimeFromUtc(utc, toTimeZoneInfo);
             };
          }
-#endif
       }
 
       public override IRow Operate(IRow row) {

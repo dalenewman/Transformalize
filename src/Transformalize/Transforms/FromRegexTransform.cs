@@ -53,11 +53,7 @@ namespace Transformalize.Transforms {
                 return;
             }
 
-#if NETS10
-            _regex = new Regex(context.Operation.Pattern);
-#else
             _regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
-#endif
 
             _input = SingleInputForMultipleOutput();
             _output = MultipleOutput();

@@ -38,11 +38,7 @@ namespace Transformalize.Actions {
             try {
                 _context.Warn(message);
                 _context.Logger.Clear();
-#if NETS10
-                _context.Warn("Unable to exit application.");
-#else
                 Environment.Exit(0);
-#endif
             } catch (Exception ex) {
                 response.Code = 500;
                 response.Message = $"Exit failed: {ex.Message}";

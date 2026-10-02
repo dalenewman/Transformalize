@@ -25,11 +25,7 @@ namespace Transformalize.Transforms {
             return;
          }
 
-#if NETS10
-         _props = typeof(Action).GetRuntimeProperties().Where(prop => CustomAttributeExtensions.GetCustomAttribute((MemberInfo)prop, typeof(CfgAttribute), (bool)true) != null).Select(prop => prop.Name).ToArray();
-#else
-            _props = typeof(Action).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
-#endif
+         _props = typeof(Action).GetProperties().Where(prop => prop.GetCustomAttributes(typeof(CfgAttribute), true).FirstOrDefault() != null).Select(prop => prop.Name).ToArray();
 
          var set = new HashSet<string>(_props, StringComparer.OrdinalIgnoreCase);
 

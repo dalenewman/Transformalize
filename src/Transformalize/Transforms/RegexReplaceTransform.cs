@@ -40,11 +40,7 @@ namespace Transformalize.Transforms {
             }
 
             var input = SingleInput();
-#if NETS10
-            var regex = new Regex(context.Operation.Pattern);
-#else
             var regex = new Regex(context.Operation.Pattern, RegexOptions.Compiled);
-#endif
             if (context.Operation.Count == 0) {
                 _transform = r => r[Context.Field] = regex.Replace(r[input].ToString(), context.Operation.NewValue);
             } else {

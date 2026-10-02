@@ -26,11 +26,7 @@ namespace Transformalize.Impl {
 
         public ParameterFinder(char prefix = '@') {
             _prefix = prefix;
-#if NETS10
-            _regex = new Regex($"\\{prefix}([\\w.$]+)", RegexOptions.CultureInvariant);
-#else
         _regex = new Regex($"\\{prefix}([\\w.$]+)", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-#endif
         }
 
         public IEnumerable<string> Find(string query) {

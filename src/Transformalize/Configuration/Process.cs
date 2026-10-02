@@ -382,12 +382,8 @@ namespace Transformalize.Configuration {
 
          // create entity field's matcher
          foreach (var entity in Entities) {
-            var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
-#if NETS10
-            entity.FieldMatcher = new Regex(pattern);
-#else
+            var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => Regex.Escape(f.Alias))) + @"\b";
             entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
-#endif
 
             // more efficient post-back strategy for form validation
             if (Mode == "form") {
@@ -615,13 +611,8 @@ namespace Transformalize.Configuration {
 
          if (CalculatedFields.Any()) {
 
-            Regex matcher;
-            var regex = @"\b" + string.Join(@"\b|\b", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
-#if NETS10
-            matcher = new Regex(regex);
-#else
-            matcher = new Regex(regex, RegexOptions.Compiled);
-#endif
+            var regex = @"\b" + string.Join(@"\b|\b", GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => Regex.Escape(f.Alias))) + @"\b";
+            var matcher = new Regex(regex, RegexOptions.Compiled);
             var key = Name;
 
             if (!_fieldMatchCache.ContainsKey(key)) {
@@ -662,12 +653,8 @@ namespace Transformalize.Configuration {
          }
 
          // create entity field's matcher
-         var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => f.Alias)) + @"\b";
-#if NETS10
-         entity.FieldMatcher = new Regex(pattern);
-#else
+         var pattern = @"\b" + string.Join(@"\b|\b", entity.GetAllFields().Where(f => !f.System).OrderByDescending(f => f.Alias.Length).Select(f => Regex.Escape(f.Alias))) + @"\b";
          entity.FieldMatcher = new Regex(pattern, RegexOptions.Compiled);
-#endif
 
          foreach (var field in entity.Fields) {
             field.Source = Utility.GetExcelName(field.EntityIndex) + "." + field.FieldName();

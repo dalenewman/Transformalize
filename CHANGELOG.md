@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2] - 2026-10-02
+
+### Fixed
+
+- **Literal field alias matching** (`Transformalize 1.5.2`): escape aliases in all three field-matching regular expressions so characters such as `.`, `+`, `|`, and parentheses cannot change the pattern or cause regex construction to fail. Entity matching and process-level calculated-field dependency discovery now preserve literal aliases.
+- Added focused regression coverage for literal column matching and regex construction with an unmatched parenthesis, including calculated-field dependencies.
+
+### Changed
+
+- Removed all 27 obsolete `NETS10` conditionals for .NET Standard 1.0, preserving the previously active implementations. The core library continues to target `netstandard2.0`.
+- Bumped `Transformalize` and `Transformalize.Container.Autofac` to **1.5.2**, so updating the Autofac package brings in the corrected core implementation.
+
 ## [1.5.1] - 2026-09-16
 
 ### Fixed

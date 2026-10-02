@@ -56,15 +56,6 @@ namespace Transformalize {
                     return;
 
                 if (checkLength) {
-#if NETS10
-                    foreach (var f in expanded) {
-                        var length = _context.Connection.MaxLength == 0 ? rows.Max(row => row[f].ToString().Length) + 1 : Math.Min(rows.Max(row => row[f].ToString().Length) + 1, _context.Connection.MaxLength);
-                        if (_context.Connection.MinLength > 0 && length < _context.Connection.MinLength) {
-                            length = _context.Connection.MinLength;
-                        }
-                        f.Length = length.ToString();
-                    }
-#else
                     Parallel.ForEach(expanded, f => {
                         var length = _context.Connection.MaxLength == 0 ? rows.Max(row => row[f].ToString().Length) + 1 : Math.Min(rows.Max(row => row[f].ToString().Length) + 1, _context.Connection.MaxLength);
                         if (_context.Connection.MinLength > 0 && length < _context.Connection.MinLength) {
@@ -72,21 +63,10 @@ namespace Transformalize {
                         }
                         f.Length = length.ToString();
                     });
-#endif
                 }
 
                 if (checkTypes) {
                     var canConvert = Constants.CanConvert();
-#if NETS10
-                    foreach (var f in expanded) {
-                        foreach (var dataType in _context.Connection.Types.Where(t => t.Type != "string")) {
-                            if (rows.All(r => canConvert[dataType.Type](r[f].ToString()))) {
-                                f.Type = dataType.Type;
-                                break;
-                            }
-                        }
-                    }
-#else
                     Parallel.ForEach(expanded, f => {
                         foreach (var dataType in _context.Connection.Types.Where(t => t.Type != "string")) {
                             if (rows.All(r => canConvert[dataType.Type](r[f].ToString()))) {
@@ -95,7 +75,6 @@ namespace Transformalize {
                             }
                         }
                     });
-#endif
                 }
             }
 
