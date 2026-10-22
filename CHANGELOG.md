@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.4] - 2026-10-21
+
+### Fixed
+
+- **ADO facet values**: preserve original apostrophes in generated facet map values instead of doubling them for SQL escaping. Synchronous, asynchronous, and streaming reads now return values that round-trip through parameterized filters without changing their contents.
+
+### Changed
+
+- Bumped `Transformalize.Provider.Ado`, `Transformalize.Provider.MySql`, `Transformalize.Provider.PostgreSql`, `Transformalize.Provider.SqlServer`, `Transformalize.Provider.Sqlite`, and their Autofac packages to **1.5.4**. The database provider packages now depend on ADO **1.5.4**, and each Autofac package brings in its updated provider.
+
+### Added
+
+- SQLite regression coverage for facet option round-trips with single and multiple selections across synchronous, asynchronous, and streaming reads, apostrophes in search filters, and original parameter values in custom map queries.
+
 ## [1.5.3] - 2026-10-21
 
 ### Changed
