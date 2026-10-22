@@ -50,7 +50,7 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Name { get; set; }
 
-      [Cfg(value = ";'`")]
+      [Cfg(value = "")]
       public string InvalidCharacters { get; set; }
 
       [Cfg(value = null)]
