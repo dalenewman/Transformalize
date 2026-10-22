@@ -111,12 +111,6 @@ namespace Transformalize.Providers.Ado {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
                   foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
-                     if (mapItem.To != null) {
-                        var value = mapItem.To.ToString();
-                        if (value.Contains("'")) {
-                           mapItem.To = value.Replace("'", "''");
-                        }
-                     }
                      map.Items.Add(mapItem);
                   }
                }
@@ -240,12 +234,6 @@ namespace Transformalize.Providers.Ado {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
                   foreach (var mapItem in new AdoMapReader(_input, cn, _factory, map.Name).Read(_input)) {
-                     if (mapItem.To != null) {
-                        var value = mapItem.To.ToString();
-                        if (value.Contains("'")) {
-                           mapItem.To = value.Replace("'", "''");
-                        }
-                     }
                      map.Items.Add(mapItem);
                   }
                }
@@ -361,12 +349,6 @@ namespace Transformalize.Providers.Ado {
                   map.Connection = _input.Connection.Name;
                   map.Query = _input.SqlSelectFacetFromInput(filter, _factory);
                   foreach (var mapItem in await new AdoMapReader(_input, cn, _factory, map.Name).ReadAsync(_input, token).ConfigureAwait(false)) {
-                     if (mapItem.To != null) {
-                        var value = mapItem.To.ToString();
-                        if (value.Contains("'")) {
-                           mapItem.To = value.Replace("'", "''");
-                        }
-                     }
                      map.Items.Add(mapItem);
                   }
                }

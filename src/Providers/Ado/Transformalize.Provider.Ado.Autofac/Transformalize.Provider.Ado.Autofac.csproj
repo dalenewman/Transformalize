@@ -13,9 +13,9 @@
     <PackageTags>etl,ado,transformalize</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
-    <Version>1.5.0</Version>
-    <FileVersion>1.5.0</FileVersion>
-    <AssemblyVersion>1.5.0</AssemblyVersion>
+    <Version>1.5.4</Version>
+    <FileVersion>1.5.4</FileVersion>
+    <AssemblyVersion>1.5.4</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Containers\Autofac\Autofac.csproj" />
