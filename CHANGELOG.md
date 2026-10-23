@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.5] - 2026-10-22
+
+### Added
+
+- Field `modal` boolean configuration property, defaulting to `false`, with a corresponding facade property. This metadata is available for OrchardCore to consume and does not change ETL execution.
+
+### Changed
+
+- Bumped `Transformalize` and `Transformalize.Container.Autofac` to **1.5.5**, so updating the Autofac package brings in the new field property.
+
 ## [1.5.4] - 2026-10-21
 
 ### Fixed

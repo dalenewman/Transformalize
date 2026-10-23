@@ -496,6 +496,13 @@ namespace Transformalize.Configuration {
       [Cfg(value = "")]
       public string Target { get; set; }
 
+      /// <summary>
+      /// Optional. Default is `false`.
+      /// Metadata for OrchardCore modal rendering; does not affect ETL execution.
+      /// </summary>
+      [Cfg(value = false)]
+      public bool Modal { get; set; }
+
       [Cfg(value = "")]
       public string Body { get; set; }
 
