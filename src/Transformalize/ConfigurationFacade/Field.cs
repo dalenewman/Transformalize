@@ -154,6 +154,9 @@ namespace Transformalize.ConfigurationFacade {
       public string Target { get; set; }
 
       [Cfg]
+      public string Modal { get; set; }
+
+      [Cfg]
       public string Body { get; set; }
 
       [Cfg]
